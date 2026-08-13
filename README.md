@@ -1,6 +1,6 @@
 # Cartografia Estelar
 
-Mapa estelar 3D interativo (79 corpos, 15 sistemas, 6 galáxias) em HTML único + Three.js, sem build.
+Mapa estelar 3D interativo (84 corpos, 17 sistemas, 6 galáxias) em HTML único + Three.js, sem build.
 
 **No ar:** https://rodrigokiller.github.io/cartografia-estelar/
 
@@ -11,4 +11,5 @@ Mapa estelar 3D interativo (79 corpos, 15 sistemas, 6 galáxias) em HTML único 
 ## Controles
 Arraste para girar, pinça ou scroll para aproximar. Toque em um corpo para catalogar, toque de novo para entrar. Afaste o zoom para subir de escala (Corpo, Sistema, Galáxia, Universo).
 
-Teclado: `/` busca · `?` manual · setas trocam de corpo · `P` modo foto (no celular, toque longo) · `ESC` volta um nível.
+Teclado: `/` busca · `?` manual · `M` registro de bordo · setas trocam de corpo · `P` modo foto · `ESC` volta um nível.
+No celular, os mesmos recursos estão nos botões ◉ (foto, ou toque longo na tela) e ◈ (registro de bordo).

@@ -114,16 +114,26 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
   font-family:var(--mono);font-size:18px;cursor:pointer;display:none;align-items:center;justify-content:center}
 .chev:hover{border-color:var(--line2);box-shadow:0 0 12px rgba(125,196,255,.25)}
 #zoomui{display:none}
-#panel::before,#panel::after,#findbox::before,#findbox::after,#cmpcard::before,#cmpcard::after{
-  content:'';position:absolute;height:1px;background:var(--line2);pointer-events:none;z-index:2}
-#panel::before{width:25.5px;top:9.5px;left:-3px;transform:rotate(-45deg)}
-#panel::after{width:25.5px;bottom:9.5px;right:-3px;transform:rotate(-45deg)}
+/* contorno diagonal nos cantos chanfrados.
+   Cada pseudo-elemento é um quadrado do tamanho exato do chanfro, ancorado na borda
+   externa (-1px = espessura da borda), e a faixa de 1px do gradiente cai exatamente
+   sobre o corte do clip-path. Geometria fechada, sem números ajustados na mão. */
+#panel::before,#panel::after,#findbox::before,#findbox::after,#cmpcard::before,#cmpcard::after,
+#helpcard::before,#helpcard::after,#player::before,#player::after,#misscard::before,#misscard::after{
+  content:'';position:absolute;pointer-events:none;z-index:2}
+#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before{
+  left:-1px;top:-1px;
+  background:linear-gradient(-45deg,transparent calc(50% - 1px),var(--line2) calc(50% - 1px),var(--line2) 50%,transparent 50%)}
+#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after{
+  right:-1px;bottom:-1px;
+  background:linear-gradient(-45deg,transparent 50%,var(--line2) 50%,var(--line2) calc(50% + 1px),transparent calc(50% + 1px))}
+#panel::before,#panel::after{width:18px;height:18px}
 #findbox{position:relative}
-#findbox::before{width:17px;top:6.5px;left:-2px;transform:rotate(-45deg)}
-#findbox::after{width:17px;bottom:6.5px;right:-2px;transform:rotate(-45deg)}
+#findbox::before,#findbox::after{width:12px;height:12px}
 #cmpcard{position:relative}
-#cmpcard::before{width:22.6px;top:8.5px;left:-2.6px;transform:rotate(-45deg)}
-#cmpcard::after{width:22.6px;bottom:8.5px;right:-2.6px;transform:rotate(-45deg)}
+#cmpcard::before,#cmpcard::after{width:16px;height:16px}
+#helpcard::before,#helpcard::after{width:16px;height:16px}
+#player::before,#player::after{width:10px;height:10px}
 #nowplay{position:absolute;top:64px;left:50%;transform:translateX(-50%);z-index:15;
   font-family:var(--mono);font-size:10px;letter-spacing:2.5px;color:var(--ion);
   background:rgba(6,12,24,.78);border:1px solid var(--line);padding:6px 14px;
@@ -238,6 +248,68 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 .cmptab td.b{text-align:left}
 #cmpbtns{display:flex;gap:10px;margin-top:14px}
 #cmpbtns .xbtn{margin-top:0}
+/* ---------- painel de missão + mundos habitáveis ---------- */
+#mission{position:absolute;inset:0;z-index:33;display:none;align-items:center;justify-content:center;
+  background:rgba(2,5,12,.82);backdrop-filter:blur(6px);padding:16px}
+#mission.on{display:flex}
+#misscard{position:relative;width:min(760px,96vw);max-height:90dvh;display:flex;flex-direction:column;
+  background:var(--panel);border:1px solid var(--line2);
+  clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)}
+#misscard::before,#misscard::after{width:16px;height:16px}
+#misshead{padding:18px 20px 12px;border-bottom:1px solid var(--line);flex:0 0 auto}
+#misshead h2{font-family:var(--mono);font-size:11px;letter-spacing:4px;color:var(--ion);font-weight:400}
+.missrank{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:10px;flex-wrap:wrap}
+.missrank .pt{font-size:17px;letter-spacing:2px;font-weight:600;color:var(--txt)}
+.missrank .ct{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--dim);white-space:nowrap}
+.missrank .ct b{color:var(--amber);font-weight:400}
+#missbar{height:6px;background:rgba(63,140,255,.14);margin-top:10px;position:relative;overflow:hidden}
+#missbar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--thrust),var(--ion));
+  transition:width .6s cubic-bezier(.3,.9,.3,1)}
+#missnext{font-family:var(--mono);font-size:9px;letter-spacing:1.6px;color:var(--dim);margin-top:7px}
+#misstools{padding:10px 20px;border-bottom:1px solid var(--line);flex:0 0 auto;
+  display:flex;gap:8px;align-items:center;flex-wrap:nowrap}
+.mchips{display:flex;gap:6px;flex-wrap:wrap;flex:1 1 auto;min-width:0}
+.mchip{font-family:var(--mono);font-size:9px;letter-spacing:1.6px;color:var(--dim);cursor:pointer;
+  border:1px solid var(--line);background:rgba(6,12,24,.5);padding:7px 10px;white-space:nowrap;
+  -webkit-tap-highlight-color:transparent}
+.mchip:hover{border-color:var(--line2);color:var(--txt)}
+.mchip.on{border-color:var(--ion);color:var(--ion);background:rgba(63,140,255,.16)}
+#misssort{font-family:var(--mono);font-size:9px;letter-spacing:1.4px;color:var(--ion);cursor:pointer;
+  border:1px solid var(--line);background:rgba(6,12,24,.75);padding:7px 8px;flex:0 0 auto}
+#misssort option{background:#0a1222;color:var(--txt)}
+#misslist{list-style:none;margin:0;padding:0;overflow-y:auto;flex:1 1 auto;-webkit-overflow-scrolling:touch}
+#misslist li{display:flex;align-items:center;gap:12px;padding:11px 20px;border-bottom:1px solid rgba(63,140,255,.08);
+  cursor:pointer;min-height:52px;-webkit-tap-highlight-color:transparent}
+#misslist li:hover,#misslist li:active{background:rgba(63,140,255,.12)}
+#misslist li.vis .mnm{color:var(--txt)}
+#misslist .mdot{flex:0 0 auto;width:9px;height:9px;border:1px solid var(--line2);transform:rotate(45deg)}
+#misslist li.vis .mdot{background:var(--amber);border-color:var(--amber);box-shadow:0 0 8px rgba(255,180,84,.5)}
+#misslist .minfo{flex:1 1 auto;min-width:0;display:block}
+#misslist .mnm{display:block;font-size:13px;letter-spacing:1.4px;color:var(--dim);font-weight:600;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#misslist .msub{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:1.4px;color:var(--dim);margin-top:3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.75}
+#misslist .mhab{flex:0 0 auto;width:62px;text-align:right;font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--dim)}
+#misslist .mhab i{display:block;height:3px;background:rgba(63,140,255,.16);margin-top:4px;position:relative}
+#misslist .mhab i b{position:absolute;left:0;top:0;bottom:0;background:var(--ok)}
+#misslist .mhab.hi{color:var(--ok)}
+#missempty{padding:26px 20px;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--dim)}
+#missfoot{padding:10px 20px;border-top:1px solid var(--line);flex:0 0 auto;display:flex;gap:10px;align-items:center}
+#missfoot .cnt{font-family:var(--mono);font-size:9px;letter-spacing:1.6px;color:var(--dim);flex:1 1 auto}
+#missfoot .xbtn{margin-top:0;flex:0 0 auto;width:auto;padding:9px 16px}
+@media (max-width:899px){
+  #mission{padding:0;align-items:flex-end}
+  #misscard{width:100%;max-width:none;max-height:92dvh;clip-path:none;
+    border-left:none;border-right:none;border-bottom:none;border-radius:14px 14px 0 0}
+  #misscard::before,#misscard::after{display:none}
+  #misshead{padding:14px 16px 10px}
+  #misstools{padding:10px 16px;flex-wrap:nowrap}
+  #misslist li{padding:12px 16px;min-height:58px}
+  #missfoot{padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+  .mchips{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .mchips::-webkit-scrollbar{display:none}
+  .mchip{padding:9px 11px}
+}
 /* ---------- busca rápida ---------- */
 #finder{position:absolute;inset:0;z-index:32;display:none;align-items:flex-start;justify-content:center;
   background:rgba(2,5,12,.66);backdrop-filter:blur(4px);padding-top:12vh}
@@ -285,7 +357,7 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 /* ---------- help ---------- */
 #help{position:absolute;inset:0;z-index:45;background:rgba(2,4,10,.82);display:none;align-items:center;justify-content:center;padding:20px}
 #help.on{display:flex}
-#helpcard{max-width:460px;width:100%;background:var(--panel2);border:1px solid var(--line2);padding:22px 24px;
+#helpcard{position:relative;max-width:460px;width:100%;background:var(--panel2);border:1px solid var(--line2);padding:22px 24px;
   clip-path:polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)}
 #helpcard h2{font-family:var(--mono);font-size:12px;letter-spacing:4px;color:var(--ion);font-weight:400;margin-bottom:14px}
 #helpcard p{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--txt);line-height:2;margin-bottom:10px}
@@ -301,7 +373,8 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 /* ---------- mobile ---------- */
 @media (max-width:899px){
   #topbar{top:14px;left:14px}
-  #topright{top:14px;right:14px}
+  #topright{top:14px;right:12px;left:12px;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .navbtn,#btnhelp{width:34px;height:34px}
   #scalebadge{display:none}
   #navpod{display:none}
   #chevL{left:12px}
@@ -356,6 +429,8 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
     <button id="navback" class="navbtn dis" title="Objeto anterior">«</button>
     <button id="navfwd" class="navbtn dis" title="Objeto seguinte">»</button>
     <button id="btnsnd" class="navbtn" title="Som ligado/desligado">♪</button>
+    <button id="btnphoto" class="navbtn" title="Modo foto ( P ou toque longo )">◉</button>
+    <button id="btnmiss" class="navbtn" title="Missão e mundos habitáveis">◈</button>
     <button id="btnfind" class="navbtn" title="Buscar ( / )">⌕</button>
     <button id="btnfs" class="navbtn" title="Tela cheia">⛶</button>
     <button id="btnhelp" title="Ajuda">?</button>
@@ -413,10 +488,39 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
       <p><b>Deslize ‹ ›</b> (ou setas do teclado) para saltar entre planetas ou luas vizinhas.</p>
       <p><b>⚖ Comparar:</b> toque no botão do card, abra outro corpo e toque de novo: análise lado a lado em escala real.</p>
       <p><b>Compartilhe:</b> o endereço da página acompanha o objeto (ex.: <span style="font-family:var(--mono)">#corpo=europa</span>), copie o link e envie.</p>
-      <p><b>Modo foto:</b> tecla <b>P</b> (no celular: toque longo na tela) esconde o painel inteiro para uma captura limpa. Repita para voltar.</p>
+      <p><b>Modo foto:</b> tecla <b>P</b>, botão ◉ ou toque longo na tela esconde o painel inteiro para uma captura limpa. Repita para voltar.</p>
+      <p><b>◈ Registro de bordo:</b> tecla <b>M</b> ou o botão ◈ abrem a lista completa do catálogo, com o que você já visitou, sua patente e filtros por habitáveis, planetas, luas, estrelas e regiões.</p>
       <p class="sub">ESC volta um nível · ? abre este manual · Dados: NASA/ESA/IAU, valores aproximados. Linhas em âmbar são referências de ficção.</p>
       <p id="diagline" style="font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;margin-top:10px"></p>
       <button class="xbtn" id="helpclose">FECHAR</button>
+    </div>
+  </div>
+
+  <div id="mission">
+    <div id="misscard">
+      <div id="misshead">
+        <h2>REGISTRO DE BORDO</h2>
+        <div class="missrank">
+          <span class="pt" id="misspat">CADETE</span>
+          <span class="ct" id="misscnt"><b>0</b> / 0 VISITADOS</span>
+        </div>
+        <div id="missbar"><i style="width:0%"></i></div>
+        <div id="missnext"></div>
+      </div>
+      <div id="misstools">
+        <div class="mchips" id="misschips"></div>
+        <select id="misssort" title="Ordenar">
+          <option value="nome">A a Z</option>
+          <option value="hab">HABITABILIDADE</option>
+          <option value="grav">GRAVIDADE</option>
+          <option value="sis">SISTEMA</option>
+        </select>
+      </div>
+      <ul id="misslist"></ul>
+      <div id="missfoot">
+        <span class="cnt" id="missfootcnt"></span>
+        <button class="xbtn" id="missclose">FECHAR</button>
+      </div>
     </div>
   </div>
 
@@ -799,11 +903,16 @@ PLANETS.push(
     sections:[{t:'REGISTRO', rows:[['Descoberta','1655 · Huygens'],['Atmosfera','N₂ densa · 1,5 atm, a única lua assim'],['Superfície','Rios, lagos e chuva de METANO líquido'],['Pouso','Sonda Huygens, 2005'],['Próxima missão','Dragonfly (drone da NASA, ~2034)']]}],
     facts:['Com a pressão certa e gravidade baixa, um humano com asas nos braços conseguiria voar em Titã.'],
     fict:'Gattaca, o destino sonhado de Vincent é uma missão a Titã.'},
-   {id:'encelado', name:'ENCÉLADO', desig:'SATURNO-II', kind:'Lua de gelo ativa', hab:55, gbar:0.011, pop:'0',
-    quick:[['DIÂMETRO','504 km'],['ÓRBITA','1,4 d'],['DESCOBERTA','1789'],['GÊISERES','sim']],
+   {id:'encelado', name:'ENCÉLADO', desig:'SATURNO-II · LUA', kind:'A lua que cospe oceano no espaço', hab:72, gbar:0.011, pop:'0 (que a gente saiba)',
+    quick:[['DIÂMETRO','504 km'],['GRAVIDADE','0,011 g'],['ÓRBITA','1,37 d'],['GÊISERES','101 jatos'],['OCEANO','global, 10 km'],['ALBEDO','0,81 · recorde']],
     visual:{mode:'rocky', c1:'#eef3f6', c2:'#cfdde6', c3:'#aec6d4', scale:5.0, seed:2.8, crater:0.2, atmo:{col:'#cfe6ff', i:0.5}},
-    sections:[{t:'REGISTRO', rows:[['Descoberta','1789 · William Herschel'],['Gêiseres','Jatos de água salgada no polo sul (Cassini voou dentro deles)'],['Oceano','Global, sob o gelo'],['Albedo','Superfície mais refletiva do sistema']]}],
-    facts:['A água dos gêiseres contém moléculas orgânicas, forte candidato a abrigar vida.'], fict:null},
+    sections:[
+      {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância de Saturno','238 mil km'],['Ano','1,37 dia'],['Rotação','Síncrona'],['O motor','A maré de Saturno amassa e estica a lua, e esse atrito derrete o gelo por dentro']]},
+      {t:'ESTRUTURA', rows:[['Diâmetro','504 km, caberia entre São Paulo e o Rio ida e volta'],['Oceano','Global, ~10 km de profundidade sob 20 km de gelo'],['Listras de tigre','Quatro fendas no polo sul, de onde saem os jatos'],['Temperatura','−201 °C na superfície, água líquida embaixo']]},
+      {t:'REGISTRO', rows:[['Descoberta','1789 · William Herschel'],['A revelação','2005: a Cassini flagrou plumas de vapor saindo do polo sul'],['O mergulho','2015: a sonda voou DENTRO de um jato, a 49 km da superfície, e provou a água'],['O que achou','Sal, sílica de fontes hidrotermais, metano e moléculas orgânicas complexas'],['2023','O James Webb viu uma pluma de 10 mil km, maior que a própria lua'],['Fosfato','2023: detectado fósforo, o último dos seis ingredientes da vida que faltava']]}
+    ],
+    facts:['A Cassini provou que existe um oceano de água salgada e quente ali embaixo, com atividade hidrotermal como nas fontes onde a vida pode ter começado na Terra.','Os gêiseres alimentam o anel E de Saturno: essa lua está literalmente pintando um anel do planeta.','É o corpo mais refletivo do Sistema Solar, devolve 81% da luz que recebe.','Uma missão futura não precisa nem pousar: basta atravessar a pluma e coletar o oceano de graça.'],
+    fict:'Star Trek Enterprise faz de Encélado uma parada de reabastecimento de água. Em 2017, a NASA anunciou o achado do hidrogênio com a frase que virou meme: "é comida de micróbio".'},
    {id:'mimas', name:'MIMAS', desig:'SATURNO-I', kind:'Lua craterizada', hab:0, gbar:0.006, pop:'0',
     quick:[['DIÂMETRO','396 km'],['ÓRBITA','0,9 d'],['DESCOBERTA','1789'],['CRATERA','Herschel']],
     visual:{mode:'rocky', c1:'#b8b2a9', c2:'#9c968d', c3:'#7d7871', scale:5.5, seed:9.4, crater:1.0, spot:{pos:[2.0,0.15], r:0.42, col:'#55504b', on:1}},
@@ -1071,6 +1180,18 @@ const STARSYS = [
    sections:[{t:'REGISTRO', rows:[['A régua','Foi a definição de magnitude 0 do céu'],['1983','IRAS achou aqui o 1º disco de detritos fora do Sol'],['Rotação','12,5 h, quase se despedaçando']]}],
    facts:['Era a Estrela do Norte em 12.000 a.C. e será de novo em 13.700 d.C.'],
    fict:'Contato: o sinal vem de Vega. · No Tanabata, ela é a tecelã Orihime.'}},
+ {id:'fomalhaut', name:'FOMALHAUT', nav:true, pos:[-4.5,0,14.5], hot:false,
+  card:{desig:'ESTRELA · 25 AL', kind:'O Olho de Sauron', hab:null,
+   quick:[['DISTÂNCIA','25 al'],['TIPO','A3V'],['ANÉIS','3'],['PLANETAS','0 conf.']],
+   sections:[{t:'REGISTRO', rows:[['A foto','O anel de poeira com o centro cego virou o "Olho de Sauron"'],['O fantasma','Fomalhaut b: anunciado em 2008, dissolvido em 2020'],['JWST','Três anéis aninhados e uma colisão flagrada em 2023']]}],
+   facts:['Um sistema planetário em obras, a 25 anos-luz.'],
+   fict:'A NASA adotou o apelido tolkieniano no release oficial.'}},
+ {id:'barnard', name:'ESTRELA DE BARNARD', nav:true, pos:[7.5,0,9.2], hot:false,
+  card:{desig:'ESTRELA · 5,96 AL', kind:'A fugitiva do céu', hab:null,
+   quick:[['DISTÂNCIA','5,96 al'],['TIPO','M4V'],['PLANETAS','4'],['RECORDE','mov. próprio']],
+   sections:[{t:'REGISTRO', rows:[['O recorde','A estrela que mais corre pelo céu visto daqui'],['A virada','Depois de um século de alarmes falsos, 4 planetas confirmados em 2024 e 2025'],['Futuro','Será a estrela mais próxima do Sol em 11.800 d.C.']]}],
+   facts:['A 4ª estrela mais próxima, e ainda assim invisível a olho nu.'],
+   fict:'Destino do Projeto Daedalus, a primeira sonda interestelar levada a sério.'}},
  {id:'kepler452', name:'KEPLER-452', nav:true, pos:[15.5,0,-9.5], hot:false,
   card:{desig:'SISTEMA ESTELAR · ~1.400 AL', kind:'Análoga solar', hab:null,
    quick:[['DISTÂNCIA','~1.400 al'],['TIPO','G2 (como o Sol)'],['PLANETA','452b'],['ANO DE 452B','385 d']],
@@ -1509,6 +1630,62 @@ const VEGA_DISK = {
   ],
   facts:['Foi a primeira evidência de que outras estrelas também constroem sistemas planetários.'],
   fict:null, moons:[]};
+const FOM_STAR = {
+  id:'fomalhautA', name:'FOMALHAUT', desig:'α PISCIS AUSTRINI · A3V', kind:'O Olho de Sauron', hab:null, gbar:12,
+  quick:[['TIPO','A3V'],['MASSA','1,9 Sol'],['BRILHO','16× o Sol'],['TEMP. SUP.','8.300 °C'],['DISTÂNCIA','25 al'],['IDADE','440 mi anos']],
+  visual:{mode:'star', c1:'#eaf2ff', c2:'#a8c8ff'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['Tipo','Estrela branca jovem, quase o dobro da massa do Sol'],['Idade','440 milhões de anos, um bebê perto dos 4,6 bilhões do Sol'],['Companheiras','Tem duas, a 0,9 e 2,5 anos-luz de distância, o sistema triplo mais espalhado conhecido']]},
+    {t:'REGISTRO', rows:[['A foto','2008: a imagem do anel com um ponto brilhante correu o mundo como "o Olho de Sauron"'],['O anel','Um cinturão de poeira nítido e excêntrico, com a borda interna varrida por algo'],['JWST (2023)','Revelou não um, mas TRÊS anéis aninhados, além de uma nuvem apelidada de "a grande explosão de poeira"'],['Constelação','Peixe Austral, a estrela mais brilhante do céu de primavera do sul']]}
+  ],
+  facts:['A imagem do anel de poeira com a estrela cega no centro é uma das fotos mais famosas da astronomia moderna.','A borda interna do anel é afiada demais para ser natural: alguma coisa com gravidade está varrendo aquele espaço.'],
+  fict:'O apelido pegou tão bem que a NASA usou "Olho de Sauron" no próprio release. Senhor dos Anéis, literalmente.'
+};
+const FOM_BODIES = [
+ {id:'fomalhautb', name:'FOMALHAUT B', desig:'DAGON · O PLANETA-FANTASMA', kind:'O planeta que virou nuvem de poeira', hab:0, gbar:0.9, pop:'0',
+  quick:[['STATUS','provavelmente não existe'],['ANUNCIADO','2008 · Hubble'],['SUMIU','2020'],['ÓRBITA','~1.700 anos'],['HIPÓTESE','colisão de asteroides'],['NOME','Dagon']],
+  sys:{orbit:9, size:1.1, speed:0.7, angle:2.4},
+  visual:{mode:'haze', c1:'#b8c4d8', c2:'#8fa4c0', c3:'#dde6f2', seed:44.4, atmo:{col:'#aac4e8', i:1.3}},
+  sections:[
+    {t:'ÓRBITA & ROTAÇÃO', rows:[['Órbita','Muito excêntrica, cruzando o anel de poeira'],['Ano','~1.700 anos terrestres'],['Posição aqui','Simbólica, no meio do anel onde ele foi fotografado']]},
+    {t:'REGISTRO', rows:[['2008','O Hubble anunciou a PRIMEIRA foto de um exoplaneta em luz visível. Manchete mundial.'],['O incômodo','Brilhava demais para um planeta e não aparecia no infravermelho, onde planetas brilham'],['2020','Reanálise: o ponto foi ficando maior e mais fraco até desaparecer'],['O veredito','Não era um planeta, era a nuvem de escombros de duas rochas de ~200 km que colidiram por volta de 2004'],['O nome','Chegou a ser batizado de Dagon pela IAU antes de evaporar']]}
+  ],
+  facts:['A gente fotografou o instante seguinte a uma colisão entre asteroides a 25 anos-luz de distância. Chance de flagrar isso: quase zero.','Foi o primeiro exoplaneta fotografado em luz visível e também o primeiro a ser desfotografado.'],
+  fict:'Dagon é a divindade marinha de Lovecraft. Um nome de horror cósmico para um planeta que se desfez em poeira.', moons:[]}
+];
+const FOM_DISK = {
+  id:'fomdisk', name:'ANEL DE FOMALHAUT', desig:'FOMALHAUT · ANEL DE DETRITOS', kind:'O Olho de Sauron visto de perto',
+  hab:0, gbar:0.01, pop:'0',
+  quick:[['RAIO','~140 UA'],['LARGURA','~14 UA'],['ANÉIS','3 aninhados'],['BORDA','afiada demais'],['DESCOBERTO','1998 · sub-mm'],['RETRATO','JWST · 2023']],
+  visual:{mode:'rocky', c1:'#93a2ba', c2:'#c3cee0', c3:'#65728a', scale:6.0, seed:44.1, crater:0.6},
+  sections:[
+    {t:'REGISTRO', rows:[['A forma','Um anel excêntrico, deslocado do centro, como se algo o estivesse puxando'],['A borda','Tão nítida que exige um "pastor" gravitacional varrendo o interior'],['JWST (2023)','Achou mais dois anéis internos e uma nuvem de escombros recém-colididos'],['O que significa','Um sistema planetário em construção, com colisões acontecendo agora']]}
+  ],
+  facts:['A foto de 2008 deste anel, com a estrela mascarada no centro, é uma das imagens mais reproduzidas da astronomia.'],
+  fict:null, moons:[]};
+const BAR_STAR = {
+  id:'barnardstar', name:'ESTRELA DE BARNARD', desig:'GL 699 · M4V', kind:'A estrela fugitiva', hab:null, gbar:50,
+  quick:[['TIPO','anã vermelha M4V'],['MASSA','0,16 Sol'],['DISTÂNCIA','5,96 al'],['IDADE','~10 bi anos'],['MOV. PRÓPRIO','10,4"/ano · recorde'],['PLANETAS','4 confirmados']],
+  visual:{mode:'star', c1:'#ff8a4a', c2:'#c42a10'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['Tipo','Anã vermelha pequena e fria, 0,4% da luz do Sol'],['Idade','Cerca de 10 bilhões de anos, mais que o dobro do Sol'],['Vida útil','Vai brilhar por mais de um trilhão de anos'],['Temperamento','Velha e quieta, mas ainda solta flares ocasionais']]},
+    {t:'REGISTRO', rows:[['A corrida','Cruza o céu 10,4 segundos de arco por ano, o maior movimento próprio conhecido'],['Em perspectiva','Percorre o diâmetro da Lua cheia a cada 180 anos'],['Vizinhança','A 4ª estrela mais próxima, atrás só do trio de Alpha Centauri'],['Aproximando','Vem na nossa direção: em 11.800 d.C. estará a 3,75 anos-luz, mais perto que Proxima'],['A novela','Van de Kamp passou décadas jurando ter achado planetas aqui, era defeito do telescópio'],['A redenção','2024: o VLT confirmou Barnard b. Em 2025, mais três irmãos']]}
+  ],
+  facts:['É a estrela solitária mais próxima do Sol e, mesmo assim, invisível a olho nu.','Depois de um século de alarmes falsos, a estrela finalmente entregou planetas de verdade.'],
+  fict:'Projeto Daedalus (1978): a Sociedade Interplanetária Britânica desenhou uma sonda nuclear para chegar aqui em 50 anos. É também destino recorrente na ficção, de Alan Dean Foster a A Estrela de Barnard de Anderson.'
+};
+const BAR_BODIES = [
+ {id:'barnardb', name:'BARNARD B', desig:'GL 699 b · SUB-TERRA', kind:'Mundo de rocha derretida', hab:2, gbar:0.6, pop:'0',
+  quick:[['MASSA','0,37 M⊕'],['RAIO','~0,75 R⊕ (est.)'],['ANO','3,15 d'],['TEMP','~125 °C'],['DESCOBERTA','2024 · VLT'],['ZONA','quente demais']],
+  sys:{orbit:7, size:0.8, speed:2.6, angle:1.0},
+  visual:{mode:'rocky', c1:'#8a5a48', c2:'#b07a5c', c3:'#5c3a2e', scale:5.0, seed:69.9, crater:0.5},
+  sections:[
+    {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância da estrela','0,023 UA'],['Ano','3,15 dias'],['Rotação','Síncrona provável'],['Zona','Vinte vezes mais perto que a zona habitável']]},
+    {t:'REGISTRO', rows:[['2024','Confirmado pelo instrumento ESPRESSO, no VLT do Chile'],['O feito','Detectar um bamboleio de 0,9 metro por segundo, o passo de uma tartaruga a 6 anos-luz'],['A companhia','Em 2025 vieram c, d e e, todos menores que a Terra'],['Por que importa','Encerra um século de fantasmas: a estrela de Barnard TEM planetas']]}
+  ],
+  facts:['A estrela mais famosa dos alarmes falsos agora tem quatro planetas confirmados.','Todos eles cabem numa órbita menor que a de Mercúrio.'],
+  fict:'Depois de 60 anos de planetas imaginários aqui, o real apareceu.', moons:[]}
+];
 const SYS = {
   sol:{ id:'sol', name:'SISTEMA SOLAR', star:SUN, bodies:PLANETS, belt:BELT_BODIES, beltR:[20.5,24.5], kuiperR:[54,60],
         starSize:5, camMax:95, hint:'TOQUE EM UM PLANETA PARA TRAVAR O LINK',
@@ -1595,6 +1772,18 @@ const SYS = {
           sections:[{t:'REGISTRO', rows:[['A régua do céu','Definiu a magnitude 0: todo brilho estelar já foi medido contra ela'],['O disco','IRAS (1983) achou aqui o 1º cinturão de detritos fora do Sol'],['JWST (2024)','Fotografou o disco liso demais: talvez não haja planetas gigantes']]}],
           facts:['Primeira estrela fotografada (1850) e primeira com espectro registrado.'],
           fict:'Contato (Carl Sagan): o sinal vem daqui. · No Tanabata, é a tecelã Orihime.'} },
+  fomalhaut:{ id:'fomalhaut', name:'FOMALHAUT', star:FOM_STAR, bodies:FOM_BODIES, belt:[], beltR:[13,16.5], beltLabel:'ANEL DE POEIRA', beltId:'fomdisk', beltCol:0x8fb0d8,
+        starSize:3.8, camMax:42, hint:'O OLHO DE SAURON: UM ANEL DE POEIRA COM UM FANTASMA DENTRO',
+        card:{desig:'SISTEMA ESTELAR · PEIXE AUSTRAL', kind:'O anel mais fotografado do céu', hab:null,
+          quick:[['ESTRELA','A3V branca e jovem'],['DISTÂNCIA','25 al'],['ANÉIS','3, vistos pelo JWST'],['PLANETAS','0 confirmados'],['IDADE','440 mi anos'],['FAMA','a foto de 2008']],
+          sections:[{t:'REGISTRO', rows:[['A imagem','O anel de poeira com o centro cego virou o "Olho de Sauron" da astronomia'],['O fantasma','Fomalhaut b foi anunciado como planeta em 2008 e sumiu em 2020'],['JWST','Em 2023 revelou três anéis aninhados, sinal de planetas que ainda não vimos']]}],
+          facts:['Um sistema em obras: aqui dá pra ver planetas sendo construídos, e escombros colidindo.']} },
+  barnard:{ id:'barnard', name:'ESTRELA DE BARNARD', star:BAR_STAR, bodies:BAR_BODIES, belt:[], beltR:null,
+        starSize:2.2, camMax:30, hint:'A ESTRELA MAIS VELOZ DO CÉU, E A 4ª MAIS PRÓXIMA',
+        card:{desig:'SISTEMA ESTELAR · OFIÚCO', kind:'A fugitiva, enfim com planetas', hab:null,
+          quick:[['ESTRELA','anã vermelha M4V'],['DISTÂNCIA','5,96 al'],['PLANETAS','4 (2024 e 2025)'],['IDADE','~10 bi anos'],['RECORDE','mov. próprio'],['RUMO','vem se aproximando']],
+          sections:[{t:'REGISTRO', rows:[['O recorde','Nenhuma estrela cruza o céu tão rápido vista da Terra'],['A novela','Décadas de planetas anunciados e desmentidos, tudo defeito de instrumento'],['A virada','2024: o ESPRESSO confirmou Barnard b. Em 2025, mais três.'],['Futuro','Em 11.800 d.C. será a estrela mais próxima do Sol']]}],
+          facts:['Alvo clássico das primeiras propostas sérias de sonda interestelar.']} },
   betelgeuse:{ id:'betelgeuse', name:'BETELGEUSE', star:BET_STAR, bodies:[], belt:[], beltR:null,
         starSize:9, camMax:70, hint:'NENHUM PLANETA CATALOGADO · SUPERGIGANTE EM FIM DE VIDA',
         card:{desig:'SISTEMA ESTELAR · ÓRION', kind:'Uma bomba-relógio magnífica', hab:null,
@@ -1620,6 +1809,8 @@ reg(TOI_STAR,'toi700'); TOI_BODIES.forEach(p=>reg(p,'toi700'));
 reg(GL_STAR,'gliese581'); GL_BODIES.forEach(p=>reg(p,'gliese581'));
 reg(PEG_STAR,'pegasi51'); PEG_BODIES.forEach(p=>reg(p,'pegasi51'));
 reg(VEGA_STAR,'vega'); VEGA_BODIES.forEach(p=>reg(p,'vega')); reg(VEGA_DISK,'vega');
+reg(FOM_STAR,'fomalhaut'); FOM_BODIES.forEach(p=>reg(p,'fomalhaut')); reg(FOM_DISK,'fomalhaut');
+reg(BAR_STAR,'barnard'); BAR_BODIES.forEach(p=>reg(p,'barnard'));
 GALAXIES.forEach(g=>{ g.coord = (g.id==='vialactea') ? 'SGR A*' : coordOf(g.name); });
 Object.values(ALLBODIES).forEach(b=>{ b.coord = coordOf(b.name); });
 const UNIVERSE_CARD = {
@@ -2483,6 +2674,7 @@ function gotoFocus(bodyId){
   const b = ALLBODIES[bodyId]; if(!b) return;
   fadeSwap('ESTABELECENDO LINK ORBITAL · '+b.name, ()=>{
     ST.level='focus'; ST.sys=b._sys; ST.body=bodyId; ST.mapCard=null;
+    markVisited(bodyId);
     swapScene(buildFocus(bodyId)); uiSync(); pushNav(); syncHash(); hideHint();
   });
 }
@@ -2615,6 +2807,86 @@ function closeCmp(){ $('#cmp').classList.remove('on'); CMP.a = null; cardRender(
 
 /* ---------- busca rápida ---------- */
 const norm = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+/* ---------- missão: visitados, patentes, lista com filtro e ordenação ---------- */
+const REGIOES = new Set(['cinturao','kuiper','oort','vegadisk','fomdisk']);
+const VIS = new Set(String(store.get('carto:vis','')).split(',').filter(Boolean));
+function markVisited(id){
+  if(!id || VIS.has(id)) return;
+  VIS.add(id);
+  store.set('carto:vis', [...VIS].join(','));
+}
+const PATENTES = [
+  {n:0,   t:'CADETE',                d:'Ainda no cais.'},
+  {n:1,   t:'APRENDIZ DE ROTA',      d:'O primeiro link travado.'},
+  {n:5,   t:'NAVEGADOR',             d:'Já sabe ler uma carta estelar.'},
+  {n:12,  t:'PILOTO DE LONGO CURSO', d:'Sai do quintal sem se perder.'},
+  {n:24,  t:'CARTÓGRAFO',            d:'Desenha o que ninguém viu.'},
+  {n:40,  t:'MESTRE CARTÓGRAFO',     d:'Metade do catálogo na memória.'},
+  {n:58,  t:'EXPLORADOR SÊNIOR',     d:'Poucos lugares ainda te surpreendem.'},
+  {n:72,  t:'ALMIRANTE DO VAZIO',    d:'Falta pouco para o catálogo inteiro.'}
+];
+const PATENTE_MAX = {t:'CARTÓGRAFO-MOR', d:'Tudo visitado. O universo ficou pequeno.'};
+function patenteDe(n, total){
+  if(n >= total) return {cur:PATENTE_MAX, nxt:null};
+  let cur = PATENTES[0], nxt = PATENTES[1] || null;
+  for(let i=0;i<PATENTES.length;i++){
+    if(n >= PATENTES[i].n){ cur = PATENTES[i]; nxt = PATENTES[i+1] || {n:total, t:PATENTE_MAX.t}; }
+  }
+  return {cur, nxt};
+}
+function catDe(b){
+  if(REGIOES.has(b.id)) return 'regiao';
+  if(b.visual && b.visual.mode==='star') return 'estrela';
+  if(b._parent) return REGIOES.has(b._parent) ? 'menor' : 'lua';
+  return 'planeta';
+}
+const MISSFILTROS = [
+  {k:'tudo',    t:'TUDO',       f:()=>true},
+  {k:'faltam',  t:'A VISITAR',  f:b=>!VIS.has(b.id)},
+  {k:'visto',   t:'VISITADOS',  f:b=>VIS.has(b.id)},
+  {k:'hab',     t:'HABITÁVEIS', f:b=>(b.hab||0) >= 30},
+  {k:'planeta', t:'PLANETAS',   f:b=>catDe(b)==='planeta'},
+  {k:'lua',     t:'LUAS',       f:b=>catDe(b)==='lua'},
+  {k:'estrela', t:'ESTRELAS',   f:b=>catDe(b)==='estrela'},
+  {k:'regiao',  t:'REGIÕES',    f:b=>catDe(b)==='regiao' || catDe(b)==='menor'}
+];
+const MISS = {filtro:'tudo', ordem:'nome'};
+const CATNOME = {planeta:'PLANETA', lua:'LUA', estrela:'ESTRELA', regiao:'REGIÃO', menor:'CORPO MENOR'};
+function missRender(){
+  const todos = Object.values(ALLBODIES);
+  const total = todos.length;
+  const n = todos.filter(b=>VIS.has(b.id)).length;
+  const pat = patenteDe(n, total);
+  $('#misspat').textContent = pat.cur.t;
+  $('#misscnt').innerHTML = '<b>'+n+'</b> / '+total+' VISITADOS';
+  $('#missbar').firstElementChild.style.width = Math.round(n/total*100)+'%';
+  $('#missnext').textContent = pat.nxt ? (pat.cur.d+' Faltam '+(pat.nxt.n-n)+' para '+pat.nxt.t+'.') : pat.cur.d;
+
+  const flt = MISSFILTROS.find(x=>x.k===MISS.filtro) || MISSFILTROS[0];
+  const nm = b=>norm(b.name);
+  const sisNome = b => SYS[b._sys] ? SYS[b._sys].name : '';
+  const lista = todos.filter(flt.f);
+  if(MISS.ordem==='hab')       lista.sort((a,b)=>(b.hab||0)-(a.hab||0) || nm(a).localeCompare(nm(b)));
+  else if(MISS.ordem==='grav') lista.sort((a,b)=>(b.gbar||0)-(a.gbar||0) || nm(a).localeCompare(nm(b)));
+  else if(MISS.ordem==='sis')  lista.sort((a,b)=>sisNome(a).localeCompare(sisNome(b)) || nm(a).localeCompare(nm(b)));
+  else                         lista.sort((a,b)=>nm(a).localeCompare(nm(b)));
+
+  $('#misslist').innerHTML = lista.length ? lista.map(b=>{
+    const sub = CATNOME[catDe(b)] + ' · ' + sisNome(b);
+    return '<li data-id="'+b.id+'" class="'+(VIS.has(b.id)?'vis':'')+'">'
+      + '<span class="mdot"></span>'
+      + '<span class="minfo"><span class="mnm">'+esc(b.name)+'</span><span class="msub">'+esc(sub)+'</span></span>'
+      + (b.hab==null ? '<span class="mhab">·</span>'
+                     : '<span class="mhab'+(b.hab>=50?' hi':'')+'">'+b.hab+'<i><b style="width:'+b.hab+'%"></b></i></span>')
+      + '</li>';
+  }).join('') : '<li id="missempty">NENHUM CORPO NESTE FILTRO</li>';
+  $('#missfootcnt').textContent = lista.length + (lista.length===1 ? ' CORPO LISTADO' : ' CORPOS LISTADOS');
+  $('#misschips').querySelectorAll('.mchip').forEach(c=>c.classList.toggle('on', c.dataset.k===MISS.filtro));
+}
+function missOpen(){ $('#mission').classList.add('on'); missRender(); }
+function missClose(){ $('#mission').classList.remove('on'); }
+
+/* ---------- busca rápida ---------- */
 let FINDIDX = null, findSel = 0, findRes = [];
 function buildFindIdx(){
   FINDIDX = [];
@@ -2828,6 +3100,23 @@ $('#helpclose').addEventListener('click', ()=>$('#help').classList.remove('on'))
 $('#help').addEventListener('click', e=>{ if(e.target.id==='help') $('#help').classList.remove('on'); });
 $('#cmpclose').addEventListener('click', closeCmp);
 $('#cmp').addEventListener('click', e=>{ if(e.target.id==='cmp') closeCmp(); });
+$('#btnmiss').addEventListener('click', missOpen);
+$('#missclose').addEventListener('click', missClose);
+$('#mission').addEventListener('click', e=>{ if(e.target.id==='mission') missClose(); });
+(function(){
+  const ch = $('#misschips');
+  ch.innerHTML = MISSFILTROS.map(f=>'<button class="mchip'+(f.k===MISS.filtro?' on':'')+'" data-k="'+f.k+'">'+esc(f.t)+'</button>').join('');
+  ch.addEventListener('click', e=>{
+    const b = e.target.closest('.mchip'); if(!b) return;
+    MISS.filtro = b.dataset.k; missRender();
+    $('#misslist').scrollTop = 0;
+  });
+  $('#misssort').addEventListener('change', e=>{ MISS.ordem = e.target.value; missRender(); $('#misslist').scrollTop = 0; });
+  $('#misslist').addEventListener('click', e=>{
+    const li = e.target.closest('li[data-id]'); if(!li) return;
+    missClose(); gotoFocus(li.dataset.id);
+  });
+})();
 $('#btnfind').addEventListener('click', findOpen);
 $('#findin').addEventListener('input', e=>findRender(e.target.value));
 $('#findin').addEventListener('keydown', e=>{
@@ -2996,8 +3285,10 @@ window.addEventListener('keydown', e=>{
   else if(e.key==='ArrowLeft') step(-1);
   else if(e.key==='/'){ e.preventDefault(); findOpen(); }
   else if(e.key==='p' || e.key==='P') togglePhoto();
+  else if(e.key==='m' || e.key==='M'){ if($('#mission').classList.contains('on')) missClose(); else missOpen(); }
   else if(e.key==='Escape'){
     if(document.body.classList.contains('photo')) togglePhoto();
+    else if($('#mission').classList.contains('on')) missClose();
     else if($('#finder').classList.contains('on')) findClose();
     else if($('#cmp').classList.contains('on')) closeCmp();
     else if($('#help').classList.contains('on')) $('#help').classList.remove('on');
@@ -3026,7 +3317,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r25';
+const BUILD = 'r26';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -3057,6 +3348,7 @@ resize();
   const [k, v] = (location.hash||'').slice(1).split('=');
   if(k==='corpo' && ALLBODIES[v]){
     ST.level='focus'; ST.sys=ALLBODIES[v]._sys; ST.body=v;
+    markVisited(v);
     swapScene(buildFocus(v));
   } else if(k==='sistema' && SYS[v]){
     ST.sys=v; swapScene(buildSystem(v));
@@ -3089,6 +3381,7 @@ $('#diagchip').addEventListener('click', function(){ this.style.display='none'; 
   ['pointerdown','pointerup','keydown','touchend'].forEach(ev=>window.addEventListener(ev, tryBoot));
 })();
 $('#btnsnd').addEventListener('click', ()=>{ $('#player').classList.toggle('on'); AUDIO.plSync(); });
+$('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: coarse)').matches));
 $('#pl_mute').addEventListener('click', ()=>AUDIO.toggle());
 $('#pl_prev').addEventListener('click', ()=>AUDIO.prev());
 $('#pl_next').addEventListener('click', ()=>AUDIO.next());
