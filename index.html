@@ -235,6 +235,9 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 .chip .orb{width:36px;height:36px;border-radius:50%;margin:0 auto;border:1px solid rgba(140,190,255,.25);
   box-shadow:inset -7px -6px 12px rgba(0,0,10,.75), 0 0 10px rgba(90,150,255,.15)}
 .chip .cn{font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;color:var(--dim);margin-top:5px}
+.chip.seen .orb{box-shadow:inset -7px -6px 12px rgba(0,0,10,.75), 0 0 0 1px rgba(255,180,84,.55), 0 0 9px rgba(255,180,84,.3)}
+.chip.seen .cn{color:var(--amber)}
+.vcount{color:var(--amber)}
 .chip:hover .orb,.chip.on .orb{border-color:var(--ion);box-shadow:inset -7px -6px 12px rgba(0,0,10,.75),0 0 12px rgba(125,196,255,.55)}
 .chip.on .cn{color:var(--ion)}
 
@@ -421,6 +424,9 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #fader{position:absolute;inset:0;background:#02040a;z-index:40;opacity:0;pointer-events:none;transition:opacity .28s ease;
   display:flex;align-items:center;justify-content:center}
 #fader.on{opacity:1;pointer-events:all}
+/* piscada da entrada contínua: rápida e nunca até o preto total */
+#fader.quick{transition:opacity .11s linear}
+#fader.quick.on{opacity:.88}
 #fadertxt{font-family:var(--mono);font-size:12px;letter-spacing:4px;color:var(--ion);text-shadow:0 0 12px rgba(125,196,255,.6)}
 #fadertxt::after{content:'▮';animation:blink 1s steps(2,start) infinite;margin-left:6px}
 #boot{position:absolute;inset:0;background:#02040a;z-index:50;display:flex;align-items:center;justify-content:center;transition:opacity .5s}
@@ -461,6 +467,24 @@ body.touch .touchonly{display:inline}
 }
 
 /* ---------- hint toast ---------- */
+/* ---------- modo tour ---------- */
+#tourbar{position:absolute;left:22px;bottom:22px;z-index:16;display:none;align-items:center;gap:12px;
+  padding:11px 14px;border:1px solid var(--line2);background:rgba(6,12,24,.86);backdrop-filter:blur(8px);
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;overflow:hidden;
+  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+body.tour #tourbar{display:flex}
+body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
+#tourbar .tlab{color:var(--amber);letter-spacing:3px}
+#tourbar .tnm{color:var(--txt);letter-spacing:2.4px;max-width:42vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tourbar .tct{color:var(--dim);font-size:9px}
+#tourbar button{width:24px;height:24px;border:1px solid var(--line);background:rgba(6,12,24,.6);
+  color:var(--dim);font-family:var(--mono);font-size:10px;cursor:pointer;flex:0 0 auto}
+#tourbar button:hover{border-color:var(--line2);color:var(--ion)}
+#tourprog{position:absolute;left:0;bottom:0;height:2px;background:var(--amber);width:0;opacity:.85}
+@media (max-width:899px){
+  #tourbar{left:12px;right:12px;bottom:calc(var(--sheetpeek,34dvh) + 12px);justify-content:space-between}
+  #tourbar .tnm{max-width:46vw}
+}
 #hint{position:absolute;left:50%;bottom:104px;transform:translateX(-50%);z-index:11;
   font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--ion);
   border:1px solid var(--line);background:rgba(6,12,24,.7);padding:9px 16px;opacity:0;transition:opacity .6s;pointer-events:none;white-space:nowrap}
@@ -539,6 +563,7 @@ body.touch .touchonly{display:inline}
       <button id="navfwd" class="navbtn dis" title="Objeto seguinte">»</button>
       <button id="btnsnd" class="navbtn" title="Trilha sonora">♪</button>
       <button id="btnphoto" class="navbtn" title="Modo foto">◉</button>
+      <button id="btntour" class="navbtn" title="Modo tour">▶</button>
       <button id="btnfs" class="navbtn" title="Tela cheia">⛶</button>
       <button id="btnhelp" title="Ajuda">?</button>
     </div>
@@ -562,6 +587,13 @@ body.touch .touchonly{display:inline}
   <div id="diagchip" title="Toque para ocultar">DIAG…</div>
   <div id="nowplay"></div>
   <div id="photoexit" title="Sair do modo foto"><b>✕</b>SAIR DO MODO FOTO</div>
+  <div id="tourbar">
+    <span class="tlab">TOUR</span>
+    <span class="tnm" id="tournm"></span>
+    <span class="tct" id="tourct"></span>
+    <button id="tourx" title="Encerrar tour">✕</button>
+    <i id="tourprog"></i>
+  </div>
   <div id="phototoast"></div>
   <div id="player">
     <div class="pl-now">♪ TRANSMISSÃO DE BORDO</div>
@@ -598,8 +630,9 @@ body.touch .touchonly{display:inline}
       <p><b>⚖ Comparar:</b> toque no botão do card, abra outro corpo e toque de novo: análise lado a lado em escala real.</p>
       <p><b>◈ Registro de bordo:</b> a lista completa do catálogo, com o que você já visitou, sua patente, busca e filtros por habitáveis, planetas, luas, estrelas e regiões.</p>
       <p><b>◉ Modo foto:</b> esconde o painel inteiro para uma captura limpa<span class="touchonly">. Um toque longo na tela faz o mesmo</span><span class="kb"> (ou a tecla <b>P</b>)</span>.</p>
+      <p><b>▶ Modo tour:</b> o mapa se guia sozinho por uma rota comentada, do quintal até outra galáxia. Toque na cena a qualquer momento para assumir o controle<span class="kb"> (ou tecla <b>T</b>)</span>.</p>
       <p><b>Compartilhe:</b> o endereço da página acompanha o objeto (ex.: <span style="font-family:var(--mono)">#corpo=europa</span>), copie o link e envie.</p>
-      <p class="sub kb">ESC volta um nível · / busca · M abre o registro · ? abre este manual</p>
+      <p class="sub kb">ESC volta um nível · / busca · M registro · T tour · P foto · ? este manual</p>
       <p class="sub">Dados: NASA/ESA/IAU, valores aproximados. Linhas em âmbar são referências de ficção.</p>
       <p class="credito">IDEALIZADO E DESENVOLVIDO POR<b>RODRIGO SANGUANINI</b>
         <a href="https://sanguanini.dev" target="_blank" rel="noopener">SANGUANINI.DEV</a></p>
@@ -1357,6 +1390,18 @@ const STARSYS = [
    sections:[{t:'REGISTRO', rows:[['O evento','Uma estrela de Andrômeda ampliou a luz de outra e entregou um planeta junto'],['O limite','Microlentes não se repetem: será candidato para sempre'],['A distância','2,5 milhões de anos-luz daqui']]}],
    facts:['A luz que carregava a informação desse planeta saiu de Andrômeda antes de existirem humanos.'],
    fict:'Andrômeda é destino clássico da ficção. Este é o único ponto real que temos por lá.'}},
+ {id:'lagoa', name:'NEBULOSA DA LAGOA', nav:true, pos:[10.5,0,-12], hot:true,
+  card:{desig:'NEBULOSA · 4.100 AL', kind:'A nebulosa do quintal', hab:null,
+   quick:[['DISTÂNCIA','4.100 al'],['CATÁLOGO','M8'],['LARGURA','~110 al'],['BINÓCULO','sim']],
+   sections:[{t:'REGISTRO', rows:[['O que é','Hidrogênio aceso por estrelas jovens, em Sagitário'],['O apelido','A faixa escura de poeira que a corta parece uma lagoa'],['Onde ver','No céu de inverno brasileiro, na direção do centro da galáxia']]}],
+   facts:['Dá para achá-la com um binóculo simples numa noite escura.'],
+   fict:'O primeiro alvo de quase todo mundo que ganha um telescópio.'}},
+ {id:'trifida', name:'NEBULOSA TRÍFIDA', nav:true, pos:[12.5,0,-14.5], hot:false,
+  card:{desig:'NEBULOSA · 4.100 AL', kind:'Três nebulosas em uma', hab:null,
+   quick:[['DISTÂNCIA','4.100 al'],['CATÁLOGO','M20'],['LARGURA','~42 al'],['PARTES','3 tipos']],
+   sections:[{t:'REGISTRO', rows:[['Três em uma','Emissão vermelha, reflexão azul e poeira escura no mesmo objeto'],['O nome','Trífida: dividida em três pelas faixas de poeira'],['Vizinha','Fica ao lado da Lagoa no céu']]}],
+   facts:['Rara por reunir os três tipos de nebulosa ao mesmo tempo.'],
+   fict:'Foi um dos primeiros alvos de teste do Hubble.'}},
  {id:'mayall2', name:'MAYALL II · G1', nav:true, gal:'andromeda', pos:[-11,0,-7], hot:false,
   card:{desig:'AGLOMERADO GLOBULAR · M31', kind:'O mais brilhante do Grupo Local', hab:null,
    quick:[['ESTRELAS','~10 milhões'],['IDADE','12 bi anos'],['DIÂMETRO','~90 al'],['DISTÂNCIA','2,5 mi al']],
@@ -1986,6 +2031,51 @@ const HH_NEBULA = {
   ],
   facts:['Você não está vendo a nebulosa: está vendo a sombra dela contra um fundo aceso.','Foi descoberta por Williamina Fleming, uma ex-empregada doméstica que virou astrônoma em Harvard.','É provavelmente a segunda imagem astronômica mais reproduzida do mundo, atrás dos Pilares.'],
   fict:'Pôster de quarto, capa de caderno e logotipo eterno: quando alguém desenha "espaço", metade das vezes desenha esta silhueta.', moons:[]};
+/* ---- lote 10: as duas do Sagitário, visíveis com binóculo do Brasil ---- */
+const LAG_STAR = {
+  id:'herschel36', name:'HERSCHEL 36', desig:'M8 · SISTEMA MÚLTIPLO', kind:'O holofote que acende a Lagoa', hab:null, gbar:24,
+  quick:[['TIPO','O7V múltipla'],['RAIO','~9 R☉'],['MASSA','~30 Sóis'],['TEMP. SUP.','40.000 °C'],['DISTÂNCIA','4.100 al'],['IDADE','~1 mi anos']],
+  visual:{mode:'star', c1:'#f2f6ff', c2:'#9fb8ff'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['O que é','Um sistema de estrelas gigantes e jovens, a fonte de luz da nebulosa'],['A força','O vento estelar dela cava a fenda que dá nome à Lagoa'],['Companhia','São pelo menos três estrelas, e a maior tem 30 vezes a massa do Sol']]},
+    {t:'REGISTRO', rows:[['Onde','No coração de M8, na constelação de Sagitário'],['Ampulheta','Bem ao lado dela fica a Nebulosa da Ampulheta, um nó de gás em turbilhão'],['Nota de escala','Cena simbólica: a nebulosa tem mais de 100 anos-luz']]}
+  ],
+  facts:['Uma única estrela dessas ilumina uma nuvem que levaria mais de um século para você atravessar na velocidade da luz.'],
+  fict:null
+};
+const LAG_NEBULA = {
+  id:'lagoa', name:'NEBULOSA DA LAGOA', desig:'M8 · NEBULOSA DE EMISSÃO', kind:'A nebulosa que dá para ver do quintal', hab:0, gbar:0.0001, pop:'0',
+  region:true, field:{shape:'cloud', r0:4, r1:24, col:0xd0567e, rock:0x7a2f4a, size:0.24},
+  quick:[['DISTÂNCIA','4.100 al'],['LARGURA','~110 anos-luz'],['CATÁLOGO','M8'],['CONSTELAÇÃO','Sagitário'],['BINÓCULO','sim ✓'],['DESCOBERTA','1654']],
+  visual:{mode:'haze', c1:'#4a1e34', c2:'#d0567e', c3:'#f0a06a', seed:8.08, atmo:{col:'#ff6a9a', i:1.7}},
+  sections:[
+    {t:'ESCALA', rows:[['Tamanho','Cerca de 110 por 50 anos-luz, três vezes a Lua cheia no céu'],['Distância','4.100 anos-luz, no braço de Sagitário'],['A fenda','A faixa escura que corta a nebulosa foi o que rendeu o apelido de lagoa'],['Posição aqui','Simbólica: a nuvem envolve as estrelas, não orbita nada']]},
+    {t:'REGISTRO', rows:[['1654','Giovanni Hodierna a registra pela primeira vez'],['O que é','Hidrogênio aceso por estrelas recém-nascidas, com um aglomerado jovem no meio'],['Ampulheta','Uma região central onde o gás gira em espiral, esculpida por Herschel 36'],['Glóbulos de Bok','Casulos escuros de poeira onde novas estrelas estão se formando agora'],['Onde ver','Do Brasil ela passa alta no céu de inverno: com binóculo, é uma mancha alongada']]}
+  ],
+  facts:['É uma das pouquíssimas nebulosas de emissão visíveis a olho nu, e do hemisfério sul ela passa bem alta.','O apelido veio da faixa escura de poeira que a atravessa e parece uma lagoa vista de cima.','Está na direção do centro da nossa galáxia: olhar para ela é olhar para o miolo da Via Láctea.'],
+  fict:'Alvo obrigatório de qualquer um que compra o primeiro telescópio, e uma das fotos mais tentadas da astrofotografia amadora.', moons:[]};
+const TRI_STAR = {
+  id:'hd164492', name:'HD 164492', desig:'M20 · SISTEMA MÚLTIPLO', kind:'As estrelas que rasgam a Trífida', hab:null, gbar:22,
+  quick:[['TIPO','O7,5 múltipla'],['RAIO','~8 R☉'],['MASSA','~20 Sóis'],['TEMP. SUP.','35.000 °C'],['DISTÂNCIA','4.100 al'],['IDADE','~300 mil anos']],
+  visual:{mode:'star', c1:'#eef4ff', c2:'#a8c0ff'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['O que é','Um sistema com pelo menos sete estrelas, no centro da nebulosa'],['O papel','A radiação delas acende o gás vermelho e empurra a poeira']]},
+    {t:'REGISTRO', rows:[['Idade','Trezentos mil anos: em escala cósmica, nasceram ontem'],['Vizinhança','A Trífida fica a menos de dois graus da Lagoa no céu']]}
+  ],
+  facts:['São tão jovens que ainda estão limpando o berço onde nasceram.'],
+  fict:null
+};
+const TRI_NEBULA = {
+  id:'trifida', name:'NEBULOSA TRÍFIDA', desig:'M20 · NEBULOSA TRÍPLICE', kind:'Três nebulosas em uma só', hab:0, gbar:0.0001, pop:'0',
+  region:true, field:{shape:'cloud', r0:4, r1:21, col:0xb05a90, rock:0x4a2a5a, size:0.23},
+  quick:[['DISTÂNCIA','4.100 al'],['LARGURA','~42 anos-luz'],['CATÁLOGO','M20'],['PARTES','3 tipos numa só'],['IDADE','~300 mil anos'],['DESCOBERTA','1764']],
+  visual:{mode:'haze', c1:'#3a1a44', c2:'#b05a90', c3:'#7ab0e0', seed:20.2, atmo:{col:'#e07ac0', i:1.6}},
+  sections:[
+    {t:'ESCALA', rows:[['Tamanho','Cerca de 42 anos-luz de ponta a ponta'],['Distância','4.100 anos-luz, quase encostada na Lagoa'],['O nome','Trífida quer dizer dividida em três, pelas faixas de poeira que a cortam']]},
+    {t:'REGISTRO', rows:[['1764','Charles Messier a cataloga como M20'],['Três em uma','É rara por juntar os três tipos: emissão no vermelho, reflexão no azul e poeira escura'],['O vermelho','Hidrogênio aceso pelas estrelas centrais'],['O azul','Poeira refletindo a luz de uma estrela vizinha, como neblina num farol'],['O preto','Faixas de poeira densa que dividem a nebulosa e dão o nome a ela'],['Hubble','Fotografou um jato de 0,75 ano-luz saindo de uma estrela em formação lá dentro']]}
+  ],
+  facts:['É a única nebulosa famosa que exibe os três tipos ao mesmo tempo: emissão, reflexão e nebulosa escura.','Fica tão perto da Lagoa no céu que binóculos mostram as duas no mesmo campo de visão.','As faixas escuras que a dividem não são buracos: é poeira densa na frente da luz.'],
+  fict:'Foi a nebulosa escolhida como um dos primeiros alvos de teste do Hubble, e virou cartão-postal de pôsteres e capas.', moons:[]};
 /* ---- fora da Via Láctea: os únicos candidatos a planeta em outras galáxias ---- */
 const AND_STAR = {
   id:'pa99lente', name:'ESTRELA-LENTE PA-99-N2', desig:'M31 · ESTRELA ANÔNIMA', kind:'Uma estrela de Andrômeda que piscou uma vez', hab:null, gbar:20,
@@ -2212,6 +2302,18 @@ const SYS = {
           quick:[['GALÁXIA','Andrômeda · M31'],['DISTÂNCIA','2,5 mi al'],['PLANETAS','1 candidato'],['MÉTODO','microlente'],['DETECTADO','1999'],['CONFIRMAR','impossível']],
           sections:[{t:'REGISTRO', rows:[['O evento','Em 1999 uma estrela de Andrômeda ampliou a luz de outra e entregou um companheiro'],['O planeta','Cerca de 6 Júpiteres, o primeiro candidato extragaláctico da história'],['O limite','Microlentes acontecem uma vez só: ninguém vai poder checar']]}],
           facts:['O único endereço catalogado deste mapa que fica fora da Via Láctea, junto com o do Redemoinho.']} },
+  lagoa:{ id:'lagoa', name:'NEBULOSA DA LAGOA', star:LAG_STAR, bodies:[], belt:[], beltR:[12,19], beltLabel:'A LAGOA →', beltId:'lagoa', beltCol:0xd0567e,
+        starSize:3.2, camMax:44, hint:'DÁ PARA VER DO QUINTAL, COM BINÓCULO, NO CÉU DE INVERNO',
+        card:{desig:'NEBULOSA DE EMISSÃO · SAGITÁRIO', kind:'A nebulosa do quintal', hab:null,
+          quick:[['DISTÂNCIA','4.100 al'],['CATÁLOGO','M8'],['LARGURA','~110 al'],['BINÓCULO','sim'],['DESCOBERTA','1654'],['NO CÉU','3 luas cheias']],
+          sections:[{t:'REGISTRO', rows:[['O que é','Uma nuvem enorme de hidrogênio acesa por estrelas jovens'],['O apelido','Vem da faixa escura de poeira que a corta ao meio'],['Onde ver','Alta no céu de inverno brasileiro, na direção do centro da galáxia']]}],
+          facts:['Uma das raras nebulosas de emissão que dá para enxergar sem telescópio.']} },
+  trifida:{ id:'trifida', name:'NEBULOSA TRÍFIDA', star:TRI_STAR, bodies:[], belt:[], beltR:[11,18], beltLabel:'A TRÍFIDA →', beltId:'trifida', beltCol:0xb05a90,
+        starSize:3.0, camMax:42, hint:'TRÊS TIPOS DE NEBULOSA NUM OBJETO SÓ',
+        card:{desig:'NEBULOSA TRÍPLICE · SAGITÁRIO', kind:'Vermelha, azul e preta ao mesmo tempo', hab:null,
+          quick:[['DISTÂNCIA','4.100 al'],['CATÁLOGO','M20'],['LARGURA','~42 al'],['IDADE','~300 mil anos'],['PARTES','3 tipos'],['VIZINHA','a Lagoa']],
+          sections:[{t:'REGISTRO', rows:[['Três em uma','Emissão no vermelho, reflexão no azul e faixas de poeira escura'],['O nome','Trífida: dividida em três pelas trilhas de poeira'],['Vizinhança','Fica no mesmo campo de binóculo que a Lagoa']]}],
+          facts:['É a única nebulosa famosa que mostra os três tipos ao mesmo tempo.']} },
   mayall2:{ id:'mayall2', name:'MAYALL II', star:G1_STAR, bodies:[], belt:[], beltR:[9,20], beltShape:'shell', beltLabel:'O ENXAME →', beltId:'g1enxame', beltCol:0xffd9a0,
         starSize:2.0, camMax:40, gal:'andromeda', hint:'DEZ MILHÕES DE ESTRELAS NUMA BOLA DE 90 ANOS-LUZ',
         card:{desig:'AGLOMERADO GLOBULAR · ANDRÔMEDA', kind:'O mais brilhante do Grupo Local', hab:null,
@@ -2262,6 +2364,8 @@ reg(M16_STAR,'m16'); reg(M16_NEBULA,'m16');
 reg(ORI_STAR,'orion'); reg(ORI_NEBULA,'orion');
 reg(CAR_STAR,'caranguejo'); reg(CAR_NEBULA,'caranguejo');
 reg(M57_STAR,'m57'); reg(M57_NEBULA,'m57');
+reg(LAG_STAR,'lagoa'); reg(LAG_NEBULA,'lagoa');
+reg(TRI_STAR,'trifida'); reg(TRI_NEBULA,'trifida');
 reg(HH_STAR,'cavalo'); reg(HH_NEBULA,'cavalo');
 reg(AND_STAR,'pa99'); AND_BODIES.forEach(p=>reg(p,'pa99'));
 reg(G1_STAR,'mayall2'); reg(G1_SWARM,'mayall2');
@@ -2478,8 +2582,9 @@ function disposeScene(act){
   if(act.labels) act.labels.forEach(l=>{ if(l.el && l.el.remove) l.el.remove(); });
 }
 
-function buildSystem(sysId){
+function buildSystem(sysId, spin0){
   const S = SYS[sysId];
+  let spinAcc = spin0 || 0;   /* rotação acumulada dos planetas, para casar com a cena de foco */
   const scene = new THREE.Scene();
   scene.add(makeStars(QLOW?900:1400, 600, 1.3, 0.75));
   scene.add(makeStars(QLOW?250:400, 500, 2.1, 0.9));
@@ -2514,6 +2619,7 @@ function buildSystem(sysId){
     const bg = makeBodyGroup(p, p.sys.size, 40);
     bg.group.position.x = p.sys.orbit;
     holder.add(bg.group);
+    bg.mesh.rotation.y = spinAcc;
     spinners.push({obj:bg.mesh, spd:0.25});
     if(p.comet){
       const mkTail = (sx, sy, op)=>{
@@ -2588,9 +2694,11 @@ function buildSystem(sysId){
   }
 
   return {kind:'system', scene, labels, pickables, sel:selReg,
+    get spin(){ return spinAcc; },
     cam:{mode:'orbit', dist:(sysId==='sol')?48:17, min:(sysId==='sol')?14:8, max:S.camMax, pitch:0.55, yaw:0.65},
     update:(dt)=>{
       for(const o of orbiters) o.holder.rotation.y += o.spd*dt*0.05;
+      spinAcc += 0.25*dt;
       for(const s of spinners) s.obj.rotation.y += s.spd*dt;
       if(starGlow){
         const z = Math.min(1, Math.max(0, (CAM.dist-CAM.min)/(CAM.min*1.6)));
@@ -2673,7 +2781,7 @@ function buildUniverse(){
     update:(dt)=>{ if(!RM) for(const m of minis) m.pts.rotation.y += dt*0.03; }};
 }
 
-function buildFocus(bodyId){
+function buildFocus(bodyId, spin0){
   const b = ALLBODIES[bodyId];
   const scene = new THREE.Scene();
   scene.add(makeStars(QLOW?750:1100, 130, 1.4, 0.8));
@@ -2785,6 +2893,7 @@ function buildFocus(bodyId){
   const radius = (b.visual.mode==='star') ? 2.35 : (b.comet ? 1.2 : 2.2);
   bg = makeBodyGroup(b, radius, QLOW?96:128);
   wrap.add(bg.group);
+  if(spin0) bg.mesh.rotation.y = spin0;   /* continua de onde a cena do sistema parou */
   bg.group.traverse(o=>{ if(o.userData && o.userData.isClouds) clouds = o; });
 
   if(b.comet){
@@ -2811,6 +2920,7 @@ function buildFocus(bodyId){
   });
 
   return {kind:'focus', scene, labels, pickables, wrap, bodyId, sel:selReg,
+    get spin(){ return bg ? bg.mesh.rotation.y : 0; },
     cam:{mode:'focus', dist:b.comet?8.2:9.0, min:b.comet?4.0:3.7, max:b.comet?10.5:9.6},
     update:(dt)=>{
       if(!RM && moonHolder) moonHolder.rotation.y += dt*0.03;
@@ -2827,22 +2937,103 @@ function buildFocus(bodyId){
 const ST = {level:'system', sys:'sol', gal:'vialactea', body:null, expanded:false, mapCard:null};
 let lastDragT = 0, upGuard = 0;
 
-const CAM = {mode:'orbit', yaw:0.65, pitch:0.55, dist:48, min:14, max:95, focusOff:new THREE.Vector3(1.2,0.12,0)};
+/* pivot: o ponto que a câmera orbita. Fica no centro (0,0,0) o tempo todo, e só
+   sai do lugar durante o mergulho em um corpo, para a entrada não ter corte. */
+const CAM = {mode:'orbit', yaw:0.65, pitch:0.55, dist:48, min:14, max:95,
+             focusOff:new THREE.Vector3(1.2,0.12,0), pivot:new THREE.Vector3()};
 function computeFocusOff(){ if(isMobile()) CAM.focusOff.set(0,-0.95,0); else CAM.focusOff.set(1.2,0.12,0); }
 function setCam(cfg){
   CAM.mode = cfg.mode; CAM.min = cfg.min; CAM.max = cfg.max; CAM.dist = cfg.dist;
   if(cfg.mode==='orbit'){ CAM.yaw = cfg.yaw; CAM.pitch = cfg.pitch; }
+  CAM.pivot.set(0,0,0);
   computeFocusOff();
 }
 function applyCam(){
   if(CAM.mode==='orbit'){
-    const cp = Math.cos(CAM.pitch), sp = Math.sin(CAM.pitch);
-    camera.position.set(Math.sin(CAM.yaw)*cp*CAM.dist, sp*CAM.dist, Math.cos(CAM.yaw)*cp*CAM.dist);
-    camera.lookAt(0,0,0);
+    const cp = Math.cos(CAM.pitch), sp = Math.sin(CAM.pitch), P = CAM.pivot;
+    camera.position.set(P.x + Math.sin(CAM.yaw)*cp*CAM.dist, P.y + sp*CAM.dist, P.z + Math.cos(CAM.yaw)*cp*CAM.dist);
+    camera.lookAt(P);
   } else {
     camera.position.set(0,0,CAM.dist);
     camera.lookAt(CAM.focusOff);
   }
+}
+
+/* ---------- mergulho contínuo: do sistema para dentro do corpo ----------
+   A câmera ancora no corpo, endireita para a mesma orientação da cena de foco e
+   fecha o zoom até o corpo ocupar a mesma fração da tela que vai ocupar depois.
+   Quando as duas imagens coincidem, a troca de cena passa despercebida. */
+const FOCUS_DIST = 9.0, FOCUS_RAIO = 2.2;   /* enquadramento da cena de foco */
+let DIVE = null;
+const _dv = new THREE.Vector3(), _da = new THREE.Vector3();
+/* distância em que o corpo, na cena do sistema, ocupa a mesma fração de tela
+   que vai ocupar na cena de foco. É o que faz a troca passar despercebida. */
+function distCasada(b){
+  const s = (b && b.sys && b.sys.size) ? b.sys.size : 0.6;
+  return Math.max(0.25, s * (FOCUS_DIST/FOCUS_RAIO));
+}
+function acharPick(id){
+  return (ACT && ACT.pickables) ? ACT.pickables.find(o=>o.userData && o.userData.id===id) : null;
+}
+function curtoParaAngulo(de, para){
+  let d = (para - de) % (Math.PI*2);
+  if(d > Math.PI) d -= Math.PI*2; else if(d < -Math.PI) d += Math.PI*2;
+  return de + d;
+}
+/* entrar: a câmera ancora no corpo, se endireita e fecha o zoom até casar */
+function diveInto(id, done){
+  const b = ALLBODIES[id], pk = acharPick(id);
+  if(RM || !pk || !b || CAM.mode!=='orbit' || !ACT || ACT.kind!=='system'){ done(); return; }
+  CAMTW = null;
+  DIVE = {dir:1, obj:pk, done, t0:performance.now(), ms:1150,
+          d0:CAM.dist, d1:distCasada(b), p1:CAM.pivot.clone(),
+          yaw0:CAM.yaw, yaw1:curtoParaAngulo(CAM.yaw, 0), pitch0:CAM.pitch, pitch1:0};
+  document.body.classList.add('diving');
+}
+/* sair: a cena do sistema começa colada no corpo e a câmera recua até o normal */
+function riseFrom(id){
+  const b = ALLBODIES[id], pk = acharPick(id);
+  if(RM || !pk || !b || !ACT || ACT.kind!=='system') return;
+  CAMTW = null;
+  DIVE = {dir:-1, obj:pk, done:null, t0:performance.now(), ms:1050,
+          d0:distCasada(b), d1:ACT.cam.dist, p1:new THREE.Vector3(),
+          yaw0:0, yaw1:curtoParaAngulo(0, ACT.cam.yaw), pitch0:0, pitch1:ACT.cam.pitch};
+  CAM.dist = DIVE.d0; CAM.yaw = 0; CAM.pitch = 0;
+  pk.getWorldPosition(_dv);
+  CAM.pivot.copy(_dv).addScaledVector(CAM.focusOff, CAM.dist / FOCUS_DIST);
+  document.body.classList.add('diving');
+}
+function diveStep(now){
+  if(!DIVE) return;
+  const k = Math.min(1, (now - DIVE.t0)/DIVE.ms), e = easeIO(k);
+  /* a distância vem primeiro: a âncora depende dela */
+  CAM.dist  = DIVE.d0 + (DIVE.d1 - DIVE.d0)*e;
+  DIVE.obj.getWorldPosition(_dv);
+  /* âncora: o corpo mais o desvio do card. O desvio entra proporcional à distância,
+     porque na cena de foco ele é um ângulo (1,2 para 9 de distância), não um deslocamento fixo. */
+  _da.copy(_dv).addScaledVector(CAM.focusOff, CAM.dist / FOCUS_DIST);
+  if(DIVE.dir > 0) CAM.pivot.lerpVectors(DIVE.p1, _da, e);
+  else             CAM.pivot.lerpVectors(_da, DIVE.p1, e);
+  CAM.yaw   = DIVE.yaw0 + (DIVE.yaw1 - DIVE.yaw0)*e;
+  CAM.pitch = DIVE.pitch0 + (DIVE.pitch1 - DIVE.pitch0)*e;
+  const op = String(DIVE.dir > 0 ? Math.max(0, 1 - k*2.2) : Math.min(1, Math.max(0, k*2.2 - 1.2)));
+  if(ACT && ACT.labels) for(const L of ACT.labels) L.el.style.opacity = op;
+  if(k >= 1){
+    const fim = DIVE.done; DIVE = null;
+    document.body.classList.remove('diving');
+    if(ACT && ACT.labels) for(const L of ACT.labels) L.el.style.opacity = '';
+    if(fim) fim();
+  }
+}
+/* piscada curta: só para disfarçar a troca de fundo, sem cortar para o preto */
+function blinkSwap(fn){
+  const f = $('#fader');
+  $('#fadertxt').textContent = '';
+  f.classList.add('quick','on');
+  setTimeout(()=>{
+    fn();
+    setTimeout(()=>{ f.classList.remove('on'); setTimeout(()=>f.classList.remove('quick'), 220); }, 40);
+  }, 120);
 }
 
 function fadeSwap(text, fn){
@@ -2852,10 +3043,11 @@ function fadeSwap(text, fn){
   f.classList.add('on');
   setTimeout(()=>{ fn(); setTimeout(()=>f.classList.remove('on'), 140); }, 330);
 }
-function swapScene(built){
+function swapScene(built, continuo){
   disposeScene(ACT); ACT = built; setCam(ACT.cam);
-  CAMTW = null;
-  if(!RM){
+  CAMTW = null; DIVE = null;
+  document.body.classList.remove('diving');
+  if(!RM && !continuo){
     const d0 = CAM.dist, f = (ACT.kind==='focus') ? 1.5 : 1.22;
     CAM.dist = Math.min(CAM.max || d0*2, d0*f);
     tweenCam({dist:d0}, (ACT.kind==='focus') ? 620 : 520);
@@ -3198,12 +3390,18 @@ function navRestore(s){
 function navBack(){ if(NAVH.i>0){ NAVH.i--; navRestore(NAVH.stack[NAVH.i]); } }
 function navFwd(){ if(NAVH.i<NAVH.stack.length-1){ NAVH.i++; navRestore(NAVH.stack[NAVH.i]); } }
 
-function gotoSystem(sysId, flavor){
-  fadeSwap(flavor || ('TRAVANDO ROTA · '+SYS[sysId].name), ()=>{
+function gotoSystem(sysId, flavor, deCorpo){
+  const troca = ()=>{
+    const spin = (deCorpo && ACT && ACT.kind==='focus') ? ACT.spin : 0;
     ST.level='system'; ST.sys=sysId; ST.body=null; ST.mapCard=null;
     ST.gal = SYS[sysId].gal || 'vialactea';
-    swapScene(buildSystem(sysId)); uiSync(); pushNav(); syncHash(); showHint(SYS[sysId].hint);
-  });
+    swapScene(buildSystem(sysId, spin), !!deCorpo);
+    if(deCorpo) riseFrom(deCorpo);
+    uiSync(); pushNav(); syncHash();
+    if(!deCorpo) showHint(SYS[sysId].hint);
+  };
+  if(deCorpo) blinkSwap(troca);
+  else fadeSwap(flavor || ('TRAVANDO ROTA · '+SYS[sysId].name), troca);
 }
 function gotoGalaxy(galId, flavor){
   galId = galId || ST.gal || 'vialactea';
@@ -3223,19 +3421,23 @@ function gotoUniverse(flavor){
     swapScene(buildUniverse()); uiSync(); pushNav(); syncHash(); showHint('TOQUE EM UMA GALÁXIA');
   });
 }
-function gotoFocus(bodyId){
+function gotoFocus(bodyId, continuo){
   const b = ALLBODIES[bodyId]; if(!b) return;
-  fadeSwap('ESTABELECENDO LINK ORBITAL · '+b.name, ()=>{
+  const troca = ()=>{
+    const spin = (continuo && ACT && ACT.kind==='system') ? ACT.spin : 0;
     ST.level='focus'; ST.sys=b._sys; ST.body=bodyId; ST.mapCard=null;
     markVisited(bodyId);
-    swapScene(buildFocus(bodyId)); uiSync(); pushNav(); syncHash(); hideHint();
-  });
+    swapScene(buildFocus(bodyId, spin), continuo); uiSync(); pushNav(); syncHash(); hideHint();
+  };
+  if(continuo) blinkSwap(troca);
+  else fadeSwap('ESTABELECENDO LINK ORBITAL · '+b.name, troca);
 }
 function up(){
   if(ST.level==='focus'){
     const b = ALLBODIES[ST.body];
     if(b._parent) gotoFocus(b._parent);
-    else gotoSystem(b._sys, 'RETORNANDO À VISÃO DO SISTEMA');
+    /* sai de dentro do corpo recuando, o inverso exato do mergulho */
+    else gotoSystem(b._sys, 'RETORNANDO À VISÃO DO SISTEMA', (b.sys ? b.id : null));
   } else if(ST.level==='system') gotoGalaxy((SYS[ST.sys] && SYS[ST.sys].gal) || 'vialactea');
   else if(ST.level==='galaxy') gotoUniverse();
 }
@@ -3251,7 +3453,14 @@ function ACTION(act, id){
 function enterTarget(act, id){
   ST.mapCard = null;
   AUDIO.sfx('enter');
-  if(act==='focus') flyThen(id, ()=>gotoFocus(id));
+  if(act==='focus'){
+    const b = ALLBODIES[id];
+    /* corpo em órbita no sistema atual: entra mergulhando, sem corte */
+    if(ACT && ACT.kind==='system' && b && b.sys && b._sys===ST.sys){
+      uiSync(); diveInto(id, ()=>gotoFocus(id, true)); return;
+    }
+    flyThen(id, ()=>gotoFocus(id));
+  }
   else if(act==='starsys') flyThen(id, ()=>gotoSystem(id));
   else flyThen(id, ()=>gotoGalaxy(id));
 }
@@ -3448,7 +3657,8 @@ const TITULOS = {
   fomalhaut:'O OLHO QUE TUDO VÊ', barnard:'PERSEGUIDOR DA FUGITIVA', m16:'TESTEMUNHA DA CRIAÇÃO',
   orion:'PARTEIRO DE ESTRELAS', caranguejo:'CRONISTA DE 1054', m57:'COVEIRO DE SÓIS',
   cavalo:'CAÇADOR DE SOMBRAS', pa99:'EMBAIXADOR EM ANDRÔMEDA', m51uls:'ALCANCE MÁXIMO',
-  mayall2:'CONTADOR DE MULTIDÕES', nucleoM31:'MERGULHADOR DO ABISMO'
+  mayall2:'CONTADOR DE MULTIDÕES', nucleoM31:'MERGULHADOR DO ABISMO',
+  lagoa:'PESCADOR DA LAGOA', trifida:'TRÊS EM UM'
 };
 function progressoSistemas(){
   const mapa = {};
@@ -3552,6 +3762,94 @@ function missRender(){
 function missOpen(){ $('#mission').classList.add('on'); missRender(); }
 function missClose(){ $('#mission').classList.remove('on'); }
 
+/* ---------- modo tour: o app se guiando sozinho ---------- */
+const TOUR = {on:false, i:0, tm:null, t0:0, ms:0};
+const ROTEIRO = [
+  {sis:'sol',   ms:9000},
+  {corpo:'terra',   ms:13000},
+  {sis:'sol',   ms:5000},
+  {corpo:'marte',   ms:12000},
+  {sis:'sol',   ms:5000},
+  {corpo:'jupiter', ms:12000},
+  {corpo:'europa',  ms:12000},
+  {sis:'sol',   ms:5000},
+  {corpo:'saturno', ms:12000},
+  {corpo:'encelado',ms:12000},
+  {sis:'sol',   ms:5000},
+  {corpo:'cinturao',ms:11000},
+  {corpo:'halley',  ms:11000},
+  {corpo:'oort',    ms:11000},
+  {sis:'trappist', ms:8000},
+  {corpo:'t1e',     ms:12000},
+  {sis:'m16',   ms:8000},
+  {corpo:'pilares', ms:12000},
+  {sis:'orion', ms:8000},
+  {corpo:'nebulosaorion', ms:12000},
+  {sis:'caranguejo', ms:8000},
+  {corpo:'caranguejo',   ms:11000},
+  {gal:'andromeda', ms:9000},
+  {sis:'pa99',  ms:8000},
+  {corpo:'pa99n2b', ms:12000},
+  {uni:true,    ms:10000}
+];
+function tourNome(p){
+  if(p.corpo) return (ALLBODIES[p.corpo]||{}).name || p.corpo;
+  if(p.sis)   return (SYS[p.sis]||{}).name || p.sis;
+  if(p.gal)   return (GALAXIES.find(g=>g.id===p.gal)||{}).name || p.gal;
+  return 'UNIVERSO OBSERVÁVEL';
+}
+function tourIr(p){
+  if(p.uni){ gotoUniverse('TOUR · PANORAMA FINAL'); return; }
+  if(p.gal){ gotoGalaxy(p.gal, 'TOUR · '+tourNome(p)); return; }
+  if(p.sis){
+    /* saindo de um corpo do mesmo sistema, recua em vez de cortar */
+    const deCorpo = (ST.level==='focus' && ALLBODIES[ST.body] && ALLBODIES[ST.body]._sys===p.sis
+                     && ALLBODIES[ST.body].sys) ? ST.body : null;
+    gotoSystem(p.sis, 'TOUR · '+tourNome(p), deCorpo);
+    return;
+  }
+  const b = ALLBODIES[p.corpo]; if(!b) return;
+  if(ACT && ACT.kind==='system' && b.sys && b._sys===ST.sys){
+    diveInto(p.corpo, ()=>gotoFocus(p.corpo, true));   /* mergulho contínuo */
+  } else {
+    gotoFocus(p.corpo);
+  }
+}
+function tourSync(){
+  const p = ROTEIRO[TOUR.i];
+  $('#tournm').textContent = tourNome(p);
+  $('#tourct').textContent = (TOUR.i+1) + '/' + ROTEIRO.length;
+}
+function tourPasso(){
+  const p = ROTEIRO[TOUR.i];
+  TOUR.t0 = performance.now(); TOUR.ms = p.ms;
+  tourSync(); tourIr(p);
+  clearTimeout(TOUR.tm);
+  TOUR.tm = setTimeout(()=>{
+    if(!TOUR.on) return;
+    TOUR.i = (TOUR.i + 1) % ROTEIRO.length;
+    tourPasso();
+  }, p.ms);
+}
+function tourStart(){
+  if(TOUR.on) return;
+  TOUR.on = true; TOUR.i = 0;
+  document.body.classList.add('tour');
+  $('#btntour').textContent = '⏹';
+  showHint('TOUR INICIADO · TOQUE NA CENA PARA ASSUMIR O CONTROLE');
+  tourPasso();
+}
+function tourStop(quieto){
+  if(!TOUR.on) return;
+  TOUR.on = false;
+  clearTimeout(TOUR.tm);
+  document.body.classList.remove('tour');
+  $('#btntour').textContent = '▶';
+  $('#tourprog').style.width = '0%';
+  if(!quieto) showHint('TOUR ENCERRADO');
+}
+function tourToggle(){ TOUR.on ? tourStop() : tourStart(); }
+
 /* ---------- busca rápida ---------- */
 let FINDIDX = null, findSel = 0, findRes = [];
 function buildFindIdx(){
@@ -3650,10 +3948,14 @@ function cardRender(){
     if(cur.type==='body' && parent) h += '<button class="xbtn" data-go="'+parent.id+'">← VOLTAR A '+esc(parent.name)+'</button>';
     if(list && list.length){
       const meta = (cur.type==='body' && parent) ? ('LUAS DE '+esc(parent.name)) : (esc(bodyish.moonsMeta ? bodyish.moonsMeta : ('LUAS · '+list.length+(list.length>1?' CONFIRMADAS':' CONFIRMADA'))));
-      h += '<div class="moonsrow"><div class="mk"><span>'+meta+'</span><span>TOQUE P/ VISITAR</span></div><div class="chips">';
+      /* quantos daquela lista você já visitou, sem poluir: só o número */
+      const jaVi = list.filter(m=>VIS.has(m.id)).length;
+      const dir = jaVi ? ('<span class="vcount">'+jaVi+'/'+list.length+' VISITADOS</span>') : '<span>TOQUE P/ VISITAR</span>';
+      h += '<div class="moonsrow"><div class="mk"><span>'+meta+'</span>'+dir+'</div><div class="chips">';
       for(const m of list){
         const v = m.visual, on = (m.id===bodyish.id) ? ' on' : '';
-        h += '<button class="chip'+on+'" data-go="'+m.id+'"><span class="orb" style="background:radial-gradient(circle at 32% 30%, '+v.c2+', '+v.c1+' 62%, #070b12)"></span><span class="cn">'+esc(m.name)+'</span></button>';
+        const vis = VIS.has(m.id) ? ' seen' : '';
+        h += '<button class="chip'+on+vis+'" data-go="'+m.id+'"><span class="orb" style="background:radial-gradient(circle at 32% 30%, '+v.c2+', '+v.c1+' 62%, #070b12)"></span><span class="cn">'+esc(m.name)+'</span></button>';
       }
       h += '</div></div>';
     }
@@ -3864,6 +4166,7 @@ const pts = new Map(); let PD = null, pinchD = 0;
    sem trocar de escala sem querer. */
 const ZLIM = {over:0, t:0, hint:0};
 function dolly(f){
+  if(DIVE) return;
   CAMTW = null;
   const now = performance.now();
   const alvo = CAM.dist * f;
@@ -3919,6 +4222,8 @@ function pick(x, y){
 const HOVERQ = matchMedia('(hover: hover)').matches; let hoverT = 0;
 let LPT = 0; /* timer do toque longo (modo foto no touch) */
 canvas.addEventListener('pointerdown', e=>{
+  if(TOUR.on) tourStop();   /* tocou na cena, o controle volta pra você */
+  if(DIVE) return;          /* durante o mergulho a câmera é da animação */
   canvas.setPointerCapture(e.pointerId);
   pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
   if(pts.size===1){
@@ -4025,8 +4330,10 @@ window.addEventListener('keydown', e=>{
   else if(e.key==='/'){ e.preventDefault(); findOpen(); }
   else if(e.key==='p' || e.key==='P') togglePhoto();
   else if(e.key==='m' || e.key==='M'){ if($('#mission').classList.contains('on')) missClose(); else missOpen(); }
+  else if(e.key==='t' || e.key==='T') tourToggle();
   else if(e.key==='Escape'){
-    if(document.body.classList.contains('photo')) togglePhoto();
+    if(TOUR.on) tourStop();
+    else if(document.body.classList.contains('photo')) togglePhoto();
     else if($('#mission').classList.contains('on')) missClose();
     else if($('#finder').classList.contains('on')) findClose();
     else if($('#cmp').classList.contains('on')) closeCmp();
@@ -4056,7 +4363,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r30';
+const BUILD = 'r31';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -4121,6 +4428,8 @@ $('#diagchip').addEventListener('click', function(){ this.classList.remove('on')
 })();
 $('#btnsnd').addEventListener('click', ()=>{ $('#player').classList.toggle('on'); AUDIO.plSync(); });
 $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: coarse)').matches));
+$('#btntour').addEventListener('click', tourToggle);
+$('#tourx').addEventListener('click', ()=>tourStop());
 $('#photoexit').addEventListener('click', e=>{ e.stopPropagation(); togglePhoto(); });
 ['pointermove','pointerdown','wheel'].forEach(ev=>window.addEventListener(ev, photoPeek, {passive:true}));
 $('#pl_mute').addEventListener('click', ()=>AUDIO.toggle());
@@ -4196,6 +4505,8 @@ function loop(){
       if(tg.op) tg.mat.opacity = (k < 1) ? (tg.baseOp + (0.95 - tg.baseOp)*e) : pulse;
     }
   }
+  if(DIVE) diveStep(now);
+  if(TOUR.on && TOUR.ms) $('#tourprog').style.width = Math.min(100, (now-TOUR.t0)/TOUR.ms*100).toFixed(1)+'%';
   if(ACT){
     if(ACT.update) ACT.update(dt, t);
     applyCam();
