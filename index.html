@@ -1420,6 +1420,18 @@ const STARSYS = [
    sections:[{t:'REGISTRO', rows:[['O evento','Uma estrela de Andrômeda ampliou a luz de outra e entregou um planeta junto'],['O limite','Microlentes não se repetem: será candidato para sempre'],['A distância','2,5 milhões de anos-luz daqui']]}],
    facts:['A luz que carregava a informação desse planeta saiu de Andrômeda antes de existirem humanos.'],
    fict:'Andrômeda é destino clássico da ficção. Este é o único ponto real que temos por lá.'}},
+ {id:'tuc47', name:'47 TUCANAE', nav:true, pos:[-13,0,-11], hot:false,
+  card:{desig:'AGLOMERADO GLOBULAR · 13.000 AL', kind:'O segundo mais brilhante do céu', hab:null,
+   quick:[['DISTÂNCIA','13.000 al'],['ESTRELAS','~1 milhão'],['IDADE','13 bi anos'],['A OLHO NU','sim']],
+   sections:[{t:'REGISTRO', rows:[['O posto','Atrás só de Ômega Centauri'],['A ilusão','Parece colado na Pequena Nuvem, mas está quinze vezes mais perto'],['Onde ver','No Tucano, no céu do sul']]}],
+   facts:['Tem quase a idade do universo e dá para ver sem telescópio.'],
+   fict:null}},
+ {id:'ngc346', name:'NGC 346', nav:true, gal:'pnm', pos:[3,0,-4], hot:true,
+  card:{desig:'BERÇÁRIO · PEQUENA NUVEM', kind:'Como nasciam estrelas no universo jovem', hab:null,
+   quick:[['DISTÂNCIA','200 mil al'],['ESTRELAS','~2.500'],['IDADE','~3 mi anos'],['METAIS','poucos']],
+   sections:[{t:'REGISTRO', rows:[['Por que importa','A galáxia é pobre em metais, como as do começo do universo'],['JWST','Achou discos de planetas onde a teoria dizia que não haveria'],['A lição','Planetas talvez se formem em condições bem mais duras']]}],
+   facts:['A janela mais próxima que temos para o universo jovem.'],
+   fict:null}},
  {id:'tarantula', name:'TARÂNTULA · 30 DOR', nav:true, gal:'magalhaes', pos:[6,0,-5], hot:true,
   card:{desig:'BERÇÁRIO GIGANTE · 160 MIL AL', kind:'A maior fábrica de estrelas do Grupo Local', hab:null,
    quick:[['DISTÂNCIA','160 mil al'],['LARGURA','~1.000 al'],['ESTRELAS','~800 mil'],['CENTRO','R136']],
@@ -1515,6 +1527,11 @@ const GALAXIES = [
    quick:[['DISTÂNCIA','160 mil al'],['DIÂMETRO','~32 mil al'],['ESTRELAS','~20 bi'],['VISÍVEL','do Brasil ✓']],
    sections:[{t:'REGISTRO', rows:[['Satélite','Orbita a Via Láctea'],['Hemisfério Sul','Visível a olho nu em céu escuro, inclusive do Brasil'],['SN 1987A','Palco da supernova mais estudada da história'],['Endereços reais','Dois sistemas navegáveis aqui: a Nebulosa da Tarântula e a própria SN 1987A']]}],
    facts:['Recebeu o nome dos navegadores de Fernão de Magalhães, que a usavam como referência.']}},
+ {id:'pnm', name:'PEQUENA NUVEM DE MAGALHÃES', nav:true, pos:[6,-9,22], hue:0.53, tilt:[0.7,1.2],
+  card:{desig:'GALÁXIA SATÉLITE · 200 MIL AL', kind:'A irmã menor, também a olho nu', hab:null,
+   quick:[['DISTÂNCIA','200 mil al'],['DIÂMETRO','~7 mil al'],['ESTRELAS','~3 bi'],['VISÍVEL','do Brasil ✓']],
+   sections:[{t:'REGISTRO', rows:[['O par','Junto com a Grande Nuvem, forma a dupla de satélites que o hemisfério sul enxerga sem telescópio'],['A ponte','Um rio de gás liga as duas, arrancado pela maré da Via Láctea'],['Henrietta Leavitt','Estudando estrelas variáveis daqui, ela descobriu como medir distâncias no universo'],['O futuro','Vai ser dilacerada e absorvida pela Via Láctea']]}],
+   facts:['Foi olhando para esta galáxia que a humanidade aprendeu a medir o tamanho do universo.']}},
  {id:'sombrero', name:'SOMBRERO · M104', nav:true, pos:[-16,-4,20], hue:0.09, tilt:[1.45,0.1],
   card:{desig:'GALÁXIA · 29 MI AL', kind:'Espiral de perfil', hab:null,
    quick:[['DISTÂNCIA','29,3 mi al'],['DIÂMETRO','~50 mil al'],['BURACO NEGRO','1 bi M☉'],['VISUAL','icônica']],
@@ -2269,6 +2286,51 @@ const SN87_STAR = {
   facts:['É a única supernova cujos neutrinos a humanidade conseguiu detectar.','A luz dela saiu antes de existirem cidades na Terra e chegou bem a tempo de termos telescópios para vê-la.','Gente viva hoje viu, a olho nu, uma estrela explodir em outra galáxia.'],
   fict:'Virou capa de revista no mundo inteiro em 1987 e é a supernova que aparece em todo livro didático.'
 };
+/* ---- lote 14: o par de galáxias do céu do sul e o segundo maior globular ---- */
+const TUC_STAR = {
+  id:'tuc47core', name:'NÚCLEO DE 47 TUC', desig:'NGC 104 · CENTRO', kind:'Um dos lugares mais apertados da galáxia', hab:null, gbar:32,
+  quick:[['TIPO','aglomerado globular'],['RAIO','~8 R☉ (as maiores)'],['ESTRELAS','~1 milhão'],['IDADE','13 bi anos'],['DISTÂNCIA','13.000 al'],['PULSARES','25 conhecidos']],
+  visual:{mode:'star', c1:'#fff2dc', c2:'#ffcf96'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['Densidade','No centro, estrelas passam tão perto que trocam de parceira e colidem'],['Blue stragglers','Estrelas que parecem jovens demais: nasceram de fusões entre estrelas velhas'],['Pulsares','Vinte e cinco pulsares de milissegundo, o segundo maior conjunto conhecido'],['Idade','13 bilhões de anos: quase a idade do universo']]},
+    {t:'REGISTRO', rows:[['O posto','Segundo aglomerado globular mais brilhante do céu, atrás só de Ômega Centauri'],['Onde','Na constelação do Tucano, coladinho na Pequena Nuvem de Magalhães no céu'],['A ilusão','Parece estar na Pequena Nuvem, mas está quinze vezes mais perto: é da nossa galáxia']]}
+  ],
+  facts:['Estrelas ali colidem e se fundem, criando astros que parecem mais jovens do que poderiam ser.'],
+  fict:null
+};
+const TUC_SWARM = {
+  id:'tuc47', name:'47 TUCANAE', desig:'NGC 104 · AGLOMERADO GLOBULAR', kind:'Um milhão de estrelas de 13 bilhões de anos', hab:0, gbar:0.01, pop:'0',
+  region:true, field:{shape:'shell', r0:5, r1:19, col:0xffe6c0, rock:0xcaa478, size:0.18},
+  quick:[['ESTRELAS','~1 milhão'],['DIÂMETRO','~120 anos-luz'],['DISTÂNCIA','13.000 al'],['IDADE','13 bi anos'],['A OLHO NU','sim ✓'],['CATÁLOGO','NGC 104']],
+  visual:{mode:'star', c1:'#ffeed0', c2:'#ffc078'},
+  sections:[
+    {t:'ESCALA', rows:[['Diâmetro','Cerca de 120 anos-luz para um milhão de estrelas'],['No céu','Do tamanho da Lua cheia, visível a olho nu como uma estrela borrada'],['Posição aqui','Simbólica: você está dentro do enxame']]},
+    {t:'REGISTRO', rows:[['1751','Nicolas Lacaille o cataloga do Cabo da Boa Esperança'],['O nome','O 47 veio de um catálogo antigo que o listava como se fosse uma estrela do Tucano'],['A vizinhança falsa','No céu ele encosta na Pequena Nuvem de Magalhães, mas está muito mais perto'],['Vida','Buscas por planetas ali não acharam nada: a densidade provavelmente atrapalha a formação']]}
+  ],
+  facts:['Ele encosta na Pequena Nuvem de Magalhães no céu, mas está quinze vezes mais perto de nós.','É tão antigo quanto o próprio universo, com margem de erro de menos de um bilhão de anos.','Procuraram planetas ali e não acharam nenhum: talvez o aperto não deixe sistemas se formarem.'],
+  fict:null, moons:[]};
+const NGC346_STAR = {
+  id:'ngc346', name:'NGC 346', desig:'PEQUENA NUVEM · AGLOMERADO', kind:'Berçário numa galáxia vizinha', hab:null, gbar:25,
+  quick:[['TIPO','aglomerado jovem'],['RAIO','~15 R☉ (as maiores)'],['ESTRELAS','~2.500'],['IDADE','~3 mi anos'],['DISTÂNCIA','200 mil al'],['GALÁXIA','Pequena Nuvem']],
+  visual:{mode:'star', c1:'#f0f6ff', c2:'#96b4ff'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['O que é','A maior região de formação estelar da Pequena Nuvem de Magalhães'],['Por que importa','A Pequena Nuvem é pobre em elementos pesados, parecida com as galáxias do universo jovem'],['A lição','Estudar aqui é o mais perto que chegamos de ver como as primeiras estrelas se formaram']]},
+    {t:'REGISTRO', rows:[['JWST (2023 e 2024)','Achou poeira e discos protoplanetários onde a teoria dizia que não deveria haver'],['A surpresa','Mesmo com poucos metais, planetas parecem conseguir se formar ali'],['Nota de escala','Cena simbólica: a região tem centenas de anos-luz']]}
+  ],
+  facts:['É a nossa janela mais próxima para entender como nasciam estrelas no universo jovem.'],
+  fict:null
+};
+const NGC346_NEBULA = {
+  id:'nuvem346', name:'NUVEM DE NGC 346', desig:'PEQUENA NUVEM · REGIÃO HII', kind:'Gás pobre em metais fabricando estrelas', hab:0, gbar:0.0001, pop:'0',
+  region:true, field:{shape:'cloud', r0:5, r1:22, col:0x7aa8e0, rock:0x3a5a8a, size:0.23},
+  quick:[['DISTÂNCIA','200 mil al'],['LARGURA','~200 anos-luz'],['GALÁXIA','Pequena Nuvem'],['METAIS','1/5 do Sol'],['DISCOS','achados pelo JWST'],['IDADE','~3 mi anos']],
+  visual:{mode:'haze', c1:'#1e3a5a', c2:'#7aa8e0', c3:'#e0a878', seed:34.6, atmo:{col:'#8ac0ff', i:1.6}},
+  sections:[
+    {t:'ESCALA', rows:[['Tamanho','Cerca de 200 anos-luz de gás e poeira'],['A química','Um quinto dos elementos pesados que o Sol tem'],['Posição aqui','Simbólica: a nuvem envolve o aglomerado']]},
+    {t:'REGISTRO', rows:[['O laboratório','As primeiras galáxias eram assim: quase só hidrogênio e hélio'],['JWST (2023)','Achou poeira e discos ao redor de estrelas jovens, contrariando a expectativa'],['2024','Confirmou que até estrelas pequenas dali têm disco, então planetas podem nascer ali'],['O que muda','Se planetas se formam com tão poucos metais, eles podem ser bem mais antigos do que se pensava']]}
+  ],
+  facts:['Se planetas conseguem nascer aqui, então eles já existiam quando o universo era muito jovem.','É a região de formação estelar mais estudada fora da nossa galáxia e da Nuvem grande.'],
+  fict:null, moons:[]};
 /* ---- fora da Via Láctea: os únicos candidatos a planeta em outras galáxias ---- */
 const AND_STAR = {
   id:'pa99lente', name:'ESTRELA-LENTE PA-99-N2', desig:'M31 · ESTRELA ANÔNIMA', kind:'Uma estrela de Andrômeda que piscou uma vez', hab:null, gbar:20,
@@ -2495,6 +2557,18 @@ const SYS = {
           quick:[['GALÁXIA','Andrômeda · M31'],['DISTÂNCIA','2,5 mi al'],['PLANETAS','1 candidato'],['MÉTODO','microlente'],['DETECTADO','1999'],['CONFIRMAR','impossível']],
           sections:[{t:'REGISTRO', rows:[['O evento','Em 1999 uma estrela de Andrômeda ampliou a luz de outra e entregou um companheiro'],['O planeta','Cerca de 6 Júpiteres, o primeiro candidato extragaláctico da história'],['O limite','Microlentes acontecem uma vez só: ninguém vai poder checar']]}],
           facts:['O único endereço catalogado deste mapa que fica fora da Via Láctea, junto com o do Redemoinho.']} },
+  tuc47:{ id:'tuc47', name:'47 TUCANAE', star:TUC_STAR, bodies:[], belt:[], beltR:[9,20], beltShape:'shell', beltLabel:'O ENXAME →', beltId:'tuc47', beltCol:0xffe6c0,
+        starSize:2.0, camMax:40, hint:'UM MILHÃO DE ESTRELAS QUASE TÃO VELHAS QUANTO O UNIVERSO',
+        card:{desig:'AGLOMERADO GLOBULAR · TUCANO', kind:'O segundo mais brilhante do céu', hab:null,
+          quick:[['DISTÂNCIA','13.000 al'],['ESTRELAS','~1 milhão'],['DIÂMETRO','~120 al'],['IDADE','13 bi anos'],['A OLHO NU','sim'],['PULSARES','25']],
+          sections:[{t:'REGISTRO', rows:[['O posto','Atrás só de Ômega Centauri em brilho'],['A ilusão','Parece estar dentro da Pequena Nuvem de Magalhães, mas está bem mais perto'],['O aperto','Estrelas colidem e se fundem no centro']]}],
+          facts:['Quase tão antigo quanto o universo, e visível a olho nu do Brasil.']} },
+  ngc346:{ id:'ngc346', name:'NGC 346', star:NGC346_STAR, bodies:[], belt:[], beltR:[11,19], beltLabel:'A NUVEM →', beltId:'nuvem346', beltCol:0x96b4ff, gal:'pnm',
+        starSize:3.0, camMax:42, hint:'COMO NASCIAM ESTRELAS NO UNIVERSO JOVEM',
+        card:{desig:'BERÇÁRIO · PEQUENA NUVEM', kind:'A janela para o universo jovem', hab:null,
+          quick:[['GALÁXIA','Pequena Nuvem'],['DISTÂNCIA','200 mil al'],['ESTRELAS','~2.500'],['IDADE','~3 mi anos'],['METAIS','poucos'],['JWST','2023 e 2024']],
+          sections:[{t:'REGISTRO', rows:[['Por que importa','A galáxia é pobre em elementos pesados, como as do universo jovem'],['A surpresa','O James Webb achou discos protoplanetários onde a teoria não previa'],['A conclusão','Planetas talvez se formem em condições bem mais duras do que se pensava']]}],
+          facts:['É o mais perto que chegamos de ver como as primeiras estrelas do universo se formaram.']} },
   tarantula:{ id:'tarantula', name:'NEBULOSA DA TARÂNTULA', star:R136_STAR, bodies:[], belt:[], beltR:[12,20], beltLabel:'A TARÂNTULA →', beltId:'tarantula', beltCol:0xe06a8a,
         starSize:3.4, camMax:46, gal:'magalhaes',
         hint:'A MAIOR FÁBRICA DE ESTRELAS DO GRUPO LOCAL, NUMA GALÁXIA VIZINHA',
@@ -2595,6 +2669,8 @@ reg(M16_STAR,'m16'); reg(M16_NEBULA,'m16');
 reg(ORI_STAR,'orion'); reg(ORI_NEBULA,'orion');
 reg(CAR_STAR,'caranguejo'); reg(CAR_NEBULA,'caranguejo');
 reg(M57_STAR,'m57'); reg(M57_NEBULA,'m57');
+reg(TUC_STAR,'tuc47'); reg(TUC_SWARM,'tuc47');
+reg(NGC346_STAR,'ngc346'); reg(NGC346_NEBULA,'ngc346');
 reg(R136_STAR,'tarantula'); reg(TAR_NEBULA,'tarantula');
 reg(SN87_STAR,'sn1987a');
 reg(K186_STAR,'kepler186'); K186_BODIES.forEach(p=>reg(p,'kepler186'));
@@ -3031,7 +3107,9 @@ function buildGalaxy(galId){
 
 function buildUniverse(){
   const scene = new THREE.Scene();
-  scene.add(makeSmudges(QLOW?70:110, 820, 0.36));
+  const fadeMats = [], fadeObjs = {}, grupos = {};
+  const fade = o => { if(o && o.material) fadeMats.push({m:o.material, o:(o.material.opacity!==undefined?o.material.opacity:1)}); return o; };
+  scene.add(fade(makeSmudges(QLOW?70:110, 820, 0.36)));
   const labels = [], pickables = [], minis = [];
   const selReg = {markers:[]};
   GALAXIES.forEach((g, i)=>{
@@ -3043,14 +3121,29 @@ function buildUniverse(){
     selReg.markers.push({id:g.id, mat:core.material, c:core.material.color.getHex(), o:(core.material.opacity!==undefined?core.material.opacity:1)});
     grp.position.set(g.pos[0], g.pos[1], g.pos[2]);
     grp.rotation.x = g.tilt[0]; grp.rotation.z = g.tilt[1];
+    grp.userData.tilt = [g.tilt[0], g.tilt[1]];
     scene.add(grp); minis.push({pts});
+    fadeObjs[g.id] = grp; grupos[g.id] = grp;
     const pick = new THREE.Mesh(new THREE.SphereGeometry(4.6, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
-    pick.position.copy(grp.position); pick.userData = {act:'galaxy', id:g.id};
+    /* r e k dizem à câmera onde parar: a miniatura tem raio 4,2 e a galáxia
+       grande abre com 30 de raio a 54 de distância, então a razão é 54/30 */
+    pick.position.copy(grp.position); pick.userData = {act:'galaxy', id:g.id, r:4.2, k:54/30};
     scene.add(pick); pickables.push(pick);
     labels.push({el:makeLabel(g.name, g.nav?'':'faint', ()=>ACTION('galaxy', g.id)),
       get:v=>v.set(g.pos[0], g.pos[1]+4.8, g.pos[2])});
   });
   return {kind:'universe', scene, labels, pickables, sel:selReg,
+    dim:(v, exceto)=>{
+      for(const f of fadeMats) f.m.opacity = f.o * v;
+      const s = Math.max(0.0001, v);
+      for(const id in fadeObjs) if(id !== exceto) fadeObjs[id].scale.setScalar(s);
+    },
+    /* endireita a miniatura enquanto mergulha: a galáxia grande é vista de frente */
+    nivelar:(id, e)=>{
+      const g = grupos[id]; if(!g) return;
+      g.rotation.x = g.userData.tilt[0]*(1-e);
+      g.rotation.z = g.userData.tilt[1]*(1-e);
+    },
     cam:{mode:'orbit', dist:72, min:34, max:150, pitch:0.7, yaw:0.3},
     update:(dt)=>{ if(!RM) for(const m of minis) m.pts.rotation.y += dt*0.03; }};
 }
@@ -3261,7 +3354,9 @@ function distCasada(b, pk){
   /* usa o raio realmente desenhado (guardado no pickable), não só o do sistema */
   const s = (pk && pk.userData && pk.userData.r) ? pk.userData.r
           : ((b && b.sys && b.sys.size) ? b.sys.size : 0.6);
-  return Math.max(0.25, s * (FOCUS_DIST/FOCUS_RAIO));
+  /* k é a razão distância/raio da cena de destino (padrão: a cena de foco) */
+  const k = (pk && pk.userData && pk.userData.k) ? pk.userData.k : (FOCUS_DIST/FOCUS_RAIO);
+  return Math.max(0.25, s * k);
 }
 /* converte a câmera de foco em órbita mantendo posição e direção exatas,
    para o mergulho poder começar de dentro de uma cena de foco */
@@ -3286,15 +3381,20 @@ function curtoParaAngulo(de, para){
   return de + d;
 }
 /* entrar: a câmera ancora no corpo, se endireita e fecha o zoom até casar */
-function diveInto(id, done){
+function diveInto(id, done, opt){
   const b = ALLBODIES[id], pk = acharPick(id);
-  if(RM || !pk || !ACT || (ACT.kind!=='system' && ACT.kind!=='focus' && ACT.kind!=='galaxy')){ done(); return; }
+  if(RM || !pk || !ACT){ done(); return; }   /* qualquer cena com alvo desenhado serve */
   focusParaOrbita();
   if(CAM.mode!=='orbit'){ done(); return; }
+  const alvoYaw = (opt && opt.yaw !== undefined) ? opt.yaw : 0;
+  const alvoPitch = (opt && opt.pitch !== undefined) ? opt.pitch : 0;
   CAMTW = null; FADEIN = null;
-  DIVE = {dir:1, id, obj:pk, done, t0:performance.now(), ms:1150,
+  DIVE = {dir:1, id, obj:pk, done, t0:performance.now(), ms:(opt && opt.ms) || 1150,
           d0:CAM.dist, d1:distCasada(b, pk), p1:CAM.pivot.clone(),
-          yaw0:CAM.yaw, yaw1:curtoParaAngulo(CAM.yaw, 0), pitch0:CAM.pitch, pitch1:0};
+          yaw0:CAM.yaw, yaw1:curtoParaAngulo(CAM.yaw, alvoYaw), pitch0:CAM.pitch, pitch1:alvoPitch,
+          /* cenas em órbita (galáxia, sistema) miram o centro: não têm o desvio do card */
+          off:(opt && opt.semDesvio) ? 0 : 1,
+          extra:(opt && opt.extra) || null};
   document.body.classList.add('diving');
 }
 /* sair: a cena do sistema começa colada no corpo e a câmera recua até o normal */
@@ -3323,7 +3423,7 @@ function diveStep(now){
   DIVE.obj.getWorldPosition(_dv);
   /* âncora: o corpo mais o desvio do card. O desvio entra proporcional à distância,
      porque na cena de foco ele é um ângulo (1,2 para 9 de distância), não um deslocamento fixo. */
-  _da.copy(_dv).addScaledVector(CAM.focusOff, CAM.dist / FOCUS_DIST);
+  _da.copy(_dv).addScaledVector(CAM.focusOff, (DIVE.off===undefined?1:DIVE.off) * CAM.dist / FOCUS_DIST);
   if(DIVE.dir > 0) CAM.pivot.lerpVectors(DIVE.p1, _da, e);
   else             CAM.pivot.lerpVectors(_da, DIVE.p1, e);
   CAM.yaw   = DIVE.yaw0 + (DIVE.yaw1 - DIVE.yaw0)*e;
@@ -3333,6 +3433,7 @@ function diveStep(now){
   const v = (DIVE.dir > 0) ? Math.max(0, 1 - Math.max(0, (k-0.40)/0.60))
                            : Math.min(1, Math.max(0, (k-0.05)/0.55));
   if(ACT && ACT.dim) ACT.dim(v, DIVE.id);
+  if(DIVE.extra) DIVE.extra(e);
   const op = String(DIVE.dir > 0 ? Math.max(0, 1 - k*2.2) : Math.min(1, Math.max(0, k*2.2 - 1.2)));
   if(ACT && ACT.labels) for(const L of ACT.labels) L.el.style.opacity = op;
   if(k >= 1){
@@ -3728,17 +3829,19 @@ function gotoSystem(sysId, flavor, deCorpo, continuo){
   if(deCorpo || continuo) blinkSwap(troca);
   else fadeSwap(flavor || ('TRAVANDO ROTA · '+SYS[sysId].name), troca);
 }
-function gotoGalaxy(galId, flavor){
+function gotoGalaxy(galId, flavor, continuo){
   galId = galId || ST.gal || 'vialactea';
   let g = GALAXIES.find(x=>x.id===galId);
   if(!g){ galId = 'vialactea'; g = GALAXIES[0]; }
-  fadeSwap(flavor || (galId==='vialactea' ? 'MAPEANDO O BRAÇO DE ÓRION' : 'SALTO INTERGALÁCTICO · '+g.name), ()=>{
+  const troca = ()=>{
     ST.level='galaxy'; ST.gal=galId; ST.body=null; ST.mapCard=null;
-    swapScene(buildGalaxy(galId)); uiSync(); pushNav(); syncHash();
+    swapScene(buildGalaxy(galId), !!continuo); uiSync(); pushNav(); syncHash();
     const nMarc = STARSYS.filter(x=>(x.gal || 'vialactea')===galId).length;
     showHint(nMarc ? 'TODOS OS SISTEMAS MARCADOS TÊM NAVEGAÇÃO LIBERADA'
                    : 'SISTEMAS INDIVIDUAIS NÃO CATALOGADOS A ESTA DISTÂNCIA');
-  });
+  };
+  if(continuo) blinkSwap(troca);
+  else fadeSwap(flavor || (galId==='vialactea' ? 'MAPEANDO O BRAÇO DE ÓRION' : 'SALTO INTERGALÁCTICO · '+g.name), troca);
 }
 function gotoUniverse(flavor){
   fadeSwap(flavor || 'EXPANDINDO ESCALA', ()=>{
@@ -3790,11 +3893,22 @@ function enterTarget(act, id){
   else if(act==='starsys'){
     /* do mapa da galáxia, mergulha no marcador da estrela */
     if(ACT && ACT.kind==='galaxy' && acharPick(id)){
-      uiSync(); diveInto(id, ()=>gotoSystem(id, null, null, true)); return;
+      uiSync();
+      diveInto(id, ()=>gotoSystem(id, null, null, true), {yaw:0.65, pitch:0.55, semDesvio:true});
+      return;
     }
     flyThen(id, ()=>gotoSystem(id));
   }
-  else flyThen(id, ()=>gotoGalaxy(id));
+  else {
+    /* do universo, mergulha na miniatura da galáxia até ela virar a galáxia inteira */
+    if(ACT && ACT.kind==='universe' && acharPick(id)){
+      uiSync();
+      const nivelar = ACT.nivelar ? (e)=>ACT.nivelar(id, e) : null;
+      diveInto(id, ()=>gotoGalaxy(id, null, true), {yaw:0.4, pitch:0.95, ms:1250, semDesvio:true, extra:nivelar});
+      return;
+    }
+    flyThen(id, ()=>gotoGalaxy(id));
+  }
 }
 function siblingList(){
   const b = ALLBODIES[ST.body]; if(!b) return null;
@@ -3993,7 +4107,8 @@ const TITULOS = {
   lagoa:'PESCADOR DA LAGOA', trifida:'TRÊS EM UM',
   omega:'SENHOR DAS MULTIDÕES', veu:'ARQUEÓLOGO DA EXPLOSÃO',
   kepler186:'AGRÔNOMO VERMELHO', roseta:'JARDINEIRO CÓSMICO',
-  tarantula:'DOMADOR DE ARANHAS', sn1987a:'CAÇADOR DE NEUTRINOS'
+  tarantula:'DOMADOR DE ARANHAS', sn1987a:'CAÇADOR DE NEUTRINOS',
+  tuc47:'GUARDIÃO DO TUCANO', ngc346:'ARQUEÓLOGO DO UNIVERSO JOVEM'
 };
 function progressoSistemas(){
   const mapa = {};
@@ -4770,7 +4885,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r36';
+const BUILD = 'r37';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
