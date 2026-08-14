@@ -500,17 +500,31 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
 
 /* ---------- mobile ---------- */
 @media (max-width:899px){
-  #topbar{top:14px;left:14px}
+  /* HUD do celular: tudo um passo menor, para sobrar tela para o mapa */
+  #topbar{top:10px;left:12px;max-width:calc(100vw - 150px)}
+  #brand{font-size:8.5px;letter-spacing:2.2px;gap:6px;margin-bottom:5px}
+  #brand .mark{width:7px;height:7px}
+  #crumbs{font-size:9.5px;letter-spacing:1.2px;gap:4px}
+  #statuspod{margin-top:6px;gap:8px;font-size:8.5px;letter-spacing:1.4px}
+  #statled{width:6px;height:6px}
+  #sig{height:9px}
+  #sig i{width:2px}
+  #sig i:nth-child(1){height:2px} #sig i:nth-child(2){height:4px} #sig i:nth-child(3){height:6px}
+  #sig i:nth-child(4){height:7px} #sig i:nth-child(5){height:9px}
+  .corner{width:16px;height:16px}
+  .c-tl,.c-tr{top:7px} .c-bl,.c-br{bottom:7px}
+  .c-tl,.c-bl{left:7px} .c-tr,.c-br{right:7px}
   /* no celular só 3 botões ficam à vista; o ⋯ abre o resto numa coluna */
-  #topright{top:12px;right:12px;left:auto;gap:8px;flex-wrap:nowrap}
-  .navbtn,#btnhelp{width:38px;height:38px;font-size:16px}
+  #topright{top:9px;right:10px;left:auto;gap:6px;flex-wrap:nowrap}
+  .navbtn,#btnhelp{width:32px;height:32px;font-size:14px}
   #btnmore{display:block;order:9}
   #btnmore.on{border-color:var(--ion);color:var(--ion);background:rgba(63,140,255,.2)}
   #morebtns{display:none;position:absolute;top:calc(100% + 8px);right:0;
     flex-direction:column;gap:8px;padding:8px;border:1px solid var(--line2);
     background:rgba(6,12,24,.94);backdrop-filter:blur(8px);
     clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
-  #morebtns.on{display:flex;animation:mdrop .18s ease-out}
+  #morebtns.on{display:flex;animation:mdrop .18s ease-out;max-height:calc(100dvh - 120px);overflow-y:auto;scrollbar-width:none}
+  #morebtns::-webkit-scrollbar{display:none}
   @keyframes mdrop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
   #scalebadge{display:none}
   #navpod{display:none}
@@ -1405,6 +1419,18 @@ const STARSYS = [
    sections:[{t:'REGISTRO', rows:[['O evento','Uma estrela de Andrômeda ampliou a luz de outra e entregou um planeta junto'],['O limite','Microlentes não se repetem: será candidato para sempre'],['A distância','2,5 milhões de anos-luz daqui']]}],
    facts:['A luz que carregava a informação desse planeta saiu de Andrômeda antes de existirem humanos.'],
    fict:'Andrômeda é destino clássico da ficção. Este é o único ponto real que temos por lá.'}},
+ {id:'tarantula', name:'TARÂNTULA · 30 DOR', nav:true, gal:'magalhaes', pos:[6,0,-5], hot:true,
+  card:{desig:'BERÇÁRIO GIGANTE · 160 MIL AL', kind:'A maior fábrica de estrelas do Grupo Local', hab:null,
+   quick:[['DISTÂNCIA','160 mil al'],['LARGURA','~1.000 al'],['ESTRELAS','~800 mil'],['CENTRO','R136']],
+   sections:[{t:'REGISTRO', rows:[['O tamanho','Quarenta vezes a Nebulosa de Órion'],['R136','O aglomerado com as estrelas mais massivas já pesadas'],['Se estivesse perto','Faria sombra na Terra à noite']]}],
+   facts:['Está numa galáxia que dá para ver a olho nu de qualquer lugar do Brasil.'],
+   fict:null}},
+ {id:'sn1987a', name:'SN 1987A', nav:true, gal:'magalhaes', pos:[-5.5,0,4], hot:true,
+  card:{desig:'SUPERNOVA · 168 MIL AL', kind:'A explosão de 1987', hab:null,
+   quick:[['EXPLODIU','23/02/1987'],['DISTÂNCIA','168 mil al'],['NEUTRINOS','24'],['RESTO','estrela de nêutrons']],
+   sections:[{t:'REGISTRO', rows:[['1987','Visível a olho nu por meses, a mais próxima desde 1604'],['Os neutrinos','Chegaram horas antes da luz'],['2024','O James Webb achou a estrela de nêutrons no meio da poeira']]}],
+   facts:['A única supernova cujos neutrinos a humanidade conseguiu detectar.'],
+   fict:'Capa de revista no mundo inteiro em 1987.'}},
  {id:'kepler186', name:'KEPLER-186', nav:true, pos:[17.5,0,-13.5], hot:false,
   card:{desig:'SISTEMA ESTELAR · 580 AL', kind:'A primeira Terra na zona certa', hab:null,
    quick:[['DISTÂNCIA','580 al'],['PLANETAS','5'],['NA ZONA','o f'],['DESCOBERTA','2014']],
@@ -1486,7 +1512,7 @@ const GALAXIES = [
  {id:'magalhaes', name:'GRANDE NUVEM DE MAGALHÃES', nav:true, pos:[13,-6,17], hue:0.5, tilt:[1.1,0.3],
   card:{desig:'GALÁXIA SATÉLITE · 160 MIL AL', kind:'Espiral anã irregular', hab:null,
    quick:[['DISTÂNCIA','160 mil al'],['DIÂMETRO','~32 mil al'],['ESTRELAS','~20 bi'],['VISÍVEL','do Brasil ✓']],
-   sections:[{t:'REGISTRO', rows:[['Satélite','Orbita a Via Láctea'],['Hemisfério Sul','Visível a olho nu em céu escuro, inclusive do Brasil'],['SN 1987A','Palco da supernova mais estudada da história']]}],
+   sections:[{t:'REGISTRO', rows:[['Satélite','Orbita a Via Láctea'],['Hemisfério Sul','Visível a olho nu em céu escuro, inclusive do Brasil'],['SN 1987A','Palco da supernova mais estudada da história'],['Endereços reais','Dois sistemas navegáveis aqui: a Nebulosa da Tarântula e a própria SN 1987A']]}],
    facts:['Recebeu o nome dos navegadores de Fernão de Magalhães, que a usavam como referência.']}},
  {id:'sombrero', name:'SOMBRERO · M104', nav:true, pos:[-16,-4,20], hue:0.09, tilt:[1.45,0.1],
   card:{desig:'GALÁXIA · 29 MI AL', kind:'Espiral de perfil', hab:null,
@@ -2207,6 +2233,41 @@ const ROS_NEBULA = {
   ],
   facts:['O buraco no meio da flor foi cavado pelo vento das estrelas que nasceram ali dentro.','É um dos alvos preferidos da astrofotografia, e quase invisível no telescópio a olho nu.','Fica na mesma região do céu que Órion, mas quase ninguém sabe que ela está lá.'],
   fict:'Virou papel de parede, capa de álbum e ilustração de ficção científica sempre que alguém quer uma nebulosa em forma de flor.', moons:[]};
+/* ---- lote 13: a vizinha que o Brasil inteiro enxerga a olho nu ---- */
+const R136_STAR = {
+  id:'r136', name:'R136', desig:'TARÂNTULA · SUPERAGLOMERADO', kind:'As estrelas mais massivas conhecidas', hab:null, gbar:60,
+  quick:[['TIPO','aglomerado jovem'],['RAIO','~30 R☉ (R136a1)'],['MASSA','até 200 Sóis'],['IDADE','~1,5 mi anos'],['DISTÂNCIA','160 mil al'],['GALÁXIA','Nuvem de Magalhães']],
+  visual:{mode:'star', c1:'#f4f8ff', c2:'#8fb0ff'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['R136a1','A estrela mais massiva já pesada: cerca de 200 vezes a massa do Sol'],['O brilho','Ela sozinha emite mais luz que 4 milhões de sóis'],['A vida','Estrelas assim vivem só uns dois milhões de anos e explodem'],['A densidade','Dezenas de estrelas gigantes num punhado de anos-luz']]},
+    {t:'REGISTRO', rows:[['Onde','No coração da Nebulosa da Tarântula, na Grande Nuvem de Magalhães'],['O limite','R136a1 obrigou os astrônomos a rever o teto de massa que uma estrela pode ter'],['Nota de escala','Cena simbólica: o aglomerado tem poucos anos-luz, a nebulosa tem mil']]}
+  ],
+  facts:['Se R136a1 substituísse o Sol, ofuscaria a Lua cheia tanto quanto o Sol ofusca as estrelas.'],
+  fict:null
+};
+const TAR_NEBULA = {
+  id:'tarantula', name:'NEBULOSA DA TARÂNTULA', desig:'30 DORADUS · BERÇÁRIO GIGANTE', kind:'A maior fábrica de estrelas da vizinhança', hab:0, gbar:0.0001, pop:'0',
+  region:true, field:{shape:'cloud', r0:5, r1:24, col:0xe06a8a, rock:0x8a3a52, size:0.25},
+  quick:[['DISTÂNCIA','160 mil al'],['LARGURA','~1.000 anos-luz'],['ESTRELAS','~800 mil'],['GALÁXIA','Magalhães'],['A OLHO NU','sim ✓'],['CATÁLOGO','30 Doradus']],
+  visual:{mode:'haze', c1:'#4a1a30', c2:'#e06a8a', c3:'#f0b070', seed:30.30, atmo:{col:'#ff7a9a', i:1.8}},
+  sections:[
+    {t:'ESCALA', rows:[['Tamanho','Cerca de mil anos-luz: quarenta vezes a Nebulosa de Órion'],['Se estivesse perto','Na distância de Órion, cobriria um quarto do céu e faria sombra à noite'],['Estrelas','Perto de 800 mil estrelas e protoestrelas se formando ali dentro'],['Posição aqui','Simbólica: você está dentro da nuvem']]},
+    {t:'REGISTRO', rows:[['O nome','Os filamentos de gás em volta parecem as pernas de uma aranha'],['SN 1987A','A supernova mais próxima em quatro séculos explodiu na borda desta nebulosa'],['R136','No centro mora o aglomerado com as estrelas mais massivas conhecidas'],['JWST (2022)','Revelou milhares de estrelas jovens que a poeira escondia'],['Onde ver','Na Grande Nuvem de Magalhães, visível a olho nu de todo o Brasil']]}
+  ],
+  facts:['É a maior região de formação estelar de todo o Grupo Local de galáxias.','Se estivesse onde está Órion, ela projetaria sombras aqui na Terra à noite.','Fica numa galáxia inteira que qualquer pessoa no hemisfério sul enxerga sem telescópio.'],
+  fict:'Aparece como cenário sempre que a ficção precisa de um céu absurdamente povoado de estrelas gigantes.', moons:[]};
+const SN87_STAR = {
+  id:'sn1987a', name:'SN 1987A', desig:'SUPERNOVA · 1987', kind:'A explosão que uma geração viu ao vivo', hab:null, gbar:0,
+  quick:[['TIPO','supernova II'],['RAIO','~50 R☉ (a estrela)'],['EXPLODIU','23/02/1987'],['DISTÂNCIA','168 mil al'],['NEUTRINOS','24 detectados'],['RESTO','estrela de nêutrons']],
+  visual:{mode:'star', c1:'#ffe8f0', c2:'#ff7a9a',
+    rings:{rin:2.2, rout:2.9, col:'#ff9ab8', op:0.75, tilt:44, seed:8.7}},
+  sections:[
+    {t:'ESTRUTURA', rows:[['A estrela','Sanduleak -69 202, uma supergigante azul de umas 20 massas solares'],['A surpresa','Ninguém esperava que uma supergigante AZUL explodisse: os modelos previam vermelhas'],['Os anéis','Três anéis de gás expelidos milhares de anos antes da explosão, hoje acesos pelo choque'],['O caroço','Em 2024 o James Webb confirmou a estrela de nêutrons escondida na poeira central']]},
+    {t:'REGISTRO', rows:[['23 de fevereiro de 1987','A luz chega à Terra e a supernova fica visível a olho nu por meses'],['Os neutrinos','Três detectores no mundo captaram 24 neutrinos horas ANTES da luz: nasceu a astronomia de neutrinos'],['Por quê antes','Os neutrinos escapam do núcleo direto, a luz demora horas para atravessar a estrela'],['A proximidade','A supernova mais próxima desde a de Kepler, em 1604'],['Hoje','Continua sendo estudada todos os anos: é o laboratório vivo de como estrelas morrem']]}
+  ],
+  facts:['É a única supernova cujos neutrinos a humanidade conseguiu detectar.','A luz dela saiu antes de existirem cidades na Terra e chegou bem a tempo de termos telescópios para vê-la.','Gente viva hoje viu, a olho nu, uma estrela explodir em outra galáxia.'],
+  fict:'Virou capa de revista no mundo inteiro em 1987 e é a supernova que aparece em todo livro didático.'
+};
 /* ---- fora da Via Láctea: os únicos candidatos a planeta em outras galáxias ---- */
 const AND_STAR = {
   id:'pa99lente', name:'ESTRELA-LENTE PA-99-N2', desig:'M31 · ESTRELA ANÔNIMA', kind:'Uma estrela de Andrômeda que piscou uma vez', hab:null, gbar:20,
@@ -2433,6 +2494,20 @@ const SYS = {
           quick:[['GALÁXIA','Andrômeda · M31'],['DISTÂNCIA','2,5 mi al'],['PLANETAS','1 candidato'],['MÉTODO','microlente'],['DETECTADO','1999'],['CONFIRMAR','impossível']],
           sections:[{t:'REGISTRO', rows:[['O evento','Em 1999 uma estrela de Andrômeda ampliou a luz de outra e entregou um companheiro'],['O planeta','Cerca de 6 Júpiteres, o primeiro candidato extragaláctico da história'],['O limite','Microlentes acontecem uma vez só: ninguém vai poder checar']]}],
           facts:['O único endereço catalogado deste mapa que fica fora da Via Láctea, junto com o do Redemoinho.']} },
+  tarantula:{ id:'tarantula', name:'NEBULOSA DA TARÂNTULA', star:R136_STAR, bodies:[], belt:[], beltR:[12,20], beltLabel:'A TARÂNTULA →', beltId:'tarantula', beltCol:0xe06a8a,
+        starSize:3.4, camMax:46, gal:'magalhaes',
+        hint:'A MAIOR FÁBRICA DE ESTRELAS DO GRUPO LOCAL, NUMA GALÁXIA VIZINHA',
+        card:{desig:'BERÇÁRIO GIGANTE · MAGALHÃES', kind:'Quarenta vezes a Nebulosa de Órion', hab:null,
+          quick:[['GALÁXIA','Magalhães'],['DISTÂNCIA','160 mil al'],['LARGURA','~1.000 al'],['ESTRELAS','~800 mil'],['CENTRO','R136'],['A OLHO NU','a galáxia, sim']],
+          sections:[{t:'REGISTRO', rows:[['O que é','A maior região de formação estelar de todo o Grupo Local'],['R136','No centro, o aglomerado com as estrelas mais massivas conhecidas'],['Se estivesse perto','Na distância de Órion, faria sombra aqui na Terra à noite']]}],
+          facts:['Fica numa galáxia que qualquer pessoa no Brasil vê a olho nu numa noite escura.']} },
+  sn1987a:{ id:'sn1987a', name:'SN 1987A', star:SN87_STAR, bodies:[], belt:[], beltR:null, gal:'magalhaes',
+        starSize:2.2, camMax:30,
+        hint:'A ÚNICA SUPERNOVA CUJOS NEUTRINOS A HUMANIDADE DETECTOU',
+        card:{desig:'SUPERNOVA · MAGALHÃES', kind:'A explosão que uma geração viu ao vivo', hab:null,
+          quick:[['GALÁXIA','Magalhães'],['EXPLODIU','23/02/1987'],['DISTÂNCIA','168 mil al'],['NEUTRINOS','24 detectados'],['A OLHO NU','foi, por meses'],['RESTO','estrela de nêutrons']],
+          sections:[{t:'REGISTRO', rows:[['1987','A supernova mais próxima desde 1604, visível a olho nu do hemisfério sul'],['Os neutrinos','Chegaram horas antes da luz e fundaram a astronomia de neutrinos'],['2024','O James Webb confirmou a estrela de nêutrons escondida na poeira']]}],
+          facts:['Muita gente viva hoje viu, a olho nu, uma estrela explodindo em outra galáxia.']} },
   kepler186:{ id:'kepler186', name:'KEPLER-186', star:K186_STAR, bodies:K186_BODIES, belt:[], beltR:null,
         starSize:2.4, camMax:32, hint:'A PRIMEIRA TERRA EM TAMANHO ENCONTRADA NA ZONA HABITÁVEL',
         card:{desig:'SISTEMA ESTELAR · CISNE', kind:'Onde a grama seria vermelha', hab:null,
@@ -2519,6 +2594,8 @@ reg(M16_STAR,'m16'); reg(M16_NEBULA,'m16');
 reg(ORI_STAR,'orion'); reg(ORI_NEBULA,'orion');
 reg(CAR_STAR,'caranguejo'); reg(CAR_NEBULA,'caranguejo');
 reg(M57_STAR,'m57'); reg(M57_NEBULA,'m57');
+reg(R136_STAR,'tarantula'); reg(TAR_NEBULA,'tarantula');
+reg(SN87_STAR,'sn1987a');
 reg(K186_STAR,'kepler186'); K186_BODIES.forEach(p=>reg(p,'kepler186'));
 reg(ROS_STAR,'roseta'); reg(ROS_NEBULA,'roseta');
 reg(OME_STAR,'omega'); reg(OME_SWARM,'omega');
@@ -3903,7 +3980,8 @@ const TITULOS = {
   mayall2:'CONTADOR DE MULTIDÕES', nucleoM31:'MERGULHADOR DO ABISMO',
   lagoa:'PESCADOR DA LAGOA', trifida:'TRÊS EM UM',
   omega:'SENHOR DAS MULTIDÕES', veu:'ARQUEÓLOGO DA EXPLOSÃO',
-  kepler186:'AGRÔNOMO VERMELHO', roseta:'JARDINEIRO CÓSMICO'
+  kepler186:'AGRÔNOMO VERMELHO', roseta:'JARDINEIRO CÓSMICO',
+  tarantula:'DOMADOR DE ARANHAS', sn1987a:'CAÇADOR DE NEUTRINOS'
 };
 function progressoSistemas(){
   const mapa = {};
@@ -4141,11 +4219,12 @@ function tourPasso(){
     tourPasso();
   }, p.ms);
 }
-function tourRota(k){
+function tourRota(k, quieto){
   if(!ROTAS[k]) return;
   TOUR.rota = k; ROTEIRO = ROTAS[k].lista;
+  store.set('carto:rota', k);          /* a TV reabre na rota que você deixou */
   const s = $('#tourrota'); if(s) s.value = k;
-  if(TOUR.on){ TOUR.i = 0; tourPasso(); }
+  if(TOUR.on && !quieto){ TOUR.i = 0; tourPasso(); }
 }
 function tourStart(){
   if(TOUR.on) return;
@@ -4679,7 +4758,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r33';
+const BUILD = 'r34';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -4747,6 +4826,7 @@ $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: c
 $('#btntour').addEventListener('click', tourToggle);
 $('#tourx').addEventListener('click', ()=>tourStop());
 $('#tourrota').addEventListener('change', e=>tourRota(e.target.value));
+tourRota(store.get('carto:rota','completo'), true);
 $('#photoexit').addEventListener('click', e=>{ e.stopPropagation(); togglePhoto(); });
 ['pointermove','pointerdown','wheel'].forEach(ev=>window.addEventListener(ev, photoPeek, {passive:true}));
 $('#pl_mute').addEventListener('click', ()=>AUDIO.toggle());
