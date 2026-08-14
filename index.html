@@ -616,6 +616,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
         <option value="completo">ROTA COMPLETA</option>
         <option value="solar">SISTEMA SOLAR</option>
         <option value="nebulosas">NEBULOSAS</option>
+        <option value="galaxias">GALÁXIAS</option>
       </select>
       <span class="tnm" id="tournm"></span>
       <span class="tct" id="tourct"></span>
@@ -1420,6 +1421,18 @@ const STARSYS = [
    sections:[{t:'REGISTRO', rows:[['O evento','Uma estrela de Andrômeda ampliou a luz de outra e entregou um planeta junto'],['O limite','Microlentes não se repetem: será candidato para sempre'],['A distância','2,5 milhões de anos-luz daqui']]}],
    facts:['A luz que carregava a informação desse planeta saiu de Andrômeda antes de existirem humanos.'],
    fict:'Andrômeda é destino clássico da ficção. Este é o único ponto real que temos por lá.'}},
+ {id:'lhs1140', name:'LHS 1140', nav:true, pos:[13.5,0,4.5], hot:false,
+  card:{desig:'SISTEMA ESTELAR · 48,5 AL', kind:'O melhor candidato a mundo com água', hab:null,
+   quick:[['DISTÂNCIA','48,5 al'],['PLANETAS','2'],['NA ZONA','o b'],['JWST','2024 e 2025']],
+   sections:[{t:'REGISTRO', rows:[['O planeta','Super-Terra na zona habitável, com densidade de mundo-oceano'],['2024','Indício de atmosfera de nitrogênio, como a nossa'],['A estrela','Anã vermelha calma, sem os flares que costumam matar atmosferas']]}],
+   facts:['É o alvo mais disputado na caça por um planeta com água líquida.'],
+   fict:'É este o nome que os astrônomos torcem para aparecer nas manchetes.'}},
+ {id:'chama', name:'NEBULOSA DA CHAMA', nav:true, pos:[0.5,0,-18.5], hot:true,
+  card:{desig:'NEBULOSA · 1.400 AL', kind:'A fogueira do cinturão de Órion', hab:null,
+   quick:[['DISTÂNCIA','1.400 al'],['CATÁLOGO','NGC 2024'],['LARGURA','~12 al'],['VIZINHA','Cabeça de Cavalo']],
+   sections:[{t:'REGISTRO', rows:[['O que acende','Alnitak, a ponta esquerda das Três Marias'],['A forma','Uma faixa de poeira corta o gás e cria o efeito de chama'],['Por dentro','800 estrelas jovens escondidas pela poeira']]}],
+   facts:['Cabe na mesma foto que a Cabeça de Cavalo, ali do lado.'],
+   fict:'A companheira de pôster da silhueta mais famosa do céu.'}},
  {id:'tuc47', name:'47 TUCANAE', nav:true, pos:[-13,0,-11], hot:false,
   card:{desig:'AGLOMERADO GLOBULAR · 13.000 AL', kind:'O segundo mais brilhante do céu', hab:null,
    quick:[['DISTÂNCIA','13.000 al'],['ESTRELAS','~1 milhão'],['IDADE','13 bi anos'],['A OLHO NU','sim']],
@@ -2331,6 +2344,54 @@ const NGC346_NEBULA = {
   ],
   facts:['Se planetas conseguem nascer aqui, então eles já existiam quando o universo era muito jovem.','É a região de formação estelar mais estudada fora da nossa galáxia e da Nuvem grande.'],
   fict:null, moons:[]};
+/* ---- lote 15 ---- */
+const LHS_STAR = {
+  id:'lhs1140', name:'LHS 1140', desig:'ESTRELA · M4.5V', kind:'A anã vermelha mais comportada da vizinhança', hab:null, gbar:48,
+  quick:[['TIPO','M4.5V'],['RAIO','0,21 R☉'],['MASSA','0,18 Sol'],['TEMP. SUP.','3.100 °C'],['DISTÂNCIA','48,5 al'],['IDADE','~5 bi anos']],
+  visual:{mode:'star', c1:'#ff8a52', c2:'#c92e10'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['Tipo','Anã vermelha pequena, com 18% da massa do Sol'],['O diferencial','Gira devagar e quase não solta flares, ao contrário da maioria das anãs vermelhas'],['Por que importa','Uma estrela calma dá chance real de um planeta manter a atmosfera']]},
+    {t:'REGISTRO', rows:[['Descoberta','O sistema foi identificado em 2017, na constelação da Baleia'],['A família','Dois planetas confirmados, b e c'],['O alvo','LHS 1140 b virou prioridade máxima do James Webb']]}
+  ],
+  facts:['Anãs vermelhas costumam fritar seus planetas com explosões. Esta é uma exceção bem-comportada.'],
+  fict:null
+};
+const LHS_BODIES = [
+ {id:'lhs1140b', name:'LHS 1140 B', desig:'LHS 1140 · SUPER-TERRA', kind:'O melhor candidato a mundo com água', hab:74, gbar:2.3, pop:'desconhecida',
+  quick:[['RAIO','1,73 R⊕'],['MASSA','5,6 M⊕'],['ANO','24,7 d'],['TEMP. EST.','−43 °C a 20 °C'],['ZONA','habitável'],['JWST','2024 e 2025']],
+  sys:{orbit:10, size:1.0, speed:1.3, angle:1.7},
+  visual:{mode:'earth', c1:'#3e6a6e', c2:'#6a8a7e', c3:'#9aa8a0', seaCol:'#123a52', sea:0.6, scale:3.2, seed:114.0,
+    cap:0.55, capAmt:0.75, capCol:'#eaf2f6', atmo:{col:'#8ac0d8', i:1.1}, clouds:{amt:0.55, scale:2.6, col:'#ffffff'}},
+  sections:[
+    {t:'ÓRBITA & ROTAÇÃO', rows:[['Ano','24,7 dias'],['Distância da estrela','0,095 UA'],['Luz recebida','Cerca de 40% da que a Terra recebe'],['Rotação','Provavelmente síncrona, com um lado sempre de dia']]},
+    {t:'ESTRUTURA', rows:[['Tamanho','1,73 vez o raio da Terra e 5,6 vezes a massa'],['A densidade','Baixa demais para ser só rocha: entre 10% e 20% da massa pode ser água'],['A hipótese','Ou é um mundo-oceano coberto de gelo, ou tem um oceano líquido no lado iluminado'],['O olho de gelo','Se for congelado, o lado do dia pode ter um "olho" de água líquida no meio']]},
+    {t:'REGISTRO', rows:[['2024','O James Webb encontrou indício de atmosfera rica em nitrogênio, como a da Terra'],['2025','Novas observações reforçaram o sinal, mas a confirmação ainda não veio'],['Por que ele','Estrela calma, planeta na zona habitável e trânsito favorável: a combinação ideal'],['O que falta','Mais horas de telescópio. É o alvo mais disputado da caça a mundos habitáveis.']]}
+  ],
+  facts:['É hoje o melhor candidato conhecido a um planeta com água líquida na superfície fora do Sistema Solar.','Se a atmosfera de nitrogênio for confirmada, será a primeira atmosfera parecida com a nossa achada em outro mundo.','Pela densidade, entre um décimo e um quinto da massa dele pode ser água. A Terra tem 0,02%.'],
+  fict:'Sempre que sai notícia de "planeta parecido com a Terra", é este o nome que os astrônomos torcem para aparecer.', moons:[]}
+];
+const CHAMA_STAR = {
+  id:'alnitak', name:'ALNITAK', desig:'ζ ORIONIS · SUPERGIGANTE', kind:'A ponta do cinturão de Órion', hab:null, gbar:14,
+  quick:[['TIPO','O9.5 Ib'],['RAIO','~20 R☉'],['MASSA','33 Sóis'],['TEMP. SUP.','29.500 °C'],['DISTÂNCIA','1.260 al'],['BRILHO','250 mil Sóis']],
+  visual:{mode:'star', c1:'#eaf2ff', c2:'#93b4ff'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['O que é','A estrela mais a leste das Três Marias, e um sistema triplo'],['O trabalho','A radiação dela arranca elétrons do hidrogênio da nuvem vizinha, e é isso que acende a Chama'],['O brilho','Cerca de 250 mil vezes a luminosidade do Sol']]},
+    {t:'REGISTRO', rows:[['Onde','Ponta esquerda do cinturão de Órion, uma das estrelas mais reconhecíveis do céu'],['Vizinhança','A Cabeça de Cavalo fica logo ali do lado, na mesma nuvem molecular']]}
+  ],
+  facts:['Você já olhou para ela: é uma das três estrelas em fila que todo mundo aprende a reconhecer.'],
+  fict:null
+};
+const CHAMA_NEBULA = {
+  id:'chama', name:'NEBULOSA DA CHAMA', desig:'NGC 2024 · NEBULOSA DE EMISSÃO', kind:'A fogueira ao lado das Três Marias', hab:0, gbar:0.0001, pop:'0',
+  region:true, field:{shape:'cloud', r0:5, r1:21, col:0xe8934a, rock:0x8a4a24, size:0.23},
+  quick:[['DISTÂNCIA','1.400 al'],['LARGURA','~12 anos-luz'],['CATÁLOGO','NGC 2024'],['ESTRELAS','~800 jovens'],['IDADE','~1 mi anos'],['VIZINHA','Cabeça de Cavalo']],
+  visual:{mode:'haze', c1:'#3a1c10', c2:'#e8934a', c3:'#f8d090', seed:24.24, atmo:{col:'#ff9a4a', i:1.7}},
+  sections:[
+    {t:'ESCALA', rows:[['Tamanho','Cerca de 12 anos-luz'],['A faixa preta','Uma trilha de poeira fria na frente, que divide a chama ao meio'],['Posição aqui','Simbólica: a nuvem fica ao lado de Alnitak, não em órbita']]},
+    {t:'REGISTRO', rows:[['O que acende','A radiação de Alnitak ioniza o hidrogênio, e o gás brilha ao se recombinar'],['Por dentro','Um aglomerado de umas 800 estrelas jovens, escondido pela poeira'],['Infravermelho','Só nesse comprimento de onda dá para ver o berçário lá dentro'],['A vizinha','Fica no mesmo campo da Cabeça de Cavalo: as duas costumam sair na mesma foto']]}
+  ],
+  facts:['Parece uma fogueira porque uma faixa de poeira escura corta o gás aceso bem no meio.','Está a poucos minutos de arco da Cabeça de Cavalo: uma única foto pega as duas.','O aglomerado de estrelas que ela esconde só foi visto quando apontamos telescópios infravermelhos para lá.'],
+  fict:'É a companheira de pôster da Cabeça de Cavalo: quem tem uma na parede quase sempre tem a outra.', moons:[]};
 /* ---- fora da Via Láctea: os únicos candidatos a planeta em outras galáxias ---- */
 const AND_STAR = {
   id:'pa99lente', name:'ESTRELA-LENTE PA-99-N2', desig:'M31 · ESTRELA ANÔNIMA', kind:'Uma estrela de Andrômeda que piscou uma vez', hab:null, gbar:20,
@@ -2557,6 +2618,18 @@ const SYS = {
           quick:[['GALÁXIA','Andrômeda · M31'],['DISTÂNCIA','2,5 mi al'],['PLANETAS','1 candidato'],['MÉTODO','microlente'],['DETECTADO','1999'],['CONFIRMAR','impossível']],
           sections:[{t:'REGISTRO', rows:[['O evento','Em 1999 uma estrela de Andrômeda ampliou a luz de outra e entregou um companheiro'],['O planeta','Cerca de 6 Júpiteres, o primeiro candidato extragaláctico da história'],['O limite','Microlentes acontecem uma vez só: ninguém vai poder checar']]}],
           facts:['O único endereço catalogado deste mapa que fica fora da Via Láctea, junto com o do Redemoinho.']} },
+  lhs1140:{ id:'lhs1140', name:'LHS 1140', star:LHS_STAR, bodies:LHS_BODIES, belt:[], beltR:null,
+        starSize:2.2, camMax:30, hint:'O MELHOR CANDIDATO CONHECIDO A MUNDO COM ÁGUA LÍQUIDA',
+        card:{desig:'SISTEMA ESTELAR · BALEIA', kind:'O alvo mais disputado do James Webb', hab:null,
+          quick:[['ESTRELA','M4.5V calma'],['DISTÂNCIA','48,5 al'],['PLANETAS','2'],['NA ZONA','o b'],['ÁGUA','10 a 20% da massa'],['JWST','2024 e 2025']],
+          sections:[{t:'REGISTRO', rows:[['O planeta','LHS 1140 b é super-Terra na zona habitável, com densidade de mundo-oceano'],['2024','Indício de atmosfera de nitrogênio, como a da Terra'],['A vantagem','A estrela é calma, então uma atmosfera teria chance de sobreviver']]}],
+          facts:['Se algum dia confirmarem água líquida fora do Sistema Solar, provavelmente será aqui.']} },
+  chama:{ id:'chama', name:'NEBULOSA DA CHAMA', star:CHAMA_STAR, bodies:[], belt:[], beltR:[11,19], beltLabel:'A CHAMA →', beltId:'chama', beltCol:0xe8934a,
+        starSize:3.2, camMax:42, hint:'A FOGUEIRA QUE FICA COLADA NA PONTA DAS TRÊS MARIAS',
+        card:{desig:'NEBULOSA DE EMISSÃO · ÓRION', kind:'A vizinha de pôster da Cabeça de Cavalo', hab:null,
+          quick:[['DISTÂNCIA','1.400 al'],['CATÁLOGO','NGC 2024'],['LARGURA','~12 al'],['ACESA POR','Alnitak'],['ESTRELAS','~800 jovens'],['VIZINHA','Cabeça de Cavalo']],
+          sections:[{t:'REGISTRO', rows:[['O que acende','A radiação de Alnitak, a ponta do cinturão de Órion'],['A forma','Uma faixa de poeira escura corta o gás ao meio e cria o efeito de fogueira'],['Por dentro','Um aglomerado de 800 estrelas jovens, só visível no infravermelho']]}],
+          facts:['Fica tão perto da Cabeça de Cavalo que as duas cabem na mesma foto.']} },
   tuc47:{ id:'tuc47', name:'47 TUCANAE', star:TUC_STAR, bodies:[], belt:[], beltR:[9,20], beltShape:'shell', beltLabel:'O ENXAME →', beltId:'tuc47', beltCol:0xffe6c0,
         starSize:2.0, camMax:40, hint:'UM MILHÃO DE ESTRELAS QUASE TÃO VELHAS QUANTO O UNIVERSO',
         card:{desig:'AGLOMERADO GLOBULAR · TUCANO', kind:'O segundo mais brilhante do céu', hab:null,
@@ -2669,6 +2742,8 @@ reg(M16_STAR,'m16'); reg(M16_NEBULA,'m16');
 reg(ORI_STAR,'orion'); reg(ORI_NEBULA,'orion');
 reg(CAR_STAR,'caranguejo'); reg(CAR_NEBULA,'caranguejo');
 reg(M57_STAR,'m57'); reg(M57_NEBULA,'m57');
+reg(LHS_STAR,'lhs1140'); LHS_BODIES.forEach(p=>reg(p,'lhs1140'));
+reg(CHAMA_STAR,'chama'); reg(CHAMA_NEBULA,'chama');
 reg(TUC_STAR,'tuc47'); reg(TUC_SWARM,'tuc47');
 reg(NGC346_STAR,'ngc346'); reg(NGC346_NEBULA,'ngc346');
 reg(R136_STAR,'tarantula'); reg(TAR_NEBULA,'tarantula');
@@ -3398,21 +3473,26 @@ function diveInto(id, done, opt){
   document.body.classList.add('diving');
 }
 /* sair: a cena do sistema começa colada no corpo e a câmera recua até o normal */
-function riseFrom(id){
+/* o inverso do mergulho: a cena nova nasce colada no alvo e a câmera recua */
+function riseFrom(id, opt){
   const b = ALLBODIES[id], pk = acharPick(id);
-  if(RM || !pk || !b || !ACT || (ACT.kind!=='system' && ACT.kind!=='focus')) return;
-  CAMTW = null;
+  if(RM || !pk || !ACT) return;
+  CAMTW = null; FADEIN = null;
   const paraFoco = (ACT.kind==='focus');
-  DIVE = {dir:-1, id, obj:pk, done: paraFoco ? (()=>{ CAM.mode='focus'; CAM.dist=ACT.cam.dist; }) : null,
-          t0:performance.now(), ms:1050,
+  const off = (opt && opt.semDesvio) ? 0 : 1;
+  const y0 = (opt && opt.yaw !== undefined) ? opt.yaw : 0;
+  const p0 = (opt && opt.pitch !== undefined) ? opt.pitch : 0;
+  DIVE = {dir:-1, id, obj:pk, off, extra:(opt && opt.extra) || null,
+          done: paraFoco ? (()=>{ CAM.mode='focus'; CAM.dist=ACT.cam.dist; }) : null,
+          t0:performance.now(), ms:(opt && opt.ms) || 1050,
           d0:distCasada(b, pk), d1:ACT.cam.dist, p1:new THREE.Vector3(),
-          yaw0:0, yaw1:curtoParaAngulo(0, paraFoco ? 0 : ACT.cam.yaw),
-          pitch0:0, pitch1: paraFoco ? 0 : ACT.cam.pitch};
+          yaw0:y0, yaw1:curtoParaAngulo(y0, paraFoco ? 0 : ACT.cam.yaw),
+          pitch0:p0, pitch1: paraFoco ? 0 : ACT.cam.pitch};
   if(paraFoco) DIVE.p1.copy(CAM.focusOff);   /* na cena de foco o alvo é o corpo central */
   CAM.mode = 'orbit';
-  CAM.dist = DIVE.d0; CAM.yaw = 0; CAM.pitch = 0;
+  CAM.dist = DIVE.d0; CAM.yaw = y0; CAM.pitch = p0;
   pk.getWorldPosition(_dv);
-  CAM.pivot.copy(_dv).addScaledVector(CAM.focusOff, CAM.dist / FOCUS_DIST);
+  CAM.pivot.copy(_dv).addScaledVector(CAM.focusOff, off * CAM.dist / FOCUS_DIST);
   document.body.classList.add('diving');
 }
 function diveStep(now){
@@ -3829,25 +3909,37 @@ function gotoSystem(sysId, flavor, deCorpo, continuo){
   if(deCorpo || continuo) blinkSwap(troca);
   else fadeSwap(flavor || ('TRAVANDO ROTA · '+SYS[sysId].name), troca);
 }
-function gotoGalaxy(galId, flavor, continuo){
+function gotoGalaxy(galId, flavor, continuo, deSistema){
   galId = galId || ST.gal || 'vialactea';
   let g = GALAXIES.find(x=>x.id===galId);
   if(!g){ galId = 'vialactea'; g = GALAXIES[0]; }
   const troca = ()=>{
     ST.level='galaxy'; ST.gal=galId; ST.body=null; ST.mapCard=null;
-    swapScene(buildGalaxy(galId), !!continuo); uiSync(); pushNav(); syncHash();
+    swapScene(buildGalaxy(galId), !!continuo || !!deSistema);
+    /* subindo de um sistema: a galáxia nasce colada no marcador dele */
+    if(deSistema) riseFrom(deSistema, {semDesvio:true});
+    uiSync(); pushNav(); syncHash();
     const nMarc = STARSYS.filter(x=>(x.gal || 'vialactea')===galId).length;
     showHint(nMarc ? 'TODOS OS SISTEMAS MARCADOS TÊM NAVEGAÇÃO LIBERADA'
                    : 'SISTEMAS INDIVIDUAIS NÃO CATALOGADOS A ESTA DISTÂNCIA');
   };
-  if(continuo) blinkSwap(troca);
+  if(continuo || deSistema) blinkSwap(troca);
   else fadeSwap(flavor || (galId==='vialactea' ? 'MAPEANDO O BRAÇO DE ÓRION' : 'SALTO INTERGALÁCTICO · '+g.name), troca);
 }
-function gotoUniverse(flavor){
-  fadeSwap(flavor || 'EXPANDINDO ESCALA', ()=>{
+function gotoUniverse(flavor, deGalaxia){
+  const troca = ()=>{
     ST.level='universe'; ST.body=null; ST.mapCard=null;
-    swapScene(buildUniverse()); uiSync(); pushNav(); syncHash(); showHint('TOQUE EM UMA GALÁXIA');
-  });
+    swapScene(buildUniverse(), !!deGalaxia);
+    /* subindo de uma galáxia: o universo nasce colado nela, que ainda se inclina de volta */
+    if(deGalaxia && ACT.nivelar){
+      riseFrom(deGalaxia, {semDesvio:true, yaw:0.4, pitch:0.95, ms:1200,
+                           extra:(e)=>ACT.nivelar(deGalaxia, 1-e)});
+    }
+    uiSync(); pushNav(); syncHash();
+    if(!deGalaxia) showHint('TOQUE EM UMA GALÁXIA');
+  };
+  if(deGalaxia) blinkSwap(troca);
+  else fadeSwap(flavor || 'EXPANDINDO ESCALA', troca);
 }
 function gotoFocus(bodyId, continuo, deCorpo){
   const b = ALLBODIES[bodyId]; if(!b) return;
@@ -3868,8 +3960,8 @@ function up(){
     /* sai de dentro do corpo recuando, o inverso exato do mergulho */
     if(b._parent) gotoFocus(b._parent, false, b.id);
     else gotoSystem(b._sys, 'RETORNANDO À VISÃO DO SISTEMA', (b.sys ? b.id : null));
-  } else if(ST.level==='system') gotoGalaxy((SYS[ST.sys] && SYS[ST.sys].gal) || 'vialactea');
-  else if(ST.level==='galaxy') gotoUniverse();
+  } else if(ST.level==='system') gotoGalaxy((SYS[ST.sys] && SYS[ST.sys].gal) || 'vialactea', null, false, ST.sys);
+  else if(ST.level==='galaxy') gotoUniverse(null, ST.gal);
 }
 function ACTION(act, id){
   hideHint();
@@ -4108,7 +4200,8 @@ const TITULOS = {
   omega:'SENHOR DAS MULTIDÕES', veu:'ARQUEÓLOGO DA EXPLOSÃO',
   kepler186:'AGRÔNOMO VERMELHO', roseta:'JARDINEIRO CÓSMICO',
   tarantula:'DOMADOR DE ARANHAS', sn1987a:'CAÇADOR DE NEUTRINOS',
-  tuc47:'GUARDIÃO DO TUCANO', ngc346:'ARQUEÓLOGO DO UNIVERSO JOVEM'
+  tuc47:'GUARDIÃO DO TUCANO', ngc346:'ARQUEÓLOGO DO UNIVERSO JOVEM',
+  lhs1140:'CAÇADOR DE OCEANOS', chama:'GUARDA-FOGO'
 };
 function progressoSistemas(){
   const mapa = {};
@@ -4285,10 +4378,32 @@ const ROTEIRO_COMPLETO = [
   {corpo:'pa99n2b', ms:12000},
   {uni:true,    ms:10000}
 ];
+const ROTA_GALAXIAS = [
+  {uni:true, ms:9000, texto:'Sete galáxias ao alcance. Em três delas já temos endereço com nome e sobrenome.'},
+  {gal:'vialactea', ms:8000},
+  {gal:'andromeda', ms:8000},
+  {sis:'nucleoM31', ms:9000},
+  {sis:'mayall2', ms:8000},
+  {corpo:'g1enxame', ms:10000},
+  {gal:'magalhaes', ms:8000},
+  {sis:'tarantula', ms:8000},
+  {corpo:'tarantula', ms:11000},
+  {sis:'sn1987a', ms:10000},
+  {gal:'pnm', ms:8000},
+  {sis:'ngc346', ms:8000},
+  {corpo:'nuvem346', ms:10000},
+  {gal:'triangulo', ms:8000},
+  {gal:'sombrero', ms:8000},
+  {gal:'redemoinho', ms:8000},
+  {sis:'m51uls', ms:8000},
+  {corpo:'m51ulsb', ms:11000},
+  {uni:true, ms:10000}
+];
 const ROTAS = {
   completo:  {nome:'ROTA COMPLETA',  lista:ROTEIRO_COMPLETO},
   solar:     {nome:'SISTEMA SOLAR',  lista:ROTA_SOLAR},
-  nebulosas: {nome:'NEBULOSAS',      lista:ROTA_NEBULOSAS}
+  nebulosas: {nome:'NEBULOSAS',      lista:ROTA_NEBULOSAS},
+  galaxias:  {nome:'GALÁXIAS',       lista:ROTA_GALAXIAS}
 };
 let ROTEIRO = ROTEIRO_COMPLETO;
 function tourNome(p){
@@ -4885,7 +5000,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r37';
+const BUILD = 'r38';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
