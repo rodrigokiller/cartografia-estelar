@@ -586,7 +586,6 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <button id="navfwd" class="navbtn dis" title="Objeto seguinte">»</button>
       <button id="btnsnd" class="navbtn" title="Trilha sonora">♪</button>
       <button id="btnphoto" class="navbtn" title="Modo foto">◉</button>
-      <button id="btntour" class="navbtn" title="Modo tour">▶</button>
       <button id="btnfs" class="navbtn" title="Tela cheia">⛶</button>
       <button id="btnhelp" title="Ajuda">?</button>
     </div>
@@ -661,7 +660,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <p><b>⚖ Comparar:</b> toque no botão do card, abra outro corpo e toque de novo: análise lado a lado em escala real.</p>
       <p><b>◈ Registro de bordo:</b> a lista completa do catálogo, com o que você já visitou, sua patente, busca e filtros por habitáveis, planetas, luas, estrelas e regiões.</p>
       <p><b>◉ Modo foto:</b> esconde o painel inteiro para uma captura limpa<span class="touchonly">. Um toque longo na tela faz o mesmo</span><span class="kb"> (ou a tecla <b>P</b>)</span>.</p>
-      <p><b>▶ Modo tour:</b> o mapa se guia sozinho por uma rota comentada, do quintal até outra galáxia. Toque na cena a qualquer momento para assumir o controle<span class="kb"> (ou tecla <b>T</b>)</span>.</p>
+      <p><b>▶ Modo tour:</b> dentro do registro de bordo<span class="kb"> (ou pela tecla <b>T</b>)</span>, o mapa se guia sozinho por uma rota comentada. Toque na cena a qualquer momento para assumir o controle.</p>
       <p><b>Compartilhe:</b> o endereço da página acompanha o objeto (ex.: <span style="font-family:var(--mono)">#corpo=europa</span>), copie o link e envie.</p>
       <p class="sub kb">ESC volta um nível · / busca · M registro · T tour · P foto · ? este manual</p>
       <p class="sub">Dados: NASA/ESA/IAU, valores aproximados. Linhas em âmbar são referências de ficção.</p>
@@ -699,6 +698,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <ul id="misslist"></ul>
       <div id="missfoot">
         <span class="cnt" id="missfootcnt"></span>
+        <button class="xbtn" id="misstour" title="O mapa se guia sozinho">▶ TOUR</button>
         <button class="xbtn" id="missclose">FECHAR</button>
       </div>
     </div>
@@ -1664,10 +1664,13 @@ const BET_STAR = {
   quick:[['TIPO','M1-2 Ia'],['RAIO','~760 R☉'],['MASSA','16–19 Sol'],['TEMP. SUP.','3.300 °C'],['IDADE','~8–10 mi anos'],['DISTÂNCIA','~550 al']],
   visual:{mode:'star', c1:'#c9451a', c2:'#ff9a52'},
   sections:[
-    {t:'ESTRUTURA', rows:[['Raio','~760 raios solares, no lugar do Sol, engoliria até Júpiter'],['Massa','16 a 19 massas solares'],['Temperatura','3.300 °C, fria para uma estrela, por isso vermelha'],['Perda de massa','Sopra o equivalente a uma Terra por ano']]},
-    {t:'REGISTRO', rows:[['Constelação','Órion (o ombro do gigante)'],['Idade','Só ~10 milhões de anos, viveu rápido demais'],['Grande Escurecimento','2019–20: poeira expelida derrubou o brilho pela metade'],['Destino','Supernova “em breve” (astronômico: até 100 mil anos)'],['Quando explodir','Brilhará como a Lua cheia, visível de dia, por meses']]}
+    {t:'ESTRUTURA', rows:[['Raio','~760 raios solares. No lugar do Sol, a superfície dela passaria da órbita de Júpiter'],['Massa','16 a 19 massas solares, mas espalhadas num volume gigantesco'],['Densidade','O "gás" da superfície é mais rarefeito que o melhor vácuo feito em laboratório'],['Temperatura','3.300 °C, fria para uma estrela, e é por isso que ela é vermelha'],['Perda de massa','Sopra o equivalente a uma Terra por ano, e se envolve na própria poeira']]},
+    {t:'ROTAÇÃO & PULSO', rows:[['Rotação','Gira rápido demais para o tamanho dela, e ninguém explicou direito por quê'],['O batimento','Ela infla e desinfla num ciclo de ~400 dias, mudando de brilho a olho nu'],['O ciclo longo','Existe um segundo ciclo de ~2.100 dias, e ele é a chave do mistério recente']]},
+    {t:'O GRANDE ESCURECIMENTO', rows:[['Dezembro de 2019','O brilho despencou pela metade e o mundo achou que ela ia explodir'],['A investigação','Telescópios do planeta inteiro se voltaram para o ombro de Órion'],['A resposta','Ela expeliu uma bolha de gás que esfriou e virou poeira, tapando parte da própria luz'],['O anticlímax','Em 2020 o brilho voltou ao normal. Não era o fim, era espirro.']]},
+    {t:'A COMPANHEIRA', rows:[['O palpite','Em 2024 propuseram que o ciclo longo seria causado por uma estrela companheira'],['O apelido','Astrônomos passaram a chamar a hipótese de Betelbuddy'],['2025','Ela foi detectada: uma estrela pequena orbitando dentro da atmosfera da gigante'],['O destino dela','Betelgeuse vai acabar engolindo a companheira']]},
+    {t:'O FIM', rows:[['Quando','Astronomicamente em breve: nas próximas dezenas de milhares de anos'],['Como será','Brilhará como a Lua cheia, visível de dia, e vai durar meses no céu'],['Perigo','Nenhum. A 550 anos-luz, é longe demais para nos fazer mal'],['O que sobra','Uma estrela de nêutrons e uma nebulosa nova no lugar do ombro de Órion']]}
   ],
-  facts:['Nenhum planeta catalogado, e se houve, os internos já foram engolidos.','Pode já ter explodido: a luz do evento levaria ~550 anos para chegar.'],
+  facts:['Se ela estivesse no lugar do Sol, a Terra estaria dentro dela.','A superfície é tão rarefeita que é mais vazia que o melhor vácuo que conseguimos produzir aqui.','O Grande Escurecimento de 2019 não foi o prenúncio da explosão: foi uma nuvem de poeira que ela mesma soprou.','Pode já ter explodido. A luz do evento levaria uns 550 anos para chegar até aqui.','Quando explodir, vai ser o objeto mais brilhante do céu noturno e dará para ler à luz dela.'],
   fict:'Beetlejuice (1988), o nome do filme é um trocadilho com a estrela. No Guia do Mochileiro, Ford Prefect vem “das vizinhanças de Betelgeuse”.'
 };
 const BELT_HUB = {
@@ -4102,15 +4105,60 @@ function fmtNumEsc(v){
   if(v >= 10)  return v.toFixed(0);
   return v.toFixed(1).replace('.', ',');
 }
+/* acha "X UA" ou "X al" nos dados de um corpo, para calibrar a cena */
+function distReal(b, filtro){
+  const cand = [];
+  const ok = k => !filtro || filtro.test(String(k));
+  for(const q of (b.quick||[])) if(ok(q[0])) cand.push(String(q[1]));
+  for(const s of (b.sections||[])) for(const r of (s.rows||[])) if(ok(r[0])) cand.push(String(r[1]));
+  for(const t of cand){
+    let m = t.match(/([\d.,]+)\s*UA/);
+    if(m) return parseFloat(m[1].replace(/\./g,'').replace(',','.')) * UA_KM;
+    m = t.match(/([\d.,]+)\s*(mil\s+)?anos-luz|([\d.,]+)\s*al\b/i);
+    if(m){
+      const n = parseFloat((m[1]||m[3]).replace(/\./g,'').replace(',','.'));
+      return n * (m[2] ? 1000 : 1) * AL_KM;
+    }
+  }
+  return 0;
+}
+/* km por unidade de cena, num sistema qualquer: usa o primeiro corpo cuja
+   distância real conhecemos e cuja órbita está desenhada */
+/* tamanho do objeto, nunca a distância até a Terra */
+const RE_TAM = /DI[ÂA]METRO|LARGURA|EXTENS|TAMANHO|ALTURA|RAIO/i;
+/* distância até a estrela do próprio sistema, nunca até nós */
+const RE_ORB = /(dist[âa]ncia\s+(do\s+sol|da\s+estrela)|^[óo]rbita$)/i;
+const _escCache = {};
+function escalaSistema(sysId){
+  if(_escCache[sysId] !== undefined) return _escCache[sysId];
+  const S = SYS[sysId]; let km = 0;
+  if(sysId === 'sol') km = UA_KM / 22;      /* a Terra orbita a 22 unidades */
+  else for(const b of (S.bodies||[])){
+    if(!b.sys || !b.sys.orbit) continue;
+    const real = distReal(b, RE_ORB);
+    if(real){ km = real / b.sys.orbit; break; }
+  }
+  /* nebulosa ou aglomerado: o anel desenhado representa a própria nuvem */
+  if(!km && S.beltR && S.beltId && ALLBODIES[S.beltId]){
+    const larg = distReal(ALLBODIES[S.beltId], RE_TAM);
+    if(larg) km = (larg/2) / S.beltR[1];
+  }
+  return (_escCache[sysId] = km);
+}
 function larguraDaTela(){
   const un = 2 * CAM.dist * Math.tan(camera.fov*Math.PI/360) * camera.aspect;  /* unidades */
   let kmPorUnidade = 0;
   if(ST.level==='focus'){
-    const d = parseDia(ALLBODIES[ST.body]);
+    const b = ALLBODIES[ST.body];
+    const d = parseDia(b);
     const raio = (ACT && ACT.raioCorpo) ? ACT.raioCorpo : FOCUS_RAIO;
     if(d) kmPorUnidade = (d.km/2) / raio;
-  } else if(ST.level==='system' && ST.sys==='sol'){
-    kmPorUnidade = UA_KM / 22;            /* órbita da Terra na cena */
+    else if(b && b.region && b.field){        /* região: usa a largura da ficha */
+      const larg = distReal(b, RE_TAM);
+      if(larg) kmPorUnidade = (larg/2) / (b.field.r1 || 20);
+    }
+  } else if(ST.level==='system'){
+    kmPorUnidade = escalaSistema(ST.sys);
   } else if(ST.level==='galaxy'){
     const g = GALAXIES.find(x=>x.id===ST.gal);
     const d = g && g.card ? parseDia(Object.assign({name:g.name}, g.card)) : null;
@@ -4547,7 +4595,7 @@ function tourStart(){
   if(TOUR.on) return;
   TOUR.on = true; TOUR.i = 0;
   document.body.classList.add('tour');
-  $('#btntour').textContent = '⏹';
+  const bt = $('#misstour'); if(bt) bt.textContent = '⏹ PARAR TOUR';
   showHint('TOUR INICIADO · TOQUE NA CENA PARA ASSUMIR O CONTROLE');
   tourPasso();
 }
@@ -4556,7 +4604,7 @@ function tourStop(quieto){
   TOUR.on = false;
   clearTimeout(TOUR.tm);
   document.body.classList.remove('tour');
-  $('#btntour').textContent = '▶';
+  const bt = $('#misstour'); if(bt) bt.textContent = '▶ TOUR';
   $('#tourprog').style.width = '0%';
   if(!quieto) showHint('TOUR ENCERRADO');
 }
@@ -5082,7 +5130,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r39';
+const BUILD = 'r40';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -5147,7 +5195,7 @@ $('#diagchip').addEventListener('click', function(){ this.classList.remove('on')
 })();
 $('#btnsnd').addEventListener('click', ()=>{ $('#player').classList.toggle('on'); AUDIO.plSync(); });
 $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: coarse)').matches));
-$('#btntour').addEventListener('click', tourToggle);
+$('#misstour').addEventListener('click', ()=>{ const on = TOUR.on; missClose(); if(on) tourStop(); else tourStart(); });
 $('#tourx').addEventListener('click', ()=>tourStop());
 $('#tourrota').addEventListener('change', e=>tourRota(e.target.value));
 tourRota(store.get('carto:rota','completo'), true);
