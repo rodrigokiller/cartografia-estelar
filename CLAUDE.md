@@ -1,6 +1,6 @@
 # Cartografia Estelar · contexto do projeto
 
-Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r28** (const BUILD no código; sempre incrementar a cada entrega e mostrar no chip DIAG).
+Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r29** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
 
 ## Arquitetura (blocos <script> em ordem)
 1. Helpers ($, isMobile, RM, clamp, easeIO, hashStr, coordOf) + shaders GLSL como template strings (NOISE/PLANET/CLOUD/ATMO/RING/SUN). fbm usa 4 octaves em touch, 5 no desktop.
@@ -12,8 +12,11 @@ Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Thre
 - Ao final de CADA entrega: 3 sugestões de melhorias (estilo GitHub Spark).
 - PROIBIDO emoji e travessão em textos novos: no app, nos docs e nas respostas do chat. Usar vírgula, dois-pontos, ponto ou o separador · . Varredura completa feita no r25: o index.html tem ZERO travessões, manter assim.
 - Two-step de seleção em toda navegação 3D; chips/busca/breadcrumb entram direto. Vale também para luas dentro do focus: currentEntity() prioriza ST.mapCard sobre o corpo focado (senão o card da lua nunca aparece).
-- Mobile primeiro-classe: flick de troca só pointerType touch; QLOW automático. REGRA DO RODRIGO: toda feature nova tem que funcionar igual em touch e desktop, mobile e web andam juntos, sempre testar os dois cenários e dar um equivalente touch pra todo atalho de teclado.
+- Mobile primeiro-classe: QLOW automático; barra superior mostra só ⌕ ◈ ⋯ e o ⋯ abre os secundários numa coluna (#morebtns, display:contents no desktop para manter a linha única). Não existe mais troca de corpo por arrasto: só os botões ‹ ›. O manual troca atalhos de teclado por gestos via `body.touch` (classe posta no JS, mais confiável que media query); textos só-teclado usam `.kb` e só-toque usam `.touchonly`. REGRA DO RODRIGO: toda feature nova tem que funcionar igual em touch e desktop, sempre testar os dois, e todo atalho de teclado precisa de equivalente tocável.
+- Testar mobile de verdade: o Chrome headless trava a janela em 500px, então renderize dentro de um `<iframe>` de 380px para ter viewport real de celular.
 - Dados: schema {id,name,desig,kind,hab,gbar,pop,quick[[k,v]],sys{orbit,size,speed,angle,incl?},visual{mode:rocky|gas|haze|earth|star,...},sections[{t,rows}],facts[],fict,moons[]}. Trivia de ficção/cultura pop (campo fict) é prioridade do Rodrigo.
+- Nebulosas NÃO entram em SYS.bodies: elas são o hub de região do próprio sistema, apontado por `beltId`. Registrar direto com reg() (M16_NEBULA, ORI_NEBULA, CAR_NEBULA, M57_NEBULA, HH_NEBULA). Se entrarem nos dois lugares, viram dois objetos com a mesma ficha e o destaque pisca duplicado (bug do r28).
+- Sistemas fora da Via Láctea: basta `gal:'andromeda'` no SYS e no marcador STARSYS. buildGalaxy filtra por `gal`, e o rastro/`up()` usam SYS[x].gal. Hoje: pa99 (Andrômeda) e m51uls (Redemoinho).
 - Regiões são "hubs": corpos com `region:true` + `field:{shape:'ring'|'shell'|'cloud', r0,r1,h,col,rock,size}` e filhos em moons[]. A flag `region` é a fonte única de verdade (catDe e buildFocus leem dela). No foco, região NÃO desenha esfera central: monta o campo de detritos com os filhos parados e clicáveis num arco à esquerda (o card cobre a direita). Cometas (`comet:true`) ganham núcleo menor, coma e duas caudas apontando para longe do Sol.
 - Cantos chanfrados: o contorno diagonal NÃO usa traço rotacionado com números na mão (era o bug do r25, a linha saía 1 a 2px fora do corte). Cada pseudo-elemento é um quadrado do tamanho exato do chanfro, ancorado em -1px (a borda), com uma faixa de 1px num linear-gradient(-45deg) caindo sobre o corte. Para um card novo com chanfro, basta somar o seletor às listas compartilhadas e definir width/height = tamanho do chanfro.
 
@@ -22,6 +25,6 @@ Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Thre
 - GitHub Pages: publicar a pasta inteira (index.html na raiz + audio/). Sem build step, o Pages serve direto.
 
 ## Roadmap acordado
-- Lotes pop contínuos de corpos reais famosos (r22: 51 Pegasi b, Vega, Trappist/JWST. r26: Fomalhaut, Barnard, Encélado. r27: Pilares da Criação e Titã/Dragonfly. r28: Órion/M42 e Caranguejo/M1. Próximos candidatos: Anel/M57 e Cabeça de Cavalo, Ceres e Vesta revisitadas pela Dawn, Io pela Juno, Kepler-186f, LHS 1140b).
+- Lotes pop contínuos de corpos reais famosos (r22: 51 Pegasi b, Vega, Trappist/JWST. r26: Fomalhaut, Barnard, Encélado. r27: Pilares da Criação e Titã/Dragonfly. r28: Órion/M42 e Caranguejo/M1. r29: Anel/M57, Cabeça de Cavalo e os dois candidatos extragalácticos, PA-99-N2 em Andrômeda e M51-ULS-1b no Redemoinho. Próximos candidatos: Ceres e Vesta revisitadas pela Dawn, Io pela Juno, Kepler-186f, LHS 1140b, Nebulosa da Lagoa).
 - Painel MISSÃO e mundos habitáveis: ENTREGUE no r26, os dois num painel só.
 - Possível migração React/FastAPI no futuro (estrutura de dados já é API-ready). Por ora, manter vanilla.
