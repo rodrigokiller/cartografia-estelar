@@ -468,22 +468,27 @@ body.touch .touchonly{display:inline}
 
 /* ---------- hint toast ---------- */
 /* ---------- modo tour ---------- */
-#tourbar{position:absolute;left:22px;bottom:22px;z-index:16;display:none;align-items:center;gap:12px;
-  padding:11px 14px;border:1px solid var(--line2);background:rgba(6,12,24,.86);backdrop-filter:blur(8px);
+#tourbar{position:absolute;left:22px;bottom:22px;z-index:16;display:none;flex-direction:column;gap:7px;
+  width:min(430px,46vw);padding:11px 14px 13px;border:1px solid var(--line2);
+  background:rgba(6,12,24,.86);backdrop-filter:blur(8px);
   font-family:var(--mono);font-size:10px;letter-spacing:2px;overflow:hidden;
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
 body.tour #tourbar{display:flex}
+#tourbar .trow{display:flex;align-items:center;gap:12px}
+#tourbar .tnarra{font-family:var(--disp);font-size:12px;letter-spacing:.3px;color:var(--dim);line-height:1.55;
+  min-height:1.55em;transition:opacity .35s}
+#tourbar .tnarra.tr-in{opacity:0}
 body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
 #tourbar .tlab{color:var(--amber);letter-spacing:3px}
-#tourbar .tnm{color:var(--txt);letter-spacing:2.4px;max-width:42vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#tourbar .tct{color:var(--dim);font-size:9px}
+#tourbar .tnm{color:var(--txt);letter-spacing:2.4px;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tourbar .tct{color:var(--dim);font-size:9px;flex:0 0 auto}
 #tourbar button{width:24px;height:24px;border:1px solid var(--line);background:rgba(6,12,24,.6);
   color:var(--dim);font-family:var(--mono);font-size:10px;cursor:pointer;flex:0 0 auto}
 #tourbar button:hover{border-color:var(--line2);color:var(--ion)}
 #tourprog{position:absolute;left:0;bottom:0;height:2px;background:var(--amber);width:0;opacity:.85}
 @media (max-width:899px){
-  #tourbar{left:12px;right:12px;bottom:calc(var(--sheetpeek,34dvh) + 12px);justify-content:space-between}
-  #tourbar .tnm{max-width:46vw}
+  #tourbar{left:12px;right:12px;width:auto;bottom:calc(var(--sheetpeek,34dvh) + 12px)}
+  #tourbar .tnarra{font-size:11.5px}
 }
 #hint{position:absolute;left:50%;bottom:104px;transform:translateX(-50%);z-index:11;
   font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--ion);
@@ -588,10 +593,13 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div id="nowplay"></div>
   <div id="photoexit" title="Sair do modo foto"><b>✕</b>SAIR DO MODO FOTO</div>
   <div id="tourbar">
-    <span class="tlab">TOUR</span>
-    <span class="tnm" id="tournm"></span>
-    <span class="tct" id="tourct"></span>
-    <button id="tourx" title="Encerrar tour">✕</button>
+    <div class="trow">
+      <span class="tlab">TOUR</span>
+      <span class="tnm" id="tournm"></span>
+      <span class="tct" id="tourct"></span>
+      <button id="tourx" title="Encerrar tour">✕</button>
+    </div>
+    <div class="tnarra" id="tournarra"></div>
     <i id="tourprog"></i>
   </div>
   <div id="phototoast"></div>
@@ -1390,6 +1398,18 @@ const STARSYS = [
    sections:[{t:'REGISTRO', rows:[['O evento','Uma estrela de Andrômeda ampliou a luz de outra e entregou um planeta junto'],['O limite','Microlentes não se repetem: será candidato para sempre'],['A distância','2,5 milhões de anos-luz daqui']]}],
    facts:['A luz que carregava a informação desse planeta saiu de Andrômeda antes de existirem humanos.'],
    fict:'Andrômeda é destino clássico da ficção. Este é o único ponto real que temos por lá.'}},
+ {id:'omega', name:'ÔMEGA CENTAURI', nav:true, pos:[-9.5,0,13], hot:false,
+  card:{desig:'AGLOMERADO GLOBULAR · 17.000 AL', kind:'Dez milhões de sóis a olho nu', hab:null,
+   quick:[['DISTÂNCIA','17.000 al'],['ESTRELAS','~10 milhões'],['DIÂMETRO','~150 al'],['A OLHO NU','sim']],
+   sections:[{t:'REGISTRO', rows:[['O engano','Ficou quase 2 mil anos catalogado como estrela'],['A suspeita','Pode ser o núcleo de uma galáxia anã que a Via Láctea engoliu'],['Onde ver','No Centauro, alto no céu brasileiro de outono']]}],
+   facts:['O maior aglomerado da nossa galáxia, e dá para achá-lo sem telescópio.'],
+   fict:null}},
+ {id:'veu', name:'NEBULOSA DO VÉU', nav:true, pos:[5.5,0,-9.5], hot:true,
+  card:{desig:'RESTO DE SUPERNOVA · 2.400 AL', kind:'Uma explosão que humanos viram', hab:null,
+   quick:[['DISTÂNCIA','2.400 al'],['LARGURA','~110 al'],['EXPLOSÃO','há ~15 mil anos'],['NO CÉU','6 luas cheias']],
+   sections:[{t:'REGISTRO', rows:[['O que é','O gás de uma supergigante que explodiu na pré-história'],['Hoje','Filamentos finíssimos que ainda correm a 1.500 km/s'],['Os apelidos','Vassoura da Bruxa e Triângulo de Pickering']]}],
+   facts:['Quando explodiu, brilhou mais que Vênus e ficou visível de dia.'],
+   fict:'A Vassoura da Bruxa é figurinha carimbada em pôster de astronomia.'}},
  {id:'lagoa', name:'NEBULOSA DA LAGOA', nav:true, pos:[10.5,0,-12], hot:true,
   card:{desig:'NEBULOSA · 4.100 AL', kind:'A nebulosa do quintal', hab:null,
    quick:[['DISTÂNCIA','4.100 al'],['CATÁLOGO','M8'],['LARGURA','~110 al'],['BINÓCULO','sim']],
@@ -2076,6 +2096,51 @@ const TRI_NEBULA = {
   ],
   facts:['É a única nebulosa famosa que exibe os três tipos ao mesmo tempo: emissão, reflexão e nebulosa escura.','Fica tão perto da Lagoa no céu que binóculos mostram as duas no mesmo campo de visão.','As faixas escuras que a dividem não são buracos: é poeira densa na frente da luz.'],
   fict:'Foi a nebulosa escolhida como um dos primeiros alvos de teste do Hubble, e virou cartão-postal de pôsteres e capas.', moons:[]};
+/* ---- lote 11: o maior aglomerado do céu e o que sobrou de uma supernova ---- */
+const OME_STAR = {
+  id:'omegacore', name:'NÚCLEO DE ÔMEGA', desig:'NGC 5139 · CENTRO', kind:'O coração do maior aglomerado do céu', hab:null, gbar:35,
+  quick:[['TIPO','aglomerado globular'],['RAIO','~10 R☉ (as maiores)'],['ESTRELAS','~10 milhões'],['IDADE','12 bi anos'],['DISTÂNCIA','17.000 al'],['SUSPEITA','buraco negro médio']],
+  visual:{mode:'star', c1:'#fff0d8', c2:'#ffc98a'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['Densidade','No miolo, as estrelas ficam a 0,1 ano-luz umas das outras'],['O céu de lá','Centenas de estrelas mais brilhantes que Sirius, todas ao mesmo tempo'],['A anomalia','Ao contrário de um globular normal, aqui há estrelas de idades e composições diferentes'],['2024 e 2025','Estrelas velozes demais no centro apontam para um buraco negro de ~8 mil massas solares']]},
+    {t:'REGISTRO', rows:[['A pista','Essa mistura de gerações não combina com um aglomerado: combina com uma galáxia'],['A teoria','É provavelmente o núcleo sobrevivente de uma galáxia anã que a Via Láctea devorou'],['Nota de escala','Cena simbólica: o aglomerado tem 150 anos-luz de diâmetro']]}
+  ],
+  facts:['Se ele é mesmo o caroço de uma galáxia engolida, estamos olhando para o cadáver de uma vizinha.'],
+  fict:null
+};
+const OME_SWARM = {
+  id:'omegacentauri', name:'ÔMEGA CENTAURI', desig:'NGC 5139 · AGLOMERADO GLOBULAR', kind:'Dez milhões de sóis a olho nu', hab:0, gbar:0.01, pop:'0',
+  region:true, field:{shape:'shell', r0:5, r1:19, col:0xffe0b8, rock:0xd0a878, size:0.18},
+  quick:[['ESTRELAS','~10 milhões'],['DIÂMETRO','~150 anos-luz'],['DISTÂNCIA','17.000 al'],['IDADE','12 bi anos'],['A OLHO NU','sim ✓'],['CATÁLOGO','NGC 5139']],
+  visual:{mode:'star', c1:'#ffe8c8', c2:'#ffbb70'},
+  sections:[
+    {t:'ESCALA', rows:[['Diâmetro','Cerca de 150 anos-luz, o maior aglomerado da Via Láctea'],['Massa','Quatro milhões de vezes a massa do Sol'],['No céu','Do tamanho da Lua cheia, e do Brasil ele fica alto no céu de outono'],['Posição aqui','Simbólica: você está dentro do enxame']]},
+    {t:'REGISTRO', rows:[['Ptolomeu','Catalogado como estrela por volta do ano 150, daí o nome de estrela, Ômega do Centauro'],['1677','Halley percebe que não é estrela, é uma nuvem'],['1830','John Herschel, do Cabo da Boa Esperança, resolve as estrelas individuais'],['A suspeita','Gerações estelares diferentes indicam que já foi o núcleo de uma galáxia anã'],['Onde ver','No Centauro, visível a olho nu como uma estrela borrada, e espetacular em binóculo']]}
+  ],
+  facts:['É o único aglomerado globular que qualquer pessoa no Brasil consegue ver a olho nu numa noite escura.','Passou quase dois mil anos catalogado como se fosse uma estrela comum.','No centro dele, o céu noturno seria mil vezes mais brilhante que o nosso, sem nunca escurecer de verdade.'],
+  fict:'Aparece como destino em ficção científica sempre que alguém precisa de um céu impossível, cheio de sóis.', moons:[]};
+const VEU_STAR = {
+  id:'progenitorveu', name:'A ESTRELA QUE EXPLODIU', desig:'CYGNUS LOOP · PROGENITORA', kind:'O fantasma de uma supergigante', hab:null, gbar:0,
+  quick:[['ERA','supergigante'],['RAIO','~40 R☉ (era)'],['MASSA','~15 Sóis'],['EXPLODIU','há ~15 mil anos'],['DISTÂNCIA','2.400 al'],['RESTOU','nada visível']],
+  visual:{mode:'star', c1:'#8fd8ff', c2:'#3f7ad0'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['O que era','Uma estrela de umas quinze massas solares, que queimou o combustível em poucos milhões de anos'],['O fim','O núcleo colapsou e as camadas externas foram lançadas a milhares de km/s'],['O que sobrou','Nenhum objeto compacto foi confirmado: só a onda de choque, que ainda viaja']]},
+    {t:'REGISTRO', rows:[['Quando','Entre 10 e 20 mil anos atrás, com humanos já caçando na Terra'],['Como teria sido','Mais brilhante que Vênus no céu, visível de dia por semanas'],['Hoje','A explosão virou um anel de gás que ocupa seis luas cheias no céu']]}
+  ],
+  facts:['Alguém viu essa estrela explodir. Não sobrou registro, mas havia gente aqui olhando para cima.'],
+  fict:null
+};
+const VEU_NEBULA = {
+  id:'veu', name:'NEBULOSA DO VÉU', desig:'CYGNUS LOOP · RESTO DE SUPERNOVA', kind:'A onda de choque que ainda não parou', hab:0, gbar:0.0001, pop:'0',
+  region:true, field:{shape:'shell', r0:8, r1:20, col:0x5fd8e8, rock:0x3a8898, size:0.2},
+  quick:[['DISTÂNCIA','2.400 al'],['LARGURA','~110 anos-luz'],['EXPLOSÃO','há ~15 mil anos'],['EXPANSÃO','1.500 km/s'],['NO CÉU','6 luas cheias'],['CONSTELAÇÃO','Cisne']],
+  visual:{mode:'haze', c1:'#123a44', c2:'#5fd8e8', c3:'#d05a7a', seed:69.6, atmo:{col:'#6ae8f0', i:1.5}},
+  sections:[
+    {t:'ESCALA', rows:[['Tamanho','Cerca de 110 anos-luz de ponta a ponta, e crescendo'],['No céu','Ocupa três graus, seis vezes o diâmetro da Lua cheia'],['A ironia','É enorme e brilhante, mas tão difusa que não dá para ver a olho nu'],['Posição aqui','Simbólica: é uma bolha de gás, e nós estaríamos dentro dela']]},
+    {t:'REGISTRO', rows:[['1784','William Herschel descobre os primeiros filamentos'],['Os apelidos','As partes ganharam nomes próprios: Vassoura da Bruxa, Triângulo de Pickering, Nebulosa da Rede'],['As cores','Vermelho de hidrogênio e azul-esverdeado de oxigênio, separados pela temperatura do choque'],['Os filamentos','Parecem fios finos porque estamos vendo a casca da bolha de lado'],['Hubble e JWST','As imagens mostram uma renda de gás com detalhes de poucos anos-luz']]}
+  ],
+  facts:['Os filamentos parecem fios de seda, mas cada um tem anos-luz de espessura: é a borda de uma bolha vista de perfil.','A onda de choque ainda corre a 1.500 quilômetros por segundo, quinze mil anos depois.','É um dos objetos mais fotografados por astrofotógrafos, e um dos mais difíceis de ver de olho no telescópio.'],
+  fict:'A Vassoura da Bruxa, um dos pedaços do Véu, é presença garantida em pôsteres de Halloween astronômico.', moons:[]};
 /* ---- fora da Via Láctea: os únicos candidatos a planeta em outras galáxias ---- */
 const AND_STAR = {
   id:'pa99lente', name:'ESTRELA-LENTE PA-99-N2', desig:'M31 · ESTRELA ANÔNIMA', kind:'Uma estrela de Andrômeda que piscou uma vez', hab:null, gbar:20,
@@ -2302,6 +2367,18 @@ const SYS = {
           quick:[['GALÁXIA','Andrômeda · M31'],['DISTÂNCIA','2,5 mi al'],['PLANETAS','1 candidato'],['MÉTODO','microlente'],['DETECTADO','1999'],['CONFIRMAR','impossível']],
           sections:[{t:'REGISTRO', rows:[['O evento','Em 1999 uma estrela de Andrômeda ampliou a luz de outra e entregou um companheiro'],['O planeta','Cerca de 6 Júpiteres, o primeiro candidato extragaláctico da história'],['O limite','Microlentes acontecem uma vez só: ninguém vai poder checar']]}],
           facts:['O único endereço catalogado deste mapa que fica fora da Via Láctea, junto com o do Redemoinho.']} },
+  omega:{ id:'omega', name:'ÔMEGA CENTAURI', star:OME_STAR, bodies:[], belt:[], beltR:[9,20], beltShape:'shell', beltLabel:'O ENXAME →', beltId:'omegacentauri', beltCol:0xffe0b8,
+        starSize:2.0, camMax:40, hint:'DEZ MILHÕES DE ESTRELAS, E DÁ PARA VER A OLHO NU DO BRASIL',
+        card:{desig:'AGLOMERADO GLOBULAR · CENTAURO', kind:'O maior do céu, e visível sem telescópio', hab:null,
+          quick:[['DISTÂNCIA','17.000 al'],['ESTRELAS','~10 milhões'],['DIÂMETRO','~150 al'],['IDADE','12 bi anos'],['A OLHO NU','sim'],['NO CÉU','1 lua cheia']],
+          sections:[{t:'REGISTRO', rows:[['O engano','Ptolomeu o catalogou como estrela, e o nome de estrela ficou'],['A suspeita','Estrelas de gerações diferentes sugerem que já foi uma galáxia anã'],['Onde ver','No Centauro, alto no céu brasileiro de outono']]}],
+          facts:['O único globular que qualquer pessoa no Brasil enxerga a olho nu numa noite escura.']} },
+  veu:{ id:'veu', name:'NEBULOSA DO VÉU', star:VEU_STAR, bodies:[], belt:[], beltR:[11,19], beltShape:'shell', beltLabel:'OS FILAMENTOS →', beltId:'veu', beltCol:0x5fd8e8,
+        starSize:1.2, camMax:42, hint:'UMA EXPLOSÃO DE 15 MIL ANOS ATRÁS, AINDA SE ESPALHANDO',
+        card:{desig:'RESTO DE SUPERNOVA · CISNE', kind:'A onda de choque que não parou', hab:null,
+          quick:[['DISTÂNCIA','2.400 al'],['LARGURA','~110 al'],['EXPLOSÃO','há ~15 mil anos'],['NO CÉU','6 luas cheias'],['EXPANSÃO','1.500 km/s'],['CATÁLOGO','Cygnus Loop']],
+          sections:[{t:'REGISTRO', rows:[['O que é','O gás lançado por uma supergigante que explodiu com humanos já na Terra'],['Os apelidos','Vassoura da Bruxa, Triângulo de Pickering, Nebulosa da Rede'],['O paradoxo','Ocupa seis luas cheias no céu e mesmo assim é invisível a olho nu']]}],
+          facts:['Alguém aqui na Terra viu essa estrela explodir, brilhando mais que Vênus.']} },
   lagoa:{ id:'lagoa', name:'NEBULOSA DA LAGOA', star:LAG_STAR, bodies:[], belt:[], beltR:[12,19], beltLabel:'A LAGOA →', beltId:'lagoa', beltCol:0xd0567e,
         starSize:3.2, camMax:44, hint:'DÁ PARA VER DO QUINTAL, COM BINÓCULO, NO CÉU DE INVERNO',
         card:{desig:'NEBULOSA DE EMISSÃO · SAGITÁRIO', kind:'A nebulosa do quintal', hab:null,
@@ -2364,6 +2441,8 @@ reg(M16_STAR,'m16'); reg(M16_NEBULA,'m16');
 reg(ORI_STAR,'orion'); reg(ORI_NEBULA,'orion');
 reg(CAR_STAR,'caranguejo'); reg(CAR_NEBULA,'caranguejo');
 reg(M57_STAR,'m57'); reg(M57_NEBULA,'m57');
+reg(OME_STAR,'omega'); reg(OME_SWARM,'omega');
+reg(VEU_STAR,'veu'); reg(VEU_NEBULA,'veu');
 reg(LAG_STAR,'lagoa'); reg(LAG_NEBULA,'lagoa');
 reg(TRI_STAR,'trifida'); reg(TRI_NEBULA,'trifida');
 reg(HH_STAR,'cavalo'); reg(HH_NEBULA,'cavalo');
@@ -2632,7 +2711,7 @@ function buildSystem(sysId, spin0){
     }
     const pick = new THREE.Mesh(new THREE.SphereGeometry(Math.max(p.sys.size+0.75, 1.25), 8, 8),
       new THREE.MeshBasicMaterial({visible:false}));
-    pick.position.x = p.sys.orbit; pick.userData = {act:'focus', id:p.id};
+    pick.position.x = p.sys.orbit; pick.userData = {act:'focus', id:p.id, r:p.sys.size};
     holder.add(pick); pickables.push(pick);
     orbiters.push({holder, spd:p.sys.speed});
     const gp = bg.group;
@@ -2686,7 +2765,7 @@ function buildSystem(sysId, spin0){
       const dot = new THREE.Mesh(new THREE.SphereGeometry(0.17, 10, 10), new THREE.MeshBasicMaterial({color:0xa8b2be}));
       dot.position.set(x, 0, z); scene.add(dot);
       const pick = new THREE.Mesh(new THREE.SphereGeometry(1.0, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
-      pick.position.copy(dot.position); pick.userData = {act:'focus', id:a.id};
+      pick.position.copy(dot.position); pick.userData = {act:'focus', id:a.id, r:0.17};
       scene.add(pick); pickables.push(pick);
       labels.push({el:makeLabel(a.name, 'faint', ()=>ACTION('focus', a.id)),
         get:v=>v.set(x, 0.8, z)});
@@ -2817,7 +2896,7 @@ function buildFocus(bodyId, spin0){
     host.add(mg.group);
     const pk = new THREE.Mesh(new THREE.SphereGeometry(Math.max(0.55, size*2.2), 6, 6),
       new THREE.MeshBasicMaterial({visible:false}));
-    pk.position.copy(pos); pk.userData = {act:'focus', id:m.id};
+    pk.position.copy(pos); pk.userData = {act:'focus', id:m.id, r:size};
     host.add(pk); pickables.push(pk);
     const glow = new THREE.Sprite(new THREE.SpriteMaterial({map:TEX_GLOW_WARM, color:0xffb454,
       blending:THREE.AdditiveBlending, depthWrite:false, transparent:true, opacity:0}));
@@ -2968,9 +3047,25 @@ let DIVE = null;
 const _dv = new THREE.Vector3(), _da = new THREE.Vector3();
 /* distância em que o corpo, na cena do sistema, ocupa a mesma fração de tela
    que vai ocupar na cena de foco. É o que faz a troca passar despercebida. */
-function distCasada(b){
-  const s = (b && b.sys && b.sys.size) ? b.sys.size : 0.6;
+function distCasada(b, pk){
+  /* usa o raio realmente desenhado (guardado no pickable), não só o do sistema */
+  const s = (pk && pk.userData && pk.userData.r) ? pk.userData.r
+          : ((b && b.sys && b.sys.size) ? b.sys.size : 0.6);
   return Math.max(0.25, s * (FOCUS_DIST/FOCUS_RAIO));
+}
+/* converte a câmera de foco em órbita mantendo posição e direção exatas,
+   para o mergulho poder começar de dentro de uma cena de foco */
+const _fc = new THREE.Vector3(), _fd = new THREE.Vector3(), _fo = new THREE.Vector3();
+function focusParaOrbita(){
+  if(CAM.mode !== 'focus') return;
+  _fc.set(0, 0, CAM.dist);
+  _fd.copy(CAM.focusOff).sub(_fc).normalize();
+  CAM.pivot.copy(_fc).addScaledVector(_fd, CAM.dist);
+  _fo.copy(_fc).sub(CAM.pivot);
+  CAM.mode = 'orbit';
+  CAM.dist = _fo.length() || CAM.dist;
+  CAM.pitch = Math.asin(Math.max(-1, Math.min(1, _fo.y/CAM.dist)));
+  CAM.yaw = Math.atan2(_fo.x, _fo.z);
 }
 function acharPick(id){
   return (ACT && ACT.pickables) ? ACT.pickables.find(o=>o.userData && o.userData.id===id) : null;
@@ -2983,21 +3078,28 @@ function curtoParaAngulo(de, para){
 /* entrar: a câmera ancora no corpo, se endireita e fecha o zoom até casar */
 function diveInto(id, done){
   const b = ALLBODIES[id], pk = acharPick(id);
-  if(RM || !pk || !b || CAM.mode!=='orbit' || !ACT || ACT.kind!=='system'){ done(); return; }
+  if(RM || !pk || !b || !ACT || (ACT.kind!=='system' && ACT.kind!=='focus')){ done(); return; }
+  focusParaOrbita();
+  if(CAM.mode!=='orbit'){ done(); return; }
   CAMTW = null;
   DIVE = {dir:1, obj:pk, done, t0:performance.now(), ms:1150,
-          d0:CAM.dist, d1:distCasada(b), p1:CAM.pivot.clone(),
+          d0:CAM.dist, d1:distCasada(b, pk), p1:CAM.pivot.clone(),
           yaw0:CAM.yaw, yaw1:curtoParaAngulo(CAM.yaw, 0), pitch0:CAM.pitch, pitch1:0};
   document.body.classList.add('diving');
 }
 /* sair: a cena do sistema começa colada no corpo e a câmera recua até o normal */
 function riseFrom(id){
   const b = ALLBODIES[id], pk = acharPick(id);
-  if(RM || !pk || !b || !ACT || ACT.kind!=='system') return;
+  if(RM || !pk || !b || !ACT || (ACT.kind!=='system' && ACT.kind!=='focus')) return;
   CAMTW = null;
-  DIVE = {dir:-1, obj:pk, done:null, t0:performance.now(), ms:1050,
-          d0:distCasada(b), d1:ACT.cam.dist, p1:new THREE.Vector3(),
-          yaw0:0, yaw1:curtoParaAngulo(0, ACT.cam.yaw), pitch0:0, pitch1:ACT.cam.pitch};
+  const paraFoco = (ACT.kind==='focus');
+  DIVE = {dir:-1, obj:pk, done: paraFoco ? (()=>{ CAM.mode='focus'; CAM.dist=ACT.cam.dist; }) : null,
+          t0:performance.now(), ms:1050,
+          d0:distCasada(b, pk), d1:ACT.cam.dist, p1:new THREE.Vector3(),
+          yaw0:0, yaw1:curtoParaAngulo(0, paraFoco ? 0 : ACT.cam.yaw),
+          pitch0:0, pitch1: paraFoco ? 0 : ACT.cam.pitch};
+  if(paraFoco) DIVE.p1.copy(CAM.focusOff);   /* na cena de foco o alvo é o corpo central */
+  CAM.mode = 'orbit';
   CAM.dist = DIVE.d0; CAM.yaw = 0; CAM.pitch = 0;
   pk.getWorldPosition(_dv);
   CAM.pivot.copy(_dv).addScaledVector(CAM.focusOff, CAM.dist / FOCUS_DIST);
@@ -3421,22 +3523,24 @@ function gotoUniverse(flavor){
     swapScene(buildUniverse()); uiSync(); pushNav(); syncHash(); showHint('TOQUE EM UMA GALÁXIA');
   });
 }
-function gotoFocus(bodyId, continuo){
+function gotoFocus(bodyId, continuo, deCorpo){
   const b = ALLBODIES[bodyId]; if(!b) return;
   const troca = ()=>{
     const spin = (continuo && ACT && ACT.kind==='system') ? ACT.spin : 0;
     ST.level='focus'; ST.sys=b._sys; ST.body=bodyId; ST.mapCard=null;
     markVisited(bodyId);
-    swapScene(buildFocus(bodyId, spin), continuo); uiSync(); pushNav(); syncHash(); hideHint();
+    swapScene(buildFocus(bodyId, spin), continuo || !!deCorpo);
+    if(deCorpo) riseFrom(deCorpo);      /* recua de dentro da lua até o planeta */
+    uiSync(); pushNav(); syncHash(); hideHint();
   };
-  if(continuo) blinkSwap(troca);
+  if(continuo || deCorpo) blinkSwap(troca);
   else fadeSwap('ESTABELECENDO LINK ORBITAL · '+b.name, troca);
 }
 function up(){
   if(ST.level==='focus'){
     const b = ALLBODIES[ST.body];
-    if(b._parent) gotoFocus(b._parent);
     /* sai de dentro do corpo recuando, o inverso exato do mergulho */
+    if(b._parent) gotoFocus(b._parent, false, b.id);
     else gotoSystem(b._sys, 'RETORNANDO À VISÃO DO SISTEMA', (b.sys ? b.id : null));
   } else if(ST.level==='system') gotoGalaxy((SYS[ST.sys] && SYS[ST.sys].gal) || 'vialactea');
   else if(ST.level==='galaxy') gotoUniverse();
@@ -3454,9 +3558,8 @@ function enterTarget(act, id){
   ST.mapCard = null;
   AUDIO.sfx('enter');
   if(act==='focus'){
-    const b = ALLBODIES[id];
-    /* corpo em órbita no sistema atual: entra mergulhando, sem corte */
-    if(ACT && ACT.kind==='system' && b && b.sys && b._sys===ST.sys){
+    /* se o alvo está desenhado na cena atual, entra mergulhando nele */
+    if(ACT && (ACT.kind==='system' || ACT.kind==='focus') && acharPick(id)){
       uiSync(); diveInto(id, ()=>gotoFocus(id, true)); return;
     }
     flyThen(id, ()=>gotoFocus(id));
@@ -3658,7 +3761,8 @@ const TITULOS = {
   orion:'PARTEIRO DE ESTRELAS', caranguejo:'CRONISTA DE 1054', m57:'COVEIRO DE SÓIS',
   cavalo:'CAÇADOR DE SOMBRAS', pa99:'EMBAIXADOR EM ANDRÔMEDA', m51uls:'ALCANCE MÁXIMO',
   mayall2:'CONTADOR DE MULTIDÕES', nucleoM31:'MERGULHADOR DO ABISMO',
-  lagoa:'PESCADOR DA LAGOA', trifida:'TRÊS EM UM'
+  lagoa:'PESCADOR DA LAGOA', trifida:'TRÊS EM UM',
+  omega:'SENHOR DAS MULTIDÕES', veu:'ARQUEÓLOGO DA EXPLOSÃO'
 };
 function progressoSistemas(){
   const mapa = {};
@@ -3765,7 +3869,7 @@ function missClose(){ $('#mission').classList.remove('on'); }
 /* ---------- modo tour: o app se guiando sozinho ---------- */
 const TOUR = {on:false, i:0, tm:null, t0:0, ms:0};
 const ROTEIRO = [
-  {sis:'sol',   ms:9000},
+  {sis:'sol',   ms:9000, texto:'Uma estrela comum, oito planetas e um mundo com vida confirmada. Começamos em casa.'},
   {corpo:'terra',   ms:13000},
   {sis:'sol',   ms:5000},
   {corpo:'marte',   ms:12000},
@@ -3785,6 +3889,8 @@ const ROTEIRO = [
   {corpo:'pilares', ms:12000},
   {sis:'orion', ms:8000},
   {corpo:'nebulosaorion', ms:12000},
+  {sis:'omega', ms:8000},
+  {corpo:'omegacentauri', ms:12000},
   {sis:'caranguejo', ms:8000},
   {corpo:'caranguejo',   ms:11000},
   {gal:'andromeda', ms:9000},
@@ -3815,10 +3921,26 @@ function tourIr(p){
     gotoFocus(p.corpo);
   }
 }
+/* a legenda de cada parada: a curiosidade do próprio objeto, nada inventado */
+function tourNarra(p){
+  if(p.texto) return p.texto;
+  let o = null;
+  if(p.corpo) o = ALLBODIES[p.corpo];
+  else if(p.sis) o = SYS[p.sis] && SYS[p.sis].card;
+  else if(p.gal){ const g = GALAXIES.find(x=>x.id===p.gal); o = g && g.card; }
+  else o = UNIVERSE_CARD;
+  if(!o) return '';
+  if(o.facts && o.facts.length) return o.facts[0];
+  if(o.fict) return o.fict;
+  return o.kind || '';
+}
 function tourSync(){
   const p = ROTEIRO[TOUR.i];
   $('#tournm').textContent = tourNome(p);
   $('#tourct').textContent = (TOUR.i+1) + '/' + ROTEIRO.length;
+  const n = $('#tournarra');
+  n.classList.add('tr-in');
+  setTimeout(()=>{ n.textContent = tourNarra(p); n.classList.remove('tr-in'); }, 260);
 }
 function tourPasso(){
   const p = ROTEIRO[TOUR.i];
@@ -4363,7 +4485,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r31';
+const BUILD = 'r32';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

@@ -1,6 +1,6 @@
 # Cartografia Estelar · contexto do projeto
 
-Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r31** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
+Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r32** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
 
 ## Arquitetura (blocos <script> em ordem)
 1. Helpers ($, isMobile, RM, clamp, easeIO, hashStr, coordOf) + shaders GLSL como template strings (NOISE/PLANET/CLOUD/ATMO/RING/SUN). fbm usa 4 octaves em touch, 5 no desktop.
@@ -13,7 +13,7 @@ Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Thre
 1. o desvio do card (`focusOff`) entra proporcional à distância (`focusOff * dist/9`), porque no foco ele é um ângulo, não um deslocamento fixo;
 2. a distância tem que ser atualizada ANTES de calcular a âncora, senão ela usa o valor do quadro anterior;
 3. a rotação do planeta é passada de uma cena para a outra (`ACT.spin` → `buildFocus(id, spin0)` e `buildSystem(sysId, spin0)`), senão a textura salta no corte.
-Medido: 1% de diferença de tamanho e 0px de posição. A troca usa `blinkSwap` (piscada de 0,11s a 88%), nunca o `fadeSwap` preto. `swapScene(cena, continuo)` pula a animação de entrada quando é contínuo.
+Medido: 1% de diferença de tamanho e 0px de posição, tanto planeta quanto lua. Vale para sistema→corpo, corpo→lua e a volta dos dois (`gotoFocus(id, continuo, deCorpo)` e `gotoSystem(sis, flavor, deCorpo)`). Para mergulhar de dentro de uma cena de foco, `focusParaOrbita()` converte a câmera mantendo posição e direção exatas. O raio realmente desenhado fica em `pickable.userData.r` (é ele que `distCasada` usa, não o `sys.size`). A troca usa `blinkSwap` (piscada de 0,11s a 88%): o Rodrigo pediu para MANTER, porque as duas cenas ainda diferem no fundo. `swapScene(cena, continuo)` pula a animação de entrada quando é contínuo.
 
 ## Convenções combinadas com o Rodrigo
 - Ao final de CADA entrega: 3 sugestões de melhorias (estilo GitHub Spark).
@@ -33,7 +33,7 @@ Medido: 1% de diferença de tamanho e 0px de posição. A troca usa `blinkSwap` 
 - GitHub Pages: publicar a pasta inteira (index.html na raiz + audio/). Sem build step, o Pages serve direto.
 
 ## Roadmap acordado
-- Lotes pop contínuos de corpos reais famosos (r22: 51 Pegasi b, Vega, Trappist/JWST. r26: Fomalhaut, Barnard, Encélado. r27: Pilares da Criação e Titã/Dragonfly. r28: Órion/M42 e Caranguejo/M1. r29: Anel/M57, Cabeça de Cavalo e os dois candidatos extragalácticos, PA-99-N2 em Andrômeda e M51-ULS-1b no Redemoinho. Próximos candidatos: Ceres e Vesta revisitadas pela Dawn, Io pela Juno, Kepler-186f, LHS 1140b, Nebulosa da Lagoa). r30: Mayall II e o núcleo duplo de Andrômeda, mais Ceres, Vesta (Dawn) e Io (Juno) com fichas completas. r31: Lagoa/M8 e Trífida/M20. Próximos: Cabeça de Cavalo já entrou no r29, restam Roseta, Véu, Omega Centauri, Kepler-186f, LHS 1140b.
-- Modo tour (tecla T ou botão ▶): ROTEIRO com 26 paradas, cada uma {corpo|sis|gal|uni, ms}. Usa o mergulho contínuo quando o corpo é do sistema atual. Qualquer toque na cena encerra. Roteiro novo precisa passar no teste de validade (todo id tem que existir).
+- Lotes pop contínuos de corpos reais famosos (r22: 51 Pegasi b, Vega, Trappist/JWST. r26: Fomalhaut, Barnard, Encélado. r27: Pilares da Criação e Titã/Dragonfly. r28: Órion/M42 e Caranguejo/M1. r29: Anel/M57, Cabeça de Cavalo e os dois candidatos extragalácticos, PA-99-N2 em Andrômeda e M51-ULS-1b no Redemoinho. Próximos candidatos: Ceres e Vesta revisitadas pela Dawn, Io pela Juno, Kepler-186f, LHS 1140b, Nebulosa da Lagoa). r30: Mayall II e o núcleo duplo de Andrômeda, mais Ceres, Vesta (Dawn) e Io (Juno) com fichas completas. r31: Lagoa/M8 e Trífida/M20. Próximos: Cabeça de Cavalo já entrou no r29, r32: Ômega Centauri e Véu. Restam Roseta, Kepler-186f, LHS 1140b, Nebulosa da Formiga.
+- Modo tour (tecla T ou botão ▶): ROTEIRO com 28 paradas, cada uma com legenda vinda de `tourNarra()` (o primeiro `facts` do próprio objeto, ou um `texto` fixo na parada). Nenhuma parada pode ficar sem legenda., cada uma {corpo|sis|gal|uni, ms}. Usa o mergulho contínuo quando o corpo é do sistema atual. Qualquer toque na cena encerra. Roteiro novo precisa passar no teste de validade (todo id tem que existir).
 - Painel MISSÃO e mundos habitáveis: ENTREGUE no r26, os dois num painel só.
 - Possível migração React/FastAPI no futuro (estrutura de dados já é API-ready). Por ora, manter vanilla.
