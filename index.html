@@ -160,6 +160,16 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 body.photo #topbar,body.photo #topright,body.photo #navpod,body.photo .chev,body.photo #zoomui,
 body.photo #diagchip,body.photo #nowplay,body.photo #player,body.photo #panel,body.photo #hint,
 body.photo .corner,body.photo #labels{opacity:0 !important;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
+/* saída visível do modo foto: some junto com o resto, reaparece ao mexer no ponteiro */
+#photoexit{position:absolute;top:16px;right:16px;z-index:31;display:none;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--ion);cursor:pointer;
+  border:1px solid var(--line2);background:rgba(6,12,24,.78);padding:9px 12px;
+  opacity:0;transition:opacity .35s;-webkit-tap-highlight-color:transparent}
+#photoexit b{font-size:13px;line-height:1;font-weight:400}
+body.photo #photoexit{display:flex}
+body.photo.hudpeek #photoexit{opacity:1}
+#photoexit:hover{border-color:var(--ion);box-shadow:0 0 12px rgba(125,196,255,.3)}
+@media (max-width:899px){ #photoexit{top:12px;right:12px;padding:11px 14px} }
 #phototoast{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:30;
   font-family:var(--mono);font-size:11px;letter-spacing:3px;color:var(--ion);text-align:center;
   background:rgba(6,12,24,.72);border:1px solid var(--line2);padding:10px 18px;
@@ -181,9 +191,16 @@ body.focusmode .chev{display:flex}
 #panelhead{padding:14px 18px 10px;border-bottom:1px solid var(--line);cursor:default}
 #grip{display:none}
 #panelbody{overflow-y:auto;overflow-x:hidden;padding:14px 18px 20px;flex:1;overscroll-behavior:contain}
-#panelbody::-webkit-scrollbar{width:4px}
-#panelbody::-webkit-scrollbar-thumb{background:var(--line2)}
-#panelbody::-webkit-scrollbar-track{background:transparent}
+/* barra de rolagem do HUD: fina e azul, igual em todas as áreas roláveis */
+#panelbody,#misslist,#cmpcard,#findlist,#player .pl-list{scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+#panelbody::-webkit-scrollbar,#misslist::-webkit-scrollbar,#cmpcard::-webkit-scrollbar,
+#findlist::-webkit-scrollbar,#player .pl-list::-webkit-scrollbar{width:4px;height:4px}
+#panelbody::-webkit-scrollbar-thumb,#misslist::-webkit-scrollbar-thumb,#cmpcard::-webkit-scrollbar-thumb,
+#findlist::-webkit-scrollbar-thumb,#player .pl-list::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
+#panelbody::-webkit-scrollbar-track,#misslist::-webkit-scrollbar-track,#cmpcard::-webkit-scrollbar-track,
+#findlist::-webkit-scrollbar-track,#player .pl-list::-webkit-scrollbar-track{background:transparent}
+#panelbody::-webkit-scrollbar-corner,#misslist::-webkit-scrollbar-corner,
+#cmpcard::-webkit-scrollbar-corner{background:transparent}
 
 .eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--dim);display:flex;justify-content:space-between;gap:8px}
 .eyebrow .lock{color:var(--ok)}
@@ -223,25 +240,40 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #cmp{position:absolute;inset:0;z-index:30;display:none;align-items:center;justify-content:center;
   background:rgba(2,5,12,.82);backdrop-filter:blur(6px)}
 #cmp.on{display:flex}
-#cmpcard{width:min(860px,94vw);max-height:92dvh;overflow-y:auto;background:var(--panel);border:1px solid var(--line2);
+#cmpcard{width:min(860px,94vw);max-height:92dvh;overflow-y:auto;overflow-x:hidden;background:var(--panel);border:1px solid var(--line2);
   padding:20px 22px 16px;clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)}
 #cmpcard h2{font-size:12px;letter-spacing:4px;color:var(--ion);margin-bottom:12px;font-weight:600}
 .cmpheads{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center}
 .cmpheads .nm{font-size:17px;font-weight:600;letter-spacing:2px}
 .cmpheads .nm small{display:block;font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:2px;margin-top:2px;font-weight:400}
 .cmpheads .vs{font-family:var(--mono);color:var(--amber);letter-spacing:2px;font-size:11px}
-.cmpviz{height:150px;margin:12px 0 4px;display:flex;align-items:flex-end;justify-content:space-around;
-  border-bottom:1px solid var(--line);padding-bottom:8px}
+.cmpviz{min-height:158px;margin:12px 0 4px;display:flex;align-items:flex-end;justify-content:space-around;
+  gap:10px;border-bottom:1px solid var(--line);padding-bottom:10px;overflow:hidden}
 .cmpviz .ball{border-radius:50%;background:radial-gradient(circle at 32% 30%, var(--bc2), var(--bc1) 68%);
-  box-shadow:0 0 18px rgba(125,196,255,.18)}
-.cmpscale{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1.6px;text-align:center;margin:6px 0 8px}
+  box-shadow:0 0 18px rgba(125,196,255,.18);flex:0 0 auto}
+.cmpviz .bwrap{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
+.cmpviz .bnm{font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;color:var(--dim);
+  max-width:15ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* diferença grande: o menor aparece dentro do maior, na escala real */
+.cmpviz.dentro{justify-content:center;gap:22px;flex-wrap:wrap}
+.cmpviz .hostwrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px}
+.cmpviz .hostnm{font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;color:var(--dim)}
+.cmpviz .inball{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(circle at 32% 30%, var(--bc2), var(--bc1) 68%);
+  box-shadow:0 0 0 1px rgba(255,255,255,.55), 0 0 10px rgba(255,255,255,.35);min-width:3px;min-height:3px}
+.cmpviz .smallnote{font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;color:var(--amber);
+  align-self:center;max-width:16ch;line-height:1.7}
+.cmpviz .smallnote b{color:var(--amber);font-weight:400}
+.cmpscale{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1.6px;text-align:center;margin:6px 0 0}
+.cmpscale.big{font-size:10.5px;color:var(--txt);margin:5px 0 10px;line-height:1.7}
+.cmpscale.big b{color:var(--ion);font-weight:400}
 .cmpbars{display:grid;grid-template-columns:1fr 52px 1fr;gap:8px;align-items:center;margin:4px 0 8px;
   font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--dim)}
 .cmpbars .bar{height:8px;background:linear-gradient(90deg,var(--thrust),var(--ion))}
 .cmpbars .bar.l{justify-self:end;background:linear-gradient(270deg,var(--thrust),var(--ion))}
 .cmpbars .gk{text-align:center}
 .cmpbars .gv{color:var(--txt)}
-.cmptab{width:100%;border-collapse:collapse;font-size:12px}
+.cmptab{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;overflow-wrap:anywhere}
 .cmptab td{padding:7px 8px;border-top:1px solid var(--line);vertical-align:top}
 .cmptab td.k{font-family:var(--mono);font-size:8px;letter-spacing:1.8px;color:var(--dim);text-align:center;width:30%;padding-top:9px}
 .cmptab td.a{text-align:right}
@@ -266,6 +298,26 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #missbar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--thrust),var(--ion));
   transition:width .6s cubic-bezier(.3,.9,.3,1)}
 #missnext{font-family:var(--mono);font-size:9px;letter-spacing:1.6px;color:var(--dim);margin-top:7px}
+#missfind{position:relative;flex:0 0 auto;border-bottom:1px solid var(--line);display:flex;align-items:center}
+#missq{flex:1 1 auto;min-width:0;background:transparent;border:none;outline:none;color:var(--txt);
+  font-family:var(--mono);font-size:12px;letter-spacing:2px;padding:12px 20px}
+#missq::placeholder{color:var(--dim);opacity:.8}
+#missqx{flex:0 0 auto;margin-right:14px;width:26px;height:26px;border:1px solid var(--line);
+  background:rgba(6,12,24,.6);color:var(--dim);font-family:var(--mono);font-size:11px;cursor:pointer;display:none}
+#missqx.on{display:block}
+#missqx:hover{border-color:var(--line2);color:var(--ion)}
+/* conquistas por sistema */
+#misslist li.sysrow{align-items:center}
+#misslist .sysbadge{flex:0 0 auto;width:26px;height:26px;display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--line2);transform:rotate(45deg);font-size:10px;color:var(--dim)}
+#misslist .sysbadge span{transform:rotate(-45deg)}
+#misslist li.full .sysbadge{background:rgba(255,180,84,.18);border-color:var(--amber);color:var(--amber);
+  box-shadow:0 0 10px rgba(255,180,84,.35)}
+#misslist li.full .mnm{color:var(--amber)}
+#misslist .sysprog{flex:0 0 auto;width:96px;text-align:right;font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--dim)}
+#misslist .sysprog i{display:block;height:3px;background:rgba(63,140,255,.16);margin-top:4px;position:relative}
+#misslist .sysprog i b{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--thrust),var(--ion))}
+#misslist li.full .sysprog i b{background:var(--amber)}
 #misstools{padding:10px 20px;border-bottom:1px solid var(--line);flex:0 0 auto;
   display:flex;gap:8px;align-items:center;flex-wrap:nowrap}
 .mchips{display:flex;gap:6px;flex-wrap:wrap;flex:1 1 auto;min-width:0}
@@ -303,7 +355,10 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
     border-left:none;border-right:none;border-bottom:none;border-radius:14px 14px 0 0}
   #misscard::before,#misscard::after{display:none}
   #misshead{padding:14px 16px 10px}
+  #missq{padding:13px 16px}
+  #missqx{margin-right:10px;width:30px;height:30px}
   #misstools{padding:10px 16px;flex-wrap:nowrap}
+  #misslist .sysprog{width:78px}
   #misslist li{padding:12px 16px;min-height:58px}
   #missfoot{padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
   .mchips{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -453,6 +508,7 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
   </div>
   <div id="diagchip" title="Toque para ocultar">DIAG…</div>
   <div id="nowplay"></div>
+  <div id="photoexit" title="Sair do modo foto"><b>✕</b>SAIR DO MODO FOTO</div>
   <div id="phototoast"></div>
   <div id="player">
     <div class="pl-now">♪ TRANSMISSÃO DE BORDO</div>
@@ -506,6 +562,10 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
         </div>
         <div id="missbar"><i style="width:0%"></i></div>
         <div id="missnext"></div>
+      </div>
+      <div id="missfind">
+        <input id="missq" type="text" placeholder="BUSCAR NO CATÁLOGO…" autocomplete="off" spellcheck="false">
+        <button id="missqx" title="Limpar busca">✕</button>
       </div>
       <div id="misstools">
         <div class="mchips" id="misschips"></div>
@@ -740,7 +800,7 @@ void main(){
 
 const SUN = {
   id:'sol', name:'SOL', desig:'ESTRELA · G2V', kind:'Anã amarela', hab:null, gbar:28,
-  quick:[['TIPO','G2V'],['TEMP. SUP.','5.505 °C'],['ROTAÇÃO','25–35 d'],['IDADE','4,6 bi anos'],['PLANETAS','8'],['MASSA','99,86%']],
+  quick:[['TIPO','G2V'],['RAIO','1 R☉'],['TEMP. SUP.','5.505 °C'],['ROTAÇÃO','25–35 d'],['IDADE','4,6 bi anos'],['PLANETAS','8']],
   visual:{mode:'star', c1:'#ff7a1e', c2:'#ffd76b', atmo:{col:'#ffb54a', i:1.6}},
   sections:[
     {t:'ESTRUTURA', rows:[['Diâmetro','1,39 mi km (109 Terras)'],['Massa','1,99 × 10³⁰ kg'],['Densidade','1,41 g/cm³'],['Gravidade','28 g'],['Temp. do núcleo','15 mi °C']]},
@@ -897,12 +957,16 @@ PLANETS.push(
   facts:['É o único planeta menos denso que a água.','Os anéis são jovens (talvez ~100 mi de anos) e vão sumir num futuro distante, "chove" anel no planeta.','Em 2025 o total de luas confirmadas saltou para 274, o recorde do sistema.'],
   fict:'Interestelar, o buraco de minhoca aparece na órbita de Saturno.',
   moons:[
-   {id:'tita', name:'TITÃ', desig:'SATURNO-VI', kind:'Lua com atmosfera', hab:41, gbar:0.14, pop:'0',
-    quick:[['DIÂMETRO','5.150 km'],['ÓRBITA','15,9 d'],['DESCOBERTA','1655'],['LAGOS','metano']],
+   {id:'tita', name:'TITÃ', desig:'SATURNO-VI · LUA', kind:'O outro mundo com chuva, rios e mares', hab:41, gbar:0.14, pop:'0',
+    quick:[['DIÂMETRO','5.150 km'],['GRAVIDADE','0,14 g'],['ÓRBITA','15,9 d'],['ATMOSFERA','N₂ · 1,5 atm'],['MARES','metano líquido'],['DRONE','Dragonfly · 2028']],
     visual:{mode:'haze', c1:'#d8963f', c2:'#eec06e', c3:'#b3742c', seed:6.6, atmo:{col:'#f0b968', i:1.25}},
-    sections:[{t:'REGISTRO', rows:[['Descoberta','1655 · Huygens'],['Atmosfera','N₂ densa · 1,5 atm, a única lua assim'],['Superfície','Rios, lagos e chuva de METANO líquido'],['Pouso','Sonda Huygens, 2005'],['Próxima missão','Dragonfly (drone da NASA, ~2034)']]}],
-    facts:['Com a pressão certa e gravidade baixa, um humano com asas nos braços conseguiria voar em Titã.'],
-    fict:'Gattaca, o destino sonhado de Vincent é uma missão a Titã.'},
+    sections:[
+      {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância de Saturno','1,22 mi km'],['Ano','15,9 dias'],['Rotação','Síncrona'],['Temperatura','−179 °C, frio que congela a própria química']]},
+      {t:'ESTRUTURA', rows:[['Tamanho','Maior que Mercúrio, a 2ª maior lua do Sistema Solar'],['Atmosfera','Nitrogênio denso a 1,5 atm, a única lua com atmosfera de verdade'],['Ciclo do metano','Evapora, forma nuvem, chove e enche rios, igualzinho à água aqui'],['Mares','Kraken, Ligeia e Punga Mare, de metano e etano líquidos'],['Por baixo','Provável oceano de água com amônia sob a crosta de gelo']]},
+      {t:'REGISTRO', rows:[['Descoberta','1655 · Christiaan Huygens'],['O pouso','2005: a sonda Huygens desceu de paraquedas e fotografou pedras arredondadas por líquido'],['Dragonfly','Um drone nuclear de oito hélices que vai VOAR de duna em duna, salto a salto'],['Lançamento','Julho de 2028, chegada em 2034, pousando nas dunas de Shangri-La'],['Por que voar','A atmosfera é densa e a gravidade é baixa: voar ali é mais fácil que na Terra']]}
+    ],
+    facts:['Com a pressão certa e gravidade baixa, um humano com asas nos braços conseguiria voar em Titã.','É o único outro lugar conhecido com líquido estável na superfície, só que de metano, não de água.','A Dragonfly será a primeira aeronave a explorar outro mundo saltando de um ponto a outro.'],
+    fict:'Gattaca: o destino sonhado de Vincent é uma missão a Titã. Também é a lua colonizada em Titan (2018) e um refúgio recorrente na ficção científica.'},
    {id:'encelado', name:'ENCÉLADO', desig:'SATURNO-II · LUA', kind:'A lua que cospe oceano no espaço', hab:72, gbar:0.011, pop:'0 (que a gente saiba)',
     quick:[['DIÂMETRO','504 km'],['GRAVIDADE','0,011 g'],['ÓRBITA','1,37 d'],['GÊISERES','101 jatos'],['OCEANO','global, 10 km'],['ALBEDO','0,81 · recorde']],
     visual:{mode:'rocky', c1:'#eef3f6', c2:'#cfdde6', c3:'#aec6d4', scale:5.0, seed:2.8, crater:0.2, atmo:{col:'#cfe6ff', i:0.5}},
@@ -1192,6 +1256,12 @@ const STARSYS = [
    sections:[{t:'REGISTRO', rows:[['O recorde','A estrela que mais corre pelo céu visto daqui'],['A virada','Depois de um século de alarmes falsos, 4 planetas confirmados em 2024 e 2025'],['Futuro','Será a estrela mais próxima do Sol em 11.800 d.C.']]}],
    facts:['A 4ª estrela mais próxima, e ainda assim invisível a olho nu.'],
    fict:'Destino do Projeto Daedalus, a primeira sonda interestelar levada a sério.'}},
+ {id:'m16', name:'PILARES DA CRIAÇÃO', nav:true, pos:[-14.5,0,-8], hot:true,
+  card:{desig:'NEBULOSA DA ÁGUIA · 6.500 AL', kind:'O berçário mais fotografado do céu', hab:null,
+   quick:[['DISTÂNCIA','6.500 al'],['CATÁLOGO','M16'],['ALTURA','4 a 5 al'],['FOTO','Hubble 1995']],
+   sections:[{t:'REGISTRO', rows:[['O que é','Colunas de gás e poeira onde novas estrelas estão nascendo'],['A imagem','A foto de 1995 virou a cara da astronomia moderna'],['JWST','Em 2022 o infravermelho revelou as estrelas escondidas dentro das colunas']]}],
+   facts:['Cada pilar é mais alto que a distância entre o Sol e a estrela mais próxima.'],
+   fict:'Capa de disco, pôster e cenário de ficção. Navegação liberada →'}},
  {id:'kepler452', name:'KEPLER-452', nav:true, pos:[15.5,0,-9.5], hot:false,
   card:{desig:'SISTEMA ESTELAR · ~1.400 AL', kind:'Análoga solar', hab:null,
    quick:[['DISTÂNCIA','~1.400 al'],['TIPO','G2 (como o Sol)'],['PLANETA','452b'],['ANO DE 452B','385 d']],
@@ -1237,7 +1307,7 @@ const GALAXIES = [
 /* ============================ SISTEMAS VIZINHOS (navegação liberada) ============================ */
 const ACEN_A = {
   id:'acena', name:'ALPHA CEN A', desig:'ESTRELA · G2V', kind:'Gêmea do Sol', hab:null, gbar:28,
-  quick:[['TIPO','G2V'],['TEMP. SUP.','5.500 °C'],['MASSA','1,1 Sol'],['IDADE','~5,3 bi anos'],['DISTÂNCIA','4,37 al'],['COMPANHEIRAS','2']],
+  quick:[['TIPO','G2V'],['RAIO','1,22 R☉'],['TEMP. SUP.','5.500 °C'],['MASSA','1,1 Sol'],['IDADE','~5,3 bi anos'],['DISTÂNCIA','4,37 al']],
   visual:{mode:'star', c1:'#fff2c4', c2:'#ffc25e'},
   sections:[
     {t:'ESTRUTURA', rows:[['Tipo','G2V, mesma classe do Sol'],['Massa','1,1 massa solar'],['Raio','1,22 R☉'],['Temperatura','5.500 °C'],['Luminosidade','1,5× o Sol']]},
@@ -1632,7 +1702,7 @@ const VEGA_DISK = {
   fict:null, moons:[]};
 const FOM_STAR = {
   id:'fomalhautA', name:'FOMALHAUT', desig:'α PISCIS AUSTRINI · A3V', kind:'O Olho de Sauron', hab:null, gbar:12,
-  quick:[['TIPO','A3V'],['MASSA','1,9 Sol'],['BRILHO','16× o Sol'],['TEMP. SUP.','8.300 °C'],['DISTÂNCIA','25 al'],['IDADE','440 mi anos']],
+  quick:[['TIPO','A3V'],['RAIO','1,84 R☉'],['MASSA','1,9 Sol'],['BRILHO','16× o Sol'],['TEMP. SUP.','8.300 °C'],['DISTÂNCIA','25 al']],
   visual:{mode:'star', c1:'#eaf2ff', c2:'#a8c8ff'},
   sections:[
     {t:'ESTRUTURA', rows:[['Tipo','Estrela branca jovem, quase o dobro da massa do Sol'],['Idade','440 milhões de anos, um bebê perto dos 4,6 bilhões do Sol'],['Companheiras','Tem duas, a 0,9 e 2,5 anos-luz de distância, o sistema triplo mais espalhado conhecido']]},
@@ -1665,7 +1735,7 @@ const FOM_DISK = {
   fict:null, moons:[]};
 const BAR_STAR = {
   id:'barnardstar', name:'ESTRELA DE BARNARD', desig:'GL 699 · M4V', kind:'A estrela fugitiva', hab:null, gbar:50,
-  quick:[['TIPO','anã vermelha M4V'],['MASSA','0,16 Sol'],['DISTÂNCIA','5,96 al'],['IDADE','~10 bi anos'],['MOV. PRÓPRIO','10,4"/ano · recorde'],['PLANETAS','4 confirmados']],
+  quick:[['TIPO','anã vermelha M4V'],['RAIO','0,19 R☉'],['MASSA','0,16 Sol'],['DISTÂNCIA','5,96 al'],['IDADE','~10 bi anos'],['PLANETAS','4 confirmados']],
   visual:{mode:'star', c1:'#ff8a4a', c2:'#c42a10'},
   sections:[
     {t:'ESTRUTURA', rows:[['Tipo','Anã vermelha pequena e fria, 0,4% da luz do Sol'],['Idade','Cerca de 10 bilhões de anos, mais que o dobro do Sol'],['Vida útil','Vai brilhar por mais de um trilhão de anos'],['Temperamento','Velha e quieta, mas ainda solta flares ocasionais']]},
@@ -1685,6 +1755,29 @@ const BAR_BODIES = [
   ],
   facts:['A estrela mais famosa dos alarmes falsos agora tem quatro planetas confirmados.','Todos eles cabem numa órbita menor que a de Mercúrio.'],
   fict:'Depois de 60 anos de planetas imaginários aqui, o real apareceu.', moons:[]}
+];
+const M16_STAR = {
+  id:'ngc6611', name:'NGC 6611', desig:'AGLOMERADO · M16', kind:'As estrelas que esculpem os Pilares', hab:null, gbar:15,
+  quick:[['TIPO','aglomerado aberto'],['RAIO','~9 R☉ (as maiores)'],['IDADE','1 a 2 mi anos'],['ESTRELAS','~460'],['DISTÂNCIA','6.500 al'],['DESTAQUE','O5V gigantes']],
+  visual:{mode:'star', c1:'#eef4ff', c2:'#9ab8ff'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['O que é','Um berçário com centenas de estrelas jovens, algumas 80 vezes mais massivas que o Sol'],['A idade','Um a dois milhões de anos, recém-nascidas em escala cósmica'],['A ferramenta','A radiação ultravioleta delas evapora o gás ao redor e esculpe as colunas'],['O destino','As maiores vão explodir em supernova antes de completarem 10 milhões de anos']]},
+    {t:'REGISTRO', rows:[['Nebulosa','Messier 16, a Nebulosa da Águia, na constelação da Serpente'],['Distância','Cerca de 6.500 anos-luz'],['Nota de escala','Este sistema é representado de forma simbólica: os Pilares têm anos-luz de altura e não orbitam nada']]}
+  ],
+  facts:['A luz dessas estrelas saiu quando a última era do gelo ainda estava em curso na Terra.'],
+  fict:null
+};
+const M16_BODIES = [
+ {id:'pilares', name:'PILARES DA CRIAÇÃO', desig:'M16 · REGIÃO DE FORMAÇÃO ESTELAR', kind:'A fotografia mais famosa do universo', hab:0, gbar:0.0001, pop:'0',
+  quick:[['ALTURA','4 a 5 anos-luz'],['DISTÂNCIA','6.500 al'],['MATERIAL','hidrogênio e poeira'],['FOTO','Hubble · 1995'],['REFEITA','JWST · 2022'],['DENTRO','estrelas nascendo']],
+  sys:{orbit:9, size:1.9, speed:0.25, angle:2.1},
+  visual:{mode:'haze', c1:'#3a2a44', c2:'#8a5a48', c3:'#c98a5a', seed:16.16, atmo:{col:'#ff9a5a', i:1.6}},
+  sections:[
+    {t:'ESCALA', rows:[['Altura','Cerca de 4 a 5 anos-luz, o pilar maior'],['Em perspectiva','A distância do Sol até Alpha Centauri caberia dentro de um deles'],['Comparação','Todo o Sistema Solar até a Nuvem de Oort é um grão perto disso'],['Posição aqui','Simbólica: eles não orbitam a estrela, estão mergulhados na nebulosa']]},
+    {t:'REGISTRO', rows:[['1995','O Hubble fotografa as colunas e a imagem vira a cara da astronomia moderna'],['O que são','Colunas de gás e poeira frios resistindo à radiação das estrelas jovens vizinhas'],['Dentro delas','Glóbulos densos onde novas estrelas estão se formando neste momento'],['2014','O Hubble refez a foto em alta definição, 20 anos depois'],['2022','O James Webb atravessou a poeira no infravermelho e revelou as estrelas escondidas'],['Já sumiram?','Uma hipótese sugere que uma supernova já os destruiu, e a notícia só chega daqui a mil anos']]}
+  ],
+  facts:['A imagem de 1995 é provavelmente a fotografia astronômica mais reproduzida da história.','O nome veio de um sermão: as colunas onde a criação acontece.','Se a supernova de fato os apagou, ainda estamos vendo fantasmas de luz por mais mil anos.'],
+  fict:'Virou capa de disco, pôster de quarto e cenário recorrente de ficção científica. Star Trek Voyager usou a imagem, e ela aparece até em selos postais.', moons:[]}
 ];
 const SYS = {
   sol:{ id:'sol', name:'SISTEMA SOLAR', star:SUN, bodies:PLANETS, belt:BELT_BODIES, beltR:[20.5,24.5], kuiperR:[54,60],
@@ -1784,6 +1877,12 @@ const SYS = {
           quick:[['ESTRELA','anã vermelha M4V'],['DISTÂNCIA','5,96 al'],['PLANETAS','4 (2024 e 2025)'],['IDADE','~10 bi anos'],['RECORDE','mov. próprio'],['RUMO','vem se aproximando']],
           sections:[{t:'REGISTRO', rows:[['O recorde','Nenhuma estrela cruza o céu tão rápido vista da Terra'],['A novela','Décadas de planetas anunciados e desmentidos, tudo defeito de instrumento'],['A virada','2024: o ESPRESSO confirmou Barnard b. Em 2025, mais três.'],['Futuro','Em 11.800 d.C. será a estrela mais próxima do Sol']]}],
           facts:['Alvo clássico das primeiras propostas sérias de sonda interestelar.']} },
+  m16:{ id:'m16', name:'NEBULOSA DA ÁGUIA', star:M16_STAR, bodies:M16_BODIES, belt:[], beltR:[14,18], beltLabel:'NUVEM DE GÁS', beltId:'pilares', beltCol:0xc07a52,
+        starSize:3.6, camMax:44, hint:'OS PILARES DA CRIAÇÃO: CADA COLUNA TEM ANOS-LUZ DE ALTURA',
+        card:{desig:'BERÇÁRIO ESTELAR · SERPENTE', kind:'Onde as estrelas nascem', hab:null,
+          quick:[['DISTÂNCIA','6.500 al'],['CATÁLOGO','Messier 16'],['IDADE','1 a 2 mi anos'],['PILARES','4 a 5 al de altura'],['FOTO','Hubble 1995'],['REVISITA','JWST 2022']],
+          sections:[{t:'REGISTRO', rows:[['A nebulosa','Uma nuvem gigante de hidrogênio onde centenas de estrelas se formaram'],['Os Pilares','Colunas de gás resistindo à radiação, com estrelas nascendo dentro'],['Escala','Cada coluna é maior que a distância do Sol até Alpha Centauri'],['Aviso','A cena aqui é simbólica: nebulosas não têm órbitas']]}],
+          facts:['O primeiro objeto deste mapa que não é nem estrela nem planeta: é o berço dos dois.']} },
   betelgeuse:{ id:'betelgeuse', name:'BETELGEUSE', star:BET_STAR, bodies:[], belt:[], beltR:null,
         starSize:9, camMax:70, hint:'NENHUM PLANETA CATALOGADO · SUPERGIGANTE EM FIM DE VIDA',
         card:{desig:'SISTEMA ESTELAR · ÓRION', kind:'Uma bomba-relógio magnífica', hab:null,
@@ -1811,6 +1910,7 @@ reg(PEG_STAR,'pegasi51'); PEG_BODIES.forEach(p=>reg(p,'pegasi51'));
 reg(VEGA_STAR,'vega'); VEGA_BODIES.forEach(p=>reg(p,'vega')); reg(VEGA_DISK,'vega');
 reg(FOM_STAR,'fomalhaut'); FOM_BODIES.forEach(p=>reg(p,'fomalhaut')); reg(FOM_DISK,'fomalhaut');
 reg(BAR_STAR,'barnard'); BAR_BODIES.forEach(p=>reg(p,'barnard'));
+reg(M16_STAR,'m16'); M16_BODIES.forEach(p=>reg(p,'m16'));
 GALAXIES.forEach(g=>{ g.coord = (g.id==='vialactea') ? 'SGR A*' : coordOf(g.name); });
 Object.values(ALLBODIES).forEach(b=>{ b.coord = coordOf(b.name); });
 const UNIVERSE_CARD = {
@@ -2747,12 +2847,31 @@ function parseDia(b){
     if(/^(DI[ÂA]METRO|DIMENS|RAIO|TAMANHO|N[ÚU]CLEO)/i.test(q[0])){ const d = tryVal(q[0], q[1]); if(d) return d; }
   return null;
 }
+const dec1 = v => v.toFixed(1).replace('.', ',');
 function fmtRatio(r){
-  if(r < 1000) return (r<10 ? r.toFixed(1) : Math.round(r)) + '×';
+  if(r < 1000) return (r<10 ? dec1(r) : Math.round(r).toLocaleString('pt-BR')) + '×';
   const e = Math.floor(Math.log10(r));
-  return (r/Math.pow(10,e)).toFixed(1) + '×10^' + e;
+  return dec1(r/Math.pow(10,e)) + '×10^' + e;
 }
-function hexOf(c, fb){ return (typeof c==='number') ? '#'+c.toString(16).padStart(6,'0') : fb; }
+/* "caberia N vezes": concordância certa, e o "de" só entra com milhão/bilhão/trilhão */
+function fmtVezes(n){
+  if(n < 2)     return dec1(n) + ' vez';
+  if(n < 10)    return dec1(n) + ' vezes';
+  if(n < 1e4)   return Math.round(n).toLocaleString('pt-BR') + ' vezes';
+  if(n < 1e6)   return Math.round(n/1e3).toLocaleString('pt-BR') + ' mil vezes';
+  for(const [d, sing, plur] of [[1e12,'trilhão','trilhões'],[1e9,'bilhão','bilhões'],[1e6,'milhão','milhões']]){
+    if(n >= d){
+      const v = n/d;
+      return (v<10 ? dec1(v) : Math.round(v).toLocaleString('pt-BR')) + ' ' + (v>=2 ? plur : sing) + ' de vezes';
+    }
+  }
+  return Math.round(n).toLocaleString('pt-BR') + ' vezes';
+}
+function hexOf(c, fb){
+  if(typeof c === 'number') return '#'+c.toString(16).padStart(6,'0');
+  if(typeof c === 'string' && c) return c;
+  return fb;
+}
 function cmpLabel(b){
   if(!CMP.a) return '⚖ COMPARAR ESTE CORPO';
   if(CMP.a.name===b.name) return '✕ CANCELAR COMPARAÇÃO';
@@ -2762,20 +2881,35 @@ function openCompare(A, B){
   const dA = parseDia(A), dB = parseDia(B);
   let viz = '';
   if(dA && dB){
-    const big = Math.max(dA.km, dB.km);
-    const ratio = big / Math.min(dA.km, dB.km);
-    const MAXPX = 130, MINPX = 6;
-    let pa = MAXPX*(dA.km/big), pb = MAXPX*(dB.km/big);
-    const capped = Math.min(pa, pb) < MINPX;
-    pa = Math.max(pa, MINPX); pb = Math.max(pb, MINPX);
+    const aMaior = dA.km >= dB.km;
+    const grande = aMaior ? A : B, pequeno = aMaior ? B : A;
+    const kmG = Math.max(dA.km, dB.km), kmP = Math.min(dA.km, dB.km);
+    const ratio = kmG / (kmP || 1);
     const c = v => [hexOf(v && v.c1, '#3f8cff'), hexOf(v && v.c2, '#7dc4ff')];
-    const [a1,a2] = c(A.visual), [b1,b2] = c(B.visual);
-    viz = '<div class="cmpviz">'
-      + '<div class="ball" style="width:'+pa.toFixed(1)+'px;height:'+pa.toFixed(1)+'px;--bc1:'+a1+';--bc2:'+a2+'"></div>'
-      + '<div class="ball" style="width:'+pb.toFixed(1)+'px;height:'+pb.toFixed(1)+'px;--bc1:'+b1+';--bc2:'+b2+'"></div>'
-      + '</div><div class="cmpscale">∅ '+esc(dA.raw)+' · ∅ '+esc(dB.raw)+' · '
-      + esc((dA.km>=dB.km?A:B).name)+' é '+fmtRatio(ratio)+' maior'
-      + (capped ? ' · FORA DE ESCALA VISUAL' : '')+'</div>';
+    const [g1,g2] = c(grande.visual), [p1,p2] = c(pequeno.visual);
+    const MAXPX = 132, MINPX = 5;
+    const pxP = Math.max(MINPX, MAXPX/ratio);
+    /* diferença pequena: lado a lado. diferença grande: o menor entra dentro do maior */
+    const dentro = ratio >= 3.2;
+    const bola = (px,x1,x2,cls)=>'<div class="ball'+(cls?' '+cls:'')+'" style="width:'+px.toFixed(1)+'px;height:'+px.toFixed(1)+'px;--bc1:'+x1+';--bc2:'+x2+'"></div>';
+    viz = dentro
+      ? '<div class="cmpviz dentro">'
+        + '<div class="hostwrap">' + bola(MAXPX,g1,g2)
+        + '<span class="inball" style="width:'+pxP.toFixed(1)+'px;height:'+pxP.toFixed(1)+'px;--bc1:'+p1+';--bc2:'+p2+'"></span>'
+        + '<span class="hostnm">'+esc(grande.name)+'</span></div>'
+        + '<div class="smallnote"><b>'+esc(pequeno.name)+'</b> nesta escala</div></div>'
+      : '<div class="cmpviz">'
+        + '<div class="bwrap">' + bola(MAXPX*(dA.km/kmG),(aMaior?g1:p1),(aMaior?g2:p2)) + '<span class="bnm">'+esc(A.name)+'</span></div>'
+        + '<div class="bwrap">' + bola(MAXPX*(dB.km/kmG),(aMaior?p1:g1),(aMaior?p2:g2)) + '<span class="bnm">'+esc(B.name)+'</span></div>'
+        + '</div>';
+    const vezes = Math.pow(ratio, 3);
+    viz += '<div class="cmpscale">∅ '+esc(dA.raw)+' · ∅ '+esc(dB.raw)+'</div>'
+        +  '<div class="cmpscale big">'
+        +  ((ratio < 1.02)
+             ? 'Os dois são praticamente do mesmo tamanho'
+             : '<b>'+esc(grande.name)+'</b> é <b>'+fmtRatio(ratio)+'</b> maior em diâmetro · <b>'
+               + esc(pequeno.name)+'</b> caberia <b>'+fmtVezes(vezes)+'</b> lá dentro')
+        +  '</div>';
   }
   let grav = '';
   if(A.gbar!=null && B.gbar!=null){
@@ -2808,7 +2942,7 @@ function closeCmp(){ $('#cmp').classList.remove('on'); CMP.a = null; cardRender(
 /* ---------- busca rápida ---------- */
 const norm = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 /* ---------- missão: visitados, patentes, lista com filtro e ordenação ---------- */
-const REGIOES = new Set(['cinturao','kuiper','oort','vegadisk','fomdisk']);
+const REGIOES = new Set(['cinturao','kuiper','oort','vegadisk','fomdisk','pilares']);
 const VIS = new Set(String(store.get('carto:vis','')).split(',').filter(Boolean));
 function markVisited(id){
   if(!id || VIS.has(id)) return;
@@ -2841,37 +2975,78 @@ function catDe(b){
   return 'planeta';
 }
 const MISSFILTROS = [
-  {k:'tudo',    t:'TUDO',       f:()=>true},
-  {k:'faltam',  t:'A VISITAR',  f:b=>!VIS.has(b.id)},
-  {k:'visto',   t:'VISITADOS',  f:b=>VIS.has(b.id)},
-  {k:'hab',     t:'HABITÁVEIS', f:b=>(b.hab||0) >= 30},
-  {k:'planeta', t:'PLANETAS',   f:b=>catDe(b)==='planeta'},
-  {k:'lua',     t:'LUAS',       f:b=>catDe(b)==='lua'},
-  {k:'estrela', t:'ESTRELAS',   f:b=>catDe(b)==='estrela'},
-  {k:'regiao',  t:'REGIÕES',    f:b=>catDe(b)==='regiao' || catDe(b)==='menor'}
+  {k:'tudo',     t:'TUDO',       f:()=>true},
+  {k:'sistemas', t:'★ SISTEMAS', f:()=>true},
+  {k:'faltam',   t:'A VISITAR',  f:b=>!VIS.has(b.id)},
+  {k:'visto',    t:'VISITADOS',  f:b=>VIS.has(b.id)},
+  {k:'hab',      t:'HABITÁVEIS', f:b=>(b.hab||0) >= 30},
+  {k:'planeta',  t:'PLANETAS',   f:b=>catDe(b)==='planeta'},
+  {k:'lua',      t:'LUAS',       f:b=>catDe(b)==='lua'},
+  {k:'estrela',  t:'ESTRELAS',   f:b=>catDe(b)==='estrela'},
+  {k:'regiao',   t:'REGIÕES',    f:b=>catDe(b)==='regiao' || catDe(b)==='menor'}
 ];
-const MISS = {filtro:'tudo', ordem:'nome'};
+const MISS = {filtro:'tudo', ordem:'nome', q:''};
+/* conquista de sistema: todos os corpos daquele sistema visitados */
+function progressoSistemas(){
+  const mapa = {};
+  for(const b of Object.values(ALLBODIES)){
+    const s = b._sys; if(!SYS[s]) continue;
+    if(!mapa[s]) mapa[s] = {id:s, nome:SYS[s].name, total:0, vistos:0};
+    mapa[s].total++;
+    if(VIS.has(b.id)) mapa[s].vistos++;
+  }
+  return Object.values(mapa);
+}
 const CATNOME = {planeta:'PLANETA', lua:'LUA', estrela:'ESTRELA', regiao:'REGIÃO', menor:'CORPO MENOR'};
 function missRender(){
   const todos = Object.values(ALLBODIES);
   const total = todos.length;
   const n = todos.filter(b=>VIS.has(b.id)).length;
   const pat = patenteDe(n, total);
+  const sis = progressoSistemas();
+  const selos = sis.filter(s=>s.vistos>=s.total).length;
   $('#misspat').textContent = pat.cur.t;
-  $('#misscnt').innerHTML = '<b>'+n+'</b> / '+total+' VISITADOS';
+  $('#misscnt').innerHTML = '<b>'+n+'</b> / '+total+' VISITADOS'
+    + (selos ? ' · <b>'+selos+'</b>/'+sis.length+' SELOS' : '');
   $('#missbar').firstElementChild.style.width = Math.round(n/total*100)+'%';
   $('#missnext').textContent = pat.nxt ? (pat.cur.d+' Faltam '+(pat.nxt.n-n)+' para '+pat.nxt.t+'.') : pat.cur.d;
+
+  const q = norm(MISS.q||'');
+  $('#missqx').classList.toggle('on', !!q);
+  const el = $('#misslist');
+
+  if(MISS.filtro==='sistemas'){
+    let ls = sis.slice().sort((a,b)=>{
+      const pa = a.vistos/a.total, pb = b.vistos/b.total;
+      return pb-pa || a.nome.localeCompare(b.nome);
+    });
+    if(q) ls = ls.filter(s=>norm(s.nome).includes(q));
+    el.innerHTML = ls.length ? ls.map(s=>{
+      const pc = Math.round(s.vistos/s.total*100), full = s.vistos>=s.total;
+      return '<li data-sis="'+s.id+'" class="sysrow'+(full?' full':'')+'">'
+        + '<span class="sysbadge"><span>'+(full?'★':'')+'</span></span>'
+        + '<span class="minfo"><span class="mnm">'+esc(s.nome)+'</span>'
+        + '<span class="msub">'+(full ? 'SISTEMA COMPLETO' : ((s.total-s.vistos)===1 ? 'FALTA 1' : 'FALTAM '+(s.total-s.vistos)))
+        + ' · '+s.total+(s.total===1 ? ' CORPO' : ' CORPOS')+'</span></span>'
+        + '<span class="sysprog">'+s.vistos+'/'+s.total+'<i><b style="width:'+pc+'%"></b></i></span>'
+        + '</li>';
+    }).join('') : '<li id="missempty">NENHUM SISTEMA ENCONTRADO</li>';
+    $('#missfootcnt').textContent = selos + ' DE ' + sis.length + (selos===1 ? ' SISTEMA COMPLETO' : ' SISTEMAS COMPLETOS');
+    $('#misschips').querySelectorAll('.mchip').forEach(c=>c.classList.toggle('on', c.dataset.k===MISS.filtro));
+    return;
+  }
 
   const flt = MISSFILTROS.find(x=>x.k===MISS.filtro) || MISSFILTROS[0];
   const nm = b=>norm(b.name);
   const sisNome = b => SYS[b._sys] ? SYS[b._sys].name : '';
-  const lista = todos.filter(flt.f);
+  let lista = todos.filter(flt.f);
+  if(q) lista = lista.filter(b=>norm(b.name+' '+(b.desig||'')+' '+sisNome(b)).includes(q));
   if(MISS.ordem==='hab')       lista.sort((a,b)=>(b.hab||0)-(a.hab||0) || nm(a).localeCompare(nm(b)));
   else if(MISS.ordem==='grav') lista.sort((a,b)=>(b.gbar||0)-(a.gbar||0) || nm(a).localeCompare(nm(b)));
   else if(MISS.ordem==='sis')  lista.sort((a,b)=>sisNome(a).localeCompare(sisNome(b)) || nm(a).localeCompare(nm(b)));
   else                         lista.sort((a,b)=>nm(a).localeCompare(nm(b)));
 
-  $('#misslist').innerHTML = lista.length ? lista.map(b=>{
+  el.innerHTML = lista.length ? lista.map(b=>{
     const sub = CATNOME[catDe(b)] + ' · ' + sisNome(b);
     return '<li data-id="'+b.id+'" class="'+(VIS.has(b.id)?'vis':'')+'">'
       + '<span class="mdot"></span>'
@@ -2879,7 +3054,7 @@ function missRender(){
       + (b.hab==null ? '<span class="mhab">·</span>'
                      : '<span class="mhab'+(b.hab>=50?' hi':'')+'">'+b.hab+'<i><b style="width:'+b.hab+'%"></b></i></span>')
       + '</li>';
-  }).join('') : '<li id="missempty">NENHUM CORPO NESTE FILTRO</li>';
+  }).join('') : '<li id="missempty">'+(q ? 'NADA ENCONTRADO PARA ESSA BUSCA' : 'NENHUM CORPO NESTE FILTRO')+'</li>';
   $('#missfootcnt').textContent = lista.length + (lista.length===1 ? ' CORPO LISTADO' : ' CORPOS LISTADOS');
   $('#misschips').querySelectorAll('.mchip').forEach(c=>c.classList.toggle('on', c.dataset.k===MISS.filtro));
 }
@@ -3112,9 +3287,18 @@ $('#mission').addEventListener('click', e=>{ if(e.target.id==='mission') missClo
     $('#misslist').scrollTop = 0;
   });
   $('#misssort').addEventListener('change', e=>{ MISS.ordem = e.target.value; missRender(); $('#misslist').scrollTop = 0; });
+  $('#missq').addEventListener('input', e=>{ MISS.q = e.target.value; missRender(); $('#misslist').scrollTop = 0; });
+  $('#missq').addEventListener('keydown', e=>{
+    if(e.key==='Escape'){ e.preventDefault(); if(MISS.q){ MISS.q=''; e.target.value=''; missRender(); } else missClose(); }
+    e.stopPropagation();
+  });
+  $('#missqx').addEventListener('click', ()=>{ MISS.q=''; $('#missq').value=''; missRender(); $('#missq').focus(); });
   $('#misslist').addEventListener('click', e=>{
-    const li = e.target.closest('li[data-id]'); if(!li) return;
-    missClose(); gotoFocus(li.dataset.id);
+    const li = e.target.closest('li[data-id],li[data-sis]');
+    if(!li) return;
+    missClose();
+    if(li.dataset.sis) gotoSystem(li.dataset.sis);
+    else gotoFocus(li.dataset.id);
   });
 })();
 $('#btnfind').addEventListener('click', findOpen);
@@ -3267,15 +3451,24 @@ bindZoom($('#zin'), 0.94);
 bindZoom($('#zout'), 1.064);
 
 /* modo foto: P esconde o HUD para capturas limpas */
+/* o botão de saída aparece ao entrar e sempre que o ponteiro se mexe, some sozinho */
+function photoPeek(){
+  if(!document.body.classList.contains('photo')) return;
+  document.body.classList.add('hudpeek');
+  clearTimeout(photoPeek._t);
+  photoPeek._t = setTimeout(()=>document.body.classList.remove('hudpeek'), 2600);
+}
 function togglePhoto(touch){
   const on = document.body.classList.toggle('photo');
   const t = $('#phototoast');
   if(t){
-    t.textContent = on ? (touch ? 'MODO FOTO · TOQUE LONGO PARA VOLTAR' : 'MODO FOTO · P PARA VOLTAR') : 'HUD RESTAURADO';
+    t.textContent = on ? (touch ? 'MODO FOTO · TOQUE LONGO OU ✕ PARA VOLTAR' : 'MODO FOTO · P OU ✕ PARA VOLTAR') : 'HUD RESTAURADO';
     t.classList.add('on');
     clearTimeout(togglePhoto._t);
-    togglePhoto._t = setTimeout(()=>t.classList.remove('on'), on ? 2200 : 900);
+    togglePhoto._t = setTimeout(()=>t.classList.remove('on'), on ? 2400 : 900);
   }
+  if(on) photoPeek();
+  else { clearTimeout(photoPeek._t); document.body.classList.remove('hudpeek'); }
 }
 
 window.addEventListener('keydown', e=>{
@@ -3317,7 +3510,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r26';
+const BUILD = 'r27';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -3382,6 +3575,8 @@ $('#diagchip').addEventListener('click', function(){ this.style.display='none'; 
 })();
 $('#btnsnd').addEventListener('click', ()=>{ $('#player').classList.toggle('on'); AUDIO.plSync(); });
 $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: coarse)').matches));
+$('#photoexit').addEventListener('click', e=>{ e.stopPropagation(); togglePhoto(); });
+['pointermove','pointerdown','wheel'].forEach(ev=>window.addEventListener(ev, photoPeek, {passive:true}));
 $('#pl_mute').addEventListener('click', ()=>AUDIO.toggle());
 $('#pl_prev').addEventListener('click', ()=>AUDIO.prev());
 $('#pl_next').addEventListener('click', ()=>AUDIO.next());
