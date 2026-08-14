@@ -313,7 +313,14 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
   background:rgba(6,12,24,.6);color:var(--dim);font-family:var(--mono);font-size:11px;cursor:pointer;display:none}
 #missqx.on{display:block}
 #missqx:hover{border-color:var(--line2);color:var(--ion)}
-/* conquistas por sistema */
+/* conquistas por sistema, agrupadas por galáxia */
+#misslist li.galrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  min-height:0;padding:14px 20px 7px;cursor:default;background:rgba(63,140,255,.07);
+  border-bottom:1px solid var(--line);position:sticky;top:0;z-index:1;backdrop-filter:blur(6px)}
+#misslist li.galrow:hover{background:rgba(63,140,255,.07)}
+#misslist .galnm{font-family:var(--mono);font-size:9.5px;letter-spacing:3px;color:var(--ion)}
+#misslist .galct{font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;color:var(--dim);white-space:nowrap}
+#misslist li.galrow.full .galnm{color:var(--amber)}
 #misslist li.sysrow{align-items:center}
 #misslist .sysbadge{flex:0 0 auto;width:26px;height:26px;display:flex;align-items:center;justify-content:center;
   border:1px solid var(--line2);transform:rotate(45deg);font-size:10px;color:var(--dim)}
@@ -371,6 +378,7 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
   #misstools{padding:10px 16px;flex-wrap:nowrap}
   #misslist .sysprog{width:78px}
   #misslist li{padding:12px 16px;min-height:58px}
+  #misslist li.galrow{padding:12px 16px 6px;min-height:0}
   #missfoot{padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
   .mchips{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .mchips::-webkit-scrollbar{display:none}
@@ -965,11 +973,16 @@ PLANETS.push(
   facts:['Tem 2,5× a massa de todos os outros planetas somados.','Funciona como "aspirador de pó" do sistema: sua gravidade desvia cometas e asteroides.','As 4 luas de Galileu (1610) foram a primeira prova de que nem tudo orbita a Terra.'],
   fict:'2001: Uma Odisseia no Espaço, destino da Discovery One.',
   moons:[
-   {id:'io', name:'IO', desig:'JÚPITER-I', kind:'Lua vulcânica', hab:0, gbar:0.18, pop:'0',
-    quick:[['DIÂMETRO','3.643 km'],['ÓRBITA','1,8 d'],['DESCOBERTA','1610'],['VULCÕES','400+']],
+   {id:'io', name:'IO', desig:'JÚPITER-I · LUA', kind:'O lugar mais vulcânico do Sistema Solar', hab:0, gbar:0.18, pop:'0',
+    quick:[['DIÂMETRO','3.643 km'],['GRAVIDADE','0,18 g'],['ÓRBITA','1,77 d'],['VULCÕES','400+'],['CRATERAS','nenhuma'],['JUNO','passou a 1.500 km']],
     visual:{mode:'rocky', c1:'#d9c25f', c2:'#b0872c', c3:'#e8dc9a', scale:5.2, seed:7.3, crater:0.3, spot:{pos:[0.6,0.1], r:0.2, col:'#b3411f', on:1}},
-    sections:[{t:'REGISTRO', rows:[['Descoberta','1610 · Galileu'],['Atividade','Corpo mais vulcânico do sistema'],['Causa','Maré gravitacional de Júpiter "amassa" o interior'],['Superfície','Enxofre, por isso as cores']]}],
-    facts:['Alguns vulcões de Io lançam plumas a 500 km de altura.'], fict:null},
+    sections:[
+      {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância de Júpiter','421 mil km'],['Ano','1,77 dia'],['Rotação','Síncrona'],['O motor','Presa num cabo de guerra entre Júpiter, Europa e Ganimedes, ela é amassada sem parar']]},
+      {t:'ESTRUTURA', rows:[['Superfície','Enxofre e dióxido de enxofre congelado, daí o amarelo, o laranja e o branco'],['Sem crateras','A lava cobre tudo tão rápido que nenhuma cicatriz de impacto sobrevive'],['Loki Patera','Um lago de lava de 200 km que muda de brilho em ciclos'],['Montanhas','Picos de até 17 km, mais altos que o Everest, erguidos por compressão'],['O rastro','Ela deixa um anel de plasma em volta de Júpiter, alimentado pelos vulcões']]},
+      {t:'REGISTRO', rows:[['Descoberta','1610 · Galileu, uma das quatro que provaram que nem tudo orbita a Terra'],['1979','A Voyager 1 flagra uma pluma no horizonte: a primeira erupção vista fora da Terra'],['Juno (2023 e 2024)','Duas passagens a 1.500 km, as mais próximas em vinte anos, com fotos em cor real'],['O que a Juno viu','Lagos de lava com margens de rocha lisa como vidro e um pico batizado de Steeple Mountain'],['A conclusão','Cada lua vulcânica parece ter seu próprio bolsão de magma, sem oceano global de lava']]}
+    ],
+    facts:['Alguns vulcões lançam plumas a 500 km de altura, o dobro da altitude da Estação Espacial.','Nenhuma cratera de impacto: a superfície inteira se refaz a cada milhão de anos.','A cada segundo, uma tonelada de material sai de Io e vira anel de plasma em volta de Júpiter.'],
+    fict:'É a colônia mineradora clássica da ficção científica, de Atmosfera Zero (1981), o "faroeste no espaço", a The Expanse.'},
    {id:'europa', name:'EUROPA', desig:'JÚPITER-II', kind:'Lua de gelo', hab:58, gbar:0.13, pop:'0',
     quick:[['DIÂMETRO','3.122 km'],['ÓRBITA','3,6 d'],['DESCOBERTA','1610'],['OCEANO','sim']],
     visual:{mode:'rocky', c1:'#ded6c8', c2:'#c9b699', c3:'#a3764f', scale:6.8, seed:3.9, crater:0.0},
@@ -1122,21 +1135,25 @@ PLANETS.push(
 const BELT_BODIES = [
  {id:'ceres', name:'CERES', desig:'CINTURÃO-1 · PLANETA ANÃO', kind:'Planeta anão', hab:10, gbar:0.029, pop:'0',
   belt:{angle:0.8, r:22.6},
-  quick:[['DIÂMETRO','940 km'],['GRAVIDADE','0,029 g'],['DIA','9 h'],['ANO','4,6 anos'],['ÁGUA','~25%'],['DESCOBERTA','1801']],
+  quick:[['DIÂMETRO','940 km'],['GRAVIDADE','0,029 g'],['DIA','9 h'],['ANO','4,6 anos'],['ÁGUA','~25% da massa'],['DAWN','2015 a 2018']],
   visual:{mode:'rocky', c1:'#8f8779', c2:'#a89f8e', c3:'#6b6357', scale:5.2, seed:4.9, crater:0.8, spot:{pos:[1.4,0.2], r:0.12, col:'#f0ead8', on:1}},
   sections:[
-    {t:'ÓRBITA & ROTAÇÃO', rows:[['Região','Cinturão principal (Marte–Júpiter)'],['Distância do Sol','414 mi km (2,8 UA)'],['Ano','4,6 anos'],['Dia','9 h']]},
-    {t:'ESTRUTURA', rows:[['Diâmetro','940 km'],['Massa','1/3 de todo o cinturão'],['Água','Até 25% da massa, mais água doce que a Terra'],['Ahuna Mons','Um CRIOVULCÃO de 4 km']]},
-    {t:'REGISTRO', rows:[['Descoberta','01/01/1801 · Giuseppe Piazzi'],['Marco','1º asteroide descoberto · promovido a planeta anão em 2006'],['Visita','Sonda Dawn · 2015–2018'],['Pontos brilhantes','Sal (carbonato de sódio) na cratera Occator'],['População','0']]}
+    {t:'ÓRBITA & ROTAÇÃO', rows:[['Região','Cinturão principal, entre Marte e Júpiter'],['Distância do Sol','414 mi km (2,8 UA)'],['Ano','4,6 anos'],['Dia','9 horas']]},
+    {t:'ESTRUTURA', rows:[['Diâmetro','940 km, um terço da massa de todo o cinturão'],['Água','Até 25% da massa, mais água doce que toda a Terra'],['Occator','A cratera dos pontos brilhantes, com 92 km'],['Ahuna Mons','Um criovulcão de 4 km que expeliu lama salgada, não lava'],['Por baixo','Um reservatório de salmoura ainda líquido, alimentado por sal e pressão']]},
+    {t:'REGISTRO', rows:[['1º de janeiro de 1801','Giuseppe Piazzi encontra o primeiro asteroide da história'],['A confusão','Foi chamado de planeta por 50 anos, virou asteroide, e em 2006 virou planeta anão'],['Dawn (2015 a 2018)','Primeira nave a orbitar um planeta anão, e a primeira a orbitar dois mundos diferentes'],['Os pontos brilhantes','Carbonato de sódio: sal que subiu do subsolo e secou na superfície, ainda hoje'],['Orgânicos','A Dawn achou compostos de carbono perto de Ernutet, matéria-prima da vida'],['A sonda hoje','Acabou o combustível em 2018 e continua em órbita, silenciosa, para não contaminar a superfície']]}
   ],
   facts:['Nos primeiros anos, foi classificado como o 8º planeta.','Os "faróis" da cratera Occator intrigaram o mundo até a Dawn revelar: depósitos de sal de um oceano antigo.'],
   fict:'The Expanse, a estação de Ceres é o coração do Cinturão, lar do detetive Miller. "Beltalowda!"', moons:[]},
- {id:'vesta', name:'VESTA', desig:'CINTURÃO-4 · ASTEROIDE', kind:'Asteroide gigante', hab:0, gbar:0.026, pop:'0',
+ {id:'vesta', name:'VESTA', desig:'CINTURÃO-4 · PROTOPLANETA', kind:'O planeta que parou no meio do caminho', hab:0, gbar:0.026, pop:'0',
   belt:{angle:2.6, r:22.2},
-  quick:[['DIÂMETRO','525 km'],['DIA','5,3 h'],['ANO','3,6 anos'],['DESCOBERTA','1807']],
+  quick:[['DIÂMETRO','525 km'],['GRAVIDADE','0,026 g'],['DIA','5,3 h'],['ANO','3,6 anos'],['DAWN','2011 a 2012'],['A OLHO NU','sim, quase']],
   visual:{mode:'rocky', c1:'#9c9488', c2:'#b8afa1', c3:'#756d62', scale:6.0, seed:7.7, crater:1.0},
-  sections:[{t:'REGISTRO', rows:[['Descoberta','1807 · Heinrich Olbers'],['Cratera Rheasilvia','500 km, com pico central de 22 km, um dos mais altos do sistema'],['Visita','Sonda Dawn · 2011–2012'],['Meteoritos','~6% dos meteoritos da Terra vieram de Vesta']]}],
-  facts:['É o asteroide mais brilhante, em condições ideais dá para ver a olho nu.'], fict:null, moons:[]},
+  sections:[
+    {t:'ESTRUTURA', rows:[['O que é','Não é bem um asteroide: tem núcleo de ferro, manto e crosta, como um planeta inacabado'],['Rheasilvia','Uma cratera de 500 km no polo sul, quase do tamanho do próprio corpo'],['O pico central','22 km de altura, rivalizando com o Olimpo de Marte pelo posto de maior do sistema'],['O tombo','O impacto arrancou 1% do volume de Vesta e mudou a rotação dela']]},
+    {t:'REGISTRO', rows:[['1807','Descoberta por Heinrich Olbers, o quarto asteroide encontrado'],['Dawn (2011 a 2012)','Passou 14 meses em órbita mapeando tudo antes de seguir para Ceres'],['Os meteoritos','Cerca de 6% de todos os meteoritos que caem na Terra vieram daqui'],['Como sabemos','A Dawn comparou a assinatura mineral e bateu com as pedras dos nossos museus'],['O que ensinou','É uma cápsula do tempo dos primeiros milhões de anos do Sistema Solar']]}
+  ],
+  facts:['É o asteroide mais brilhante do céu: em condições ideais, dá para ver a olho nu.','Você provavelmente já viu um pedaço de Vesta: eles estão nas coleções de meteoritos do mundo inteiro.','O impacto de Rheasilvia espalhou uma família inteira de fragmentos que ainda orbitam por perto.'],
+  fict:null, moons:[]},
  {id:'palas', name:'PALLAS', desig:'CINTURÃO-2 · ASTEROIDE', kind:'Asteroide gigante', hab:0, gbar:0.02, pop:'0',
   belt:{angle:4.4, r:23.0},
   quick:[['DIÂMETRO','512 km'],['ÓRBITA','inclinada 34°'],['ANO','4,6 anos'],['DESCOBERTA','1802']],
@@ -1233,7 +1250,7 @@ const STARSYS = [
   card:{desig:'SISTEMA ESTELAR · 40,7 AL', kind:'Anã vermelha · 7 planetas rochosos', hab:null,
    quick:[['DISTÂNCIA','40,7 al'],['PLANETAS','7 rochosos'],['ZONA HABIT.','3'],['DESCOBERTA','2016–17']],
    sections:[{t:'REGISTRO', rows:[['Estrela','Anã vermelha ultrafria, pouco maior que Júpiter'],['Sistema','7 planetas em órbitas menores que a de Mercúrio'],['James Webb','Já mediu b e c, provavelmente sem atmosfera; a zona habitável é a próxima']]}],
-   facts:['O sistema com mais planetas do tamanho da Terra já encontrado. Navegação liberada →']}},
+   facts:['O sistema com mais planetas do tamanho da Terra já encontrado até hoje.']}},
  {id:'betelgeuse', name:'BETELGEUSE', nav:true, pos:[-6,0,-16], hot:true,
   card:{desig:'ESTRELA · ~550 AL', kind:'Supergigante vermelha', hab:null,
    quick:[['DISTÂNCIA','~550 al'],['RAIO','~760 Sóis'],['IDADE','~10 mi anos'],['DESTINO','supernova']],
@@ -1284,7 +1301,7 @@ const STARSYS = [
   card:{desig:'SISTEMA ESTELAR · 50,5 AL', kind:'O marco zero dos exoplanetas', hab:null,
    quick:[['DISTÂNCIA','50,5 al'],['ESTRELA','G2IV'],['PLANETAS','1 conf.'],['DESCOBERTA','1995 · Nobel 2019']],
    sections:[{t:'REGISTRO', rows:[['1995','Mayor & Queloz: o 1º exoplaneta em uma estrela tipo Sol'],['Dimidium','Júpiter quente com ano de 4,2 dias: “impossível” até existir'],['O prêmio','Nobel de Física de 2019, 24 anos depois']]}],
-   facts:['Onde a caça aos exoplanetas começou. Navegação liberada →'],
+   facts:['Todo exoplaneta conhecido hoje descende desta descoberta de 1995.'],
    fict:'O apelido original do planeta, Bellerophon, aparece em Firefly.'}},
  {id:'vega', name:'VEGA', nav:true, pos:[2.5,0,12.8], hot:false,
   card:{desig:'ESTRELA · 25 AL', kind:'A estrela-padrão · dona do 1º disco de detritos', hab:null,
@@ -1309,12 +1326,12 @@ const STARSYS = [
    quick:[['DISTÂNCIA','6.500 al'],['CATÁLOGO','M16'],['ALTURA','4 a 5 al'],['FOTO','Hubble 1995']],
    sections:[{t:'REGISTRO', rows:[['O que é','Colunas de gás e poeira onde novas estrelas estão nascendo'],['A imagem','A foto de 1995 virou a cara da astronomia moderna'],['JWST','Em 2022 o infravermelho revelou as estrelas escondidas dentro das colunas']]}],
    facts:['Cada pilar é mais alto que a distância entre o Sol e a estrela mais próxima.'],
-   fict:'Capa de disco, pôster e cenário de ficção. Navegação liberada →'}},
+   fict:'Capa de disco, pôster de quarto e cenário recorrente de ficção científica.'}},
  {id:'orion', name:'NEBULOSA DE ÓRION', nav:true, pos:[3.5,0,-13.5], hot:true,
   card:{desig:'BERÇÁRIO ESTELAR · 1.344 AL', kind:'A fábrica de estrelas mais próxima', hab:null,
    quick:[['DISTÂNCIA','1.344 al'],['CATÁLOGO','M42'],['LARGURA','24 al'],['A OLHO NU','sim']],
    sections:[{t:'REGISTRO', rows:[['O que é','Uma nuvem acesa por estrelas recém-nascidas, o Trapézio'],['O espetáculo','Centenas de discos protoplanetários: sistemas solares em obras'],['Onde ver','Na espada de Órion, logo abaixo das três Marias']]}],
-   facts:['A nebulosa que todo mundo já viu a olho nu sem saber. Navegação liberada →'],
+   facts:['A mancha turva na espada de Órion que todo mundo já viu a olho nu sem saber o que era.'],
    fict:'“Naves em chamas ao largo de Órion”, diz Roy Batty em Blade Runner.'}},
  {id:'caranguejo', name:'CARANGUEJO · M1', nav:true, pos:[-17.5,0,3], hot:true,
   card:{desig:'RESTO DE SUPERNOVA · 6.500 AL', kind:'A explosão de 1054', hab:null,
@@ -1338,8 +1355,20 @@ const STARSYS = [
   card:{desig:'SISTEMA · ANDRÔMEDA', kind:'O primeiro planeta candidato fora da Via Láctea', hab:null,
    quick:[['DISTÂNCIA','2,5 mi al'],['MÉTODO','microlente'],['DETECTADO','1999'],['MASSA','~6 M♃']],
    sections:[{t:'REGISTRO', rows:[['O evento','Uma estrela de Andrômeda ampliou a luz de outra e entregou um planeta junto'],['O limite','Microlentes não se repetem: será candidato para sempre'],['A distância','2,5 milhões de anos-luz daqui']]}],
-   facts:['Um endereço de verdade em Andrômeda. Navegação liberada →'],
+   facts:['A luz que carregava a informação desse planeta saiu de Andrômeda antes de existirem humanos.'],
    fict:'Andrômeda é destino clássico da ficção. Este é o único ponto real que temos por lá.'}},
+ {id:'mayall2', name:'MAYALL II · G1', nav:true, gal:'andromeda', pos:[-11,0,-7], hot:false,
+  card:{desig:'AGLOMERADO GLOBULAR · M31', kind:'O mais brilhante do Grupo Local', hab:null,
+   quick:[['ESTRELAS','~10 milhões'],['IDADE','12 bi anos'],['DIÂMETRO','~90 al'],['DISTÂNCIA','2,5 mi al']],
+   sections:[{t:'REGISTRO', rows:[['O que é','Uma bola de dez milhões de estrelas velhas orbitando Andrômeda'],['O brilho','Supera qualquer aglomerado globular da Via Láctea'],['A suspeita','Pode ter um buraco negro de massa intermediária no centro']]}],
+   facts:['As estrelas dali se formaram quando o universo tinha menos de dois bilhões de anos.'],
+   fict:null}},
+ {id:'nucleoM31', name:'NÚCLEO DE M31', nav:true, gal:'andromeda', pos:[0,0,0], hot:true,
+  card:{desig:'NÚCLEO GALÁCTICO · M31', kind:'O buraco negro central de Andrômeda', hab:null,
+   quick:[['MASSA','~140 mi Sóis'],['NÚCLEO','duplo, P1 e P2'],['COMPARAÇÃO','50× o nosso'],['DISTÂNCIA','2,5 mi al']],
+   sections:[{t:'REGISTRO', rows:[['O núcleo duplo','O Hubble viu dois caroços de luz onde deveria haver um só'],['A explicação','É um disco de estrelas em órbitas alongadas, que se acumulam de um lado'],['O futuro','Vai se fundir com o buraco negro da Via Láctea daqui a 4,5 bi de anos']]}],
+   facts:['É cinquenta vezes mais massivo que o buraco negro no centro da nossa galáxia.'],
+   fict:'O destino favorito da ficção quando alguém precisa de "outra galáxia".'}},
  {id:'m51uls', name:'M51-ULS-1', nav:true, gal:'redemoinho', pos:[-7,0,5.5], hot:true,
   card:{desig:'BINÁRIA DE RAIOS X · M51', kind:'O planeta mais distante já suspeitado', hab:null,
    quick:[['DISTÂNCIA','28 mi al'],['MÉTODO','raios X'],['DETECTADO','2021'],['TAMANHO','~Saturno']],
@@ -1981,6 +2010,51 @@ const AND_BODIES = [
   facts:['A luz que carrega essa informação saiu de Andrômeda há 2,5 milhões de anos.','É o objeto mais distante que dá para "visitar" neste mapa fora das galáxias inteiras.','Nenhum telescópio existente ou planejado consegue confirmar este planeta.'],
   fict:'Andrômeda é destino recorrente da ficção, de Mass Effect a Star Trek. Este é o único endereço real que temos por lá.', moons:[]}
 ];
+const G1_STAR = {
+  id:'g1nucleo', name:'NÚCLEO DE G1', desig:'MAYALL II · CENTRO', kind:'Meio milhão de estrelas num punhado de anos-luz', hab:null, gbar:30,
+  quick:[['TIPO','aglomerado globular'],['RAIO','~9 R☉ (as maiores)'],['ESTRELAS','~10 milhões'],['IDADE','12 bi anos'],['DISTÂNCIA','2,5 mi al'],['SUSPEITA','buraco negro de 20 mil sóis']],
+  visual:{mode:'star', c1:'#ffe9c0', c2:'#ffbd6a'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['O que é','O centro do aglomerado mais brilhante de todo o Grupo Local'],['Densidade','No miolo, as estrelas ficam a semanas-luz umas das outras, não anos-luz'],['Idade','Cerca de 12 bilhões de anos: são estrelas quase tão velhas quanto o universo'],['O mistério','A velocidade das estrelas centrais sugere um buraco negro de porte médio, raríssimo']]},
+    {t:'REGISTRO', rows:[['Onde','Orbitando Andrômeda, a 130 mil anos-luz do centro dela'],['A dúvida','É um globular gigante ou o caroço de uma galáxia anã devorada por M31?'],['O céu de lá','Um planeta ali teria milhares de estrelas mais brilhantes que Vênus, e noite quase nunca']]}
+  ],
+  facts:['É o aglomerado globular mais brilhante do Grupo Local inteiro, ofuscando qualquer um da Via Láctea.'],
+  fict:null
+};
+const G1_SWARM = {
+  id:'g1enxame', name:'ENXAME DE MAYALL II', desig:'M31 · AGLOMERADO GLOBULAR', kind:'Dez milhões de sóis apertados numa bola', hab:0, gbar:0.01, pop:'0',
+  region:true, field:{shape:'shell', r0:5, r1:19, col:0xffd9a0, rock:0xc9a26a, size:0.17},
+  quick:[['ESTRELAS','~10 milhões'],['DIÂMETRO','~90 anos-luz'],['MASSA','7 mi Sóis'],['IDADE','12 bi anos'],['DISTÂNCIA','2,5 mi al'],['DESCOBERTO','1953']],
+  visual:{mode:'star', c1:'#ffe0b0', c2:'#ffb066'},
+  sections:[
+    {t:'ESCALA', rows:[['Diâmetro','Cerca de 90 anos-luz para dez milhões de estrelas'],['Comparação','Nesse mesmo espaço, a vizinhança do Sol tem umas poucas dezenas de estrelas'],['Posição aqui','Simbólica: você está dentro do enxame, olhando ao redor']]},
+    {t:'REGISTRO', rows:[['1953','Nicholas Mayall e Olin Eggen o catalogam como o segundo objeto da lista deles'],['O apelido','G1, de globular número 1, o mais brilhante da lista de Andrômeda'],['Hubble (1994)','Resolveu estrelas individuais nele, a 2,5 milhões de anos-luz'],['O achado','Medidas de movimento sugerem um buraco negro de massa intermediária no centro']]}
+  ],
+  facts:['Se a Terra estivesse aqui, o céu noturno teria milhares de estrelas mais brilhantes que Vênus.','É quase tão velho quanto o próprio universo: essas estrelas se formaram antes da maioria das galáxias se organizarem.','Pode não ser um aglomerado: talvez seja o coração sobrevivente de uma galáxia anã que Andrômeda engoliu.'],
+  fict:null, moons:[]};
+const M31N_STAR = {
+  id:'p2buraco', name:'BURACO NEGRO DE M31', desig:'P2 · NÚCLEO DE ANDRÔMEDA', kind:'Cinquenta vezes o buraco negro da nossa galáxia', hab:null, gbar:900000000000,
+  quick:[['TIPO','buraco negro supermassivo'],['MASSA','~140 mi Sóis'],['RAIO','~1,2 R☉ (horizonte)'],['DISTÂNCIA','2,5 mi al'],['NÚCLEO','duplo (P1 e P2)'],['COMPARAÇÃO','50× o Sgr A*']],
+  visual:{mode:'star', c1:'#050303', c2:'#1a0c05',
+    rings:{rin:1.5, rout:3.2, col:'#ffab4a', op:0.9, tilt:74, seed:3.1}},
+  sections:[
+    {t:'ESTRUTURA', rows:[['Massa','Cerca de 140 milhões de sóis, contra 4,1 milhões do buraco negro da Via Láctea'],['O disco','Um anel de estrelas jovens e azuis mergulha até bem perto do horizonte'],['O enigma','Ninguém sabe como estrelas conseguem se formar sob uma maré gravitacional dessas']]},
+    {t:'REGISTRO', rows:[['O núcleo duplo','O Hubble viu dois caroços de luz, P1 e P2, onde deveria haver um só'],['A explicação','Não são dois núcleos: é um disco de estrelas em órbitas alongadas, que se acumulam de um lado'],['P2','O ponto onde mora o buraco negro de verdade'],['Daqui a 4,5 bi de anos','Quando as galáxias colidirem, ele e o Sagittarius A* vão espiralar até virar um só']]}
+  ],
+  facts:['Quando Andrômeda e a Via Láctea se fundirem, os dois buracos negros centrais vão se encontrar e virar um.','O anel de estrelas jovens ao redor dele não deveria existir: a gravidade deveria despedaçar qualquer nuvem antes de virar estrela.'],
+  fict:'É o centro da galáxia que a ficção científica mais adota como destino, de Mass Effect a incontáveis space operas.'
+};
+const M31N_DISK = {
+  id:'p1disco', name:'DISCO P1', desig:'M31 · DISCO EXCÊNTRICO', kind:'O falso segundo núcleo de Andrômeda', hab:0, gbar:0.01, pop:'0',
+  region:true, field:{shape:'ring', r0:5, r1:16, h:2.0, col:0x9fc0ff, rock:0x6a86c0, size:0.16},
+  quick:[['O QUE É','disco de estrelas'],['RAIO','~5 anos-luz'],['ESTRELAS','milhões'],['ÓRBITA','alongada'],['VELOCIDADE','1.000 km/s'],['REVELADO','Hubble, 1993']],
+  visual:{mode:'star', c1:'#cfe0ff', c2:'#7f9cff'},
+  sections:[
+    {t:'ESCALA', rows:[['Tamanho','Alguns anos-luz de ponta a ponta, com milhões de estrelas dentro'],['Velocidade','Perto do buraco negro, estrelas passam a mais de mil quilômetros por segundo'],['Posição aqui','Simbólica: o disco envolve o buraco negro, não orbita a distância']]},
+    {t:'REGISTRO', rows:[['O enigma de 1993','O Hubble mostrou dois caroços de luz no núcleo, batizados P1 e P2'],['A solução','Tremaine propôs em 1995: é um só disco, com órbitas alongadas'],['Por que parece duplo','As estrelas andam mais devagar no ponto mais distante, então se acumulam ali e formam o falso segundo núcleo'],['P2','O caroço menor é onde mora o buraco negro de verdade']]}
+  ],
+  facts:['O "segundo núcleo" de Andrômeda é uma ilusão de perspectiva: estrelas se amontoando na parte lenta da órbita.','É o mesmo efeito que faz um cometa passar rápido perto do Sol e demorar séculos no ponto distante.'],
+  fict:null, moons:[]};
 const M51_STAR = {
   id:'m51uls1', name:'M51-ULS-1', desig:'BINÁRIA DE RAIOS X', kind:'Um cadáver estelar devorando uma gigante', hab:null, gbar:150000000000,
   quick:[['TIPO','estrela de nêutrons ou buraco negro'],['RAIO','~10 km'],['COMPANHEIRA','supergigante de 20 Sóis'],['DISTÂNCIA','28 mi al'],['GALÁXIA','Redemoinho · M51'],['BRILHO','ultraluminoso em raios X']],
@@ -2138,6 +2212,19 @@ const SYS = {
           quick:[['GALÁXIA','Andrômeda · M31'],['DISTÂNCIA','2,5 mi al'],['PLANETAS','1 candidato'],['MÉTODO','microlente'],['DETECTADO','1999'],['CONFIRMAR','impossível']],
           sections:[{t:'REGISTRO', rows:[['O evento','Em 1999 uma estrela de Andrômeda ampliou a luz de outra e entregou um companheiro'],['O planeta','Cerca de 6 Júpiteres, o primeiro candidato extragaláctico da história'],['O limite','Microlentes acontecem uma vez só: ninguém vai poder checar']]}],
           facts:['O único endereço catalogado deste mapa que fica fora da Via Láctea, junto com o do Redemoinho.']} },
+  mayall2:{ id:'mayall2', name:'MAYALL II', star:G1_STAR, bodies:[], belt:[], beltR:[9,20], beltShape:'shell', beltLabel:'O ENXAME →', beltId:'g1enxame', beltCol:0xffd9a0,
+        starSize:2.0, camMax:40, gal:'andromeda', hint:'DEZ MILHÕES DE ESTRELAS NUMA BOLA DE 90 ANOS-LUZ',
+        card:{desig:'AGLOMERADO GLOBULAR · ANDRÔMEDA', kind:'O mais brilhante do Grupo Local', hab:null,
+          quick:[['GALÁXIA','Andrômeda · M31'],['ESTRELAS','~10 milhões'],['IDADE','12 bi anos'],['DIÂMETRO','~90 al'],['DISTÂNCIA','2,5 mi al'],['SUSPEITA','buraco negro médio']],
+          sections:[{t:'REGISTRO', rows:[['O que é','Uma bola antiquíssima de estrelas orbitando Andrômeda'],['O recorde','Mais brilhante que qualquer globular da Via Láctea'],['A dúvida','Pode ser o caroço de uma galáxia anã que M31 devorou']]}],
+          facts:['O céu visto de dentro dele teria milhares de estrelas mais brilhantes que Vênus.']} },
+  nucleoM31:{ id:'nucleoM31', name:'NÚCLEO DE ANDRÔMEDA', star:M31N_STAR, bodies:[], belt:[], beltR:[6,13], beltLabel:'DISCO P1 →', beltId:'p1disco', beltCol:0x9fc0ff,
+        starSize:2.0, camMax:36, gal:'andromeda',
+        hint:'UM BURACO NEGRO 50 VEZES MAIOR QUE O DA NOSSA GALÁXIA',
+        card:{desig:'NÚCLEO GALÁCTICO · M31', kind:'O coração de Andrômeda', hab:null,
+          quick:[['GALÁXIA','Andrômeda · M31'],['MASSA','~140 mi Sóis'],['NÚCLEO','duplo, P1 e P2'],['DISTÂNCIA','2,5 mi al'],['COMPARAÇÃO','50× o Sgr A*'],['DESTINO','fusão com o nosso']],
+          sections:[{t:'REGISTRO', rows:[['O núcleo duplo','O Hubble viu dois caroços onde deveria haver um: é um disco de estrelas desalinhado'],['O buraco negro','Fica em P2, com cerca de 140 milhões de massas solares'],['O encontro','Daqui a 4,5 bilhões de anos ele e o buraco negro da Via Láctea vão se fundir']]}],
+          facts:['Tem um anel de estrelas jovens que, pela teoria, não deveria conseguir se formar ali.']} },
   m51uls:{ id:'m51uls', name:'M51-ULS-1', star:M51_STAR, bodies:M51_BODIES, belt:[], beltR:null, gal:'redemoinho',
         starSize:1.6, camMax:32, hint:'28 MILHÕES DE ANOS-LUZ: O PLANETA MAIS DISTANTE JÁ SUSPEITADO',
         card:{desig:'BINÁRIA DE RAIOS X · M51', kind:'Caçando planetas em outra galáxia', hab:null,
@@ -2177,6 +2264,8 @@ reg(CAR_STAR,'caranguejo'); reg(CAR_NEBULA,'caranguejo');
 reg(M57_STAR,'m57'); reg(M57_NEBULA,'m57');
 reg(HH_STAR,'cavalo'); reg(HH_NEBULA,'cavalo');
 reg(AND_STAR,'pa99'); AND_BODIES.forEach(p=>reg(p,'pa99'));
+reg(G1_STAR,'mayall2'); reg(G1_SWARM,'mayall2');
+reg(M31N_STAR,'nucleoM31'); reg(M31N_DISK,'nucleoM31');
 reg(M51_STAR,'m51uls'); M51_BODIES.forEach(p=>reg(p,'m51uls'));
 GALAXIES.forEach(g=>{ g.coord = (g.id==='vialactea') ? 'SGR A*' : coordOf(g.name); });
 Object.values(ALLBODIES).forEach(b=>{ b.coord = coordOf(b.name); });
@@ -2448,10 +2537,16 @@ function buildSystem(sysId){
   /* cinturão */
   if(S.beltR){
     const bc = QLOW?850:1300, bPos = new Float32Array(bc*3);
+    const esferico = S.beltShape === 'shell';
     for(let i=0;i<bc;i++){
-      const a = Math.random()*Math.PI*2;
       const r = S.beltR[0] + Math.random()*(S.beltR[1]-S.beltR[0]);
-      bPos[i*3]=Math.cos(a)*r; bPos[i*3+1]=(Math.random()-0.5)*0.9; bPos[i*3+2]=Math.sin(a)*r;
+      if(esferico){
+        const u = Math.random()*Math.PI*2, v = Math.acos(2*Math.random()-1);
+        bPos[i*3]=r*Math.sin(v)*Math.cos(u); bPos[i*3+1]=r*Math.cos(v); bPos[i*3+2]=r*Math.sin(v)*Math.sin(u);
+      } else {
+        const a = Math.random()*Math.PI*2;
+        bPos[i*3]=Math.cos(a)*r; bPos[i*3+1]=(Math.random()-0.5)*0.9; bPos[i*3+2]=Math.sin(a)*r;
+      }
     }
     const bgm = new THREE.BufferGeometry(); bgm.setAttribute('position', new THREE.BufferAttribute(bPos,3));
     const beltCol = S.beltCol || 0x6b7684;
@@ -3086,9 +3181,9 @@ function navSync(){
 }
 function pushNav(){
   if(NAVH.guard){ NAVH.guard = false; navSync(); return; }
-  const s = {level:ST.level, sys:ST.sys, body:ST.body};
+  const s = {level:ST.level, sys:ST.sys, body:ST.body, gal:ST.gal};
   const top = NAVH.stack[NAVH.i];
-  if(top && top.level===s.level && top.sys===s.sys && top.body===s.body) return;
+  if(top && top.level===s.level && top.sys===s.sys && top.body===s.body && top.gal===s.gal) return;
   NAVH.stack.length = NAVH.i+1;
   NAVH.stack.push(s); NAVH.i++;
   navSync();
@@ -3097,7 +3192,7 @@ function navRestore(s){
   NAVH.guard = true;
   if(s.level==='focus') gotoFocus(s.body);
   else if(s.level==='system') gotoSystem(s.sys, 'RECUPERANDO REGISTRO');
-  else if(s.level==='galaxy') gotoGalaxy('RECUPERANDO REGISTRO');
+  else if(s.level==='galaxy') gotoGalaxy(s.gal || 'vialactea', 'RECUPERANDO REGISTRO');
   else gotoUniverse('RECUPERANDO REGISTRO');
 }
 function navBack(){ if(NAVH.i>0){ NAVH.i--; navRestore(NAVH.stack[NAVH.i]); } }
@@ -3112,12 +3207,14 @@ function gotoSystem(sysId, flavor){
 }
 function gotoGalaxy(galId, flavor){
   galId = galId || ST.gal || 'vialactea';
-  const g = GALAXIES.find(x=>x.id===galId);
+  let g = GALAXIES.find(x=>x.id===galId);
+  if(!g){ galId = 'vialactea'; g = GALAXIES[0]; }
   fadeSwap(flavor || (galId==='vialactea' ? 'MAPEANDO O BRAÇO DE ÓRION' : 'SALTO INTERGALÁCTICO · '+g.name), ()=>{
     ST.level='galaxy'; ST.gal=galId; ST.body=null; ST.mapCard=null;
     swapScene(buildGalaxy(galId)); uiSync(); pushNav(); syncHash();
-    showHint(galId==='vialactea' ? 'TODOS OS SISTEMAS MARCADOS TÊM NAVEGAÇÃO LIBERADA'
-                                 : 'SISTEMAS INDIVIDUAIS NÃO CATALOGADOS A ESTA DISTÂNCIA');
+    const nMarc = STARSYS.filter(x=>(x.gal || 'vialactea')===galId).length;
+    showHint(nMarc ? 'TODOS OS SISTEMAS MARCADOS TÊM NAVEGAÇÃO LIBERADA'
+                   : 'SISTEMAS INDIVIDUAIS NÃO CATALOGADOS A ESTA DISTÂNCIA');
   });
 }
 function gotoUniverse(flavor){
@@ -3350,17 +3447,33 @@ const TITULOS = {
   betelgeuse:'VIGIA DA SUPERNOVA', pegasi51:'MARCO ZERO', vega:'OUVINTE DE CONTATO',
   fomalhaut:'O OLHO QUE TUDO VÊ', barnard:'PERSEGUIDOR DA FUGITIVA', m16:'TESTEMUNHA DA CRIAÇÃO',
   orion:'PARTEIRO DE ESTRELAS', caranguejo:'CRONISTA DE 1054', m57:'COVEIRO DE SÓIS',
-  cavalo:'CAÇADOR DE SOMBRAS', pa99:'EMBAIXADOR EM ANDRÔMEDA', m51uls:'ALCANCE MÁXIMO'
+  cavalo:'CAÇADOR DE SOMBRAS', pa99:'EMBAIXADOR EM ANDRÔMEDA', m51uls:'ALCANCE MÁXIMO',
+  mayall2:'CONTADOR DE MULTIDÕES', nucleoM31:'MERGULHADOR DO ABISMO'
 };
 function progressoSistemas(){
   const mapa = {};
   for(const b of Object.values(ALLBODIES)){
     const s = b._sys; if(!SYS[s]) continue;
-    if(!mapa[s]) mapa[s] = {id:s, nome:SYS[s].name, total:0, vistos:0};
+    if(!mapa[s]) mapa[s] = {id:s, nome:SYS[s].name, gal:(SYS[s].gal || 'vialactea'), total:0, vistos:0};
     mapa[s].total++;
     if(VIS.has(b.id)) mapa[s].vistos++;
   }
   return Object.values(mapa);
+}
+/* expedição: o mesmo progresso, mas somado por galáxia (a casa sempre em primeiro) */
+function progressoGalaxias(sis){
+  const mapa = {};
+  for(const s of sis){
+    if(!mapa[s.gal]){
+      const g = GALAXIES.find(x=>x.id===s.gal);
+      mapa[s.gal] = {id:s.gal, nome:g ? g.name : s.gal, sistemas:[], total:0, vistos:0, completos:0};
+    }
+    const m = mapa[s.gal];
+    m.sistemas.push(s); m.total += s.total; m.vistos += s.vistos;
+    if(s.vistos >= s.total) m.completos++;
+  }
+  return Object.values(mapa).sort((a,b)=>
+    (a.id==='vialactea' ? -1 : b.id==='vialactea' ? 1 : a.nome.localeCompare(b.nome)));
 }
 const CATNOME = {planeta:'PLANETA', lua:'LUA', estrela:'ESTRELA', regiao:'REGIÃO', menor:'CORPO MENOR'};
 function missRender(){
@@ -3381,23 +3494,34 @@ function missRender(){
   const el = $('#misslist');
 
   if(MISS.filtro==='sistemas'){
-    let ls = sis.slice().sort((a,b)=>{
-      const pa = a.vistos/a.total, pb = b.vistos/b.total;
-      return pb-pa || a.nome.localeCompare(b.nome);
-    });
-    if(q) ls = ls.filter(s=>norm(s.nome).includes(q));
-    el.innerHTML = ls.length ? ls.map(s=>{
-      const pc = Math.round(s.vistos/s.total*100), full = s.vistos>=s.total;
-      return '<li data-sis="'+s.id+'" class="sysrow'+(full?' full':'')+'">'
-        + '<span class="sysbadge"><span>'+(full?'★':'')+'</span></span>'
-        + '<span class="minfo"><span class="mnm">'+esc(s.nome)+'</span>'
-        + '<span class="msub">'+(full ? esc('★ ' + (TITULOS[s.id] || 'SISTEMA COMPLETO'))
-                                      : ((s.total-s.vistos)===1 ? 'FALTA 1' : 'FALTAM '+(s.total-s.vistos))
-                                        + ' · '+s.total+(s.total===1 ? ' CORPO' : ' CORPOS'))+'</span></span>'
-        + '<span class="sysprog">'+s.vistos+'/'+s.total+'<i><b style="width:'+pc+'%"></b></i></span>'
-        + '</li>';
-    }).join('') : '<li id="missempty">NENHUM SISTEMA ENCONTRADO</li>';
-    $('#missfootcnt').textContent = selos + ' DE ' + sis.length + (selos===1 ? ' SISTEMA COMPLETO' : ' SISTEMAS COMPLETOS');
+    const gals = progressoGalaxias(sis);
+    let html = '', achou = 0;
+    for(const g of gals){
+      let ls = g.sistemas.slice().sort((a,b)=>{
+        const pa = a.vistos/a.total, pb = b.vistos/b.total;
+        return pb-pa || a.nome.localeCompare(b.nome);
+      });
+      if(q) ls = ls.filter(s=>norm(s.nome+' '+g.nome).includes(q));
+      if(!ls.length) continue;
+      achou += ls.length;
+      const gpc = Math.round(g.vistos/g.total*100), gfull = g.vistos>=g.total;
+      html += '<li class="galrow'+(gfull?' full':'')+'"><span class="galnm">'+esc(g.nome)+'</span>'
+            + '<span class="galct">'+g.completos+'/'+g.sistemas.length+' SISTEMAS · '+gpc+'%</span></li>';
+      html += ls.map(s=>{
+        const pc = Math.round(s.vistos/s.total*100), full = s.vistos>=s.total;
+        return '<li data-sis="'+s.id+'" class="sysrow'+(full?' full':'')+'">'
+          + '<span class="sysbadge"><span>'+(full?'★':'')+'</span></span>'
+          + '<span class="minfo"><span class="mnm">'+esc(s.nome)+'</span>'
+          + '<span class="msub">'+(full ? esc('★ ' + (TITULOS[s.id] || 'SISTEMA COMPLETO'))
+                                        : ((s.total-s.vistos)===1 ? 'FALTA 1' : 'FALTAM '+(s.total-s.vistos))
+                                          + ' · '+s.total+(s.total===1 ? ' CORPO' : ' CORPOS'))+'</span></span>'
+          + '<span class="sysprog">'+s.vistos+'/'+s.total+'<i><b style="width:'+pc+'%"></b></i></span>'
+          + '</li>';
+      }).join('');
+    }
+    el.innerHTML = achou ? html : '<li id="missempty">NENHUM SISTEMA ENCONTRADO</li>';
+    $('#missfootcnt').textContent = selos + ' DE ' + sis.length + (selos===1 ? ' SISTEMA COMPLETO' : ' SISTEMAS COMPLETOS')
+      + ' · ' + gals.length + ' GALÁXIAS';
     $('#misschips').querySelectorAll('.mchip').forEach(c=>c.classList.toggle('on', c.dataset.k===MISS.filtro));
     return;
   }
@@ -3932,7 +4056,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r29';
+const BUILD = 'r30';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

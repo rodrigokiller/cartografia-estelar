@@ -1,6 +1,6 @@
 # Cartografia Estelar · contexto do projeto
 
-Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r29** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
+Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r30** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
 
 ## Arquitetura (blocos <script> em ordem)
 1. Helpers ($, isMobile, RM, clamp, easeIO, hashStr, coordOf) + shaders GLSL como template strings (NOISE/PLANET/CLOUD/ATMO/RING/SUN). fbm usa 4 octaves em touch, 5 no desktop.
@@ -16,7 +16,8 @@ Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Thre
 - Testar mobile de verdade: o Chrome headless trava a janela em 500px, então renderize dentro de um `<iframe>` de 380px para ter viewport real de celular.
 - Dados: schema {id,name,desig,kind,hab,gbar,pop,quick[[k,v]],sys{orbit,size,speed,angle,incl?},visual{mode:rocky|gas|haze|earth|star,...},sections[{t,rows}],facts[],fict,moons[]}. Trivia de ficção/cultura pop (campo fict) é prioridade do Rodrigo.
 - Nebulosas NÃO entram em SYS.bodies: elas são o hub de região do próprio sistema, apontado por `beltId`. Registrar direto com reg() (M16_NEBULA, ORI_NEBULA, CAR_NEBULA, M57_NEBULA, HH_NEBULA). Se entrarem nos dois lugares, viram dois objetos com a mesma ficha e o destaque pisca duplicado (bug do r28).
-- Sistemas fora da Via Láctea: basta `gal:'andromeda'` no SYS e no marcador STARSYS. buildGalaxy filtra por `gal`, e o rastro/`up()` usam SYS[x].gal. Hoje: pa99 (Andrômeda) e m51uls (Redemoinho).
+- Sistemas fora da Via Láctea: basta `gal:'andromeda'` no SYS e no marcador STARSYS. buildGalaxy filtra por `gal`, o rastro/`up()`/pushNav usam SYS[x].gal (o histórico guarda `gal`; sem isso navBack quebrava ao voltar para uma galáxia, bug do r29). Hoje: pa99, mayall2 e nucleoM31 (Andrômeda) e m51uls (Redemoinho). `beltShape:'shell'` faz o cinturão do sistema virar esfera (aglomerado globular).
+- Curiosidades (`facts`) e trivia (`fict`) são sobre o objeto REAL, nunca sobre o app. Nada de "navegação liberada" ou instruções de interface ali: isso vai em `hint` ou nas seções.
 - Regiões são "hubs": corpos com `region:true` + `field:{shape:'ring'|'shell'|'cloud', r0,r1,h,col,rock,size}` e filhos em moons[]. A flag `region` é a fonte única de verdade (catDe e buildFocus leem dela). No foco, região NÃO desenha esfera central: monta o campo de detritos com os filhos parados e clicáveis num arco à esquerda (o card cobre a direita). Cometas (`comet:true`) ganham núcleo menor, coma e duas caudas apontando para longe do Sol.
 - Cantos chanfrados: o contorno diagonal NÃO usa traço rotacionado com números na mão (era o bug do r25, a linha saía 1 a 2px fora do corte). Cada pseudo-elemento é um quadrado do tamanho exato do chanfro, ancorado em -1px (a borda), com uma faixa de 1px num linear-gradient(-45deg) caindo sobre o corte. Para um card novo com chanfro, basta somar o seletor às listas compartilhadas e definir width/height = tamanho do chanfro.
 
@@ -25,6 +26,6 @@ Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Thre
 - GitHub Pages: publicar a pasta inteira (index.html na raiz + audio/). Sem build step, o Pages serve direto.
 
 ## Roadmap acordado
-- Lotes pop contínuos de corpos reais famosos (r22: 51 Pegasi b, Vega, Trappist/JWST. r26: Fomalhaut, Barnard, Encélado. r27: Pilares da Criação e Titã/Dragonfly. r28: Órion/M42 e Caranguejo/M1. r29: Anel/M57, Cabeça de Cavalo e os dois candidatos extragalácticos, PA-99-N2 em Andrômeda e M51-ULS-1b no Redemoinho. Próximos candidatos: Ceres e Vesta revisitadas pela Dawn, Io pela Juno, Kepler-186f, LHS 1140b, Nebulosa da Lagoa).
+- Lotes pop contínuos de corpos reais famosos (r22: 51 Pegasi b, Vega, Trappist/JWST. r26: Fomalhaut, Barnard, Encélado. r27: Pilares da Criação e Titã/Dragonfly. r28: Órion/M42 e Caranguejo/M1. r29: Anel/M57, Cabeça de Cavalo e os dois candidatos extragalácticos, PA-99-N2 em Andrômeda e M51-ULS-1b no Redemoinho. Próximos candidatos: Ceres e Vesta revisitadas pela Dawn, Io pela Juno, Kepler-186f, LHS 1140b, Nebulosa da Lagoa). r30: Mayall II e o núcleo duplo de Andrômeda, mais Ceres, Vesta (Dawn) e Io (Juno) com fichas completas.
 - Painel MISSÃO e mundos habitáveis: ENTREGUE no r26, os dois num painel só.
 - Possível migração React/FastAPI no futuro (estrutura de dados já é API-ready). Por ora, manter vanilla.
