@@ -480,6 +480,9 @@ body.tour #tourbar{display:flex}
 #tourbar .tnarra.tr-in{opacity:0}
 body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
 #tourbar .tlab{color:var(--amber);letter-spacing:3px}
+#tourrota{flex:0 0 auto;font-family:var(--mono);font-size:9px;letter-spacing:1.6px;color:var(--amber);
+  background:rgba(6,12,24,.8);border:1px solid var(--line);padding:5px 6px;cursor:pointer;max-width:38%}
+#tourrota option{background:#0a1222;color:var(--txt)}
 #tourbar .tnm{color:var(--txt);letter-spacing:2.4px;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #tourbar .tct{color:var(--dim);font-size:9px;flex:0 0 auto}
 #tourbar button{width:24px;height:24px;border:1px solid var(--line);background:rgba(6,12,24,.6);
@@ -594,7 +597,11 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div id="photoexit" title="Sair do modo foto"><b>✕</b>SAIR DO MODO FOTO</div>
   <div id="tourbar">
     <div class="trow">
-      <span class="tlab">TOUR</span>
+      <select id="tourrota" title="Escolher rota">
+        <option value="completo">ROTA COMPLETA</option>
+        <option value="solar">SISTEMA SOLAR</option>
+        <option value="nebulosas">NEBULOSAS</option>
+      </select>
       <span class="tnm" id="tournm"></span>
       <span class="tct" id="tourct"></span>
       <button id="tourx" title="Encerrar tour">✕</button>
@@ -1398,6 +1405,18 @@ const STARSYS = [
    sections:[{t:'REGISTRO', rows:[['O evento','Uma estrela de Andrômeda ampliou a luz de outra e entregou um planeta junto'],['O limite','Microlentes não se repetem: será candidato para sempre'],['A distância','2,5 milhões de anos-luz daqui']]}],
    facts:['A luz que carregava a informação desse planeta saiu de Andrômeda antes de existirem humanos.'],
    fict:'Andrômeda é destino clássico da ficção. Este é o único ponto real que temos por lá.'}},
+ {id:'kepler186', name:'KEPLER-186', nav:true, pos:[17.5,0,-13.5], hot:false,
+  card:{desig:'SISTEMA ESTELAR · 580 AL', kind:'A primeira Terra na zona certa', hab:null,
+   quick:[['DISTÂNCIA','580 al'],['PLANETAS','5'],['NA ZONA','o f'],['DESCOBERTA','2014']],
+   sections:[{t:'REGISTRO', rows:[['O marco','O primeiro planeta do tamanho da Terra achado na zona habitável'],['A luz','Um sol vermelho e um dia que parece um entardecer eterno'],['A ressalva','Está na borda fria da zona']]}],
+   facts:['Se houvesse plantas lá, elas seriam escuras para aproveitar a luz vermelha.'],
+   fict:'A NASA fez um pôster de viagem: "onde a grama é sempre mais vermelha".'}},
+ {id:'roseta', name:'NEBULOSA DA ROSETA', nav:true, pos:[8.5,0,-17], hot:true,
+  card:{desig:'NEBULOSA · 5.200 AL', kind:'Uma flor de gás de 130 anos-luz', hab:null,
+   quick:[['DISTÂNCIA','5.200 al'],['LARGURA','~130 al'],['NO CÉU','5 luas cheias'],['CATÁLOGO','NGC 2237']],
+   sections:[{t:'REGISTRO', rows:[['A forma','O buraco no meio foi cavado pelas estrelas que nasceram lá dentro'],['Onde','No Unicórnio, ao lado de Órion'],['O detalhe','O vermelho das fotos é hidrogênio, invisível para o olho']]}],
+   facts:['Uma das nebulosas mais fotografadas, e quase desconhecida de quem só olha o céu.'],
+   fict:'Papel de parede e capa de álbum sempre que alguém quer uma flor cósmica.'}},
  {id:'omega', name:'ÔMEGA CENTAURI', nav:true, pos:[-9.5,0,13], hot:false,
   card:{desig:'AGLOMERADO GLOBULAR · 17.000 AL', kind:'Dez milhões de sóis a olho nu', hab:null,
    quick:[['DISTÂNCIA','17.000 al'],['ESTRELAS','~10 milhões'],['DIÂMETRO','~150 al'],['A OLHO NU','sim']],
@@ -2141,6 +2160,53 @@ const VEU_NEBULA = {
   ],
   facts:['Os filamentos parecem fios de seda, mas cada um tem anos-luz de espessura: é a borda de uma bolha vista de perfil.','A onda de choque ainda corre a 1.500 quilômetros por segundo, quinze mil anos depois.','É um dos objetos mais fotografados por astrofotógrafos, e um dos mais difíceis de ver de olho no telescópio.'],
   fict:'A Vassoura da Bruxa, um dos pedaços do Véu, é presença garantida em pôsteres de Halloween astronômico.', moons:[]};
+/* ---- lote 12 ---- */
+const K186_STAR = {
+  id:'kepler186', name:'KEPLER-186', desig:'ESTRELA · M1V', kind:'Uma anã vermelha com cinco planetas', hab:null, gbar:42,
+  quick:[['TIPO','M1V'],['RAIO','0,47 R☉'],['MASSA','0,54 Sol'],['TEMP. SUP.','3.800 °C'],['DISTÂNCIA','580 al'],['PLANETAS','5']],
+  visual:{mode:'star', c1:'#ff9a5a', c2:'#d8501e'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['Tipo','Anã vermelha com metade da massa do Sol'],['Brilho','Cerca de 4% da luz do Sol'],['Vida útil','Dezenas de bilhões de anos: ela vai brilhar muito depois de o Sol morrer']]},
+    {t:'REGISTRO', rows:[['A família','Cinco planetas conhecidos, quatro deles grudados na estrela'],['O prêmio','Só o quinto, o f, cai na zona habitável'],['Constelação','Cisne, a 580 anos-luz']]}
+  ],
+  facts:['Anãs vermelhas como esta são o tipo mais comum de estrela do universo: três em cada quatro.'],
+  fict:null
+};
+const K186_BODIES = [
+ {id:'kepler186f', name:'KEPLER-186F', desig:'KEPLER-186 · EXOPLANETA f', kind:'A primeira Terra em tamanho na zona certa', hab:60, gbar:1.1, pop:'desconhecida',
+  quick:[['RAIO','1,11 R⊕'],['ANO','130 d'],['LUZ','32% da Terra'],['ZONA','habitável (borda)'],['DESCOBERTA','2014'],['DISTÂNCIA','580 al']],
+  sys:{orbit:11, size:0.95, speed:1.0, angle:2.4},
+  visual:{mode:'earth', c1:'#5a6a4a', c2:'#8a8a5e', c3:'#b09a72', seaCol:'#1a3a5e', sea:0.5, scale:3.4, seed:186.6,
+    cap:0.7, capAmt:0.55, capCol:'#e8eef2', atmo:{col:'#c88a6a', i:1.0}, clouds:{amt:0.5, scale:2.6, col:'#f0e8e0'}},
+  sections:[
+    {t:'ÓRBITA & ROTAÇÃO', rows:[['Ano','130 dias'],['Distância da estrela','0,43 UA'],['Luz recebida','Um terço da que a Terra recebe: o meio-dia de lá seria o nosso fim de tarde'],['Rotação','Provavelmente não é síncrona, por estar longe o bastante']]},
+    {t:'REGISTRO', rows:[['2014','Anunciado como o primeiro planeta do tamanho da Terra na zona habitável de outra estrela'],['O tamanho','Apenas 11% maior que a Terra, quase certamente rochoso'],['A ressalva','Fica na borda fria da zona: precisaria de bastante efeito estufa para ter água líquida'],['A cor','Se tiver plantas, elas talvez fossem escuras para aproveitar a luz vermelha da estrela'],['Verificação','Distante demais para medir a massa, então a composição segue estimada']]}
+  ],
+  facts:['Foi o primeiro planeta com tamanho de Terra encontrado onde a água poderia ser líquida.','O céu de lá teria um sol vermelho e maior, e o dia inteiro pareceria um entardecer.','Se houvesse vegetação, ela provavelmente seria escura, quase preta, para absorver a luz vermelha.'],
+  fict:'A NASA fez um pôster de viagem espacial dele com o slogan "Onde a grama é sempre mais vermelha do outro lado".', moons:[]}
+];
+const ROS_STAR = {
+  id:'ngc2244', name:'NGC 2244', desig:'ROSETA · AGLOMERADO', kind:'As estrelas que abriram o buraco da flor', hab:null, gbar:20,
+  quick:[['TIPO','aglomerado aberto'],['RAIO','~12 R☉ (as maiores)'],['IDADE','~2 mi anos'],['ESTRELAS','~2 mil'],['DISTÂNCIA','5.200 al'],['CONSTELAÇÃO','Unicórnio']],
+  visual:{mode:'star', c1:'#eef4ff', c2:'#a0bcff'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['O que é','Um aglomerado jovem nascido dentro da própria nebulosa'],['O sopro','O vento estelar delas varreu o gás central e abriu o buraco que dá forma de flor'],['As gigantes','Algumas estrelas ali têm mais de 50 mil vezes a luminosidade do Sol']]},
+    {t:'REGISTRO', rows:[['O buraco','Tem uns 30 anos-luz de diâmetro e continua crescendo'],['Nota de escala','Cena simbólica: a nebulosa tem 130 anos-luz de ponta a ponta']]}
+  ],
+  facts:['As estrelas que iluminam a Roseta nasceram dela: é a flor que acendeu a própria luz.'],
+  fict:null
+};
+const ROS_NEBULA = {
+  id:'roseta', name:'NEBULOSA DA ROSETA', desig:'NGC 2237 · NEBULOSA DE EMISSÃO', kind:'A flor de gás do céu de inverno', hab:0, gbar:0.0001, pop:'0',
+  region:true, field:{shape:'cloud', r0:5, r1:23, col:0xe0526a, rock:0x8a2f42, size:0.24},
+  quick:[['DISTÂNCIA','5.200 al'],['LARGURA','~130 anos-luz'],['MASSA','10 mil Sóis'],['BURACO','~30 al'],['NO CÉU','5 luas cheias'],['CATÁLOGO','NGC 2237']],
+  visual:{mode:'haze', c1:'#4a1424', c2:'#e0526a', c3:'#f0a878', seed:22.37, atmo:{col:'#ff5a7a', i:1.7}},
+  sections:[
+    {t:'ESCALA', rows:[['Tamanho','Cerca de 130 anos-luz, e ocupa cinco luas cheias no céu'],['Massa','Gás suficiente para formar dez mil sóis'],['A forma','O buraco central não é vazio: é gás empurrado para longe pelas estrelas do meio'],['Posição aqui','Simbólica: o aglomerado fica dentro da nebulosa']]},
+    {t:'REGISTRO', rows:[['O nome','Veio da forma: uma rosa vista de frente, com pétalas de gás'],['As estrelas','O aglomerado NGC 2244 se formou aqui há uns dois milhões de anos'],['Glóbulos','Casulos escuros de poeira onde novas estrelas ainda estão nascendo'],['Onde ver','No Unicórnio, ao lado de Órion, mas fraca demais para o olho: é alvo de foto'],['Cor real','O vermelho intenso das fotos vem do hidrogênio, e o olho humano não o enxerga bem']]}
+  ],
+  facts:['O buraco no meio da flor foi cavado pelo vento das estrelas que nasceram ali dentro.','É um dos alvos preferidos da astrofotografia, e quase invisível no telescópio a olho nu.','Fica na mesma região do céu que Órion, mas quase ninguém sabe que ela está lá.'],
+  fict:'Virou papel de parede, capa de álbum e ilustração de ficção científica sempre que alguém quer uma nebulosa em forma de flor.', moons:[]};
 /* ---- fora da Via Láctea: os únicos candidatos a planeta em outras galáxias ---- */
 const AND_STAR = {
   id:'pa99lente', name:'ESTRELA-LENTE PA-99-N2', desig:'M31 · ESTRELA ANÔNIMA', kind:'Uma estrela de Andrômeda que piscou uma vez', hab:null, gbar:20,
@@ -2367,6 +2433,18 @@ const SYS = {
           quick:[['GALÁXIA','Andrômeda · M31'],['DISTÂNCIA','2,5 mi al'],['PLANETAS','1 candidato'],['MÉTODO','microlente'],['DETECTADO','1999'],['CONFIRMAR','impossível']],
           sections:[{t:'REGISTRO', rows:[['O evento','Em 1999 uma estrela de Andrômeda ampliou a luz de outra e entregou um companheiro'],['O planeta','Cerca de 6 Júpiteres, o primeiro candidato extragaláctico da história'],['O limite','Microlentes acontecem uma vez só: ninguém vai poder checar']]}],
           facts:['O único endereço catalogado deste mapa que fica fora da Via Láctea, junto com o do Redemoinho.']} },
+  kepler186:{ id:'kepler186', name:'KEPLER-186', star:K186_STAR, bodies:K186_BODIES, belt:[], beltR:null,
+        starSize:2.4, camMax:32, hint:'A PRIMEIRA TERRA EM TAMANHO ENCONTRADA NA ZONA HABITÁVEL',
+        card:{desig:'SISTEMA ESTELAR · CISNE', kind:'Onde a grama seria vermelha', hab:null,
+          quick:[['ESTRELA','anã vermelha M1V'],['PLANETAS','5'],['DISTÂNCIA','580 al'],['NA ZONA','o f'],['DESCOBERTA','2014'],['TAMANHO DO f','1,11 R⊕']],
+          sections:[{t:'REGISTRO', rows:[['O marco','Kepler-186f foi o primeiro planeta do tamanho da Terra na zona habitável de outra estrela'],['A luz','Recebe um terço da luz que a Terra recebe, e vermelha'],['A ressalva','Fica na borda fria da zona: água líquida depende de estufa']]}],
+          facts:['A NASA fez um pôster de viagem com o slogan "onde a grama é sempre mais vermelha".']} },
+  roseta:{ id:'roseta', name:'NEBULOSA DA ROSETA', star:ROS_STAR, bodies:[], belt:[], beltR:[12,20], beltLabel:'AS PÉTALAS →', beltId:'roseta', beltCol:0xe0526a,
+        starSize:3.2, camMax:44, hint:'UMA FLOR DE GÁS DE 130 ANOS-LUZ, AO LADO DE ÓRION',
+        card:{desig:'NEBULOSA DE EMISSÃO · UNICÓRNIO', kind:'A flor do céu de inverno', hab:null,
+          quick:[['DISTÂNCIA','5.200 al'],['LARGURA','~130 al'],['CATÁLOGO','NGC 2237'],['NO CÉU','5 luas cheias'],['BURACO','~30 al'],['IDADE','~2 mi anos']],
+          sections:[{t:'REGISTRO', rows:[['A forma','O buraco central foi cavado pelo vento das estrelas que nasceram ali'],['O aglomerado','NGC 2244, com uns dois milhões de anos, mora dentro dela'],['Onde ver','Ao lado de Órion, mas fraca demais para o olho: é alvo de fotografia']]}],
+          facts:['Fica na região mais famosa do céu e quase ninguém sabe que ela está lá.']} },
   omega:{ id:'omega', name:'ÔMEGA CENTAURI', star:OME_STAR, bodies:[], belt:[], beltR:[9,20], beltShape:'shell', beltLabel:'O ENXAME →', beltId:'omegacentauri', beltCol:0xffe0b8,
         starSize:2.0, camMax:40, hint:'DEZ MILHÕES DE ESTRELAS, E DÁ PARA VER A OLHO NU DO BRASIL',
         card:{desig:'AGLOMERADO GLOBULAR · CENTAURO', kind:'O maior do céu, e visível sem telescópio', hab:null,
@@ -2441,6 +2519,8 @@ reg(M16_STAR,'m16'); reg(M16_NEBULA,'m16');
 reg(ORI_STAR,'orion'); reg(ORI_NEBULA,'orion');
 reg(CAR_STAR,'caranguejo'); reg(CAR_NEBULA,'caranguejo');
 reg(M57_STAR,'m57'); reg(M57_NEBULA,'m57');
+reg(K186_STAR,'kepler186'); K186_BODIES.forEach(p=>reg(p,'kepler186'));
+reg(ROS_STAR,'roseta'); reg(ROS_NEBULA,'roseta');
 reg(OME_STAR,'omega'); reg(OME_SWARM,'omega');
 reg(VEU_STAR,'veu'); reg(VEU_NEBULA,'veu');
 reg(LAG_STAR,'lagoa'); reg(LAG_NEBULA,'lagoa');
@@ -2665,17 +2745,21 @@ function buildSystem(sysId, spin0){
   const S = SYS[sysId];
   let spinAcc = spin0 || 0;   /* rotação acumulada dos planetas, para casar com a cena de foco */
   const scene = new THREE.Scene();
-  scene.add(makeStars(QLOW?900:1400, 600, 1.3, 0.75));
-  scene.add(makeStars(QLOW?250:400, 500, 2.1, 0.9));
+  /* móveis da cena: o que some no mergulho para sobrar só o corpo visado */
+  const fadeMats = [], fadeObjs = {};
+  const fade = o => { if(o && o.material){ fadeMats.push({m:o.material, o:(o.material.opacity!==undefined?o.material.opacity:1)}); } return o; };
+  scene.add(fade(makeStars(QLOW?900:1400, 600, 1.3, 0.75)));
+  scene.add(fade(makeStars(QLOW?250:400, 500, 2.1, 0.9)));
   const labels = [], pickables = [], spinners = [];
 
   const star = makeBodyGroup(S.star, S.starSize, 48);
   const starGlow = star.group.children.find(c=>c.isSprite) || null;
   scene.add(star.group);
+  fadeObjs[S.star.id] = star.group;
   spinners.push({obj:star.mesh, spd:0.02});
   const starPick = new THREE.Mesh(new THREE.SphereGeometry(S.starSize+0.8, 8, 8),
     new THREE.MeshBasicMaterial({visible:false}));
-  starPick.userData = {act:'focus', id:S.star.id};
+  starPick.userData = {act:'focus', id:S.star.id, r:S.starSize};
   scene.add(starPick); pickables.push(starPick);
   labels.push({el:makeLabel(S.star.name, '', ()=>ACTION('focus', S.star.id)),
     get:v=>v.set(0, S.starSize+0.6, 0)});
@@ -2693,12 +2777,13 @@ function buildSystem(sysId, spin0){
     for(let i=0;i<seg;i++){ const a=i/seg*Math.PI*2; oPos[i*3]=Math.cos(a)*p.sys.orbit; oPos[i*3+2]=Math.sin(a)*p.sys.orbit; }
     const og = new THREE.BufferGeometry(); og.setAttribute('position', new THREE.BufferAttribute(oPos,3));
     const orbit = new THREE.LineLoop(og, new THREE.LineBasicMaterial({color:0x2a4a7a, transparent:true, opacity:0.5}));
-    holder.add(orbit);
+    holder.add(fade(orbit));
     selReg.orbits.push({id:p.id, mat:orbit.material, c:0x2a4a7a, o:0.5});
     const bg = makeBodyGroup(p, p.sys.size, 40);
     bg.group.position.x = p.sys.orbit;
     holder.add(bg.group);
     bg.mesh.rotation.y = spinAcc;
+    fadeObjs[p.id] = bg.group;   /* encolhe no mergulho, menos o corpo visado */
     spinners.push({obj:bg.mesh, spd:0.25});
     if(p.comet){
       const mkTail = (sx, sy, op)=>{
@@ -2736,6 +2821,7 @@ function buildSystem(sysId, spin0){
     const bgm = new THREE.BufferGeometry(); bgm.setAttribute('position', new THREE.BufferAttribute(bPos,3));
     const beltCol = S.beltCol || 0x6b7684;
     const belt = new THREE.Points(bgm, new THREE.PointsMaterial({color:beltCol, size:0.13, sizeAttenuation:true, transparent:true, opacity:0.75, depthWrite:false}));
+    fade(belt);
     selReg.belt = {id:(S.beltId || 'cinturao'), mat:belt.material, c:beltCol, o:0.75};
     if(S.kuiperR){
       const kc = QLOW?500:800, kPos = new Float32Array(kc*3);
@@ -2746,7 +2832,7 @@ function buildSystem(sysId, spin0){
       }
       const kg = new THREE.BufferGeometry(); kg.setAttribute('position', new THREE.BufferAttribute(kPos,3));
       const kbelt = new THREE.Points(kg, new THREE.PointsMaterial({color:0x5a6a8a, size:0.15, sizeAttenuation:true, transparent:true, opacity:0.5, depthWrite:false}));
-      scene.add(kbelt);
+      scene.add(fade(kbelt));
       selReg.kbelt = {id:'kuiper', mat:kbelt.material, c:0x5a6a8a, o:0.5};
       const kmid = (S.kuiperR[0]+S.kuiperR[1])/2, kang = 0.55;
       labels.push({el:makeLabel('CINTURÃO DE KUIPER', 'faint', ()=>ACTION('focus','kuiper')),
@@ -2774,6 +2860,13 @@ function buildSystem(sysId, spin0){
 
   return {kind:'system', scene, labels, pickables, sel:selReg,
     get spin(){ return spinAcc; },
+    /* v=1 cena cheia, v=0 só o corpo visado. É o que deixa a troca sem piscar. */
+    dim:(v, exceto)=>{
+      for(const f of fadeMats) f.m.opacity = f.o * v;
+      const s = Math.max(0.0001, v);
+      for(const id in fadeObjs) if(id !== exceto) fadeObjs[id].scale.setScalar(s);
+      if(starGlow) starGlow.material.opacity = v;
+    },
     cam:{mode:'orbit', dist:(sysId==='sol')?48:17, min:(sysId==='sol')?14:8, max:S.camMax, pitch:0.55, yaw:0.65},
     update:(dt)=>{
       for(const o of orbiters) o.holder.rotation.y += o.spd*dt*0.05;
@@ -2802,8 +2895,10 @@ function buildGalaxy(galId){
   const G = GALAXIES.find(x=>x.id===galId) || GALAXIES[0];
   const gi = GALAXIES.indexOf(G);
   const scene = new THREE.Scene();
-  scene.add(makeStars(QLOW?200:300, 700, 1.1, 0.28));
-  scene.add(makeSmudges(QLOW?42:66, 640, 0.28));
+  const fadeMats = [], fadeObjs = {};
+  const fade = o => { if(o && o.material) fadeMats.push({m:o.material, o:(o.material.opacity!==undefined?o.material.opacity:1)}); return o; };
+  scene.add(fade(makeStars(QLOW?200:300, 700, 1.1, 0.28)));
+  scene.add(fade(makeSmudges(QLOW?42:66, 640, 0.28)));
   const gal = makeGalaxyPoints({count:QLOW?5500:9000, arms:(galId==='vialactea')?4:(2+(gi%3)),
     radius:30, spin:(galId==='sombrero')?0.08:0.22, hue:(G.hue!==undefined)?G.hue:0.58, psize:0.13});
   scene.add(gal);
@@ -2811,26 +2906,37 @@ function buildGalaxy(galId){
   core.scale.setScalar(9); scene.add(core);
   const labels = [], pickables = [];
   const selReg = {markers:[]};
+  let dimV = 1;
   for(const s of STARSYS.filter(x=>(x.gal || 'vialactea')===galId)){
     const mk = new THREE.Sprite(new THREE.SpriteMaterial({map:TEX_STARDOT, blending:THREE.AdditiveBlending, depthWrite:false, transparent:true,
       color: s.hot ? 0xffa060 : (s.nav ? 0x9fd0ff : 0xbcd0e8)}));
     mk.position.set(s.pos[0], s.pos[1], s.pos[2]);
     mk.scale.setScalar(s.nav?1.9:1.4);
+    mk.userData.base = s.nav?1.9:1.4;
     selReg.markers.push({id:s.id, mat:mk.material, c:mk.material.color.getHex(), o:(mk.material.opacity!==undefined?mk.material.opacity:1)});
     scene.add(mk);
+    fadeObjs[s.id] = mk;
     const pick = new THREE.Mesh(new THREE.SphereGeometry(2.0, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
-    pick.position.copy(mk.position); pick.userData = {act:'starsys', id:s.id};
+    pick.position.copy(mk.position); pick.userData = {act:'starsys', id:s.id, r:0.55};
     scene.add(pick); pickables.push(pick);
     labels.push({el:makeLabel(s.name, s.hot?'hot':(s.nav?'':'faint'), ()=>ACTION('starsys', s.id)),
       get:v=>v.set(s.pos[0], s.pos[1]+1.1, s.pos[2])});
   }
   return {kind:'galaxy', scene, labels, pickables, sel:selReg,
+    dim:(v, exceto)=>{
+      dimV = v;
+      for(const f of fadeMats) f.m.opacity = f.o * v;
+      for(const id in fadeObjs){
+        const base = fadeObjs[id].userData.base || 1;
+        fadeObjs[id].scale.setScalar((id === exceto ? 1 : Math.max(0.0001, v)) * base);
+      }
+    },
     cam:{mode:'orbit', dist:54, min:30, max:110, pitch:0.95, yaw:0.4},
     update:(dt)=>{
       if(!RM) gal.rotation.y += dt*0.008;
       const z = Math.min(1, Math.max(0, (CAM.dist-30)/30));
-      gal.material.opacity = 0.30 + 0.65*z;
-      core.material.opacity = 0.12 + 0.78*z;
+      gal.material.opacity = (0.30 + 0.65*z) * dimV;
+      core.material.opacity = (0.12 + 0.78*z) * dimV;
     }};
 }
 
@@ -2869,6 +2975,9 @@ function buildFocus(bodyId, spin0){
   scene.add(wrap);
   const labels = [], pickables = [];
   const selReg = {markers:[]};
+  const fadeMats = [], fadeObjs = {};
+  const fade = o => { if(o && o.material) fadeMats.push({m:o.material, o:(o.material.opacity!==undefined?o.material.opacity:1)}); return o; };
+  scene.children.forEach(fade);   /* os dois campos de estrelas já criados acima */
   const kids = b.moons || [];
   const parent = b._parent ? ALLBODIES[b._parent] : null;
   let bg = null, clouds = null, moonHolder = null, cometFx = null;
@@ -2878,6 +2987,7 @@ function buildFocus(bodyId, spin0){
     const pg = makeBodyGroup(parent, 0.85, 40);
     pg.group.position.set(-3.6, 2.1, -8.5);
     scene.add(pg.group);
+    fadeObjs['_mae'] = pg.group;
   } else if(b.visual.mode !== 'star'){
     const sunGlow = new THREE.Sprite(new THREE.SpriteMaterial({
       map:(b._sys==='trappist')?TEX_GLOW_RED:TEX_GLOW_WARM,
@@ -2885,7 +2995,7 @@ function buildFocus(bodyId, spin0){
     sunGlow.scale.setScalar(b.comet ? 3.0 : 2.6);
     /* no cometa o Sol fica em cima à direita: a cauda cai para o lado livre da tela */
     sunGlow.position.set(b.comet ? 9 : -10, b.comet ? 6.5 : 5, b.comet ? -9 : -18);
-    scene.add(sunGlow);
+    scene.add(fade(sunGlow));
   }
 
   /* marcador de seleção reaproveitado pelos dois modos */
@@ -2894,6 +3004,7 @@ function buildFocus(bodyId, spin0){
     mg.group.position.copy(pos);
     const host = moonHolder || wrap;
     host.add(mg.group);
+    fadeObjs[m.id] = mg.group;
     const pk = new THREE.Mesh(new THREE.SphereGeometry(Math.max(0.55, size*2.2), 6, 6),
       new THREE.MeshBasicMaterial({visible:false}));
     pk.position.copy(pos); pk.userData = {act:'focus', id:m.id, r:size};
@@ -2964,6 +3075,11 @@ function buildFocus(bodyId, spin0){
       addKid(m, v, 0.34 + hashStr(m.id)*0.16, 28);
     });
     return {kind:'focus', scene, labels, pickables, wrap, bodyId, sel:selReg,
+      dim:(v, exceto)=>{
+        for(const f of fadeMats) f.m.opacity = f.o * v;
+        const s = Math.max(0.0001, v);
+        for(const id in fadeObjs) if(id !== exceto) fadeObjs[id].scale.setScalar(s);
+      },
       cam:{mode:'focus', dist:11.0, min:4.2, max:13.0},
       update:(dt)=>{ if(!RM && (performance.now() - lastDragT > 2600)) wrap.rotation.y += dt*0.012; }};
   }
@@ -3000,6 +3116,11 @@ function buildFocus(bodyId, spin0){
 
   return {kind:'focus', scene, labels, pickables, wrap, bodyId, sel:selReg,
     get spin(){ return bg ? bg.mesh.rotation.y : 0; },
+    dim:(v, exceto)=>{
+      for(const f of fadeMats) f.m.opacity = f.o * v;
+      const s = Math.max(0.0001, v);
+      for(const id in fadeObjs) if(id !== exceto) fadeObjs[id].scale.setScalar(s);
+    },
     cam:{mode:'focus', dist:b.comet?8.2:9.0, min:b.comet?4.0:3.7, max:b.comet?10.5:9.6},
     update:(dt)=>{
       if(!RM && moonHolder) moonHolder.rotation.y += dt*0.03;
@@ -3078,11 +3199,11 @@ function curtoParaAngulo(de, para){
 /* entrar: a câmera ancora no corpo, se endireita e fecha o zoom até casar */
 function diveInto(id, done){
   const b = ALLBODIES[id], pk = acharPick(id);
-  if(RM || !pk || !b || !ACT || (ACT.kind!=='system' && ACT.kind!=='focus')){ done(); return; }
+  if(RM || !pk || !ACT || (ACT.kind!=='system' && ACT.kind!=='focus' && ACT.kind!=='galaxy')){ done(); return; }
   focusParaOrbita();
   if(CAM.mode!=='orbit'){ done(); return; }
-  CAMTW = null;
-  DIVE = {dir:1, obj:pk, done, t0:performance.now(), ms:1150,
+  CAMTW = null; FADEIN = null;
+  DIVE = {dir:1, id, obj:pk, done, t0:performance.now(), ms:1150,
           d0:CAM.dist, d1:distCasada(b, pk), p1:CAM.pivot.clone(),
           yaw0:CAM.yaw, yaw1:curtoParaAngulo(CAM.yaw, 0), pitch0:CAM.pitch, pitch1:0};
   document.body.classList.add('diving');
@@ -3093,7 +3214,7 @@ function riseFrom(id){
   if(RM || !pk || !b || !ACT || (ACT.kind!=='system' && ACT.kind!=='focus')) return;
   CAMTW = null;
   const paraFoco = (ACT.kind==='focus');
-  DIVE = {dir:-1, obj:pk, done: paraFoco ? (()=>{ CAM.mode='focus'; CAM.dist=ACT.cam.dist; }) : null,
+  DIVE = {dir:-1, id, obj:pk, done: paraFoco ? (()=>{ CAM.mode='focus'; CAM.dist=ACT.cam.dist; }) : null,
           t0:performance.now(), ms:1050,
           d0:distCasada(b, pk), d1:ACT.cam.dist, p1:new THREE.Vector3(),
           yaw0:0, yaw1:curtoParaAngulo(0, paraFoco ? 0 : ACT.cam.yaw),
@@ -3118,6 +3239,11 @@ function diveStep(now){
   else             CAM.pivot.lerpVectors(_da, DIVE.p1, e);
   CAM.yaw   = DIVE.yaw0 + (DIVE.yaw1 - DIVE.yaw0)*e;
   CAM.pitch = DIVE.pitch0 + (DIVE.pitch1 - DIVE.pitch0)*e;
+  /* os móveis da cena somem no mergulho e voltam na saída: só o corpo visado
+     atravessa a troca, então não precisa piscar a tela inteira */
+  const v = (DIVE.dir > 0) ? Math.max(0, 1 - Math.max(0, (k-0.40)/0.60))
+                           : Math.min(1, Math.max(0, (k-0.05)/0.55));
+  if(ACT && ACT.dim) ACT.dim(v, DIVE.id);
   const op = String(DIVE.dir > 0 ? Math.max(0, 1 - k*2.2) : Math.min(1, Math.max(0, k*2.2 - 1.2)));
   if(ACT && ACT.labels) for(const L of ACT.labels) L.el.style.opacity = op;
   if(k >= 1){
@@ -3127,15 +3253,22 @@ function diveStep(now){
     if(fim) fim();
   }
 }
-/* piscada curta: só para disfarçar a troca de fundo, sem cortar para o preto */
+/* troca direta: o corpo já está no mesmo lugar e tamanho, então basta acender
+   o cenário novo por cima. Nada de piscar a tela. */
+let FADEIN = null;
 function blinkSwap(fn){
-  const f = $('#fader');
-  $('#fadertxt').textContent = '';
-  f.classList.add('quick','on');
-  setTimeout(()=>{
-    fn();
-    setTimeout(()=>{ f.classList.remove('on'); setTimeout(()=>f.classList.remove('quick'), 220); }, 40);
-  }, 120);
+  fn();
+  if(DIVE) return;   /* a saída (riseFrom) já acende o cenário sozinha */
+  if(ACT && ACT.dim){
+    ACT.dim(0, ST.body || null);
+    FADEIN = {t0:performance.now(), ms:620};
+  }
+}
+function fadeInStep(now){
+  if(!FADEIN) return;
+  const k = Math.min(1, (now - FADEIN.t0)/FADEIN.ms);
+  if(ACT && ACT.dim) ACT.dim(easeIO(k), null);
+  if(k >= 1) FADEIN = null;
 }
 
 function fadeSwap(text, fn){
@@ -3147,7 +3280,8 @@ function fadeSwap(text, fn){
 }
 function swapScene(built, continuo){
   disposeScene(ACT); ACT = built; setCam(ACT.cam);
-  CAMTW = null; DIVE = null;
+  CAMTW = null; DIVE = null; FADEIN = null;
+  if(ACT.dim) ACT.dim(1, null);
   document.body.classList.remove('diving');
   if(!RM && !continuo){
     const d0 = CAM.dist, f = (ACT.kind==='focus') ? 1.5 : 1.22;
@@ -3492,17 +3626,17 @@ function navRestore(s){
 function navBack(){ if(NAVH.i>0){ NAVH.i--; navRestore(NAVH.stack[NAVH.i]); } }
 function navFwd(){ if(NAVH.i<NAVH.stack.length-1){ NAVH.i++; navRestore(NAVH.stack[NAVH.i]); } }
 
-function gotoSystem(sysId, flavor, deCorpo){
+function gotoSystem(sysId, flavor, deCorpo, continuo){
   const troca = ()=>{
     const spin = (deCorpo && ACT && ACT.kind==='focus') ? ACT.spin : 0;
     ST.level='system'; ST.sys=sysId; ST.body=null; ST.mapCard=null;
     ST.gal = SYS[sysId].gal || 'vialactea';
-    swapScene(buildSystem(sysId, spin), !!deCorpo);
+    swapScene(buildSystem(sysId, spin), !!deCorpo || !!continuo);
     if(deCorpo) riseFrom(deCorpo);
     uiSync(); pushNav(); syncHash();
     if(!deCorpo) showHint(SYS[sysId].hint);
   };
-  if(deCorpo) blinkSwap(troca);
+  if(deCorpo || continuo) blinkSwap(troca);
   else fadeSwap(flavor || ('TRAVANDO ROTA · '+SYS[sysId].name), troca);
 }
 function gotoGalaxy(galId, flavor){
@@ -3564,7 +3698,13 @@ function enterTarget(act, id){
     }
     flyThen(id, ()=>gotoFocus(id));
   }
-  else if(act==='starsys') flyThen(id, ()=>gotoSystem(id));
+  else if(act==='starsys'){
+    /* do mapa da galáxia, mergulha no marcador da estrela */
+    if(ACT && ACT.kind==='galaxy' && acharPick(id)){
+      uiSync(); diveInto(id, ()=>gotoSystem(id, null, null, true)); return;
+    }
+    flyThen(id, ()=>gotoSystem(id));
+  }
   else flyThen(id, ()=>gotoGalaxy(id));
 }
 function siblingList(){
@@ -3762,7 +3902,8 @@ const TITULOS = {
   cavalo:'CAÇADOR DE SOMBRAS', pa99:'EMBAIXADOR EM ANDRÔMEDA', m51uls:'ALCANCE MÁXIMO',
   mayall2:'CONTADOR DE MULTIDÕES', nucleoM31:'MERGULHADOR DO ABISMO',
   lagoa:'PESCADOR DA LAGOA', trifida:'TRÊS EM UM',
-  omega:'SENHOR DAS MULTIDÕES', veu:'ARQUEÓLOGO DA EXPLOSÃO'
+  omega:'SENHOR DAS MULTIDÕES', veu:'ARQUEÓLOGO DA EXPLOSÃO',
+  kepler186:'AGRÔNOMO VERMELHO', roseta:'JARDINEIRO CÓSMICO'
 };
 function progressoSistemas(){
   const mapa = {};
@@ -3867,8 +4008,49 @@ function missOpen(){ $('#mission').classList.add('on'); missRender(); }
 function missClose(){ $('#mission').classList.remove('on'); }
 
 /* ---------- modo tour: o app se guiando sozinho ---------- */
-const TOUR = {on:false, i:0, tm:null, t0:0, ms:0};
-const ROTEIRO = [
+const TOUR = {on:false, i:0, tm:null, t0:0, ms:0, rota:'completo'};
+const ROTA_SOLAR = [
+  {sis:'sol', ms:8000, texto:'Uma estrela comum, oito planetas e um mundo com vida confirmada. Começamos em casa.'},
+  {corpo:'terra', ms:12000},
+  {corpo:'lua', ms:10000},
+  {sis:'sol', ms:5000},
+  {corpo:'marte', ms:11000},
+  {corpo:'cinturao', ms:10000},
+  {corpo:'ceres', ms:10000},
+  {sis:'sol', ms:5000},
+  {corpo:'jupiter', ms:11000},
+  {corpo:'io', ms:10000},
+  {corpo:'europa', ms:11000},
+  {sis:'sol', ms:5000},
+  {corpo:'saturno', ms:11000},
+  {corpo:'tita', ms:11000},
+  {corpo:'encelado', ms:11000},
+  {sis:'sol', ms:5000},
+  {corpo:'halley', ms:10000},
+  {corpo:'kuiper', ms:10000},
+  {corpo:'oort', ms:11000}
+];
+const ROTA_NEBULOSAS = [
+  {sis:'orion', ms:7000, texto:'As nuvens onde as estrelas nascem, e os restos das que morreram.'},
+  {corpo:'nebulosaorion', ms:12000},
+  {sis:'m16', ms:6000},
+  {corpo:'pilares', ms:12000},
+  {sis:'cavalo', ms:6000},
+  {corpo:'cabecacavalo', ms:11000},
+  {sis:'lagoa', ms:6000},
+  {corpo:'lagoa', ms:11000},
+  {sis:'trifida', ms:6000},
+  {corpo:'trifida', ms:11000},
+  {sis:'roseta', ms:6000},
+  {corpo:'roseta', ms:11000},
+  {sis:'caranguejo', ms:6000},
+  {corpo:'caranguejo', ms:11000},
+  {sis:'veu', ms:6000},
+  {corpo:'veu', ms:11000},
+  {sis:'m57', ms:6000},
+  {corpo:'anel', ms:12000}
+];
+const ROTEIRO_COMPLETO = [
   {sis:'sol',   ms:9000, texto:'Uma estrela comum, oito planetas e um mundo com vida confirmada. Começamos em casa.'},
   {corpo:'terra',   ms:13000},
   {sis:'sol',   ms:5000},
@@ -3898,6 +4080,12 @@ const ROTEIRO = [
   {corpo:'pa99n2b', ms:12000},
   {uni:true,    ms:10000}
 ];
+const ROTAS = {
+  completo:  {nome:'ROTA COMPLETA',  lista:ROTEIRO_COMPLETO},
+  solar:     {nome:'SISTEMA SOLAR',  lista:ROTA_SOLAR},
+  nebulosas: {nome:'NEBULOSAS',      lista:ROTA_NEBULOSAS}
+};
+let ROTEIRO = ROTEIRO_COMPLETO;
 function tourNome(p){
   if(p.corpo) return (ALLBODIES[p.corpo]||{}).name || p.corpo;
   if(p.sis)   return (SYS[p.sis]||{}).name || p.sis;
@@ -3952,6 +4140,12 @@ function tourPasso(){
     TOUR.i = (TOUR.i + 1) % ROTEIRO.length;
     tourPasso();
   }, p.ms);
+}
+function tourRota(k){
+  if(!ROTAS[k]) return;
+  TOUR.rota = k; ROTEIRO = ROTAS[k].lista;
+  const s = $('#tourrota'); if(s) s.value = k;
+  if(TOUR.on){ TOUR.i = 0; tourPasso(); }
 }
 function tourStart(){
   if(TOUR.on) return;
@@ -4485,7 +4679,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r32';
+const BUILD = 'r33';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -4552,6 +4746,7 @@ $('#btnsnd').addEventListener('click', ()=>{ $('#player').classList.toggle('on')
 $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: coarse)').matches));
 $('#btntour').addEventListener('click', tourToggle);
 $('#tourx').addEventListener('click', ()=>tourStop());
+$('#tourrota').addEventListener('change', e=>tourRota(e.target.value));
 $('#photoexit').addEventListener('click', e=>{ e.stopPropagation(); togglePhoto(); });
 ['pointermove','pointerdown','wheel'].forEach(ev=>window.addEventListener(ev, photoPeek, {passive:true}));
 $('#pl_mute').addEventListener('click', ()=>AUDIO.toggle());
@@ -4628,6 +4823,7 @@ function loop(){
     }
   }
   if(DIVE) diveStep(now);
+  else if(FADEIN) fadeInStep(now);
   if(TOUR.on && TOUR.ms) $('#tourprog').style.width = Math.min(100, (now-TOUR.t0)/TOUR.ms*100).toFixed(1)+'%';
   if(ACT){
     if(ACT.update) ACT.update(dt, t);
