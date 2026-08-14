@@ -199,15 +199,14 @@ body.focusmode .chev{display:flex}
 #grip{display:none}
 #panelbody{overflow-y:auto;overflow-x:hidden;padding:14px 18px 20px;flex:1;overscroll-behavior:contain}
 /* barra de rolagem do HUD: fina e azul, igual em todas as áreas roláveis */
-#panelbody,#misslist,#cmpcard,#findlist,#player .pl-list{scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
-#panelbody::-webkit-scrollbar,#misslist::-webkit-scrollbar,#cmpcard::-webkit-scrollbar,
+#panelbody,#misslist,#findlist,#player .pl-list{scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+#panelbody::-webkit-scrollbar,#misslist::-webkit-scrollbar,
 #findlist::-webkit-scrollbar,#player .pl-list::-webkit-scrollbar{width:4px;height:4px}
-#panelbody::-webkit-scrollbar-thumb,#misslist::-webkit-scrollbar-thumb,#cmpcard::-webkit-scrollbar-thumb,
+#panelbody::-webkit-scrollbar-thumb,#misslist::-webkit-scrollbar-thumb,
 #findlist::-webkit-scrollbar-thumb,#player .pl-list::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
-#panelbody::-webkit-scrollbar-track,#misslist::-webkit-scrollbar-track,#cmpcard::-webkit-scrollbar-track,
+#panelbody::-webkit-scrollbar-track,#misslist::-webkit-scrollbar-track,
 #findlist::-webkit-scrollbar-track,#player .pl-list::-webkit-scrollbar-track{background:transparent}
-#panelbody::-webkit-scrollbar-corner,#misslist::-webkit-scrollbar-corner,
-#cmpcard::-webkit-scrollbar-corner{background:transparent}
+#panelbody::-webkit-scrollbar-corner,#misslist::-webkit-scrollbar-corner{background:transparent}
 
 .eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--dim);display:flex;justify-content:space-between;gap:8px}
 .eyebrow .lock{color:var(--ok)}
@@ -250,8 +249,14 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #cmp{position:absolute;inset:0;z-index:30;display:none;align-items:center;justify-content:center;
   background:rgba(2,5,12,.82);backdrop-filter:blur(6px)}
 #cmp.on{display:flex}
-#cmpcard{width:min(860px,94vw);max-height:92dvh;overflow-y:auto;overflow-x:hidden;background:var(--panel);border:1px solid var(--line2);
+#cmpcard{width:min(860px,94vw);max-height:92dvh;display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line2);
   padding:20px 22px 16px;clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)}
+/* o conteúdo rola por dentro; a moldura (e os cortes diagonais) fica parada */
+.cardscroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;
+  scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.cardscroll::-webkit-scrollbar{width:4px}
+.cardscroll::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
+.cardscroll::-webkit-scrollbar-track{background:transparent}
 #cmpcard h2{font-size:12px;letter-spacing:4px;color:var(--ion);margin-bottom:12px;font-weight:600}
 .cmpheads{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center}
 .cmpheads .nm{font-size:17px;font-weight:600;letter-spacing:2px}
@@ -437,8 +442,7 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 /* ---------- help ---------- */
 #help{position:absolute;inset:0;z-index:45;background:rgba(2,4,10,.82);display:none;align-items:center;justify-content:center;padding:20px}
 #help.on{display:flex}
-#helpcard{position:relative;max-width:460px;width:100%;max-height:88dvh;overflow-y:auto;overflow-x:hidden;
-  scrollbar-width:thin;scrollbar-color:var(--line2) transparent;
+#helpcard{position:relative;max-width:460px;width:100%;max-height:88dvh;display:flex;flex-direction:column;
   background:var(--panel2);border:1px solid var(--line2);padding:22px 24px;
   clip-path:polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)}
 #helpcard h2{font-family:var(--mono);font-size:12px;letter-spacing:4px;color:var(--ion);font-weight:400;margin-bottom:14px}
@@ -450,9 +454,6 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #helpcard .credito b{display:block;font-size:13px;letter-spacing:4px;color:var(--txt);font-weight:600;margin:5px 0 3px}
 #helpcard .credito a{color:var(--ion);text-decoration:none;letter-spacing:3px;border-bottom:1px solid var(--line)}
 #helpcard .credito a:hover{color:#fff;border-color:var(--ion)}
-#helpcard::-webkit-scrollbar{width:4px}
-#helpcard::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
-#helpcard::-webkit-scrollbar-track{background:transparent}
 /* atalhos de teclado só onde existe teclado; e o inverso para o toque.
    A classe vem do JS (body.touch) porque é mais confiável que a media query. */
 .kb{display:inline}
@@ -650,7 +651,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div id="fader"><div id="fadertxt">ESTABELECENDO LINK</div></div>
 
   <div id="help">
-    <div id="helpcard">
+    <div id="helpcard"><div class="cardscroll">
       <h2>MANUAL DO NAVEGADOR</h2>
       <p><b>Toque</b> em um corpo para catalogar. Toque de novo (ou use o botão ▶ do card) para entrar.</p>
       <p><b>Arraste</b> para girar<span class="kb"> · <b>scroll</b> para aproximar</span><span class="touchonly"> · <b>pinça</b> para aproximar. Os botões <b>+ / −</b> também ajustam o zoom</span>.</p>
@@ -667,7 +668,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
         <a href="https://sanguanini.dev" target="_blank" rel="noopener">SANGUANINI.DEV</a></p>
       <p id="diagline" style="font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;margin-top:10px"></p>
       <button class="xbtn" id="helpclose">FECHAR</button>
-    </div>
+    </div></div>
   </div>
 
   <div id="mission">
@@ -711,11 +712,11 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   </div>
 
   <div id="cmp">
-    <div id="cmpcard">
+    <div id="cmpcard"><div class="cardscroll">
       <h2>◇ ANÁLISE COMPARATIVA</h2>
       <div id="cmpbody"></div>
       <div id="cmpbtns"><button class="xbtn" id="cmpclose">FECHAR</button></div>
-    </div>
+    </div></div>
   </div>
 
   <div id="boot"><div id="bootlines"></div></div>
@@ -4769,7 +4770,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r35';
+const BUILD = 'r36';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
