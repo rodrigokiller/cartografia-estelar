@@ -595,7 +595,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div id="navpod">
     <div id="radar"></div>
     <div id="coordbox">
-      <div>SAT LINK 08 · DESTINO</div>
+      <div id="fovline">SAT LINK 08 · DESTINO</div>
       <div class="big" id="coordval">--°--'</div>
       <div id="clock">T+ 00:00:00</div>
     </div>
@@ -1421,6 +1421,12 @@ const STARSYS = [
    sections:[{t:'REGISTRO', rows:[['O evento','Uma estrela de Andrômeda ampliou a luz de outra e entregou um planeta junto'],['O limite','Microlentes não se repetem: será candidato para sempre'],['A distância','2,5 milhões de anos-luz daqui']]}],
    facts:['A luz que carregava a informação desse planeta saiu de Andrômeda antes de existirem humanos.'],
    fict:'Andrômeda é destino clássico da ficção. Este é o único ponto real que temos por lá.'}},
+ {id:'pleiades', name:'PLÊIADES · M45', nav:true, pos:[-4.5,0,-16.5], hot:false,
+  card:{desig:'AGLOMERADO ABERTO · 444 AL', kind:'As Sete Irmãs', hab:null,
+   quick:[['DISTÂNCIA','444 al'],['ESTRELAS','~1.000'],['DIÂMETRO','~15 al'],['A OLHO NU','sim']],
+   sections:[{t:'REGISTRO', rows:[['No céu','Quatro vezes o tamanho da Lua cheia, no Touro'],['Os nomes','Sete Irmãs, Subaru, Matariki: quase toda cultura batizou este grupo'],['O véu azul','Uma nuvem de poeira que elas estão apenas atravessando']]}],
+   facts:['É o aglomerado mais citado da história humana, da Odisseia ao logo da Subaru.'],
+   fict:'De Sailor Moon a Star Trek, sempre aparece quando alguém precisa de um punhado de estrelas.'}},
  {id:'lhs1140', name:'LHS 1140', nav:true, pos:[13.5,0,4.5], hot:false,
   card:{desig:'SISTEMA ESTELAR · 48,5 AL', kind:'O melhor candidato a mundo com água', hab:null,
    quick:[['DISTÂNCIA','48,5 al'],['PLANETAS','2'],['NA ZONA','o b'],['JWST','2024 e 2025']],
@@ -2392,6 +2398,29 @@ const CHAMA_NEBULA = {
   ],
   facts:['Parece uma fogueira porque uma faixa de poeira escura corta o gás aceso bem no meio.','Está a poucos minutos de arco da Cabeça de Cavalo: uma única foto pega as duas.','O aglomerado de estrelas que ela esconde só foi visto quando apontamos telescópios infravermelhos para lá.'],
   fict:'É a companheira de pôster da Cabeça de Cavalo: quem tem uma na parede quase sempre tem a outra.', moons:[]};
+/* ---- lote 16: o aglomerado que toda cultura da Terra batizou ---- */
+const PLE_STAR = {
+  id:'alcyone', name:'ALCÍONE', desig:'η TAURI · GIGANTE AZUL', kind:'A mais brilhante das Sete Irmãs', hab:null, gbar:9,
+  quick:[['TIPO','B7 IIIe'],['RAIO','~10 R☉'],['MASSA','6 Sóis'],['TEMP. SUP.','12.300 °C'],['DISTÂNCIA','440 al'],['BRILHO','2.400 Sóis']],
+  visual:{mode:'star', c1:'#eef4ff', c2:'#9dc0ff'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['O que é','Uma gigante azul girando tão rápido que joga gás para fora pelo equador'],['O disco','Esse gás forma um anel ao redor dela, por isso o "e" na classificação'],['O brilho','Cerca de 2.400 vezes a luminosidade do Sol']]},
+    {t:'REGISTRO', rows:[['O nome','Uma das sete filhas de Atlas na mitologia grega'],['A posição','A estrela mais brilhante do aglomerado das Plêiades'],['Nota de escala','Cena simbólica: o aglomerado tem uns 15 anos-luz de diâmetro']]}
+  ],
+  facts:['Gira tão rápido que está literalmente se desfiando pelo equador.'],
+  fict:null
+};
+const PLE_SWARM = {
+  id:'pleiades', name:'PLÊIADES', desig:'M45 · AGLOMERADO ABERTO', kind:'As Sete Irmãs, o aglomerado de todo mundo', hab:0, gbar:0.01, pop:'0',
+  region:true, field:{shape:'shell', r0:6, r1:19, col:0xa8c8ff, rock:0x5a7ab0, size:0.2},
+  quick:[['DISTÂNCIA','444 anos-luz'],['ESTRELAS','~1.000'],['DIÂMETRO','~15 anos-luz'],['IDADE','~100 mi anos'],['A OLHO NU','6 a 7 estrelas'],['CATÁLOGO','M45']],
+  visual:{mode:'star', c1:'#dfeaff', c2:'#8ab0ff'},
+  sections:[
+    {t:'ESCALA', rows:[['Tamanho','Cerca de 15 anos-luz para umas mil estrelas'],['No céu','Ocupa quatro vezes a Lua cheia, e a maioria enxerga seis pontos'],['Idade','100 milhões de anos: nasceram quando os dinossauros dominavam a Terra'],['Posição aqui','Simbólica: você está no meio do aglomerado']]},
+    {t:'REGISTRO', rows:[['O véu azul','A poeira que envolve as estrelas não é delas: o aglomerado está atravessando uma nuvem no caminho'],['Grécia','As sete filhas de Atlas, perseguidas por Órion, que ainda as segue pelo céu'],['Japão','Chamam de Subaru, e sim, é esse o desenho no símbolo da montadora'],['Brasil','Para vários povos indígenas, o nascer delas marca o começo das chuvas e do ano novo'],['Nova Zelândia','Matariki, o ano novo maori, é marcado pelo reaparecimento delas no céu'],['O destino','Daqui a uns 250 milhões de anos a gravidade da galáxia vai dispersar o grupo']]}
+  ],
+  facts:['Quase toda cultura antiga que olhou para o céu batizou este aglomerado, e muitas contaram sete irmãs.','O símbolo da Subaru são as Plêiades: subaru é o nome japonês delas.','No Brasil, o nascer das Plêiades marcava o início do ano e das chuvas para vários povos indígenas.','A neblina azul ao redor delas não é o berço onde nasceram: é uma nuvem que elas estão apenas atravessando.'],
+  fict:'Da Odisseia à Bíblia, de Sailor Moon a Star Trek, é o aglomerado mais citado da cultura humana.', moons:[]};
 /* ---- fora da Via Láctea: os únicos candidatos a planeta em outras galáxias ---- */
 const AND_STAR = {
   id:'pa99lente', name:'ESTRELA-LENTE PA-99-N2', desig:'M31 · ESTRELA ANÔNIMA', kind:'Uma estrela de Andrômeda que piscou uma vez', hab:null, gbar:20,
@@ -2618,6 +2647,12 @@ const SYS = {
           quick:[['GALÁXIA','Andrômeda · M31'],['DISTÂNCIA','2,5 mi al'],['PLANETAS','1 candidato'],['MÉTODO','microlente'],['DETECTADO','1999'],['CONFIRMAR','impossível']],
           sections:[{t:'REGISTRO', rows:[['O evento','Em 1999 uma estrela de Andrômeda ampliou a luz de outra e entregou um companheiro'],['O planeta','Cerca de 6 Júpiteres, o primeiro candidato extragaláctico da história'],['O limite','Microlentes acontecem uma vez só: ninguém vai poder checar']]}],
           facts:['O único endereço catalogado deste mapa que fica fora da Via Láctea, junto com o do Redemoinho.']} },
+  pleiades:{ id:'pleiades', name:'PLÊIADES', star:PLE_STAR, bodies:[], belt:[], beltR:[9,20], beltShape:'shell', beltLabel:'AS SETE IRMÃS →', beltId:'pleiades', beltCol:0xa8c8ff,
+        starSize:2.2, camMax:40, hint:'O AGLOMERADO QUE TODA CULTURA DA TERRA BATIZOU',
+        card:{desig:'AGLOMERADO ABERTO · TOURO', kind:'As Sete Irmãs', hab:null,
+          quick:[['DISTÂNCIA','444 al'],['ESTRELAS','~1.000'],['DIÂMETRO','~15 al'],['IDADE','~100 mi anos'],['A OLHO NU','6 a 7'],['CATÁLOGO','M45']],
+          sections:[{t:'REGISTRO', rows:[['No céu','Ocupa quatro luas cheias, e quase todo mundo enxerga seis pontinhos'],['Os nomes','Sete Irmãs na Grécia, Subaru no Japão, Matariki na Nova Zelândia'],['No Brasil','Para vários povos indígenas, o nascer delas marca o ano novo e as chuvas']]}],
+          facts:['O símbolo da Subaru são elas: é o nome japonês do aglomerado.']} },
   lhs1140:{ id:'lhs1140', name:'LHS 1140', star:LHS_STAR, bodies:LHS_BODIES, belt:[], beltR:null,
         starSize:2.2, camMax:30, hint:'O MELHOR CANDIDATO CONHECIDO A MUNDO COM ÁGUA LÍQUIDA',
         card:{desig:'SISTEMA ESTELAR · BALEIA', kind:'O alvo mais disputado do James Webb', hab:null,
@@ -2743,6 +2778,7 @@ reg(ORI_STAR,'orion'); reg(ORI_NEBULA,'orion');
 reg(CAR_STAR,'caranguejo'); reg(CAR_NEBULA,'caranguejo');
 reg(M57_STAR,'m57'); reg(M57_NEBULA,'m57');
 reg(LHS_STAR,'lhs1140'); LHS_BODIES.forEach(p=>reg(p,'lhs1140'));
+reg(PLE_STAR,'pleiades'); reg(PLE_SWARM,'pleiades');
 reg(CHAMA_STAR,'chama'); reg(CHAMA_NEBULA,'chama');
 reg(TUC_STAR,'tuc47'); reg(TUC_SWARM,'tuc47');
 reg(NGC346_STAR,'ngc346'); reg(NGC346_NEBULA,'ngc346');
@@ -3371,7 +3407,7 @@ function buildFocus(bodyId, spin0){
     addKid(m, vv, 0.20 + hashStr(m.id)*0.10, 24);
   });
 
-  return {kind:'focus', scene, labels, pickables, wrap, bodyId, sel:selReg,
+  return {kind:'focus', scene, labels, pickables, wrap, bodyId, sel:selReg, raioCorpo:radius,
     get spin(){ return bg ? bg.mesh.rotation.y : 0; },
     dim:(v, exceto)=>{
       for(const f of fadeMats) f.m.opacity = f.o * v;
@@ -4048,6 +4084,45 @@ function parseDia(b){
   return null;
 }
 const dec1 = v => v.toFixed(1).replace('.', ',');
+/* ---------- largura real do que está na tela ----------
+   Só mostra onde a conta é honesta: no corpo (sabemos o diâmetro dele), no
+   Sistema Solar (a Terra orbita a 22 unidades = 1 UA) e na galáxia (o diâmetro
+   está na ficha). Nos sistemas estilizados e no universo, a linha antiga fica. */
+const UA_KM = 149597870, AL_KM = 9.4607e12;
+function fmtEscala(km){
+  if(!isFinite(km) || km <= 0) return null;
+  if(km >= AL_KM*0.05) return fmtNumEsc(km/AL_KM) + ' AL';
+  if(km >= UA_KM*0.02) return fmtNumEsc(km/UA_KM) + ' UA';
+  if(km >= 1e6)        return fmtNumEsc(km/1e6) + ' MI KM';
+  if(km >= 1000)       return fmtNumEsc(km/1000) + ' MIL KM';
+  return Math.round(km).toLocaleString('pt-BR') + ' KM';
+}
+function fmtNumEsc(v){
+  if(v >= 100) return Math.round(v).toLocaleString('pt-BR');
+  if(v >= 10)  return v.toFixed(0);
+  return v.toFixed(1).replace('.', ',');
+}
+function larguraDaTela(){
+  const un = 2 * CAM.dist * Math.tan(camera.fov*Math.PI/360) * camera.aspect;  /* unidades */
+  let kmPorUnidade = 0;
+  if(ST.level==='focus'){
+    const d = parseDia(ALLBODIES[ST.body]);
+    const raio = (ACT && ACT.raioCorpo) ? ACT.raioCorpo : FOCUS_RAIO;
+    if(d) kmPorUnidade = (d.km/2) / raio;
+  } else if(ST.level==='system' && ST.sys==='sol'){
+    kmPorUnidade = UA_KM / 22;            /* órbita da Terra na cena */
+  } else if(ST.level==='galaxy'){
+    const g = GALAXIES.find(x=>x.id===ST.gal);
+    const d = g && g.card ? parseDia(Object.assign({name:g.name}, g.card)) : null;
+    if(d) kmPorUnidade = (d.km/2) / 30;   /* a galáxia é desenhada com raio 30 */
+  }
+  return kmPorUnidade ? fmtEscala(un*kmPorUnidade) : null;
+}
+function fovSync(){
+  const el = $('#fovline'); if(!el) return;
+  const s = larguraDaTela();
+  el.textContent = s ? ('CAMPO DE VISÃO · ' + s) : 'SAT LINK 08 · DESTINO';
+}
 function fmtRatio(r){
   if(r < 1000) return (r<10 ? dec1(r) : Math.round(r).toLocaleString('pt-BR')) + '×';
   const e = Math.floor(Math.log10(r));
@@ -4201,7 +4276,7 @@ const TITULOS = {
   kepler186:'AGRÔNOMO VERMELHO', roseta:'JARDINEIRO CÓSMICO',
   tarantula:'DOMADOR DE ARANHAS', sn1987a:'CAÇADOR DE NEUTRINOS',
   tuc47:'GUARDIÃO DO TUCANO', ngc346:'ARQUEÓLOGO DO UNIVERSO JOVEM',
-  lhs1140:'CAÇADOR DE OCEANOS', chama:'GUARDA-FOGO'
+  lhs1140:'CAÇADOR DE OCEANOS', chama:'GUARDA-FOGO', pleiades:'IRMÃO DAS SETE'
 };
 function progressoSistemas(){
   const mapa = {};
@@ -4795,6 +4870,13 @@ setInterval(()=>{
   const ss = String(s%60).padStart(2,'0');
   $('#clock').textContent = 'T+ '+hh+':'+mm+':'+ss;
 }, 1000);
+/* a escala acompanha o zoom, mas só redesenha quando muda de verdade */
+let fovUlt = '';
+setInterval(()=>{
+  const s = larguraDaTela();
+  const t = s ? ('CAMPO DE VISÃO · ' + s) : 'SAT LINK 08 · DESTINO';
+  if(t !== fovUlt){ fovUlt = t; const el = $('#fovline'); if(el) el.textContent = t; }
+}, 220);
 
 /* ============================ GESTOS & TECLADO ============================ */
 const pts = new Map(); let PD = null, pinchD = 0;
@@ -5000,7 +5082,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r38';
+const BUILD = 'r39';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
