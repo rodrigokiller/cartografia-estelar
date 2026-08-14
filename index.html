@@ -2914,6 +2914,11 @@ function buildSystem(sysId, spin0){
       const kmid = (S.kuiperR[0]+S.kuiperR[1])/2, kang = 0.55;
       labels.push({el:makeLabel('CINTURÃO DE KUIPER', 'faint', ()=>ACTION('focus','kuiper')),
         get:v=>v.set(Math.cos(kang)*kmid, 1.2, Math.sin(kang)*kmid)});
+      /* alvo invisível na região: é o que permite mergulhar para dentro do cinturão */
+      const kpick = new THREE.Mesh(new THREE.SphereGeometry(1.8, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
+      kpick.position.set(Math.cos(kang)*kmid, 0.6, Math.sin(kang)*kmid);
+      kpick.userData = {act:'focus', id:'kuiper', r:0.9};
+      scene.add(kpick); pickables.push(kpick);
       labels.push({el:makeLabel('NUVEM DE OORT →', 'faint', ()=>ACTION('focus','oort')),
         get:v=>v.set(Math.cos(4.1)*70, 2.2, Math.sin(4.1)*70)});
     }
@@ -2921,6 +2926,12 @@ function buildSystem(sysId, spin0){
     const beltId = S.beltId || 'cinturao';
     labels.push({el:makeLabel(S.beltLabel || 'CINTURÃO', 'faint', ()=>ACTION('focus', beltId)),
       get:v=>v.set(Math.cos(bang)*bmid, 0.9, Math.sin(bang)*bmid)});
+    if(ALLBODIES[beltId]){
+      const bpick = new THREE.Mesh(new THREE.SphereGeometry(1.8, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
+      bpick.position.set(Math.cos(bang)*bmid, 0.4, Math.sin(bang)*bmid);
+      bpick.userData = {act:'focus', id:beltId, r:0.9};
+      scene.add(bpick); pickables.push(bpick);
+    }
     scene.add(belt);
     orbiters.push({holder:belt, spd:0.02});
     for(const a of S.belt){
@@ -4758,7 +4769,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r34';
+const BUILD = 'r35';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
