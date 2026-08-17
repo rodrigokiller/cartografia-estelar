@@ -63,6 +63,7 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #statuspod{margin-top:9px;display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:10px;letter-spacing:2px}
 #statled{width:7px;height:7px;background:var(--ok);box-shadow:0 0 8px var(--ok);animation:blink 1.6s steps(2,start) infinite}
 #stattxt{color:var(--dim)}
+#fovmob{display:none;color:var(--ion);letter-spacing:1.6px}
 #stattxt b{color:var(--txt);font-weight:400}
 #sig{display:flex;align-items:flex-end;gap:2px;height:12px}
 #sig i{width:3px;background:var(--ion);opacity:.25;animation:sig 2.4s infinite}
@@ -507,6 +508,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   #brand .mark{width:7px;height:7px}
   #crumbs{font-size:9.5px;letter-spacing:1.2px;gap:4px}
   #statuspod{margin-top:6px;gap:8px;font-size:8.5px;letter-spacing:1.4px}
+  #fovmob{display:inline}
   #statled{width:6px;height:6px}
   #sig{height:9px}
   #sig i{width:2px}
@@ -573,6 +575,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <span id="statled"></span>
       <span id="stattxt">STATUS: <b id="statval">EM ÓRBITA</b></span>
       <span id="sig"><i></i><i></i><i></i><i></i><i></i></span>
+      <span id="fovmob"></span>
     </div>
   </div>
 
@@ -1421,6 +1424,12 @@ const STARSYS = [
    sections:[{t:'REGISTRO', rows:[['O evento','Uma estrela de Andrômeda ampliou a luz de outra e entregou um planeta junto'],['O limite','Microlentes não se repetem: será candidato para sempre'],['A distância','2,5 milhões de anos-luz daqui']]}],
    facts:['A luz que carregava a informação desse planeta saiu de Andrômeda antes de existirem humanos.'],
    fict:'Andrômeda é destino clássico da ficção. Este é o único ponto real que temos por lá.'}},
+ {id:'sgra', name:'SAGITTARIUS A*', nav:true, pos:[0,0,0], hot:true,
+  card:{desig:'BURACO NEGRO · 26.000 AL', kind:'O centro da Via Láctea', hab:null,
+   quick:[['MASSA','4,3 mi Sóis'],['DISTÂNCIA','26.000 al'],['FOTO','EHT · 2022'],['NOBEL','2020']],
+   sections:[{t:'REGISTRO', rows:[['O que é','O buraco negro supermassivo no centro da nossa galáxia'],['Como sabemos','Estrelas orbitando um ponto invisível, seguidas por décadas'],['2022','A sombra dele foi fotografada pelo Event Horizon Telescope']]}],
+   facts:['O Sol leva 230 milhões de anos para dar uma volta em torno dele.'],
+   fict:'O buraco negro favorito da ficção científica quando alguém precisa de um centro galáctico.'}},
  {id:'pleiades', name:'PLÊIADES · M45', nav:true, pos:[-4.5,0,-16.5], hot:false,
   card:{desig:'AGLOMERADO ABERTO · 444 AL', kind:'As Sete Irmãs', hab:null,
    quick:[['DISTÂNCIA','444 al'],['ESTRELAS','~1.000'],['DIÂMETRO','~15 al'],['A OLHO NU','sim']],
@@ -2424,6 +2433,32 @@ const PLE_SWARM = {
   ],
   facts:['Quase toda cultura antiga que olhou para o céu batizou este aglomerado, e muitas contaram sete irmãs.','O símbolo da Subaru são as Plêiades: subaru é o nome japonês delas.','No Brasil, o nascer das Plêiades marcava o início do ano e das chuvas para vários povos indígenas.','A neblina azul ao redor delas não é o berço onde nasceram: é uma nuvem que elas estão apenas atravessando.'],
   fict:'Da Odisseia à Bíblia, de Sailor Moon a Star Trek, é o aglomerado mais citado da cultura humana.', moons:[]};
+/* ---- lote 18: o nosso endereço central ---- */
+const SGR_STAR = {
+  id:'sgra', name:'SAGITTARIUS A*', desig:'SGR A* · BURACO NEGRO SUPERMASSIVO', kind:'O centro da nossa galáxia', hab:null, gbar:1400000000000,
+  quick:[['MASSA','4,3 mi Sóis'],['RAIO','~17 R☉ (horizonte)'],['DISTÂNCIA','26.000 al'],['DIÂMETRO','~24 mi km'],['FOTO','EHT · 2022'],['NOBEL','2020']],
+  visual:{mode:'star', c1:'#050303', c2:'#1c0d06',
+    rings:{rin:1.4, rout:3.0, col:'#ffb057', op:0.9, tilt:26, seed:4.3}},
+  sections:[
+    {t:'ESTRUTURA', rows:[['Massa','4,3 milhões de sóis comprimidos num ponto'],['O horizonte','Cerca de 24 milhões de km de diâmetro, caberia dentro da órbita de Mercúrio'],['O brilho','Surpreendentemente fraco: ele está de dieta, engolindo pouquíssima matéria'],['Comparação','O buraco negro de M87, o outro fotografado, é mil vezes mais massivo']]},
+    {t:'COMO SABEMOS', rows:[['As estrelas','Décadas seguindo estrelas que orbitam um ponto invisível no centro da galáxia'],['S2','Uma delas passa a 3% da velocidade da luz no ponto mais próximo, e completa a volta em 16 anos'],['A conta','Pela órbita delas, a massa central só pode ser um buraco negro'],['Nobel 2020','Reinhard Genzel e Andrea Ghez levaram o prêmio por essa descoberta'],['A foto','Em 2022 o Event Horizon Telescope mostrou o anel de luz ao redor da sombra']]},
+    {t:'REGISTRO', rows:[['Onde','Na direção de Sagitário, a 26 mil anos-luz, atrás de nuvens de poeira'],['Por que não vemos','A poeira do disco galáctico bloqueia a luz visível: só o rádio e o infravermelho passam'],['O flagra de 2019','Ele engoliu algo e brilhou 75 vezes mais forte por algumas horas'],['Nota de escala','Cena simbólica: as estrelas S orbitam a distâncias de horas-luz']]}
+  ],
+  facts:['Tudo neste mapa que fica na Via Láctea, inclusive você, está orbitando este ponto.','O Sol leva 230 milhões de anos para dar uma volta em torno dele.','A foto de 2022 não mostra o buraco negro: mostra a sombra dele contra o gás quente atrás.','Ele é tão "limpo" que se estivesse comendo com apetite, o céu noturno da Terra seria diferente.'],
+  fict:'É o destino final de metade da ficção científica que envolve buracos negros, de Interestelar a Cowboy Bebop.'
+};
+const SGR_BODIES = [
+ {id:'s2estrela', name:'S2', desig:'S0-2 · ESTRELA TESTEMUNHA', kind:'A estrela que provou o buraco negro', hab:0, gbar:12, pop:'0',
+  quick:[['TIPO','B, ~14 Sóis'],['RAIO','~6 R☉'],['ANO','16 anos'],['VELOCIDADE','3% da luz'],['MAIS PERTO','120 UA'],['DESCOBERTA','1990s']],
+  sys:{orbit:9, size:1.1, speed:2.2, angle:1.4},
+  visual:{mode:'star', c1:'#eaf0ff', c2:'#9fb8ff'},
+  sections:[
+    {t:'ÓRBITA & ROTAÇÃO', rows:[['Ano','16 anos terrestres para dar uma volta'],['No periastro','Chega a 120 UA do buraco negro, correndo a 3% da velocidade da luz'],['A curva','A órbita dela é tão elíptica que serve de laboratório de relatividade'],['Posição aqui','Simbólica: a órbita real é muito mais alongada']]},
+    {t:'REGISTRO', rows:[['O papel','Foi seguindo esta estrela, volta após volta, que se provou o que há no centro'],['2018','A passagem dela confirmou o desvio para o vermelho previsto por Einstein'],['2020','A órbita mostrou a precessão de Schwarzschild, outra previsão da relatividade confirmada'],['O feito','Uma geração de astrônomos passou a carreira medindo o movimento de um ponto de luz']]}
+  ],
+  facts:['Astrônomos acompanharam uma volta inteira desta estrela: dezesseis anos de paciência.','No ponto mais próximo ela viaja a mais de 7 mil quilômetros por segundo.','Ela é a prova mais direta de que existe um buraco negro no centro da nossa galáxia.'],
+  fict:'É a estrela que rendeu um Nobel, e quase ninguém fora da astronomia sabe o nome dela.', moons:[]}
+];
 /* ---- fora da Via Láctea: os únicos candidatos a planeta em outras galáxias ---- */
 const AND_STAR = {
   id:'pa99lente', name:'ESTRELA-LENTE PA-99-N2', desig:'M31 · ESTRELA ANÔNIMA', kind:'Uma estrela de Andrômeda que piscou uma vez', hab:null, gbar:20,
@@ -2650,6 +2685,12 @@ const SYS = {
           quick:[['GALÁXIA','Andrômeda · M31'],['DISTÂNCIA','2,5 mi al'],['PLANETAS','1 candidato'],['MÉTODO','microlente'],['DETECTADO','1999'],['CONFIRMAR','impossível']],
           sections:[{t:'REGISTRO', rows:[['O evento','Em 1999 uma estrela de Andrômeda ampliou a luz de outra e entregou um companheiro'],['O planeta','Cerca de 6 Júpiteres, o primeiro candidato extragaláctico da história'],['O limite','Microlentes acontecem uma vez só: ninguém vai poder checar']]}],
           facts:['O único endereço catalogado deste mapa que fica fora da Via Láctea, junto com o do Redemoinho.']} },
+  sgra:{ id:'sgra', name:'SAGITTARIUS A*', star:SGR_STAR, bodies:SGR_BODIES, belt:[], beltR:null,
+        starSize:2.4, camMax:32, hint:'O CENTRO DA VIA LÁCTEA: TUDO AQUI ORBITA ESTE PONTO',
+        card:{desig:'BURACO NEGRO · CENTRO DA GALÁXIA', kind:'O nosso endereço central', hab:null,
+          quick:[['MASSA','4,3 mi Sóis'],['DISTÂNCIA','26.000 al'],['FOTO','EHT · 2022'],['NOBEL','2020'],['TESTEMUNHA','a estrela S2'],['VOLTA DO SOL','230 mi anos']],
+          sections:[{t:'REGISTRO', rows:[['Como sabemos','Décadas medindo estrelas que orbitam um ponto invisível'],['S2','Passa a 3% da velocidade da luz e dá a volta em 16 anos'],['2022','O Event Horizon Telescope fotografou a sombra dele']]}],
+          facts:['Tudo o que existe na Via Láctea, inclusive você, está orbitando este ponto.']} },
   pleiades:{ id:'pleiades', name:'PLÊIADES', star:PLE_STAR, bodies:[], belt:[], beltR:[9,20], beltShape:'shell', beltLabel:'AS SETE IRMÃS →', beltId:'pleiades', beltCol:0xa8c8ff,
         starSize:2.2, camMax:40, hint:'O AGLOMERADO QUE TODA CULTURA DA TERRA BATIZOU',
         card:{desig:'AGLOMERADO ABERTO · TOURO', kind:'As Sete Irmãs', hab:null,
@@ -2782,6 +2823,7 @@ reg(CAR_STAR,'caranguejo'); reg(CAR_NEBULA,'caranguejo');
 reg(M57_STAR,'m57'); reg(M57_NEBULA,'m57');
 reg(LHS_STAR,'lhs1140'); LHS_BODIES.forEach(p=>reg(p,'lhs1140'));
 reg(PLE_STAR,'pleiades'); reg(PLE_SWARM,'pleiades');
+reg(SGR_STAR,'sgra'); SGR_BODIES.forEach(p=>reg(p,'sgra'));
 reg(CHAMA_STAR,'chama'); reg(CHAMA_NEBULA,'chama');
 reg(TUC_STAR,'tuc47'); reg(TUC_SWARM,'tuc47');
 reg(NGC346_STAR,'ngc346'); reg(NGC346_NEBULA,'ngc346');
@@ -4094,6 +4136,8 @@ const dec1 = v => v.toFixed(1).replace('.', ',');
 const UA_KM = 149597870, AL_KM = 9.4607e12;
 function fmtEscala(km){
   if(!isFinite(km) || km <= 0) return null;
+  if(km >= AL_KM*1e6)  return fmtNumEsc(km/AL_KM/1e6) + ' MI AL';
+  if(km >= AL_KM*1000) return fmtNumEsc(km/AL_KM/1000) + ' MIL AL';
   if(km >= AL_KM*0.05) return fmtNumEsc(km/AL_KM) + ' AL';
   if(km >= UA_KM*0.02) return fmtNumEsc(km/UA_KM) + ' UA';
   if(km >= 1e6)        return fmtNumEsc(km/1e6) + ' MI KM';
@@ -4114,10 +4158,12 @@ function distReal(b, filtro){
   for(const t of cand){
     let m = t.match(/([\d.,]+)\s*UA/);
     if(m) return parseFloat(m[1].replace(/\./g,'').replace(',','.')) * UA_KM;
-    m = t.match(/([\d.,]+)\s*(mil\s+)?anos-luz|([\d.,]+)\s*al\b/i);
+    /* entende "15 anos-luz", "2,5 mi al", "26.000 al", "1 bi al" */
+    m = t.match(/([\d.,]+)\s*(mil|mi|bi)?\s*(anos-luz|al)\b/i);
     if(m){
-      const n = parseFloat((m[1]||m[3]).replace(/\./g,'').replace(',','.'));
-      return n * (m[2] ? 1000 : 1) * AL_KM;
+      const n = parseFloat(m[1].replace(/\./g,'').replace(',','.'));
+      const mult = {mil:1e3, mi:1e6, bi:1e9}[(m[2]||'').toLowerCase()] || 1;
+      return n * mult * AL_KM;
     }
   }
   return 0;
@@ -4127,7 +4173,7 @@ function distReal(b, filtro){
 /* tamanho do objeto, nunca a distância até a Terra */
 const RE_TAM = /DI[ÂA]METRO|LARGURA|EXTENS|TAMANHO|ALTURA|RAIO/i;
 /* distância até a estrela do próprio sistema, nunca até nós */
-const RE_ORB = /(dist[âa]ncia\s+(do\s+sol|da\s+estrela)|^[óo]rbita$)/i;
+const RE_ORB = /(dist[âa]ncia\s+(do\s+sol|da\s+estrela|de\s+j[úu]piter|de\s+saturno)|^[óo]rbita$|mais\s+perto|periastro|semieixo)/i;
 const _escCache = {};
 function escalaSistema(sysId){
   if(_escCache[sysId] !== undefined) return _escCache[sysId];
@@ -4145,6 +4191,22 @@ function escalaSistema(sysId){
   }
   return (_escCache[sysId] = km);
 }
+/* no universo, calibra pela distância real de cada galáxia até nós: a Via Láctea
+   está na origem, então a distância de cada uma até o centro da cena é a escala */
+let _escUni = null;
+function escalaUniverso(){
+  if(_escUni !== null) return _escUni;
+  const razoes = [];
+  for(const g of GALAXIES){
+    if(g.id === 'vialactea' || !g.card) continue;
+    const real = distReal(Object.assign({name:g.name}, g.card), /DIST[ÂA]NCIA/i);
+    const un = Math.hypot(g.pos[0], g.pos[1], g.pos[2]);
+    if(real && un > 0.1) razoes.push(real/un);
+  }
+  if(!razoes.length) return (_escUni = 0);
+  razoes.sort((a,b)=>a-b);
+  return (_escUni = razoes[Math.floor(razoes.length/2)]);   /* mediana */
+}
 function larguraDaTela(){
   const un = 2 * CAM.dist * Math.tan(camera.fov*Math.PI/360) * camera.aspect;  /* unidades */
   let kmPorUnidade = 0;
@@ -4159,6 +4221,8 @@ function larguraDaTela(){
     }
   } else if(ST.level==='system'){
     kmPorUnidade = escalaSistema(ST.sys);
+  } else if(ST.level==='universe'){
+    kmPorUnidade = escalaUniverso();
   } else if(ST.level==='galaxy'){
     const g = GALAXIES.find(x=>x.id===ST.gal);
     const d = g && g.card ? parseDia(Object.assign({name:g.name}, g.card)) : null;
@@ -4324,7 +4388,8 @@ const TITULOS = {
   kepler186:'AGRÔNOMO VERMELHO', roseta:'JARDINEIRO CÓSMICO',
   tarantula:'DOMADOR DE ARANHAS', sn1987a:'CAÇADOR DE NEUTRINOS',
   tuc47:'GUARDIÃO DO TUCANO', ngc346:'ARQUEÓLOGO DO UNIVERSO JOVEM',
-  lhs1140:'CAÇADOR DE OCEANOS', chama:'GUARDA-FOGO', pleiades:'IRMÃO DAS SETE'
+  lhs1140:'CAÇADOR DE OCEANOS', chama:'GUARDA-FOGO', pleiades:'IRMÃO DAS SETE',
+  sgra:'SENTINELA DO CENTRO'
 };
 function progressoSistemas(){
   const mapa = {};
@@ -4923,7 +4988,12 @@ let fovUlt = '';
 setInterval(()=>{
   const s = larguraDaTela();
   const t = s ? ('CAMPO DE VISÃO · ' + s) : 'SAT LINK 08 · DESTINO';
-  if(t !== fovUlt){ fovUlt = t; const el = $('#fovline'); if(el) el.textContent = t; }
+  if(t !== fovUlt){
+    fovUlt = t;
+    const el = $('#fovline'); if(el) el.textContent = t;
+    /* no celular o canto de baixo está escondido: a escala entra na linha de status */
+    const em = $('#fovmob'); if(em) em.textContent = s ? ('· ' + s) : '';
+  }
 }, 220);
 
 /* ============================ GESTOS & TECLADO ============================ */
@@ -5130,7 +5200,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r40';
+const BUILD = 'r41';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

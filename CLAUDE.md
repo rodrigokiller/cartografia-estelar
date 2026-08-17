@@ -1,6 +1,6 @@
 # Cartografia Estelar · contexto do projeto
 
-Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r40** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
+Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r41** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
 
 ## Arquitetura (blocos <script> em ordem)
 1. Helpers ($, isMobile, RM, clamp, easeIO, hashStr, coordOf) + shaders GLSL como template strings (NOISE/PLANET/CLOUD/ATMO/RING/SUN). fbm usa 4 octaves em touch, 5 no desktop.
@@ -39,4 +39,5 @@ Medido: 1% de diferença de tamanho e 0px de posição, tanto planeta quanto lua
 - Modo tour (tecla T ou botão ▶): três rotas em `ROTAS` (completo/solar/nebulosas), escolhidas no seletor da barra. `ROTEIRO` aponta para a rota ativa. Roteiro com 28 paradas, cada uma com legenda vinda de `tourNarra()` (o primeiro `facts` do próprio objeto, ou um `texto` fixo na parada). Nenhuma parada pode ficar sem legenda., cada uma {corpo|sis|gal|uni, ms}. Usa o mergulho contínuo quando o corpo é do sistema atual. Qualquer toque na cena encerra. Roteiro novo precisa passar no teste de validade (todo id tem que existir).
 - Painel MISSÃO e mundos habitáveis: ENTREGUE no r26, os dois num painel só.
 - Possível migração React/FastAPI no futuro (estrutura de dados já é API-ready). Por ora, manter vanilla.
+
 
