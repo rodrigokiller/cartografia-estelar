@@ -696,6 +696,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
           <option value="hab">HABITABILIDADE</option>
           <option value="grav">GRAVIDADE</option>
           <option value="sis">SISTEMA</option>
+          <option value="dist">DISTÂNCIA DE CASA</option>
         </select>
       </div>
       <ul id="misslist"></ul>
@@ -1600,20 +1601,22 @@ const ACEN_BODIES = [
   sys:{orbit:30, size:0.6, speed:0.28, angle:3.6},
   visual:{mode:'star', c1:'#d43a1a', c2:'#ff7a4d'},
   sections:[
-    {t:'ÓRBITA & ROTAÇÃO', rows:[['Órbita ao redor do par A–B','~550 mil anos'],['Distância real do par','~13 mil UA (0,2 al), AQUI FORA DE ESCALA'],['Rotação','~83 dias']]},
-    {t:'REGISTRO', rows:[['Distância da Terra','4,24 al, a estrela mais próxima do Sol'],['Temperamento','Flares violentos: dobra de brilho em minutos'],['Vida útil','~4 trilhões de anos'],['Planetas','Proxima b (2016) e d (2022) · c é candidato']]}
+    {t:'ÓRBITA & ROTAÇÃO', rows:[['Órbita ao redor do par A e B','~550 mil anos'],['Distância real do par','~13 mil UA (0,2 al). Aqui fora de escala.'],['Rotação','~83 dias, devagar para uma anã vermelha']]},
+    {t:'O TEMPERAMENTO', rows:[['Flare star','Ela dobra de brilho em minutos, e volta ao normal como se nada tivesse acontecido'],['O superflare de 2019','Ficou 14 mil vezes mais brilhante no ultravioleta, por sete segundos'],['O que isso faz','Uma rajada dessas arranca a atmosfera de um planeta próximo, camada por camada'],['A frequência','Não é evento raro: acontece o tempo todo, e já acontecia há bilhões de anos'],['O veredito','É provável que ela tenha esterilizado os próprios planetas muito antes de nós existirmos']]},
+    {t:'REGISTRO', rows:[['Distância','4,24 anos-luz, a estrela mais próxima do Sol e assim continuará por milênios'],['Descoberta','1915, por Robert Innes, do Observatório de Joanesburgo'],['Vida útil','Cerca de 4 trilhões de anos: ela vai brilhar muito depois de todas as outras se apagarem'],['A família','Proxima b (2016), d (2022) e c ainda como candidato']]}
   ],
-  facts:['É tão fraca que, mesmo sendo a mais próxima, é invisível a olho nu.','Toque nas “luas” acima para visitar os planetas Proxima b e d.'],
+  facts:['É a estrela mais próxima do Sol e mesmo assim é invisível a olho nu: você precisa de telescópio para ver a nossa vizinha de porta.','Em 2019 ela soltou um clarão 14 mil vezes mais brilhante que o normal, e provavelmente já fez isso milhões de vezes.','Vai continuar brilhando por 4 trilhões de anos, tempo suficiente para o universo ficar irreconhecível.','A luz que sai dela hoje chega aqui daqui a quatro anos e três meses.'],
   fict:'Projeto Breakthrough Starshot: velas de luz a 20% da velocidade da luz chegariam aqui em ~20 anos.',
   moons:[
    {id:'proximab', name:'PROXIMA B', desig:'PROXIMA · EXOPLANETA b', kind:'Rochoso · zona habitável', hab:52, gbar:1.0, pop:'desconhecida (provavelmente 0)',
     quick:[['RAIO','~1,03 R⊕'],['MASSA','≥1,07 M⊕'],['ANO','11,2 d'],['TEMP. EQ.','−39 °C'],['ZONA','habitável'],['ÁGUA','possível']],
     visual:{mode:'rocky', c1:'#8a6a52', c2:'#b08a66', c3:'#5d4636', scale:4.6, seed:31.7, crater:0.35, atmo:{col:'#7fb0d8', i:0.7}},
     sections:[
-     {t:'ÓRBITA & ROTAÇÃO', rows:[['Ano','11,19 dias'],['Distância da estrela','0,0485 UA (5% Sol–Terra)'],['Rotação','Provavelmente síncrona, um lado sempre dia'],['Estações','Não']]},
-     {t:'REGISTRO', rows:[['Descoberta','2016 · ESO (Pale Red Dot)'],['O problema','Flares da Proxima podem ter arrancado a atmosfera'],['Se tiver atmosfera','Clima ameno no terminador dia/noite'],['Água','Possível, recebe luz parecida com a Terra']]}
+     {t:'ÓRBITA & ROTAÇÃO', rows:[['Ano','11,19 dias'],['Distância da estrela','0,0485 UA, ou 5% da distância entre o Sol e a Terra'],['Rotação','Provavelmente síncrona, com um lado em dia eterno'],['O terminador','A faixa de eterno entardecer entre o lado quente e o gelado é onde a vida teria chance'],['Estações','Não existem']]},
+     {t:'REGISTRO', rows:[['2016','Descoberto pelo ESO na campanha Pale Red Dot, que acompanhou a estrela noite após noite'],['A luz','Recebe 65% da energia que a Terra recebe, mas quase toda no vermelho e no infravermelho'],['O problema','As rajadas da estrela provavelmente arrancaram qualquer atmosfera que ele tenha tido'],['A esperança','Se ele tiver campo magnético forte, ou se a atmosfera se refizer, ainda há chance'],['A verificação','Ele não transita na frente da estrela vista daqui, o que dificulta muito estudar a atmosfera']]}
     ],
-    facts:['O exoplaneta potencialmente habitável mais próximo que existe.','O céu diurno seria vermelho-alaranjado, e a estrela pareceria 3× maior que o nosso Sol.'], fict:'Destino da frota em “Aurora” (Kim Stanley Robinson) e lar dos tripós de “A Guerra dos Mundos”? Não, mas a ficção adora este endereço.'},
+    facts:['É o exoplaneta potencialmente habitável mais próximo que existe, e provavelmente sempre será.','O céu de lá seria vermelho-alaranjado, com a estrela parecendo três vezes maior que o nosso Sol.','Como ele não passa na frente da estrela visto da Terra, nem o James Webb consegue analisar a atmosfera dele direito.','É o alvo do Breakthrough Starshot: velas de luz que chegariam lá em vinte anos, contra os setenta mil anos de uma sonda comum.'],
+    fict:'É o endereço interestelar preferido da ficção: aparece em Aurora, de Kim Stanley Robinson, e em praticamente toda história de primeira viagem tripulada a outra estrela.'},
    {id:'proximad', name:'PROXIMA D', desig:'PROXIMA · EXOPLANETA d', kind:'Sub-Terra quente', hab:3, gbar:0.4, pop:'0',
     quick:[['RAIO','~0,81 R⊕'],['MASSA','~0,26 M⊕'],['ANO','5,1 d'],['TEMP. EQ.','~90 °C'],['ZONA','quente demais'],['ÁGUA','não']],
     visual:{mode:'rocky', c1:'#9a7a5a', c2:'#c49a6a', c3:'#6b5138', scale:5.2, seed:12.9, crater:0.7},
@@ -1691,7 +1694,7 @@ const BELT_HUB = {
   sections:[
     {t:'REGISTRO', rows:[['O que é','Restos de formação planetária que Júpiter nunca deixou virar planeta'],['Densidade real','Sondas o atravessam sem nem mirar, filmes exageram'],['Composição','Rocha, metal e gelo · Ceres tem até água'],['Visitantes','Dawn (Ceres/Vesta) · NEAR (Eros) · Lucy em rota']]}
   ],
-  facts:['Somando tudo, dá só 4% da massa da Lua.','Toque em um dos corpos acima para visitá-lo.'],
+  facts:['Somando tudo, o cinturão inteiro dá só 4% da massa da Lua.','Os filmes mentem: as rochas ficam tão longe umas das outras que uma sonda o atravessa sem precisar desviar de nada.'],
   fict:'The Expanse, aqui nasce a cultura belter. “Beltalowda!”',
   moons:BELT_BODIES};
 const KUIPER_HUB = {
@@ -1703,7 +1706,7 @@ const KUIPER_HUB = {
   sections:[
     {t:'REGISTRO', rows:[['O que é','Um anel de mundos congelados além de Netuno, sobras intactas da formação do sistema'],['Previsto','Por Gerard Kuiper (1951), confirmado só em 1992'],['Habitantes ilustres','Plutão, Éris, Makemake, Haumea, Arrokoth'],['Cometas','É o berço dos cometas de curto período, como o Halley'],['Além dele','A Nuvem de Oort, até 1 ano-luz de distância']]}
   ],
-  facts:['Éris, aqui, foi quem “rebaixou” Plutão em 2006.','Toque em um dos mundos acima para visitá-lo.'],
+  facts:['Foi a descoberta de Éris, aqui, que rebaixou Plutão a planeta anão em 2006.','É material intocado da formação do Sistema Solar, congelado no lugar há 4,6 bilhões de anos.'],
   fict:'The Expanse, além do Cinturão, o território onde a Terra e Marte não mandam. No universo de Star Trek, a região vira rota de contrabando.',
   moons:[
    {id:'eris', name:'ÉRIS', desig:'PLANETA ANÃO · TRANSNETUNIANO', kind:'A que destronou Plutão', hab:1, gbar:0.084, pop:'0',
@@ -1804,7 +1807,7 @@ const K16_STAR = {
   quick:[['TIPO','K5V'],['RAIO','0,65 R☉'],['MASSA','0,69 Sol'],['PAR','Kepler-16 B (M4V)'],['DANÇA','41 dias'],['DISTÂNCIA','245 al']],
   visual:{mode:'star', c1:'#ffd9a0', c2:'#ff9a52'},
   sections:[{t:'REGISTRO', rows:[['O par','A e B orbitam o centro comum a cada 41 dias'],['O prêmio','Um planeta que circula as DUAS, Kepler-16b'],['Descoberta','2011, telescópio Kepler']]}],
-  facts:['Aqui a companheira B aparece orbitando, toque nela também.'], fict:'Star Wars, o sistema que fez a NASA desenhar Tatooine em release oficial.'
+  facts:['As duas estrelas se eclipsam mutuamente vistas da Terra, e foi assim que o Kepler achou o planeta que orbita as duas.'], fict:'Star Wars, o sistema que fez a NASA desenhar Tatooine em release oficial.'
 };
 const K16_BODIES = [
  {id:'k16b_star', name:'KEPLER-16 B (ESTRELA)', desig:'COMPANHEIRA · M4V', kind:'A segunda luz do entardecer', hab:null, gbar:60, pop:'·',
@@ -4371,6 +4374,19 @@ const MISSFILTROS = [
   {k:'estrela',  t:'ESTRELAS',   f:b=>catDe(b)==='estrela'},
   {k:'regiao',   t:'REGIÕES',    f:b=>catDe(b)==='regiao' || catDe(b)==='menor'}
 ];
+/* distância de casa: vem do sistema do corpo, não do corpo em si. O Sistema
+   Solar fica em 0, e o resto se ordena pelo quão longe você foi. */
+const _distSis = {};
+function distDeCasa(b){
+  const sid = b._sys;
+  if(_distSis[sid] !== undefined) return _distSis[sid];
+  const S = SYS[sid]; let km = 0;
+  if(sid !== 'sol' && S){
+    const fontes = [S.card ? Object.assign({name:S.name}, S.card) : null, S.star].filter(Boolean);
+    for(const f of fontes){ const d = distReal(f, /DIST[ÂA]NCIA/i); if(d){ km = d; break; } }
+  }
+  return (_distSis[sid] = km);
+}
 const MISS = {filtro:'tudo', ordem:'nome', q:''};
 /* cada sistema 100% visitado rende um título, além do selo */
 const TITULOS = {
@@ -4475,10 +4491,12 @@ function missRender(){
   if(MISS.ordem==='hab')       lista.sort((a,b)=>(b.hab||0)-(a.hab||0) || nm(a).localeCompare(nm(b)));
   else if(MISS.ordem==='grav') lista.sort((a,b)=>(b.gbar||0)-(a.gbar||0) || nm(a).localeCompare(nm(b)));
   else if(MISS.ordem==='sis')  lista.sort((a,b)=>sisNome(a).localeCompare(sisNome(b)) || nm(a).localeCompare(nm(b)));
+  else if(MISS.ordem==='dist') lista.sort((a,b)=>distDeCasa(a)-distDeCasa(b) || sisNome(a).localeCompare(sisNome(b)) || nm(a).localeCompare(nm(b)));
   else                         lista.sort((a,b)=>nm(a).localeCompare(nm(b)));
 
   el.innerHTML = lista.length ? lista.map(b=>{
-    const sub = CATNOME[catDe(b)] + ' · ' + sisNome(b);
+    let sub = CATNOME[catDe(b)] + ' · ' + sisNome(b);
+    if(MISS.ordem==='dist'){ const d = distDeCasa(b); sub += ' · ' + (d ? fmtEscala(d) : 'EM CASA'); }
     return '<li data-id="'+b.id+'" class="'+(VIS.has(b.id)?'vis':'')+'">'
       + '<span class="mdot"></span>'
       + '<span class="minfo"><span class="mnm">'+esc(b.name)+'</span><span class="msub">'+esc(sub)+'</span></span>'
@@ -5200,7 +5218,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r41';
+const BUILD = 'r42';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

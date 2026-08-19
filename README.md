@@ -7,6 +7,7 @@ Feito por [Rodrigo Sanguanini](https://sanguanini.dev), com trilha sonora origin
 
 **Rodar local:** abra `index.html` no navegador (a pasta `audio/` precisa estar junto para a trilha; sem ela, toca a música generativa).
 **Publicar:** `git push` na branch `main`. O GitHub Pages serve a pasta inteira, sem build step.
+**Verificar os dados:** `node tools/verifica.js` confere a integridade do catálogo antes de publicar.
 **Continuar com IA:** abra a pasta no VS Code com Claude Code. O `CLAUDE.md` carrega todo o contexto do projeto.
 
 ## Controles
