@@ -1,6 +1,6 @@
 # Cartografia Estelar · contexto do projeto
 
-Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r49** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
+Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r50** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
 
 ## Arquitetura (blocos <script> em ordem)
 1. Helpers ($, isMobile, RM, clamp, easeIO, hashStr, coordOf) + shaders GLSL como template strings (NOISE/PLANET/CLOUD/ATMO/RING/SUN). fbm usa 4 octaves em touch, 5 no desktop.
@@ -47,6 +47,15 @@ Duas features grandes que ele quer testar. Fazer uma por vez, em commit isolado,
 
    Original: **Terra e Lua em tempo real**: botão discreto (a ideia dele: perto do "comparar este corpo", não ao lado do nome) que alterna a Terra procedural pela Terra de verdade, com mapa correto, rotação pelo horário do navegador e a Lua na posição e fase reais. REGRA DELE: nunca pedir permissão de localização. Sem permissão, mostrar orientação neutra. Só centraliza no primeiro clique; depois o arrasto continua livre. Vale também para a Lua quando se entra nela. O mapa precisa ser desenhado em canvas (o app roda em file:// e não deve depender de textura externa).
 2. **Sondas, satélites e trajetórias**: as sondas já entraram como corpos (r44). Falta a trajetória desenhada numa cor discreta, um botão de play que percorre o caminho com a câmera acompanhando o objeto, e um relógio de anos no HUD mostrando o tempo passando. Ele topa que isso valha para outros corpos também (orbitar junto), mas avisou para não estragar a navegação atual, que está do jeito que ele quer.
+
+## O QUE FICOU PARA DEPOIS (pedidos do Rodrigo, NÃO deixar se perder)
+- **Ir e vir pela trajetória com o mouse** (scrub): ideia dele desde o início das sondas. O motor já anda por pontos locais transformados por quadro, então dá para mapear um arrasto ao parâmetro `e` do trajStep.
+- **Satélites e foguetes** como novos tipos de objeto (a classe de linha e o filtro já existem, é só criar a classe `satelite` e os dados).
+- **"Orbitar junto" de qualquer corpo**: play genérico acompanhando um corpo em órbita fechada (o Halley já funciona, generalizar é pequeno).
+- **Tour**: o Rodrigo NÃO anda gostando dele. Mantido por ora (tecla T + registro de bordo). Se ele pedir, remover a UI sem dó, o código é isolado.
+- **Terra ao vivo**: nuvens e luzes de cidades entraram no r50, mas falta o Rodrigo validar o visual no navegador real; costas mais detalhadas seguem pendentes.
+- **Lote pop pendente**: Nebulosa de Carina. Depois: Io/Europa focus com mergulho já funcionam, mas fichas de luas de Urano/Netuno seguem curtas.
+- **Marcos no percurso** FEITOS no r50 (campo `marcos:[[ano,'RÓTULO']]` no corpo; Halley usa `traj:{de,ate}` para o intervalo de anos).
 
 ## Publicação
 - Repositório git local iniciado no r25 (branch main). Commits em PT-BR, um por entrega.

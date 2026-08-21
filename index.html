@@ -1258,6 +1258,7 @@ PLANETS.push(
 const PLANETAS_SONDAS = [
  {id:'voyager1', name:'VOYAGER 1', desig:'SONDA · 1977', kind:'O objeto humano mais distante', hab:0, gbar:0, pop:'0',
   sonda:true,
+  marcos:[[1977,'LANÇAMENTO'],[1979,'JÚPITER'],[1980,'SATURNO'],[1990,'PÁLIDO PONTO AZUL'],[2012,'ESPAÇO INTERESTELAR']],
   quick:[['LANÇAMENTO','5/9/1977'],['DISTÂNCIA','~168 UA'],['VELOCIDADE','61.000 km/h'],['ONDE','espaço interestelar'],['ENERGIA','até ~2030'],['TAMANHO','3,7 m de antena']],
   sys:{orbit:64, size:0.30, speed:0.9, angle:1.15, incl:0.35},
   visual:{mode:'rocky', c1:'#b8b2a4', c2:'#e0d8c4', c3:'#6a655c', scale:7.0, seed:77.1, crater:0.2},
@@ -1270,6 +1271,7 @@ const PLANETAS_SONDAS = [
   fict:'O Disco de Ouro virou símbolo cultural, e a sonda aparece de Star Trek a incontáveis histórias sobre o que dizer a um alienígena.', moons:[]},
  {id:'voyager2', name:'VOYAGER 2', desig:'SONDA · 1977', kind:'A única que visitou os quatro gigantes', hab:0, gbar:0, pop:'0',
   sonda:true,
+  marcos:[[1977,'LANÇAMENTO'],[1979,'JÚPITER'],[1981,'SATURNO'],[1986,'URANO'],[1989,'NETUNO'],[2018,'ESPAÇO INTERESTELAR']],
   quick:[['LANÇAMENTO','20/8/1977'],['DISTÂNCIA','~140 UA'],['VELOCIDADE','55.000 km/h'],['ONDE','espaço interestelar'],['RECORDE','4 gigantes'],['ENERGIA','até ~2030']],
   sys:{orbit:58, size:0.28, speed:0.95, angle:4.3, incl:-0.28},
   visual:{mode:'rocky', c1:'#b0aa9c', c2:'#d8d0bc', c3:'#605b53', scale:7.0, seed:77.2, crater:0.2},
@@ -1281,6 +1283,7 @@ const PLANETAS_SONDAS = [
   fict:'A missão dela é o exemplo clássico de aproveitar uma janela astronômica: quem perdeu, esperou dois séculos.', moons:[]},
  {id:'newhorizons', name:'NEW HORIZONS', desig:'SONDA · 2006', kind:'A que finalmente mostrou Plutão', hab:0, gbar:0, pop:'0',
   sonda:true,
+  marcos:[[2006,'LANÇAMENTO'],[2007,'JÚPITER'],[2015,'PLUTÃO'],[2019,'ARROKOTH']],
   quick:[['LANÇAMENTO','19/1/2006'],['DISTÂNCIA','~62 UA'],['VELOCIDADE','52.000 km/h'],['PLUTÃO','14/7/2015'],['ARROKOTH','1/1/2019'],['ENERGIA','até ~2040']],
   sys:{orbit:50, size:0.26, speed:1.1, angle:2.6, incl:0.12},
   visual:{mode:'rocky', c1:'#c0b8a8', c2:'#e8e0cc', c3:'#6e685e', scale:7.0, seed:77.3, crater:0.2},
@@ -1292,6 +1295,7 @@ const PLANETAS_SONDAS = [
   fict:'O coração de nitrogênio de Plutão que ela fotografou virou uma das imagens planetárias mais reconhecíveis do século.', moons:[]},
  {id:'pioneer10', name:'PIONEER 10', desig:'SONDA · 1972', kind:'A primeira a cruzar o cinturão', hab:0, gbar:0, pop:'0',
   sonda:true,
+  marcos:[[1972,'LANÇAMENTO'],[1973,'JÚPITER'],[2003,'ÚLTIMO SINAL']],
   quick:[['LANÇAMENTO','2/3/1972'],['DISTÂNCIA','~140 UA'],['ÚLTIMO SINAL','23/1/2003'],['MARCO','1ª em Júpiter'],['PLACA','sim'],['RUMO','Aldebarã']],
   sys:{orbit:70, size:0.24, speed:0.8, angle:5.4, incl:-0.1},
   visual:{mode:'rocky', c1:'#a8a296', c2:'#cec6b4', c3:'#5a554e', scale:7.0, seed:77.4, crater:0.2},
@@ -1871,6 +1875,7 @@ PLANETS.push(
  {id:'halley', name:'COMETA HALLEY', desig:'1P · COMETA PERIÓDICO', kind:'O cometa de todas as gerações', hab:0, gbar:0.0001, pop:'0',
   quick:[['NÚCLEO','15 × 8 km'],['PERÍODO','75–76 anos'],['ÚLTIMA VISITA','1986'],['PRÓXIMA','2061'],['VELOCIDADE','até 254 mil km/h'],['REGISTROS','desde 240 a.C.']],
   comet:true,
+  traj:{de:1986, ate:2061}, marcos:[[1986,'ÚLTIMA VISITA'],[2023,'AFÉLIO'],[2061,'PRÓXIMO PERIÉLIO']],
   sys:{orbit:38, size:0.34, speed:2.6, angle:5.1, incl:0.5},
   visual:{mode:'rocky', c1:'#3f3c38', c2:'#5c5850', c3:'#2a2825', scale:6.4, seed:19.86, crater:0.9, atmo:{col:'#a8e8d0', i:0.5}},
   sections:[
@@ -3683,6 +3688,35 @@ function texturaLua(){
   t.anisotropy = 4;
   return (_texLua = t);
 }
+let _texLuzes = null, _texPreta = null;
+function texturaPreta(){
+  if(_texPreta) return _texPreta;
+  const c = document.createElement('canvas'); c.width = c.height = 4;
+  c.getContext('2d').fillRect(0,0,4,4);
+  return (_texPreta = new THREE.CanvasTexture(c));
+}
+/* luzes das cidades: pontinhos ambar sorteados so onde ha continente,
+   lendo os pixels do proprio mapa desenhado */
+function texturaLuzes(){
+  if(_texLuzes) return _texLuzes;
+  const src = texturaTerra().image;
+  const W = 1024, H = 512, c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const g = c.getContext('2d');
+  g.fillStyle = '#000'; g.fillRect(0,0,W,H);
+  const dados = src.getContext('2d').getImageData(0,0,src.width,src.height).data;
+  let n = 0;
+  for(let i=0; i<30000 && n<3400; i++){
+    const x = Math.random(), y = 0.14 + Math.random()*0.66;   /* evita os polos */
+    const k = (Math.floor(y*src.height)*src.width + Math.floor(x*src.width))*4;
+    if(dados[k+1] > dados[k] && dados[k+1] > dados[k+2]+8){   /* pixel de terra firme */
+      g.fillStyle = 'rgba(255,198,112,' + (0.30 + Math.random()*0.55) + ')';
+      const t = Math.random() < 0.10 ? 1.7 : 0.9;
+      g.fillRect(x*W, y*H, t, t); n++;
+    }
+  }
+  return (_texLuzes = new THREE.CanvasTexture(c));
+}
 /* quanto a Terra ja girou hoje, em relacao ao Sol da cena */
 function giroAtual(){
   const d = new Date();
@@ -3714,17 +3748,20 @@ varying vec2 vUv; varying vec3 vN;
 void main(){ vUv = uv; vN = normalize(normalMatrix * normal);
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
 const LIVE_FRAG = `
-uniform sampler2D uMap; uniform vec3 uL; uniform float uAmb;
+uniform sampler2D uMap; uniform sampler2D uLuzes; uniform vec3 uL; uniform float uAmb;
 varying vec2 vUv; varying vec3 vN;
 void main(){
   vec3 col = texture2D(uMap, vUv).rgb;
   float dif = max(dot(normalize(vN), normalize(uL)), 0.0);
   float lum = uAmb + (1.0 - uAmb) * smoothstep(0.0, 0.30, dif);
-  gl_FragColor = vec4(col * lum, 1.0);
+  /* as cidades acendem so do lado da noite */
+  vec3 noite = texture2D(uLuzes, vUv).rgb * (1.0 - smoothstep(0.0, 0.22, dif));
+  gl_FragColor = vec4(col * lum + noite, 1.0);
 }`;
 function liveMaterial(id){
   return new THREE.ShaderMaterial({vertexShader:LIVE_VERT, fragmentShader:LIVE_FRAG,
     uniforms:{uMap:{value: id === 'lua' ? texturaLua() : texturaTerra()},
+              uLuzes:{value: id === 'lua' ? texturaPreta() : texturaLuzes()},
               uL:{value:LDIR.clone()}, uAmb:{value: id === 'lua' ? 0.05 : 0.07}}});
 }
 /* Greenwich apontado para o Sol da cena ao meio-dia UTC. O eixo tambem ganha a
@@ -3740,6 +3777,15 @@ function grupoLive(id, raio, seg){
       uniforms:{uCol:{value:C('#7fb0ff')}, uI:{value:1.15}},
       side:THREE.BackSide, blending:THREE.AdditiveBlending, transparent:true, depthWrite:false});
     g.add(new THREE.Mesh(new THREE.SphereGeometry(raio*1.05, seg, seg), am));
+    /* nuvens sutis por cima do mapa, com o shader que os planetas ja usam */
+    const cm = new THREE.ShaderMaterial({vertexShader:PLANET_VERT, fragmentShader:CLOUD_FRAG,
+      transparent:true, depthWrite:false,
+      uniforms:{uL:{value:LDIR.clone()}, uTime:{value:0}, uCAmt:{value:0.42},
+                uCScale:{value:3.6}, uCCol:{value:C('#ffffff')}}});
+    ANIM_MATS.push(cm);
+    const nuvens = new THREE.Mesh(new THREE.SphereGeometry(raio*1.02, seg, seg), cm);
+    nuvens.userData.isClouds = true;
+    g.add(nuvens);
   }
   malha.rotation.y = giroAtual() + LIVE_FASE;
   return {group:g, mesh:malha};
@@ -4066,15 +4112,20 @@ function anoDe(b){
 function trajStart(id){
   const b = ALLBODIES[id];
   const o = (ACT && ACT.sel && ACT.sel.orbits) ? ACT.sel.orbits.find(x=>x.id===id) : null;
-  if(!b || !o || !o.obj || !ehEscape(b) || DIVE) return;
-  o.obj.updateWorldMatrix(true, false);
+  if(!b || !o || !o.obj || !(ehEscape(b) || b.comet) || DIVE) return;
+  /* guarda os pontos LOCAIS e transforma a cada quadro: o Halley continua
+     orbitando durante o passeio e a linha acompanha */
   const pos = o.obj.geometry.getAttribute('position');
-  const pts = [];
+  const local = [];
   for(let i=0;i<pos.count;i++)
-    pts.push(new THREE.Vector3(pos.getX(i), pos.getY(i), pos.getZ(i)).applyMatrix4(o.obj.matrixWorld));
+    local.push(new THREE.Vector3(pos.getX(i), pos.getY(i), pos.getZ(i)));
+  if(o.obj.isLineLoop) local.push(local[0].clone());   /* fecha a volta */
   CAMTW = null;
-  TRAJ = {fase:'vai', pts, t0:performance.now(), ms:12000, id,
-          d0:CAM.dist, ano0:anoDe(b), ano1:(new Date()).getFullYear()};
+  TRAJ = {fase:'vai', local, obj:o.obj, t0:performance.now(), ms:(b.comet && !b.escape) ? 15000 : 12000, id,
+          d0:CAM.dist, marcos:b.marcos || null, mAtual:null,
+          _a:new THREE.Vector3(), _b:new THREE.Vector3(),
+          ano0:(b.traj && b.traj.de) || anoDe(b),
+          ano1:(b.traj && b.traj.ate) || (new Date()).getFullYear()};
   const el = $('#trajclock');
   el.textContent = b.name; el.classList.add('on');
   showHint('PERCORRENDO A ROTA · TOQUE NA CENA PARA ENCERRAR');
@@ -4102,12 +4153,20 @@ function trajStep(now){
     return;
   }
   const k = Math.min(1, (now-TRAJ.t0)/TRAJ.ms), e = easeIO(k);
-  const f = e*(TRAJ.pts.length-1);
-  const i = Math.min(TRAJ.pts.length-2, Math.floor(f));
-  CAM.pivot.lerpVectors(TRAJ.pts[i], TRAJ.pts[i+1], f-i);
+  const f = e*(TRAJ.local.length-1);
+  const i = Math.min(TRAJ.local.length-2, Math.floor(f));
+  TRAJ.obj.updateWorldMatrix(true, false);
+  TRAJ._a.copy(TRAJ.local[i]).applyMatrix4(TRAJ.obj.matrixWorld);
+  TRAJ._b.copy(TRAJ.local[i+1]).applyMatrix4(TRAJ.obj.matrixWorld);
+  CAM.pivot.lerpVectors(TRAJ._a, TRAJ._b, f-i);
   CAM.dist = TRAJ.d0 + (Math.min(TRAJ.d0,16) - TRAJ.d0)*Math.min(1, k*4);
-  if(TRAJ.ano0)
-    $('#trajclock').textContent = (ALLBODIES[TRAJ.id]||{}).name + ' · ' + Math.round(TRAJ.ano0 + (TRAJ.ano1-TRAJ.ano0)*e);
+  if(TRAJ.ano0){
+    const ano = TRAJ.ano0 + (TRAJ.ano1-TRAJ.ano0)*e;
+    let txt = (ALLBODIES[TRAJ.id]||{}).name + ' · ' + Math.round(ano);
+    if(TRAJ.marcos) for(const m of TRAJ.marcos) if(ano >= m[0]) TRAJ.mAtual = m;
+    if(TRAJ.mAtual) txt += ' · ' + TRAJ.mAtual[1];
+    $('#trajclock').textContent = txt;
+  }
   if(k>=1){ TRAJ.fase='pausa'; TRAJ.t0=now; }
 }
 
@@ -5368,7 +5427,7 @@ function cardRender(){
     }
   }
   const bTraj = (cur.type==='map' && cur.navKind==='body') ? ALLBODIES[cur.navId] : null;
-  if(bTraj && ehEscape(bTraj) && ACT && ACT.kind==='system' && bTraj._sys===ST.sys)
+  if(bTraj && (ehEscape(bTraj) || bTraj.comet) && ACT && ACT.kind==='system' && bTraj._sys===ST.sys)
     h += '<button class="xbtn" id="trajgo">≋ PERCORRER A TRAJETÓRIA</button>';
   if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='body'?'▶ ENTRAR · TRAVAR LINK':'▶ ENTRAR · TRAVAR ROTA')+'</button>';
   if(cur.type==='map' && !cur.self && !cur.nav){
@@ -5773,7 +5832,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r49';
+const BUILD = 'r50';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
