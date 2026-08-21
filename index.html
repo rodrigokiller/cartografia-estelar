@@ -5618,7 +5618,12 @@ window.addEventListener('keydown', e=>{
 
 /* sheet mobile: arrastar / tocar no cabeçalho */
 const head = $('#panelhead'); let HD = null;
-head.addEventListener('pointerdown', e=>{ HD = {x:e.clientX, y:e.clientY, done:false}; head.setPointerCapture(e.pointerId); });
+head.addEventListener('pointerdown', e=>{
+  /* botao dentro do cabecalho (LIVE) precisa receber o proprio clique:
+     capturar o ponteiro aqui desviaria o clique para o cabecalho */
+  if(e.target.closest('button, a, input, select')) return;
+  HD = {x:e.clientX, y:e.clientY, done:false}; head.setPointerCapture(e.pointerId);
+});
 head.addEventListener('pointermove', e=>{
   if(!HD || HD.done) return;
   const dy = e.clientY-HD.y;
@@ -5632,7 +5637,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r45';
+const BUILD = 'r46';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
