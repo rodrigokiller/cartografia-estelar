@@ -1,6 +1,6 @@
 # Cartografia Estelar · contexto do projeto
 
-Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r44** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
+Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r45** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
 
 ## Arquitetura (blocos <script> em ordem)
 1. Helpers ($, isMobile, RM, clamp, easeIO, hashStr, coordOf) + shaders GLSL como template strings (NOISE/PLANET/CLOUD/ATMO/RING/SUN). fbm usa 4 octaves em touch, 5 no desktop.
@@ -35,7 +35,9 @@ Medido: 1% de diferença de tamanho e 0px de posição, tanto planeta quanto lua
 
 ## Roadmap experimental (pedidos do Rodrigo, ainda NÃO feitos)
 Duas features grandes que ele quer testar. Fazer uma por vez, em commit isolado, para dar `git revert` fácil se quebrar o que já está bom.
-1. **Terra e Lua em tempo real**: botão discreto (a ideia dele: perto do "comparar este corpo", não ao lado do nome) que alterna a Terra procedural pela Terra de verdade, com mapa correto, rotação pelo horário do navegador e a Lua na posição e fase reais. REGRA DELE: nunca pedir permissão de localização. Sem permissão, mostrar orientação neutra. Só centraliza no primeiro clique; depois o arrasto continua livre. Vale também para a Lua quando se entra nela. O mapa precisa ser desenhado em canvas (o app roda em file:// e não deve depender de textura externa).
+1. ~~Terra e Lua em tempo real~~ **FEITO no r45**: botão LIVE ao lado do nome (só aparece na Terra e na Lua, `podeLive()`). `texturaTerra()`/`texturaLua()` desenham o mapa em canvas (nada externo, roda em file://), `LIVE_FRAG` faz a iluminação à mão porque a cena de foco não tem luzes Three.js, `giroAtual()` põe Greenwich no lugar certo pela hora UTC e `faseDaLua()` posiciona a Lua no ângulo real. Nunca pede permissão. A escolha fica em `carto:live`. ATENÇÃO: `LIVE` é declarado no bloco 5 mas só pode LER o store no bloco 6, senão os dois blocos morrem (erro do r45).
+
+   Original: **Terra e Lua em tempo real**: botão discreto (a ideia dele: perto do "comparar este corpo", não ao lado do nome) que alterna a Terra procedural pela Terra de verdade, com mapa correto, rotação pelo horário do navegador e a Lua na posição e fase reais. REGRA DELE: nunca pedir permissão de localização. Sem permissão, mostrar orientação neutra. Só centraliza no primeiro clique; depois o arrasto continua livre. Vale também para a Lua quando se entra nela. O mapa precisa ser desenhado em canvas (o app roda em file:// e não deve depender de textura externa).
 2. **Sondas, satélites e trajetórias**: as sondas já entraram como corpos (r44). Falta a trajetória desenhada numa cor discreta, um botão de play que percorre o caminho com a câmera acompanhando o objeto, e um relógio de anos no HUD mostrando o tempo passando. Ele topa que isso valha para outros corpos também (orbitar junto), mas avisou para não estragar a navegação atual, que está do jeito que ele quer.
 
 ## Publicação

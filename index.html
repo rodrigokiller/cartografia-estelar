@@ -468,6 +468,18 @@ body.touch .touchonly{display:inline}
   #helpcard p{font-size:11.5px;line-height:1.95}
 }
 
+
+/* botao LIVE: instrumentacao, nao botao de interface */
+.livebtn{display:inline-flex;align-items:center;gap:5px;vertical-align:middle;margin-left:10px;
+  font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--dim2);
+  border:1px solid var(--line);background:rgba(6,12,24,.5);padding:3px 7px;cursor:pointer;
+  position:relative;top:-3px;transition:color .2s,border-color .2s,background .2s;-webkit-tap-highlight-color:transparent}
+.livebtn:hover{color:var(--ion);border-color:var(--line2)}
+.livebtn i{width:5px;height:5px;border-radius:50%;background:var(--dim2);display:block}
+.livebtn.on{color:var(--ok);border-color:rgba(89,242,192,.5);background:rgba(89,242,192,.10)}
+.livebtn.on i{background:var(--ok);box-shadow:0 0 6px var(--ok);animation:pulseLive 1.8s ease-in-out infinite}
+@keyframes pulseLive{50%{opacity:.35}}
+#liveinfo{font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;color:var(--ok);margin-top:6px}
 /* ---------- hint toast ---------- */
 /* ---------- modo tour ---------- */
 #tourbar{position:absolute;left:22px;bottom:22px;z-index:16;display:none;flex-direction:column;gap:7px;
@@ -3512,6 +3524,164 @@ function buildUniverse(){
     update:(dt)=>{ if(!RM) for(const m of minis) m.pts.rotation.y += dt*0.03; }};
 }
 
+
+/* ============================ TERRA E LUA EM TEMPO REAL ============================
+   Modo LIVE: troca a textura procedural pelo mapa de verdade, desenhado em canvas
+   (nada externo, porque o app roda em file://), e gira o corpo para a hora atual.
+   Nunca pede permissao de localizacao: usa so o relogio do proprio navegador. */
+let LIVE = false;   /* lido do store mais adiante: o store nasce no bloco seguinte */
+const CONTINENTES = [
+  /* America do Sul */
+  [[-81,8],[-77,12],[-71,12],[-60,11],[-52,5],[-50,0],[-44,-2],[-35,-5],[-35,-9],[-39,-13],[-41,-22],
+   [-48,-25],[-48,-28],[-53,-34],[-58,-38],[-62,-40],[-65,-45],[-69,-52],[-75,-52],[-73,-45],[-75,-37],
+   [-71,-30],[-70,-20],[-71,-14],[-77,-6],[-80,-3],[-79,2]],
+  /* America do Norte e America Central */
+  [[-168,66],[-158,71],[-140,70],[-128,70],[-115,69],[-95,68],[-81,73],[-70,70],[-64,60],[-55,52],
+   [-60,46],[-67,45],[-71,41],[-76,35],[-81,31],[-80,25],[-84,30],[-90,29],[-97,26],[-97,20],[-92,18],
+   [-88,16],[-84,10],[-79,9],[-83,15],[-92,15],[-105,20],[-110,24],[-114,29],[-117,33],[-122,38],
+   [-124,44],[-124,48],[-131,54],[-140,60],[-150,60],[-158,57],[-166,60],[-168,66]],
+  /* Groenlandia */
+  [[-45,60],[-30,68],[-22,70],[-20,76],[-30,82],[-45,83],[-58,82],[-68,76],[-55,68],[-50,62]],
+  /* Africa */
+  [[-17,15],[-16,21],[-10,26],[-5,32],[3,37],[11,34],[20,32],[27,31],[33,31],[35,24],[38,18],[43,12],
+   [51,12],[51,6],[45,0],[41,-8],[40,-14],[35,-20],[33,-26],[27,-33],[20,-35],[18,-32],[13,-23],
+   [12,-16],[9,-1],[3,6],[-8,5],[-13,9],[-17,15]],
+  /* Europa e Asia */
+  [[-10,36],[-9,44],[-2,49],[4,52],[8,58],[5,62],[12,68],[22,71],[30,70],[40,68],[55,70],[70,73],
+   [85,74],[105,77],[125,74],[140,73],[160,70],[170,66],[178,65],[170,60],[160,60],[155,52],[142,47],
+   [135,43],[130,35],[122,31],[121,23],[110,20],[105,10],[100,6],[95,16],[90,22],[80,15],[77,8],
+   [72,20],[68,24],[60,25],[52,25],[45,13],[43,12],[35,24],[35,31],[33,36],[28,41],[20,42],[13,45],
+   [12,38],[15,37],[8,44],[0,43],[-5,36],[-10,36]],
+  /* Australia */
+  [[113,-22],[114,-27],[118,-34],[126,-32],[132,-32],[138,-35],[145,-38],[147,-43],[150,-37],
+   [153,-31],[153,-25],[146,-19],[142,-11],[136,-12],[130,-12],[125,-14],[121,-19],[113,-22]],
+  /* Antartida */
+  [[-180,-70],[-150,-75],[-120,-73],[-90,-72],[-60,-63],[-45,-72],[-20,-70],[10,-69],[40,-68],
+   [70,-67],[100,-66],[130,-66],[160,-70],[180,-72],[180,-90],[-180,-90]]
+];
+let _texTerra = null, _texLua = null;
+function texturaTerra(){
+  if(_texTerra) return _texTerra;
+  const W = 2048, H = 1024, c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const g = c.getContext('2d');
+  const oc = g.createLinearGradient(0,0,0,H);
+  oc.addColorStop(0,'#0d2a4a'); oc.addColorStop(0.5,'#124b7a'); oc.addColorStop(1,'#0d2a4a');
+  g.fillStyle = oc; g.fillRect(0,0,W,H);
+  const px = (lon,lat)=>[ (lon+180)/360*W, (90-lat)/180*H ];
+  g.lineJoin = 'round';
+  for(const poly of CONTINENTES){
+    g.beginPath();
+    poly.forEach((pt,i)=>{ const [x,y] = px(pt[0],pt[1]); i ? g.lineTo(x,y) : g.moveTo(x,y); });
+    g.closePath();
+    const gr = g.createLinearGradient(0,0,0,H);
+    gr.addColorStop(0,'#5f7a4a'); gr.addColorStop(0.42,'#6f8a52'); gr.addColorStop(0.58,'#7f8a55'); gr.addColorStop(1,'#6a7f52');
+    g.fillStyle = gr; g.fill();
+    g.strokeStyle = 'rgba(120,150,90,.55)'; g.lineWidth = 2; g.stroke();
+  }
+  /* deserto do Saara e Arabia, para o olho reconhecer na hora */
+  g.fillStyle = 'rgba(196,168,104,.55)';
+  g.beginPath();
+  [[-15,20],[10,26],[30,28],[42,22],[52,18],[45,12],[30,15],[10,14],[-10,13]].forEach((pt,i)=>{
+    const [x,y]=px(pt[0],pt[1]); i?g.lineTo(x,y):g.moveTo(x,y); });
+  g.closePath(); g.fill();
+  /* calotas polares */
+  const cal = g.createLinearGradient(0,0,0,H*0.12);
+  cal.addColorStop(0,'rgba(238,246,250,.95)'); cal.addColorStop(1,'rgba(238,246,250,0)');
+  g.fillStyle = cal; g.fillRect(0,0,W,H*0.12);
+  const cal2 = g.createLinearGradient(0,H,0,H*0.86);
+  cal2.addColorStop(0,'rgba(238,246,250,.98)'); cal2.addColorStop(1,'rgba(238,246,250,0)');
+  g.fillStyle = cal2; g.fillRect(0,H*0.86,W,H*0.14);
+  const t = new THREE.CanvasTexture(c);
+  t.anisotropy = 4;
+  return (_texTerra = t);
+}
+function texturaLua(){
+  if(_texLua) return _texLua;
+  const W = 1024, H = 512, c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const g = c.getContext('2d');
+  g.fillStyle = '#8d8880'; g.fillRect(0,0,W,H);
+  /* mares lunares no lado visivel, que fica centrado em lon 0 */
+  const mares = [[-8,28,120,70],[18,22,95,60],[36,4,85,70],[-30,-4,70,55],[6,-10,80,60],[-42,20,60,45],[52,26,55,40]];
+  for(const [lon,lat,rw,rh] of mares){
+    const x = (lon+180)/360*W, y = (90-lat)/180*H;
+    const gr = g.createRadialGradient(x,y,0,x,y,Math.max(rw,rh));
+    gr.addColorStop(0,'rgba(78,76,74,.92)'); gr.addColorStop(1,'rgba(78,76,74,0)');
+    g.fillStyle = gr; g.beginPath(); g.ellipse(x,y,rw,rh,0,0,Math.PI*2); g.fill();
+  }
+  for(let i=0;i<520;i++){
+    const x = Math.random()*W, y = Math.random()*H, r = 1 + Math.random()*7;
+    g.fillStyle = 'rgba(255,255,255,' + (0.05 + Math.random()*0.13) + ')';
+    g.beginPath(); g.arc(x,y,r,0,Math.PI*2); g.fill();
+    g.fillStyle = 'rgba(0,0,0,.10)';
+    g.beginPath(); g.arc(x+r*0.3,y+r*0.3,r*0.8,0,Math.PI*2); g.fill();
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.anisotropy = 4;
+  return (_texLua = t);
+}
+/* quanto a Terra ja girou hoje, em relacao ao Sol da cena */
+function giroAtual(){
+  const d = new Date();
+  const horasUTC = d.getUTCHours() + d.getUTCMinutes()/60 + d.getUTCSeconds()/3600;
+  return -(horasUTC/24) * Math.PI*2;   /* meia-noite de Greenwich = 0 */
+}
+/* idade da Lua em dias desde a lua nova, e a fracao iluminada */
+function faseDaLua(){
+  const novaRef = Date.UTC(2000,0,6,18,14);      /* lua nova de referencia */
+  const SIN = 29.530588853 * 86400000;
+  const idade = (((Date.now() - novaRef) % SIN) + SIN) % SIN / 86400000;
+  const ang = idade/29.530588853 * Math.PI*2;
+  return {idade, ang, ilum:(1 - Math.cos(ang))/2};
+}
+function nomeDaFase(i){
+  if(i < 1.8) return 'LUA NOVA';
+  if(i < 5.5) return 'CRESCENTE CÔNCAVA';
+  if(i < 9.2) return 'QUARTO CRESCENTE';
+  if(i < 12.9) return 'CRESCENTE GIBOSA';
+  if(i < 16.6) return 'LUA CHEIA';
+  if(i < 20.3) return 'MINGUANTE GIBOSA';
+  if(i < 24.0) return 'QUARTO MINGUANTE';
+  if(i < 27.7) return 'MINGUANTE CÔNCAVA';
+  return 'LUA NOVA';
+}
+function podeLive(id){ return id === 'terra' || id === 'lua'; }
+const LIVE_VERT = `
+varying vec2 vUv; varying vec3 vN;
+void main(){ vUv = uv; vN = normalize(normalMatrix * normal);
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
+const LIVE_FRAG = `
+uniform sampler2D uMap; uniform vec3 uL; uniform float uAmb;
+varying vec2 vUv; varying vec3 vN;
+void main(){
+  vec3 col = texture2D(uMap, vUv).rgb;
+  float dif = max(dot(normalize(vN), normalize(uL)), 0.0);
+  float lum = uAmb + (1.0 - uAmb) * smoothstep(0.0, 0.30, dif);
+  gl_FragColor = vec4(col * lum, 1.0);
+}`;
+function liveMaterial(id){
+  return new THREE.ShaderMaterial({vertexShader:LIVE_VERT, fragmentShader:LIVE_FRAG,
+    uniforms:{uMap:{value: id === 'lua' ? texturaLua() : texturaTerra()},
+              uL:{value:LDIR.clone()}, uAmb:{value: id === 'lua' ? 0.05 : 0.07}}});
+}
+/* Greenwich apontado para o Sol da cena ao meio-dia UTC. O eixo tambem ganha a
+   inclinacao real de 23,4 graus, que e o que produz as estacoes. */
+const LIVE_FASE = Math.atan2(LDIR.x, LDIR.z) - Math.PI/2;
+function grupoLive(id, raio, seg){
+  const g = new THREE.Group();
+  const malha = new THREE.Mesh(new THREE.SphereGeometry(raio, seg, seg), liveMaterial(id));
+  g.add(malha);
+  if(id === 'terra'){
+    g.rotation.z = THREE.MathUtils.degToRad(23.4);
+    const am = new THREE.ShaderMaterial({vertexShader:ATMO_VERT, fragmentShader:ATMO_FRAG,
+      uniforms:{uCol:{value:C('#7fb0ff')}, uI:{value:1.15}},
+      side:THREE.BackSide, blending:THREE.AdditiveBlending, transparent:true, depthWrite:false});
+    g.add(new THREE.Mesh(new THREE.SphereGeometry(raio*1.05, seg, seg), am));
+  }
+  malha.rotation.y = giroAtual() + LIVE_FASE;
+  return {group:g, mesh:malha};
+}
 function buildFocus(bodyId, spin0){
   const b = ALLBODIES[bodyId];
   const scene = new THREE.Scene();
@@ -3632,7 +3802,8 @@ function buildFocus(bodyId, spin0){
 
   /* ---------- CORPO: esfera + luas orbitando ---------- */
   const radius = (b.visual.mode==='star') ? 2.35 : (b.comet ? 1.2 : 2.2);
-  bg = makeBodyGroup(b, radius, QLOW?96:128);
+  const aoVivo = LIVE && podeLive(bodyId);
+  bg = aoVivo ? grupoLive(bodyId, radius, QLOW?96:128) : makeBodyGroup(b, radius, QLOW?96:128);
   wrap.add(bg.group);
   if(spin0) bg.mesh.rotation.y = spin0;   /* continua de onde a cena do sistema parou */
   bg.group.traverse(o=>{ if(o.userData && o.userData.isClouds) clouds = o; });
@@ -3654,7 +3825,9 @@ function buildFocus(bodyId, spin0){
   moonHolder = new THREE.Group(); scene.add(moonHolder);
   const vv = new THREE.Vector3();
   kids.forEach((m, i)=>{
-    const ang = i * (Math.PI*2/Math.max(3, kids.length)) + 0.55;
+    let ang = i * (Math.PI*2/Math.max(3, kids.length)) + 0.55;
+    /* ao vivo, a Lua fica no angulo real em relacao ao Sol: a fase fica certa */
+    if(aoVivo && bodyId === 'terra' && m.id === 'lua') ang = LIVE_FASE + Math.PI + faseDaLua().ang;
     const r = 3.15 + (i%3)*0.5;
     vv.set(Math.cos(ang)*r, 0.42*Math.sin(i*2.13) + 0.15, Math.sin(ang)*r);
     addKid(m, vv, 0.20 + hashStr(m.id)*0.10, 24);
@@ -3669,8 +3842,9 @@ function buildFocus(bodyId, spin0){
     },
     cam:{mode:'focus', dist:b.comet?8.2:9.0, min:b.comet?4.0:3.7, max:b.comet?10.5:9.6},
     update:(dt)=>{
-      if(!RM && moonHolder) moonHolder.rotation.y += dt*0.03;
-      if(!RM && (performance.now() - lastDragT > 2600)){
+      if(!RM && moonHolder && !aoVivo) moonHolder.rotation.y += dt*0.03;
+      if(aoVivo){ bg.mesh.rotation.y = giroAtual() + LIVE_FASE; }
+      else if(!RM && (performance.now() - lastDragT > 2600)){
         bg.mesh.rotation.y += dt*0.055;
         if(clouds) clouds.rotation.y += dt*0.028;
       }
@@ -3857,6 +4031,7 @@ const store = {
   get(k, d){ try{ const v = localStorage.getItem(k); return (v===null||v===undefined) ? d : v; }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
 };
+LIVE = store.get('carto:live','0') === '1';   /* modo ao vivo da Terra e da Lua */
 
 /* ---------- áudio: playlist + ambiente generativo + sfx ---------- */
 const PLAYLIST = [
@@ -5002,7 +5177,10 @@ function cardRender(){
   const lockOn = ST.level==='focus';
   $('#headmini').innerHTML =
     '<div class="eyebrow"><span>'+esc(b.desig||'')+'</span><span class="lock'+(lockOn?'':' off')+'">'+(lockOn?'⬢ LINK TRAVADO':'MODO MAPA')+'</span></div>'+
-    '<h1 class="bodyname">'+esc(b.name)+'</h1>'+
+    '<h1 class="bodyname">'+esc(b.name)
+      + ((lockOn && podeLive(ST.body))
+         ? '<button class="livebtn'+(LIVE?' on':'')+'" id="btnlive" title="Mostrar como está agora, de verdade"><i></i>'+(LIVE?'AO VIVO':'LIVE')+'</button>'
+         : '') + '</h1>'+
     '<div class="subkind">'+esc(b.kind||'')+'</div>';
 
   let h = '';
@@ -5069,6 +5247,13 @@ function cardRender(){
   }
   if(cur.sysd) h += '<div class="notice">'+esc(SYS[ST.sys].hint)+'. Afaste o zoom para subir de escala.</div>';
 
+  if(LIVE && lockOn && podeLive(ST.body)){
+    const d = new Date(), f = faseDaLua();
+    const hh = String(d.getUTCHours()).padStart(2,'0') + ':' + String(d.getUTCMinutes()).padStart(2,'0');
+    h = h.replace('<div class="qgrid">',
+      '<div id="liveinfo">AGORA · ' + hh + ' UTC · ' + nomeDaFase(f.idade)
+      + ' · ' + Math.round(f.ilum*100) + '% ILUMINADA</div><div class="qgrid">');
+  }
   const pb = $('#panelbody');
   pb.innerHTML = h; pb.scrollTop = 0;
   pb.querySelectorAll('[data-go]').forEach(el=>el.addEventListener('click', ()=>gotoFocus(el.dataset.go)));
@@ -5079,6 +5264,13 @@ function cardRender(){
     if(CMP.a && CMP.a.name===b.name){ CMP.a = null; cardRender(); showHint('COMPARAÇÃO CANCELADA'); return; }
     if(!CMP.a){ CMP.a = b; cardRender(); showHint('AGORA ABRA OUTRO CORPO E TOQUE EM ⚖'); return; }
     openCompare(CMP.a, b);
+  });
+  const bl = $('#btnlive'); if(bl) bl.addEventListener('click', ()=>{
+    LIVE = !LIVE;
+    store.set('carto:live', LIVE ? '1' : '0');
+    swapScene(buildFocus(ST.body), true);
+    uiSync();
+    showHint(LIVE ? 'MODO AO VIVO: POSIÇÃO E ILUMINAÇÃO REAIS DE AGORA' : 'MODO CARTOGRÁFICO');
   });
   const ng = $('#navgo'); if(ng) ng.addEventListener('click', ()=>{ enterTarget(cur.navKind==='gal' ? 'galaxy' : (cur.navKind==='sys' ? 'starsys' : 'focus'), cur.navId); });
   const bp = $('#backpan'); if(bp) bp.addEventListener('click', ()=>{ ST.mapCard=null; uiSync(); });
@@ -5440,7 +5632,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r44';
+const BUILD = 'r45';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

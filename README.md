@@ -10,6 +10,8 @@ Feito por [Rodrigo Sanguanini](https://sanguanini.dev), com trilha sonora origin
 **Verificar os dados:** `node tools/verifica.js` confere a integridade do catálogo antes de publicar.
 **Continuar com IA:** abra a pasta no VS Code com Claude Code. O `CLAUDE.md` carrega todo o contexto do projeto.
 
+**Modo ao vivo:** na Terra e na Lua, o botão LIVE ao lado do nome mostra o mapa real, a rotação da hora atual e a fase da Lua de agora. Não pede nenhuma permissão.
+
 ## Controles
 Arraste para girar, pinça ou scroll para aproximar. Toque em um corpo para catalogar, toque de novo para entrar. Afaste o zoom para subir de escala (Corpo, Sistema, Galáxia, Universo).
 
