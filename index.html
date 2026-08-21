@@ -3359,14 +3359,27 @@ function buildSystem(sysId, spin0){
     const cls = classeDaLinha(p), est = LINHA[cls], fuga = ehEscape(p);
     const seg = 128, oPos = new Float32Array(seg*3);
     if(fuga){
-      /* vem de dentro do sistema, curva perto do Sol e sai para fora: a ponta
-         final e onde o objeto esta hoje, e a linha nao fecha */
-      const r0 = p.sys.orbit*0.16, r1 = p.sys.orbit;
-      for(let i=0;i<seg;i++){
-        const t = i/(seg-1);
-        const a = -2.15 + t*2.15;
-        const r = r0 + (r1-r0)*Math.pow(t, 1.7);
-        oPos[i*3]=Math.cos(a)*r; oPos[i*3+1]=0; oPos[i*3+2]=Math.sin(a)*r;
+      const r1 = p.sys.orbit;
+      if(p.sonda){
+        /* sonda foi LANÇADA DA TERRA: o arco começa na órbita dela (22 un = 1 UA)
+           e abre até a posição atual */
+        const r0 = Math.min(22, r1*0.9);
+        for(let i=0;i<seg;i++){
+          const t = i/(seg-1);
+          const a = -1.9 + t*1.9;
+          const r = r0 + (r1-r0)*Math.pow(t, 1.45);
+          oPos[i*3]=Math.cos(a)*r; oPos[i*3+1]=0; oPos[i*3+2]=Math.sin(a)*r;
+        }
+      } else {
+        /* visitante interestelar: vem DE FORA, rasga o periélio perto do Sol
+           (a ʻOumuamua passou a 0,26 UA, dentro da órbita de Mercúrio) e vai embora */
+        const rp = Math.max(5.5, r1*0.09);
+        for(let i=0;i<seg;i++){
+          const t = i/(seg-1);
+          const a = -2.3 + t*2.3;
+          const r = rp + (r1-rp)*Math.pow(Math.abs(2*t-1), 1.6);
+          oPos[i*3]=Math.cos(a)*r; oPos[i*3+1]=0; oPos[i*3+2]=Math.sin(a)*r;
+        }
       }
     } else {
       for(let i=0;i<seg;i++){ const a=i/seg*Math.PI*2; oPos[i*3]=Math.cos(a)*p.sys.orbit; oPos[i*3+2]=Math.sin(a)*p.sys.orbit; }
@@ -3395,7 +3408,7 @@ function buildSystem(sysId, spin0){
       new THREE.MeshBasicMaterial({visible:false}));
     pick.position.x = p.sys.orbit; pick.userData = {act:'focus', id:p.id, r:p.sys.size};
     holder.add(pick); pickables.push(pick);
-    if(!fuga) orbiters.push({holder, spd:p.sys.speed});   /* rota de escape fica parada */
+    if(!fuga) orbiters.push({holder, spd:p.sys.speed, orb:p.sys.orbit});   /* rota de escape fica parada */
     const gp = bg.group;
     labels.push({el:makeLabel(p.name, '', ()=>ACTION('focus', p.id)),
       get:v=>{ gp.getWorldPosition(v); v.y += p.sys.size + 0.55; }});
@@ -3477,7 +3490,13 @@ function buildSystem(sysId, spin0){
     },
     cam:{mode:'orbit', dist:(sysId==='sol')?48:17, min:(sysId==='sol')?14:8, max:S.camMax, pitch:0.55, yaw:0.65},
     update:(dt)=>{
-      for(const o of orbiters) o.holder.rotation.y += o.spd*dt*0.05;
+      /* durante o percurso de uma trajetória, o sistema anda no ritmo dos anos
+         do relógio: período por Kepler, normalizado na Terra (22 un = 1 ano) */
+      const anosSeg = (TRAJ && TRAJ.fase==='vai' && TRAJ.anosPorSeg) ? TRAJ.anosPorSeg : 0;
+      for(const o of orbiters){
+        o.holder.rotation.y += o.spd*dt*0.05;
+        if(anosSeg && o.orb) o.holder.rotation.y += (Math.PI*2) * anosSeg * dt / Math.pow(o.orb/22, 1.5);
+      }
       spinAcc += 0.25*dt;
       for(const s of spinners) s.obj.rotation.y += s.spd*dt;
       if(starGlow){
@@ -3790,6 +3809,38 @@ function grupoLive(id, raio, seg){
   malha.rotation.y = giroAtual() + LIVE_FASE;
   return {group:g, mesh:malha};
 }
+/* ============================ MODELO DE SONDA ============================
+   Na cena de foco, sonda aparece como sonda: prato, corpo, hastes e o gerador
+   nuclear, em silhueta estilizada (e o disco de ouro na lateral). */
+function grupoSonda(raio){
+  const g = new THREE.Group();
+  const mCorpo = new THREE.MeshBasicMaterial({color:0xb8b2a2});
+  const mEscuro = new THREE.MeshBasicMaterial({color:0x6e685c});
+  const mPrato = new THREE.MeshBasicMaterial({color:0xe6e0d0, side:THREE.DoubleSide});
+  const mOuro = new THREE.MeshBasicMaterial({color:0xd8a545});
+  const corpo = new THREE.Mesh(new THREE.CylinderGeometry(raio*0.34, raio*0.34, raio*0.30, 10), mCorpo);
+  corpo.rotation.x = Math.PI/2;
+  g.add(corpo);
+  const disco = new THREE.Mesh(new THREE.CylinderGeometry(raio*0.10, raio*0.10, raio*0.02, 20), mOuro);
+  disco.rotation.z = Math.PI/2; disco.position.set(raio*0.36, 0, 0);
+  g.add(disco);
+  const prato = new THREE.Mesh(new THREE.CylinderGeometry(raio*0.80, raio*0.16, raio*0.34, 40, 1, true), mPrato);
+  prato.rotation.x = -Math.PI/2; prato.position.z = raio*0.42;
+  g.add(prato);
+  const foco = new THREE.Mesh(new THREE.CylinderGeometry(raio*0.015, raio*0.015, raio*0.55, 6), mEscuro);
+  foco.rotation.x = Math.PI/2; foco.position.z = raio*0.55;
+  g.add(foco);
+  const haste = new THREE.Mesh(new THREE.CylinderGeometry(raio*0.02, raio*0.02, raio*1.9, 6), mEscuro);
+  haste.rotation.z = Math.PI/2; haste.position.x = -raio*0.95;
+  g.add(haste);
+  const rtg = new THREE.Mesh(new THREE.CylinderGeometry(raio*0.07, raio*0.07, raio*0.5, 8), mEscuro);
+  rtg.rotation.z = Math.PI/2; rtg.position.set(raio*0.75, -raio*0.35, 0);
+  g.add(rtg);
+  const wrap = new THREE.Group();
+  wrap.add(g);
+  g.rotation.set(0.45, 1.15, 0.08);   /* prato de perfil: le-se como sonda, nao como disco */
+  return {group:wrap, mesh:g};
+}
 function buildFocus(bodyId, spin0){
   const b = ALLBODIES[bodyId];
   const scene = new THREE.Scene();
@@ -3911,7 +3962,8 @@ function buildFocus(bodyId, spin0){
   /* ---------- CORPO: esfera + luas orbitando ---------- */
   const radius = (b.visual.mode==='star') ? 2.35 : (b.comet ? 1.2 : 2.2);
   const aoVivo = LIVE && podeLive(bodyId);
-  bg = aoVivo ? grupoLive(bodyId, radius, QLOW?96:128) : makeBodyGroup(b, radius, QLOW?96:128);
+  bg = aoVivo ? grupoLive(bodyId, radius, QLOW?96:128)
+     : (b.sonda ? grupoSonda(radius) : makeBodyGroup(b, radius, QLOW?96:128));
   wrap.add(bg.group);
   if(spin0) bg.mesh.rotation.y = spin0;   /* continua de onde a cena do sistema parou */
   bg.group.traverse(o=>{ if(o.userData && o.userData.isClouds) clouds = o; });
@@ -4126,6 +4178,7 @@ function trajStart(id){
           _a:new THREE.Vector3(), _b:new THREE.Vector3(),
           ano0:(b.traj && b.traj.de) || anoDe(b),
           ano1:(b.traj && b.traj.ate) || (new Date()).getFullYear()};
+  TRAJ.anosPorSeg = (TRAJ.ano0 && TRAJ.ano1 > TRAJ.ano0) ? (TRAJ.ano1-TRAJ.ano0)/(TRAJ.ms/1000) : 0;
   const el = $('#trajclock');
   el.textContent = b.name; el.classList.add('on');
   showHint('PERCORRENDO A ROTA · TOQUE NA CENA PARA ENCERRAR');
@@ -5832,7 +5885,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r50';
+const BUILD = 'r51';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

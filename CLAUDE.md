@@ -1,6 +1,6 @@
 # Cartografia Estelar · contexto do projeto
 
-Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r50** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
+Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r51** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
 
 ## Arquitetura (blocos <script> em ordem)
 1. Helpers ($, isMobile, RM, clamp, easeIO, hashStr, coordOf) + shaders GLSL como template strings (NOISE/PLANET/CLOUD/ATMO/RING/SUN). fbm usa 4 octaves em touch, 5 no desktop.
@@ -47,6 +47,12 @@ Duas features grandes que ele quer testar. Fazer uma por vez, em commit isolado,
 
    Original: **Terra e Lua em tempo real**: botão discreto (a ideia dele: perto do "comparar este corpo", não ao lado do nome) que alterna a Terra procedural pela Terra de verdade, com mapa correto, rotação pelo horário do navegador e a Lua na posição e fase reais. REGRA DELE: nunca pedir permissão de localização. Sem permissão, mostrar orientação neutra. Só centraliza no primeiro clique; depois o arrasto continua livre. Vale também para a Lua quando se entra nela. O mapa precisa ser desenhado em canvas (o app roda em file:// e não deve depender de textura externa).
 2. **Sondas, satélites e trajetórias**: as sondas já entraram como corpos (r44). Falta a trajetória desenhada numa cor discreta, um botão de play que percorre o caminho com a câmera acompanhando o objeto, e um relógio de anos no HUD mostrando o tempo passando. Ele topa que isso valha para outros corpos também (orbitar junto), mas avisou para não estragar a navegação atual, que está do jeito que ele quer.
+
+## Trajetórias honestas (r51, regras que o Rodrigo validou em teste)
+- Sonda (`sonda:true`) parte da ÓRBITA DA TERRA (22 un = 1 UA), nunca de dentro de Mercúrio: foi lançada de lá.
+- Visitante interestelar (`escape:true` sem sonda, ex. ʻOumuamua) vem DE FORA, rasga o periélio (0,26 UA real) e sai: temos os dados, não inventar órbita fake.
+- Durante o percurso, o sistema inteiro orbita no ritmo dos anos do relógio (Kepler simplificado: T = (orbit/22)^1.5 anos). `TRAJ.anosPorSeg` alimenta o update do buildSystem.
+- Na cena de foco, sonda renderiza com `grupoSonda()` (prato, corpo, disco de ouro, hastes, RTG), não como esfera.
 
 ## O QUE FICOU PARA DEPOIS (pedidos do Rodrigo, NÃO deixar se perder)
 - **Ir e vir pela trajetória com o mouse** (scrub): ideia dele desde o início das sondas. O motor já anda por pontos locais transformados por quadro, então dá para mapear um arrasto ao parâmetro `e` do trajStep.
