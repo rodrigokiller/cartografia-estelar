@@ -1846,7 +1846,7 @@ PLANETS.push(
   ],
   facts:['Mark Twain nasceu e morreu com o Halley no céu (1835 e 1910), como ele mesmo previu.','Em 1910 venderam “pílulas anticometa” contra o gás da cauda. Funcionaram: ninguém morreu.'],
   fict:'Praticamente todo almanaque, romance e desenho do século XX tem o Halley, de Tintim a Os Simpsons.', moons:[]},
- {id:'oumuamua', name:'ʻOUMUAMUA', desig:'1I/2017 U1 · VISITANTE INTERESTELAR', kind:'O primeiro mensageiro de outra estrela', hab:0, gbar:0.00001, pop:'0 (até onde sabemos…)',
+ {id:'oumuamua', escape:true, name:'ʻOUMUAMUA', desig:'1I/2017 U1 · VISITANTE INTERESTELAR', kind:'O primeiro mensageiro de outra estrela', hab:0, gbar:0.00001, pop:'0 (até onde sabemos…)',
   quick:[['TAMANHO','~100–400 m'],['FORMA','charuto/panqueca 10:1'],['ORIGEM','outro sistema estelar'],['VELOCIDADE','87 km/s'],['DETECÇÃO','2017 · Pan-STARRS'],['STATUS','já foi embora']],
   sys:{orbit:57, size:0.26, speed:3.4, angle:1.2, incl:0.7},
   visual:{mode:'rocky', c1:'#8a4f3a', c2:'#b0714f', c3:'#5c3223', scale:7.5, seed:20.17, crater:0.6},
@@ -3271,6 +3271,20 @@ function disposeScene(act){
   if(act.labels) act.labels.forEach(l=>{ if(l.el && l.el.remove) l.el.remove(); });
 }
 
+/* Classe da linha de cada corpo. O planeta e a referencia; cometa e sonda
+   entram bem mais apagados para nao competir. Objeto em rota de escape nao
+   ganha elipse: ele nao volta, entao a linha dele e um arco aberto. */
+const LINHA = {
+  planeta: {cor:0x2a4a7a, op:0.50},
+  cometa:  {cor:0x2f5f6b, op:0.26},
+  sonda:   {cor:0x4a4a72, op:0.22}
+};
+function classeDaLinha(p){
+  if(p.sonda) return 'sonda';
+  if(p.comet || p.escape) return 'cometa';
+  return 'planeta';
+}
+function ehEscape(p){ return !!(p.sonda || p.escape); }
 function buildSystem(sysId, spin0){
   const S = SYS[sysId];
   let spinAcc = spin0 || 0;   /* rotação acumulada dos planetas, para casar com a cena de foco */
@@ -3302,13 +3316,27 @@ function buildSystem(sysId, spin0){
     holder.rotation.y = p.sys.angle;
     if(p.sys.incl) holder.rotation.x = p.sys.incl;
     scene.add(holder);
-    /* linha da órbita */
+    /* linha: elipse fechada para quem volta, arco aberto para quem vai embora */
+    const cls = classeDaLinha(p), est = LINHA[cls], fuga = ehEscape(p);
     const seg = 128, oPos = new Float32Array(seg*3);
-    for(let i=0;i<seg;i++){ const a=i/seg*Math.PI*2; oPos[i*3]=Math.cos(a)*p.sys.orbit; oPos[i*3+2]=Math.sin(a)*p.sys.orbit; }
+    if(fuga){
+      /* vem de dentro do sistema, curva perto do Sol e sai para fora: a ponta
+         final e onde o objeto esta hoje, e a linha nao fecha */
+      const r0 = p.sys.orbit*0.16, r1 = p.sys.orbit;
+      for(let i=0;i<seg;i++){
+        const t = i/(seg-1);
+        const a = -2.15 + t*2.15;
+        const r = r0 + (r1-r0)*Math.pow(t, 1.7);
+        oPos[i*3]=Math.cos(a)*r; oPos[i*3+1]=0; oPos[i*3+2]=Math.sin(a)*r;
+      }
+    } else {
+      for(let i=0;i<seg;i++){ const a=i/seg*Math.PI*2; oPos[i*3]=Math.cos(a)*p.sys.orbit; oPos[i*3+2]=Math.sin(a)*p.sys.orbit; }
+    }
     const og = new THREE.BufferGeometry(); og.setAttribute('position', new THREE.BufferAttribute(oPos,3));
-    const orbit = new THREE.LineLoop(og, new THREE.LineBasicMaterial({color:0x2a4a7a, transparent:true, opacity:0.5}));
+    const mat = new THREE.LineBasicMaterial({color:est.cor, transparent:true, opacity:est.op});
+    const orbit = fuga ? new THREE.Line(og, mat) : new THREE.LineLoop(og, mat);
     holder.add(fade(orbit));
-    selReg.orbits.push({id:p.id, mat:orbit.material, c:0x2a4a7a, o:0.5});
+    selReg.orbits.push({id:p.id, mat:orbit.material, c:est.cor, o:est.op});
     const bg = makeBodyGroup(p, p.sys.size, 40);
     bg.group.position.x = p.sys.orbit;
     holder.add(bg.group);
@@ -3328,7 +3356,7 @@ function buildSystem(sysId, spin0){
       new THREE.MeshBasicMaterial({visible:false}));
     pick.position.x = p.sys.orbit; pick.userData = {act:'focus', id:p.id, r:p.sys.size};
     holder.add(pick); pickables.push(pick);
-    orbiters.push({holder, spd:p.sys.speed});
+    if(!fuga) orbiters.push({holder, spd:p.sys.speed});   /* rota de escape fica parada */
     const gp = bg.group;
     labels.push({el:makeLabel(p.name, '', ()=>ACTION('focus', p.id)),
       get:v=>{ gp.getWorldPosition(v); v.y += p.sys.size + 0.55; }});
@@ -5637,7 +5665,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r46';
+const BUILD = 'r47';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
