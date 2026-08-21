@@ -1,6 +1,6 @@
 # Cartografia Estelar · contexto do projeto
 
-Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r52** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
+Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r53** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
 
 ## Arquitetura (blocos <script> em ordem)
 1. Helpers ($, isMobile, RM, clamp, easeIO, hashStr, coordOf) + shaders GLSL como template strings (NOISE/PLANET/CLOUD/ATMO/RING/SUN). fbm usa 4 octaves em touch, 5 no desktop.
@@ -58,7 +58,9 @@ Duas features grandes que ele quer testar. Fazer uma por vez, em commit isolado,
 - **POLIR o LIVE da Terra**: ele aprovou o estilo e o funcionamento, mas está "muito cru". Melhorar contornos de costa, cores, nuvens, transição dia/noite.
 - **POLIR MUITO o modelo da sonda**: aprovado o espírito, mas "sem base sem estrutura". Dar treliça, painéis, mais peças, talvez modelos levemente diferentes por sonda.
 - **Revisitar atalhos assumidos por pressa** (lista honesta): mapa da Terra com polígonos grosseiros; luzes de cidade por amostragem aleatória; nuvens do LIVE são o shader genérico; modelo de sonda único para as quatro; marcos de trajetória hardcoded nos dados.
-- **Player da linha do tempo** (r52): a UI existe (play/pausa, arrasto, 0,5x/1x/2x). Ideias futuras dele: mostrar velocidade em km/h real, marcos clicáveis na barra.
+- **Foguetes** (quando entrarem): só missões famosas da cultura pop (Apollo 11, Saturn V), senão vira zona. Palavras dele.
+- **Lotes prometidos e ainda não feitos**: satélites históricos (Sputnik, Hubble, ISS, JWST, estreando a classe `satelite` nos filtros) e Urano+Netuno revisitadas (Tritão, Miranda, fichas completas). Carina FEITA no r53.
+- **Player da linha do tempo** (r53: o sistema é função do prog via ACT.tempoViagem, pausa congela TUDO, arrasto volta no tempo, câmera livre sem sair do modo, botão liga/desliga aceso, painel em duas linhas com texto de largura fixa): a UI existe (play/pausa, arrasto, 0,5x/1x/2x). Ideias futuras dele: mostrar velocidade em km/h real, marcos clicáveis na barra.
 - **Ir e vir pela trajetória com o mouse** (scrub): ideia dele desde o início das sondas. O motor já anda por pontos locais transformados por quadro, então dá para mapear um arrasto ao parâmetro `e` do trajStep.
 - **Satélites e foguetes** como novos tipos de objeto (a classe de linha e o filtro já existem, é só criar a classe `satelite` e os dados).
 - **"Orbitar junto" de qualquer corpo**: play genérico acompanhando um corpo em órbita fechada (o Halley já funciona, generalizar é pequeno).
