@@ -1216,14 +1216,19 @@ PLANETS.push(
     {t:'REGISTRO', rows:[['Descoberta','13/03/1781 · William Herschel'],['Marco','1º planeta descoberto com telescópio'],['Única visita','Voyager 2 · 1986'],['Luas','Nomes de Shakespeare e Pope'],['População','0']]},
     {t:'LINK & VIAGEM', rows:[['Luz do Sol até aqui','2,7 h'],['Sonda desde a Terra','~8,5 anos (Voyager 2)']]}
   ],
-  facts:['Rola de lado: provavelmente levou um impacto colossal no passado.','Mesmo mais perto do Sol que Netuno, é o planeta mais FRIO.','Herschel quis chamá-lo de "Georgium Sidus", em homenagem ao rei George III. Não pegou.'],
-  fict:null,
+  facts:['Rola de lado: provavelmente levou um impacto colossal no passado.','Mesmo mais perto do Sol que Netuno, é o planeta mais FRIO.','A atmosfera tem sulfeto de hidrogênio: o planeta literalmente cheira a ovo podre.','Herschel quis chamá-lo de "Georgium Sidus", em homenagem ao rei George III. Não pegou.'],
+  fict:'Só foi visitado uma vez, em 1986, e a próxima missão proposta é a prioridade número um da década na astronomia americana.',
   moons:[
    {id:'miranda', name:'MIRANDA', desig:'URANO-V', kind:'Lua "Frankenstein"', hab:0, gbar:0.008, pop:'0',
-    quick:[['DIÂMETRO','472 km'],['ÓRBITA','1,4 d'],['DESCOBERTA','1948'],['PENHASCO','20 km']],
+    quick:[['DIÂMETRO','472 km'],['ÓRBITA','1,4 d'],['DESCOBERTA','1948'],['PENHASCO','20 km'],['TEMP.','−187 °C'],['VISITA','Voyager 2, 1986']],
     visual:{mode:'rocky', c1:'#a9a29a', c2:'#c4bdb4', c3:'#7d766f', scale:6.2, seed:12.5, crater:0.8},
-    sections:[{t:'REGISTRO', rows:[['Descoberta','1948 · Gerard Kuiper'],['Verona Rupes','Penhasco de ~20 km, o maior do sistema'],['Visual','Parece "remontada" de pedaços diferentes']]}],
-    facts:['Pulando de Verona Rupes, a queda na gravidade fraca duraria ~12 minutos.'], fict:null},
+    sections:[
+      {t:'O QUEBRA-CABEÇA', rows:[['O visual','Terrenos que não combinam, emendados como uma colcha de retalhos'],['A teoria antiga','Ela teria sido despedaçada por um impacto e se re-montado errado'],['A teoria atual','Derretimentos parciais por maré remodelaram só algumas regiões'],['Coroas','Três cicatrizes ovais gigantes, únicas no sistema solar']]},
+      {t:'VERONA RUPES', rows:[['O que é','Um penhasco de ~20 km de altura, o maior do sistema solar'],['Comparação','Dez vezes o Grand Canyon, dois Everestes empilhados'],['O salto','Na gravidade fraca, a queda livre duraria uns 12 minutos'],['O pouso','Com um airbag simples, dá para sobreviver: a queda acumula só ~200 km/h']]},
+      {t:'REGISTRO', rows:[['Descoberta','1948 · Gerard Kuiper'],['Nome','A filha de Próspero em A Tempestade, de Shakespeare'],['Única visita','Voyager 2, janeiro de 1986, a 29 mil km']]}
+    ],
+    facts:['Verona Rupes tem 20 km de altura: pulando de lá, a queda duraria 12 minutos.','Parece remontada de pedaços que não combinam, e ninguém sabe ao certo por quê.'],
+    fict:'Verona Rupes é sempre citado como o melhor lugar do sistema solar para um salto base, um clássico da divulgação científica.'},
    {id:'titania', name:'TITÂNIA', desig:'URANO-III', kind:'Lua principal', hab:0, gbar:0.037, pop:'0',
     quick:[['DIÂMETRO','1.578 km'],['ÓRBITA','8,7 d'],['DESCOBERTA','1787'],['RANK','8ª maior']],
     visual:{mode:'rocky', c1:'#b39e8c', c2:'#cdbaa8', c3:'#8a7666', scale:4.8, seed:3.3, crater:0.6},
@@ -1249,14 +1254,19 @@ PLANETS.push(
     {t:'REGISTRO', rows:[['Descoberta','23/09/1846 · Galle & Le Verrier'],['Marco','Previsto pela MATEMÁTICA antes de ser visto'],['Única visita','Voyager 2 · 1989'],['1 ano netuniano','Completou a 1ª órbita pós-descoberta em 2011'],['População','0']]},
     {t:'LINK & VIAGEM', rows:[['Luz do Sol até aqui','4,2 h'],['Sonda desde a Terra','~12 anos (Voyager 2)']]}
   ],
-  facts:['Foi descoberto "no papel": Le Verrier calculou onde ele deveria estar pelas perturbações em Urano.','Desde a descoberta (1846), só completou 1 volta ao redor do Sol.','Recebe 900× menos luz solar que a Terra, e mesmo assim tem os ventos mais violentos.'],
+  facts:['Foi descoberto "no papel": Le Verrier calculou onde ele deveria estar pelas perturbações em Urano.','Desde a descoberta (1846), só completou 1 volta ao redor do Sol.','Recebe 900× menos luz solar que a Terra, e mesmo assim tem os ventos mais violentos.','Lá dentro, a pressão provavelmente faz chover DIAMANTES de verdade.'],
   fict:'Ad Astra, a estação final da jornada orbita Netuno.',
   moons:[
    {id:'tritao', name:'TRITÃO', desig:'NETUNO-I', kind:'Lua capturada', hab:6, gbar:0.08, pop:'0',
-    quick:[['DIÂMETRO','2.707 km'],['ÓRBITA','5,9 d'],['DESCOBERTA','1846'],['SENTIDO','retrógrado']],
+    quick:[['DIÂMETRO','2.707 km'],['ÓRBITA','5,9 d'],['DESCOBERTA','1846'],['SENTIDO','retrógrado'],['TEMP.','−235 °C'],['GÊISERES','ativos']],
     visual:{mode:'rocky', c1:'#e8d9d2', c2:'#cbb4ab', c3:'#a88d84', scale:4.2, seed:10.7, crater:0.3, cap:0.55, capAmt:0.5, capCol:'#f4eeea', atmo:{col:'#e8c8d8', i:0.35}},
-    sections:[{t:'REGISTRO', rows:[['Descoberta','1846 · William Lassell (17 dias após Netuno!)'],['Órbita','RETRÓGRADA, única lua grande assim'],['Origem','Capturada do Cinturão de Kuiper'],['Gêiseres','Jatos de nitrogênio a −235 °C'],['Destino','Espirala para dentro: será destruída em ~3,6 bi anos']]}],
-    facts:['Um mundo do Cinturão de Kuiper "sequestrado" por Netuno, primo de Plutão.'], fict:null}
+    sections:[
+      {t:'A CAPTURA', rows:[['A pista','Órbita RETRÓGRADA: gira ao contrário da rotação de Netuno, única lua grande assim'],['A origem','Nasceu no Cinturão de Kuiper, primo direto de Plutão, e foi capturado'],['O preço','A captura provavelmente destruiu as luas originais de Netuno'],['Descoberta','1846 · William Lassell, 17 dias depois do próprio Netuno']]},
+      {t:'UM MUNDO ATIVO', rows:[['Gêiseres','Jatos de nitrogênio de 8 km de altura, vistos pela Voyager 2 em 1989'],['A superfície','Gelo de nitrogênio com textura de casca de melão, jovem e renovada'],['Temperatura','−235 °C: mais frio que Plutão, um dos lugares mais gelados do sistema'],['Atmosfera','Fina, de nitrogênio, com nuvens e ventos']]},
+      {t:'O DESTINO', rows:[['A espiral','A órbita retrógrada encolhe por maré: ele cai lentamente para dentro'],['O fim','Em ~3,6 bilhões de anos cruza o limite de Roche e é despedaçado'],['O legado','Netuno vai ganhar um anel gigante, talvez mais vistoso que o de Saturno']]}
+    ],
+    facts:['Um mundo do Cinturão de Kuiper "sequestrado" por Netuno, primo de Plutão.','É mais frio que Plutão, e mesmo assim tem gêiseres ativos de nitrogênio.','Um dia será despedaçado pela maré e virará um anel gigante em volta de Netuno.'],
+    fict:'A única lua grande que orbita ao contrário fascina os escritores: aparece de Arthur C. Clarke a jogos como Destiny.'}
   ]
 },
 {
@@ -6059,7 +6069,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r55';
+const BUILD = 'r56';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
