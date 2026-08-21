@@ -198,11 +198,24 @@ body.photo.hudpeek #photoexit{opacity:1}
 #phototoast.on{opacity:1}
 /* relogio de anos do percurso da trajetoria */
 #trajclock{position:absolute;left:50%;bottom:120px;transform:translateX(-50%);z-index:16;
-  font-family:var(--mono);font-size:11px;letter-spacing:2.5px;color:var(--amber);
-  background:rgba(6,12,24,.82);border:1px solid var(--line);padding:7px 14px;
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:2px;color:var(--amber);
+  background:rgba(6,12,24,.88);border:1px solid var(--line);padding:8px 12px;
   opacity:0;transition:opacity .4s;pointer-events:none;white-space:nowrap}
-#trajclock.on{opacity:1}
-@media (max-width:899px){ #trajclock{bottom:calc(var(--sheetpeek,34dvh) + 58px)} }
+#trajclock.on{opacity:1;pointer-events:auto}
+#trajclock button{width:26px;height:26px;border:1px solid var(--line);background:rgba(6,12,24,.6);
+  color:var(--ion);font-family:var(--mono);font-size:11px;cursor:pointer;flex:0 0 auto;line-height:1}
+#trajclock button:hover{border-color:var(--line2)}
+#trajclock .tcol{display:flex;flex-direction:column;gap:3px}
+#trajclock .tbar{width:170px;height:5px;background:rgba(63,140,255,.18);position:relative;cursor:pointer;touch-action:none}
+#trajclock .tbar i{position:absolute;left:0;top:0;bottom:0;background:var(--amber);width:0}
+#trajclock .tanos{display:flex;justify-content:space-between;font-size:8px;letter-spacing:1px;color:var(--dim2)}
+#trajclock .ttx{color:var(--amber);min-width:150px}
+@media (max-width:899px){
+  #trajclock{bottom:calc(var(--sheetpeek,34dvh) + 58px);gap:8px;padding:7px 10px}
+  #trajclock .tbar{width:92px}
+  #trajclock .ttx{min-width:0;max-width:30vw;overflow:hidden;text-overflow:ellipsis}
+}
 body.photo #filtpop,body.photo #trajclock{opacity:0 !important;visibility:hidden}
 /* telemetria de debug: escondida por padrão, sai com Shift+D (ver CLAUDE.md) */
 #diagchip{display:none;position:absolute;right:8px;bottom:6px;z-index:14;font-family:var(--mono);font-size:9px;
@@ -683,7 +696,16 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-cls="sonda"><span>SONDAS</span><b>LIGADA</b></div>
     <div class="fp-n">Esconde só a linha. Os corpos continuam no mapa, e o que você selecionar mostra a própria rota.</div>
   </div>
-  <div id="trajclock"></div>
+  <div id="trajclock">
+    <button id="trajplay" title="Pausar e continuar">⏸</button>
+    <div class="tcol">
+      <div class="tbar" id="trajbar"><i id="trajfill"></i></div>
+      <div class="tanos"><span id="trajano0"></span><span id="trajano1"></span></div>
+    </div>
+    <span class="ttx" id="trajtxt"></span>
+    <button id="trajvel" title="Velocidade">1×</button>
+    <button id="trajx2" title="Encerrar">✕</button>
+  </div>
 
   <div id="panel">
     <div id="panelhead">
@@ -3313,6 +3335,7 @@ function disposeScene(act){
    entram bem mais apagados para nao competir. Objeto em rota de escape nao
    ganha elipse: ele nao volta, entao a linha dele e um arco aberto. */
 const FILTROS = {planeta:true, cometa:true, sonda:true};   /* linhas visiveis por classe */
+const ORB_TERRA = 15;   /* orbita da Terra na cena do sol: 15 unidades = 1 UA */
 const LINHA = {
   planeta: {cor:0x2a4a7a, op:0.50},
   cometa:  {cor:0x2f5f6b, op:0.26},
@@ -3363,7 +3386,7 @@ function buildSystem(sysId, spin0){
       if(p.sonda){
         /* sonda foi LANÇADA DA TERRA: o arco começa na órbita dela (22 un = 1 UA)
            e abre até a posição atual */
-        const r0 = Math.min(22, r1*0.9);
+        const r0 = Math.min(ORB_TERRA, r1*0.9);
         for(let i=0;i<seg;i++){
           const t = i/(seg-1);
           const a = -1.9 + t*1.9;
@@ -3371,13 +3394,16 @@ function buildSystem(sysId, spin0){
           oPos[i*3]=Math.cos(a)*r; oPos[i*3+1]=0; oPos[i*3+2]=Math.sin(a)*r;
         }
       } else {
-        /* visitante interestelar: vem DE FORA, rasga o periélio perto do Sol
-           (a ʻOumuamua passou a 0,26 UA, dentro da órbita de Mercúrio) e vai embora */
-        const rp = Math.max(5.5, r1*0.09);
+        /* visitante interestelar: HIPÉRBOLE de verdade, r = p/(1+e·cosθ) com e>1.
+           A dobra no periélio é o Sol curvando a rota, como aconteceu de fato
+           (a ʻOumuamua passou a 0,26 UA, dentro da órbita de Mercúrio). */
+        const rp = Math.max(0.28*ORB_TERRA, r1*0.06), exc = 1.25;
+        const pC = rp*(1+exc);
+        const thMax = Math.acos((pC/r1 - 1)/exc);
         for(let i=0;i<seg;i++){
-          const t = i/(seg-1);
-          const a = -2.3 + t*2.3;
-          const r = rp + (r1-rp)*Math.pow(Math.abs(2*t-1), 1.6);
+          const th = -thMax + (i/(seg-1))*2*thMax;
+          const r = pC/(1+exc*Math.cos(th));
+          const a = th - thMax;   /* a ponta final cai onde o corpo está hoje */
           oPos[i*3]=Math.cos(a)*r; oPos[i*3+1]=0; oPos[i*3+2]=Math.sin(a)*r;
         }
       }
@@ -3495,7 +3521,7 @@ function buildSystem(sysId, spin0){
       const anosSeg = (TRAJ && TRAJ.fase==='vai' && TRAJ.anosPorSeg) ? TRAJ.anosPorSeg : 0;
       for(const o of orbiters){
         o.holder.rotation.y += o.spd*dt*0.05;
-        if(anosSeg && o.orb) o.holder.rotation.y += (Math.PI*2) * anosSeg * dt / Math.pow(o.orb/22, 1.5);
+        if(anosSeg && o.orb) o.holder.rotation.y += (Math.PI*2) * anosSeg * dt / Math.pow(o.orb/ORB_TERRA, 1.5);
       }
       spinAcc += 0.25*dt;
       for(const s of spinners) s.obj.rotation.y += s.spd*dt;
@@ -4173,15 +4199,32 @@ function trajStart(id){
     local.push(new THREE.Vector3(pos.getX(i), pos.getY(i), pos.getZ(i)));
   if(o.obj.isLineLoop) local.push(local[0].clone());   /* fecha a volta */
   CAMTW = null;
-  TRAJ = {fase:'vai', local, obj:o.obj, t0:performance.now(), ms:(b.comet && !b.escape) ? 15000 : 12000, id,
-          d0:CAM.dist, marcos:b.marcos || null, mAtual:null,
-          _a:new THREE.Vector3(), _b:new THREE.Vector3(),
+  /* base = metade da velocidade antiga; o botao de velocidade multiplica */
+  TRAJ = {fase:'chega', prog:0, vel:1, pausado:false, arrasto:false,
+          local, obj:o.obj, t0:performance.now(), ln:performance.now(),
+          base:(b.comet && !b.escape) ? 30000 : 24000, id,
+          d0:CAM.dist, dAlvo:Math.min(CAM.dist, 16), p0:CAM.pivot.clone(),
+          marcos:b.marcos || null, mAtual:null, anosPorSeg:0,
+          _a:new THREE.Vector3(), _b:new THREE.Vector3(), _c:new THREE.Vector3(),
           ano0:(b.traj && b.traj.de) || anoDe(b),
           ano1:(b.traj && b.traj.ate) || (new Date()).getFullYear()};
-  TRAJ.anosPorSeg = (TRAJ.ano0 && TRAJ.ano1 > TRAJ.ano0) ? (TRAJ.ano1-TRAJ.ano0)/(TRAJ.ms/1000) : 0;
-  const el = $('#trajclock');
-  el.textContent = b.name; el.classList.add('on');
-  showHint('PERCORRENDO A ROTA · TOQUE NA CENA PARA ENCERRAR');
+  $('#trajtxt').textContent = b.name;
+  $('#trajano0').textContent = TRAJ.ano0 || '';
+  $('#trajano1').textContent = TRAJ.ano0 ? TRAJ.ano1 : '';
+  $('#trajfill').style.width = '0%';
+  $('#trajplay').textContent = '⏸';
+  $('#trajvel').textContent = '1×';
+  $('#trajclock').classList.add('on');
+  showHint('LINHA DO TEMPO · ARRASTE A BARRA · TOQUE NA CENA PARA SAIR');
+}
+/* ponto do percurso em coordenadas do mundo, na fracao pedida */
+function trajPonto(prog, out){
+  const f = prog*(TRAJ.local.length-1);
+  const i = Math.min(TRAJ.local.length-2, Math.floor(f));
+  TRAJ.obj.updateWorldMatrix(true, false);
+  TRAJ._a.copy(TRAJ.local[i]).applyMatrix4(TRAJ.obj.matrixWorld);
+  TRAJ._b.copy(TRAJ.local[i+1]).applyMatrix4(TRAJ.obj.matrixWorld);
+  out.lerpVectors(TRAJ._a, TRAJ._b, f-i);
 }
 function trajCancelar(){
   if(!TRAJ || TRAJ.fase==='volta') return;
@@ -4201,26 +4244,34 @@ function trajStep(now){
     if(k>=1) trajLimpar();
     return;
   }
-  if(TRAJ.fase==='pausa'){
-    if(now-TRAJ.t0 > 1400) trajCancelar();
+  if(TRAJ.fase==='chega'){
+    /* primeiro a camera voa ate o ponto de partida; os anos so contam depois */
+    const k = Math.min(1, (now-TRAJ.t0)/1300), e = easeIO(k);
+    trajPonto(0, TRAJ._c);
+    CAM.pivot.lerpVectors(TRAJ.p0, TRAJ._c, e);
+    CAM.dist = TRAJ.d0 + (TRAJ.dAlvo-TRAJ.d0)*e;
+    if(k>=1){ TRAJ.fase='vai'; TRAJ.ln = now; }
     return;
   }
-  const k = Math.min(1, (now-TRAJ.t0)/TRAJ.ms), e = easeIO(k);
-  const f = e*(TRAJ.local.length-1);
-  const i = Math.min(TRAJ.local.length-2, Math.floor(f));
-  TRAJ.obj.updateWorldMatrix(true, false);
-  TRAJ._a.copy(TRAJ.local[i]).applyMatrix4(TRAJ.obj.matrixWorld);
-  TRAJ._b.copy(TRAJ.local[i+1]).applyMatrix4(TRAJ.obj.matrixWorld);
-  CAM.pivot.lerpVectors(TRAJ._a, TRAJ._b, f-i);
-  CAM.dist = TRAJ.d0 + (Math.min(TRAJ.d0,16) - TRAJ.d0)*Math.min(1, k*4);
-  if(TRAJ.ano0){
-    const ano = TRAJ.ano0 + (TRAJ.ano1-TRAJ.ano0)*e;
+  /* fase 'vai': o player comanda */
+  const dt = Math.min(0.1, (now-TRAJ.ln)/1000); TRAJ.ln = now;
+  if(!TRAJ.pausado && !TRAJ.arrasto)
+    TRAJ.prog = Math.min(1, TRAJ.prog + dt*1000*TRAJ.vel/TRAJ.base);
+  const span = (TRAJ.ano0 && TRAJ.ano1 > TRAJ.ano0) ? (TRAJ.ano1-TRAJ.ano0) : 0;
+  TRAJ.anosPorSeg = (TRAJ.pausado || TRAJ.arrasto) ? 0 : span*1000*TRAJ.vel/TRAJ.base;
+  trajPonto(TRAJ.prog, TRAJ._c);
+  CAM.pivot.copy(TRAJ._c);
+  CAM.dist = TRAJ.dAlvo;
+  $('#trajfill').style.width = (TRAJ.prog*100).toFixed(1)+'%';
+  if(span){
+    const ano = TRAJ.ano0 + span*TRAJ.prog;
     let txt = (ALLBODIES[TRAJ.id]||{}).name + ' · ' + Math.round(ano);
+    TRAJ.mAtual = null;   /* recalcula sempre: o arrasto pode voltar no tempo */
     if(TRAJ.marcos) for(const m of TRAJ.marcos) if(ano >= m[0]) TRAJ.mAtual = m;
     if(TRAJ.mAtual) txt += ' · ' + TRAJ.mAtual[1];
-    $('#trajclock').textContent = txt;
+    $('#trajtxt').textContent = txt;
   }
-  if(k>=1){ TRAJ.fase='pausa'; TRAJ.t0=now; }
+  if(TRAJ.prog >= 1 && !TRAJ.pausado){ TRAJ.pausado = true; $('#trajplay').textContent = '▶'; }
 }
 
 let FADEIN = null;
@@ -4801,7 +4852,7 @@ const _escCache = {};
 function escalaSistema(sysId){
   if(_escCache[sysId] !== undefined) return _escCache[sysId];
   const S = SYS[sysId]; let km = 0;
-  if(sysId === 'sol') km = UA_KM / 22;      /* a Terra orbita a 22 unidades */
+  if(sysId === 'sol') km = UA_KM / ORB_TERRA;      /* a Terra orbita a 22 unidades */
   else for(const b of (S.bodies||[])){
     if(!b.sys || !b.sys.orbit) continue;
     const real = distReal(b, RE_ORB);
@@ -5419,6 +5470,11 @@ function cardRender(){
     '<h1 class="bodyname">'+esc(b.name)
       + ((lockOn && podeLive(ST.body))
          ? '<button class="livebtn'+(LIVE?' on':'')+'" id="btnlive" title="Mostrar como está agora, de verdade"><i></i>'+(LIVE?'AO VIVO':'LIVE')+'</button>'
+         : '')
+      + ((cur.type==='map' && cur.navKind==='body' && ALLBODIES[cur.navId]
+          && (ehEscape(ALLBODIES[cur.navId]) || ALLBODIES[cur.navId].comet)
+          && ACT && ACT.kind==='system' && ALLBODIES[cur.navId]._sys===ST.sys)
+         ? '<button class="livebtn" id="btntraj" title="Percorrer a rota no tempo"><i></i>LINHA DO TEMPO</button>'
          : '') + '</h1>'+
     '<div class="subkind">'+esc(b.kind||'')+'</div>';
 
@@ -5479,9 +5535,6 @@ function cardRender(){
       if(b.fict) h += '<div class="sect"><h3>NA FICÇÃO</h3><div class="fict">'+esc(b.fict)+'</div></div>';
     }
   }
-  const bTraj = (cur.type==='map' && cur.navKind==='body') ? ALLBODIES[cur.navId] : null;
-  if(bTraj && (ehEscape(bTraj) || bTraj.comet) && ACT && ACT.kind==='system' && bTraj._sys===ST.sys)
-    h += '<button class="xbtn" id="trajgo">≋ PERCORRER A TRAJETÓRIA</button>';
   if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='body'?'▶ ENTRAR · TRAVAR LINK':'▶ ENTRAR · TRAVAR ROTA')+'</button>';
   if(cur.type==='map' && !cur.self && !cur.nav){
     h += '<div class="notice">ROTA INDISPONÍVEL: dados de navegação insuficientes. Sonda em trânsito.</div>';
@@ -5514,7 +5567,7 @@ function cardRender(){
     uiSync();
     showHint(LIVE ? 'MODO AO VIVO: POSIÇÃO E ILUMINAÇÃO REAIS DE AGORA' : 'MODO CARTOGRÁFICO');
   });
-  const tg = $('#trajgo'); if(tg) tg.addEventListener('click', ()=>trajStart(cur.navId));
+  const tg = $('#btntraj'); if(tg) tg.addEventListener('click', ()=>trajStart(cur.navId));
   const ng = $('#navgo'); if(ng) ng.addEventListener('click', ()=>{ enterTarget(cur.navKind==='gal' ? 'galaxy' : (cur.navKind==='sys' ? 'starsys' : 'focus'), cur.navId); });
   const bp = $('#backpan'); if(bp) bp.addEventListener('click', ()=>{ ST.mapCard=null; uiSync(); });
 }
@@ -5885,7 +5938,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r51';
+const BUILD = 'r52';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -5968,6 +6021,32 @@ $('#filtpop').addEventListener('click', e=>{
   store.set('carto:linhas', ['planeta','cometa','sonda'].filter(k=>FILTROS[k]!==false).join(','));
   filtSync(); applySel();
 });
+$('#trajplay').addEventListener('click', ()=>{
+  if(!TRAJ || TRAJ.fase!=='vai') return;
+  if(TRAJ.prog >= 1) TRAJ.prog = 0;   /* replay do inicio */
+  TRAJ.pausado = !TRAJ.pausado;
+  $('#trajplay').textContent = TRAJ.pausado ? '▶' : '⏸';
+});
+$('#trajvel').addEventListener('click', ()=>{
+  if(!TRAJ) return;
+  TRAJ.vel = TRAJ.vel===0.5 ? 1 : (TRAJ.vel===1 ? 2 : 0.5);
+  $('#trajvel').textContent = String(TRAJ.vel).replace('.',',')+'×';
+});
+$('#trajx2').addEventListener('click', ()=>trajCancelar());
+(function(){
+  const bar = $('#trajbar');
+  function pega(e){
+    if(!TRAJ || TRAJ.fase!=='vai') return;
+    const r = bar.getBoundingClientRect();
+    TRAJ.prog = Math.min(1, Math.max(0, (e.clientX - r.left)/r.width));
+  }
+  bar.addEventListener('pointerdown', e=>{
+    if(!TRAJ) return;
+    TRAJ.arrasto = true; bar.setPointerCapture(e.pointerId); pega(e);
+  });
+  bar.addEventListener('pointermove', e=>{ if(TRAJ && TRAJ.arrasto) pega(e); });
+  bar.addEventListener('pointerup', ()=>{ if(TRAJ) TRAJ.arrasto = false; });
+})();
 $('#misstour').addEventListener('click', ()=>{ const on = TOUR.on; missClose(); if(on) tourStop(); else tourStart(); });
 $('#tourx').addEventListener('click', ()=>tourStop());
 $('#tourrota').addEventListener('change', e=>tourRota(e.target.value));

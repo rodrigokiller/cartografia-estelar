@@ -1,6 +1,6 @@
 # Cartografia Estelar · contexto do projeto
 
-Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r51** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
+Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r52** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
 
 ## Arquitetura (blocos <script> em ordem)
 1. Helpers ($, isMobile, RM, clamp, easeIO, hashStr, coordOf) + shaders GLSL como template strings (NOISE/PLANET/CLOUD/ATMO/RING/SUN). fbm usa 4 octaves em touch, 5 no desktop.
@@ -49,12 +49,16 @@ Duas features grandes que ele quer testar. Fazer uma por vez, em commit isolado,
 2. **Sondas, satélites e trajetórias**: as sondas já entraram como corpos (r44). Falta a trajetória desenhada numa cor discreta, um botão de play que percorre o caminho com a câmera acompanhando o objeto, e um relógio de anos no HUD mostrando o tempo passando. Ele topa que isso valha para outros corpos também (orbitar junto), mas avisou para não estragar a navegação atual, que está do jeito que ele quer.
 
 ## Trajetórias honestas (r51, regras que o Rodrigo validou em teste)
-- Sonda (`sonda:true`) parte da ÓRBITA DA TERRA (22 un = 1 UA), nunca de dentro de Mercúrio: foi lançada de lá.
+- Sonda (`sonda:true`) parte da ÓRBITA DA TERRA (15 un = 1 UA; o 22 do r39 era ERRADO, 22 é o cinturão), nunca de dentro de Mercúrio: foi lançada de lá.
 - Visitante interestelar (`escape:true` sem sonda, ex. ʻOumuamua) vem DE FORA, rasga o periélio (0,26 UA real) e sai: temos os dados, não inventar órbita fake.
 - Durante o percurso, o sistema inteiro orbita no ritmo dos anos do relógio (Kepler simplificado: T = (orbit/22)^1.5 anos). `TRAJ.anosPorSeg` alimenta o update do buildSystem.
 - Na cena de foco, sonda renderiza com `grupoSonda()` (prato, corpo, disco de ouro, hastes, RTG), não como esfera.
 
 ## O QUE FICOU PARA DEPOIS (pedidos do Rodrigo, NÃO deixar se perder)
+- **POLIR o LIVE da Terra**: ele aprovou o estilo e o funcionamento, mas está "muito cru". Melhorar contornos de costa, cores, nuvens, transição dia/noite.
+- **POLIR MUITO o modelo da sonda**: aprovado o espírito, mas "sem base sem estrutura". Dar treliça, painéis, mais peças, talvez modelos levemente diferentes por sonda.
+- **Revisitar atalhos assumidos por pressa** (lista honesta): mapa da Terra com polígonos grosseiros; luzes de cidade por amostragem aleatória; nuvens do LIVE são o shader genérico; modelo de sonda único para as quatro; marcos de trajetória hardcoded nos dados.
+- **Player da linha do tempo** (r52): a UI existe (play/pausa, arrasto, 0,5x/1x/2x). Ideias futuras dele: mostrar velocidade em km/h real, marcos clicáveis na barra.
 - **Ir e vir pela trajetória com o mouse** (scrub): ideia dele desde o início das sondas. O motor já anda por pontos locais transformados por quadro, então dá para mapear um arrasto ao parâmetro `e` do trajStep.
 - **Satélites e foguetes** como novos tipos de objeto (a classe de linha e o filtro já existem, é só criar a classe `satelite` e os dados).
 - **"Orbitar junto" de qualquer corpo**: play genérico acompanhando um corpo em órbita fechada (o Halley já funciona, generalizar é pequeno).
