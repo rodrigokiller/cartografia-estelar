@@ -973,10 +973,11 @@ const PLANETS = [
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','108,2 mi km (0,72 UA)'],['Ano','225 dias'],['Dia sideral','243 dias'],['Dia solar','117 dias'],['Tipo de rotação','RETRÓGRADA, o Sol nasce no oeste'],['Veloc. orbital','35,0 km/s'],['Inclinação axial','177° (invertido)'],['Estações','Não']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','12.104 km'],['Massa','4,87 × 10²⁴ kg'],['Densidade','5,24 g/cm³'],['Área','460,2 mi km²'],['Relevo','Vulcões e planícies de lava']]},
     {t:'CLIMA & ATMOSFERA', rows:[['Temp. dia ≈ noite','~464 °C (efeito estufa)'],['Atmosfera','96,5% CO₂ · 3,5% N₂'],['Nuvens','Ácido sulfúrico'],['Pressão','92 atm (900 m sob o mar)'],['Água','Traços de vapor']]},
-    {t:'REGISTRO', rows:[['Descoberta','Antiguidade'],['Missões','Venera 7-14 · Magellan · Akatsuki'],['População','0']]},
+    {t:'AS VENERA', rows:[['O desafio','Pousar num lugar com 464 °C e 92 atmosferas, que amassa e cozinha qualquer coisa'],['Venera 3 (1966)','Primeiro objeto humano a tocar outro planeta, mesmo tendo se espatifado'],['Venera 7 (1970)','Primeiro pouso bem-sucedido em outro planeta. Transmitiu por 23 minutos, deitada de lado.'],['Venera 9 (1975)','Mandou a primeira foto tirada da superfície de outro planeta: pedras chatas e um céu alaranjado'],['Venera 13 (1982)','Fotos coloridas e som. Sobreviveu 127 minutos, quando era projetada para durar 32.'],['O preço','Cada sonda derretia em pouco mais de uma hora, e os soviéticos mandaram mais de uma dúzia']]},
+    {t:'REGISTRO', rows:[['Descoberta','Conhecido desde a Antiguidade, e chamado de estrela por muito tempo'],['O engano histórico','Por causa das nuvens, muita gente imaginou um mundo tropical e pantanoso embaixo'],['Magellan (1990)','Mapeou 98% da superfície com radar, atravessando as nuvens'],['Akatsuki','A sonda japonesa que errou a inserção em 2010 e conseguiu entrar em órbita cinco anos depois'],['O futuro','VERITAS e DAVINCI, da NASA, e EnVision, da Europa, voltam lá na década de 2030']]},
     {t:'LINK & VIAGEM', rows:[['Luz do Sol até aqui','6,0 min'],['Sonda desde a Terra','~4 meses']]}
   ],
-  facts:['O planeta mais quente do sistema, quente o bastante para derreter chumbo.','Gira tão devagar que o dia sideral (243 d) é maior que o ano (225 d).','Depois do Sol e da Lua, é o objeto mais brilhante do nosso céu ("Estrela d\'Alva").'],
+  facts:['As sondas Venera tiraram fotos coloridas da superfície de outro planeta em 1982, e derreteram pouco mais de uma hora depois.','A primeira imagem já feita do chão de outro planeta veio daqui, em 1975.','O planeta mais quente do sistema, quente o bastante para derreter chumbo.','Gira tão devagar que o dia sideral (243 d) é maior que o ano (225 d).','Depois do Sol e da Lua, é o objeto mais brilhante do nosso céu ("Estrela d\'Alva").'],
   fict:'The Expanse, o "incidente Arboghast" acontece na órbita de Vênus.', moons:[]
 },
 {
@@ -5665,7 +5666,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r47';
+const BUILD = 'r48';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
