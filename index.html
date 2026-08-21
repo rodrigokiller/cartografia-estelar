@@ -698,6 +698,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-cls="planeta"><span>PLANETAS</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="cometa"><span>COMETAS E VISITANTES</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="sonda"><span>SONDAS</span><b>LIGADA</b></div>
+    <div class="filtrow" data-cls="satelite"><span>SATÉLITES</span><b>LIGADA</b></div>
     <div class="fp-n">Esconde só a linha. Os corpos continuam no mapa, e o que você selecionar mostra a própria rota.</div>
   </div>
   <div id="trajclock">
@@ -1335,6 +1336,58 @@ const PLANETAS_SONDAS = [
   fict:'A placa de Pioneer é provavelmente a imagem mais reproduzida da exploração espacial depois da foto da Terra.', moons:[]}
 ];
 PLANETAS_SONDAS.forEach(x=>PLANETS.push(x));
+
+/* ============================ SATÉLITES HISTÓRICOS ============================
+   Orbitam a TERRA (satOf), não o Sol: o anel deles é desenhado em volta dela
+   e viaja junto. Classe de linha `satelite`, desligada por padrão nos filtros. */
+const SATELITES = [
+ {id:'iss', name:'ISS', desig:'ESTAÇÃO · 1998', kind:'A casa da humanidade em órbita', hab:0, gbar:0, pop:'~7 humanos',
+  satelite:true, satOf:'terra',
+  quick:[['LANÇAMENTO','20/11/1998'],['ALTITUDE','~420 km'],['VELOCIDADE','28.000 km/h'],['UMA VOLTA','92 min'],['TAMANHO','109 m, um campo de futebol'],['HABITADA DESDE','2/11/2000']],
+  sys:{orbit:1.15, size:0.12, speed:2.2, angle:0.8},
+  visual:{mode:'rocky', c1:'#c8c8d0', c2:'#e8e8ee', c3:'#8a8a94', scale:7.0, seed:20.0, crater:0.1},
+  sections:[
+    {t:'A CASA', rows:[['Construção','Mais de 40 lançamentos ao longo de 13 anos, montada peça por peça em órbita'],['Quem fez','15 países, com Estados Unidos e Rússia dividindo a espinha dorsal'],['A rotina','16 voltas na Terra por dia: um nascer do sol a cada 45 minutos'],['Posição aqui','Simbólica: na escala real ela quase encostaria na superfície']]},
+    {t:'REGISTRO', rows:[['Habitação contínua','Desde 2 de novembro de 2000 sempre houve alguém morando lá'],['Visível a olho nu','Sim: parece uma estrela rápida cruzando o céu ao anoitecer'],['Ciência','Milhares de experimentos em microgravidade, de cristais a corações artificiais'],['Futuro','Aposentadoria prevista para ±2030, com reentrada dirigida no Pacífico']]}
+  ],
+  facts:['É a estrutura mais cara já construída: mais de 150 bilhões de dólares.','Desde novembro de 2000 a humanidade nunca mais esteve inteira no planeta: sempre há alguém lá em cima.','Dá uma volta completa na Terra em 92 minutos, a 28 mil km/h.'],
+  fict:'Cenário de Gravity e de incontáveis filmes, e a live dela na NASA é uma das transmissões mais assistidas da internet.', moons:[]},
+ {id:'hubble', name:'HUBBLE', desig:'TELESCÓPIO · 1990', kind:'O olho que redefiniu o cosmos', hab:0, gbar:0, pop:'0',
+  satelite:true, satOf:'terra',
+  quick:[['LANÇAMENTO','24/4/1990'],['ALTITUDE','~520 km'],['ESPELHO','2,4 m'],['UMA VOLTA','95 min'],['REPAROS EM ÓRBITA','5 missões'],['STATUS','ativo']],
+  sys:{orbit:1.38, size:0.11, speed:1.9, angle:2.6},
+  visual:{mode:'rocky', c1:'#b8b4a8', c2:'#d8d4c8', c3:'#7a766c', scale:7.0, seed:19.9, crater:0.1},
+  sections:[
+    {t:'O DRAMA', rows:[['1990','Chega ao espaço e descobre-se que o espelho tinha um defeito de fabricação'],['1993','Astronautas instalam a correção em órbita: o telescópio ganhou óculos'],['Depois','Cinco missões de ônibus espacial o mantiveram novo por décadas'],['Posição aqui','Simbólica: ele voa poucos quilômetros acima da ISS']]},
+    {t:'REGISTRO', rows:[['Deep Field','Apontou 10 dias para um pedaço "vazio" do céu e encontrou 3 mil galáxias'],['Produção','Mais de 1,5 milhão de observações e dezenas de milhares de artigos'],['Pilares da Criação','A foto mais famosa da astronomia é dele, de 1995'],['Hoje','Segue ativo, trabalhando em dupla com o James Webb']]}
+  ],
+  facts:['Nasceu míope por um erro de polímento de 2 milésimos de milímetro, e foi consertado em pleno espaço.','O Deep Field mostrou que até o "nada" do céu tem milhares de galáxias.','As fotos dele definiram a estética do cosmos para uma geração inteira.'],
+  fict:'Os Pilares da Criação e o Deep Field viraram pôster de quarto, capa de álbum e papel de parede no mundo todo.', moons:[]},
+ {id:'sputnik', name:'SPUTNIK 1', desig:'SATÉLITE · 1957', kind:'O primeiro objeto humano em órbita', hab:0, gbar:0, pop:'0',
+  satelite:true, satOf:'terra',
+  quick:[['LANÇAMENTO','4/10/1957'],['TAMANHO','58 cm'],['MASSA','83,6 kg'],['UMA VOLTA','96 min'],['SINAL','21 dias de bip'],['REENTRADA','4/1/1958']],
+  sys:{orbit:1.58, size:0.10, speed:2.6, angle:4.4},
+  visual:{mode:'rocky', c1:'#c0c4cc', c2:'#e4e8f0', c3:'#82868e', scale:7.0, seed:19.57, crater:0.05},
+  sections:[
+    {t:'O DIA QUE MUDOU TUDO', rows:[['4/10/1957','A União Soviética põe em órbita uma esfera polida de alumínio com quatro antenas'],['O bip','Transmitia em frequência que qualquer radioamador captava: o mundo inteiro OUVIU'],['O susto','Nos Estados Unidos, o choque levou à criação da NASA no ano seguinte'],['Posição aqui','Simbólica e póstuma: o original reentrou e queimou em janeiro de 1958']]},
+    {t:'REGISTRO', rows:[['A corrida','Foi o tiro de largada da corrida espacial que levaria à Lua em 12 anos'],['A vida dele','21 dias de sinal, 1.400 órbitas, 3 meses no espaço'],['O nome','Sputnik significa "companheiro de viagem" em russo']]}
+  ],
+  facts:['Era só uma esfera de 58 cm com um rádio, e mudou a história do século XX em 21 dias de bip.','Qualquer radioamador do planeta podia sintonizar o sinal dele: propaganda perfeita.','Três meses depois do lançamento ele reentrou e virou meteoro sobre o Atlântico.'],
+  fict:'"Momento Sputnik" virou expressão para qualquer susto tecnológico, e o bip dele abre incontáveis filmes da Guerra Fria.', moons:[]},
+ {id:'jwst', name:'JAMES WEBB', desig:'TELESCÓPIO · 2021', kind:'O espelho de ouro no ponto L2', hab:0, gbar:0, pop:'0',
+  satelite:true, satOf:'terra',
+  quick:[['LANÇAMENTO','25/12/2021'],['ONDE','ponto L2, 1,5 mi km'],['ESPELHO','6,5 m, 18 hexágonos'],['PARASSOL','uma quadra de tênis'],['ENXERGA','infravermelho'],['1ª IMAGEM','12/7/2022']],
+  sys:{orbit:2.1, size:0.11, speed:1.1, angle:5.6},
+  visual:{mode:'rocky', c1:'#d8b054', c2:'#f0d084', c3:'#9a7a34', scale:7.0, seed:20.21, crater:0.05},
+  sections:[
+    {t:'A MÁQUINA', rows:[['O espelho','6,5 metros de diâmetro em 18 hexágonos banhados a OURO, dobrado para caber no foguete'],['O parassol','Cinco camadas do tamanho de uma quadra de tênis, mantendo o lado frio a −230 °C'],['Sem conserto','A 1,5 milhão de km, longe demais para qualquer missão de reparo: tinha que dar certo de primeira'],['Posição aqui','Simbólica: ele NÃO orbita a Terra, fica no ponto L2, quatro vezes mais longe que a Lua']]},
+    {t:'REGISTRO', rows:[['O desdobramento','344 pontos únicos de falha nas primeiras semanas, todos funcionaram'],['12/7/2022','A primeira leva de imagens, com os Penhascos Cósmicos de Carina'],['O que ele vê','No infravermelho: as primeiras galáxias do universo e atmosferas de exoplanetas'],['Dupla','Trabalha em conjunto com o Hubble, cada um numa faixa de luz']]}
+  ],
+  facts:['O espelho é banhado a ouro de verdade: 48 gramas, menos que uma bola de golfe.','É sensível o bastante para detectar o calor de um zangão na distância da Lua.','Foi lançado dobrado como um origami e se abriu sozinho no caminho para L2.'],
+  fict:'A primeira imagem dele foi revelada pelo presidente dos Estados Unidos ao vivo, um evento de TV planetário.', moons:[]}
+];
+SATELITES.forEach(x=>PLANETS.push(x));
+
 const BELT_BODIES = [
  {id:'ceres', name:'CERES', desig:'CINTURÃO-1 · PLANETA ANÃO', kind:'Planeta anão', hab:10, gbar:0.029, pop:'0',
   belt:{angle:0.8, r:22.6},
@@ -3377,14 +3430,16 @@ function disposeScene(act){
    ganha elipse: ele nao volta, entao a linha dele e um arco aberto. */
 /* linhas visíveis por classe. PADRÃO: só planetas; cometa, sonda e toda classe
    futura (satelite, foguete) nascem DESLIGADAS, o mapa fica limpo por default */
-const FILTROS = {planeta:true, cometa:false, sonda:false};
+const FILTROS = {planeta:true, cometa:false, sonda:false, satelite:false};
 const ORB_TERRA = 15;   /* orbita da Terra na cena do sol: 15 unidades = 1 UA */
 const LINHA = {
   planeta: {cor:0x2a4a7a, op:0.50},
   cometa:  {cor:0x2f5f6b, op:0.26},
-  sonda:   {cor:0x4a4a72, op:0.22}
+  sonda:   {cor:0x4a4a72, op:0.22},
+  satelite:{cor:0x4a6b7a, op:0.30}
 };
 function classeDaLinha(p){
+  if(p.satelite) return 'satelite';
   if(p.sonda) return 'sonda';
   if(p.comet || p.escape) return 'cometa';
   return 'planeta';
@@ -3416,11 +3471,18 @@ function buildSystem(sysId, spin0){
   const orbiters = [];
   const selReg = {orbits:[], markers:[], belt:null};
   let cometFx = null;
+  const holderDe = {};   /* para satélites acharem o holder do corpo-mãe */
   for(const p of S.bodies){
     const holder = new THREE.Object3D();
     holder.rotation.y = p.sys.angle;
     if(p.sys.incl) holder.rotation.x = p.sys.incl;
-    scene.add(holder);
+    if(p.satOf && holderDe[p.satOf]){
+      /* satélite: a órbita é um anel pequeno EM VOLTA do corpo-mãe (sys.orbit
+         vira o raio desse anel) e o conjunto viaja preso ao holder dele */
+      holder.position.x = ALLBODIES[p.satOf].sys.orbit;
+      holderDe[p.satOf].add(holder);
+    } else scene.add(holder);
+    holderDe[p.id] = holder;
     /* linha: elipse fechada para quem volta, arco aberto para quem vai embora */
     const cls = classeDaLinha(p), est = LINHA[cls], fuga = ehEscape(p);
     const seg = 128, oPos = new Float32Array(seg*3);
@@ -3474,13 +3536,13 @@ function buildSystem(sysId, spin0){
       cometFx = {grp:bg.group, inner:mkTail(2.3, 0.62, 0.5), outer:mkTail(4.8, 1.05, 0.22),
         v:new THREE.Vector3(), w:new THREE.Vector3(), s1:new THREE.Vector3(), s2:new THREE.Vector3()};
     }
-    const pick = new THREE.Mesh(new THREE.SphereGeometry(Math.max(p.sys.size+0.75, 1.25), 8, 8),
+    const pick = new THREE.Mesh(new THREE.SphereGeometry(Math.max(p.sys.size + (p.satOf?0.15:0.75), p.satOf?0.35:1.25), 8, 8),
       new THREE.MeshBasicMaterial({visible:false}));
     pick.position.x = p.sys.orbit; pick.userData = {act:'focus', id:p.id, r:p.sys.size};
     holder.add(pick); pickables.push(pick);
-    if(!fuga) orbiters.push({holder, spd:p.sys.speed, orb:p.sys.orbit});   /* rota de escape fica parada */
+    if(!fuga) orbiters.push({holder, spd:p.sys.speed, orb:p.satOf?0:p.sys.orbit});   /* escape parada; satélite não entra no Kepler da linha do tempo */
     const gp = bg.group;
-    labels.push({el:makeLabel(p.name, '', ()=>ACTION('focus', p.id)),
+    labels.push({el:makeLabel(p.name, p.satOf?'faint':'', ()=>ACTION('focus', p.id)),
       get:v=>{ gp.getWorldPosition(v); v.y += p.sys.size + 0.55; }});
   }
 
@@ -4040,7 +4102,7 @@ function buildFocus(bodyId, spin0){
   const radius = (b.visual.mode==='star') ? 2.35 : (b.comet ? 1.2 : 2.2);
   const aoVivo = LIVE && podeLive(bodyId);
   bg = aoVivo ? grupoLive(bodyId, radius, QLOW?96:128)
-     : (b.sonda ? grupoSonda(radius) : makeBodyGroup(b, radius, QLOW?96:128));
+     : ((b.sonda || b.satelite) ? grupoSonda(radius) : makeBodyGroup(b, radius, QLOW?96:128));
   wrap.add(bg.group);
   if(spin0) bg.mesh.rotation.y = spin0;   /* continua de onde a cena do sistema parou */
   bg.group.traverse(o=>{ if(o.userData && o.userData.isClouds) clouds = o; });
@@ -4375,7 +4437,7 @@ const store = {
 LIVE = store.get('carto:live','0') === '1';   /* modo ao vivo da Terra e da Lua */
 { const v = store.get('carto:linhas', null);
   if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
-    for(const k of ['planeta','cometa','sonda']) FILTROS[k] = on.has(k); } }
+    for(const k of ['planeta','cometa','sonda','satelite']) FILTROS[k] = on.has(k); } }
 
 /* ---------- áudio: playlist + ambiente generativo + sfx ---------- */
 const PLAYLIST = [
@@ -5997,7 +6059,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r54';
+const BUILD = 'r55';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -6077,7 +6139,7 @@ $('#btnfilt').addEventListener('click', ()=>{
 $('#filtpop').addEventListener('click', e=>{
   const r = e.target.closest('.filtrow'); if(!r) return;
   FILTROS[r.dataset.cls] = FILTROS[r.dataset.cls] === false;
-  store.set('carto:linhas', ['planeta','cometa','sonda'].filter(k=>FILTROS[k]!==false).join(','));
+  store.set('carto:linhas', ['planeta','cometa','sonda','satelite'].filter(k=>FILTROS[k]!==false).join(','));
   filtSync(); applySel();
 });
 $('#trajplay').addEventListener('click', ()=>{
