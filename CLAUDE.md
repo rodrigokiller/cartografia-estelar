@@ -1,6 +1,6 @@
 # Cartografia Estelar · contexto do projeto
 
-Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r43** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
+Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r44** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
 
 ## Arquitetura (blocos <script> em ordem)
 1. Helpers ($, isMobile, RM, clamp, easeIO, hashStr, coordOf) + shaders GLSL como template strings (NOISE/PLANET/CLOUD/ATMO/RING/SUN). fbm usa 4 octaves em touch, 5 no desktop.
@@ -32,6 +32,11 @@ Medido: 1% de diferença de tamanho e 0px de posição, tanto planeta quanto lua
 
 ## Teste de integridade (r42)
 `node tools/verifica.js` antes de cada entrega. Ele executa os dados de verdade e falha se: um corpo citado em SYS não passou por `reg()` (esse erro eu já cometi duas vezes), um `beltId` aponta para o nada, uma nebulosa está em SYS.bodies E como beltId (o objeto duplicado do r28), um sistema ficou sem marcador em STARSYS, um `_sys`/`_parent` aponta para algo inexistente, uma região não tem `field`, ou um texto novo tem travessão, emoji ou instrução de app dentro de `facts`/`fict`. Avisos (não quebram): ficha sem curiosidade, estrela sem RAIO.
+
+## Roadmap experimental (pedidos do Rodrigo, ainda NÃO feitos)
+Duas features grandes que ele quer testar. Fazer uma por vez, em commit isolado, para dar `git revert` fácil se quebrar o que já está bom.
+1. **Terra e Lua em tempo real**: botão discreto (a ideia dele: perto do "comparar este corpo", não ao lado do nome) que alterna a Terra procedural pela Terra de verdade, com mapa correto, rotação pelo horário do navegador e a Lua na posição e fase reais. REGRA DELE: nunca pedir permissão de localização. Sem permissão, mostrar orientação neutra. Só centraliza no primeiro clique; depois o arrasto continua livre. Vale também para a Lua quando se entra nela. O mapa precisa ser desenhado em canvas (o app roda em file:// e não deve depender de textura externa).
+2. **Sondas, satélites e trajetórias**: as sondas já entraram como corpos (r44). Falta a trajetória desenhada numa cor discreta, um botão de play que percorre o caminho com a câmera acompanhando o objeto, e um relógio de anos no HUD mostrando o tempo passando. Ele topa que isso valha para outros corpos também (orbitar junto), mas avisou para não estragar a navegação atual, que está do jeito que ele quer.
 
 ## Publicação
 - Repositório git local iniciado no r25 (branch main). Commits em PT-BR, um por entrega.
