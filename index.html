@@ -697,6 +697,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
           <option value="grav">GRAVIDADE</option>
           <option value="sis">SISTEMA</option>
           <option value="dist">DISTÂNCIA DE CASA</option>
+          <option value="tam">TAMANHO</option>
         </select>
       </div>
       <ul id="misslist"></ul>
@@ -1057,17 +1058,26 @@ PLANETS.push(
     sections:[{t:'REGISTRO', rows:[['Descoberta','1610 · Galileu'],['Oceano','Sob 15–25 km de gelo · 2× a água da Terra'],['Missão','Europa Clipper, chega em 2030'],['Habitabilidade','Um dos melhores candidatos a vida']]}],
     facts:['As "rachaduras" na superfície são falhas no gelo sobre o oceano.'],
     fict:'2010 (Arthur C. Clarke), "TODOS ESTES MUNDOS SÃO SEUS, EXCETO EUROPA. NÃO TENTEM POUSAR LÁ."'},
-   {id:'ganimedes', name:'GANIMEDES', desig:'JÚPITER-III', kind:'Lua gigante', hab:12, gbar:0.15, pop:'0',
-    quick:[['DIÂMETRO','5.268 km'],['ÓRBITA','7,2 d'],['DESCOBERTA','1610'],['RANK','maior lua']],
+   {id:'ganimedes', name:'GANIMEDES', desig:'JÚPITER-III · LUA', kind:'A maior lua do Sistema Solar', hab:12, gbar:0.15, pop:'0',
+    quick:[['DIÂMETRO','5.268 km'],['GRAVIDADE','0,15 g'],['ÓRBITA','7,15 d'],['OCEANO','sob 150 km de gelo'],['CAMPO MAGNÉTICO','próprio, único'],['JUICE','chega em 2031']],
     visual:{mode:'rocky', c1:'#8f857a', c2:'#b5a894', c3:'#6b6157', scale:4.4, seed:8.8, crater:0.6},
-    sections:[{t:'REGISTRO', rows:[['Descoberta','1610 · Galileu'],['Tamanho','Maior lua do sistema, maior que Mercúrio'],['Campo magnético','Único satélite que tem o próprio'],['Oceano','Provável, sob a crosta']]}],
-    facts:['Se orbitasse o Sol, seria classificado como planeta.'],
-    fict:'The Expanse, o "celeiro" agrícola dos planetas exteriores.'},
-   {id:'calisto', name:'CALISTO', desig:'JÚPITER-IV', kind:'Lua craterizada', hab:8, gbar:0.13, pop:'0',
-    quick:[['DIÂMETRO','4.821 km'],['ÓRBITA','16,7 d'],['DESCOBERTA','1610'],['CRATERAS','recorde']],
+    sections:[
+      {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância de Júpiter','1,07 mi km'],['Ano','7,15 dias'],['Rotação','Síncrona'],['A dança','Faz ressonância 1:2:4 com Europa e Io: a cada volta dela, Europa dá duas e Io dá quatro']]},
+      {t:'ESTRUTURA', rows:[['Tamanho','Maior que Mercúrio, e maior que Plutão com folga'],['O oceano','Água salgada sob 150 km de gelo, com possivelmente mais água que todos os oceanos da Terra'],['O núcleo','Ferro líquido em movimento, e é isso que gera o campo magnético'],['A superfície','Metade escura e craterizada, metade clara e sulcada por falhas antigas']]},
+      {t:'REGISTRO', rows:[['1610','Galileu a descobre junto com as outras três, e o céu deixa de girar só em torno da Terra'],['O nome','Ganimedes, o jovem que Zeus raptou para servir de copeiro dos deuses'],['1996','O Hubble detecta oxigênio tênue na atmosfera dela'],['2015','A oscilação das auroras confirma o oceano subterrâneo: só água salgada explicaria o padrão'],['2023','A Juno passou a 1.000 km e fotografou a superfície em alta resolução'],['JUICE','A sonda europeia lançada em 2023 vai entrar em órbita dela em 2034, a primeira nave a orbitar uma lua de outro planeta']]}
+    ],
+    facts:['É a única lua do Sistema Solar com campo magnético próprio, e por isso tem auroras.','Se orbitasse o Sol em vez de Júpiter, seria classificada como planeta sem discussão.','O oceano escondido nela pode ter mais água líquida que a superfície inteira da Terra.','É maior que Mercúrio, e mesmo assim quase ninguém sabe o nome dela.'],
+    fict:'The Expanse: é o celeiro agrícola dos planetas exteriores, e a briga por ela move boa parte da história.'},
+   {id:'calisto', name:'CALISTO', desig:'JÚPITER-IV · LUA', kind:'A lua mais craterizada, e a mais habitável de Júpiter', hab:22, gbar:0.13, pop:'0',
+    quick:[['DIÂMETRO','4.821 km'],['GRAVIDADE','0,13 g'],['ÓRBITA','16,7 d'],['CRATERAS','recorde do sistema'],['RADIAÇÃO','baixa, fora do cinturão'],['OCEANO','provável']],
     visual:{mode:'rocky', c1:'#7a6f63', c2:'#948a7c', c3:'#5c5348', scale:5.6, seed:11.2, crater:1.0},
-    sections:[{t:'REGISTRO', rows:[['Descoberta','1610 · Galileu'],['Superfície','A mais craterizada do sistema, 4 bi de anos'],['Radiação','Fora do cinturão de Júpiter: base humana viável']]}],
-    facts:['Geologicamente "morto": quase nada mudou em bilhões de anos.'], fict:null}
+    sections:[
+      {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância de Júpiter','1,88 mi km, a mais distante das quatro grandes'],['Ano','16,7 dias'],['Rotação','Síncrona'],['Fora da dança','É a única das quatro que não entra na ressonância, e por isso não é amassada por maré']]},
+      {t:'ESTRUTURA', rows:[['A superfície','A mais craterizada de todo o Sistema Solar: não sobrou espaço para novas crateras'],['A idade','Cerca de 4 bilhões de anos praticamente sem mudanças'],['Valhalla','Uma cicatriz de impacto com anéis concêntricos que se espalham por 3.800 km'],['Por dentro','Rocha e gelo mal separados, e provavelmente um oceano salgado a uns 150 km de profundidade']]},
+      {t:'REGISTRO', rows:[['1610','Descoberta por Galileu, a quarta das luas galileanas'],['O nome','Calisto, a ninfa que Zeus transformou em ursa'],['A vantagem','Fica longe o bastante para escapar do cinturão de radiação letal de Júpiter'],['O estudo da NASA','Um projeto de 2003 a apontou como o melhor lugar para uma base humana no sistema de Júpiter'],['JUICE','A sonda europeia vai sobrevoá-la 21 vezes a partir de 2031']]}
+    ],
+    facts:['É o corpo mais craterizado que conhecemos: a superfície está saturada, cada impacto novo apaga um antigo.','Ao contrário das irmãs, ela escapou do cabo de guerra gravitacional e por isso ficou geologicamente parada.','A NASA já a estudou como o melhor endereço para uma base tripulada em Júpiter, porque a radiação ali é suportável.','Olhar para ela é olhar para uma superfície praticamente intocada desde a formação do Sistema Solar.'],
+    fict:'É o destino da missão em 2010: O Ano em Que Faremos Contato, e base recorrente em ficção que leva humanos a Júpiter.'}
   ]
 },
 {
@@ -1425,6 +1435,30 @@ const STARSYS = [
    sections:[{t:'REGISTRO', rows:[['O evento','Uma estrela de Andrômeda ampliou a luz de outra e entregou um planeta junto'],['O limite','Microlentes não se repetem: será candidato para sempre'],['A distância','2,5 milhões de anos-luz daqui']]}],
    facts:['A luz que carregava a informação desse planeta saiu de Andrômeda antes de existirem humanos.'],
    fict:'Andrômeda é destino clássico da ficção. Este é o único ponto real que temos por lá.'}},
+ {id:'cygx1', name:'CYGNUS X-1', nav:true, pos:[2.5,0,-11.5], hot:true,
+  card:{desig:'BURACO NEGRO · 7.200 AL', kind:'O primeiro buraco negro aceito', hab:null,
+   quick:[['MASSA','21 Sóis'],['DISTÂNCIA','7.200 al'],['DESCOBERTO','1964'],['APOSTA','Hawking perdeu']],
+   sections:[{t:'REGISTRO', rows:[['A importância','Abriu caminho para todo o estudo de buracos negros'],['A aposta','Hawking apostou por dezesseis anos que não era um, e perdeu'],['Como vemos','Os raios X do gás que ele arranca da estrela vizinha']]}],
+   facts:['Gira tão rápido que arrasta o espaço em volta, quase no limite que a física permite.'],
+   fict:'A banda Rush dedicou duas músicas a ele.'}},
+ {id:'k218', name:'K2-18', nav:true, pos:[-15.5,0,-6.5], hot:false,
+  card:{desig:'SISTEMA ESTELAR · 124 AL', kind:'A controvérsia da vida extraterrestre', hab:null,
+   quick:[['DISTÂNCIA','124 al'],['PLANETAS','2'],['NA ZONA','o b'],['JWST','2023 e 2025']],
+   sections:[{t:'REGISTRO', rows:[['A manchete','Duas vezes anunciado como possível sinal de vida'],['O gás','Na Terra ele vem quase só de fitoplâncton marinho'],['O problema','O sinal some dependendo de como os dados são analisados']]}],
+   facts:['É o caso que mostra como uma bioassinatura é difícil de provar.'],
+   fict:null}},
+ {id:'gato', name:'OLHO DE GATO', nav:true, pos:[-2.5,0,15.5], hot:true,
+  card:{desig:'NEBULOSA PLANETÁRIA · 3.300 AL', kind:'A mais complexa que conhecemos', hab:null,
+   quick:[['DISTÂNCIA','3.300 al'],['CATÁLOGO','NGC 6543'],['CAMADAS','11 anéis'],['IDADE','~1.000 anos']],
+   sections:[{t:'REGISTRO', rows:[['A forma','Onze cascas concêntricas, jatos e laços'],['1864','Provou que nebulosas são gás, não estrelas'],['O futuro do Sol','Ele vai terminar parecido, só que mais simples']]}],
+   facts:['A forma é tão complexa que ninguém explicou completamente como ela se formou.'],
+   fict:'Uma das imagens mais reproduzidas do Hubble.'}},
+ {id:'formiga', name:'NEBULOSA DA FORMIGA', nav:true, pos:[16.5,0,7.5], hot:true,
+  card:{desig:'NEBULOSA BIPOLAR · 8.000 AL', kind:'A estrela que morre em duas direções', hab:null,
+   quick:[['DISTÂNCIA','8.000 al'],['CATÁLOGO','Menzel 3'],['JATOS','1.000 km/s'],['LASER','sim']],
+   sections:[{t:'REGISTRO', rows:[['O mistério','Deveria soprar gás em esfera, mas dispara dois jatos'],['A suspeita','Uma companheira próxima canalizando tudo'],['O laser','Emissão laser natural detectada no centro em 2018']]}],
+   facts:['Dois lobos e uma cintura, igualzinho ao corpo de uma formiga.'],
+   fict:'Presença garantida em toda lista de objetos mais estranhos do universo.'}},
  {id:'sgra', name:'SAGITTARIUS A*', nav:true, pos:[0,0,0], hot:true,
   card:{desig:'BURACO NEGRO · 26.000 AL', kind:'O centro da Via Láctea', hab:null,
    quick:[['MASSA','4,3 mi Sóis'],['DISTÂNCIA','26.000 al'],['FOTO','EHT · 2022'],['NOBEL','2020']],
@@ -2462,6 +2496,101 @@ const SGR_BODIES = [
   facts:['Astrônomos acompanharam uma volta inteira desta estrela: dezesseis anos de paciência.','No ponto mais próximo ela viaja a mais de 7 mil quilômetros por segundo.','Ela é a prova mais direta de que existe um buraco negro no centro da nossa galáxia.'],
   fict:'É a estrela que rendeu um Nobel, e quase ninguém fora da astronomia sabe o nome dela.', moons:[]}
 ];
+/* ---- lote 20: o primeiro buraco negro e o mundo-oceano da polemica ---- */
+const CYG_STAR = {
+  id:'cygx1', name:'CYGNUS X-1', desig:'BURACO NEGRO ESTELAR', kind:'O primeiro buraco negro que a humanidade aceitou', hab:null, gbar:400000000000,
+  quick:[['MASSA','21 Sóis'],['RAIO','~0,09 R☉ (horizonte)'],['DISTÂNCIA','7.200 al'],['DESCOBERTO','1964'],['COMPANHEIRA','supergigante azul'],['ROTAÇÃO','~95% do limite']],
+  visual:{mode:'star', c1:'#060404', c2:'#22100a',
+    rings:{rin:1.5, rout:3.4, col:'#7fb8ff', op:0.9, tilt:38, seed:1.9}},
+  sections:[
+    {t:'ESTRUTURA', rows:[['Massa','21 vezes a do Sol, num objeto de uns 60 km de diâmetro'],['A dupla','Orbita uma supergigante azul de 40 massas solares a cada 5,6 dias'],['O disco','Ele arranca matéria da companheira, e o gás em queda esquenta a milhões de graus'],['A rotação','Gira a quase o limite teórico: mais de 800 voltas por segundo']]},
+    {t:'A APOSTA', rows:[['1964','Detectado como uma das fontes de raios X mais fortes do céu'],['1974','Stephen Hawking aposta com Kip Thorne que NÃO é um buraco negro'],['Por que apostar contra','Hawking disse que era uma apólice de seguro: se estivesse errado sobre buracos negros, ao menos ganharia a aposta'],['1990','Hawking admite a derrota e paga: uma assinatura de revista para Thorne'],['O detalhe','A revista era a Penthouse, para irritação da esposa de Thorne']]},
+    {t:'REGISTRO', rows:[['A importância','Foi o primeiro objeto amplamente aceito como buraco negro, e abriu caminho para todo o resto'],['2021','Novas medidas aumentaram a massa dele de 15 para 21 sóis'],['O futuro','A companheira também vai colapsar, e o par pode virar uma fonte de ondas gravitacionais']]}
+  ],
+  facts:['Foi o primeiro buraco negro que a ciência aceitou de verdade, e Hawking apostou contra ele por dezesseis anos.','Ele gira tão rápido que arrasta o próprio espaço em volta, quase no limite que a física permite.','Está na constelação do Cisne e é uma das fontes de raios X mais brilhantes do nosso céu.'],
+  fict:'A banda Rush escreveu duas músicas sobre ele, Cygnus X-1 Livro I e II, e o nome virou sinônimo de buraco negro na cultura pop.'
+};
+const CYG_BODIES = [
+ {id:'hde226868', name:'HDE 226868', desig:'CYGNUS X-1 · SUPERGIGANTE AZUL', kind:'A estrela que está sendo devorada', hab:0, gbar:3, pop:'0',
+  quick:[['TIPO','O9.7 Iab'],['RAIO','~22 R☉'],['MASSA','40 Sóis'],['TEMP. SUP.','31.000 °C'],['ÓRBITA','5,6 d'],['DESTINO','supernova']],
+  sys:{orbit:9, size:1.6, speed:2.4, angle:2.0},
+  visual:{mode:'star', c1:'#dfeaff', c2:'#7fa8ff'},
+  sections:[
+    {t:'ÓRBITA & ROTAÇÃO', rows:[['Ano','5,6 dias em torno do buraco negro'],['Distância da estrela','Cerca de 0,2 UA, metade da distância de Mercúrio ao Sol'],['O que acontece','O vento estelar dela é sugado e forma o disco que brilha em raios X']]},
+    {t:'REGISTRO', rows:[['A pista','Foi o bamboleio dela que denunciou a massa invisível ao lado'],['O destino','Ela própria vai explodir em supernova em alguns milhões de anos'],['Depois','O sistema pode virar um par de buracos negros em espiral, do tipo que o LIGO detecta']]}
+  ],
+  facts:['Ela perde massa continuamente para o vizinho invisível, e é essa matéria caindo que enxergamos em raios X.','Sem ela ninguém teria achado o buraco negro: foi o movimento dela que entregou o fantasma.'],
+  fict:null, moons:[]}
+];
+const K218_STAR = {
+  id:'k218estrela', name:'K2-18', desig:'ESTRELA · M2.5V', kind:'A anã vermelha da manchete', hab:null, gbar:44,
+  quick:[['TIPO','M2.5V'],['RAIO','0,45 R☉'],['MASSA','0,36 Sol'],['TEMP. SUP.','3.500 °C'],['DISTÂNCIA','124 al'],['PLANETAS','2']],
+  visual:{mode:'star', c1:'#ff9a62', c2:'#d0441c'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['Tipo','Anã vermelha comum, com um terço da massa do Sol'],['A zona habitável','Fica bem perto dela, por causa do brilho fraco'],['O comportamento','Relativamente calma, o que ajuda a preservar atmosferas']]},
+    {t:'REGISTRO', rows:[['Descoberta','O sistema veio da missão K2, a segunda vida do telescópio Kepler'],['A família','K2-18 b, a super-Terra famosa, e K2-18 c, mais interno'],['Onde','Na constelação do Leão, a 124 anos-luz']]}
+  ],
+  facts:['Uma estrela absolutamente comum que virou manchete mundial por causa de um dos planetas dela.'],
+  fict:null
+};
+const K218_BODIES = [
+ {id:'k218b', name:'K2-18 B', desig:'K2-18 · SUB-NETUNO', kind:'O mundo-oceano que dividiu a ciência', hab:66, gbar:1.3, pop:'desconhecida',
+  quick:[['RAIO','2,6 R⊕'],['MASSA','8,6 M⊕'],['ANO','33 d'],['ZONA','habitável'],['ÁGUA','vapor confirmado'],['JWST','2023 e 2025']],
+  sys:{orbit:10, size:1.2, speed:1.2, angle:0.9},
+  visual:{mode:'haze', c1:'#3a5a72', c2:'#7aa8c8', c3:'#c8dce8', seed:218.0, atmo:{col:'#8fc0e8', i:1.4}},
+  sections:[
+    {t:'ÓRBITA & ROTAÇÃO', rows:[['Ano','33 dias'],['Distância da estrela','0,14 UA, dentro da zona habitável dessa anã vermelha'],['Rotação','Provavelmente síncrona'],['O tipo','Grande demais para ser rochoso, pequeno demais para ser um gigante gasoso']]},
+    {t:'ESTRUTURA', rows:[['A hipótese hyceana','Um oceano global de água líquida sob uma atmosfera espessa de hidrogênio'],['A alternativa','Um mini-Netuno sem superfície nenhuma, onde o que parece oceano é só gás cada vez mais denso'],['O que se sabe','Metano e dióxido de carbono confirmados na atmosfera. Isso é sólido.'],['O que se discute','Praticamente todo o resto']]},
+    {t:'A CONTROVÉRSIA', rows:[['2019','Vapor de água detectado, e o mundo anuncia o primeiro planeta habitável com água'],['2023','O James Webb acha metano e CO₂, e um sinal fraco de sulfeto de dimetila'],['Por que importa','Na Terra esse gás é produzido quase só por vida marinha'],['2025','Um novo estudo eleva a confiança do sinal e a manchete volta com força'],['O contra-ataque','Reanálises independentes mostram o sinal sumindo conforme o método usado'],['Onde estamos','Sem consenso. É o exemplo mais claro de como uma bioassinatura é difícil de provar.']]}
+  ],
+  facts:['É o planeta que trouxe a expressão possível sinal de vida para as manchetes, duas vezes, com seis anos de intervalo.','O gás em questão, na Terra, é produzido principalmente por fitoplâncton marinho.','Também é o exemplo perfeito de por que a ciência exige repetição: o mesmo dado, analisado de outro jeito, dá outro resultado.','Ninguém sabe sequer se ele tem superfície: pode ser um oceano gigante ou apenas gás até o fundo.'],
+  fict:'Virou o rosto da caça por vida fora da Terra, e cada nova análise dele rende manchete no mundo inteiro.', moons:[]}
+];
+/* ---- lote 21: as duas nebulosas de forma mais bizarra ---- */
+const GATO_STAR = {
+  id:'gatocentro', name:'NÚCLEO DO OLHO DE GATO', desig:'NGC 6543 · ANÃ BRANCA', kind:'A estrela que soprou onze camadas', hab:null, gbar:170000,
+  quick:[['TIPO','anã branca quente'],['RAIO','~0,01 R☉'],['TEMP. SUP.','80.000 °C'],['MASSA','~1 Sol'],['DISTÂNCIA','3.300 al'],['CAMADAS','11 anéis']],
+  visual:{mode:'star', c1:'#eaf6ff', c2:'#9fd4ff'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['O que é','O núcleo exposto de uma estrela como o Sol, no fim da vida'],['O pulso','Ela expeliu camada após camada em intervalos de cerca de 1.500 anos'],['Os anéis','O Hubble contou onze cascas concêntricas, como as camadas de uma cebola'],['A suspeita','Um padrão tão regular sugere uma estrela companheira governando o processo']]},
+    {t:'REGISTRO', rows:[['1786','Descoberta por William Herschel'],['1864','Foi o primeiro objeto do tipo a ter o espectro analisado, provando que nebulosas são gás, não estrelas'],['O apelido','Os laços cruzados no centro lembram a pupila de um gato']]}
+  ],
+  facts:['Foi analisando esta nebulosa que a humanidade descobriu que nebulosas são feitas de gás.'],
+  fict:null
+};
+const GATO_NEBULA = {
+  id:'olhodegato', name:'OLHO DE GATO', desig:'NGC 6543 · NEBULOSA PLANETÁRIA', kind:'A nebulosa mais complexa que conhecemos', hab:0, gbar:0.0001, pop:'0',
+  region:true, field:{shape:'cloud', r0:4, r1:20, col:0x5ad8c0, rock:0x2a7a70, size:0.22},
+  quick:[['DISTÂNCIA','3.300 al'],['LARGURA','~0,5 ano-luz'],['IDADE','~1.000 anos'],['CAMADAS','11 anéis'],['CATÁLOGO','NGC 6543'],['HALO','3 anos-luz']],
+  visual:{mode:'haze', c1:'#1a4a48', c2:'#5ad8c0', c3:'#e0a060', seed:65.43, atmo:{col:'#6af0d8', i:1.6}},
+  sections:[
+    {t:'ESCALA', rows:[['O centro','Cerca de meio ano-luz de ponta a ponta'],['O halo','O gás mais antigo se espalha por 3 anos-luz, expelido bem antes'],['A idade','O miolo brilhante tem só mil anos: em escala cósmica, aconteceu ontem']]},
+    {t:'REGISTRO', rows:[['A forma','Jatos, bolhas, laços e onze cascas concêntricas, tudo no mesmo objeto'],['Por que tão complexa','Provavelmente há duas estrelas no centro, e a dança das duas esculpe o gás'],['1864','William Huggins analisou a luz dela e provou que nebulosas são nuvens de gás'],['Hubble','A imagem dela é uma das mais reproduzidas do telescópio'],['O nosso futuro','O Sol vai terminar assim, embora provavelmente de forma bem mais simples']]}
+  ],
+  facts:['É considerada a nebulosa planetária mais complexa já observada, e ninguém explicou completamente a forma dela.','Foi ela que provou, em 1864, que nebulosas são gás e não aglomerados de estrelas distantes.','As onze camadas foram sopradas em intervalos regulares de mil e quinhentos anos, como um relógio.'],
+  fict:'A imagem do Hubble virou pôster, capa de livro e ícone: quando alguém desenha um olho cósmico, está copiando ela.', moons:[]};
+const FORM_STAR = {
+  id:'formigacentro', name:'NÚCLEO DA FORMIGA', desig:'MZ 3 · ESTRELA MORIBUNDA', kind:'A estrela que dispara jatos gêmeos', hab:null, gbar:150000,
+  quick:[['TIPO','anã branca + companheira'],['RAIO','~0,02 R☉'],['TEMP. SUP.','~35.000 °C'],['DISTÂNCIA','8.000 al'],['JATOS','1.000 km/s'],['LASER','detectado em 2018']],
+  visual:{mode:'star', c1:'#fff0e8', c2:'#ff9a72'},
+  sections:[
+    {t:'ESTRUTURA', rows:[['O que é','Uma estrela em fim de vida que, em vez de soprar gás em todas as direções, dispara dois jatos opostos'],['A causa','Quase certamente uma companheira próxima, ou um campo magnético intenso, canalizando o fluxo'],['A velocidade','O gás sai a mil quilômetros por segundo, com precisão de metralhadora']]},
+    {t:'REGISTRO', rows:[['2018','Detectaram emissão laser vindo do centro, sinal de gás denso escondido ali'],['O que isso indica','Deve haver um disco de material comprimido em volta, provavelmente por causa da companheira'],['A simetria','Os dois lobos são espelhos quase perfeitos um do outro, o que exige um mecanismo muito organizado']]}
+  ],
+  facts:['O centro dela emite laser natural, coisa raríssima, e isso denuncia um disco de gás escondido.'],
+  fict:null
+};
+const FORM_NEBULA = {
+  id:'formiganeb', name:'NEBULOSA DA FORMIGA', desig:'MZ 3 · NEBULOSA BIPOLAR', kind:'A nebulosa com forma de inseto', hab:0, gbar:0.0001, pop:'0',
+  region:true, field:{shape:'cloud', r0:4, r1:19, col:0xe86a5a, rock:0x8a3020, size:0.22},
+  quick:[['DISTÂNCIA','8.000 al'],['LARGURA','~1,6 ano-luz'],['FORMA','dois lobos'],['JATOS','1.000 km/s'],['CATÁLOGO','Menzel 3'],['DESCOBERTA','1922']],
+  visual:{mode:'haze', c1:'#4a1a14', c2:'#e86a5a', c3:'#ffc890', seed:33.0, atmo:{col:'#ff7a5a', i:1.7}},
+  sections:[
+    {t:'ESCALA', rows:[['Tamanho','Cerca de 1,6 ano-luz de uma ponta à outra'],['A forma','Dois lobos simétricos separados por uma cintura, exatamente como o corpo de uma formiga'],['Posição aqui','Simbólica: os lobos saem da estrela central em direções opostas']]},
+    {t:'REGISTRO', rows:[['1922','Catalogada por Donald Menzel, daí o nome Menzel 3'],['O mistério','Estrelas moribundas costumam soprar gás em esfera. Esta dispara em duas direções, e ninguém sabe exatamente por quê.'],['As hipóteses','Uma companheira orbitando muito perto, ou um campo magnético canalizando o vento'],['O laser','Em 2018 o observatório Herschel detectou emissão laser no centro, algo visto em pouquíssimos objetos'],['Por que interessa','Entender isso é entender como o Sol vai morrer, e por que algumas estrelas morrem tortas']]}
+  ],
+  facts:['A forma de inseto é tão marcada que o apelido é imediato: dois lobos e uma cintura no meio.','Estrelas como o Sol deveriam morrer soprando gás em todas as direções. Esta escolheu duas, e ainda não sabemos por quê.','O centro dela emite laser natural, um fenômeno detectado em pouquíssimos lugares do universo.'],
+  fict:'É a nebulosa favorita de quem gosta de formas bizarras: aparece em toda lista de objetos mais estranhos do universo.', moons:[]};
 /* ---- fora da Via Láctea: os únicos candidatos a planeta em outras galáxias ---- */
 const AND_STAR = {
   id:'pa99lente', name:'ESTRELA-LENTE PA-99-N2', desig:'M31 · ESTRELA ANÔNIMA', kind:'Uma estrela de Andrômeda que piscou uma vez', hab:null, gbar:20,
@@ -2688,6 +2817,30 @@ const SYS = {
           quick:[['GALÁXIA','Andrômeda · M31'],['DISTÂNCIA','2,5 mi al'],['PLANETAS','1 candidato'],['MÉTODO','microlente'],['DETECTADO','1999'],['CONFIRMAR','impossível']],
           sections:[{t:'REGISTRO', rows:[['O evento','Em 1999 uma estrela de Andrômeda ampliou a luz de outra e entregou um companheiro'],['O planeta','Cerca de 6 Júpiteres, o primeiro candidato extragaláctico da história'],['O limite','Microlentes acontecem uma vez só: ninguém vai poder checar']]}],
           facts:['O único endereço catalogado deste mapa que fica fora da Via Láctea, junto com o do Redemoinho.']} },
+  cygx1:{ id:'cygx1', name:'CYGNUS X-1', star:CYG_STAR, bodies:CYG_BODIES, belt:[], beltR:null,
+        starSize:2.0, camMax:30, hint:'O PRIMEIRO BURACO NEGRO QUE A CIÊNCIA ACEITOU, E HAWKING APOSTOU CONTRA',
+        card:{desig:'BURACO NEGRO · CISNE', kind:'O objeto da aposta de Hawking', hab:null,
+          quick:[['MASSA','21 Sóis'],['DISTÂNCIA','7.200 al'],['DESCOBERTO','1964'],['COMPANHEIRA','supergigante'],['ÓRBITA','5,6 d'],['APOSTA','paga em 1990']],
+          sections:[{t:'REGISTRO', rows:[['A importância','Primeiro objeto amplamente aceito como buraco negro'],['A aposta','Hawking apostou com Thorne que não era, e perdeu em 1990'],['Como vemos','O gás arrancado da companheira brilha em raios X ao cair']]}],
+          facts:['Hawking pagou a aposta com uma assinatura de revista, para irritação da esposa de Thorne.']} },
+  k218:{ id:'k218', name:'K2-18', star:K218_STAR, bodies:K218_BODIES, belt:[], beltR:null,
+        starSize:2.4, camMax:30, hint:'O PLANETA QUE VIROU MANCHETE DE VIDA EXTRATERRESTRE, DUAS VEZES',
+        card:{desig:'SISTEMA ESTELAR · LEÃO', kind:'A controvérsia mais famosa da astrobiologia', hab:null,
+          quick:[['ESTRELA','anã vermelha M2.5V'],['DISTÂNCIA','124 al'],['PLANETAS','2'],['NA ZONA','o b'],['ÁGUA','vapor confirmado'],['JWST','2023 e 2025']],
+          sections:[{t:'REGISTRO', rows:[['2019','Vapor de água detectado, e a manchete de primeiro planeta habitável corre o mundo'],['2023 e 2025','Sinal fraco de um gás que na Terra vem de vida marinha'],['O contraponto','Reanálises independentes mostram o sinal sumindo conforme o método']]}],
+          facts:['É o exemplo mais claro de como é difícil provar uma bioassinatura de verdade.']} },
+  gato:{ id:'gato', name:'OLHO DE GATO', star:GATO_STAR, bodies:[], belt:[], beltR:[11,18], beltLabel:'O OLHO →', beltId:'olhodegato', beltCol:0x5ad8c0,
+        starSize:1.4, camMax:36, hint:'ONZE CAMADAS DE GÁS, SOPRADAS A CADA MIL E QUINHENTOS ANOS',
+        card:{desig:'NEBULOSA PLANETÁRIA · DRAGÃO', kind:'A mais complexa que conhecemos', hab:null,
+          quick:[['DISTÂNCIA','3.300 al'],['CATÁLOGO','NGC 6543'],['LARGURA','~0,5 al'],['CAMADAS','11 anéis'],['IDADE','~1.000 anos'],['HALO','3 al']],
+          sections:[{t:'REGISTRO', rows:[['A forma','Jatos, bolhas e onze cascas concêntricas no mesmo objeto'],['1864','Foi ela que provou que nebulosas são feitas de gás'],['O futuro do Sol','Ele vai terminar assim, só que bem mais simples']]}],
+          facts:['Ninguém explicou completamente como uma estrela produz uma forma tão complexa.']} },
+  formiga:{ id:'formiga', name:'NEBULOSA DA FORMIGA', star:FORM_STAR, bodies:[], belt:[], beltR:[11,18], beltLabel:'OS LOBOS →', beltId:'formiganeb', beltCol:0xe86a5a,
+        starSize:1.4, camMax:36, hint:'UMA ESTRELA MORRENDO EM DUAS DIREÇÕES, E NINGUÉM SABE POR QUÊ',
+        card:{desig:'NEBULOSA BIPOLAR · NORMA', kind:'A nebulosa com forma de inseto', hab:null,
+          quick:[['DISTÂNCIA','8.000 al'],['CATÁLOGO','Menzel 3'],['LARGURA','~1,6 al'],['JATOS','1.000 km/s'],['LASER','sim, 2018'],['DESCOBERTA','1922']],
+          sections:[{t:'REGISTRO', rows:[['O mistério','Estrelas assim deveriam soprar gás em esfera, esta dispara em dois jatos'],['A suspeita','Uma companheira muito próxima canalizando o fluxo'],['O laser','O centro emite laser natural, coisa raríssima']]}],
+          facts:['Dois lobos e uma cintura: o apelido de formiga é imediato quando você vê a foto.']} },
   sgra:{ id:'sgra', name:'SAGITTARIUS A*', star:SGR_STAR, bodies:SGR_BODIES, belt:[], beltR:null,
         starSize:2.4, camMax:32, hint:'O CENTRO DA VIA LÁCTEA: TUDO AQUI ORBITA ESTE PONTO',
         card:{desig:'BURACO NEGRO · CENTRO DA GALÁXIA', kind:'O nosso endereço central', hab:null,
@@ -2827,6 +2980,10 @@ reg(M57_STAR,'m57'); reg(M57_NEBULA,'m57');
 reg(LHS_STAR,'lhs1140'); LHS_BODIES.forEach(p=>reg(p,'lhs1140'));
 reg(PLE_STAR,'pleiades'); reg(PLE_SWARM,'pleiades');
 reg(SGR_STAR,'sgra'); SGR_BODIES.forEach(p=>reg(p,'sgra'));
+reg(CYG_STAR,'cygx1'); CYG_BODIES.forEach(p=>reg(p,'cygx1'));
+reg(K218_STAR,'k218'); K218_BODIES.forEach(p=>reg(p,'k218'));
+reg(GATO_STAR,'gato'); reg(GATO_NEBULA,'gato');
+reg(FORM_STAR,'formiga'); reg(FORM_NEBULA,'formiga');
 reg(CHAMA_STAR,'chama'); reg(CHAMA_NEBULA,'chama');
 reg(TUC_STAR,'tuc47'); reg(TUC_SWARM,'tuc47');
 reg(NGC346_STAR,'ngc346'); reg(NGC346_NEBULA,'ngc346');
@@ -4162,7 +4319,7 @@ function distReal(b, filtro){
     let m = t.match(/([\d.,]+)\s*UA/);
     if(m) return parseFloat(m[1].replace(/\./g,'').replace(',','.')) * UA_KM;
     /* entende "15 anos-luz", "2,5 mi al", "26.000 al", "1 bi al" */
-    m = t.match(/([\d.,]+)\s*(mil|mi|bi)?\s*(anos-luz|al)\b/i);
+    m = t.match(/([\d.,]+)\s*(mil|mi|bi)?\s*(anos?-luz|al)\b/i);
     if(m){
       const n = parseFloat(m[1].replace(/\./g,'').replace(',','.'));
       const mult = {mil:1e3, mi:1e6, bi:1e9}[(m[2]||'').toLowerCase()] || 1;
@@ -4376,6 +4533,13 @@ const MISSFILTROS = [
 ];
 /* distância de casa: vem do sistema do corpo, não do corpo em si. O Sistema
    Solar fica em 0, e o resto se ordena pelo quão longe você foi. */
+/* diâmetro do corpo, reaproveitando o parser da comparação */
+const _tamCache = {};
+function tamDe(b){
+  if(_tamCache[b.id] !== undefined) return _tamCache[b.id];
+  const d = parseDia(b);
+  return (_tamCache[b.id] = d ? d.km : 0);
+}
 const _distSis = {};
 function distDeCasa(b){
   const sid = b._sys;
@@ -4405,7 +4569,8 @@ const TITULOS = {
   tarantula:'DOMADOR DE ARANHAS', sn1987a:'CAÇADOR DE NEUTRINOS',
   tuc47:'GUARDIÃO DO TUCANO', ngc346:'ARQUEÓLOGO DO UNIVERSO JOVEM',
   lhs1140:'CAÇADOR DE OCEANOS', chama:'GUARDA-FOGO', pleiades:'IRMÃO DAS SETE',
-  sgra:'SENTINELA DO CENTRO'
+  sgra:'SENTINELA DO CENTRO', cygx1:'GANHADOR DA APOSTA', k218:'CAÇADOR DE BIOASSINATURAS',
+  gato:'OLHEIRO', formiga:'ENTOMOLOGISTA CÓSMICO'
 };
 function progressoSistemas(){
   const mapa = {};
@@ -4492,11 +4657,13 @@ function missRender(){
   else if(MISS.ordem==='grav') lista.sort((a,b)=>(b.gbar||0)-(a.gbar||0) || nm(a).localeCompare(nm(b)));
   else if(MISS.ordem==='sis')  lista.sort((a,b)=>sisNome(a).localeCompare(sisNome(b)) || nm(a).localeCompare(nm(b)));
   else if(MISS.ordem==='dist') lista.sort((a,b)=>distDeCasa(a)-distDeCasa(b) || sisNome(a).localeCompare(sisNome(b)) || nm(a).localeCompare(nm(b)));
+  else if(MISS.ordem==='tam')  lista.sort((a,b)=>(tamDe(b)-tamDe(a)) || nm(a).localeCompare(nm(b)));
   else                         lista.sort((a,b)=>nm(a).localeCompare(nm(b)));
 
   el.innerHTML = lista.length ? lista.map(b=>{
     let sub = CATNOME[catDe(b)] + ' · ' + sisNome(b);
     if(MISS.ordem==='dist'){ const d = distDeCasa(b); sub += ' · ' + (d ? fmtEscala(d) : 'EM CASA'); }
+    if(MISS.ordem==='tam'){ const t = tamDe(b); sub += ' · ' + (t ? fmtEscala(t) : 'SEM MEDIDA'); }
     return '<li data-id="'+b.id+'" class="'+(VIS.has(b.id)?'vis':'')+'">'
       + '<span class="mdot"></span>'
       + '<span class="minfo"><span class="mnm">'+esc(b.name)+'</span><span class="msub">'+esc(sub)+'</span></span>'
@@ -5218,7 +5385,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r42';
+const BUILD = 'r43';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

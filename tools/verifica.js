@@ -73,6 +73,27 @@ for(const [id, b] of Object.entries(ALLBODIES)){
   }
 }
 
+/* 5. todo id que o código procura precisa existir no HTML (erro silencioso
+      clássico: $('#algo') devolve null e a função morre sem avisar) */
+const corpoHtml = html.slice(html.indexOf('<body'), html.indexOf('</body>'));
+const idsHtml = new Set([...corpoHtml.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]));
+const criados = new Set([...todo.matchAll(/id\s*=\s*['"]([\w-]+)['"]/g)].map(m => m[1]));
+const usados = new Map();
+for(const m of todo.matchAll(/\$\('#([\w-]+)'\)|getElementById\('([\w-]+)'\)/g)){
+  const id = m[1] || m[2];
+  usados.set(id, (usados.get(id) || 0) + 1);
+}
+for(const [id] of usados)
+  if(!idsHtml.has(id) && !criados.has(id))
+    erros.push(`o código procura #${id}, que não existe no HTML`);
+
+/* 6. seletores de id no CSS que não casam com nada (typo silencioso) */
+const css = html.slice(html.indexOf('<style'), html.indexOf('</style>'));
+const idsCss = new Set([...css.matchAll(/#([\w-]+)/g)].map(m => m[1]));
+for(const id of idsCss)
+  if(!idsHtml.has(id) && !criados.has(id) && !/^[0-9a-fA-F]{3,8}$/.test(id))
+    avisos.push(`o CSS estiliza #${id}, que não existe no HTML`);
+
 const n = Object.keys(ALLBODIES).length;
 console.log(`${n} corpos · ${Object.keys(SYS).length} sistemas · ${STARSYS.length} marcadores · ${GALAXIES.length} galáxias`);
 if(avisos.length){ console.log('\nAVISOS'); for(const a of avisos) console.log('  ~ ' + a); }
