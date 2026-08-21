@@ -1,6 +1,6 @@
 # Cartografia Estelar · contexto do projeto
 
-Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r48** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
+Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r49** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
 
 ## Arquitetura (blocos <script> em ordem)
 1. Helpers ($, isMobile, RM, clamp, easeIO, hashStr, coordOf) + shaders GLSL como template strings (NOISE/PLANET/CLOUD/ATMO/RING/SUN). fbm usa 4 octaves em touch, 5 no desktop.
@@ -33,12 +33,12 @@ Medido: 1% de diferença de tamanho e 0px de posição, tanto planeta quanto lua
 ## Teste de integridade (r42)
 `node tools/verifica.js` antes de cada entrega. Ele executa os dados de verdade e falha se: um corpo citado em SYS não passou por `reg()` (esse erro eu já cometi duas vezes), um `beltId` aponta para o nada, uma nebulosa está em SYS.bodies E como beltId (o objeto duplicado do r28), um sistema ficou sem marcador em STARSYS, um `_sys`/`_parent` aponta para algo inexistente, uma região não tem `field`, ou um texto novo tem travessão, emoji ou instrução de app dentro de `facts`/`fict`. Avisos (não quebram): ficha sem curiosidade, estrela sem RAIO.
 
-## Órbitas e filtros (combinado no r46, ainda NÃO implementado)
+## Órbitas e filtros (FEITO: classes no r47, filtros e percurso no r49)
 O Sistema Solar ficou cheio e as linhas competem entre si. Plano acordado com o Rodrigo:
 - Cada linha ganha **classe** (`planeta`, `lua`, `cometa`, `sonda`) com cor e opacidade próprias. Planeta fica como está; cometa e sonda entram bem mais apagados e num tom levemente diferente, sem virar outra paleta.
 - **Sonda não tem órbita fechada.** Voyager e Pioneer estão em rota de escape: desenhar elipse seria mentira. A linha delas deve ser um arco ABERTO, saindo do interior do sistema e apontando para fora, terminando na posição atual.
-- A trajetória da sonda só aparece **quando ela está selecionada** (two-step), junto de um play que percorre o caminho com a câmera acompanhando e um relógio de anos no HUD.
-- Botão de filtros no topo à direita (junto de ⌕ ◈ ⋯), abrindo um popover no estilo do painel de missão, com liga/desliga por classe de linha. Os corpos continuam visíveis: o filtro esconde só a linha.
+- FEITO r49: o arco fica sempre visível (apagado, classe cometa/sonda); ao selecionar ele acende em âmbar e o card ganha ≋ PERCORRER A TRAJETÓRIA (`trajStart`, só para `ehEscape`). O play move `CAM.pivot` pelos pontos da própria linha (lidos da geometry, robusto a qualquer forma futura), com `#trajclock` mostrando os anos (`anoDe` extrai do quick). Fases vai→pausa→volta; toque, ESC ou troca de cena encerram; dolly bloqueado durante.
+- FEITO r49: botão ≋ no topo abre `#filtpop` com liga/desliga por classe (planeta/cometa/sonda). Esconde SÓ a linha (`obj.visible` no applySel), o corpo selecionado sempre mostra a própria rota, escolha salva em `carto:linhas`.
 - Cinturões ficam como estão, o Rodrigo gosta deles.
 
 ## Roadmap experimental (pedidos do Rodrigo, ainda NÃO feitos)

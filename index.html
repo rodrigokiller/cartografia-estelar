@@ -81,7 +81,7 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #morebtns{display:contents}
 #btnmore{display:none}
 #scalebadge{order:0} #navback{order:1} #navfwd{order:2} #btnsnd{order:3}
-#btnphoto{order:4} #btnmiss{order:5} #btnfind{order:6} #btnfs{order:7} #btnhelp{order:8}
+#btnphoto{order:4} #btnfilt{order:4} #btnmiss{order:5} #btnfind{order:6} #btnfs{order:7} #btnhelp{order:8}
 #scalebadge{font-family:var(--mono);font-size:10px;letter-spacing:2.4px;color:var(--dim);border:1px solid var(--line);padding:6px 10px;background:rgba(6,12,24,.6)}
 #scalebadge b{color:var(--ion);font-weight:400}
 #btnhelp{width:30px;height:30px;border:1px solid var(--line);background:rgba(6,12,24,.6);color:var(--ion);font-family:var(--mono);font-size:14px;cursor:pointer}
@@ -162,6 +162,21 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #player .pl-list li:hover{background:rgba(63,140,255,.12)}
 #player .pl-list li.cur{color:var(--amber)}
 #player .pl-mute{width:100%;margin-top:8px}
+/* popover de filtros das linhas: mesmo corpo do player */
+#filtpop{position:absolute;top:60px;right:14px;z-index:20;width:min(280px,86vw);display:none;
+  background:var(--panel);border:1px solid var(--line2);padding:12px 14px 10px;
+  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+#filtpop.on{display:block}
+#filtpop .fp-t{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:6px}
+.filtrow{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;
+  padding:9px 4px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10px;
+  letter-spacing:1.6px;color:var(--txt);-webkit-tap-highlight-color:transparent}
+.filtrow:hover{background:rgba(63,140,255,.10)}
+.filtrow b{font-weight:400;color:var(--ok);letter-spacing:1.6px}
+.filtrow.off{color:var(--dim2)}
+.filtrow.off b{color:var(--dim2)}
+#filtpop .fp-n{font-family:var(--mono);font-size:8.5px;letter-spacing:1.2px;color:var(--dim2);
+  margin-top:8px;line-height:1.7}
 /* modo foto (tecla P): HUD some para capturas limpas */
 body.photo #topbar,body.photo #topright,body.photo #navpod,body.photo .chev,body.photo #zoomui,
 body.photo #diagchip,body.photo #nowplay,body.photo #player,body.photo #panel,body.photo #hint,
@@ -181,6 +196,14 @@ body.photo.hudpeek #photoexit{opacity:1}
   background:rgba(6,12,24,.72);border:1px solid var(--line2);padding:10px 18px;
   opacity:0;pointer-events:none;transition:opacity .4s}
 #phototoast.on{opacity:1}
+/* relogio de anos do percurso da trajetoria */
+#trajclock{position:absolute;left:50%;bottom:120px;transform:translateX(-50%);z-index:16;
+  font-family:var(--mono);font-size:11px;letter-spacing:2.5px;color:var(--amber);
+  background:rgba(6,12,24,.82);border:1px solid var(--line);padding:7px 14px;
+  opacity:0;transition:opacity .4s;pointer-events:none;white-space:nowrap}
+#trajclock.on{opacity:1}
+@media (max-width:899px){ #trajclock{bottom:calc(var(--sheetpeek,34dvh) + 58px)} }
+body.photo #filtpop,body.photo #trajclock{opacity:0 !important;visibility:hidden}
 /* telemetria de debug: escondida por padrão, sai com Shift+D (ver CLAUDE.md) */
 #diagchip{display:none;position:absolute;right:8px;bottom:6px;z-index:14;font-family:var(--mono);font-size:9px;
   letter-spacing:1px;color:var(--dim);background:rgba(4,8,18,.72);border:1px solid var(--line);
@@ -601,6 +624,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <button id="navfwd" class="navbtn dis" title="Objeto seguinte">»</button>
       <button id="btnsnd" class="navbtn" title="Trilha sonora">♪</button>
       <button id="btnphoto" class="navbtn" title="Modo foto">◉</button>
+      <button id="btnfilt" class="navbtn" title="Linhas do mapa">≋</button>
       <button id="btnfs" class="navbtn" title="Tela cheia">⛶</button>
       <button id="btnhelp" title="Ajuda">?</button>
     </div>
@@ -652,6 +676,14 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <ul class="pl-list" id="pl_list"></ul>
     <button class="xbtn pl-mute" id="pl_mute">SOM: LIGADO</button>
   </div>
+  <div id="filtpop">
+    <div class="fp-t">≋ LINHAS DO MAPA</div>
+    <div class="filtrow" data-cls="planeta"><span>PLANETAS</span><b>LIGADA</b></div>
+    <div class="filtrow" data-cls="cometa"><span>COMETAS E VISITANTES</span><b>LIGADA</b></div>
+    <div class="filtrow" data-cls="sonda"><span>SONDAS</span><b>LIGADA</b></div>
+    <div class="fp-n">Esconde só a linha. Os corpos continuam no mapa, e o que você selecionar mostra a própria rota.</div>
+  </div>
+  <div id="trajclock"></div>
 
   <div id="panel">
     <div id="panelhead">
@@ -3275,6 +3307,7 @@ function disposeScene(act){
 /* Classe da linha de cada corpo. O planeta e a referencia; cometa e sonda
    entram bem mais apagados para nao competir. Objeto em rota de escape nao
    ganha elipse: ele nao volta, entao a linha dele e um arco aberto. */
+const FILTROS = {planeta:true, cometa:true, sonda:true};   /* linhas visiveis por classe */
 const LINHA = {
   planeta: {cor:0x2a4a7a, op:0.50},
   cometa:  {cor:0x2f5f6b, op:0.26},
@@ -3337,7 +3370,7 @@ function buildSystem(sysId, spin0){
     const mat = new THREE.LineBasicMaterial({color:est.cor, transparent:true, opacity:est.op});
     const orbit = fuga ? new THREE.Line(og, mat) : new THREE.LineLoop(og, mat);
     holder.add(fade(orbit));
-    selReg.orbits.push({id:p.id, mat:orbit.material, c:est.cor, o:est.op});
+    selReg.orbits.push({id:p.id, mat:orbit.material, obj:orbit, cls, c:est.cor, o:est.op});
     const bg = makeBodyGroup(p, p.sys.size, 40);
     bg.group.position.x = p.sys.orbit;
     holder.add(bg.group);
@@ -4017,6 +4050,67 @@ function diveStep(now){
 }
 /* troca direta: o corpo já está no mesmo lugar e tamanho, então basta acender
    o cenário novo por cima. Nada de piscar a tela. */
+/* ============================ PERCURSO DA TRAJETÓRIA ============================
+   Para objetos em rota de escape: a câmera pega carona do lançamento até onde o
+   objeto está hoje, com um relógio de anos correndo junto. Toque encerra. */
+let TRAJ = null;
+function anoDe(b){
+  for(const q of (b.quick||[])){
+    if(/LANÇAMENTO|DETECTADO|DESCOBERTA/i.test(q[0])){
+      const m = String(q[1]).match(/(19|20)\d\d/);
+      if(m) return +m[0];
+    }
+  }
+  return null;
+}
+function trajStart(id){
+  const b = ALLBODIES[id];
+  const o = (ACT && ACT.sel && ACT.sel.orbits) ? ACT.sel.orbits.find(x=>x.id===id) : null;
+  if(!b || !o || !o.obj || !ehEscape(b) || DIVE) return;
+  o.obj.updateWorldMatrix(true, false);
+  const pos = o.obj.geometry.getAttribute('position');
+  const pts = [];
+  for(let i=0;i<pos.count;i++)
+    pts.push(new THREE.Vector3(pos.getX(i), pos.getY(i), pos.getZ(i)).applyMatrix4(o.obj.matrixWorld));
+  CAMTW = null;
+  TRAJ = {fase:'vai', pts, t0:performance.now(), ms:12000, id,
+          d0:CAM.dist, ano0:anoDe(b), ano1:(new Date()).getFullYear()};
+  const el = $('#trajclock');
+  el.textContent = b.name; el.classList.add('on');
+  showHint('PERCORRENDO A ROTA · TOQUE NA CENA PARA ENCERRAR');
+}
+function trajCancelar(){
+  if(!TRAJ || TRAJ.fase==='volta') return;
+  $('#trajclock').classList.remove('on');
+  TRAJ = {fase:'volta', t0:performance.now(), ms:850, p0:CAM.pivot.clone(), dA:CAM.dist, d1:TRAJ.d0};
+}
+function trajLimpar(){
+  TRAJ = null;
+  const el = $('#trajclock'); if(el) el.classList.remove('on');
+}
+function trajStep(now){
+  if(!TRAJ) return;
+  if(TRAJ.fase==='volta'){
+    const k = Math.min(1, (now-TRAJ.t0)/TRAJ.ms), e = easeIO(k);
+    CAM.pivot.copy(TRAJ.p0).multiplyScalar(1-e);
+    CAM.dist = TRAJ.dA + (TRAJ.d1-TRAJ.dA)*e;
+    if(k>=1) trajLimpar();
+    return;
+  }
+  if(TRAJ.fase==='pausa'){
+    if(now-TRAJ.t0 > 1400) trajCancelar();
+    return;
+  }
+  const k = Math.min(1, (now-TRAJ.t0)/TRAJ.ms), e = easeIO(k);
+  const f = e*(TRAJ.pts.length-1);
+  const i = Math.min(TRAJ.pts.length-2, Math.floor(f));
+  CAM.pivot.lerpVectors(TRAJ.pts[i], TRAJ.pts[i+1], f-i);
+  CAM.dist = TRAJ.d0 + (Math.min(TRAJ.d0,16) - TRAJ.d0)*Math.min(1, k*4);
+  if(TRAJ.ano0)
+    $('#trajclock').textContent = (ALLBODIES[TRAJ.id]||{}).name + ' · ' + Math.round(TRAJ.ano0 + (TRAJ.ano1-TRAJ.ano0)*e);
+  if(k>=1){ TRAJ.fase='pausa'; TRAJ.t0=now; }
+}
+
 let FADEIN = null;
 function blinkSwap(fn){
   fn();
@@ -4043,6 +4137,7 @@ function fadeSwap(text, fn){
 function swapScene(built, continuo){
   disposeScene(ACT); ACT = built; setCam(ACT.cam);
   CAMTW = null; DIVE = null; FADEIN = null;
+  trajLimpar();
   if(ACT.dim) ACT.dim(1, null);
   document.body.classList.remove('diving');
   if(!RM && !continuo){
@@ -4061,6 +4156,9 @@ const store = {
   set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
 };
 LIVE = store.get('carto:live','0') === '1';   /* modo ao vivo da Terra e da Lua */
+{ const v = store.get('carto:linhas', null);
+  if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
+    for(const k of ['planeta','cometa','sonda']) FILTROS[k] = on.has(k); } }
 
 /* ---------- áudio: playlist + ambiente generativo + sfx ---------- */
 const PLAYLIST = [
@@ -5269,6 +5367,9 @@ function cardRender(){
       if(b.fict) h += '<div class="sect"><h3>NA FICÇÃO</h3><div class="fict">'+esc(b.fict)+'</div></div>';
     }
   }
+  const bTraj = (cur.type==='map' && cur.navKind==='body') ? ALLBODIES[cur.navId] : null;
+  if(bTraj && ehEscape(bTraj) && ACT && ACT.kind==='system' && bTraj._sys===ST.sys)
+    h += '<button class="xbtn" id="trajgo">≋ PERCORRER A TRAJETÓRIA</button>';
   if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='body'?'▶ ENTRAR · TRAVAR LINK':'▶ ENTRAR · TRAVAR ROTA')+'</button>';
   if(cur.type==='map' && !cur.self && !cur.nav){
     h += '<div class="notice">ROTA INDISPONÍVEL: dados de navegação insuficientes. Sonda em trânsito.</div>';
@@ -5301,6 +5402,7 @@ function cardRender(){
     uiSync();
     showHint(LIVE ? 'MODO AO VIVO: POSIÇÃO E ILUMINAÇÃO REAIS DE AGORA' : 'MODO CARTOGRÁFICO');
   });
+  const tg = $('#trajgo'); if(tg) tg.addEventListener('click', ()=>trajStart(cur.navId));
   const ng = $('#navgo'); if(ng) ng.addEventListener('click', ()=>{ enterTarget(cur.navKind==='gal' ? 'galaxy' : (cur.navKind==='sys' ? 'starsys' : 'focus'), cur.navId); });
   const bp = $('#backpan'); if(bp) bp.addEventListener('click', ()=>{ ST.mapCard=null; uiSync(); });
 }
@@ -5328,6 +5430,8 @@ function applySel(){
   const S = ACT.sel;
   const targets = [];
   (S.orbits||[]).forEach(o=>{
+    /* o filtro esconde so a linha; a do corpo selecionado sempre aparece */
+    if(o.obj) o.obj.visible = (FILTROS[o.cls || 'planeta'] !== false) || selId===o.id;
     if(selId===o.id) targets.push({mat:o.mat, base:o.c, baseOp:o.o, amber:0xffb454, op:true});
     else { o.mat.color.setHex(o.c); o.mat.opacity = o.o; }
   });
@@ -5464,7 +5568,7 @@ const pts = new Map(); let PD = null, pinchD = 0;
    sem trocar de escala sem querer. */
 const ZLIM = {over:0, t:0, hint:0};
 function dolly(f){
-  if(DIVE) return;
+  if(DIVE || TRAJ) return;
   CAMTW = null;
   const now = performance.now();
   const alvo = CAM.dist * f;
@@ -5521,6 +5625,7 @@ const HOVERQ = matchMedia('(hover: hover)').matches; let hoverT = 0;
 let LPT = 0; /* timer do toque longo (modo foto no touch) */
 canvas.addEventListener('pointerdown', e=>{
   if(TOUR.on) tourStop();   /* tocou na cena, o controle volta pra você */
+  if(TRAJ){ trajCancelar(); return; }   /* idem para o percurso da trajetória */
   if(DIVE) return;          /* durante o mergulho a câmera é da animação */
   canvas.setPointerCapture(e.pointerId);
   pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
@@ -5631,6 +5736,8 @@ window.addEventListener('keydown', e=>{
   else if(e.key==='t' || e.key==='T') tourToggle();
   else if(e.key==='Escape'){
     if(TOUR.on) tourStop();
+    else if(TRAJ && TRAJ.fase!=='volta') trajCancelar();
+    else if($('#filtpop').classList.contains('on')) $('#filtpop').classList.remove('on');
     else if(document.body.classList.contains('photo')) togglePhoto();
     else if($('#mission').classList.contains('on')) missClose();
     else if($('#finder').classList.contains('on')) findClose();
@@ -5666,7 +5773,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r48';
+const BUILD = 'r49';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -5729,8 +5836,26 @@ $('#diagchip').addEventListener('click', function(){ this.classList.remove('on')
   }
   ['pointerdown','pointerup','keydown','touchend'].forEach(ev=>window.addEventListener(ev, tryBoot));
 })();
-$('#btnsnd').addEventListener('click', ()=>{ $('#player').classList.toggle('on'); AUDIO.plSync(); });
+$('#btnsnd').addEventListener('click', ()=>{ $('#filtpop').classList.remove('on'); $('#player').classList.toggle('on'); AUDIO.plSync(); });
 $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: coarse)').matches));
+function filtSync(){
+  $('#filtpop').querySelectorAll('.filtrow').forEach(r=>{
+    const on = FILTROS[r.dataset.cls] !== false;
+    r.classList.toggle('off', !on);
+    r.querySelector('b').textContent = on ? 'LIGADA' : 'OCULTA';
+  });
+}
+$('#btnfilt').addEventListener('click', ()=>{
+  $('#player').classList.remove('on');
+  $('#filtpop').classList.toggle('on');
+  filtSync();
+});
+$('#filtpop').addEventListener('click', e=>{
+  const r = e.target.closest('.filtrow'); if(!r) return;
+  FILTROS[r.dataset.cls] = FILTROS[r.dataset.cls] === false;
+  store.set('carto:linhas', ['planeta','cometa','sonda'].filter(k=>FILTROS[k]!==false).join(','));
+  filtSync(); applySel();
+});
 $('#misstour').addEventListener('click', ()=>{ const on = TOUR.on; missClose(); if(on) tourStop(); else tourStart(); });
 $('#tourx').addEventListener('click', ()=>tourStop());
 $('#tourrota').addEventListener('change', e=>tourRota(e.target.value));
@@ -5811,6 +5936,7 @@ function loop(){
     }
   }
   if(DIVE) diveStep(now);
+  if(TRAJ) trajStep(now);
   else if(FADEIN) fadeInStep(now);
   if(TOUR.on && TOUR.ms) $('#tourprog').style.width = Math.min(100, (now-TOUR.t0)/TOUR.ms*100).toFixed(1)+'%';
   if(ACT){
