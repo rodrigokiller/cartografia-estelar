@@ -186,8 +186,8 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #datepop .dcol button:hover{color:var(--amber);border-color:var(--amber)}
 #datepop .drow{display:flex;gap:8px}
 #datepop .drow .xbtn{margin:0;flex:1}
-#simclock{display:none;align-items:center;gap:7px;margin-top:3px;
-  font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;color:var(--dim2)}
+#simclock{display:none;align-items:center;gap:7px;position:absolute;left:24px;bottom:3px;z-index:11;
+  font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;color:var(--dim2);pointer-events:auto}
 body.emsistema #simclock{display:flex}
 #simclock button{background:none;border:none;color:var(--dim);opacity:.55;cursor:pointer;
   font-size:10px;padding:0 2px;line-height:1}
@@ -248,7 +248,7 @@ body.photo.hudpeek #photoexit{opacity:1}
   #trajclock{width:94vw}
   #trajclock .ttx{width:100%}
 }
-body.photo #filtpop,body.photo #trajclock{opacity:0 !important;visibility:hidden}
+body.photo #filtpop,body.photo #trajclock,body.photo #simclock,body.photo #cfgpop,body.photo #datepop{opacity:0 !important;visibility:hidden}
 /* telemetria de debug: escondida por padrão, sai com Shift+D (ver CLAUDE.md) */
 #diagchip{display:none;position:absolute;right:8px;bottom:6px;z-index:14;font-family:var(--mono);font-size:9px;
   letter-spacing:1px;color:var(--dim);background:rgba(4,8,18,.72);border:1px solid var(--line);
@@ -637,6 +637,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   @keyframes mdrop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
   #scalebadge{display:none}
   #navpod{display:none}
+  #simclock{left:12px;bottom:12px}
   #chevL{left:12px}
   #chevR{right:12px}
   .chev{top:auto;bottom:calc(var(--sheetpeek,34dvh) + 14px);margin-top:0}
@@ -695,10 +696,10 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <button id="navfwd" class="navbtn dis" title="Objeto seguinte">»</button>
       <button id="btnsnd" class="navbtn" title="Trilha sonora">♪</button>
       <button id="btnphoto" class="navbtn" title="Modo foto">⌗</button>
-      <button id="btncfg" class="navbtn" title="Configurações">⚙︎</button>
       <button id="btnfs" class="navbtn" title="Tela cheia">⛶</button>
       <button id="btnfilt" class="navbtn" title="Linhas do mapa">≋</button>
       <button id="btnhelp" title="Ajuda">?</button>
+      <button id="btncfg" class="navbtn" title="Configurações">⚙︎</button>
     </div>
   </div>
 
@@ -708,9 +709,10 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <div id="fovline">SAT LINK 08 · DESTINO</div>
       <div class="big" id="coordval">--°--'</div>
       <div id="clock">T+ 00:00:00</div>
-      <div id="simclock"><span id="simdata"></span><button id="simpp" data-tip="Pausar ou continuar o tempo">⏸</button><button id="simgo" data-tip="Ir para uma data">◈</button></div>
     </div>
   </div>
+
+  <div id="simclock"><span id="simdata"></span><button id="simpp" data-tip="Pausar ou continuar o tempo">⏸</button><button id="simgo" data-tip="Ir para uma data">◈</button></div>
 
   <button class="chev" id="chevL" title="Anterior">‹</button>
   <button class="chev" id="chevR" title="Próximo">›</button>
@@ -762,6 +764,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div id="cfgpop">
     <div class="fp-t">⚙︎ CONFIGURAÇÕES</div>
     <div class="fp-t fp-t2">VELOCIDADE DO TEMPO</div>
+    <div class="filtrow" data-vel="real"><span>TEMPO REAL · 1 S = 1 S</span><b></b></div>
     <div class="filtrow" data-vel="dia"><span>1 SEGUNDO = 1 DIA</span><b></b></div>
     <div class="filtrow" data-vel="semana"><span>1 SEGUNDO = 1 SEMANA</span><b></b></div>
     <div class="filtrow" data-vel="mes"><span>1 SEGUNDO = 1 MÊS</span><b></b></div>
@@ -3666,7 +3669,7 @@ const FILTROBJ = {planeta:true, anao:true, cometa:true, sonda:true, satelite:tru
    pode pausar e pular para qualquer data. As posições vêm de Kepler. */
 const SIM_HOJE = Date.now(), MS_ANO = 365.25*86400000;
 const SIMT = {data: Date.now(), vel:'dia', pausado:false,
-  diasPorSeg(){ return this.vel==='mes' ? 30.44 : (this.vel==='semana' ? 7 : 1); }};
+  diasPorSeg(){ return this.vel==='mes' ? 30.44 : (this.vel==='semana' ? 7 : (this.vel==='real' ? 1/86400 : 1)); }};
 function satelitesDe(id){
   /* só o que está ATIVO e em órbita: foguete histórico e satélite morto
      ficam nas listas do card e do registro, não na cena */
@@ -7320,7 +7323,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r80';
+const BUILD = 'r81';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -7420,8 +7423,9 @@ const MESES_N = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NO
 function simClockUI(){
   const el = $('#simdata'); if(!el) return;
   const d = new Date(SIMT.data);
-  const rot = SIMT.vel==='mes' ? '1 S = 1 MÊS' : (SIMT.vel==='semana' ? '1 S = 1 SEMANA' : '1 S = 1 DIA');
-  el.textContent = rot + ' · ' + d.getDate() + ' ' + MESES_N[d.getMonth()] + ' ' + d.getFullYear();
+  let txt = d.getDate() + ' ' + MESES_N[d.getMonth()] + ' ' + d.getFullYear();
+  if(SIMT.vel==='real') txt += ' · ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  el.textContent = txt;
   const pp = $('#simpp'); if(pp) pp.textContent = SIMT.pausado ? '▶' : '⏸';
 }
 const DP = {d:1, m:0, a:2026};
