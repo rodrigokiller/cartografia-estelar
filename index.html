@@ -374,6 +374,11 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #misslist .galct{font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;color:var(--dim);white-space:nowrap}
 #misslist li.galrow.full .galnm{color:var(--amber)}
 #misslist li.sysrow{align-items:center}
+#misslist .mexp{flex:0 0 auto;width:22px;height:22px;border:1px solid var(--line2);background:none;
+  color:var(--dim);font-family:var(--mono);font-size:12px;line-height:1;cursor:pointer;padding:0}
+#misslist .mexp:hover{color:var(--amber);border-color:var(--amber)}
+#misslist li.mkid{padding-left:40px;min-height:30px}
+#misslist li.mkid .mnm{font-size:10px}
 #misslist .sysbadge{flex:0 0 auto;width:26px;height:26px;display:flex;align-items:center;justify-content:center;
   border:1px solid var(--line2);transform:rotate(45deg);font-size:10px;color:var(--dim)}
 #misslist .sysbadge span{transform:rotate(-45deg)}
@@ -5797,7 +5802,7 @@ const ALCANCADOS = new Set(['sol','mercurio','venus','terra','lua','marte','fobo
   'jupiter','io','europa','ganimedes','calisto','saturno','tita','encelado','mimas','reia','iapeto',
   'urano','netuno','tritao','plutao','caronte','ceres','vesta','palas','eros','itokawa','ryugu','bennu',
   'halley','arrokoth','cinturao','kuiper','voyager1','voyager2','newhorizons','pioneer10']);
-const MISS = {filtro:'tudo', ordem:'nome', q:''};
+const MISS = {filtro:'tudo', ordem:'nome', q:'', galFech:new Set(), sisAb:new Set()};
 /* cada sistema 100% visitado rende um título, além do selo */
 const TITULOS = {
   sol:'GUARDIÃO DE CASA', trappist:'PASTOR DOS SETE', alphacen:'VIZINHO DE PORTA',
@@ -5844,7 +5849,7 @@ function progressoGalaxias(sis){
   return Object.values(mapa).sort((a,b)=>
     (a.id==='vialactea' ? -1 : b.id==='vialactea' ? 1 : a.nome.localeCompare(b.nome)));
 }
-const CATNOME = {planeta:'PLANETA', lua:'LUA', estrela:'ESTRELA', regiao:'REGIÃO', menor:'CORPO MENOR'};
+const CATNOME = {planeta:'PLANETA', lua:'LUA', estrela:'ESTRELA', regiao:'REGIÃO', menor:'CORPO MENOR', nave:'NAVE'};
 function missRender(){
   const todos = Object.values(ALLBODIES);
   const total = todos.length;
@@ -5874,11 +5879,17 @@ function missRender(){
       if(!ls.length) continue;
       achou += ls.length;
       const gpc = Math.round(g.vistos/g.total*100), gfull = g.vistos>=g.total;
-      html += '<li class="galrow'+(gfull?' full':'')+'"><span class="galnm">'+esc(g.nome)+'</span>'
+      const gAberta = !MISS.galFech.has(g.id) || !!q;   /* buscando, tudo aberto */
+      html += '<li class="galrow'+(gfull?' full':'')+'" data-gal="'+g.id+'">'
+            + '<button class="mexp" data-exp="g:'+g.id+'">'+(gAberta?'−':'+')+'</button>'
+            + '<span class="galnm">'+esc(g.nome)+'</span>'
             + '<span class="galct">'+g.completos+'/'+g.sistemas.length+' SISTEMAS · '+gpc+'%</span></li>';
-      html += ls.map(s=>{
+      if(!gAberta) continue;
+      for(const s of ls){
         const pc = Math.round(s.vistos/s.total*100), full = s.vistos>=s.total;
-        return '<li data-sis="'+s.id+'" class="sysrow'+(full?' full':'')+'">'
+        const sAberto = MISS.sisAb.has(s.id) || !!q;
+        html += '<li data-sis="'+s.id+'" class="sysrow'+(full?' full':'')+'">'
+          + '<button class="mexp" data-exp="s:'+s.id+'">'+(sAberto?'−':'+')+'</button>'
           + '<span class="sysbadge"><span>'+(full?'★':'')+'</span></span>'
           + '<span class="minfo"><span class="mnm">'+esc(s.nome)+'</span>'
           + '<span class="msub">'+(full ? esc('★ ' + (TITULOS[s.id] || 'SISTEMA COMPLETO'))
@@ -5886,7 +5897,18 @@ function missRender(){
                                           + ' · '+s.total+(s.total===1 ? ' CORPO' : ' CORPOS'))+'</span></span>'
           + '<span class="sysprog">'+s.vistos+'/'+s.total+'<i><b style="width:'+pc+'%"></b></i></span>'
           + '</li>';
-      }).join('');
+        if(sAberto){
+          const oc = {estrela:0, planeta:1, lua:2, nave:3, regiao:4, menor:5};
+          const corpos = Object.values(ALLBODIES).filter(x=>x._sys===s.id)
+            .sort((a,c)=>((oc[catDe(a)]!==undefined?oc[catDe(a)]:9)-(oc[catDe(c)]!==undefined?oc[catDe(c)]:9))
+                         || a.name.localeCompare(c.name));
+          html += corpos.map(x=>'<li class="mkid'+(VIS.has(x.id)?' vis':'')+'" data-id="'+x.id+'">'
+            + '<span class="mdot"></span>'
+            + '<span class="minfo"><span class="mnm">'+esc(x.name)+'</span>'
+            + '<span class="msub">'+(CATNOME[catDe(x)]||'CORPO')+(VIS.has(x.id)?' · VISITADO':'')+'</span></span>'
+            + '</li>').join('');
+        }
+      }
     }
     el.innerHTML = achou ? html : '<li id="missempty">NENHUM SISTEMA ENCONTRADO</li>';
     $('#missfootcnt').textContent = selos + ' DE ' + sis.length + (selos===1 ? ' SISTEMA COMPLETO' : ' SISTEMAS COMPLETOS')
@@ -6417,9 +6439,19 @@ $('#mission').addEventListener('click', e=>{ if(e.target.id==='mission') missClo
       missClose(); openCompare(A, b);
       return;
     }
-    const li = e.target.closest('li[data-id],li[data-sis]');
+    const ex = e.target.closest('button[data-exp]');
+    if(ex){
+      e.stopPropagation();
+      const tipo = ex.dataset.exp.split(':')[0], id = ex.dataset.exp.split(':')[1];
+      if(tipo==='g'){ if(MISS.galFech.has(id)) MISS.galFech.delete(id); else MISS.galFech.add(id); }
+      else { if(MISS.sisAb.has(id)) MISS.sisAb.delete(id); else MISS.sisAb.add(id); }
+      missRender();
+      return;
+    }
+    const li = e.target.closest('li[data-id],li[data-sis],li[data-gal]');
     if(!li) return;
     missClose();
+    if(li.dataset.gal){ gotoGalaxy(li.dataset.gal); return; }
     if(li.dataset.sis) gotoSystem(li.dataset.sis);
     else gotoFocus(li.dataset.id);
   });
@@ -6716,7 +6748,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r65';
+const BUILD = 'r66';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
