@@ -394,11 +394,12 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 .eyebrow #cardx2{background:none;border:1px solid var(--line2);color:var(--dim);font-family:var(--mono);
   font-size:9px;width:18px;height:18px;line-height:1;cursor:pointer;padding:0;margin-left:8px;flex:0 0 auto}
 .eyebrow #cardx2:hover{color:var(--amber);border-color:var(--amber)}
-#tip{position:fixed;z-index:60;font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--amber);
-  background:rgba(6,12,24,.94);border:1px solid rgba(255,180,84,.5);padding:6px 10px;pointer-events:none;
+#tip{position:fixed;z-index:60;font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--ion);
+  background:rgba(6,12,24,.94);border:1px solid rgba(63,140,255,.55);padding:6px 10px;pointer-events:none;
   opacity:0;transition:opacity .15s;transform:translate(-50%,-100%);white-space:nowrap}
 #tip.on{opacity:1}
-.mbadge.vt{color:var(--amber);padding:0 7px;display:inline-flex;align-items:center;justify-content:center}
+#tip.amber{color:var(--amber);border-color:rgba(255,180,84,.5)}
+.mbadge.vt{color:var(--amber);padding:3px 7px 0;display:inline-flex;align-items:center;justify-content:center;line-height:1}
 #misslist li.mkid .mnm{font-size:10px}
 #misslist .sysbadge{flex:0 0 auto;width:26px;height:26px;display:flex;align-items:center;justify-content:center;
   border:1px solid var(--line2);transform:rotate(45deg);font-size:10px;color:var(--dim)}
@@ -1448,6 +1449,7 @@ const FOGUETES = [
   sys:{orbit:2.5, size:0.11, speed:1.0, angle:3.6},
   visual:{mode:'rocky', c1:'#d8d8dc', c2:'#f0f0f4', c3:'#8a8a92', scale:7.0, seed:19.69, crater:0.05},
   sections:[
+    {t:'A MISSÃO, DIA A DIA', rows:[['16/7','Lançamento do Kennedy às 9h32; três horas depois, a injeção translunar'],['17 a 18/7','Cruzeiro de ida com uma única correção de rota'],['19/7','Entrada na órbita da Lua, 30 voltas começam'],['20/7','A Eagle desce: "Houston, a Águia pousou". O passo vem à noite'],['21/7','Decolagem da Lua e reencontro com Collins no Columbia'],['22 a 23/7','A volta, com transmissões de TV para o mundo'],['24/7','Reentrada e mergulho no Pacífico, 8 dias depois']]},
     {t:'O SATURN V', rows:[['O tamanho','110 metros, um prédio de 36 andares subindo inteiro'],['A potência','O foguete mais poderoso já lançado até o Starship, meio século depois'],['Os motores','Cinco F-1 queimando 13 toneladas de combustível POR SEGUNDO'],['Posição aqui','Simbólica: a rota real foi Terra, órbita lunar, Mar da Tranquilidade']]},
     {t:'O POUSO', rows:[['A Eagle','Armstrong assumiu o manual com alarmes tocando e pedras no alvo'],['O combustível','Pousou com uns 25 segundos de margem no tanque'],['A frase','"Um pequeno passo para um homem, um salto gigante para a humanidade"'],['O público','600 milhões de pessoas assistindo ao vivo, recorde absoluto da época']]},
     {t:'REGISTRO', rows:[['O computador','Menos memória que uma calculadora de bolso, e bastou'],['A bandeira','Caiu com o sopro da decolagem da Eagle, Aldrin viu pela janela'],['A volta','Mergúlho no Pacífico e quarentena de 21 dias contra "germes lunares"']]}
@@ -1462,6 +1464,7 @@ const FOGUETES = [
   sys:{orbit:2.8, size:0.10, speed:0.9, angle:1.7},
   visual:{mode:'rocky', c1:'#c8c8cc', c2:'#e4e4e8', c3:'#7a7a82', scale:7.0, seed:19.70, crater:0.08},
   sections:[
+    {t:'A MISSÃO, DIA A DIA', rows:[['11/4','Lançamento às 13h13; um motor desliga cedo, mas a rota segue'],['13/4','O tanque de O₂ explode a 330 mil km: "Houston, we\'ve had a problem"'],['14/4','A tripulação migra para o módulo lunar e contorna a Lua'],['15 a 16/4','Frio de 4 °C, ração de água e a gambiarra do filtro de CO₂'],['17/4','Reentrada em silêncio de 6 minutos e splashdown: todos vivos']]},
     {t:'HOUSTON, TIVEMOS UM PROBLEMA', rows:[['13/4/1970','Um tanque de oxigênio explode a 330 mil km da Terra'],['A frase real','"Houston, we\'ve had a problem", no passado, Lovell corrigia todo mundo'],['A decisão','Sem combustível para dar meia-volta: a rota foi CONTORNAR a Lua'],['O bote','A tripulação migrou para o módulo lunar, projetado para 2 pessoas por 2 dias']]},
     {t:'A GAMBIARRA', rows:[['O CO₂','Filtros quadrados em encaixes redondos: fita adesiva, meia e capa de manual'],['O frio','4 °C, paredes suando, quase nada de água e energia'],['O retorno','Correções de rota no olho, mirando a Terra pela janela'],['17/4','Splashdown perfeito no Pacífico: o mundo inteiro respirou']]}
   ],
@@ -2056,7 +2059,7 @@ const KUIPER_HUB = {
 PLANETS.push(
  {id:'halley', name:'COMETA HALLEY', desig:'1P · COMETA PERIÓDICO', kind:'O cometa de todas as gerações', hab:0, gbar:0.0001, pop:'0',
   quick:[['NÚCLEO','15 × 8 km'],['PERÍODO','75–76 anos'],['ÚLTIMA VISITA','1986'],['PRÓXIMA','2061'],['VELOCIDADE','até 254 mil km/h'],['REGISTROS','desde 240 a.C.']],
-  comet:true,
+  comet:true, orbita:{peri:8.6, afel:47},
   traj:{de:1986, ate:2061}, marcos:[[1986,'ÚLTIMA VISITA'],[2023,'AFÉLIO'],[2061,'PRÓXIMO PERIÉLIO']],
   sys:{orbit:38, size:0.34, speed:2.6, angle:5.1, incl:0.5},
   visual:{mode:'rocky', c1:'#3f3c38', c2:'#5c5850', c3:'#2a2825', scale:6.4, seed:19.86, crater:0.9, atmo:{col:'#a8e8d0', i:0.5}},
@@ -3699,6 +3702,15 @@ function buildSystem(sysId, spin0){
           oPos[i*3]=Math.cos(a)*r; oPos[i*3+1]=0; oPos[i*3+2]=Math.sin(a)*r;
         }
       }
+    } else if(p.orbita){
+      /* elipse honesta (Halley): r = a(1-e²)/(1+e·cosθ), Sol no foco */
+      const a2 = (p.orbita.peri + p.orbita.afel)/2;
+      const ex = (p.orbita.afel - p.orbita.peri)/(p.orbita.afel + p.orbita.peri);
+      for(let i=0;i<seg;i++){
+        const th = i/seg*Math.PI*2;
+        const r = a2*(1-ex*ex)/(1+ex*Math.cos(th));
+        oPos[i*3]=Math.cos(th)*r; oPos[i*3+2]=Math.sin(th)*r;
+      }
     } else {
       for(let i=0;i<seg;i++){ const a=i/seg*Math.PI*2; oPos[i*3]=Math.cos(a)*p.sys.orbit; oPos[i*3+2]=Math.sin(a)*p.sys.orbit; }
     }
@@ -3710,7 +3722,8 @@ function buildSystem(sysId, spin0){
     const bg = (p.sonda || p.satelite || p.foguete)
       ? grupoNave(p.id, p.sys.size*2.6)
       : makeBodyGroup(p, p.sys.size, 40);
-    bg.group.position.x = p.sys.orbit;
+    /* corpo em órbita elíptica fica no AFÉLIO (o Halley passou por lá em 2023) */
+    bg.group.position.x = p.orbita ? -p.orbita.afel : p.sys.orbit;
     holder.add(bg.group);
     bg.mesh.rotation.y = spinAcc;
     fadeObjs[p.id] = bg.group;   /* encolhe no mergulho, menos o corpo visado */
@@ -3726,9 +3739,9 @@ function buildSystem(sysId, spin0){
     }
     const pick = new THREE.Mesh(new THREE.SphereGeometry(Math.max(p.sys.size + (p.satOf?0.15:0.75), p.satOf?0.35:1.25), 8, 8),
       new THREE.MeshBasicMaterial({visible:false}));
-    pick.position.x = p.sys.orbit; pick.userData = {act:'focus', id:p.id, r:p.sys.size};
+    pick.position.x = p.orbita ? -p.orbita.afel : p.sys.orbit; pick.userData = {act:'focus', id:p.id, r:p.sys.size};
     holder.add(pick); pickables.push(pick);
-    if(!fuga) orbiters.push({holder, spd:p.sys.speed, orb:p.satOf?0:p.sys.orbit});   /* escape parada; satélite não entra no Kepler da linha do tempo */
+    if(!fuga) orbiters.push({holder, spd:(p.orbita?0:p.sys.speed), orb:(p.satOf||p.orbita)?0:p.sys.orbit});   /* escape e elipse ficam parados; o Halley espera décadas no afélio */
     const gp = bg.group;
     labels.push({el:makeLabel(p.name, p.satOf?'faint mini':'', ()=>ACTION('focus', p.id)),
       mini:!!p.satOf,
@@ -3742,7 +3755,7 @@ function buildSystem(sysId, spin0){
     if(p.foguete){ bg.group.visible = false; pick.userData.escondido = true; labels[labels.length-1].off = true; }
     /* as luas também aparecem no mapa do sistema, em miniatura */
     if(p.moons && p.moons.length && !p.satOf && !p.comet && !ehEscape(p) && !p.region){
-      p.moons.slice(0, 6).forEach((m, mi)=>{
+      p.moons.slice(0, QLOW ? 3 : 6).forEach((m, mi)=>{
         const mh = new THREE.Object3D();
         mh.position.x = p.sys.orbit;
         mh.rotation.y = mi*2.1 + hashStr(m.id)*6;
@@ -5145,6 +5158,7 @@ function trajStart(id){
       d.className = 'tmk';
       d.style.left = (pct*100) + '%';
       d.dataset.tip = m[1] + ' · ' + (TRAJ.dias ? ('DIA ' + m[0]) : m[0]);
+      d.dataset.tipamber = '1';
       bar.appendChild(d);
     }
   }
@@ -5232,11 +5246,14 @@ function trajStep(now){
 
 let FADEIN = null;
 function blinkSwap(fn){
-  fn();
-  if(DIVE) return;   /* a saída (riseFrom) já acende o cenário sozinha */
-  if(ACT && ACT.dim){
-    ACT.dim(0, ST.body || null);
-    FADEIN = {t0:performance.now(), ms:620};
+  /* try/finally: aconteça o que acontecer na troca, a cena nova SEMPRE acende.
+     (antidoto para a tela preta que o Rodrigo viu num estado intermediário) */
+  try{ fn(); }
+  finally{
+    if(!DIVE && ACT && ACT.dim){
+      ACT.dim(0, ST.body || null);
+      FADEIN = {t0:performance.now(), ms:620};
+    }
   }
 }
 function fadeInStep(now){
@@ -5255,6 +5272,7 @@ function fadeSwap(text, fn){
 }
 function swapScene(built, continuo){
   disposeScene(ACT); ACT = built; setCam(ACT.cam);
+  if(!continuo) CAM.pivot.set(0, 0, 0);   /* pivô limpo em toda troca sem emenda */
   CAMTW = null; DIVE = null; FADEIN = null;
   trajLimpar();
   if(ACT.dim) ACT.dim(1, null);
@@ -6630,7 +6648,7 @@ function cardRender(){
     }
     if(dono.exLuas) h += '<div class="exluas">LUAS DO PASSADO · '+esc(dono.exLuas)+'</div>';
     /* satélites em badge de texto (a lista pode crescer), vermelho se desativado */
-    const badge = x => '<button class="mbadge'+(x.morto?' morto':'')+(x.id===bodyish.id?' on':'')+'" data-go="'+x.id+'"'+(x.morto?' data-tip="DESATIVADO · SÓ REGISTRO"':'')+'>'+esc(x.name)+'</button>';
+    const badge = x => '<button class="mbadge'+(x.morto?' morto':'')+(x.id===bodyish.id?' on':'')+'" data-go="'+x.id+'"'+(x.morto?' data-tip="DESATIVADO · SÓ REGISTRO" data-tipamber="1"':'')+'>'+esc(x.name)+'</button>';
     const vtb = x => '<button class="mbadge vt" data-vt="'+x.id+'" title="Ver a linha do tempo">≋</button>';
     if(sats.length){
       h += '<div class="moonsrow"><div class="mk"><span>SATÉLITES</span><span>'+sats.filter(x=>!x.morto).length+' ATIVOS · '+sats.length+' NO REGISTRO</span></div><div class="badges">'
@@ -7164,7 +7182,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r75';
+const BUILD = 'r76';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -7233,12 +7251,22 @@ $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: c
 (function(){
   const tip = $('#tip');
   document.addEventListener('mouseover', e=>{
-    const el = e.target.closest ? e.target.closest('[data-tip]') : null;
+    let el = e.target.closest ? e.target.closest('[data-tip]') : null;
+    if(!el && e.target.closest){
+      /* qualquer title vira balão nosso na primeira passada do mouse */
+      const tl = e.target.closest('[title]');
+      if(tl && tl.getAttribute('title')){
+        tl.dataset.tip = tl.getAttribute('title').toUpperCase();
+        tl.removeAttribute('title');
+        el = tl;
+      }
+    }
     if(!el){ tip.classList.remove('on'); return; }
     const r = el.getBoundingClientRect();
     tip.textContent = el.dataset.tip;
     tip.style.left = (r.left + r.width/2) + 'px';
     tip.style.top = (r.top - 6) + 'px';
+    tip.classList.toggle('amber', el.dataset.tipamber !== undefined);
     tip.classList.add('on');
   });
   document.addEventListener('mouseout', e=>{
