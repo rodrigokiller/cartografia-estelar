@@ -170,6 +170,7 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
 #filtpop.on{display:block}
 #filtpop .fp-t{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:6px}
+#filtpop .fp-t2{margin-top:12px;padding-top:10px;border-top:1px solid rgba(63,140,255,.16)}
 .filtrow{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;
   padding:9px 4px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10px;
   letter-spacing:1.6px;color:var(--txt);-webkit-tap-highlight-color:transparent}
@@ -701,7 +702,12 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-cls="cometa"><span>COMETAS E VISITANTES</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="sonda"><span>SONDAS</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="satelite"><span>SATÉLITES</span><b>LIGADA</b></div>
-    <div class="fp-n">Esconde só a linha. Os corpos continuam no mapa, e o que você selecionar mostra a própria rota.</div>
+    <div class="fp-n">Esconde só a linha. O corpo selecionado sempre mostra a própria rota.</div>
+    <div class="fp-t fp-t2">◌ OBJETOS NO MAPA</div>
+    <div class="filtrow" data-obj="cometa"><span>COMETAS E VISITANTES</span><b>VISÍVEL</b></div>
+    <div class="filtrow" data-obj="sonda"><span>SONDAS</span><b>VISÍVEL</b></div>
+    <div class="filtrow" data-obj="satelite"><span>SATÉLITES</span><b>VISÍVEL</b></div>
+    <div class="fp-n">Some com o objeto inteiro: corpo, rótulo e rota. Planetas e luas ficam sempre.</div>
   </div>
   <div id="trajclock">
     <div class="trow1">
@@ -1044,7 +1050,7 @@ const PLANETS = [
   fict:'The Expanse, o "incidente Arboghast" acontece na órbita de Vênus.', moons:[]
 },
 {
-  id:'terra', name:'TERRA', desig:'SOL-3 · PLANETA', kind:'Rochoso · habitável', hab:100, gbar:1.0, pop:'8,1 bilhões (+ ~7 em órbita)',
+  id:'terra', name:'TERRA', desig:'SOL-3 · PLANETA', kind:'Rochoso · habitável', hab:100, gbar:1.0, pop:'8,1 bilhões (+ ~7 em órbita)', moonsMeta:'1 LUA · 4 SATÉLITES FAMOSOS',
   quick:[['GRAVIDADE','1 g'],['TEMP. MÉDIA','15 °C'],['DIA','24 h'],['ANO','365,25 d'],['LUAS','1'],['ÁGUA','71%']],
   sys:{orbit:15, size:0.9, speed:1.0, angle:4.2},
   visual:{mode:'earth', c1:'#3f7d43', c2:'#8a9a55', c3:'#c2a06a', seaCol:'#0d3f78', sea:0.52, scale:3.4, seed:12.3, cap:0.78, capAmt:0.9, capCol:'#eef4f8', lights:1, atmo:{col:'#6fb7ff', i:1.5}, clouds:{amt:0.95, scale:4.2, col:'#ffffff'}},
@@ -3513,6 +3519,15 @@ function disposeScene(act){
 /* linhas visíveis por classe. PADRÃO: só planetas; cometa, sonda e toda classe
    futura (satelite, foguete) nascem DESLIGADAS, o mapa fica limpo por default */
 const FILTROS = {planeta:true, cometa:false, sonda:false, satelite:false};
+/* segundo grupo do filtro: esconder o OBJETO inteiro (corpo, rótulo e rota).
+   Planetas e luas nunca somem. Vale também para a cena de foco e os chips. */
+const FILTROBJ = {cometa:true, sonda:true, satelite:true};
+function satelitesDe(id){
+  if(FILTROBJ.satelite === false) return [];
+  const r = [];
+  for(const k in ALLBODIES){ const b = ALLBODIES[k]; if(b.satOf === id) r.push(b); }
+  return r;
+}
 const ORB_TERRA = 15;   /* orbita da Terra na cena do sol: 15 unidades = 1 UA */
 const LINHA = {
   planeta: {cor:0x2a4a7a, op:0.50},
@@ -3554,6 +3569,7 @@ function buildSystem(sysId, spin0){
   const selReg = {orbits:[], markers:[], belt:null};
   let cometFx = null;
   const holderDe = {};   /* para satélites acharem o holder do corpo-mãe */
+  const objReg = [];     /* cometas, sondas e satélites, para o filtro de objetos */
   for(const p of S.bodies){
     const holder = new THREE.Object3D();
     holder.rotation.y = p.sys.angle;
@@ -3626,6 +3642,8 @@ function buildSystem(sysId, spin0){
     const gp = bg.group;
     labels.push({el:makeLabel(p.name, p.satOf?'faint':'', ()=>ACTION('focus', p.id)),
       get:v=>{ gp.getWorldPosition(v); v.y += p.sys.size + 0.55; }});
+    if(cls !== 'planeta') objReg.push({id:p.id, cls, holder, pick, lbl:labels[labels.length-1],
+      tails:(p.comet && cometFx) ? [cometFx.inner, cometFx.outer] : null});
   }
 
   /* cinturão */
@@ -3693,7 +3711,7 @@ function buildSystem(sysId, spin0){
     }
   }
 
-  return {kind:'system', scene, labels, pickables, sel:selReg,
+  return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
        Pausar congela, e arrastar para trás faz o sistema voltar no tempo junto. */
@@ -4425,8 +4443,8 @@ function buildFocus(bodyId, spin0){
   const fadeMats = [], fadeObjs = {};
   const fade = o => { if(o && o.material) fadeMats.push({m:o.material, o:(o.material.opacity!==undefined?o.material.opacity:1)}); return o; };
   scene.children.forEach(fade);   /* os dois campos de estrelas já criados acima */
-  const kids = b.moons || [];
-  const parent = b._parent ? ALLBODIES[b._parent] : null;
+  const kids = (b.moons || []).concat(satelitesDe(bodyId));
+  const parent = b._parent ? ALLBODIES[b._parent] : (b.satOf ? ALLBODIES[b.satOf] : null);
   let bg = null, clouds = null, moonHolder = null, cometFx = null;
 
   /* contexto ao fundo: planeta-mãe (se lua de verdade) ou o brilho da estrela */
@@ -4886,6 +4904,9 @@ LIVE = store.get('carto:live','0') === '1';   /* modo ao vivo da Terra e da Lua 
 { const v = store.get('carto:linhas', null);
   if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
     for(const k of ['planeta','cometa','sonda','satelite']) FILTROS[k] = on.has(k); } }
+{ const v = store.get('carto:objetos', null);
+  if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
+    for(const k of ['cometa','sonda','satelite']) FILTROBJ[k] = on.has(k); } }
 
 /* ---------- áudio: playlist + ambiente generativo + sfx ---------- */
 const PLAYLIST = [
@@ -6048,8 +6069,9 @@ function cardRender(){
   let h = '';
   const bodyish = (cur.type==='body') ? b : (cur.navKind==='body' ? b : null);
   if(bodyish){
-    const parent = bodyish._parent ? ALLBODIES[bodyish._parent] : null;
-    const list = (cur.type==='body' && parent) ? parent.moons : (bodyish.moons||[]);
+    const parent = bodyish._parent ? ALLBODIES[bodyish._parent] : (bodyish.satOf ? ALLBODIES[bodyish.satOf] : null);
+    const list = (cur.type==='body' && parent) ? (parent.moons||[]).concat(satelitesDe(parent.id))
+               : (bodyish.moons||[]).concat(satelitesDe(bodyish.id));
     if(cur.type==='body' && parent) h += '<button class="xbtn" data-go="'+parent.id+'">← VOLTAR A '+esc(parent.name)+'</button>';
     if(list && list.length){
       const meta = (cur.type==='body' && parent) ? ('LUAS DE '+esc(parent.name)) : (esc(bodyish.moonsMeta ? bodyish.moonsMeta : ('LUAS · '+list.length+(list.length>1?' CONFIRMADAS':' CONFIRMADA'))));
@@ -6159,7 +6181,19 @@ function uiSync(){
   applySel();
 }
 let SELFX = null;
+/* aplica o filtro de objetos: some com corpo, rótulo, rota e cauda */
+function aplicaObjetos(){
+  if(!ACT || !ACT.objs) return;
+  for(const o of ACT.objs){
+    const vis = FILTROBJ[o.cls] !== false;
+    o.holder.visible = vis;
+    o.pick.userData.escondido = !vis;
+    if(o.lbl && o.lbl.el) o.lbl.el.style.display = vis ? '' : 'none';
+    if(o.tails) for(const t of o.tails) t.visible = vis;
+  }
+}
 function applySel(){
+  aplicaObjetos();
   if(!ACT || !ACT.sel){ SELFX = null; return; }
   const selId = ST.mapCard ? ST.mapCard.id : null;
   const S = ACT.sel;
@@ -6336,7 +6370,7 @@ function rayHit(x, y){
   if(!ACT || !ACT.pickables.length) return null;
   const ndc = new THREE.Vector2(((x-CRECT.left)/CRECT.width)*2-1, -((y-CRECT.top)/CRECT.height)*2+1);
   raycaster.setFromCamera(ndc, camera);
-  const hits = raycaster.intersectObjects(ACT.pickables, false);
+  const hits = raycaster.intersectObjects(ACT.pickables, false).filter(h=>!h.object.userData.escondido);
   return hits.length ? hits[0].object.userData : null;
 }
 function pick(x, y){
@@ -6346,6 +6380,7 @@ function pick(x, y){
     const R = matchMedia('(pointer: coarse)').matches ? 34 : 18;
     const v = new THREE.Vector3(); let best = null, bd = 1e9;
     for(const o of ACT.pickables){
+      if(o.userData.escondido) continue;
       o.getWorldPosition(v); v.project(camera);
       if(v.z > 1) continue;
       const px = ( v.x*0.5+0.5)*CRECT.width  + CRECT.left;
@@ -6508,7 +6543,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r60';
+const BUILD = 'r61';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -6575,9 +6610,15 @@ $('#btnsnd').addEventListener('click', ()=>{ $('#filtpop').classList.remove('on'
 $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: coarse)').matches));
 function filtSync(){
   $('#filtpop').querySelectorAll('.filtrow').forEach(r=>{
-    const on = FILTROS[r.dataset.cls] !== false;
-    r.classList.toggle('off', !on);
-    r.querySelector('b').textContent = on ? 'LIGADA' : 'OCULTA';
+    if(r.dataset.obj){
+      const on = FILTROBJ[r.dataset.obj] !== false;
+      r.classList.toggle('off', !on);
+      r.querySelector('b').textContent = on ? 'VISÍVEL' : 'OCULTO';
+    } else {
+      const on = FILTROS[r.dataset.cls] !== false;
+      r.classList.toggle('off', !on);
+      r.querySelector('b').textContent = on ? 'LIGADA' : 'OCULTA';
+    }
   });
 }
 $('#btnfilt').addEventListener('click', ()=>{
@@ -6587,9 +6628,15 @@ $('#btnfilt').addEventListener('click', ()=>{
 });
 $('#filtpop').addEventListener('click', e=>{
   const r = e.target.closest('.filtrow'); if(!r) return;
-  FILTROS[r.dataset.cls] = FILTROS[r.dataset.cls] === false;
-  store.set('carto:linhas', ['planeta','cometa','sonda','satelite'].filter(k=>FILTROS[k]!==false).join(','));
-  filtSync(); applySel();
+  if(r.dataset.obj){
+    FILTROBJ[r.dataset.obj] = FILTROBJ[r.dataset.obj] === false;
+    store.set('carto:objetos', ['cometa','sonda','satelite'].filter(k=>FILTROBJ[k]!==false).join(','));
+    filtSync(); aplicaObjetos(); cardRender();
+  } else {
+    FILTROS[r.dataset.cls] = FILTROS[r.dataset.cls] === false;
+    store.set('carto:linhas', ['planeta','cometa','sonda','satelite'].filter(k=>FILTROS[k]!==false).join(','));
+    filtSync(); applySel();
+  }
 });
 $('#trajplay').addEventListener('click', ()=>{
   if(!TRAJ || TRAJ.fase!=='vai') return;
