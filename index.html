@@ -215,7 +215,7 @@ body.photo.hudpeek #photoexit{opacity:1}
 #trajclock .tcol .tbar{width:100%}
 #trajclock .tbar{width:100%;height:7px;background:rgba(63,140,255,.18);position:relative;cursor:pointer;touch-action:none}
 #trajclock .tbar i{position:absolute;left:0;top:0;bottom:0;background:var(--amber);width:0}
-#trajclock .tbar b.tmk{position:absolute;top:50%;width:8px;height:8px;pointer-events:none;
+#trajclock .tbar b.tmk{position:absolute;top:50%;width:8px;height:8px;cursor:pointer;
   transform:translate(-50%,-50%) rotate(45deg);background:#0a1526;border:1px solid var(--amber);opacity:.85}
 #trajclock .tanos{display:flex;justify-content:space-between;font-size:8px;letter-spacing:1px;color:var(--dim2)}
 #trajclock .ttx{color:var(--amber);text-align:center;white-space:nowrap;overflow:hidden;
@@ -383,6 +383,14 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #misslist li.mkid.niv1{padding-left:32px}
 #misslist li.mkid.niv2{padding-left:66px}
 #misslist .mexp.vazio{border:none;cursor:default;pointer-events:none}
+#labels .mini{font-size:8px;letter-spacing:1.2px;opacity:.82}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.mbadge{font-family:var(--mono);font-size:8.5px;letter-spacing:1.4px;color:var(--ok);
+  background:rgba(63,140,255,.07);border:1px solid var(--line2);padding:5px 8px;cursor:pointer}
+.mbadge:hover{border-color:var(--amber);color:var(--amber)}
+.mbadge.on{border-color:var(--amber);color:var(--amber)}
+.mbadge.morto{color:#d06a6a;border-color:rgba(208,106,106,.4)}
+.mbadge.vt{color:var(--amber);padding:5px 7px}
 #misslist li.mkid .mnm{font-size:10px}
 #misslist .sysbadge{flex:0 0 auto;width:26px;height:26px;display:flex;align-items:center;justify-content:center;
   border:1px solid var(--line2);transform:rotate(45deg);font-size:10px;color:var(--dim)}
@@ -653,7 +661,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <button id="navback" class="navbtn dis" title="Objeto anterior">«</button>
       <button id="navfwd" class="navbtn dis" title="Objeto seguinte">»</button>
       <button id="btnsnd" class="navbtn" title="Trilha sonora">♪</button>
-      <button id="btnphoto" class="navbtn" title="Modo foto">◉</button>
+      <button id="btnphoto" class="navbtn" title="Modo foto">⌗</button>
       <button id="btnfilt" class="navbtn" title="Linhas do mapa">≋</button>
       <button id="btnfs" class="navbtn" title="Tela cheia">⛶</button>
       <button id="btnhelp" title="Ajuda">?</button>
@@ -719,6 +727,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-obj="sonda"><span>SONDAS</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="satelite"><span>SATÉLITES</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="foguete"><span>MISSÕES TRIPULADAS</span><b>VISÍVEL</b></div>
+    <div class="filtrow" data-obj="cinturao"><span>CINTURÕES</span><b>VISÍVEL</b></div>
     <div class="fp-n">Some com o objeto inteiro: corpo, rótulo e rota. Planetas e luas ficam sempre.</div>
   </div>
   <div id="trajclock">
@@ -755,7 +764,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <p><b>Botões ‹ ›</b> saltam entre planetas ou luas vizinhas<span class="kb">, assim como as setas do teclado</span>.</p>
       <p><b>⚖ Comparar:</b> toque no botão do card, abra outro corpo e toque de novo: análise lado a lado em escala real.</p>
       <p><b>◈ Registro de bordo:</b> a lista completa do catálogo, com o que você já visitou, sua patente, busca e filtros por habitáveis, planetas, luas, estrelas e regiões.</p>
-      <p><b>◉ Modo foto:</b> esconde o painel inteiro para uma captura limpa<span class="touchonly">. Um toque longo na tela faz o mesmo</span><span class="kb"> (ou a tecla <b>P</b>)</span>.</p>
+      <p><b>⌗ Modo foto:</b> esconde o painel inteiro para uma captura limpa<span class="touchonly">. Um toque longo na tela faz o mesmo</span><span class="kb"> (ou a tecla <b>P</b>)</span>.</p>
       <p><b>▶ Modo tour:</b> dentro do registro de bordo<span class="kb"> (ou pela tecla <b>T</b>)</span>, o mapa se guia sozinho por uma rota comentada. Toque na cena a qualquer momento para assumir o controle.</p>
       <p><b>Compartilhe:</b> o endereço da página acompanha o objeto (ex.: <span style="font-family:var(--mono)">#corpo=europa</span>), copie o link e envie.</p>
       <p class="sub kb">ESC volta um nível · / ou S busca · M registro · T tour · P foto · ? este manual</p>
@@ -1062,7 +1071,7 @@ const PLANETS = [
   fict:'The Expanse, o "incidente Arboghast" acontece na órbita de Vênus.', moons:[]
 },
 {
-  id:'terra', name:'TERRA', desig:'SOL-3 · PLANETA', kind:'Rochoso · habitável', hab:100, gbar:1.0, pop:'8,1 bilhões (+ ~7 em órbita)', moonsMeta:'1 LUA · SATÉLITES E MISSÕES FAMOSAS',
+  id:'terra', name:'TERRA', desig:'SOL-3 · PLANETA', kind:'Rochoso · habitável', hab:100, gbar:1.0, pop:'8,1 bilhões (+ ~7 em órbita)',
   quick:[['GRAVIDADE','1 g'],['TEMP. MÉDIA','15 °C'],['DIA','24 h'],['ANO','365,25 d'],['LUAS','1'],['ÁGUA','71%']],
   sys:{orbit:15, size:0.9, speed:1.0, angle:4.2},
   visual:{mode:'earth', c1:'#3f7d43', c2:'#8a9a55', c3:'#c2a06a', seaCol:'#0d3f78', sea:0.52, scale:3.4, seed:12.3, cap:0.78, capAmt:0.9, capCol:'#eef4f8', lights:1, atmo:{col:'#6fb7ff', i:1.5}, clouds:{amt:0.95, scale:4.2, col:'#ffffff'}},
@@ -1394,7 +1403,7 @@ const SATELITES = [
   facts:['Nasceu míope por um erro de polímento de 2 milésimos de milímetro, e foi consertado em pleno espaço.','O Deep Field mostrou que até o "nada" do céu tem milhares de galáxias.','As fotos dele definiram a estética do cosmos para uma geração inteira.'],
   fict:'Os Pilares da Criação e o Deep Field viraram pôster de quarto, capa de álbum e papel de parede no mundo todo.', moons:[]},
  {id:'sputnik', name:'SPUTNIK 1', desig:'SATÉLITE · 1957', kind:'O primeiro objeto humano em órbita', hab:0, gbar:0, pop:'0',
-  satelite:true, satOf:'terra',
+  satelite:true, satOf:'terra', morto:true,
   quick:[['LANÇAMENTO','4/10/1957'],['TAMANHO','58 cm'],['MASSA','83,6 kg'],['UMA VOLTA','96 min'],['SINAL','21 dias de bip'],['REENTRADA','4/1/1958']],
   sys:{orbit:1.58, size:0.10, speed:2.6, angle:4.4},
   visual:{mode:'rocky', c1:'#c0c4cc', c2:'#e4e8f0', c3:'#82868e', scale:7.0, seed:19.57, crater:0.05},
@@ -3531,8 +3540,17 @@ function makeLabel(text, cls, onClick){
 function updateLabels(){
   if(!ACT) return;
   const W = CRECT.width, H = CRECT.height;
+  /* longe demais, os nomes de luas e satélites descansam */
+  const longe = !!(ACT.zoomMini && CAM.dist > ACT.zoomMini);
+  if(ACT._longe !== longe){
+    ACT._longe = longe;
+    for(const L of ACT.labels)
+      if(L.badge) L.el.textContent = L.base + (longe ? ' +' + L.badge : '');
+  }
   for(const L of ACT.labels){
     if(L.off){ L.el.style.display = 'none'; continue; }
+    if(L.mini && longe){ L.el.style.display = 'none'; continue; }
+    if(L.cinturao && FILTROBJ.cinturao === false){ L.el.style.display = 'none'; continue; }
     L.get(tmpV);
     tmpV.project(camera);
     if(tmpV.z > 1 || tmpV.x < -1.1 || tmpV.x > 1.1 || tmpV.y < -1.1 || tmpV.y > 1.1){
@@ -3567,13 +3585,15 @@ function disposeScene(act){
 const FILTROS = {planeta:true, cometa:false, sonda:false, satelite:false, foguete:false};
 /* segundo grupo do filtro: esconder o OBJETO inteiro (corpo, rótulo e rota).
    Planetas e luas nunca somem. Vale também para a cena de foco e os chips. */
-const FILTROBJ = {cometa:true, sonda:true, satelite:true, foguete:true};
+const FILTROBJ = {cometa:true, sonda:true, satelite:true, foguete:true, cinturao:true};
 function satelitesDe(id){
+  /* só o que está ATIVO e em órbita: foguete histórico e satélite morto
+     ficam nas listas do card e do registro, não na cena */
   const r = [];
   for(const k in ALLBODIES){
     const b = ALLBODIES[k];
-    if(b.satOf !== id) continue;
-    if(FILTROBJ[b.foguete ? 'foguete' : 'satelite'] === false) continue;
+    if(b.satOf !== id || b.foguete || b.morto) continue;
+    if(FILTROBJ.satelite === false) continue;
     r.push(b);
   }
   return r;
@@ -3622,7 +3642,12 @@ function buildSystem(sysId, spin0){
   let cometFx = null;
   const holderDe = {};   /* para satélites acharem o holder do corpo-mãe */
   const objReg = [];     /* cometas, sondas e satélites, para o filtro de objetos */
+  const labelDe = {}, kidCount = {}, satN = {};
   for(const p of S.bodies){
+    /* desativado (Sputnik): fica só na ficha e nas listas, sem orbitar */
+    if(p.satOf && p.morto) continue;
+    /* teto de 6 satélites por corpo: o enxame do futuro não polui o mapa */
+    if(p.satOf && !p.foguete){ satN[p.satOf] = (satN[p.satOf]||0) + 1; if(satN[p.satOf] > 6) continue; }
     const holder = new THREE.Object3D();
     holder.rotation.y = p.sys.angle;
     if(p.sys.incl) holder.rotation.x = p.sys.incl;
@@ -3670,7 +3695,7 @@ function buildSystem(sysId, spin0){
     const mat = new THREE.LineBasicMaterial({color:est.cor, transparent:true, opacity:est.op});
     const orbit = fuga ? new THREE.Line(og, mat) : new THREE.LineLoop(og, mat);
     holder.add(fade(orbit));
-    selReg.orbits.push({id:p.id, mat:orbit.material, obj:orbit, cls, c:est.cor, o:est.op});
+    selReg.orbits.push({id:p.id, mat:orbit.material, obj:orbit, cls, c:est.cor, o:est.op, oculto:!!p.foguete});
     const bg = (p.sonda || p.satelite || p.foguete)
       ? grupoNave(p.id, p.sys.size*2.6)
       : makeBodyGroup(p, p.sys.size, 40);
@@ -3694,12 +3719,46 @@ function buildSystem(sysId, spin0){
     holder.add(pick); pickables.push(pick);
     if(!fuga) orbiters.push({holder, spd:p.sys.speed, orb:p.satOf?0:p.sys.orbit});   /* escape parada; satélite não entra no Kepler da linha do tempo */
     const gp = bg.group;
-    labels.push({el:makeLabel(p.name, p.satOf?'faint':'', ()=>ACTION('focus', p.id)),
+    labels.push({el:makeLabel(p.name, p.satOf?'faint mini':'', ()=>ACTION('focus', p.id)),
+      mini:!!p.satOf,
       get:v=>{ gp.getWorldPosition(v); v.y += p.sys.size + 0.55; }});
+    labelDe[p.id] = labels[labels.length-1];
     if(cls !== 'planeta') objReg.push({id:p.id, cls, holder, pick, lbl:labels[labels.length-1],
-      corpo:bg.group, tails:(p.comet && cometFx) ? [cometFx.inner, cometFx.outer] : null});
+      corpo:bg.group, sempreOculto:!!p.foguete,
+      tails:(p.comet && cometFx) ? [cometFx.inner, cometFx.outer] : null});
+    if(p.satOf) kidCount[p.satOf] = (kidCount[p.satOf]||0) + 1;
+    /* foguete histórico não fica em órbita: só aparece na linha do tempo */
+    if(p.foguete){ bg.group.visible = false; pick.userData.escondido = true; labels[labels.length-1].off = true; }
+    /* as luas também aparecem no mapa do sistema, em miniatura */
+    if(p.moons && p.moons.length && !p.satOf && !p.comet && !ehEscape(p) && !p.region){
+      p.moons.slice(0, 6).forEach((m, mi)=>{
+        const mh = new THREE.Object3D();
+        mh.position.x = p.sys.orbit;
+        mh.rotation.y = mi*2.1 + hashStr(m.id)*6;
+        holder.add(mh);
+        const mr = p.sys.size + 0.42 + mi*0.30;
+        const ms = Math.max(0.055, Math.min(0.16, p.sys.size*0.16));
+        const mg2 = makeBodyGroup(m, ms, 10);
+        mg2.group.position.x = mr;
+        mh.add(mg2.group);
+        fadeObjs[m.id] = mg2.group;
+        const mpk = new THREE.Mesh(new THREE.SphereGeometry(0.30, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
+        mpk.position.x = mr; mpk.userData = {act:'focus', id:m.id, r:ms};
+        mh.add(mpk); pickables.push(mpk);
+        orbiters.push({holder:mh, spd:1.5 + (mi%3)*0.5, orb:0});
+        const mgp = mg2.group;
+        labels.push({el:makeLabel(m.name, 'faint mini', ()=>ACTION('focus', m.id)),
+          mini:true, get:v=>{ mgp.getWorldPosition(v); v.y += ms + 0.28; }});
+        kidCount[p.id] = (kidCount[p.id]||0) + 1;
+      });
+    }
   }
 
+  /* o planeta com filhos escondidos pelo zoom mostra +N no rótulo */
+  for(const pid in kidCount){
+    const L = labelDe[pid];
+    if(L){ L.badge = kidCount[pid]; L.base = (ALLBODIES[pid]||{name:''}).name; }
+  }
   /* cinturão */
   if(S.beltR){
     const bc = QLOW?850:1300, bPos = new Float32Array(bc*3);
@@ -3730,29 +3789,31 @@ function buildSystem(sysId, spin0){
       const kbelt = new THREE.Points(kg, new THREE.PointsMaterial({color:0x5a6a8a, size:0.15, sizeAttenuation:true, transparent:true, opacity:0.5, depthWrite:false}));
       scene.add(fade(kbelt));
       selReg.kbelt = {id:'kuiper', mat:kbelt.material, c:0x5a6a8a, o:0.5};
+      objReg.push({id:'kuiper_pts', cls:'cinturao', holder:kbelt, pick:null, lbl:null});
       const kmid = (S.kuiperR[0]+S.kuiperR[1])/2, kang = 0.55;
-      labels.push({el:makeLabel('CINTURÃO DE KUIPER', 'faint', ()=>ACTION('focus','kuiper')),
+      labels.push({cinturao:true, el:makeLabel('CINTURÃO DE KUIPER', 'faint', ()=>ACTION('focus','kuiper')),
         get:v=>v.set(Math.cos(kang)*kmid, 1.2, Math.sin(kang)*kmid)});
       /* alvo invisível na região: é o que permite mergulhar para dentro do cinturão */
       const kpick = new THREE.Mesh(new THREE.SphereGeometry(1.8, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
       kpick.position.set(Math.cos(kang)*kmid, 0.6, Math.sin(kang)*kmid);
       kpick.userData = {act:'focus', id:'kuiper', r:0.9};
       scene.add(kpick); pickables.push(kpick);
-      labels.push({el:makeLabel('NUVEM DE OORT →', 'faint', ()=>ACTION('focus','oort')),
+      labels.push({cinturao:true, el:makeLabel('NUVEM DE OORT →', 'faint', ()=>ACTION('focus','oort')),
         get:v=>v.set(Math.cos(4.1)*70, 2.2, Math.sin(4.1)*70)});
     }
     const bmid = (S.beltR[0]+S.beltR[1])/2, bang = 2.35;
     const beltId = S.beltId || 'cinturao';
-    labels.push({el:makeLabel(S.beltLabel || 'CINTURÃO', 'faint', ()=>ACTION('focus', beltId)),
+    labels.push({cinturao:true, el:makeLabel(S.beltLabel || 'CINTURÃO', 'faint', ()=>ACTION('focus', beltId)),
       get:v=>v.set(Math.cos(bang)*bmid, 0.9, Math.sin(bang)*bmid)});
     if(ALLBODIES[beltId]){
       const bpick = new THREE.Mesh(new THREE.SphereGeometry(1.8, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
       bpick.position.set(Math.cos(bang)*bmid, 0.4, Math.sin(bang)*bmid);
-      bpick.userData = {act:'focus', id:beltId, r:0.9};
+      bpick.userData = {act:'focus', id:beltId, r:0.9, cinturao:true};
       scene.add(bpick); pickables.push(bpick);
     }
     scene.add(belt);
     orbiters.push({holder:belt, spd:0.02});
+    objReg.push({id:'cinturao_pts', cls:'cinturao', holder:belt, pick:null, lbl:null});
     for(const a of S.belt){
       const x = Math.cos(a.belt.angle)*a.belt.r, z = Math.sin(a.belt.angle)*a.belt.r;
       const dot = new THREE.Mesh(new THREE.SphereGeometry(0.17, 10, 10), new THREE.MeshBasicMaterial({color:0xa8b2be}));
@@ -3766,6 +3827,7 @@ function buildSystem(sysId, spin0){
   }
 
   return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg,
+    zoomMini:(S.camMax || 60)*0.40,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
        Pausar congela, e arrastar para trás faz o sistema voltar no tempo junto. */
@@ -4237,7 +4299,9 @@ function nomeDaFase(i){
   if(i < 27.7) return 'MINGUANTE CÔNCAVA';
   return 'LUA NOVA';
 }
-function podeLive(id){ return id === 'terra' || id === 'lua'; }
+/* O AO VIVO da Terra foi recolhido: o Rodrigo quer uma v2 dos continentes.
+   A Lua real (fase, mares, iluminação) virou o modo PADRÃO dela. */
+function podeLive(id){ return false; }
 const LIVE_VERT = `
 varying vec2 vUv; varying vec3 vN; varying vec3 vV;
 void main(){ vUv = uv; vN = normalize(normalMatrix * normal);
@@ -4776,7 +4840,7 @@ function buildFocus(bodyId, spin0){
 
   /* ---------- CORPO: esfera + luas orbitando ---------- */
   const radius = (b.visual.mode==='star') ? 2.35 : (b.comet ? 1.2 : 2.2);
-  const aoVivo = LIVE && podeLive(bodyId);
+  const aoVivo = bodyId === 'lua';   /* a Lua real é o padrão; a Terra espera a v2 */
   bg = aoVivo ? grupoLive(bodyId, radius, QLOW?96:128)
      : ((b.sonda || b.satelite || b.foguete) ? grupoNave(bodyId, radius) : makeBodyGroup(b, radius, QLOW?96:128));
   wrap.add(bg.group);
@@ -4802,7 +4866,7 @@ function buildFocus(bodyId, spin0){
   kids.forEach((m, i)=>{
     let ang = i * (Math.PI*2/Math.max(3, kids.length)) + 0.55;
     /* ao vivo, a Lua fica no angulo real em relacao ao Sol: a fase fica certa */
-    if(aoVivo && bodyId === 'terra' && m.id === 'lua') ang = LIVE_FASE + Math.PI + faseDaLua().ang;
+    if(bodyId === 'terra' && m.id === 'lua') ang = LIVE_FASE + Math.PI + faseDaLua().ang;
     const r = 3.15 + (i%3)*0.5;
     vv.set(Math.cos(ang)*r, 0.42*Math.sin(i*2.13) + 0.15, Math.sin(ang)*r);
     addKid(m, vv, 0.20 + hashStr(m.id)*0.10, 24);
@@ -4976,6 +5040,24 @@ function anoDe(b){
   }
   return null;
 }
+/* leva até a linha do tempo de onde estiver: volta ao sistema e dá o play */
+function temLinhaDoTempo(b){ return !!(b && (ehEscape(b) || b.comet || (b.foguete && b.traj))); }
+function verLinhaDoTempo(id){
+  const b = ALLBODIES[id];
+  if(!b || !temLinhaDoTempo(b)) return;
+  if(typeof missClose === 'function') missClose();
+  const alvo = b._sys;
+  const sel = ()=>{ if(!(ST.mapCard && ST.mapCard.id === id)) ACTION('focus', id); };
+  if(ACT && ACT.kind === 'system' && ST.sys === alvo && !DIVE){ sel(); trajStart(id); return; }
+  let tent = 0;
+  const tenta = ()=>{
+    if(TRAJ) return;
+    if(ACT && ACT.kind === 'system' && ST.sys === alvo && !DIVE && !CAMTW){ sel(); trajStart(id); return; }
+    if(++tent < 20) setTimeout(tenta, 320);
+  };
+  gotoSystem(alvo);
+  setTimeout(tenta, 750);
+}
 function trajStart(id){
   const b = ALLBODIES[id];
   const o = (ACT && ACT.sel && ACT.sel.orbits) ? ACT.sel.orbits.find(x=>x.id===id) : null;
@@ -5005,7 +5087,8 @@ function trajStart(id){
   }
   /* o corpo (sonda, cometa, foguete) navega junto com o ponto do percurso */
   { const oo = ACT.objs && ACT.objs.find(x=>x.id===id);
-    if(oo && oo.corpo){ TRAJ.corpo = oo.corpo; TRAJ.cpos0 = oo.corpo.position.clone(); } }
+    if(oo && oo.corpo){ TRAJ.corpo = oo.corpo; TRAJ.cpos0 = oo.corpo.position.clone();
+      if(oo.sempreOculto){ oo.corpo.visible = true; TRAJ.corpoTemp = oo.corpo; } } }
   /* missão tripulada: em vez do anel simbólico, a rota REAL Terra-Lua,
      com a Lua aparecendo como destino e a nave fazendo a volta por trás */
   if(TRAJ.dias){
@@ -5050,6 +5133,7 @@ function trajStart(id){
       const d = document.createElement('b');
       d.className = 'tmk';
       d.style.left = (pct*100) + '%';
+      d.title = m[1] + ' · ' + (TRAJ.dias ? ('DIA ' + m[0]) : m[0]);
       bar.appendChild(d);
     }
   }
@@ -5069,13 +5153,14 @@ function trajCancelar(){
   if(!TRAJ || TRAJ.fase==='volta') return;
   $('#trajclock').classList.remove('on');
   TRAJ = {fase:'volta', t0:performance.now(), ms:850, p0:CAM.pivot.clone(), dA:CAM.dist, d1:TRAJ.d0,
-          corpo:TRAJ.corpo, cpos0:TRAJ.cpos0,
+          corpo:TRAJ.corpo, cpos0:TRAJ.cpos0, corpoTemp:TRAJ.corpoTemp,
           rotaViz:TRAJ.rotaViz, luaViz:TRAJ.luaViz, luaLbl:TRAJ.luaLbl};
   cardRender();
 }
 function trajLimpar(){
   if(ACT && ACT.tempoLivre) ACT.tempoLivre();
   if(TRAJ && TRAJ.corpo && TRAJ.cpos0) TRAJ.corpo.position.copy(TRAJ.cpos0);
+  if(TRAJ && TRAJ.corpoTemp) TRAJ.corpoTemp.visible = false;
   if(TRAJ){
     if(TRAJ.rotaViz && TRAJ.rotaViz.parent) TRAJ.rotaViz.parent.remove(TRAJ.rotaViz);
     if(TRAJ.luaViz && TRAJ.luaViz.parent) TRAJ.luaViz.parent.remove(TRAJ.luaViz);
@@ -5184,7 +5269,7 @@ LIVE = store.get('carto:live','0') === '1';   /* modo ao vivo da Terra e da Lua 
     for(const k of ['planeta','cometa','sonda','satelite','foguete']) FILTROS[k] = on.has(k); } }
 { const v = store.get('carto:objetos', null);
   if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
-    for(const k of ['cometa','sonda','satelite','foguete']) FILTROBJ[k] = on.has(k); } }
+    for(const k of ['cometa','sonda','satelite','foguete','cinturao']) FILTROBJ[k] = on.has(k); } }
 
 /* ---------- áudio: playlist + ambiente generativo + sfx ---------- */
 const PLAYLIST = [
@@ -5441,8 +5526,8 @@ const AUDIO = (function(){
         const o = ctx.createOscillator(); o.connect(g);
         o.type = 'square'; o.frequency.value = 1020;
         g.gain.setValueAtTime(0.0001, t);
-        g.gain.exponentialRampToValueAtTime(0.010, t+0.02);
-        g.gain.setValueAtTime(0.010, t+0.22);
+        g.gain.exponentialRampToValueAtTime(0.002, t+0.02);
+        g.gain.setValueAtTime(0.002, t+0.22);
         g.gain.exponentialRampToValueAtTime(0.0001, t+0.28);
         o.start(t); o.stop(t+0.30);
       }
@@ -5457,8 +5542,8 @@ const AUDIO = (function(){
       const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1400; bp.Q.value = 0.7;
       const ng = ctx.createGain();
       ng.gain.setValueAtTime(0.0001, t0);
-      ng.gain.exponentialRampToValueAtTime(0.005, t0+0.12);
-      ng.gain.setValueAtTime(0.005, t0+dur-0.28);
+      ng.gain.exponentialRampToValueAtTime(0.001, t0+0.12);
+      ng.gain.setValueAtTime(0.001, t0+dur-0.28);
       ng.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
       src.connect(bp); bp.connect(ng); ng.connect(master);
       src.start(t0); src.stop(t0+dur);
@@ -5467,8 +5552,8 @@ const AUDIO = (function(){
         const o = ctx.createOscillator(); o.connect(g);
         o.type = 'sine'; o.frequency.value = 2475;
         g.gain.setValueAtTime(0.0001, tq);
-        g.gain.exponentialRampToValueAtTime(0.013, tq+0.015);
-        g.gain.setValueAtTime(0.013, tq+0.18);
+        g.gain.exponentialRampToValueAtTime(0.0026, tq+0.015);
+        g.gain.setValueAtTime(0.0026, tq+0.18);
         g.gain.exponentialRampToValueAtTime(0.0001, tq+0.23);
         o.start(tq); o.stop(tq+0.24);
       }
@@ -5934,6 +6019,8 @@ const norm = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLo
 const VIS = new Set(String(store.get('carto:vis','')).split(',').filter(Boolean));
 /* os mais recentes primeiro, para o buscar sugerir "voltar aonde eu estava" */
 let REC = String(store.get('carto:rec','')).split(',').filter(Boolean);
+let FRQ = {};
+try{ FRQ = JSON.parse(store.get('carto:frq','{}')) || {}; }catch(e){ FRQ = {}; }
 /* easter egg sonoro: uma vez por sessao, ao abrir a ficha certa */
 const SOM_EPOCA = {sputnik:'sputnik', apollo11:'quindar', apollo13:'quindar'};
 const _somTocado = new Set();
@@ -5948,6 +6035,8 @@ function markVisited(id){
   somDeEpoca(id);
   REC = [id].concat(REC.filter(x=>x!==id)).slice(0, 20);
   store.set('carto:rec', REC.join(','));
+  FRQ[id] = (FRQ[id]||0) + 1;
+  store.set('carto:frq', JSON.stringify(FRQ));
   if(VIS.has(id)) return;
   VIS.add(id);
   store.set('carto:vis', [...VIS].join(','));
@@ -5989,6 +6078,7 @@ const MISSFILTROS = [
   {k:'lua',      t:'LUAS',       f:b=>catDe(b)==='lua'},
   {k:'estrela',  t:'ESTRELAS',   f:b=>catDe(b)==='estrela'},
   {k:'nave',     t:'NAVES',      f:b=>catDe(b)==='nave'},
+  {k:'missoes',  t:'MISSÕES',    f:b=>catDe(b)==='nave' && !!b.foguete},
   {k:'regiao',   t:'REGIÕES',    f:b=>catDe(b)==='regiao' || catDe(b)==='menor'}
 ];
 /* distância de casa: vem do sistema do corpo, não do corpo em si. O Sistema
@@ -6166,6 +6256,7 @@ function missRender(){
       + '<span class="minfo"><span class="mnm">'+esc(b.name)+'</span><span class="msub">'+esc(sub)+'</span></span>'
       + (b.hab==null ? '<span class="mhab">·</span>'
                      : '<span class="mhab'+(b.hab>=50?' hi':'')+'">'+b.hab+'<i><b style="width:'+b.hab+'%"></b></i></span>')
+      + (temLinhaDoTempo(b) ? '<button class="mcmp" data-vt="'+b.id+'" title="Ver a linha do tempo">≋</button>' : '')
       + '<button class="mcmp'+(CMP.a && CMP.a.name===b.name ? ' arm' : '')+'" data-cmp="'+b.id+'" title="Comparar">⚖</button>'
       + '</li>';
   }).join('') : '<li id="missempty">'+(q ? 'NADA ENCONTRADO PARA ESSA BUSCA' : 'NENHUM CORPO NESTE FILTRO')+'</li>';
@@ -6397,6 +6488,14 @@ function findSugestoes(cap){
       add(b.name, 'NESTE SISTEMA', ()=>gotoFocus(b.id), b.id);
     }
   }
+  /* os queridinhos: quem você mais visita */
+  const top = Object.keys(FRQ).sort((a,c)=>FRQ[c]-FRQ[a]);
+  for(const id of top){
+    if(out.length >= cap) break;
+    const b = ALLBODIES[id];
+    if(!b || FRQ[id] < 2) continue;
+    add(b.name, 'MAIS VISITADO', ()=>gotoFocus(id), id);
+  }
   if(out.length < cap){
     const gid = S ? (S.gal || 'vialactea') : ST.gal;
     const g = GALAXIES.find(x=>x.id===gid);
@@ -6488,11 +6587,20 @@ function cardRender(){
     '<div class="subkind">'+esc(b.kind||'')+'</div>';
 
   let h = '';
+  /* ENTRAR agora mora no TOPO do card, como o Rodrigo pediu */
+  if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='body'?'▶ ENTRAR · TRAVAR LINK':'▶ ENTRAR · TRAVAR ROTA')+'</button>';
+  if(ST.mapCard && ST.level==='focus') h += '<button class="xbtn" id="cardx">✕ FECHAR · VOLTAR AO CORPO</button>';
+  { const alvoVT = (cur.type==='body') ? b : ((cur.type==='map' && cur.navKind==='body') ? ALLBODIES[cur.navId] : null);
+    if(alvoVT && temLinhaDoTempo(alvoVT) && !(ACT && ACT.kind==='system' && alvoVT._sys===ST.sys))
+      h += '<button class="xbtn primary" id="vertraj" data-vt="'+alvoVT.id+'">≋ VER A LINHA DO TEMPO</button>'; }
   const bodyish = (cur.type==='body') ? b : (cur.navKind==='body' ? b : null);
   if(bodyish){
     const parent = bodyish._parent ? ALLBODIES[bodyish._parent] : (bodyish.satOf ? ALLBODIES[bodyish.satOf] : null);
-    const list = (cur.type==='body' && parent) ? (parent.moons||[]).concat(satelitesDe(parent.id))
-               : (bodyish.moons||[]).concat(satelitesDe(bodyish.id));
+    const dono = (cur.type==='body' && parent) ? parent : bodyish;
+    const list = dono.moons || [];
+    const sats = Object.values(ALLBODIES).filter(x=>x.satOf===dono.id && !x.foguete);
+    const missoes = Object.values(ALLBODIES).filter(x=>x.satOf===dono.id && x.foguete);
+    const sondas = (dono.id==='terra') ? Object.values(ALLBODIES).filter(x=>x.sonda) : [];
     if(cur.type==='body' && parent) h += '<button class="xbtn" data-go="'+parent.id+'">← VOLTAR A '+esc(parent.name)+'</button>';
     if(list && list.length){
       const meta = (cur.type==='body' && parent) ? ('LUAS DE '+esc(parent.name)) : (esc(bodyish.moonsMeta ? bodyish.moonsMeta : ('LUAS · '+list.length+(list.length>1?' CONFIRMADAS':' CONFIRMADA'))));
@@ -6507,6 +6615,21 @@ function cardRender(){
       }
       h += '</div></div>';
     }
+    /* satélites em badge de texto (a lista pode crescer), vermelho se desativado */
+    const badge = x => '<button class="mbadge'+(x.morto?' morto':'')+(x.id===bodyish.id?' on':'')+'" data-go="'+x.id+'">'+esc(x.name)+(x.morto?' · DESATIVADO':'')+'</button>';
+    const vtb = x => '<button class="mbadge vt" data-vt="'+x.id+'" title="Ver a linha do tempo">≋</button>';
+    if(sats.length){
+      h += '<div class="moonsrow"><div class="mk"><span>SATÉLITES</span><span>'+sats.filter(x=>!x.morto).length+' ATIVOS · '+sats.length+' NO REGISTRO</span></div><div class="badges">'
+         + sats.map(x=>badge(x)).join('') + '</div></div>';
+    }
+    if(missoes.length){
+      h += '<div class="moonsrow"><div class="mk"><span>MISSÕES TRIPULADAS</span><span>HISTÓRICO · ≋ VÊ A VIAGEM</span></div><div class="badges">'
+         + missoes.map(x=>badge(x)+vtb(x)).join('') + '</div></div>';
+    }
+    if(sondas.length){
+      h += '<div class="moonsrow"><div class="mk"><span>SONDAS LANÇADAS DAQUI</span><span>EM VOO · ≋ VÊ A ROTA</span></div><div class="badges">'
+         + sondas.map(x=>badge(x)+vtb(x)).join('') + '</div></div>';
+    }
   }
   if(b.quick){
     h += '<div class="qgrid">';
@@ -6518,7 +6641,8 @@ function cardRender(){
     h += '<div class="bars">';
     if(b.hab!==null && b.hab!==undefined){
       const col = b.hab>=60 ? 'var(--ok)' : (b.hab>=25 ? '#ffd257' : 'var(--danger)');
-      h += '<div class="bar"><div class="bk"><span>ÍNDICE DE HABITABILIDADE</span><span>'+b.hab+'/100</span></div><div class="track"><div class="fill" style="width:'+b.hab+'%;background:'+col+';color:'+col+'"></div></div></div>';
+      if(catDe(b) !== 'nave')
+        h += '<div class="bar"><div class="bk"><span>ÍNDICE DE HABITABILIDADE</span><span>'+b.hab+'/100</span></div><div class="track"><div class="fill" style="width:'+b.hab+'%;background:'+col+';color:'+col+'"></div></div></div>';
     }
     if(b.gbar){
       const w = Math.min(100, b.gbar/2.6*100);
@@ -6545,14 +6669,13 @@ function cardRender(){
       if(b.fict) h += '<div class="sect"><h3>NA FICÇÃO</h3><div class="fict">'+esc(b.fict)+'</div></div>';
     }
   }
-  if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='body'?'▶ ENTRAR · TRAVAR LINK':'▶ ENTRAR · TRAVAR ROTA')+'</button>';
   if(cur.type==='map' && !cur.self && !cur.nav){
     h += '<div class="notice">ROTA INDISPONÍVEL: dados de navegação insuficientes. Sonda em trânsito.</div>';
     h += '<button class="xbtn" id="backpan">← VOLTAR AO PANORAMA</button>';
   }
   if(cur.sysd) h += '<div class="notice">'+esc(SYS[ST.sys].hint)+'. Afaste o zoom para subir de escala.</div>';
 
-  if(LIVE && lockOn && podeLive(ST.body)){
+  if(lockOn && ST.body === 'lua'){
     const d = new Date(), f = faseDaLua();
     const hh = String(d.getUTCHours()).padStart(2,'0') + ':' + String(d.getUTCMinutes()).padStart(2,'0');
     h = h.replace('<div class="qgrid">',
@@ -6561,7 +6684,10 @@ function cardRender(){
   }
   const pb = $('#panelbody');
   pb.innerHTML = h; pb.scrollTop = 0;
-  pb.querySelectorAll('[data-go]').forEach(el=>el.addEventListener('click', ()=>gotoFocus(el.dataset.go)));
+  pb.querySelectorAll('[data-go]').forEach(el=>el.addEventListener('click', ()=>{
+    if(el.classList.contains('chip') || el.classList.contains('mbadge')) ACTION('focus', el.dataset.go);   /* 1º clique: ficha; ENTRAR fica no topo */
+    else gotoFocus(el.dataset.go);
+  }));
   const xe = $('#xexp'); if(xe) xe.addEventListener('click', ()=>{ ST.expanded=!ST.expanded; cardRender(); if(isMobile()&&ST.expanded)$('#panel').classList.add('expanded'); });
   const cb = $('#cmpbtn'); if(cb) cb.addEventListener('click', ()=>{
     const ce = currentEntity(); if(!ce || !ce.b) return;
@@ -6582,6 +6708,8 @@ function cardRender(){
     else trajStart(cur.navId);
   });
   const ng = $('#navgo'); if(ng) ng.addEventListener('click', ()=>{ enterTarget(cur.navKind==='gal' ? 'galaxy' : (cur.navKind==='sys' ? 'starsys' : 'focus'), cur.navId); });
+  const cx = $('#cardx'); if(cx) cx.addEventListener('click', ()=>{ ST.mapCard = null; uiSync(); });
+  pb.querySelectorAll('[data-vt]').forEach(el=>el.addEventListener('click', ()=>verLinhaDoTempo(el.dataset.vt)));
   const bp = $('#backpan'); if(bp) bp.addEventListener('click', ()=>{ ST.mapCard=null; uiSync(); });
 }
 
@@ -6606,9 +6734,15 @@ let SELFX = null;
 function aplicaObjetos(){
   if(!ACT || !ACT.objs) return;
   for(const o of ACT.objs){
+    if(o.sempreOculto){
+      /* foguete histórico: pick e rótulo sempre fora; o corpo é da linha do tempo */
+      if(o.pick) o.pick.userData.escondido = true;
+      if(o.lbl) o.lbl.off = true;
+      continue;
+    }
     const vis = FILTROBJ[o.cls] !== false;
-    o.holder.visible = vis;
-    o.pick.userData.escondido = !vis;
+    if(o.holder) o.holder.visible = vis;
+    if(o.pick) o.pick.userData.escondido = !vis;
     if(o.lbl) o.lbl.off = !vis;
     if(o.tails) for(const t of o.tails) t.visible = vis;
   }
@@ -6621,7 +6755,7 @@ function applySel(){
   const targets = [];
   (S.orbits||[]).forEach(o=>{
     /* o filtro esconde so a linha; a do corpo selecionado sempre aparece */
-    if(o.obj) o.obj.visible = (FILTROS[o.cls || 'planeta'] !== false) || selId===o.id;
+    if(o.obj) o.obj.visible = o.oculto ? false : ((FILTROS[o.cls || 'planeta'] !== false) || selId===o.id);
     if(selId===o.id) targets.push({mat:o.mat, base:o.c, baseOp:o.o, amber:0xffb454, op:true});
     else { o.mat.color.setHex(o.c); o.mat.opacity = o.o; }
   });
@@ -6699,6 +6833,8 @@ $('#mission').addEventListener('click', e=>{ if(e.target.id==='mission') missClo
       missClose(); openCompare(A, b);
       return;
     }
+    const vt = e.target.closest('button[data-vt]');
+    if(vt){ e.stopPropagation(); verLinhaDoTempo(vt.dataset.vt); return; }
     const ex = e.target.closest('button[data-exp]');
     if(ex){
       e.stopPropagation();
@@ -6802,7 +6938,8 @@ function rayHit(x, y){
   if(!ACT || !ACT.pickables.length) return null;
   const ndc = new THREE.Vector2(((x-CRECT.left)/CRECT.width)*2-1, -((y-CRECT.top)/CRECT.height)*2+1);
   raycaster.setFromCamera(ndc, camera);
-  const hits = raycaster.intersectObjects(ACT.pickables, false).filter(h=>!h.object.userData.escondido);
+  const hits = raycaster.intersectObjects(ACT.pickables, false)
+    .filter(h=>!h.object.userData.escondido && !(h.object.userData.cinturao && FILTROBJ.cinturao === false));
   return hits.length ? hits[0].object.userData : null;
 }
 function pick(x, y){
@@ -6812,7 +6949,7 @@ function pick(x, y){
     const R = matchMedia('(pointer: coarse)').matches ? 34 : 18;
     const v = new THREE.Vector3(); let best = null, bd = 1e9;
     for(const o of ACT.pickables){
-      if(o.userData.escondido) continue;
+      if(o.userData.escondido || (o.userData.cinturao && FILTROBJ.cinturao === false)) continue;
       o.getWorldPosition(v); v.project(camera);
       if(v.z > 1) continue;
       const px = ( v.x*0.5+0.5)*CRECT.width  + CRECT.left;
@@ -6823,6 +6960,7 @@ function pick(x, y){
     if(best && bd <= R) ud = best.userData;
   }
   if(ud) ACTION(ud.act, ud.id);
+  else if(ST.level==='focus' && ST.mapCard){ ST.mapCard = null; uiSync(); }
 }
 const HOVERQ = matchMedia('(hover: hover)').matches; let hoverT = 0;
 let LPT = 0; /* timer do toque longo (modo foto no touch) */
@@ -7009,7 +7147,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r72';
+const BUILD = 'r74';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -7096,7 +7234,7 @@ $('#filtpop').addEventListener('click', e=>{
   const r = e.target.closest('.filtrow'); if(!r) return;
   if(r.dataset.obj){
     FILTROBJ[r.dataset.obj] = FILTROBJ[r.dataset.obj] === false;
-    store.set('carto:objetos', ['cometa','sonda','satelite','foguete'].filter(k=>FILTROBJ[k]!==false).join(','));
+    store.set('carto:objetos', ['cometa','sonda','satelite','foguete','cinturao'].filter(k=>FILTROBJ[k]!==false).join(','));
     filtSync(); aplicaObjetos(); cardRender();
   } else {
     FILTROS[r.dataset.cls] = FILTROS[r.dataset.cls] === false;
