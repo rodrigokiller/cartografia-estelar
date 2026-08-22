@@ -4063,6 +4063,19 @@ const BIOMAS = [
   {tipo:'tr', l0:[-118,52], l1:[-106,35], w:7, cor:'rgba(150,138,116,.35)'} /* Rochosas */
 ];
 let _texTerra = null, _texLua = null, _mascaraTerra = null;
+/* v2 das costas: em vez de segmentos retos, uma curva quadrática contínua
+   pelos pontos médios. As costas ficam orgânicas sem mexer nos dados. */
+function tracarSuave(g, poly, px){
+  const P = poly.map(pt=>px(pt[0], pt[1]));
+  const n = P.length;
+  g.beginPath();
+  g.moveTo((P[0][0]+P[n-1][0])/2, (P[0][1]+P[n-1][1])/2);
+  for(let i=0;i<n;i++){
+    const a = P[i], b = P[(i+1)%n];
+    g.quadraticCurveTo(a[0], a[1], (a[0]+b[0])/2, (a[1]+b[1])/2);
+  }
+  g.closePath();
+}
 function texturaTerra(){
   if(_texTerra) return _texTerra;
   const W = 2048, H = 1024, c = document.createElement('canvas');
@@ -4077,18 +4090,14 @@ function texturaTerra(){
   /* plataforma rasa: um halo verde-agua por fora de cada costa */
   g.lineJoin = 'round';
   for(const poly of CONTINENTES){
-    g.beginPath();
-    poly.forEach((pt,i)=>{ const [x,y]=px(pt[0],pt[1]); i?g.lineTo(x,y):g.moveTo(x,y); });
-    g.closePath();
+    tracarSuave(g, poly, px);
     g.strokeStyle = 'rgba(96,178,196,.34)'; g.lineWidth = 6; g.stroke();
   }
   /* terra firme num canvas proprio, para os biomas respeitarem a mascara */
   const lc = document.createElement('canvas'); lc.width = W; lc.height = H;
   const lg = lc.getContext('2d'); lg.lineJoin = 'round';
   for(const poly of CONTINENTES){
-    lg.beginPath();
-    poly.forEach((pt,i)=>{ const [x,y]=px(pt[0],pt[1]); i?lg.lineTo(x,y):lg.moveTo(x,y); });
-    lg.closePath();
+    tracarSuave(lg, poly, px);
     const gr = lg.createLinearGradient(0,0,0,H);
     gr.addColorStop(0,'#8a9070'); gr.addColorStop(0.2,'#5c7a48');
     gr.addColorStop(0.5,'#67854e'); gr.addColorStop(0.8,'#5f7a4c'); gr.addColorStop(1,'#e8eef2');
@@ -4120,9 +4129,7 @@ function texturaTerra(){
   lg.globalCompositeOperation = 'source-over';
   /* costa: um traco fino escuro para o olho achar o contorno */
   for(const poly of CONTINENTES){
-    lg.beginPath();
-    poly.forEach((pt,i)=>{ const [x,y]=px(pt[0],pt[1]); i?lg.lineTo(x,y):lg.moveTo(x,y); });
-    lg.closePath();
+    tracarSuave(lg, poly, px);
     lg.strokeStyle = 'rgba(40,64,52,.5)'; lg.lineWidth = 1.5; lg.stroke();
   }
   g.drawImage(lc, 0, 0);
@@ -4323,9 +4330,9 @@ function nomeDaFase(i){
   if(i < 27.7) return 'MINGUANTE CÔNCAVA';
   return 'LUA NOVA';
 }
-/* O AO VIVO da Terra foi recolhido: o Rodrigo quer uma v2 dos continentes.
-   A Lua real (fase, mares, iluminação) virou o modo PADRÃO dela. */
-function podeLive(id){ return false; }
+/* v2 dos continentes (costas suaves): o botão AO VIVO voltou, só na Terra.
+   A Lua real (fase, mares, iluminação) segue sendo o modo PADRÃO dela. */
+function podeLive(id){ return id === 'terra'; }
 const LIVE_VERT = `
 varying vec2 vUv; varying vec3 vN; varying vec3 vV;
 void main(){ vUv = uv; vN = normalize(normalMatrix * normal);
@@ -4864,7 +4871,7 @@ function buildFocus(bodyId, spin0){
 
   /* ---------- CORPO: esfera + luas orbitando ---------- */
   const radius = (b.visual.mode==='star') ? 2.35 : (b.comet ? 1.2 : 2.2);
-  const aoVivo = bodyId === 'lua';   /* a Lua real é o padrão; a Terra espera a v2 */
+  const aoVivo = bodyId === 'lua' || (LIVE && podeLive(bodyId));   /* Lua sempre real; Terra na v2 opcional */
   bg = aoVivo ? grupoLive(bodyId, radius, QLOW?96:128)
      : ((b.sonda || b.satelite || b.foguete) ? grupoNave(bodyId, radius) : makeBodyGroup(b, radius, QLOW?96:128));
   wrap.add(bg.group);
@@ -6707,7 +6714,7 @@ function cardRender(){
   }
   if(cur.sysd) h += '<div class="notice">'+esc(SYS[ST.sys].hint)+'. Afaste o zoom para subir de escala.</div>';
 
-  if(lockOn && ST.body === 'lua'){
+  if(lockOn && (ST.body === 'lua' || (LIVE && ST.body === 'terra'))){
     const d = new Date(), f = faseDaLua();
     const hh = String(d.getUTCHours()).padStart(2,'0') + ':' + String(d.getUTCMinutes()).padStart(2,'0');
     h = h.replace('<div class="qgrid">',
@@ -7182,7 +7189,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r76';
+const BUILD = 'r77';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
