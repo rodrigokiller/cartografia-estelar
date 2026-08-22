@@ -1,6 +1,6 @@
 # Cartografia Estelar · contexto do projeto
 
-Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r69** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
+Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r70** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
 
 ## Arquitetura (blocos <script> em ordem)
 1. Helpers ($, isMobile, RM, clamp, easeIO, hashStr, coordOf) + shaders GLSL como template strings (NOISE/PLANET/CLOUD/ATMO/RING/SUN). fbm usa 4 octaves em touch, 5 no desktop.
@@ -55,6 +55,7 @@ Duas features grandes que ele quer testar. Fazer uma por vez, em commit isolado,
 - Na cena de foco, sonda renderiza com `grupoSonda()` (prato, corpo, disco de ouro, hastes, RTG), não como esfera.
 
 ## O QUE FICOU PARA DEPOIS (pedidos do Rodrigo, NÃO deixar se perder)
+- r70: rota Terra-Lua real nas Apollo durante a linha do tempo (TRAJ.local trocado pela curva, Lua simbólica com label aparece e some), comparação traduzida para o dia a dia (COTIDIANO/cotidianoDe, corpos até 30 km), e sons de época sintetizados (sfx 'sputnik' com três bips e 'quindar' com o chiado + bips de 2.475 Hz da Apollo, uma vez por sessão via somDeEpoca, AGUARDANDO o veredito do Rodrigo sobre o gosto).
 - r65-r69 entregues: filtro esconde rótulo também (flag `off` na label, o loop respeita), registro de bordo em árvore (galáxia > sistema > corpos, MISS.galFech/sisAb), filtro NAVES, buscar inteligente (carto:rec, sugestões do sistema atual, atalho S, limite 12/6), corpo navega junto no percurso (TRAJ.corpo via objReg), linha do tempo em DIAS para foguetes (traj:{dias,d0,d1}, marcos em dias, sem Kepler), Lua LIVE com mares reais + Tycho + base da Apollo 11 marcada em âmbar.
 - **POLIR o LIVE da Terra**: ele aprovou o estilo e o funcionamento, mas está "muito cru". Melhorar contornos de costa, cores, nuvens, transição dia/noite.
 - Modelos das naves: treliça e peças no r58, texturas canvas (metal escovado, kapton, placas) via texNave() no r69. Miniaturas dos modelos no mapa e no foco (r65). Rodrigo validou o desenho, seguimos polindo sob demanda.

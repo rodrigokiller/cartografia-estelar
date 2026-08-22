@@ -1419,7 +1419,7 @@ const FOGUETES = [
   foguete:true, satOf:'terra',
   traj:{dias:8, d0:'16/7/1969', d1:'24/7/1969'},
   marcos:[[0,'LANÇAMENTO'],[0.2,'RUMO À LUA'],[3,'ÓRBITA LUNAR'],[4,'O POUSO'],[4.4,'UM PEQUENO PASSO'],[5.1,'DECOLAGEM DA LUA'],[8,'SPLASHDOWN']],
-  quick:[['LANÇAMENTO','16/7/1969'],['FOGUETE','Saturn V, 110 m'],['TRIPULAÇÃO','Armstrong · Aldrin · Collins'],['POUSO','20/7/1969, Mar da Tranquilidade'],['NA SUPERFÍCIE','21 h 36 min'],['RETORNO','24/7/1969']],
+  quick:[['LANÇAMENTO','16/7/1969'],['TAMANHO','110 m, o Saturn V'],['TRIPULAÇÃO','Armstrong · Aldrin · Collins'],['POUSO','20/7/1969, Mar da Tranquilidade'],['NA SUPERFÍCIE','21 h 36 min'],['RETORNO','24/7/1969']],
   sys:{orbit:2.5, size:0.11, speed:1.0, angle:3.6},
   visual:{mode:'rocky', c1:'#d8d8dc', c2:'#f0f0f4', c3:'#8a8a92', scale:7.0, seed:19.69, crater:0.05},
   sections:[
@@ -5001,6 +5001,31 @@ function trajStart(id){
   /* o corpo (sonda, cometa, foguete) navega junto com o ponto do percurso */
   { const oo = ACT.objs && ACT.objs.find(x=>x.id===id);
     if(oo && oo.corpo){ TRAJ.corpo = oo.corpo; TRAJ.cpos0 = oo.corpo.position.clone(); } }
+  /* missão tripulada: em vez do anel simbólico, a rota REAL Terra-Lua,
+     com a Lua aparecendo como destino e a nave fazendo a volta por trás */
+  if(TRAJ.dias){
+    const D = 4.6, R = 0.62, pts = [];
+    const bez = (a,b,c2,t)=>{ const u = 1-t; return a*u*u + b*2*u*t + c2*t*t; };
+    const aIni = 2.28, aFim = -2.44;
+    for(let i=0;i<=64;i++){ const t = i/64;
+      pts.push(new THREE.Vector3(bez(0.5, 2.4, D+Math.cos(aIni)*R, t), 0, bez(0.25, 1.5, Math.sin(aIni)*R, t))); }
+    for(let i=1;i<=48;i++){ const t = i/48;
+      const a = aIni + (aFim-aIni)*t;
+      pts.push(new THREE.Vector3(D+Math.cos(a)*R, 0, Math.sin(a)*R)); }
+    for(let i=1;i<=64;i++){ const t = i/64;
+      pts.push(new THREE.Vector3(bez(D+Math.cos(aFim)*R, 2.4, 0.5, t), 0, bez(Math.sin(aFim)*R, -1.5, -0.25, t))); }
+    TRAJ.local = pts;
+    const lg = new THREE.BufferGeometry().setFromPoints(pts);
+    TRAJ.rotaViz = new THREE.Line(lg, new THREE.LineBasicMaterial({color:0xffb454, transparent:true, opacity:0.45}));
+    o.obj.parent.add(TRAJ.rotaViz);
+    TRAJ.luaViz = new THREE.Mesh(new THREE.SphereGeometry(0.30, 20, 20),
+      new THREE.MeshBasicMaterial({color:0x9a958c}));
+    TRAJ.luaViz.position.set(D, 0, 0);
+    o.obj.parent.add(TRAJ.luaViz);
+    TRAJ.luaLbl = {el:makeLabel('LUA', 'faint', null),
+      get:(v)=>{ if(TRAJ && TRAJ.luaViz) TRAJ.luaViz.getWorldPosition(v); v.y += 0.55; }};
+    ACT.labels.push(TRAJ.luaLbl);
+  }
   $('#trajtxt').textContent = b.name;
   $('#trajano0').textContent = TRAJ.dias ? b.traj.d0 : (TRAJ.ano0 || '');
   $('#trajano1').textContent = TRAJ.dias ? b.traj.d1 : (TRAJ.ano0 ? TRAJ.ano1 : '');
@@ -5039,12 +5064,21 @@ function trajCancelar(){
   if(!TRAJ || TRAJ.fase==='volta') return;
   $('#trajclock').classList.remove('on');
   TRAJ = {fase:'volta', t0:performance.now(), ms:850, p0:CAM.pivot.clone(), dA:CAM.dist, d1:TRAJ.d0,
-          corpo:TRAJ.corpo, cpos0:TRAJ.cpos0};
+          corpo:TRAJ.corpo, cpos0:TRAJ.cpos0,
+          rotaViz:TRAJ.rotaViz, luaViz:TRAJ.luaViz, luaLbl:TRAJ.luaLbl};
   cardRender();
 }
 function trajLimpar(){
   if(ACT && ACT.tempoLivre) ACT.tempoLivre();
   if(TRAJ && TRAJ.corpo && TRAJ.cpos0) TRAJ.corpo.position.copy(TRAJ.cpos0);
+  if(TRAJ){
+    if(TRAJ.rotaViz && TRAJ.rotaViz.parent) TRAJ.rotaViz.parent.remove(TRAJ.rotaViz);
+    if(TRAJ.luaViz && TRAJ.luaViz.parent) TRAJ.luaViz.parent.remove(TRAJ.luaViz);
+    if(TRAJ.luaLbl){
+      if(ACT && ACT.labels){ const i = ACT.labels.indexOf(TRAJ.luaLbl); if(i >= 0) ACT.labels.splice(i, 1); }
+      if(TRAJ.luaLbl.el && TRAJ.luaLbl.el.remove) TRAJ.luaLbl.el.remove();
+    }
+  }
   TRAJ = null;
   const el = $('#trajclock'); if(el) el.classList.remove('on');
 }
@@ -5393,6 +5427,46 @@ const AUDIO = (function(){
       g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.024, t+0.012);
       g.gain.exponentialRampToValueAtTime(0.0001, t+0.11);
       o.start(t); o.stop(t+0.12);
+    } else if(name==='sputnik'){
+      /* o bip real era continuo em ~20 MHz; aqui, tres pulsos discretos de 1 kHz */
+      const t0 = ctx.currentTime;
+      for(let i=0;i<3;i++){
+        const t = t0 + i*0.55;
+        const g = ctx.createGain(); g.connect(master);
+        const o = ctx.createOscillator(); o.connect(g);
+        o.type = 'square'; o.frequency.value = 1020;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.010, t+0.02);
+        g.gain.setValueAtTime(0.010, t+0.22);
+        g.gain.exponentialRampToValueAtTime(0.0001, t+0.28);
+        o.start(t); o.stop(t+0.30);
+      }
+    } else if(name==='quindar'){
+      /* o som da Apollo: chiado de radio com os bips Quindar de 2.475 Hz
+         que abriam e fechavam cada transmissao de Houston */
+      const t0 = ctx.currentTime, dur = 1.15;
+      const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate*dur), ctx.sampleRate);
+      const dd = buf.getChannelData(0);
+      for(let i=0;i<dd.length;i++) dd[i] = Math.random()*2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1400; bp.Q.value = 0.7;
+      const ng = ctx.createGain();
+      ng.gain.setValueAtTime(0.0001, t0);
+      ng.gain.exponentialRampToValueAtTime(0.005, t0+0.12);
+      ng.gain.setValueAtTime(0.005, t0+dur-0.28);
+      ng.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+      src.connect(bp); bp.connect(ng); ng.connect(master);
+      src.start(t0); src.stop(t0+dur);
+      for(const tq of [t0+0.05, t0+dur-0.20]){
+        const g = ctx.createGain(); g.connect(master);
+        const o = ctx.createOscillator(); o.connect(g);
+        o.type = 'sine'; o.frequency.value = 2475;
+        g.gain.setValueAtTime(0.0001, tq);
+        g.gain.exponentialRampToValueAtTime(0.013, tq+0.015);
+        g.gain.setValueAtTime(0.013, tq+0.18);
+        g.gain.exponentialRampToValueAtTime(0.0001, tq+0.23);
+        o.start(tq); o.stop(tq+0.24);
+      }
     } else if(name==='enter'){
       whoosh(1100, 280, 0.7, 0.024, 0.6);
     } else {
@@ -5548,6 +5622,7 @@ function ACTION(act, id){
   if(ST.mapCard && ST.mapCard.id===id && ST.mapCard.act===act){ enterTarget(act, id); return; }
   ST.mapCard = {type:(act==='focus') ? 'body' : act, id, act};
   AUDIO.sfx('sel');
+  somDeEpoca(id);
   uiSync();
   showHint('TOQUE DE NOVO PARA ENTRAR · OU USE O BOTÃO DO CARD');
 }
@@ -5764,6 +5839,20 @@ function cmpLabel(b){
   if(CMP.a.name===b.name) return '✕ CANCELAR COMPARAÇÃO';
   return '⚖ COMPARAR VS ' + esc(CMP.a.name);
 }
+/* para naves e corpos pequenos: traduz metros em coisas do dia a dia */
+const COTIDIANO = [[1.75,'uma pessoa'],[12,'um ônibus'],[30,'um prédio de dez andares'],
+  [71,'um Boeing 747'],[93,'a Estátua da Liberdade'],[105,'um campo de futebol'],
+  [330,'a Torre Eiffel'],[828,'o Burj Khalifa'],[8848,'o monte Everest']];
+function cotidianoDe(km){
+  const m = km*1000;
+  if(!(m > 0) || m > 30000) return null;
+  let ref = COTIDIANO[0];
+  for(const r of COTIDIANO) if(Math.abs(Math.log(m/r[0])) < Math.abs(Math.log(m/ref[0]))) ref = r;
+  const raz = m/ref[0];
+  if(raz >= 0.85 && raz <= 1.2) return 'praticamente o tamanho de ' + ref[1];
+  if(raz > 1.2 && raz <= 30) return 'como ' + Math.round(raz) + '× ' + ref[1];
+  return 'na casa de ' + ref[1];
+}
 function openCompare(A, B){
   const dA = parseDia(A), dB = parseDia(B);
   let viz = '';
@@ -5790,6 +5879,14 @@ function openCompare(A, B){
         + '<div class="bwrap">' + bola(MAXPX*(dB.km/kmG),(aMaior?p1:g1),(aMaior?p2:g2)) + '<span class="bnm">'+esc(B.name)+'</span></div>'
         + '</div>';
     const vezes = Math.pow(ratio, 3);
+    const cotA = cotidianoDe(dA.km), cotB = cotidianoDe(dB.km);
+    if(cotA || cotB){
+      viz += '<div class="cmpscale">'
+        + (cotA ? '<b>'+esc(A.name)+'</b>: '+esc(cotA) : '')
+        + (cotA && cotB ? ' · ' : '')
+        + (cotB ? '<b>'+esc(B.name)+'</b>: '+esc(cotB) : '')
+        + '</div>';
+    }
     viz += '<div class="cmpscale">∅ '+esc(dA.raw)+' · ∅ '+esc(dB.raw)+'</div>'
         +  '<div class="cmpscale big">'
         +  ((ratio < 1.02)
@@ -5832,8 +5929,18 @@ const norm = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLo
 const VIS = new Set(String(store.get('carto:vis','')).split(',').filter(Boolean));
 /* os mais recentes primeiro, para o buscar sugerir "voltar aonde eu estava" */
 let REC = String(store.get('carto:rec','')).split(',').filter(Boolean);
+/* easter egg sonoro: uma vez por sessao, ao abrir a ficha certa */
+const SOM_EPOCA = {sputnik:'sputnik', apollo11:'quindar', apollo13:'quindar'};
+const _somTocado = new Set();
+function somDeEpoca(id){
+  const nome = SOM_EPOCA[id];
+  if(!nome || _somTocado.has(id)) return;
+  _somTocado.add(id);
+  setTimeout(()=>AUDIO.sfx(nome), 450);
+}
 function markVisited(id){
   if(!id) return;
+  somDeEpoca(id);
   REC = [id].concat(REC.filter(x=>x!==id)).slice(0, 20);
   store.set('carto:rec', REC.join(','));
   if(VIS.has(id)) return;
@@ -6882,7 +6989,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r69';
+const BUILD = 'r70';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
