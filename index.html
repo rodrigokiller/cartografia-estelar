@@ -390,7 +390,15 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 .mbadge:hover{border-color:var(--amber);color:var(--amber)}
 .mbadge.on{border-color:var(--amber);color:var(--amber)}
 .mbadge.morto{color:#d06a6a;border-color:rgba(208,106,106,.4)}
-.mbadge.vt{color:var(--amber);padding:5px 7px}
+.exluas{font-family:var(--mono);font-size:8.5px;letter-spacing:1.2px;color:var(--dim2);margin-top:8px;line-height:1.8}
+.eyebrow #cardx2{background:none;border:1px solid var(--line2);color:var(--dim);font-family:var(--mono);
+  font-size:9px;width:18px;height:18px;line-height:1;cursor:pointer;padding:0;margin-left:8px;flex:0 0 auto}
+.eyebrow #cardx2:hover{color:var(--amber);border-color:var(--amber)}
+#tip{position:fixed;z-index:60;font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--amber);
+  background:rgba(6,12,24,.94);border:1px solid rgba(255,180,84,.5);padding:6px 10px;pointer-events:none;
+  opacity:0;transition:opacity .15s;transform:translate(-50%,-100%);white-space:nowrap}
+#tip.on{opacity:1}
+.mbadge.vt{color:var(--amber);padding:0 7px;display:inline-flex;align-items:center;justify-content:center}
 #misslist li.mkid .mnm{font-size:10px}
 #misslist .sysbadge{flex:0 0 auto;width:26px;height:26px;display:flex;align-items:center;justify-content:center;
   border:1px solid var(--line2);transform:rotate(45deg);font-size:10px;color:var(--dim)}
@@ -568,7 +576,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   #tourbar{left:12px;right:12px;width:auto;bottom:calc(var(--sheetpeek,34dvh) + 12px)}
   #tourbar .tnarra{font-size:11.5px}
 }
-#hint{position:absolute;left:50%;bottom:104px;transform:translateX(-50%);z-index:11;
+#hint{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:11;
   font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--ion);
   border:1px solid var(--line);background:rgba(6,12,24,.7);padding:9px 16px;opacity:0;transition:opacity .6s;pointer-events:none;white-space:nowrap}
 #hint.on{opacity:1}
@@ -655,7 +663,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div id="topright">
     <div id="scalebadge">ESCALA · <b id="scaleval">SISTEMA</b></div>
     <button id="btnfind" class="navbtn" title="Buscar">⌕</button>
-    <button id="btnmiss" class="navbtn" title="Registro de bordo">◈</button>
+    <button id="btnmiss" class="navbtn" title="Registro de bordo">▤</button>
     <button id="btnmore" class="navbtn" title="Mais opções" aria-expanded="false">⋯</button>
     <div id="morebtns">
       <button id="navback" class="navbtn dis" title="Objeto anterior">«</button>
@@ -714,6 +722,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <ul class="pl-list" id="pl_list"></ul>
     <button class="xbtn pl-mute" id="pl_mute">SOM: LIGADO</button>
   </div>
+  <div id="tip"></div>
   <div id="filtpop">
     <div class="fp-t">≋ LINHAS DO MAPA</div>
     <div class="filtrow" data-cls="planeta"><span>PLANETAS</span><b>LIGADA</b></div>
@@ -762,8 +771,8 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <p><b>Arraste</b> para girar<span class="kb"> · <b>scroll</b> para aproximar</span><span class="touchonly"> · <b>pinça</b> para aproximar. Os botões <b>+ / −</b> também ajustam o zoom</span>.</p>
       <p><b>Afaste o zoom</b> até o limite para subir de escala: Corpo → Sistema → Galáxia → Universo. Ele trava no limite: afaste de novo para subir. A trilha no topo também navega.</p>
       <p><b>Botões ‹ ›</b> saltam entre planetas ou luas vizinhas<span class="kb">, assim como as setas do teclado</span>.</p>
-      <p><b>⚖ Comparar:</b> toque no botão do card, abra outro corpo e toque de novo: análise lado a lado em escala real.</p>
-      <p><b>◈ Registro de bordo:</b> a lista completa do catálogo, com o que você já visitou, sua patente, busca e filtros por habitáveis, planetas, luas, estrelas e regiões.</p>
+      <p><b>◫ Comparar:</b> toque no botão do card, abra outro corpo e toque de novo: análise lado a lado em escala real.</p>
+      <p><b>▤ Registro de bordo:</b> a lista completa do catálogo, com o que você já visitou, sua patente, busca e filtros por habitáveis, planetas, luas, estrelas e regiões.</p>
       <p><b>⌗ Modo foto:</b> esconde o painel inteiro para uma captura limpa<span class="touchonly">. Um toque longo na tela faz o mesmo</span><span class="kb"> (ou a tecla <b>P</b>)</span>.</p>
       <p><b>▶ Modo tour:</b> dentro do registro de bordo<span class="kb"> (ou pela tecla <b>T</b>)</span>, o mapa se guia sozinho por uma rota comentada. Toque na cena a qualquer momento para assumir o controle.</p>
       <p><b>Compartilhe:</b> o endereço da página acompanha o objeto (ex.: <span style="font-family:var(--mono)">#corpo=europa</span>), copie o link e envie.</p>
@@ -1072,6 +1081,7 @@ const PLANETS = [
 },
 {
   id:'terra', name:'TERRA', desig:'SOL-3 · PLANETA', kind:'Rochoso · habitável', hab:100, gbar:1.0, pop:'8,1 bilhões (+ ~7 em órbita)',
+  exLuas:'A hipótese do Grande Impacto Duplo (2011) sugere uma segunda lua menor no passado, que colidiu de leve com a Lua e teria virado as montanhas do lado oculto.',
   quick:[['GRAVIDADE','1 g'],['TEMP. MÉDIA','15 °C'],['DIA','24 h'],['ANO','365,25 d'],['LUAS','1'],['ÁGUA','71%']],
   sys:{orbit:15, size:0.9, speed:1.0, angle:4.2},
   visual:{mode:'earth', c1:'#3f7d43', c2:'#8a9a55', c3:'#c2a06a', seaCol:'#0d3f78', sea:0.52, scale:3.4, seed:12.3, cap:0.78, capAmt:0.9, capCol:'#eef4f8', lights:1, atmo:{col:'#6fb7ff', i:1.5}, clouds:{amt:0.95, scale:4.2, col:'#ffffff'}},
@@ -1099,6 +1109,7 @@ const PLANETS = [
 },
 {
   id:'marte', name:'MARTE', desig:'SOL-4 · PLANETA', kind:'Rochoso', hab:34, gbar:0.38, pop:'0 humanos · rovers ativos',
+  exLuas:'Modelos sugerem que Marte já teve uma lua bem maior, despedaçada pela maré: Fobos e Deimos seriam os restos, e Fobos repete o destino em ~50 milhões de anos.',
   quick:[['GRAVIDADE','0,38 g'],['TEMP. MÉDIA','−63 °C'],['DIA','24 h 37'],['ANO','687 d'],['LUAS','2'],['ÁGUA','gelo']],
   sys:{orbit:18, size:0.68, speed:0.53, angle:1.1},
   visual:{mode:'rocky', c1:'#a35634', c2:'#c98757', c3:'#7c3c22', scale:4.6, seed:9.9, crater:0.5, cap:0.82, capAmt:0.55, capCol:'#f2e6da', atmo:{col:'#e0a37e', i:0.55}},
@@ -5133,7 +5144,7 @@ function trajStart(id){
       const d = document.createElement('b');
       d.className = 'tmk';
       d.style.left = (pct*100) + '%';
-      d.title = m[1] + ' · ' + (TRAJ.dias ? ('DIA ' + m[0]) : m[0]);
+      d.dataset.tip = m[1] + ' · ' + (TRAJ.dias ? ('DIA ' + m[0]) : m[0]);
       bar.appendChild(d);
     }
   }
@@ -5925,9 +5936,9 @@ function hexOf(c, fb){
   return fb;
 }
 function cmpLabel(b){
-  if(!CMP.a) return '⚖ COMPARAR ESTE CORPO';
+  if(!CMP.a) return '◫ COMPARAR ESTE CORPO';
   if(CMP.a.name===b.name) return '✕ CANCELAR COMPARAÇÃO';
-  return '⚖ COMPARAR VS ' + esc(CMP.a.name);
+  return '◫ COMPARAR VS ' + esc(CMP.a.name);
 }
 /* para naves e corpos pequenos: traduz metros em coisas do dia a dia */
 const COTIDIANO = [[1.75,'uma pessoa'],[12,'um ônibus'],[30,'um prédio de dez andares'],
@@ -6022,7 +6033,8 @@ let REC = String(store.get('carto:rec','')).split(',').filter(Boolean);
 let FRQ = {};
 try{ FRQ = JSON.parse(store.get('carto:frq','{}')) || {}; }catch(e){ FRQ = {}; }
 /* easter egg sonoro: uma vez por sessao, ao abrir a ficha certa */
-const SOM_EPOCA = {sputnik:'sputnik', apollo11:'quindar', apollo13:'quindar'};
+/* desligados: o Rodrigo testou duas vezes e não curtiu; a síntese fica guardada */
+const SOM_EPOCA = {};
 const _somTocado = new Set();
 function somDeEpoca(id){
   const nome = SOM_EPOCA[id];
@@ -6257,7 +6269,7 @@ function missRender(){
       + (b.hab==null ? '<span class="mhab">·</span>'
                      : '<span class="mhab'+(b.hab>=50?' hi':'')+'">'+b.hab+'<i><b style="width:'+b.hab+'%"></b></i></span>')
       + (temLinhaDoTempo(b) ? '<button class="mcmp" data-vt="'+b.id+'" title="Ver a linha do tempo">≋</button>' : '')
-      + '<button class="mcmp'+(CMP.a && CMP.a.name===b.name ? ' arm' : '')+'" data-cmp="'+b.id+'" title="Comparar">⚖</button>'
+      + '<button class="mcmp'+(CMP.a && CMP.a.name===b.name ? ' arm' : '')+'" data-cmp="'+b.id+'" title="Comparar">◫</button>'
       + '</li>';
   }).join('') : '<li id="missempty">'+(q ? 'NADA ENCONTRADO PARA ESSA BUSCA' : 'NENHUM CORPO NESTE FILTRO')+'</li>';
   $('#missfootcnt').textContent = lista.length + (lista.length===1 ? ' CORPO LISTADO' : ' CORPOS LISTADOS');
@@ -6573,7 +6585,8 @@ function cardRender(){
   const cur = currentEntity(), b = cur.b;
   const lockOn = ST.level==='focus';
   $('#headmini').innerHTML =
-    '<div class="eyebrow"><span>'+esc(b.desig||'')+'</span><span class="lock'+(lockOn?'':' off')+'">'+(lockOn?'⬢ LINK TRAVADO':'MODO MAPA')+'</span></div>'+
+    '<div class="eyebrow"><span>'+esc(b.desig||'')+'</span><span class="lock'+(lockOn?'':' off')+'">'+(lockOn?'⬢ LINK TRAVADO':'MODO MAPA')+'</span>'
+    +(ST.mapCard ? '<button id="cardx2" title="Fechar esta ficha">✕</button>' : '')+'</div>'+
     '<h1 class="bodyname">'+esc(b.name)
       + ((lockOn && podeLive(ST.body))
          ? '<button class="livebtn'+(LIVE?' on':'')+'" id="btnlive" title="Mostrar como está agora, de verdade"><i></i>'+(LIVE?'AO VIVO':'LIVE')+'</button>'
@@ -6589,7 +6602,7 @@ function cardRender(){
   let h = '';
   /* ENTRAR agora mora no TOPO do card, como o Rodrigo pediu */
   if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='body'?'▶ ENTRAR · TRAVAR LINK':'▶ ENTRAR · TRAVAR ROTA')+'</button>';
-  if(ST.mapCard && ST.level==='focus') h += '<button class="xbtn" id="cardx">✕ FECHAR · VOLTAR AO CORPO</button>';
+
   { const alvoVT = (cur.type==='body') ? b : ((cur.type==='map' && cur.navKind==='body') ? ALLBODIES[cur.navId] : null);
     if(alvoVT && temLinhaDoTempo(alvoVT) && !(ACT && ACT.kind==='system' && alvoVT._sys===ST.sys))
       h += '<button class="xbtn primary" id="vertraj" data-vt="'+alvoVT.id+'">≋ VER A LINHA DO TEMPO</button>'; }
@@ -6615,8 +6628,9 @@ function cardRender(){
       }
       h += '</div></div>';
     }
+    if(dono.exLuas) h += '<div class="exluas">LUAS DO PASSADO · '+esc(dono.exLuas)+'</div>';
     /* satélites em badge de texto (a lista pode crescer), vermelho se desativado */
-    const badge = x => '<button class="mbadge'+(x.morto?' morto':'')+(x.id===bodyish.id?' on':'')+'" data-go="'+x.id+'">'+esc(x.name)+(x.morto?' · DESATIVADO':'')+'</button>';
+    const badge = x => '<button class="mbadge'+(x.morto?' morto':'')+(x.id===bodyish.id?' on':'')+'" data-go="'+x.id+'"'+(x.morto?' data-tip="DESATIVADO · SÓ REGISTRO"':'')+'>'+esc(x.name)+'</button>';
     const vtb = x => '<button class="mbadge vt" data-vt="'+x.id+'" title="Ver a linha do tempo">≋</button>';
     if(sats.length){
       h += '<div class="moonsrow"><div class="mk"><span>SATÉLITES</span><span>'+sats.filter(x=>!x.morto).length+' ATIVOS · '+sats.length+' NO REGISTRO</span></div><div class="badges">'
@@ -6693,7 +6707,7 @@ function cardRender(){
     const ce = currentEntity(); if(!ce || !ce.b) return;
     const b = ce.b;
     if(CMP.a && CMP.a.name===b.name){ CMP.a = null; cardRender(); showHint('COMPARAÇÃO CANCELADA'); return; }
-    if(!CMP.a){ CMP.a = b; cardRender(); showHint('AGORA ABRA OUTRO CORPO E TOQUE EM ⚖'); return; }
+    if(!CMP.a){ CMP.a = b; cardRender(); showHint('AGORA ABRA OUTRO CORPO E TOQUE EM ◫'); return; }
     openCompare(CMP.a, b);
   });
   const bl = $('#btnlive'); if(bl) bl.addEventListener('click', ()=>{
@@ -6708,7 +6722,7 @@ function cardRender(){
     else trajStart(cur.navId);
   });
   const ng = $('#navgo'); if(ng) ng.addEventListener('click', ()=>{ enterTarget(cur.navKind==='gal' ? 'galaxy' : (cur.navKind==='sys' ? 'starsys' : 'focus'), cur.navId); });
-  const cx = $('#cardx'); if(cx) cx.addEventListener('click', ()=>{ ST.mapCard = null; uiSync(); });
+  const cx = $('#cardx2'); if(cx) cx.addEventListener('click', ()=>{ ST.mapCard = null; uiSync(); });
   pb.querySelectorAll('[data-vt]').forEach(el=>el.addEventListener('click', ()=>verLinhaDoTempo(el.dataset.vt)));
   const bp = $('#backpan'); if(bp) bp.addEventListener('click', ()=>{ ST.mapCard=null; uiSync(); });
 }
@@ -6730,6 +6744,7 @@ function uiSync(){
   applySel();
 }
 let SELFX = null;
+const SEGV = new THREE.Vector3();   /* alvo da trava de centro no mapa */
 /* aplica o filtro de objetos: some com corpo, rótulo, rota e cauda */
 function aplicaObjetos(){
   if(!ACT || !ACT.objs) return;
@@ -6931,8 +6946,10 @@ function dolly(f){
     CAM.dist = CAM.max;
     return;
   }
-  CAM.dist = clamp(alvo, CAM.min, CAM.max);
-  if(CAM.dist > CAM.min + 1e-3) ZLIM.over = 0;
+  /* com um corpo travado no centro, o zoom entra bem mais perto dele */
+  const minEf = (ACT && ACT.kind==='system' && ST.mapCard) ? Math.min(CAM.min, 4.2) : CAM.min;
+  CAM.dist = clamp(alvo, minEf, CAM.max);
+  if(CAM.dist > minEf + 1e-3) ZLIM.over = 0;
 }
 function rayHit(x, y){
   if(!ACT || !ACT.pickables.length) return null;
@@ -7147,7 +7164,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r74';
+const BUILD = 'r75';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -7212,6 +7229,22 @@ $('#diagchip').addEventListener('click', function(){ this.classList.remove('on')
 })();
 $('#btnsnd').addEventListener('click', ()=>{ $('#filtpop').classList.remove('on'); $('#player').classList.toggle('on'); AUDIO.plSync(); });
 $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: coarse)').matches));
+/* balãozinho no nosso estilo: qualquer elemento com data-tip ganha um */
+(function(){
+  const tip = $('#tip');
+  document.addEventListener('mouseover', e=>{
+    const el = e.target.closest ? e.target.closest('[data-tip]') : null;
+    if(!el){ tip.classList.remove('on'); return; }
+    const r = el.getBoundingClientRect();
+    tip.textContent = el.dataset.tip;
+    tip.style.left = (r.left + r.width/2) + 'px';
+    tip.style.top = (r.top - 6) + 'px';
+    tip.classList.add('on');
+  });
+  document.addEventListener('mouseout', e=>{
+    if(e.target.closest && e.target.closest('[data-tip]')) tip.classList.remove('on');
+  });
+})();
 function filtSync(){
   $('#filtpop').querySelectorAll('.filtrow').forEach(r=>{
     if(r.dataset.obj){
@@ -7353,6 +7386,16 @@ function loop(){
   }
   if(DIVE) diveStep(now);
   if(TRAJ) trajStep(now);
+  /* trava de centro no mapa: o corpo selecionado vira o pivô da câmera,
+     e soltar a seleção devolve o centro suavemente */
+  if(ACT && ACT.kind==='system' && !DIVE && !TRAJ && !CAMTW){
+    if(ST.mapCard){
+      const pk = ACT.pickables.find(x=>x.userData.id===ST.mapCard.id);
+      if(pk){ pk.getWorldPosition(SEGV); CAM.pivot.lerp(SEGV, Math.min(1, dt*5.2)); }
+    } else if(CAM.pivot.lengthSq() > 1e-6){
+      SEGV.set(0,0,0); CAM.pivot.lerp(SEGV, Math.min(1, dt*5.2));
+    }
+  }
   else if(FADEIN) fadeInStep(now);
   if(TOUR.on && TOUR.ms) $('#tourprog').style.width = Math.min(100, (now-TOUR.t0)/TOUR.ms*100).toFixed(1)+'%';
   if(ACT){
