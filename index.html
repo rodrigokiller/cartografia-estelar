@@ -753,7 +753,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <p><b>◉ Modo foto:</b> esconde o painel inteiro para uma captura limpa<span class="touchonly">. Um toque longo na tela faz o mesmo</span><span class="kb"> (ou a tecla <b>P</b>)</span>.</p>
       <p><b>▶ Modo tour:</b> dentro do registro de bordo<span class="kb"> (ou pela tecla <b>T</b>)</span>, o mapa se guia sozinho por uma rota comentada. Toque na cena a qualquer momento para assumir o controle.</p>
       <p><b>Compartilhe:</b> o endereço da página acompanha o objeto (ex.: <span style="font-family:var(--mono)">#corpo=europa</span>), copie o link e envie.</p>
-      <p class="sub kb">ESC volta um nível · / busca · M registro · T tour · P foto · ? este manual</p>
+      <p class="sub kb">ESC volta um nível · / ou S busca · M registro · T tour · P foto · ? este manual</p>
       <p class="sub">Dados: NASA/ESA/IAU, valores aproximados. Linhas em âmbar são referências de ficção.</p>
       <p class="credito">IDEALIZADO E DESENVOLVIDO POR<b>RODRIGO SANGUANINI</b>
         <a href="https://sanguanini.dev" target="_blank" rel="noopener">SANGUANINI.DEV</a></p>
@@ -5733,8 +5733,13 @@ function closeCmp(){ $('#cmp').classList.remove('on'); CMP.a = null; cardRender(
 const norm = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 /* ---------- missão: visitados, patentes, lista com filtro e ordenação ---------- */
 const VIS = new Set(String(store.get('carto:vis','')).split(',').filter(Boolean));
+/* os mais recentes primeiro, para o buscar sugerir "voltar aonde eu estava" */
+let REC = String(store.get('carto:rec','')).split(',').filter(Boolean);
 function markVisited(id){
-  if(!id || VIS.has(id)) return;
+  if(!id) return;
+  REC = [id].concat(REC.filter(x=>x!==id)).slice(0, 20);
+  store.set('carto:rec', REC.join(','));
+  if(VIS.has(id)) return;
   VIS.add(id);
   store.set('carto:vis', [...VIS].join(','));
 }
@@ -6147,13 +6152,44 @@ function findOpen(){
   setTimeout(()=>i.focus(), 30);
 }
 function findClose(){ $('#finder').classList.remove('on'); $('#findin').blur(); }
+/* a lista inicial da busca ajuda: últimos visitados e o sistema onde você está */
+function findSugestoes(cap){
+  const out = [], usados = new Set();
+  const add = (name, sub, go, id)=>{
+    if(out.length >= cap || (id && usados.has(id))) return;
+    if(id) usados.add(id);
+    out.push({name, sub, go});
+  };
+  for(const id of REC.slice(0, 4)){
+    if(out.length >= 2) break;   /* os dois últimos, como pedido */
+    const b = ALLBODIES[id];
+    if(!b || id === ST.body) continue;
+    add(b.name, 'VISITADO HÁ POUCO', ()=>gotoFocus(id), id);
+  }
+  const S = SYS[ST.sys];
+  if(S){
+    add(S.star.name, 'A ESTRELA DAQUI', ()=>gotoFocus(S.star.id), S.star.id);
+    for(const b of (S.bodies || [])){
+      if(out.length >= cap) break;
+      add(b.name, 'NESTE SISTEMA', ()=>gotoFocus(b.id), b.id);
+    }
+  }
+  if(out.length < cap){
+    const gid = S ? (S.gal || 'vialactea') : ST.gal;
+    const g = GALAXIES.find(x=>x.id===gid);
+    if(g) add(g.name, 'A GALÁXIA DAQUI', ()=>gotoGalaxy(g.id), 'gal:'+g.id);
+  }
+  return out;
+}
 function findRender(q){
   q = norm(q);
-  findRes = (q ? FINDIDX.filter(x=>x.k.includes(q)) : FINDIDX.slice(0, 8)).slice(0, 8);
+  const cap = matchMedia('(pointer: coarse)').matches ? 6 : 12;
+  findRes = q ? FINDIDX.filter(x=>x.k.includes(q)).slice(0, cap) : findSugestoes(cap);
   findSel = 0;
   $('#findlist').innerHTML = findRes.map((r,i)=>
     '<li class="'+(i===0?'sel':'')+'" data-i="'+i+'">'+esc(r.name)+'<small>'+esc(r.sub)+'</small></li>'
   ).join('') || '<li><small>SEM RESULTADOS NO CATÁLOGO</small></li>';
+  $('#findlist').scrollTop = 0;
 }
 function paintSel(){ $('#findlist').querySelectorAll('li').forEach((li,i)=>li.classList.toggle('sel', i===findSel)); }
 function findGo(){ const r = findRes[findSel]; if(r){ findClose(); r.go(); } }
@@ -6705,7 +6741,7 @@ window.addEventListener('keydown', e=>{
   if(tag==='INPUT' || tag==='TEXTAREA') return;
   if(e.key==='ArrowRight') step(1);
   else if(e.key==='ArrowLeft') step(-1);
-  else if(e.key==='/'){ e.preventDefault(); findOpen(); }
+  else if(e.key==='/' || e.key==='s' || e.key==='S'){ e.preventDefault(); findOpen(); }
   else if(e.key==='p' || e.key==='P') togglePhoto();
   else if(e.key==='m' || e.key==='M'){ if($('#mission').classList.contains('on')) missClose(); else missOpen(); }
   else if(e.key==='t' || e.key==='T') tourToggle();
@@ -6748,7 +6784,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r66';
+const BUILD = 'r67';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
