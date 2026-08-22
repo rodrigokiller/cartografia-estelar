@@ -126,12 +126,12 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
    sobre o corte do clip-path. Geometria fechada, sem números ajustados na mão. */
 #panel::before,#panel::after,#findbox::before,#findbox::after,#cmpcard::before,#cmpcard::after,
 #helpcard::before,#helpcard::after,#player::before,#player::after,#misscard::before,#misscard::after,
-#filtpop::before,#filtpop::after{
+#filtpop::before,#filtpop::after,#cfgpop::before,#cfgpop::after{
   content:'';position:absolute;pointer-events:none;z-index:2}
-#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before,#filtpop::before{
+#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before,#filtpop::before,#cfgpop::before{
   left:-1px;top:-1px;
   background:linear-gradient(-45deg,transparent calc(50% - 1px),var(--line2) calc(50% - 1px),var(--line2) 50%,transparent 50%)}
-#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after,#filtpop::after{
+#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after,#filtpop::after,#cfgpop::after{
   right:-1px;bottom:-1px;
   background:linear-gradient(-45deg,transparent 50%,var(--line2) 50%,var(--line2) calc(50% + 1px),transparent calc(50% + 1px))}
 #panel::before,#panel::after{width:18px;height:18px}
@@ -142,6 +142,7 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #helpcard::before,#helpcard::after{width:16px;height:16px}
 #player::before,#player::after{width:10px;height:10px}
 #filtpop::before,#filtpop::after{width:10px;height:10px}
+#cfgpop::before,#cfgpop::after{width:10px;height:10px}
 #nowplay{position:absolute;top:64px;left:50%;transform:translateX(-50%);z-index:15;
   font-family:var(--mono);font-size:10px;letter-spacing:2.5px;color:var(--ion);
   background:rgba(6,12,24,.78);border:1px solid var(--line);padding:6px 14px;
@@ -169,8 +170,30 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
   background:var(--panel);border:1px solid var(--line2);padding:12px 14px 10px;
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
 #filtpop.on{display:block}
-#filtpop .fp-t{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:6px}
-#filtpop .fp-t2{margin-top:12px;padding-top:10px;border-top:1px solid rgba(63,140,255,.16)}
+#cfgpop{position:absolute;top:60px;right:14px;z-index:20;width:min(300px,86vw);display:none;
+  background:var(--panel);border:1px solid var(--line2);padding:12px 14px 10px;
+  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+#cfgpop.on{display:block}
+#datepop{position:absolute;left:14px;bottom:118px;z-index:22;display:none;
+  background:var(--panel);border:1px solid var(--line2);padding:12px 14px}
+#datepop.on{display:block}
+#datepop .dcols{display:flex;gap:14px;margin:8px 0 10px}
+#datepop .dcol{display:flex;flex-direction:column;align-items:center;gap:4px}
+#datepop .dcol b{font-family:var(--mono);font-size:13px;color:var(--ion);min-width:44px;text-align:center}
+#datepop .dcol span{font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--dim2)}
+#datepop .dcol button{width:34px;height:22px;background:none;border:1px solid var(--line2);color:var(--dim);
+  cursor:pointer;font-size:9px;padding:0}
+#datepop .dcol button:hover{color:var(--amber);border-color:var(--amber)}
+#datepop .drow{display:flex;gap:8px}
+#datepop .drow .xbtn{margin:0;flex:1}
+#simclock{display:none;align-items:center;gap:7px;margin-top:3px;
+  font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;color:var(--dim2)}
+body.emsistema #simclock{display:flex}
+#simclock button{background:none;border:none;color:var(--dim);opacity:.55;cursor:pointer;
+  font-size:10px;padding:0 2px;line-height:1}
+#simclock button:hover{opacity:1;color:var(--amber)}
+#filtpop .fp-t,#cfgpop .fp-t,#datepop .fp-t{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:6px}
+#filtpop .fp-t2,#cfgpop .fp-t2{margin-top:12px;padding-top:10px;border-top:1px solid rgba(63,140,255,.16)}
 .filtrow{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;
   padding:9px 4px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10px;
   letter-spacing:1.6px;color:var(--txt);-webkit-tap-highlight-color:transparent}
@@ -178,7 +201,7 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 .filtrow b{font-weight:400;color:var(--ok);letter-spacing:1.6px}
 .filtrow.off{color:var(--dim2)}
 .filtrow.off b{color:var(--dim2)}
-#filtpop .fp-n{font-family:var(--mono);font-size:8.5px;letter-spacing:1.2px;color:var(--dim2);
+#filtpop .fp-n,#cfgpop .fp-n{font-family:var(--mono);font-size:8.5px;letter-spacing:1.2px;color:var(--dim2);
   margin-top:8px;line-height:1.7}
 /* modo foto (tecla P): HUD some para capturas limpas */
 body.photo #topbar,body.photo #topright,body.photo #navpod,body.photo .chev,body.photo #zoomui,
@@ -399,6 +422,7 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
   opacity:0;transition:opacity .15s;transform:translate(-50%,-100%);white-space:nowrap}
 #tip.on{opacity:1}
 #tip.amber{color:var(--amber);border-color:rgba(255,180,84,.5)}
+#tip.baixo{transform:translate(-50%,0)}
 .mbadge.vt{color:var(--amber);padding:3px 7px 0;display:inline-flex;align-items:center;justify-content:center;line-height:1}
 #misslist li.mkid .mnm{font-size:10px}
 #misslist .sysbadge{flex:0 0 auto;width:26px;height:26px;display:flex;align-items:center;justify-content:center;
@@ -671,8 +695,9 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <button id="navfwd" class="navbtn dis" title="Objeto seguinte">»</button>
       <button id="btnsnd" class="navbtn" title="Trilha sonora">♪</button>
       <button id="btnphoto" class="navbtn" title="Modo foto">⌗</button>
-      <button id="btnfilt" class="navbtn" title="Linhas do mapa">≋</button>
+      <button id="btncfg" class="navbtn" title="Configurações">⚙︎</button>
       <button id="btnfs" class="navbtn" title="Tela cheia">⛶</button>
+      <button id="btnfilt" class="navbtn" title="Linhas do mapa">≋</button>
       <button id="btnhelp" title="Ajuda">?</button>
     </div>
   </div>
@@ -683,6 +708,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <div id="fovline">SAT LINK 08 · DESTINO</div>
       <div class="big" id="coordval">--°--'</div>
       <div id="clock">T+ 00:00:00</div>
+      <div id="simclock"><span id="simdata"></span><button id="simpp" data-tip="Pausar ou continuar o tempo">⏸</button><button id="simgo" data-tip="Ir para uma data">◈</button></div>
     </div>
   </div>
 
@@ -724,22 +750,41 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <button class="xbtn pl-mute" id="pl_mute">SOM: LIGADO</button>
   </div>
   <div id="tip"></div>
+  <div id="datepop">
+    <div class="fp-t">VER O SISTEMA EM OUTRA DATA</div>
+    <div class="dcols">
+      <div class="dcol"><button data-d="d1">▲</button><b id="dp_d"></b><button data-d="d0">▼</button><span>DIA</span></div>
+      <div class="dcol"><button data-d="m1">▲</button><b id="dp_m"></b><button data-d="m0">▼</button><span>MÊS</span></div>
+      <div class="dcol"><button data-d="a1">▲</button><b id="dp_a"></b><button data-d="a0">▼</button><span>ANO</span></div>
+    </div>
+    <div class="drow"><button class="xbtn primary" id="dp_ir">VER NESSA DATA</button><button class="xbtn" id="dp_hoje">HOJE</button></div>
+  </div>
+  <div id="cfgpop">
+    <div class="fp-t">⚙︎ CONFIGURAÇÕES</div>
+    <div class="fp-t fp-t2">VELOCIDADE DO TEMPO</div>
+    <div class="filtrow" data-vel="dia"><span>1 SEGUNDO = 1 DIA</span><b></b></div>
+    <div class="filtrow" data-vel="semana"><span>1 SEGUNDO = 1 SEMANA</span><b></b></div>
+    <div class="filtrow" data-vel="mes"><span>1 SEGUNDO = 1 MÊS</span><b></b></div>
+    <div class="fp-n">O relógio no canto inferior esquerdo mostra a data do sistema. Pausar e viajar no tempo ficam lá.</div>
+  </div>
   <div id="filtpop">
     <div class="fp-t">≋ LINHAS DO MAPA</div>
     <div class="filtrow" data-cls="planeta"><span>PLANETAS</span><b>LIGADA</b></div>
+    <div class="filtrow" data-cls="anao"><span>PLANETAS ANÕES</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="cometa"><span>COMETAS E VISITANTES</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="sonda"><span>SONDAS</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="satelite"><span>SATÉLITES</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="foguete"><span>MISSÕES TRIPULADAS</span><b>LIGADA</b></div>
     <div class="fp-n">Esconde só a linha. O corpo selecionado sempre mostra a própria rota.</div>
     <div class="fp-t fp-t2">◌ OBJETOS NO MAPA</div>
+    <div class="filtrow" data-obj="planeta"><span>PLANETAS</span><b>VISÍVEL</b></div>
+    <div class="filtrow" data-obj="anao"><span>PLANETAS ANÕES</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="cometa"><span>COMETAS E VISITANTES</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="sonda"><span>SONDAS</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="satelite"><span>SATÉLITES</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="foguete"><span>MISSÕES TRIPULADAS</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="cinturao"><span>CINTURÕES</span><b>VISÍVEL</b></div>
-    <div class="fp-t fp-t2">▸ MOVIMENTO</div>
-    <div class="filtrow" data-mov="1"><span>SISTEMA EM MOVIMENTO · 1 S = 1 MÊS</span><b>DESLIGADO</b></div>
+
     <div class="fp-n">Some com o objeto inteiro: corpo, rótulo e rota. Planetas e luas ficam sempre.</div>
   </div>
   <div id="trajclock">
@@ -1316,7 +1361,7 @@ PLANETS.push(
   id:'plutao', name:'PLUTÃO', desig:'KBO-134340 · PLANETA ANÃO', kind:'Planeta anão', hab:2, gbar:0.06, pop:'0',
   quick:[['GRAVIDADE','0,06 g'],['TEMP. MÉDIA','−229 °C'],['DIA','6,4 d'],['ANO','248 anos'],['LUAS','5'],['CORAÇÃO','sim ♥']],
   sys:{orbit:50, size:0.42, speed:0.004, angle:4.9, incl:0.3},
-  orbita:{peri:44, afel:58, pos:0.22},
+  anao:true, orbita:{peri:44, afel:58, pos:0.22},
   visual:{mode:'rocky', c1:'#c7a582', c2:'#9a7a5c', c3:'#6e523f', scale:3.6, seed:14.2, crater:0.35, cap:0.8, capAmt:0.35, capCol:'#e8ddd0', spot:{pos:[0.4,-0.1], r:0.5, col:'#e6d7c4', on:1}},
   moonsMeta:'5 CONFIRMADAS · 1 PRINCIPAL',
   sections:[
@@ -2052,8 +2097,19 @@ const KUIPER_HUB = {
     facts:['Antes do nome oficial, foi “Ultima Thule”.','A colisão que o formou foi tão suave que caminharia mais rápido que ela.'], fict:null}
   ]};
 PLANETS.push(
+ {id:'sedna', name:'SEDNA', desig:'PLANETA ANÃO · CONFINS', kind:'O mundo mais solitário conhecido', hab:0, gbar:0.03, pop:'0',
+  anao:true, sys:{orbit:100, size:0.30, speed:0.001, angle:4.0},
+  orbita:{peri:66, afel:130, pos:0.93, incl:0.21},
+  quick:[['DIÂMETRO','~1.000 km'],['ANO','~11.400 anos'],['DISTÂNCIA','76–900 UA'],['COR','a mais vermelha do sistema'],['DESCOBERTA','2003'],['PERIÉLIO','~2076']],
+  visual:{mode:'rocky', c1:'#a85a48', c2:'#c87a5e', c3:'#7a3e32', scale:4.4, seed:90.3, crater:0.3},
+  sections:[
+    {t:'A ÓRBITA IMPOSSÍVEL', rows:[['Excentricidade','De 76 a 900 UA: uma volta leva 11.400 anos, mais que toda a civilização escrita'],['O mistério','Nada conhecido explica como ela foi parar lá: nem planetas, nem o Kuiper'],['As hipóteses','Uma estrela que passou perto no berço do Sol, ou o Planeta Nove, ainda não visto'],['Posição aqui','Chegando ao periélio de ~2076: a única visita dela na nossa era. As distâncias seguem a escala comprimida da cena']]},
+    {t:'REGISTRO', rows:[['Descoberta','2003 · Mike Brown, de novo ele'],['Nome','A deusa inuit do mar gelado, que vive no fundo do Ártico'],['Cor','Avermelhada como quase nada no sistema, talvez tolinas de bilhões de anos'],['Temperatura','Nunca acima de −240 °C']]}
+  ],
+  facts:['Da última vez que Sedna passou perto do Sol, a humanidade ainda não tinha inventado a escrita.','A órbita dela é tão esticada que nenhuma explicação conhecida dá conta: algo a jogou lá.','É um dos objetos mais vermelhos já observados, e ninguém sabe exatamente por quê.'],
+  fict:'Sedna é a musa das teorias do Planeta Nove: toda simulação do nono planeta começa tentando explicar a órbita dela.', moons:[]},
  {id:'eris', name:'ÉRIS', desig:'PLANETA ANÃO · TRANSNETUNIANO', kind:'A que destronou Plutão', hab:1, gbar:0.084, pop:'0',
-  sys:{orbit:70, size:0.38, speed:0.002, angle:2.2},
+  anao:true, sys:{orbit:70, size:0.38, speed:0.002, angle:2.2},
   orbita:{peri:52, afel:85, incl:0.77},
   quick:[['DIÂMETRO','2.326 km'],['ANO','558 anos'],['DISTÂNCIA','38–98 UA'],['TEMP','−243 °C'],['LUA','Disnomia'],['DESCOBERTA','2005']],
   visual:{mode:'rocky', c1:'#d8dde4', c2:'#f2f5f9', c3:'#aab2bd', scale:4.8, seed:66.2, crater:0.25, atmo:{col:'#cfe0f5', i:0.35}},
@@ -3602,12 +3658,15 @@ function disposeScene(act){
    ganha elipse: ele nao volta, entao a linha dele e um arco aberto. */
 /* linhas visíveis por classe. PADRÃO: só planetas; cometa, sonda e toda classe
    futura (satelite, foguete) nascem DESLIGADAS, o mapa fica limpo por default */
-const FILTROS = {planeta:true, cometa:false, sonda:false, satelite:false, foguete:false};
+const FILTROS = {planeta:true, anao:true, cometa:false, sonda:false, satelite:false, foguete:false};
 /* segundo grupo do filtro: esconder o OBJETO inteiro (corpo, rótulo e rota).
    Planetas e luas nunca somem. Vale também para a cena de foco e os chips. */
-const FILTROBJ = {cometa:true, sonda:true, satelite:true, foguete:true, cinturao:true};
-/* modo movimento: 1 segundo real = 1 mês, Kepler simplificado */
-const MOV = {on:false};
+const FILTROBJ = {planeta:true, anao:true, cometa:true, sonda:true, satelite:true, foguete:true, cinturao:true};
+/* relógio de simulação: o sistema tem uma DATA que corre (padrão 1 s = 1 dia),
+   pode pausar e pular para qualquer data. As posições vêm de Kepler. */
+const SIM_HOJE = Date.now(), MS_ANO = 365.25*86400000;
+const SIMT = {data: Date.now(), vel:'dia', pausado:false,
+  diasPorSeg(){ return this.vel==='mes' ? 30.44 : (this.vel==='semana' ? 7 : 1); }};
 function satelitesDe(id){
   /* só o que está ATIVO e em órbita: foguete histórico e satélite morto
      ficam nas listas do card e do registro, não na cena */
@@ -3626,9 +3685,11 @@ const LINHA = {
   cometa:  {cor:0x2f5f6b, op:0.26},
   sonda:   {cor:0x4a4a72, op:0.22},
   satelite:{cor:0x4a6b7a, op:0.30},
+  anao:    {cor:0x5c4d80, op:0.42},
   foguete: {cor:0x7a5548, op:0.30}
 };
 function classeDaLinha(p){
+  if(p.anao) return 'anao';
   if(p.foguete) return 'foguete';
   if(p.satelite) return 'satelite';
   if(p.sonda) return 'sonda';
@@ -3665,6 +3726,7 @@ function buildSystem(sysId, spin0){
   const holderDe = {};   /* para satélites acharem o holder do corpo-mãe */
   const objReg = [];     /* cometas, sondas e satélites, para o filtro de objetos */
   const labelDe = {}, kidCount = {}, satN = {};
+  const elipticos = [];   /* corpos de elipse: Kepler por áreas iguais */
   for(const p of S.bodies){
     /* desativado (Sputnik): fica só na ficha e nas listas, sem orbitar */
     if(p.satOf && p.morto) continue;
@@ -3677,7 +3739,11 @@ function buildSystem(sysId, spin0){
       const _th = (p.orbita.pos !== undefined ? p.orbita.pos : 0.5) * Math.PI * 2;
       const _r = _a2*(1-_ex*_ex)/(1+_ex*Math.cos(_th));
       obX = Math.cos(_th)*_r; obZ = Math.sin(_th)*_r;
+      elipticos.push({th:_th, a2:_a2, ex:_ex,
+        T:Math.max(0.4, Math.pow(_a2/ORB_TERRA, 1.5)),
+        grupo:null, pick:null, extras:[]});
     }
+    const elip = p.orbita ? elipticos[elipticos.length-1] : null;
     /* teto de 6 satélites por corpo: o enxame do futuro não polui o mapa */
     if(p.satOf && !p.foguete){ satN[p.satOf] = (satN[p.satOf]||0) + 1; if(satN[p.satOf] > 6) continue; }
     const holder = new THREE.Object3D();
@@ -3742,6 +3808,7 @@ function buildSystem(sysId, spin0){
       ? grupoNave(p.id, p.sys.size*2.6)
       : makeBodyGroup(p, p.sys.size, 40);
     bg.group.position.set(obX, 0, obZ);
+    if(elip) elip.grupo = bg.group;
     holder.add(bg.group);
     bg.mesh.rotation.y = spinAcc;
     fadeObjs[p.id] = bg.group;   /* encolhe no mergulho, menos o corpo visado */
@@ -3758,6 +3825,7 @@ function buildSystem(sysId, spin0){
     const pick = new THREE.Mesh(new THREE.SphereGeometry(Math.max(p.sys.size + (p.satOf?0.15:0.75), p.satOf?0.35:1.25), 8, 8),
       new THREE.MeshBasicMaterial({visible:false}));
     pick.position.set(obX, 0, obZ); pick.userData = {act:'focus', id:p.id, r:p.sys.size};
+    if(elip) elip.pick = pick;
     holder.add(pick); pickables.push(pick);
     if(!fuga) orbiters.push({holder, spd:(p.orbita?0:p.sys.speed), orb:(p.satOf||p.orbita)?0:p.sys.orbit});   /* escape e elipse ficam parados; o Halley espera décadas no afélio */
     const gp = bg.group;
@@ -3765,7 +3833,7 @@ function buildSystem(sysId, spin0){
       mini:!!p.satOf,
       get:v=>{ gp.getWorldPosition(v); v.y += p.sys.size + 0.55; }});
     labelDe[p.id] = labels[labels.length-1];
-    if(cls !== 'planeta') objReg.push({id:p.id, cls, holder, pick, lbl:labels[labels.length-1],
+    objReg.push({id:p.id, cls, holder, pick, lbl:labels[labels.length-1],
       corpo:bg.group, sempreOculto:!!p.foguete,
       tails:(p.comet && cometFx) ? [cometFx.inner, cometFx.outer] : null});
     if(p.satOf) kidCount[p.satOf] = (kidCount[p.satOf]||0) + 1;
@@ -3776,6 +3844,7 @@ function buildSystem(sysId, spin0){
       p.moons.slice(0, QLOW ? 3 : 6).forEach((m, mi)=>{
         const mh = new THREE.Object3D();
         mh.position.set(obX, 0, obZ);
+        if(elip) elip.extras.push(mh);
         mh.rotation.y = mi*2.1 + hashStr(m.id)*6;
         holder.add(mh);
         const mr = p.sys.size + 0.42 + mi*0.30;
@@ -3868,8 +3937,40 @@ function buildSystem(sysId, spin0){
     }
   }
 
+  /* motor do tempo: gira as órbitas circulares por Kepler e anda as elipses
+     por áreas iguais (rápido no periélio, lento no afélio, como manda a lei) */
+  function avancarAnos(anos){
+    if(!anos) return;
+    for(const o of orbiters) if(o.orb)
+      o.holder.rotation.y += (Math.PI*2)*anos/Math.pow(o.orb/ORB_TERRA, 1.5);
+    for(const e of elipticos){
+      let resta = anos % e.T;
+      const bMe = e.a2*Math.sqrt(1-e.ex*e.ex);
+      const passoMax = e.T/240;
+      while(Math.abs(resta) > 1e-9){
+        const d = Math.max(-passoMax, Math.min(passoMax, resta));
+        const r = e.a2*(1-e.ex*e.ex)/(1+e.ex*Math.cos(e.th));
+        e.th += d * (Math.PI*2) * e.a2 * bMe / (e.T * r * r);
+        resta -= d;
+      }
+      const r2 = e.a2*(1-e.ex*e.ex)/(1+e.ex*Math.cos(e.th));
+      const x = Math.cos(e.th)*r2, z = Math.sin(e.th)*r2;
+      if(e.grupo) e.grupo.position.set(x, 0, z);
+      if(e.pick) e.pick.position.set(x, 0, z);
+      for(const ex2 of e.extras) ex2.position.set(x, 0, z);
+    }
+  }
+  /* se o relógio já foi viajado para outra data, a cena nasce sincronizada */
+  avancarAnos((SIMT.data - SIM_HOJE)/MS_ANO);
+  let simPrev = SIMT.data;
+  /* limite de zoom calculado pelo objeto mais distante em órbita */
+  let alcance = 0;
+  if(S.beltR) alcance = Math.max(alcance, S.beltR[1]);
+  if(S.kuiperR) alcance = Math.max(alcance, S.kuiperR[1]);
+  for(const pb of S.bodies) alcance = Math.max(alcance, pb.orbita ? pb.orbita.afel : (pb.sys ? pb.sys.orbit : 0));
+  const camMaxDin = Math.max(S.camMax || 60, alcance * 1.7);
   return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg,
-    zoomMini:(S.camMax || 60)*0.40,
+    zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
        Pausar congela, e arrastar para trás faz o sistema voltar no tempo junto. */
@@ -3880,7 +3981,7 @@ function buildSystem(sysId, spin0){
         o.holder.rotation.y = o.base + (Math.PI*2)*anos/Math.pow(o.orb/ORB_TERRA, 1.5);
       }
     },
-    tempoLivre:()=>{ for(const o of orbiters) o.base = null; },
+    tempoLivre:()=>{ for(const o of orbiters){ if(o.base != null){ o.holder.rotation.y = o.base; o.base = null; } } },
     /* v=1 cena cheia, v=0 só o corpo visado. É o que deixa a troca sem piscar. */
     dim:(v, exceto)=>{
       for(const f of fadeMats) f.m.opacity = f.o * v;
@@ -3888,17 +3989,17 @@ function buildSystem(sysId, spin0){
       for(const id in fadeObjs) if(id !== exceto) fadeObjs[id].scale.setScalar(s);
       if(starGlow) starGlow.material.opacity = v;
     },
-    cam:{mode:'orbit', dist:(sysId==='sol')?48:17, min:(sysId==='sol')?14:8, max:S.camMax, pitch:0.55, yaw:0.65},
+    cam:{mode:'orbit', dist:(sysId==='sol')?48:17, min:(sysId==='sol')?14:8, max:camMaxDin, pitch:0.55, yaw:0.65},
     update:(dt)=>{
-      /* na linha do tempo quem manda é o player (tempoViagem); fora dela,
-         ou o balé simbólico, ou o modo movimento (1 s = 1 mês, Kepler) */
-      if(!(TRAJ && (TRAJ.fase==='vai' || TRAJ.fase==='chega'))){
-        for(const o of orbiters){
-          if(MOV.on && o.orb)
-            o.holder.rotation.y += (Math.PI*2) * (dt/12) / Math.pow(o.orb/ORB_TERRA, 1.5);
-          else
-            o.holder.rotation.y += o.spd*dt*0.05;
-        }
+      /* na linha do tempo quem manda é o player (tempoViagem); fora dela, o
+         RELÓGIO DE SIMULAÇÃO move tudo por Kepler. Luas e satélites (simbólicos)
+         seguem o balé de sempre. */
+      const emViagem = TRAJ && (TRAJ.fase==='vai' || TRAJ.fase==='chega');
+      const danos = (SIMT.data - simPrev)/MS_ANO;
+      simPrev = SIMT.data;
+      if(!emViagem){
+        if(danos) avancarAnos(danos);
+        for(const o of orbiters) if(!o.orb) o.holder.rotation.y += o.spd*dt*0.05;
       }
       spinAcc += 0.25*dt;
       for(const s of spinners) s.obj.rotation.y += s.spd*dt;
@@ -5317,6 +5418,7 @@ function swapScene(built, continuo){
   }
   canvas.classList.remove('cantap');
   document.body.classList.toggle('focusmode', ACT.kind==='focus');
+  document.body.classList.toggle('emsistema', ACT.kind==='system');
   $('#panel').classList.remove('expanded');
 }
 
@@ -5328,11 +5430,11 @@ const store = {
 LIVE = store.get('carto:live','0') === '1';   /* modo ao vivo da Terra e da Lua */
 { const v = store.get('carto:linhas', null);
   if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
-    for(const k of ['planeta','cometa','sonda','satelite','foguete']) FILTROS[k] = on.has(k); } }
-MOV.on = store.get('carto:mov', '0') === '1';
+    for(const k of ['planeta','anao','cometa','sonda','satelite','foguete']) FILTROS[k] = on.has(k); } }
+SIMT.vel = store.get('carto:vel', 'dia');
 { const v = store.get('carto:objetos', null);
   if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
-    for(const k of ['cometa','sonda','satelite','foguete','cinturao']) FILTROBJ[k] = on.has(k); } }
+    for(const k of ['planeta','anao','cometa','sonda','satelite','foguete','cinturao']) FILTROBJ[k] = on.has(k); } }
 
 /* ---------- áudio: playlist + ambiente generativo + sfx ---------- */
 const PLAYLIST = [
@@ -6795,7 +6897,7 @@ function uiSync(){
   cardRender();
   applySel();
 }
-let SELFX = null;
+let SELFX = null, SIMCLK_T = 0;
 const SEGV = new THREE.Vector3();   /* alvo da trava de centro no mapa */
 /* aplica o filtro de objetos: some com corpo, rótulo, rota e cauda */
 function aplicaObjetos(){
@@ -7180,6 +7282,8 @@ window.addEventListener('keydown', e=>{
   else if(e.key==='Escape'){
     if(TOUR.on) tourStop();
     else if(TRAJ && TRAJ.fase!=='volta') trajCancelar();
+    else if($('#datepop').classList.contains('on')) $('#datepop').classList.remove('on');
+    else if($('#cfgpop').classList.contains('on')) $('#cfgpop').classList.remove('on');
     else if($('#filtpop').classList.contains('on')) $('#filtpop').classList.remove('on');
     else if(document.body.classList.contains('photo')) togglePhoto();
     else if($('#mission').classList.contains('on')) missClose();
@@ -7216,7 +7320,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r79';
+const BUILD = 'r80';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -7298,21 +7402,87 @@ $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: c
     if(!el){ tip.classList.remove('on'); return; }
     const r = el.getBoundingClientRect();
     tip.textContent = el.dataset.tip;
-    tip.style.left = (r.left + r.width/2) + 'px';
-    tip.style.top = (r.top - 6) + 'px';
     tip.classList.toggle('amber', el.dataset.tipamber !== undefined);
     tip.classList.add('on');
+    /* nunca fora da tela: clampa nas laterais e desce quando bate no teto */
+    const tb = tip.getBoundingClientRect();
+    let lx = r.left + r.width/2;
+    lx = Math.max(tb.width/2 + 6, Math.min(window.innerWidth - tb.width/2 - 6, lx));
+    tip.style.left = lx + 'px';
+    if(r.top - tb.height - 10 < 0){ tip.classList.add('baixo'); tip.style.top = (r.bottom + 8) + 'px'; }
+    else { tip.classList.remove('baixo'); tip.style.top = (r.top - 6) + 'px'; }
   });
   document.addEventListener('mouseout', e=>{
     if(e.target.closest && e.target.closest('[data-tip]')) tip.classList.remove('on');
   });
 })();
+const MESES_N = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+function simClockUI(){
+  const el = $('#simdata'); if(!el) return;
+  const d = new Date(SIMT.data);
+  const rot = SIMT.vel==='mes' ? '1 S = 1 MÊS' : (SIMT.vel==='semana' ? '1 S = 1 SEMANA' : '1 S = 1 DIA');
+  el.textContent = rot + ' · ' + d.getDate() + ' ' + MESES_N[d.getMonth()] + ' ' + d.getFullYear();
+  const pp = $('#simpp'); if(pp) pp.textContent = SIMT.pausado ? '▶' : '⏸';
+}
+const DP = {d:1, m:0, a:2026};
+function dpSync(){
+  $('#dp_d').textContent = String(DP.d).padStart(2,'0');
+  $('#dp_m').textContent = MESES_N[DP.m];
+  $('#dp_a').textContent = DP.a;
+}
+$('#simpp').addEventListener('click', ()=>{ SIMT.pausado = !SIMT.pausado; simClockUI(); });
+$('#simgo').addEventListener('click', ()=>{
+  const dp = $('#datepop');
+  if(!dp.classList.contains('on')){
+    const d = new Date(SIMT.data);
+    DP.d = d.getDate(); DP.m = d.getMonth(); DP.a = d.getFullYear();
+    dpSync();
+  }
+  dp.classList.toggle('on');
+});
+$('#datepop').addEventListener('click', e=>{
+  const st = e.target.closest('button[data-d]');
+  if(st){
+    const k = st.dataset.d[0], up = st.dataset.d[1]==='1' ? 1 : -1;
+    if(k==='d') DP.d = ((DP.d - 1 + up + 31) % 31) + 1;
+    if(k==='m') DP.m = (DP.m + up + 12) % 12;
+    if(k==='a') DP.a = Math.max(1600, Math.min(2500, DP.a + up));
+    dpSync(); return;
+  }
+});
+$('#dp_ir').addEventListener('click', ()=>{
+  const dias = new Date(DP.a, DP.m + 1, 0).getDate();
+  SIMT.data = new Date(DP.a, DP.m, Math.min(DP.d, dias), 12).getTime();
+  $('#datepop').classList.remove('on');
+  simClockUI();
+  showHint('SISTEMA NA DATA · ' + Math.min(DP.d, dias) + ' ' + MESES_N[DP.m] + ' ' + DP.a);
+});
+$('#dp_hoje').addEventListener('click', ()=>{
+  SIMT.data = Date.now();
+  $('#datepop').classList.remove('on');
+  simClockUI();
+});
+function cfgSync(){
+  $('#cfgpop').querySelectorAll('[data-vel]').forEach(r=>{
+    const on = SIMT.vel === r.dataset.vel;
+    r.classList.toggle('off', !on);
+    r.querySelector('b').textContent = on ? 'ATIVA' : '';
+  });
+}
+$('#btncfg').addEventListener('click', ()=>{
+  $('#filtpop').classList.remove('on'); $('#player').classList.remove('on');
+  $('#cfgpop').classList.toggle('on');
+  cfgSync();
+});
+$('#cfgpop').addEventListener('click', e=>{
+  const r = e.target.closest('[data-vel]'); if(!r) return;
+  SIMT.vel = r.dataset.vel;
+  store.set('carto:vel', SIMT.vel);
+  cfgSync(); simClockUI();
+});
 function filtSync(){
   $('#filtpop').querySelectorAll('.filtrow').forEach(r=>{
-    if(r.dataset.mov){
-      r.classList.toggle('off', !MOV.on);
-      r.querySelector('b').textContent = MOV.on ? 'LIGADO' : 'DESLIGADO';
-    } else if(r.dataset.obj){
+    if(r.dataset.obj){
       const on = FILTROBJ[r.dataset.obj] !== false;
       r.classList.toggle('off', !on);
       r.querySelector('b').textContent = on ? 'VISÍVEL' : 'OCULTO';
@@ -7325,25 +7495,19 @@ function filtSync(){
 }
 $('#btnfilt').addEventListener('click', ()=>{
   $('#player').classList.remove('on');
+  $('#cfgpop').classList.remove('on');
   $('#filtpop').classList.toggle('on');
   filtSync();
 });
 $('#filtpop').addEventListener('click', e=>{
   const r = e.target.closest('.filtrow'); if(!r) return;
-  if(r.dataset.mov){
-    MOV.on = !MOV.on;
-    store.set('carto:mov', MOV.on ? '1' : '0');
-    filtSync();
-    showHint(MOV.on ? 'SISTEMA EM MOVIMENTO · 1 SEGUNDO = 1 MÊS' : 'SISTEMA EM POSE CARTOGRÁFICA');
-    return;
-  }
   if(r.dataset.obj){
     FILTROBJ[r.dataset.obj] = FILTROBJ[r.dataset.obj] === false;
-    store.set('carto:objetos', ['cometa','sonda','satelite','foguete','cinturao'].filter(k=>FILTROBJ[k]!==false).join(','));
+    store.set('carto:objetos', ['planeta','anao','cometa','sonda','satelite','foguete','cinturao'].filter(k=>FILTROBJ[k]!==false).join(','));
     filtSync(); aplicaObjetos(); cardRender();
   } else {
     FILTROS[r.dataset.cls] = FILTROS[r.dataset.cls] === false;
-    store.set('carto:linhas', ['planeta','cometa','sonda','satelite','foguete'].filter(k=>FILTROS[k]!==false).join(','));
+    store.set('carto:linhas', ['planeta','anao','cometa','sonda','satelite','foguete'].filter(k=>FILTROS[k]!==false).join(','));
     filtSync(); applySel();
   }
 });
@@ -7475,6 +7639,10 @@ function loop(){
     ACT._acesa = true;
     RLOG.push('heal-d');
   }
+  /* a data do sistema corre aqui (para na linha do tempo e no pause) */
+  if(ACT && ACT.kind==='system' && !SIMT.pausado && !TRAJ && !DIVE)
+    SIMT.data += dt * SIMT.diasPorSeg() * 86400000;
+  if(now - SIMCLK_T > 400){ SIMCLK_T = now; if(typeof simClockUI === 'function') simClockUI(); }
   /* trava de centro no mapa: o corpo selecionado vira o pivô da câmera,
      e soltar a seleção devolve o centro suavemente */
   if(ACT && ACT.kind==='system' && !DIVE && !TRAJ && !CAMTW){
