@@ -379,7 +379,10 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #misslist .mexp{flex:0 0 auto;width:22px;height:22px;border:1px solid var(--line2);background:none;
   color:var(--dim);font-family:var(--mono);font-size:12px;line-height:1;cursor:pointer;padding:0}
 #misslist .mexp:hover{color:var(--amber);border-color:var(--amber)}
-#misslist li.mkid{padding-left:40px;min-height:30px}
+#misslist li.mkid{min-height:30px}
+#misslist li.mkid.niv1{padding-left:32px}
+#misslist li.mkid.niv2{padding-left:66px}
+#misslist .mexp.vazio{border:none;cursor:default;pointer-events:none}
 #misslist li.mkid .mnm{font-size:10px}
 #misslist .sysbadge{flex:0 0 auto;width:26px;height:26px;display:flex;align-items:center;justify-content:center;
   border:1px solid var(--line2);transform:rotate(45deg);font-size:10px;color:var(--dim)}
@@ -6013,7 +6016,7 @@ const ALCANCADOS = new Set(['sol','mercurio','venus','terra','lua','marte','fobo
   'jupiter','io','europa','ganimedes','calisto','saturno','tita','encelado','mimas','reia','iapeto',
   'urano','netuno','tritao','plutao','caronte','ceres','vesta','palas','eros','itokawa','ryugu','bennu',
   'halley','arrokoth','cinturao','kuiper','voyager1','voyager2','newhorizons','pioneer10']);
-const MISS = {filtro:'tudo', ordem:'nome', q:'', galFech:new Set(), sisAb:new Set()};
+const MISS = {filtro:'tudo', ordem:'nome', q:'', galFech:new Set(), sisAb:new Set(), corpAb:new Set()};
 /* cada sistema 100% visitado rende um título, além do selo */
 const TITULOS = {
   sol:'GUARDIÃO DE CASA', trappist:'PASTOR DOS SETE', alphacen:'VIZINHO DE PORTA',
@@ -6109,15 +6112,29 @@ function missRender(){
           + '<span class="sysprog">'+s.vistos+'/'+s.total+'<i><b style="width:'+pc+'%"></b></i></span>'
           + '</li>';
         if(sAberto){
-          const oc = {estrela:0, planeta:1, lua:2, nave:3, regiao:4, menor:5};
-          const corpos = Object.values(ALLBODIES).filter(x=>x._sys===s.id)
-            .sort((a,c)=>((oc[catDe(a)]!==undefined?oc[catDe(a)]:9)-(oc[catDe(c)]!==undefined?oc[catDe(c)]:9))
-                         || a.name.localeCompare(c.name));
-          html += corpos.map(x=>'<li class="mkid'+(VIS.has(x.id)?' vis':'')+'" data-id="'+x.id+'">'
+          /* multi-nível: o sistema abre no nível de cima (estrela, planetas,
+             cinturões, cometas, sondas) e cada corpo com filhos ganha o próprio + */
+          const filhosDe = x => (x.moons || []).concat(
+            Object.values(ALLBODIES).filter(y=>y.satOf === x.id));
+          const oc = {estrela:0, planeta:1, regiao:2, menor:3, nave:4, lua:5};
+          const chave = x => (oc[catDe(x)] !== undefined ? oc[catDe(x)] : 9);
+          const tops = Object.values(ALLBODIES)
+            .filter(x=>x._sys === s.id && !x._parent && !x.satOf)
+            .sort((a,c)=>chave(a)-chave(c) || a.name.localeCompare(c.name));
+          const linha = (x, nivel, temFilhos, aberto)=>
+            '<li class="mkid niv'+nivel+(VIS.has(x.id)?' vis':'')+'" data-id="'+x.id+'">'
+            + (temFilhos ? '<button class="mexp" data-exp="c:'+x.id+'">'+(aberto?'−':'+')+'</button>'
+                         : '<span class="mexp vazio"></span>')
             + '<span class="mdot"></span>'
             + '<span class="minfo"><span class="mnm">'+esc(x.name)+'</span>'
             + '<span class="msub">'+(CATNOME[catDe(x)]||'CORPO')+(VIS.has(x.id)?' · VISITADO':'')+'</span></span>'
-            + '</li>').join('');
+            + '</li>';
+          for(const x of tops){
+            const kids2 = filhosDe(x);
+            const ab = MISS.corpAb.has(x.id) || !!q;
+            html += linha(x, 1, kids2.length > 0, ab);
+            if(ab && kids2.length) for(const k2 of kids2) html += linha(k2, 2, false, false);
+          }
         }
       }
     }
@@ -6687,7 +6704,8 @@ $('#mission').addEventListener('click', e=>{ if(e.target.id==='mission') missClo
       e.stopPropagation();
       const tipo = ex.dataset.exp.split(':')[0], id = ex.dataset.exp.split(':')[1];
       if(tipo==='g'){ if(MISS.galFech.has(id)) MISS.galFech.delete(id); else MISS.galFech.add(id); }
-      else { if(MISS.sisAb.has(id)) MISS.sisAb.delete(id); else MISS.sisAb.add(id); }
+      else if(tipo==='s'){ if(MISS.sisAb.has(id)) MISS.sisAb.delete(id); else MISS.sisAb.add(id); }
+      else { if(MISS.corpAb.has(id)) MISS.corpAb.delete(id); else MISS.corpAb.add(id); }
       missRender();
       return;
     }
@@ -6991,7 +7009,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r71';
+const BUILD = 'r72';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
