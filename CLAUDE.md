@@ -1,6 +1,6 @@
 # Cartografia Estelar · contexto do projeto
 
-Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r61** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
+Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r64** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
 
 ## Arquitetura (blocos <script> em ordem)
 1. Helpers ($, isMobile, RM, clamp, easeIO, hashStr, coordOf) + shaders GLSL como template strings (NOISE/PLANET/CLOUD/ATMO/RING/SUN). fbm usa 4 octaves em touch, 5 no desktop.
@@ -57,12 +57,12 @@ Duas features grandes que ele quer testar. Fazer uma por vez, em commit isolado,
 ## O QUE FICOU PARA DEPOIS (pedidos do Rodrigo, NÃO deixar se perder)
 - **POLIR o LIVE da Terra**: ele aprovou o estilo e o funcionamento, mas está "muito cru". Melhorar contornos de costa, cores, nuvens, transição dia/noite.
 - **POLIR MUITO o modelo da sonda**: aprovado o espírito, mas "sem base sem estrutura". Dar treliça, painéis, mais peças, talvez modelos levemente diferentes por sonda.
-- **Revisitar atalhos assumidos por pressa** (lista honesta): mapa da Terra com polígonos grosseiros; luzes de cidade por amostragem aleatória; nuvens do LIVE são o shader genérico; modelo de sonda único para as quatro; marcos de trajetória hardcoded nos dados.
-- **Foguetes** (quando entrarem): só missões famosas da cultura pop (Apollo 11, Saturn V), senão vira zona. Palavras dele.
+- **Revisitar atalhos assumidos por pressa** (lista honesta): mapa da Terra com polígonos grosseiros; luzes de cidade por amostragem aleatória; nuvens do LIVE FEITAS em canvas no r64 (texturaNuvens: ITCZ, espirais das latitudes médias, cirros polares, subtrópicos limpos); modelo de sonda único para as quatro; marcos de trajetória hardcoded nos dados.
+- **Foguetes FEITOS no r62** (Apollo 11 e Apollo 13, classe `foguete` nos dois grupos de filtro, modelo grupoFoguete do Saturn V, satOf terra). Regra dele mantida: SÓ missões famosas da cultura pop, senão vira zona.
 - **Satélites históricos FEITOS no r55** (ISS, Hubble, Sputnik, James Webb): corpos com `satelite:true` + `satOf:'terra'`. O motor parenteia o holder deles no holder do corpo-mãe (sys.orbit vira o raio do anel EM VOLTA da Terra, e o conjunto viaja junto). Classe de linha `satelite` nos filtros, desligada por padrão. Label faint, pick menor. r58: cada nave famosa tem modelo próprio (grupoISS/grupoHubble/grupoSputnik/grupoJWST, despacho em grupoNave). r61: satélites também aparecem no FOCO da Terra junto com a Lua e nos chips do card (satelitesDe concatenado em kids e na lista), e o foco/card de satélite usa satOf como mãe (VOLTAR A TERRA). Urano+Netuno revisitadas FEITAS no r56. Carina FEITA no r53.
 - **Player da linha do tempo** (r53: o sistema é função do prog via ACT.tempoViagem, pausa congela TUDO, arrasto volta no tempo, câmera livre sem sair do modo, botão liga/desliga aceso, painel em duas linhas com texto de largura fixa): a UI existe (play/pausa, arrasto, 0,5x/1x/2x). Ideias futuras dele: mostrar velocidade em km/h real. Marcos clicáveis FEITOS no r59 (losangos .tmk na barra + ímã de 2,8% no arrasto).
-- **Ir e vir pela trajetória com o mouse** (scrub): ideia dele desde o início das sondas. O motor já anda por pontos locais transformados por quadro, então dá para mapear um arrasto ao parâmetro `e` do trajStep.
-- **Satélites e foguetes** como novos tipos de objeto (a classe de linha e o filtro já existem, é só criar a classe `satelite` e os dados).
+- **Scrub na cena FEITO no r63**: pegar o objeto (30px mouse, 52px toque) e arrastar move ele pela linha (projeção dos 160 pontos, ímã dos marcos). km/h real no relógio também (r63, vem do quick VELOCIDADE).
+- Satélites (r55) e foguetes (r62) FEITOS como tipos de objeto.
 - **"Orbitar junto" de qualquer corpo**: play genérico acompanhando um corpo em órbita fechada (o Halley já funciona, generalizar é pequeno).
 - **Tour**: o Rodrigo NÃO anda gostando dele. Mantido por ora (tecla T + registro de bordo). Se ele pedir, remover a UI sem dó, o código é isolado.
 - **Terra ao vivo**: POLIDA no r57 (continentes refinados + 13 ilhas, biomas por máscara source-atop em BIOMAS, plataforma costeira, tundra/gelo, luzes com 55 metrópoles reais lendo a máscara `_mascaraTerra`, shader com crepúsculo quente, luar azulado e reflexo do Sol só na água). Falta o Rodrigo validar no navegador real.

@@ -4053,7 +4053,52 @@ function texturaLua(){
   t.anisotropy = 4;
   return (_texLua = t);
 }
-let _texLuzes = null, _texPreta = null;
+let _texLuzes = null, _texPreta = null, _texNuvens = null;
+/* nuvens com clima de verdade: a faixa de convergência no equador, as
+   frentes em espiral das latitudes médias, os cirros polares e os cinturões
+   subtropicais mais limpos. Desenhado em canvas, nada externo. */
+function texturaNuvens(){
+  if(_texNuvens) return _texNuvens;
+  const W = 1024, H = 512, c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const g = c.getContext('2d');
+  const blob = (x,y,r,a)=>{
+    const gr = g.createRadialGradient(x,y,0,x,y,r);
+    gr.addColorStop(0,'rgba(255,255,255,'+a+')'); gr.addColorStop(1,'rgba(255,255,255,0)');
+    g.fillStyle = gr; g.beginPath(); g.arc(x,y,r,0,Math.PI*2); g.fill();
+  };
+  /* zona de convergência intertropical: o colar de cúmulos do equador */
+  for(let i=0;i<90;i++){
+    const x = Math.random()*W, y = H*0.5 + (Math.random()-0.5)*H*0.06;
+    blob(x, y, 6+Math.random()*16, 0.32+Math.random()*0.28);
+  }
+  /* frentes em espiral (vírgulas) nas latitudes médias, giro oposto por hemisfério */
+  for(const yc of [H*0.24, H*0.76]){
+    const dir = yc < H/2 ? 1 : -1;
+    for(let sN=0;sN<6;sN++){
+      const x0 = (sN + Math.random()*0.6)*W/6;
+      for(let t2=0;t2<26;t2++){
+        const tt = t2/26, ang = tt*3.4, rr = 4+tt*30;
+        blob(x0 + Math.cos(ang)*rr*1.8, yc + Math.sin(ang)*rr*0.8*dir,
+             5+tt*13, 0.30*(1-tt*0.5)+0.10);
+      }
+    }
+  }
+  /* cirros finos perto dos polos */
+  for(let i=0;i<40;i++){
+    const y = Math.random()<0.5 ? Math.random()*H*0.09 : H-(Math.random()*H*0.09);
+    g.fillStyle = 'rgba(255,255,255,'+(0.10+Math.random()*0.12)+')';
+    g.fillRect(Math.random()*W, y, 30+Math.random()*80, 1.6);
+  }
+  /* pontilhado esparso nos subtrópicos (os desertos ficam mais limpos) */
+  for(let i=0;i<160;i++){
+    const band = Math.random()<0.5 ? H*0.38 : H*0.62;
+    blob(Math.random()*W, band+(Math.random()-0.5)*H*0.05, 3+Math.random()*7, 0.10+Math.random()*0.14);
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = THREE.RepeatWrapping;
+  return (_texNuvens = t);
+}
 function texturaPreta(){
   if(_texPreta) return _texPreta;
   const c = document.createElement('canvas'); c.width = c.height = 4;
@@ -4160,6 +4205,15 @@ void main(){
   vec3 luzes = texture2D(uLuzes, vUv).rgb * (1.0 - smoothstep(0.0, 0.18, dif));
   gl_FragColor = vec4(c + luzes, 1.0);
 }`;
+const NUVENS_FRAG = `
+uniform sampler2D uMapN; uniform vec3 uL; uniform float uTime;
+varying vec2 vUv; varying vec3 vN; varying vec3 vV;
+void main(){
+  float a = texture2D(uMapN, vec2(fract(vUv.x + uTime*0.0016), vUv.y)).a;
+  float dif = dot(normalize(vN), normalize(uL));
+  float lum = 0.10 + 0.95*smoothstep(-0.06, 0.35, dif);
+  gl_FragColor = vec4(vec3(lum), a*0.9);
+}`;
 function liveMaterial(id){
   return new THREE.ShaderMaterial({vertexShader:LIVE_VERT, fragmentShader:LIVE_FRAG,
     uniforms:{uMap:{value: id === 'lua' ? texturaLua() : texturaTerra()},
@@ -4179,11 +4233,10 @@ function grupoLive(id, raio, seg){
       uniforms:{uCol:{value:C('#7fb0ff')}, uI:{value:1.15}},
       side:THREE.BackSide, blending:THREE.AdditiveBlending, transparent:true, depthWrite:false});
     g.add(new THREE.Mesh(new THREE.SphereGeometry(raio*1.05, seg, seg), am));
-    /* nuvens sutis por cima do mapa, com o shader que os planetas ja usam */
-    const cm = new THREE.ShaderMaterial({vertexShader:PLANET_VERT, fragmentShader:CLOUD_FRAG,
+    /* nuvens com clima real, desenhadas em canvas, derivando devagar */
+    const cm = new THREE.ShaderMaterial({vertexShader:LIVE_VERT, fragmentShader:NUVENS_FRAG,
       transparent:true, depthWrite:false,
-      uniforms:{uL:{value:LDIR.clone()}, uTime:{value:0}, uCAmt:{value:0.5},
-                uCScale:{value:3.1}, uCCol:{value:C('#ffffff')}}});
+      uniforms:{uMapN:{value:texturaNuvens()}, uL:{value:LDIR.clone()}, uTime:{value:0}}});
     ANIM_MATS.push(cm);
     const nuvens = new THREE.Mesh(new THREE.SphereGeometry(raio*1.02, seg, seg), cm);
     nuvens.userData.isClouds = true;
@@ -6654,7 +6707,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r63';
+const BUILD = 'r64';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
