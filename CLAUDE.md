@@ -1,6 +1,6 @@
 # Cartografia Estelar · contexto do projeto
 
-Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r70** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
+Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r71** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
 
 ## Arquitetura (blocos <script> em ordem)
 1. Helpers ($, isMobile, RM, clamp, easeIO, hashStr, coordOf) + shaders GLSL como template strings (NOISE/PLANET/CLOUD/ATMO/RING/SUN). fbm usa 4 octaves em touch, 5 no desktop.

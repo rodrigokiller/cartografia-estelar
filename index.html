@@ -202,6 +202,7 @@ body.photo.hudpeek #photoexit{opacity:1}
 /* relogio de anos do percurso da trajetoria */
 #trajclock{position:absolute;left:50%;bottom:120px;transform:translateX(-50%);z-index:16;
   display:flex;flex-direction:column;align-items:stretch;gap:6px;
+  width:min(620px, 94vw);
   font-family:var(--mono);font-size:10.5px;letter-spacing:2px;color:var(--amber);
   background:rgba(6,12,24,.88);border:1px solid var(--line);padding:8px 12px;
   opacity:0;transition:opacity .4s;pointer-events:none;white-space:nowrap}
@@ -212,16 +213,17 @@ body.photo.hudpeek #photoexit{opacity:1}
 #trajclock .trow1{display:flex;align-items:center;gap:10px}
 #trajclock .tcol{display:flex;flex-direction:column;gap:3px;flex:1 1 auto}
 #trajclock .tcol .tbar{width:100%}
-#trajclock .tbar{width:170px;height:5px;background:rgba(63,140,255,.18);position:relative;cursor:pointer;touch-action:none}
+#trajclock .tbar{width:100%;height:7px;background:rgba(63,140,255,.18);position:relative;cursor:pointer;touch-action:none}
 #trajclock .tbar i{position:absolute;left:0;top:0;bottom:0;background:var(--amber);width:0}
-#trajclock .tbar b.tmk{position:absolute;top:50%;width:6px;height:6px;pointer-events:none;
+#trajclock .tbar b.tmk{position:absolute;top:50%;width:8px;height:8px;pointer-events:none;
   transform:translate(-50%,-50%) rotate(45deg);background:#0a1526;border:1px solid var(--amber);opacity:.85}
 #trajclock .tanos{display:flex;justify-content:space-between;font-size:8px;letter-spacing:1px;color:var(--dim2)}
 #trajclock .ttx{color:var(--amber);text-align:center;white-space:nowrap;overflow:hidden;
-  text-overflow:ellipsis;min-height:1.3em;width:300px;max-width:74vw}
+  text-overflow:ellipsis;min-height:1.3em;width:100%}
 @media (max-width:899px){
   #trajclock{bottom:calc(var(--sheetpeek,34dvh) + 58px);gap:8px;padding:7px 10px}
-  #trajclock .ttx{width:auto}
+  #trajclock{width:94vw}
+  #trajclock .ttx{width:100%}
 }
 body.photo #filtpop,body.photo #trajclock{opacity:0 !important;visibility:hidden}
 /* telemetria de debug: escondida por padrão, sai com Shift+D (ver CLAUDE.md) */
@@ -6989,7 +6991,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r70';
+const BUILD = 'r71';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
