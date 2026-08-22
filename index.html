@@ -3518,6 +3518,7 @@ function updateLabels(){
   if(!ACT) return;
   const W = CRECT.width, H = CRECT.height;
   for(const L of ACT.labels){
+    if(L.off){ L.el.style.display = 'none'; continue; }
     L.get(tmpV);
     tmpV.project(camera);
     if(tmpV.z > 1 || tmpV.x < -1.1 || tmpV.x > 1.1 || tmpV.y < -1.1 || tmpV.y > 1.1){
@@ -3656,7 +3657,9 @@ function buildSystem(sysId, spin0){
     const orbit = fuga ? new THREE.Line(og, mat) : new THREE.LineLoop(og, mat);
     holder.add(fade(orbit));
     selReg.orbits.push({id:p.id, mat:orbit.material, obj:orbit, cls, c:est.cor, o:est.op});
-    const bg = makeBodyGroup(p, p.sys.size, 40);
+    const bg = (p.sonda || p.satelite || p.foguete)
+      ? grupoNave(p.id, p.sys.size*2.6)
+      : makeBodyGroup(p, p.sys.size, 40);
     bg.group.position.x = p.sys.orbit;
     holder.add(bg.group);
     bg.mesh.rotation.y = spinAcc;
@@ -4571,6 +4574,7 @@ function buildFocus(bodyId, spin0){
   const fadeMats = [], fadeObjs = {};
   const fade = o => { if(o && o.material) fadeMats.push({m:o.material, o:(o.material.opacity!==undefined?o.material.opacity:1)}); return o; };
   scene.children.forEach(fade);   /* os dois campos de estrelas já criados acima */
+  const objsFoco = [];   /* naves dentro do foco, para o filtro de objetos */
   const kids = (b.moons || []).concat(satelitesDe(bodyId));
   const parent = b._parent ? ALLBODIES[b._parent] : (b.satOf ? ALLBODIES[b.satOf] : null);
   let bg = null, clouds = null, moonHolder = null, cometFx = null;
@@ -4593,7 +4597,8 @@ function buildFocus(bodyId, spin0){
 
   /* marcador de seleção reaproveitado pelos dois modos */
   function addKid(m, pos, size, seg){
-    const mg = makeBodyGroup(m, size, seg||24);
+    const nave = !!(m.sonda || m.satelite || m.foguete);
+    const mg = nave ? grupoNave(m.id, size*2.2) : makeBodyGroup(m, size, seg||24);
     mg.group.position.copy(pos);
     const host = moonHolder || wrap;
     host.add(mg.group);
@@ -4611,6 +4616,8 @@ function buildFocus(bodyId, spin0){
     const gp = mg.group;
     labels.push({el:makeLabel(m.name, 'faint', ()=>ACTION('focus', m.id)),
       get:v=>{ gp.getWorldPosition(v); v.y += size + 0.08; }});
+    if(nave) objsFoco.push({id:m.id, cls:classeDaLinha(m), holder:mg.group, pick:pk,
+      lbl:labels[labels.length-1], tails:[glow]});
     return mg;
   }
 
@@ -4711,7 +4718,7 @@ function buildFocus(bodyId, spin0){
     addKid(m, vv, 0.20 + hashStr(m.id)*0.10, 24);
   });
 
-  return {kind:'focus', scene, labels, pickables, wrap, bodyId, sel:selReg, raioCorpo:radius,
+  return {kind:'focus', scene, labels, pickables, wrap, bodyId, sel:selReg, raioCorpo:radius, objs:objsFoco,
     get spin(){ return bg ? bg.mesh.rotation.y : 0; },
     dim:(v, exceto)=>{
       for(const f of fadeMats) f.m.opacity = f.o * v;
@@ -5746,6 +5753,7 @@ function patenteDe(n, total){
   return {cur, nxt};
 }
 function catDe(b){
+  if(b.sonda || b.satelite || b.foguete) return 'nave';
   if(b.region) return 'regiao';
   if(b.visual && b.visual.mode==='star') return 'estrela';
   if(b._parent) return (ALLBODIES[b._parent] && ALLBODIES[b._parent].region) ? 'menor' : 'lua';
@@ -5761,6 +5769,7 @@ const MISSFILTROS = [
   {k:'planeta',  t:'PLANETAS',   f:b=>catDe(b)==='planeta'},
   {k:'lua',      t:'LUAS',       f:b=>catDe(b)==='lua'},
   {k:'estrela',  t:'ESTRELAS',   f:b=>catDe(b)==='estrela'},
+  {k:'nave',     t:'NAVES',      f:b=>catDe(b)==='nave'},
   {k:'regiao',   t:'REGIÕES',    f:b=>catDe(b)==='regiao' || catDe(b)==='menor'}
 ];
 /* distância de casa: vem do sistema do corpo, não do corpo em si. O Sistema
@@ -6318,7 +6327,7 @@ function aplicaObjetos(){
     const vis = FILTROBJ[o.cls] !== false;
     o.holder.visible = vis;
     o.pick.userData.escondido = !vis;
-    if(o.lbl && o.lbl.el) o.lbl.el.style.display = vis ? '' : 'none';
+    if(o.lbl) o.lbl.off = !vis;
     if(o.tails) for(const t of o.tails) t.visible = vis;
   }
 }
@@ -6707,7 +6716,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r64';
+const BUILD = 'r65';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
