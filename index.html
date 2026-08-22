@@ -1417,6 +1417,8 @@ SATELITES.forEach(x=>PLANETS.push(x));
 const FOGUETES = [
  {id:'apollo11', name:'APOLLO 11', desig:'MISSÃO · 1969', kind:'O Saturn V que levou a humanidade à Lua', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra',
+  traj:{dias:8, d0:'16/7/1969', d1:'24/7/1969'},
+  marcos:[[0,'LANÇAMENTO'],[0.2,'RUMO À LUA'],[3,'ÓRBITA LUNAR'],[4,'O POUSO'],[4.4,'UM PEQUENO PASSO'],[5.1,'DECOLAGEM DA LUA'],[8,'SPLASHDOWN']],
   quick:[['LANÇAMENTO','16/7/1969'],['FOGUETE','Saturn V, 110 m'],['TRIPULAÇÃO','Armstrong · Aldrin · Collins'],['POUSO','20/7/1969, Mar da Tranquilidade'],['NA SUPERFÍCIE','21 h 36 min'],['RETORNO','24/7/1969']],
   sys:{orbit:2.5, size:0.11, speed:1.0, angle:3.6},
   visual:{mode:'rocky', c1:'#d8d8dc', c2:'#f0f0f4', c3:'#8a8a92', scale:7.0, seed:19.69, crater:0.05},
@@ -1429,6 +1431,8 @@ const FOGUETES = [
   fict:'De 2001 a First Man, é o evento mais filmado da era espacial, e as teorias de conspiração sobre ele viraram piada cultural.', moons:[]},
  {id:'apollo13', name:'APOLLO 13', desig:'MISSÃO · 1970', kind:'O fracasso mais bem-sucedido da história', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra',
+  traj:{dias:6, d0:'11/4/1970', d1:'17/4/1970'},
+  marcos:[[0,'LANÇAMENTO'],[2.3,'A EXPLOSÃO'],[3.2,'CONTORNO DA LUA'],[3.3,'RECORDE DE DISTÂNCIA'],[6,'SPLASHDOWN']],
   quick:[['LANÇAMENTO','11/4/1970'],['A EXPLOSÃO','13/4, tanque de O₂'],['TRIPULAÇÃO','Lovell · Swigert · Haise'],['A ROTA','contorno livre da Lua'],['SPLASHDOWN','17/4/1970'],['SALDO','todos vivos']],
   sys:{orbit:2.8, size:0.10, speed:0.9, angle:1.7},
   visual:{mode:'rocky', c1:'#c8c8cc', c2:'#e4e4e8', c3:'#7a7a82', scale:7.0, seed:19.70, crater:0.08},
@@ -3688,7 +3692,7 @@ function buildSystem(sysId, spin0){
     labels.push({el:makeLabel(p.name, p.satOf?'faint':'', ()=>ACTION('focus', p.id)),
       get:v=>{ gp.getWorldPosition(v); v.y += p.sys.size + 0.55; }});
     if(cls !== 'planeta') objReg.push({id:p.id, cls, holder, pick, lbl:labels[labels.length-1],
-      tails:(p.comet && cometFx) ? [cometFx.inner, cometFx.outer] : null});
+      corpo:bg.group, tails:(p.comet && cometFx) ? [cometFx.inner, cometFx.outer] : null});
   }
 
   /* cinturão */
@@ -4894,7 +4898,7 @@ function anoDe(b){
 function trajStart(id){
   const b = ALLBODIES[id];
   const o = (ACT && ACT.sel && ACT.sel.orbits) ? ACT.sel.orbits.find(x=>x.id===id) : null;
-  if(!b || !o || !o.obj || !(ehEscape(b) || b.comet) || DIVE) return;
+  if(!b || !o || !o.obj || !(ehEscape(b) || b.comet || (b.foguete && b.traj)) || DIVE) return;
   /* guarda os pontos LOCAIS e transforma a cada quadro: o Halley continua
      orbitando durante o passeio e a linha acompanha */
   const pos = o.obj.geometry.getAttribute('position');
@@ -4913,9 +4917,17 @@ function trajStart(id){
           _a:new THREE.Vector3(), _b:new THREE.Vector3(), _c:new THREE.Vector3(),
           ano0:(b.traj && b.traj.de) || anoDe(b),
           ano1:(b.traj && b.traj.ate) || (new Date()).getFullYear()};
+  /* missão tripulada: o relógio conta DIAS, não anos, e o sistema não acelera */
+  if(b.foguete && b.traj && b.traj.dias){
+    TRAJ.dias = true; TRAJ.ano0 = 0; TRAJ.ano1 = b.traj.dias;
+    TRAJ.base = 20000;
+  }
+  /* o corpo (sonda, cometa, foguete) navega junto com o ponto do percurso */
+  { const oo = ACT.objs && ACT.objs.find(x=>x.id===id);
+    if(oo && oo.corpo){ TRAJ.corpo = oo.corpo; TRAJ.cpos0 = oo.corpo.position.clone(); } }
   $('#trajtxt').textContent = b.name;
-  $('#trajano0').textContent = TRAJ.ano0 || '';
-  $('#trajano1').textContent = TRAJ.ano0 ? TRAJ.ano1 : '';
+  $('#trajano0').textContent = TRAJ.dias ? b.traj.d0 : (TRAJ.ano0 || '');
+  $('#trajano1').textContent = TRAJ.dias ? b.traj.d1 : (TRAJ.ano0 ? TRAJ.ano1 : '');
   $('#trajfill').style.width = '0%';
   $('#trajplay').textContent = '⏸';
   $('#trajvel').textContent = '1×';
@@ -4924,7 +4936,7 @@ function trajStart(id){
   { const bar = $('#trajbar');
     bar.querySelectorAll('.tmk').forEach(x=>x.remove());
     TRAJ._mk = [];
-    const spanAnos = (TRAJ.ano0 && TRAJ.ano1 > TRAJ.ano0) ? (TRAJ.ano1 - TRAJ.ano0) : 0;
+    const spanAnos = ((TRAJ.dias || TRAJ.ano0) && TRAJ.ano1 > TRAJ.ano0) ? (TRAJ.ano1 - TRAJ.ano0) : 0;
     if(spanAnos && TRAJ.marcos) for(const m of TRAJ.marcos){
       const pct = (m[0] - TRAJ.ano0)/spanAnos;
       if(pct < 0 || pct > 1) continue;
@@ -4950,11 +4962,13 @@ function trajPonto(prog, out){
 function trajCancelar(){
   if(!TRAJ || TRAJ.fase==='volta') return;
   $('#trajclock').classList.remove('on');
-  TRAJ = {fase:'volta', t0:performance.now(), ms:850, p0:CAM.pivot.clone(), dA:CAM.dist, d1:TRAJ.d0};
+  TRAJ = {fase:'volta', t0:performance.now(), ms:850, p0:CAM.pivot.clone(), dA:CAM.dist, d1:TRAJ.d0,
+          corpo:TRAJ.corpo, cpos0:TRAJ.cpos0};
   cardRender();
 }
 function trajLimpar(){
   if(ACT && ACT.tempoLivre) ACT.tempoLivre();
+  if(TRAJ && TRAJ.corpo && TRAJ.cpos0) TRAJ.corpo.position.copy(TRAJ.cpos0);
   TRAJ = null;
   const el = $('#trajclock'); if(el) el.classList.remove('on');
 }
@@ -4980,15 +4994,22 @@ function trajStep(now){
   const dt = Math.min(0.1, (now-TRAJ.ln)/1000); TRAJ.ln = now;
   if(!TRAJ.pausado && !TRAJ.arrasto)
     TRAJ.prog = Math.min(1, TRAJ.prog + dt*1000*TRAJ.vel/TRAJ.base);
-  const span = (TRAJ.ano0 && TRAJ.ano1 > TRAJ.ano0) ? (TRAJ.ano1-TRAJ.ano0) : 0;
+  const span = ((TRAJ.dias || TRAJ.ano0) && TRAJ.ano1 > TRAJ.ano0) ? (TRAJ.ano1-TRAJ.ano0) : 0;
   trajPonto(TRAJ.prog, TRAJ._c);
   CAM.pivot.copy(TRAJ._c);
-  /* o zoom fica livre: quem quiser afasta e vê o sistema inteiro andando */
-  if(span && ACT && ACT.tempoViagem) ACT.tempoViagem(span*TRAJ.prog);
+  /* o corpo navega junto, em vez de esperar parado no fim da linha */
+  if(TRAJ.corpo && TRAJ.corpo.parent){
+    TRAJ.corpo.parent.worldToLocal(TRAJ._b.copy(TRAJ._c));
+    TRAJ.corpo.position.copy(TRAJ._b);
+  }
+  /* o zoom fica livre: quem quiser afasta e vê o sistema inteiro andando
+     (em dias, o sistema não acelera: oito dias não movem planeta nenhum) */
+  if(span && !TRAJ.dias && ACT && ACT.tempoViagem) ACT.tempoViagem(span*TRAJ.prog);
   $('#trajfill').style.width = (TRAJ.prog*100).toFixed(1)+'%';
   if(span){
     const ano = TRAJ.ano0 + span*TRAJ.prog;
-    let txt = (ALLBODIES[TRAJ.id]||{}).name + ' · ' + Math.round(ano);
+    let txt = (ALLBODIES[TRAJ.id]||{}).name + ' · '
+      + (TRAJ.dias ? ('DIA ' + Math.min(Math.floor(ano)+1, TRAJ.ano1)) : Math.round(ano));
     TRAJ.mAtual = null;   /* recalcula sempre: o arrasto pode voltar no tempo */
     if(TRAJ.marcos) for(const m of TRAJ.marcos) if(ano >= m[0]) TRAJ.mAtual = m;
     if(TRAJ.mAtual) txt += ' · ' + TRAJ.mAtual[1];
@@ -6257,7 +6278,8 @@ function cardRender(){
          ? '<button class="livebtn'+(LIVE?' on':'')+'" id="btnlive" title="Mostrar como está agora, de verdade"><i></i>'+(LIVE?'AO VIVO':'LIVE')+'</button>'
          : '')
       + ((cur.type==='map' && cur.navKind==='body' && ALLBODIES[cur.navId]
-          && (ehEscape(ALLBODIES[cur.navId]) || ALLBODIES[cur.navId].comet)
+          && (ehEscape(ALLBODIES[cur.navId]) || ALLBODIES[cur.navId].comet
+              || (ALLBODIES[cur.navId].foguete && ALLBODIES[cur.navId].traj))
           && ACT && ACT.kind==='system' && ALLBODIES[cur.navId]._sys===ST.sys)
          ? '<button class="livebtn'+((TRAJ && TRAJ.fase!=='volta' && TRAJ.id===cur.navId)?' on':'')+'" id="btntraj" title="Percorrer a rota no tempo"><i></i>LINHA DO TEMPO</button>'
          : '') + '</h1>'+
@@ -6784,7 +6806,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r67';
+const BUILD = 'r68';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
