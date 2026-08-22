@@ -213,6 +213,8 @@ body.photo.hudpeek #photoexit{opacity:1}
 #trajclock .tcol .tbar{width:100%}
 #trajclock .tbar{width:170px;height:5px;background:rgba(63,140,255,.18);position:relative;cursor:pointer;touch-action:none}
 #trajclock .tbar i{position:absolute;left:0;top:0;bottom:0;background:var(--amber);width:0}
+#trajclock .tbar b.tmk{position:absolute;top:50%;width:6px;height:6px;pointer-events:none;
+  transform:translate(-50%,-50%) rotate(45deg);background:#0a1526;border:1px solid var(--amber);opacity:.85}
 #trajclock .tanos{display:flex;justify-content:space-between;font-size:8px;letter-spacing:1px;color:var(--dim2)}
 #trajclock .ttx{color:var(--amber);text-align:center;white-space:nowrap;overflow:hidden;
   text-overflow:ellipsis;min-height:1.3em;width:300px;max-width:74vw}
@@ -4689,6 +4691,21 @@ function trajStart(id){
   $('#trajplay').textContent = '⏸';
   $('#trajvel').textContent = '1×';
   $('#trajclock').classList.add('on');
+  /* os marcos viram losangos na barra: clicar ali pula direto para o ano */
+  { const bar = $('#trajbar');
+    bar.querySelectorAll('.tmk').forEach(x=>x.remove());
+    TRAJ._mk = [];
+    const spanAnos = (TRAJ.ano0 && TRAJ.ano1 > TRAJ.ano0) ? (TRAJ.ano1 - TRAJ.ano0) : 0;
+    if(spanAnos && TRAJ.marcos) for(const m of TRAJ.marcos){
+      const pct = (m[0] - TRAJ.ano0)/spanAnos;
+      if(pct < 0 || pct > 1) continue;
+      TRAJ._mk.push(pct);
+      const d = document.createElement('b');
+      d.className = 'tmk';
+      d.style.left = (pct*100) + '%';
+      bar.appendChild(d);
+    }
+  }
   showHint('LINHA DO TEMPO · A CENA CONTINUA LIVRE: ARRASTE E DÊ ZOOM À VONTADE');
   cardRender();
 }
@@ -6420,7 +6437,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r58';
+const BUILD = 'r59';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -6521,10 +6538,14 @@ $('#trajx2').addEventListener('click', ()=>trajCancelar());
     if(!TRAJ || TRAJ.fase!=='vai') return;
     const r = bar.getBoundingClientRect();
     TRAJ.prog = Math.min(1, Math.max(0, (e.clientX - r.left)/r.width));
+    /* ímã: perto de um marco, gruda nele */
+    if(TRAJ._mk) for(const pm of TRAJ._mk) if(Math.abs(TRAJ.prog - pm) < 0.028){ TRAJ.prog = pm; break; }
   }
   bar.addEventListener('pointerdown', e=>{
     if(!TRAJ) return;
-    TRAJ.arrasto = true; bar.setPointerCapture(e.pointerId); pega(e);
+    TRAJ.arrasto = true;
+    try{ bar.setPointerCapture(e.pointerId); }catch(_){}
+    pega(e);
   });
   bar.addEventListener('pointermove', e=>{ if(TRAJ && TRAJ.arrasto) pega(e); });
   bar.addEventListener('pointerup', ()=>{ if(TRAJ) TRAJ.arrasto = false; });
