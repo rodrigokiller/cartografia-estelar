@@ -4046,21 +4046,67 @@ function texturaLua(){
   c.width = W; c.height = H;
   const g = c.getContext('2d');
   g.fillStyle = '#8d8880'; g.fillRect(0,0,W,H);
-  /* mares lunares no lado visivel, que fica centrado em lon 0 */
-  const mares = [[-8,28,120,70],[18,22,95,60],[36,4,85,70],[-30,-4,70,55],[6,-10,80,60],[-42,20,60,45],[52,26,55,40]];
-  for(const [lon,lat,rw,rh] of mares){
-    const x = (lon+180)/360*W, y = (90-lat)/180*H;
-    const gr = g.createRadialGradient(x,y,0,x,y,Math.max(rw,rh));
-    gr.addColorStop(0,'rgba(78,76,74,.92)'); gr.addColorStop(1,'rgba(78,76,74,0)');
-    g.fillStyle = gr; g.beginPath(); g.ellipse(x,y,rw,rh,0,0,Math.PI*2); g.fill();
+  const px = (lon,lat)=>[ (lon+180)/360*W, (90-lat)/180*H ];
+  /* mosqueado de terreno alto */
+  for(let i=0;i<900;i++){
+    g.fillStyle = 'rgba(' + (Math.random()<0.5 ? '255,255,255' : '60,58,54') + ',' + (0.02+Math.random()*0.05) + ')';
+    const r = 4+Math.random()*22, x = Math.random()*W, y = Math.random()*H;
+    g.beginPath(); g.arc(x,y,r,0,Math.PI*2); g.fill();
   }
+  /* os mares com nome e lugar de verdade, no lado que nos encara (lon 0) */
+  const MARES = [
+    ['Procellarum', -55, 20, 95, 120, 0.9],
+    ['Imbrium', -17, 33, 75, 60, 1.0],
+    ['Serenitatis', 18, 26, 48, 44, 1.0],
+    ['Tranquillitatis', 31, 9, 52, 42, 0.95],
+    ['Fecunditatis', 52, -8, 40, 42, 0.85],
+    ['Crisium', 59, 17, 32, 26, 1.0],
+    ['Nectaris', 35, -15, 26, 24, 0.85],
+    ['Nubium', -17, -21, 36, 28, 0.85],
+    ['Humorum', -39, -24, 26, 24, 0.9]
+  ];
+  for(const [nm, lon, lat, rw, rh, dk] of MARES){
+    const [x, y] = px(lon, lat);
+    for(let i=0;i<5;i++){
+      const dx = (Math.random()-0.5)*rw*0.5, dy = (Math.random()-0.5)*rh*0.5;
+      const gr = g.createRadialGradient(x+dx,y+dy,0,x+dx,y+dy,Math.max(rw,rh)*0.8);
+      gr.addColorStop(0,'rgba(74,72,70,'+(0.34*dk)+')'); gr.addColorStop(1,'rgba(74,72,70,0)');
+      g.fillStyle = gr;
+      g.beginPath(); g.ellipse(x+dx, y+dy, rw*0.8, rh*0.8, 0, 0, Math.PI*2); g.fill();
+    }
+  }
+  /* crateras miudas */
   for(let i=0;i<520;i++){
-    const x = Math.random()*W, y = Math.random()*H, r = 1 + Math.random()*7;
-    g.fillStyle = 'rgba(255,255,255,' + (0.05 + Math.random()*0.13) + ')';
+    const x = Math.random()*W, y = Math.random()*H, r = 1 + Math.random()*6;
+    g.fillStyle = 'rgba(255,255,255,' + (0.05 + Math.random()*0.12) + ')';
     g.beginPath(); g.arc(x,y,r,0,Math.PI*2); g.fill();
     g.fillStyle = 'rgba(0,0,0,.10)';
     g.beginPath(); g.arc(x+r*0.3,y+r*0.3,r*0.8,0,Math.PI*2); g.fill();
   }
+  /* Tycho e Copernico com os sistemas de raios */
+  const raios = (lon, lat, n, len, w, a)=>{
+    const [x, y] = px(lon, lat);
+    for(let i=0;i<n;i++){
+      const ang = i/n*Math.PI*2 + Math.random()*0.4;
+      const L = len*(0.5+Math.random()*0.6);
+      const gr = g.createLinearGradient(x, y, x+Math.cos(ang)*L, y+Math.sin(ang)*L);
+      gr.addColorStop(0,'rgba(255,255,255,'+a+')'); gr.addColorStop(1,'rgba(255,255,255,0)');
+      g.strokeStyle = gr; g.lineWidth = w;
+      g.beginPath(); g.moveTo(x,y); g.lineTo(x+Math.cos(ang)*L, y+Math.sin(ang)*L); g.stroke();
+    }
+    g.fillStyle = 'rgba(255,255,255,.85)';
+    g.beginPath(); g.arc(x, y, 4, 0, Math.PI*2); g.fill();
+    g.fillStyle = 'rgba(90,88,84,.9)';
+    g.beginPath(); g.arc(x, y, 2, 0, Math.PI*2); g.fill();
+  };
+  raios(-11, -43, 14, 150, 1.6, 0.30);   /* Tycho, o rei dos raios */
+  raios(-20, 10, 10, 70, 1.2, 0.22);     /* Copernico */
+  /* Base da Tranquilidade: onde a Apollo 11 pousou, marcada em ambar */
+  { const [x, y] = px(23.47, 0.67);
+    g.strokeStyle = 'rgba(255,180,84,.9)'; g.lineWidth = 1.2;
+    g.beginPath(); g.arc(x, y, 5, 0, Math.PI*2); g.stroke();
+    g.fillStyle = 'rgba(255,180,84,1)';
+    g.fillRect(x-1, y-1, 2, 2); }
   const t = new THREE.CanvasTexture(c);
   t.anisotropy = 4;
   return (_texLua = t);
@@ -4261,6 +4307,36 @@ function grupoLive(id, raio, seg){
    Na cena de foco, sonda aparece como sonda e satélite como satélite.
    Tudo em primitivas (a cena não tem luzes: MeshBasicMaterial com cores
    escolhidas peça a peça faz o papel do sombreado). */
+/* texturas sutis para as naves: metal escovado, kapton amassado e placas.
+   Base branca multiplicada pela cor do material, entao servem para todas. */
+let _texNave = null;
+function texNave(){
+  if(_texNave) return _texNave;
+  const mk = fn => {
+    const c = document.createElement('canvas'); c.width = c.height = 128;
+    fn(c.getContext('2d'), 128);
+    const t = new THREE.CanvasTexture(c);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    return t;
+  };
+  _texNave = {
+    metal: mk((g,S)=>{ g.fillStyle='#fff'; g.fillRect(0,0,S,S);
+      for(let i=0;i<420;i++){ g.fillStyle='rgba(0,0,0,'+(Math.random()*0.10)+')'; g.fillRect(Math.random()*S,0,1,S); }
+      for(let i=0;i<70;i++){ g.fillStyle='rgba(255,255,255,'+(Math.random()*0.22)+')'; g.fillRect(Math.random()*S,0,1,S); } }),
+    kapton: mk((g,S)=>{ g.fillStyle='#fff'; g.fillRect(0,0,S,S);
+      for(let i=0;i<900;i++){ g.fillStyle='rgba(0,0,0,'+(Math.random()*0.20)+')';
+        g.fillRect(Math.random()*S, Math.random()*S, 2+Math.random()*4, 1+Math.random()*3); }
+      for(let i=0;i<320;i++){ g.fillStyle='rgba(255,255,255,'+(Math.random()*0.38)+')';
+        g.fillRect(Math.random()*S, Math.random()*S, 1+Math.random()*3, 1); } }),
+    placas: mk((g,S)=>{ g.fillStyle='#fff'; g.fillRect(0,0,S,S);
+      g.strokeStyle='rgba(0,0,0,.15)'; g.lineWidth=1;
+      for(let x=0;x<=S;x+=16){ g.beginPath(); g.moveTo(x,0); g.lineTo(x,S); g.stroke(); }
+      for(let y=0;y<=S;y+=16){ g.beginPath(); g.moveTo(0,y); g.lineTo(S,y); g.stroke(); }
+      for(let i=0;i<42;i++){ g.fillStyle='rgba(0,0,0,'+(0.03+Math.random()*0.07)+')';
+        g.fillRect(Math.floor(Math.random()*8)*16, Math.floor(Math.random()*8)*16, 16, 16); } })
+  };
+  return _texNave;
+}
 function _cil(mat, r0, r1, len, seg){ return new THREE.Mesh(new THREE.CylinderGeometry(r0, r1, len, seg||8), mat); }
 function _box(mat, x, y, z){ return new THREE.Mesh(new THREE.BoxGeometry(x, y, z), mat); }
 /* treliça: três longarinas finas em triângulo com travessas */
@@ -4285,11 +4361,11 @@ function _trelica(mat, comp, r){
 }
 function grupoSonda(raio){
   const g = new THREE.Group();
-  const mCorpo = new THREE.MeshBasicMaterial({color:0x9a8f78});
-  const mEscuro = new THREE.MeshBasicMaterial({color:0x5e584c});
-  const mKapton = new THREE.MeshBasicMaterial({color:0x8a6428});
-  const mPrato = new THREE.MeshBasicMaterial({color:0xe6e0d0, side:THREE.DoubleSide});
-  const mPratoIn = new THREE.MeshBasicMaterial({color:0xc4bcac, side:THREE.DoubleSide});
+  const mCorpo = new THREE.MeshBasicMaterial({color:0x9a8f78, map:texNave().metal});
+  const mEscuro = new THREE.MeshBasicMaterial({color:0x5e584c, map:texNave().metal});
+  const mKapton = new THREE.MeshBasicMaterial({color:0x8a6428, map:texNave().kapton});
+  const mPrato = new THREE.MeshBasicMaterial({color:0xe6e0d0, side:THREE.DoubleSide, map:texNave().metal});
+  const mPratoIn = new THREE.MeshBasicMaterial({color:0xc4bcac, side:THREE.DoubleSide, map:texNave().metal});
   const mOuro = new THREE.MeshBasicMaterial({color:0xd8a545});
   /* corpo: caixa decagonal embrulhada em kapton, com a lateral escura */
   const corpo = _cil(mKapton, raio*0.34, raio*0.34, raio*0.26, 10);
@@ -4346,12 +4422,12 @@ function grupoSonda(raio){
 }
 function grupoISS(raio){
   const g = new THREE.Group();
-  const mTruss = new THREE.MeshBasicMaterial({color:0x9aa0aa});
-  const mTruss2 = new THREE.MeshBasicMaterial({color:0x7a8089});
-  const mMod = new THREE.MeshBasicMaterial({color:0xd8d8dc});
-  const mMod2 = new THREE.MeshBasicMaterial({color:0xb4b6bc});
-  const mPainel = new THREE.MeshBasicMaterial({color:0x9a6428, side:THREE.DoubleSide});
-  const mPainel2 = new THREE.MeshBasicMaterial({color:0xb4783a, side:THREE.DoubleSide});
+  const mTruss = new THREE.MeshBasicMaterial({color:0x9aa0aa, map:texNave().metal});
+  const mTruss2 = new THREE.MeshBasicMaterial({color:0x7a8089, map:texNave().metal});
+  const mMod = new THREE.MeshBasicMaterial({color:0xd8d8dc, map:texNave().placas});
+  const mMod2 = new THREE.MeshBasicMaterial({color:0xb4b6bc, map:texNave().placas});
+  const mPainel = new THREE.MeshBasicMaterial({color:0x9a6428, side:THREE.DoubleSide, map:texNave().placas});
+  const mPainel2 = new THREE.MeshBasicMaterial({color:0xb4783a, side:THREE.DoubleSide, map:texNave().placas});
   const mRad = new THREE.MeshBasicMaterial({color:0xcdd4da, side:THREE.DoubleSide});
   /* a espinha: treliça comprida com segmentos alternados */
   for(let i=0;i<7;i++){
@@ -4400,8 +4476,8 @@ function grupoISS(raio){
 }
 function grupoHubble(raio){
   const g = new THREE.Group();
-  const mTubo = new THREE.MeshBasicMaterial({color:0xc0c4cc});
-  const mTubo2 = new THREE.MeshBasicMaterial({color:0x8f939b});
+  const mTubo = new THREE.MeshBasicMaterial({color:0xc0c4cc, map:texNave().metal});
+  const mTubo2 = new THREE.MeshBasicMaterial({color:0x8f939b, map:texNave().metal});
   const mEscuro = new THREE.MeshBasicMaterial({color:0x3c4046});
   const mPainel = new THREE.MeshBasicMaterial({color:0x35497e, side:THREE.DoubleSide});
   /* o tubo prateado, em duas seções */
@@ -4445,7 +4521,7 @@ function grupoHubble(raio){
 }
 function grupoSputnik(raio){
   const g = new THREE.Group();
-  const mBola = new THREE.MeshBasicMaterial({color:0xd4d8e0});
+  const mBola = new THREE.MeshBasicMaterial({color:0xd4d8e0, map:texNave().metal});
   const mBrilho = new THREE.MeshBasicMaterial({color:0xf2f4f8});
   const mHaste = new THREE.MeshBasicMaterial({color:0xaab0ba});
   const bola = new THREE.Mesh(new THREE.SphereGeometry(raio*0.42, 28, 28), mBola);
@@ -4473,9 +4549,9 @@ function grupoSputnik(raio){
 }
 function grupoJWST(raio){
   const g = new THREE.Group();
-  const mOuro = new THREE.MeshBasicMaterial({color:0xd8b054});
-  const mOuro2 = new THREE.MeshBasicMaterial({color:0xc09a40});
-  const mEscuro = new THREE.MeshBasicMaterial({color:0x3c4046});
+  const mOuro = new THREE.MeshBasicMaterial({color:0xd8b054, map:texNave().kapton});
+  const mOuro2 = new THREE.MeshBasicMaterial({color:0xc09a40, map:texNave().kapton});
+  const mEscuro = new THREE.MeshBasicMaterial({color:0x3c4046, map:texNave().metal});
   /* o espelho: 18 hexágonos de ouro em dois anéis (o centro é vazio) */
   const d = raio*0.21, hexes = [];
   const ring1 = [[1,0],[0,1],[-1,1],[-1,0],[0,-1],[1,-1]];
@@ -4527,8 +4603,8 @@ function grupoJWST(raio){
 }
 function grupoFoguete(raio){
   const g = new THREE.Group();
-  const mBranco = new THREE.MeshBasicMaterial({color:0xe8e8ec});
-  const mPreto = new THREE.MeshBasicMaterial({color:0x26262c});
+  const mBranco = new THREE.MeshBasicMaterial({color:0xe8e8ec, map:texNave().placas});
+  const mPreto = new THREE.MeshBasicMaterial({color:0x26262c, map:texNave().metal});
   const mMotor = new THREE.MeshBasicMaterial({color:0x8a7a60});
   const k = raio*0.92;
   /* os três estágios do Saturn V, com as faixas pretas do padrão de rolagem */
@@ -6806,7 +6882,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r68';
+const BUILD = 'r69';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

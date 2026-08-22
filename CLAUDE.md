@@ -1,6 +1,6 @@
 # Cartografia Estelar · contexto do projeto
 
-Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r64** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
+Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r69** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
 
 ## Arquitetura (blocos <script> em ordem)
 1. Helpers ($, isMobile, RM, clamp, easeIO, hashStr, coordOf) + shaders GLSL como template strings (NOISE/PLANET/CLOUD/ATMO/RING/SUN). fbm usa 4 octaves em touch, 5 no desktop.
@@ -55,8 +55,9 @@ Duas features grandes que ele quer testar. Fazer uma por vez, em commit isolado,
 - Na cena de foco, sonda renderiza com `grupoSonda()` (prato, corpo, disco de ouro, hastes, RTG), não como esfera.
 
 ## O QUE FICOU PARA DEPOIS (pedidos do Rodrigo, NÃO deixar se perder)
+- r65-r69 entregues: filtro esconde rótulo também (flag `off` na label, o loop respeita), registro de bordo em árvore (galáxia > sistema > corpos, MISS.galFech/sisAb), filtro NAVES, buscar inteligente (carto:rec, sugestões do sistema atual, atalho S, limite 12/6), corpo navega junto no percurso (TRAJ.corpo via objReg), linha do tempo em DIAS para foguetes (traj:{dias,d0,d1}, marcos em dias, sem Kepler), Lua LIVE com mares reais + Tycho + base da Apollo 11 marcada em âmbar.
 - **POLIR o LIVE da Terra**: ele aprovou o estilo e o funcionamento, mas está "muito cru". Melhorar contornos de costa, cores, nuvens, transição dia/noite.
-- **POLIR MUITO o modelo da sonda**: aprovado o espírito, mas "sem base sem estrutura". Dar treliça, painéis, mais peças, talvez modelos levemente diferentes por sonda.
+- Modelos das naves: treliça e peças no r58, texturas canvas (metal escovado, kapton, placas) via texNave() no r69. Miniaturas dos modelos no mapa e no foco (r65). Rodrigo validou o desenho, seguimos polindo sob demanda.
 - **Revisitar atalhos assumidos por pressa** (lista honesta): mapa da Terra com polígonos grosseiros; luzes de cidade por amostragem aleatória; nuvens do LIVE FEITAS em canvas no r64 (texturaNuvens: ITCZ, espirais das latitudes médias, cirros polares, subtrópicos limpos); modelo de sonda único para as quatro; marcos de trajetória hardcoded nos dados.
 - **Foguetes FEITOS no r62** (Apollo 11 e Apollo 13, classe `foguete` nos dois grupos de filtro, modelo grupoFoguete do Saturn V, satOf terra). Regra dele mantida: SÓ missões famosas da cultura pop, senão vira zona.
 - **Satélites históricos FEITOS no r55** (ISS, Hubble, Sputnik, James Webb): corpos com `satelite:true` + `satOf:'terra'`. O motor parenteia o holder deles no holder do corpo-mãe (sys.orbit vira o raio do anel EM VOLTA da Terra, e o conjunto viaja junto). Classe de linha `satelite` nos filtros, desligada por padrão. Label faint, pick menor. r58: cada nave famosa tem modelo próprio (grupoISS/grupoHubble/grupoSputnik/grupoJWST, despacho em grupoNave). r61: satélites também aparecem no FOCO da Terra junto com a Lua e nos chips do card (satelitesDe concatenado em kids e na lista), e o foco/card de satélite usa satOf como mãe (VOLTAR A TERRA). Urano+Netuno revisitadas FEITAS no r56. Carina FEITA no r53.
@@ -66,7 +67,7 @@ Duas features grandes que ele quer testar. Fazer uma por vez, em commit isolado,
 - **"Orbitar junto" de qualquer corpo**: play genérico acompanhando um corpo em órbita fechada (o Halley já funciona, generalizar é pequeno).
 - **Tour**: o Rodrigo NÃO anda gostando dele. Mantido por ora (tecla T + registro de bordo). Se ele pedir, remover a UI sem dó, o código é isolado.
 - **Terra ao vivo**: POLIDA no r57 (continentes refinados + 13 ilhas, biomas por máscara source-atop em BIOMAS, plataforma costeira, tundra/gelo, luzes com 55 metrópoles reais lendo a máscara `_mascaraTerra`, shader com crepúsculo quente, luar azulado e reflexo do Sol só na água). Falta o Rodrigo validar no navegador real.
-- **Lote pop pendente**: Nebulosa da Formiga, Plêiades. Io/Europa focus com mergulho já funcionam; Tritão e Miranda ganharam fichas completas no r56.
+- Lotes pop: Formiga e Olho de Gato FEITOS no r60 (Plêiades já existia desde o r39). Io/Europa focus com mergulho já funcionam; Tritão e Miranda ganharam fichas completas no r56.
 - **Marcos no percurso** FEITOS no r50 (campo `marcos:[[ano,'RÓTULO']]` no corpo; Halley usa `traj:{de,ate}` para o intervalo de anos).
 
 ## Publicação
