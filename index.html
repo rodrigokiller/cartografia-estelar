@@ -5051,6 +5051,7 @@ function diveStep(now){
   if(ACT && ACT.labels) for(const L of ACT.labels) L.el.style.opacity = op;
   if(k >= 1){
     const fim = DIVE.done; DIVE = null;
+    if(ACT) ACT._acesa = true;   /* a saída acende sozinha; a entrada troca de cena logo em seguida */
     document.body.classList.remove('diving');
     if(ACT && ACT.labels) for(const L of ACT.labels) L.el.style.opacity = '';
     if(fim) fim();
@@ -5259,6 +5260,7 @@ function blinkSwap(fn){
   finally{
     if(!DIVE && ACT && ACT.dim){
       ACT.dim(0, ST.body || null);
+      ACT._acesa = false;
       FADEIN = {t0:performance.now(), ms:620};
     }
   }
@@ -5267,7 +5269,7 @@ function fadeInStep(now){
   if(!FADEIN) return;
   const k = Math.min(1, (now - FADEIN.t0)/FADEIN.ms);
   if(ACT && ACT.dim) ACT.dim(easeIO(k), null);
-  if(k >= 1) FADEIN = null;
+  if(k >= 1){ FADEIN = null; if(ACT) ACT._acesa = true; }
 }
 
 function fadeSwap(text, fn){
@@ -7189,7 +7191,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r77';
+const BUILD = 'r78';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -7421,6 +7423,23 @@ function loop(){
   }
   if(DIVE) diveStep(now);
   if(TRAJ) trajStep(now);
+  /* CORREÇÃO do bug da cena preta (r75-r77): o bloco da trava de centro foi
+     inserido entre o if(TRAJ) e o "else if(FADEIN)", e o else passou a se
+     ligar ao if da trava. Em cena de sistema o if rodava sempre, o else
+     nunca, e o FADEIN morria de fome: a cena entrava apagada e ficava.
+     Agora o fade é independente e ainda tem um vigia. */
+  if(FADEIN && !DIVE) fadeInStep(now);
+  if(FADEIN && now - FADEIN.t0 > 1400){
+    if(ACT && ACT.dim) ACT.dim(1, null);
+    if(ACT) ACT._acesa = true;
+    FADEIN = null;
+    RLOG.push('heal-f');
+  }
+  if(!DIVE && !TRAJ && !FADEIN && ACT && ACT._acesa === false){
+    ACT.dim(1, null);
+    ACT._acesa = true;
+    RLOG.push('heal-d');
+  }
   /* trava de centro no mapa: o corpo selecionado vira o pivô da câmera,
      e soltar a seleção devolve o centro suavemente */
   if(ACT && ACT.kind==='system' && !DIVE && !TRAJ && !CAMTW){
@@ -7431,7 +7450,6 @@ function loop(){
       SEGV.set(0,0,0); CAM.pivot.lerp(SEGV, Math.min(1, dt*5.2));
     }
   }
-  else if(FADEIN) fadeInStep(now);
   if(TOUR.on && TOUR.ms) $('#tourprog').style.width = Math.min(100, (now-TOUR.t0)/TOUR.ms*100).toFixed(1)+'%';
   if(ACT){
     if(ACT.update) ACT.update(dt, t);
