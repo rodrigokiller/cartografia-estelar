@@ -1709,6 +1709,18 @@ const STARSYS = [
    sections:[{t:'REGISTRO', rows:[['A forma','O buraco no meio foi cavado pelas estrelas que nasceram lá dentro'],['Onde','No Unicórnio, ao lado de Órion'],['O detalhe','O vermelho das fotos é hidrogênio, invisível para o olho']]}],
    facts:['Uma das nebulosas mais fotografadas, e quase desconhecida de quem só olha o céu.'],
    fict:'Papel de parede e capa de álbum sempre que alguém quer uma flor cósmica.'}},
+ {id:'formiga', name:'NEBULOSA DA FORMIGA', nav:true, pos:[-13.5,0,6], hot:false,
+  card:{desig:'MZ 3 · ~4.500 AL', kind:'O futuro do Sol, em forma de formiga', hab:null,
+   quick:[['DISTÂNCIA','~4.500 al'],['CATÁLOGO','Menzel 3'],['JATOS','>1.000 km/s'],['CONSTELAÇÃO','Norma']],
+   sections:[{t:'REGISTRO', rows:[['O que é','Uma estrela como o Sol expelindo as últimas camadas'],['A forma','Cabeça e tórax de formiga, esculpidos por algo que aperta a cintura']]}],
+   facts:['O retrato do fim do nosso próprio sistema solar.'],
+   fict:'A formiga cósmica do Hubble, clássico de 2001.'}},
+ {id:'olhodegato', name:'OLHO DE GATO', nav:true, pos:[8.5,0,-16], hot:false,
+  card:{desig:'NGC 6543 · ~3.300 AL', kind:'Onze anéis concêntricos no Dragão', hab:null,
+   quick:[['DISTÂNCIA','~3.300 al'],['CATÁLOGO','NGC 6543'],['CASCAS','11'],['CONSTELAÇÃO','Dragão']],
+   sections:[{t:'REGISTRO', rows:[['O que é','Uma planetária de anéis concêntricos, um sopro a cada 1.500 anos'],['O marco','Onde Huggins provou em 1864 que nebulosas são gás']]}],
+   facts:['Aqui nasceu a astrofísica, num espectroscópio de 1864.'],
+   fict:'A internet jura que é o Olho de Sauron.'}},
  {id:'carina', name:'NEBULOSA DE CARINA', nav:true, pos:[-12,0,-15], hot:true,
   card:{desig:'BERÇÁRIO GIGANTE · 7.500 AL', kind:'A maior nebulosa do céu', hab:null,
    quick:[['DISTÂNCIA','7.500 al'],['CATÁLOGO','NGC 3372'],['LARGURA','~300 al'],['A OLHO NU','sim']],
@@ -2810,6 +2822,50 @@ const CARINA_NEBULA = {
   ],
   facts:['É a maior e mais brilhante nebulosa do céu, e o hemisfério sul a vê a olho nu: Órion é que fica com a fama.','A Montanha Mística é uma coluna de poeira de três anos-luz sendo comida pela radiação por todos os lados.'],
   fict:'Os Penhascos Cósmicos do JWST viraram o papel de parede espacial mais usado do mundo em 2022.', moons:[]};
+const MZ3_STAR = {
+  id:'mz3star', name:'MZ 3 CENTRAL', desig:'FORMIGA · ESTRELA MORIBUNDA', kind:'Um sol no fim da vida, soprando o próprio casulo', hab:null, gbar:6,
+  quick:[['TIPO','gigante em agonia'],['RAIO','~1 R☉ (núcleo expondo)'],['DISTÂNCIA','~4.500 al'],['DESCOBERTA','1922 · Donald Menzel'],['JATOS','>1.000 km/s'],['DESTINO','anã branca']],
+  visual:{mode:'star', c1:'#ffd8c0', c2:'#e88a5a'},
+  sections:[
+    {t:'A AGONIA', rows:[['O que acontece','Uma estrela parecida com o Sol esgotou o combustível e está expelindo as camadas externas'],['Os jatos','Gás escapando a mais de 1.000 km/s, esculpido em dois lóbulos simétricos'],['A suspeita','Uma companheira escondida, ou campos magnéticos, moldando o corpo de formiga'],['O que sobra','O núcleo nu vira uma anã branca do tamanho da Terra']]},
+    {t:'REGISTRO', rows:[['Descoberta','1922, por Donald Menzel, daí o nome Mz 3'],['Aviso de família','É o retrato do futuro do nosso Sol, daqui a uns 5 bilhões de anos']]}
+  ],
+  facts:['Está morrendo do jeito que o Sol vai morrer: expelindo as próprias camadas até sobrar só o núcleo.','Os jatos dela correm a mais de 1.000 km/s, e ainda assim desenham uma formiga perfeita.'],
+  fict:'A foto do Hubble de 2001 virou clássico instantâneo: uma formiga gigante brilhando no meio do nada.'
+};
+const FORMIGA_NEBULA = {
+  id:'formiganeb', name:'NEBULOSA DA FORMIGA', desig:'MZ 3 · NEBULOSA PLANETÁRIA', kind:'O casulo em forma de formiga de uma estrela que morre', hab:0, gbar:0.0001, pop:'0',
+  region:true, field:{shape:'cloud', r0:4, r1:16, col:0xd06a6a, rock:0x6a2830, size:0.22},
+  quick:[['DISTÂNCIA','~4.500 al'],['CATÁLOGO','Menzel 3'],['FORMA','dois lóbulos, corpo de formiga'],['EXPANSÃO','>1.000 km/s'],['CONSTELAÇÃO','Norma, o Esquadro'],['TIPO','nebulosa planetária']],
+  visual:{mode:'haze', c1:'#4a1f22', c2:'#d06a6a', c3:'#f0a878', seed:19.22, atmo:{col:'#ff8a6a', i:1.6}},
+  sections:[
+    {t:'A FORMIGA', rows:[['Cabeça e tórax','Os dois lóbulos de gás brilhante que dão o apelido'],['O escultor','Algo aperta a cintura: talvez uma segunda estrela, talvez campos magnéticos'],['Planetária','O nome é histórico e não tem a ver com planetas: nos telescópios antigos pareciam discos'],['Posição aqui','Simbólica: a nuvem envolve a estrela central']]},
+    {t:'REGISTRO', rows:[['Vida curta','Nebulosas assim duram só umas dezenas de milhares de anos e se dissipam'],['O futuro do Sol','É assim que o nosso sistema termina: um sopro colorido e uma anã branca'],['Estudo','O Hubble a fotografou em detalhe em 1997 e 2001']]}
+  ],
+  facts:['É uma estrela como o Sol morrendo AGORA: o retrato do fim do nosso próprio sistema.','O gás escapa a 1.000 km/s, mas alguma coisa aperta a cintura dela e desenha a formiga.','Nebulosa planetária não tem planeta nenhum: o nome é um engano histórico que pegou.'],
+  fict:'Uma das fotos mais reproduzidas do Hubble: a formiga cósmica de quatro mil anos-luz.', moons:[]};
+const OLHO_STAR = {
+  id:'olhostar', name:'NGC 6543 CENTRAL', desig:'OLHO DE GATO · ESTRELA PULSANTE', kind:'A estrela que sopra anéis a cada 1.500 anos', hab:null, gbar:7,
+  quick:[['TIPO','O7, quase anã branca'],['RAIO','~0,65 R☉'],['TEMPERATURA','~80.000 °C'],['DISTÂNCIA','~3.300 al'],['BRILHO','10.000 Sóis'],['PULSOS','a cada ~1.500 anos']],
+  visual:{mode:'star', c1:'#d8ecff', c2:'#7ab0ff'},
+  sections:[
+    {t:'OS PULSOS', rows:[['O ritmo','A cada ~1.500 anos ela expele uma casca de gás, como anéis de fumaça'],['O registro','Pelo menos onze cascas concêntricas contadas nas fotos profundas'],['Hoje','Minúscula e ferozmente quente, a caminho de virar anã branca']]},
+    {t:'REGISTRO', rows:[['Descoberta','1786 · William Herschel'],['1864','William Huggins apontou um espectroscópio para cá e provou que nebulosas são GÁS'],['O marco','Foi a primeira nebulosa planetária estudada por espectro: nasceu ali a astrofísica']]}
+  ],
+  facts:['Em 1864 esta nebulosa provou que o céu profundo é feito de gás: o espectroscópio de Huggins viu as linhas.','Ela solta um anel de fumaça cósmico a cada 1.500 anos, pontual como um relógio.'],
+  fict:'O Olho de Gato é uma das imagens mais famosas do Hubble, e a internet jura que é o Olho de Sauron.'
+};
+const OLHO_NEBULA = {
+  id:'olhoneb', name:'OLHO DE GATO', desig:'NGC 6543 · NEBULOSA PLANETÁRIA', kind:'Círculos dentro de círculos, o olho que encara de volta', hab:0, gbar:0.0001, pop:'0',
+  region:true, field:{shape:'shell', r0:5, r1:15, col:0x5ac8b0, rock:0x2a6a58, size:0.22},
+  quick:[['DISTÂNCIA','~3.300 al'],['CATÁLOGO','NGC 6543'],['CONSTELAÇÃO','Dragão'],['CASCAS','11 concêntricas'],['IDADE','~1.000 anos (miolo)'],['TIPO','nebulosa planetária']],
+  visual:{mode:'haze', c1:'#123a34', c2:'#5ac8b0', c3:'#b8e8d8', seed:65.43, atmo:{col:'#6ae8c8', i:1.6}},
+  sections:[
+    {t:'O OLHO', rows:[['O miolo','Cascas, jatos e nós de gás numa complexidade que ninguém explica por completo'],['As íris','Onze anéis concêntricos: um sopro da estrela a cada 1.500 anos'],['O apelido','Nas fotos, o conjunto encara de volta como um olho de gato'],['Posição aqui','Simbólica: a casca envolve a estrela central']]},
+    {t:'REGISTRO', rows:[['Descoberta','1786 · William Herschel'],['O marco de 1864','Huggins provou aqui que nebulosas são gás brilhando, não enxames de estrelas'],['Endereço','Na constelação do Dragão, perto do polo norte celeste']]}
+  ],
+  facts:['Cada anel do olho é um sopro da estrela central, um a cada 1.500 anos: dá para contar onze.','Foi aqui, em 1864, que a humanidade descobriu que nebulosas são gás: o espectro não mente.','O miolo é tão complexo que até hoje se debate o que esculpe os jatos e os nós.'],
+  fict:'Concorre com os Pilares da Criação ao posto de foto mais famosa do Hubble, e rende comparações com o Olho de Sauron desde 2004.', moons:[]};
 /* ---- fora da Via Láctea: os únicos candidatos a planeta em outras galáxias ---- */
 const AND_STAR = {
   id:'pa99lente', name:'ESTRELA-LENTE PA-99-N2', desig:'M31 · ESTRELA ANÔNIMA', kind:'Uma estrela de Andrômeda que piscou uma vez', hab:null, gbar:20,
@@ -3122,6 +3178,18 @@ const SYS = {
           quick:[['DISTÂNCIA','5.200 al'],['LARGURA','~130 al'],['CATÁLOGO','NGC 2237'],['NO CÉU','5 luas cheias'],['BURACO','~30 al'],['IDADE','~2 mi anos']],
           sections:[{t:'REGISTRO', rows:[['A forma','O buraco central foi cavado pelo vento das estrelas que nasceram ali'],['O aglomerado','NGC 2244, com uns dois milhões de anos, mora dentro dela'],['Onde ver','Ao lado de Órion, mas fraca demais para o olho: é alvo de fotografia']]}],
           facts:['Fica na região mais famosa do céu e quase ninguém sabe que ela está lá.']} },
+  formiga:{ id:'formiga', name:'NEBULOSA DA FORMIGA', star:MZ3_STAR, bodies:[], belt:[], beltR:[9,15], beltLabel:'A FORMIGA →', beltId:'formiganeb', beltCol:0xd06a6a,
+        starSize:2.2, camMax:38, hint:'UMA ESTRELA COMO O SOL, MORRENDO EM FORMA DE FORMIGA',
+        card:{desig:'MZ 3 · PLANETÁRIA', kind:'O futuro do Sol, ao vivo', hab:null,
+          quick:[['DISTÂNCIA','~4.500 al'],['CATÁLOGO','Menzel 3'],['JATOS','>1.000 km/s'],['CONSTELAÇÃO','Norma']],
+          sections:[{t:'REGISTRO', rows:[['O que é','Uma estrela tipo o Sol expelindo as camadas finais'],['A forma','Dois lóbulos com cintura apertada: uma formiga'],['O aviso','É assim que o nosso sistema termina']]}],
+          facts:['O retrato do fim do Sol, daqui a 5 bilhões de anos.']} },
+  olhodegato:{ id:'olhodegato', name:'OLHO DE GATO', star:OLHO_STAR, bodies:[], belt:[], beltR:[9,14], beltLabel:'O OLHO →', beltId:'olhoneb', beltCol:0x5ac8b0,
+        starSize:2.0, camMax:36, hint:'ONZE ANÉIS, UM SOPRO A CADA 1.500 ANOS',
+        card:{desig:'NGC 6543 · PLANETÁRIA', kind:'O olho que encara de volta', hab:null,
+          quick:[['DISTÂNCIA','~3.300 al'],['CATÁLOGO','NGC 6543'],['CASCAS','11'],['CONSTELAÇÃO','Dragão']],
+          sections:[{t:'REGISTRO', rows:[['O que é','Uma planetária de cascas concêntricas'],['O marco','Aqui Huggins provou em 1864 que nebulosa é gás'],['O apelido','O olho de gato que a internet chama de Sauron']]}],
+          facts:['Foi aqui que nasceu a astrofísica, num espectroscópio de 1864.']} },
   carina:{ id:'carina', name:'NEBULOSA DE CARINA', star:ETA_STAR, bodies:[], belt:[], beltR:[12,20], beltLabel:'A NEBULOSA →', beltId:'carinaneb', beltCol:0xd88a5a,
         starSize:3.2, camMax:46, hint:'A MAIOR NEBULOSA DO CÉU, VISÍVEL A OLHO NU DO BRASIL',
         card:{desig:'BERÇÁRIO GIGANTE · QUILHA', kind:'Quatro vezes Órion, e com a estrela-bomba', hab:null,
@@ -3216,6 +3284,8 @@ reg(R136_STAR,'tarantula'); reg(TAR_NEBULA,'tarantula');
 reg(SN87_STAR,'sn1987a');
 reg(K186_STAR,'kepler186'); K186_BODIES.forEach(p=>reg(p,'kepler186'));
 reg(ROS_STAR,'roseta'); reg(ROS_NEBULA,'roseta');
+reg(MZ3_STAR,'formiga'); reg(FORMIGA_NEBULA,'formiga');
+reg(OLHO_STAR,'olhodegato'); reg(OLHO_NEBULA,'olhodegato');
 reg(ETA_STAR,'carina'); reg(CARINA_NEBULA,'carina');
 reg(OME_STAR,'omega'); reg(OME_SWARM,'omega');
 reg(VEU_STAR,'veu'); reg(VEU_NEBULA,'veu');
@@ -5580,6 +5650,7 @@ const TITULOS = {
   cavalo:'CAÇADOR DE SOMBRAS', pa99:'EMBAIXADOR EM ANDRÔMEDA', m51uls:'ALCANCE MÁXIMO',
   mayall2:'CONTADOR DE MULTIDÕES', nucleoM31:'MERGULHADOR DO ABISMO',
   lagoa:'PESCADOR DA LAGOA', trifida:'TRÊS EM UM',
+  formiga:'ENCANTADOR DE FORMIGAS', olhodegato:'VIGIA DO OLHO DE GATO',
   carina:'ESCALADOR DA MONTANHA MÍSTICA', omega:'SENHOR DAS MULTIDÕES', veu:'ARQUEÓLOGO DA EXPLOSÃO',
   kepler186:'AGRÔNOMO VERMELHO', roseta:'JARDINEIRO CÓSMICO',
   tarantula:'DOMADOR DE ARANHAS', sn1987a:'CAÇADOR DE NEUTRINOS',
@@ -6437,7 +6508,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r59';
+const BUILD = 'r60';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
