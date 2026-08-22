@@ -1,6 +1,6 @@
 # Cartografia Estelar · contexto do projeto
 
-Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r56** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
+Mapa estelar 3D interativo, single-page, em `index.html` (HTML+CSS+JS puro, Three.js r128 via cdnjs, shaders GLSL procedurais, sem build step, roda em file:// e GitHub Pages). Idioma: PT-BR. Build atual: **r57** (const BUILD no código; sempre incrementar a cada entrega). O chip DIAG fica OCULTO por padrão e sai com **Shift+D** (atalho secreto, não documentado no manual do app); clicar nele esconde de novo.
 
 ## Arquitetura (blocos <script> em ordem)
 1. Helpers ($, isMobile, RM, clamp, easeIO, hashStr, coordOf) + shaders GLSL como template strings (NOISE/PLANET/CLOUD/ATMO/RING/SUN). fbm usa 4 octaves em touch, 5 no desktop.
@@ -65,7 +65,7 @@ Duas features grandes que ele quer testar. Fazer uma por vez, em commit isolado,
 - **Satélites e foguetes** como novos tipos de objeto (a classe de linha e o filtro já existem, é só criar a classe `satelite` e os dados).
 - **"Orbitar junto" de qualquer corpo**: play genérico acompanhando um corpo em órbita fechada (o Halley já funciona, generalizar é pequeno).
 - **Tour**: o Rodrigo NÃO anda gostando dele. Mantido por ora (tecla T + registro de bordo). Se ele pedir, remover a UI sem dó, o código é isolado.
-- **Terra ao vivo**: nuvens e luzes de cidades entraram no r50, mas falta o Rodrigo validar o visual no navegador real; costas mais detalhadas seguem pendentes.
+- **Terra ao vivo**: POLIDA no r57 (continentes refinados + 13 ilhas, biomas por máscara source-atop em BIOMAS, plataforma costeira, tundra/gelo, luzes com 55 metrópoles reais lendo a máscara `_mascaraTerra`, shader com crepúsculo quente, luar azulado e reflexo do Sol só na água). Falta o Rodrigo validar no navegador real.
 - **Lote pop pendente**: Nebulosa da Formiga, Plêiades. Io/Europa focus com mergulho já funcionam; Tritão e Miranda ganharam fichas completas no r56.
 - **Marcos no percurso** FEITOS no r50 (campo `marcos:[[ano,'RÓTULO']]` no corpo; Halley usa `traj:{de,ate}` para o intervalo de anos).
 

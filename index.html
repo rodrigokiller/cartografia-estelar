@@ -3767,66 +3767,136 @@ function buildUniverse(){
 let LIVE = false;   /* lido do store mais adiante: o store nasce no bloco seguinte */
 const CONTINENTES = [
   /* America do Sul */
-  [[-81,8],[-77,12],[-71,12],[-60,11],[-52,5],[-50,0],[-44,-2],[-35,-5],[-35,-9],[-39,-13],[-41,-22],
-   [-48,-25],[-48,-28],[-53,-34],[-58,-38],[-62,-40],[-65,-45],[-69,-52],[-75,-52],[-73,-45],[-75,-37],
-   [-71,-30],[-70,-20],[-71,-14],[-77,-6],[-80,-3],[-79,2]],
-  /* America do Norte e America Central */
-  [[-168,66],[-158,71],[-140,70],[-128,70],[-115,69],[-95,68],[-81,73],[-70,70],[-64,60],[-55,52],
-   [-60,46],[-67,45],[-71,41],[-76,35],[-81,31],[-80,25],[-84,30],[-90,29],[-97,26],[-97,20],[-92,18],
-   [-88,16],[-84,10],[-79,9],[-83,15],[-92,15],[-105,20],[-110,24],[-114,29],[-117,33],[-122,38],
-   [-124,44],[-124,48],[-131,54],[-140,60],[-150,60],[-158,57],[-166,60],[-168,66]],
+  [[-77,8],[-75,11],[-71,12],[-64,10],[-60,8],[-52,5],[-50,0],[-44,-2],[-38,-4],[-35,-5],[-34,-7],
+   [-35,-9],[-37,-11],[-39,-13],[-39,-17],[-41,-22],[-45,-23],[-48,-25],[-48,-28],[-52,-33],[-56,-34],
+   [-58,-38],[-62,-39],[-62,-41],[-65,-45],[-67,-49],[-69,-52],[-68,-55],[-75,-54],[-73,-50],[-74,-46],
+   [-75,-42],[-73,-37],[-71,-30],[-70,-25],[-70,-18],[-72,-17],[-76,-14],[-79,-8],[-81,-6],[-81,-4],
+   [-80,-2],[-80,2],[-78,5],[-77,8]],
+  /* America do Norte e Central */
+  [[-166,62],[-163,70],[-156,71],[-140,70],[-125,70],[-110,68],[-95,68],[-85,70],[-81,73],[-73,71],
+   [-68,68],[-64,60],[-58,54],[-55,52],[-60,46],[-66,44],[-70,42],[-74,39],[-76,35],[-80,32],[-81,27],
+   [-80,25],[-82,28],[-85,30],[-89,29],[-94,29],[-97,26],[-97,21],[-94,18],[-90,16],[-87,14],[-84,10],
+   [-79,9],[-78,7],[-81,8],[-83,11],[-85,13],[-88,14],[-92,15],[-96,16],[-102,18],[-106,22],[-109,24],
+   [-112,27],[-114,30],[-117,33],[-120,35],[-122,38],[-124,42],[-124,48],[-128,51],[-132,55],[-137,58],
+   [-142,60],[-150,60],[-153,58],[-158,56],[-162,58],[-166,62]],
   /* Groenlandia */
   [[-45,60],[-30,68],[-22,70],[-20,76],[-30,82],[-45,83],[-58,82],[-68,76],[-55,68],[-50,62]],
   /* Africa */
-  [[-17,15],[-16,21],[-10,26],[-5,32],[3,37],[11,34],[20,32],[27,31],[33,31],[35,24],[38,18],[43,12],
-   [51,12],[51,6],[45,0],[41,-8],[40,-14],[35,-20],[33,-26],[27,-33],[20,-35],[18,-32],[13,-23],
-   [12,-16],[9,-1],[3,6],[-8,5],[-13,9],[-17,15]],
+  [[-6,35],[-2,35],[3,37],[10,37],[11,34],[15,32],[20,32],[25,32],[32,31],[34,28],[35,24],[37,21],
+   [38,18],[40,15],[43,12],[47,11],[51,12],[51,10],[49,7],[45,2],[41,-2],[40,-6],[39,-10],[40,-14],
+   [36,-18],[35,-22],[33,-26],[30,-31],[26,-34],[20,-35],[18,-34],[17,-29],[15,-27],[12,-18],[13,-12],
+   [13,-6],[9,-1],[9,4],[5,4],[1,6],[-4,5],[-8,4],[-13,8],[-17,15],[-16,20],[-15,24],[-13,28],
+   [-9,31],[-6,35]],
   /* Europa e Asia */
-  [[-10,36],[-9,44],[-2,49],[4,52],[8,58],[5,62],[12,68],[22,71],[30,70],[40,68],[55,70],[70,73],
-   [85,74],[105,77],[125,74],[140,73],[160,70],[170,66],[178,65],[170,60],[160,60],[155,52],[142,47],
-   [135,43],[130,35],[122,31],[121,23],[110,20],[105,10],[100,6],[95,16],[90,22],[80,15],[77,8],
-   [72,20],[68,24],[60,25],[52,25],[45,13],[43,12],[35,24],[35,31],[33,36],[28,41],[20,42],[13,45],
-   [12,38],[15,37],[8,44],[0,43],[-5,36],[-10,36]],
+  [[-10,36],[-7,37],[-9,39],[-9,43],[-2,48],[-5,48],[-2,50],[2,51],[4,53],[8,54],[8,57],[6,58],
+   [5,62],[10,64],[14,68],[20,70],[26,71],[30,70],[35,66],[40,67],[45,68],[55,69],[68,69],[73,68],
+   [80,70],[90,73],[100,76],[110,74],[120,72],[130,71],[140,72],[150,70],[160,69],[170,66],[178,66],
+   [179,62],[170,60],[162,60],[160,56],[156,51],[150,47],[142,47],[140,42],[135,43],[130,42],[128,39],
+   [126,35],[129,35],[128,38],[122,37],[121,32],[122,28],[117,23],[110,20],[108,15],[106,10],[104,8],
+   [100,8],[98,12],[97,17],[94,16],[91,22],[88,21],[85,19],[80,15],[80,10],[77,8],[73,15],[70,20],
+   [66,24],[61,25],[57,26],[52,25],[48,29],[44,29],[41,31],[36,36],[33,36],[27,36],[26,40],[22,40],
+   [20,42],[16,41],[18,40],[15,38],[15,44],[12,45],[8,44],[6,43],[3,42],[0,40],[-2,36],[-6,36],[-10,36]],
+  /* Arabia */
+  [[35,29],[39,25],[43,17],[45,13],[53,17],[59,22],[56,26],[51,28],[48,30],[44,30],[39,32],[35,29]],
   /* Australia */
   [[113,-22],[114,-27],[118,-34],[126,-32],[132,-32],[138,-35],[145,-38],[147,-43],[150,-37],
    [153,-31],[153,-25],[146,-19],[142,-11],[136,-12],[130,-12],[125,-14],[121,-19],[113,-22]],
   /* Antartida */
   [[-180,-70],[-150,-75],[-120,-73],[-90,-72],[-60,-63],[-45,-72],[-20,-70],[10,-69],[40,-68],
-   [70,-67],[100,-66],[130,-66],[160,-70],[180,-72],[180,-90],[-180,-90]]
+   [70,-67],[100,-66],[130,-66],[160,-70],[180,-72],[180,-90],[-180,-90]],
+  /* ilhas que fazem o mapa parecer o nosso */
+  [[-24,64],[-21,66],[-16,66],[-14,64],[-18,63],[-24,64]],                     /* Islandia */
+  [[-5,50],[-3,53],[-2,56],[-4,58],[-7,57],[-6,54],[-5,50]],                   /* Gra-Bretanha */
+  [[-10,52],[-8,55],[-6,54],[-7,52],[-10,52]],                                 /* Irlanda */
+  [[44,-25],[47,-24],[50,-16],[49,-12],[47,-15],[43,-22],[44,-25]],            /* Madagascar */
+  [[80,6],[82,7],[81,9],[80,6]],                                               /* Sri Lanka */
+  [[130,31],[133,34],[136,35],[140,36],[141,39],[142,43],[145,44],[143,42],[141,35],[137,34],[132,31],[130,31]], /* Japao */
+  [[95,5],[99,2],[103,-2],[106,-6],[104,-6],[100,-1],[96,3],[95,5]],           /* Sumatra */
+  [[109,1],[113,4],[117,7],[119,1],[116,-3],[110,-2],[109,1]],                 /* Borneo */
+  [[105,-7],[112,-8],[114,-8],[110,-7],[105,-7]],                              /* Java */
+  [[131,-1],[136,-2],[141,-3],[146,-6],[150,-10],[144,-8],[138,-7],[132,-4],[131,-1]], /* Nova Guine */
+  [[120,18],[122,16],[121,12],[125,9],[122,7],[120,14],[120,18]],              /* Filipinas */
+  [[173,-35],[176,-38],[178,-38],[175,-41],[172,-44],[167,-46],[170,-44],[172,-40],[173,-35]], /* Nova Zelandia */
+  [[-84,22],[-79,21],[-74,20],[-77,20],[-82,22],[-84,22]]                      /* Cuba */
 ];
-let _texTerra = null, _texLua = null;
+/* biomas pintados por cima da terra firme (mascara source-atop) */
+const BIOMAS = [
+  {tipo:'el', c:[15,22], r:[38,8],  cor:'rgba(202,172,110,.62)'},   /* Saara */
+  {tipo:'el', c:[46,22], r:[10,6],  cor:'rgba(206,178,116,.55)'},   /* Arabia */
+  {tipo:'el', c:[133,-25], r:[15,8], cor:'rgba(196,148,96,.5)'},    /* interior australiano */
+  {tipo:'el', c:[105,44], r:[13,5], cor:'rgba(188,168,128,.42)'},   /* Gobi */
+  {tipo:'el', c:[21,-24], r:[7,6],  cor:'rgba(198,164,110,.4)'},    /* Kalahari */
+  {tipo:'el', c:[-62,-4], r:[17,8], cor:'rgba(46,96,46,.55)'},      /* Amazonia */
+  {tipo:'el', c:[22,0],  r:[11,6],  cor:'rgba(48,98,48,.5)'},       /* Congo */
+  {tipo:'el', c:[85,33], r:[13,4],  cor:'rgba(210,206,196,.5)'},    /* Himalaia e Tibete */
+  {tipo:'tr', l0:[-72,6], l1:[-70,-42], w:6, cor:'rgba(150,132,104,.45)'},  /* Andes */
+  {tipo:'tr', l0:[-118,52], l1:[-106,35], w:7, cor:'rgba(150,138,116,.35)'} /* Rochosas */
+];
+let _texTerra = null, _texLua = null, _mascaraTerra = null;
 function texturaTerra(){
   if(_texTerra) return _texTerra;
   const W = 2048, H = 1024, c = document.createElement('canvas');
   c.width = W; c.height = H;
   const g = c.getContext('2d');
-  const oc = g.createLinearGradient(0,0,0,H);
-  oc.addColorStop(0,'#0d2a4a'); oc.addColorStop(0.5,'#124b7a'); oc.addColorStop(1,'#0d2a4a');
-  g.fillStyle = oc; g.fillRect(0,0,W,H);
   const px = (lon,lat)=>[ (lon+180)/360*W, (90-lat)/180*H ];
+  /* oceano com profundidade e um respiro mais claro no equador */
+  const oc = g.createLinearGradient(0,0,0,H);
+  oc.addColorStop(0,'#0a2440'); oc.addColorStop(0.28,'#10416c');
+  oc.addColorStop(0.5,'#155081'); oc.addColorStop(0.72,'#10416c'); oc.addColorStop(1,'#0a2440');
+  g.fillStyle = oc; g.fillRect(0,0,W,H);
+  /* plataforma rasa: um halo verde-agua por fora de cada costa */
   g.lineJoin = 'round';
   for(const poly of CONTINENTES){
     g.beginPath();
-    poly.forEach((pt,i)=>{ const [x,y] = px(pt[0],pt[1]); i ? g.lineTo(x,y) : g.moveTo(x,y); });
+    poly.forEach((pt,i)=>{ const [x,y]=px(pt[0],pt[1]); i?g.lineTo(x,y):g.moveTo(x,y); });
     g.closePath();
-    const gr = g.createLinearGradient(0,0,0,H);
-    gr.addColorStop(0,'#5f7a4a'); gr.addColorStop(0.42,'#6f8a52'); gr.addColorStop(0.58,'#7f8a55'); gr.addColorStop(1,'#6a7f52');
-    g.fillStyle = gr; g.fill();
-    g.strokeStyle = 'rgba(120,150,90,.55)'; g.lineWidth = 2; g.stroke();
+    g.strokeStyle = 'rgba(96,178,196,.34)'; g.lineWidth = 6; g.stroke();
   }
-  /* deserto do Saara e Arabia, para o olho reconhecer na hora */
-  g.fillStyle = 'rgba(196,168,104,.55)';
-  g.beginPath();
-  [[-15,20],[10,26],[30,28],[42,22],[52,18],[45,12],[30,15],[10,14],[-10,13]].forEach((pt,i)=>{
-    const [x,y]=px(pt[0],pt[1]); i?g.lineTo(x,y):g.moveTo(x,y); });
-  g.closePath(); g.fill();
-  /* calotas polares */
-  const cal = g.createLinearGradient(0,0,0,H*0.12);
-  cal.addColorStop(0,'rgba(238,246,250,.95)'); cal.addColorStop(1,'rgba(238,246,250,0)');
-  g.fillStyle = cal; g.fillRect(0,0,W,H*0.12);
-  const cal2 = g.createLinearGradient(0,H,0,H*0.86);
-  cal2.addColorStop(0,'rgba(238,246,250,.98)'); cal2.addColorStop(1,'rgba(238,246,250,0)');
-  g.fillStyle = cal2; g.fillRect(0,H*0.86,W,H*0.14);
+  /* terra firme num canvas proprio, para os biomas respeitarem a mascara */
+  const lc = document.createElement('canvas'); lc.width = W; lc.height = H;
+  const lg = lc.getContext('2d'); lg.lineJoin = 'round';
+  for(const poly of CONTINENTES){
+    lg.beginPath();
+    poly.forEach((pt,i)=>{ const [x,y]=px(pt[0],pt[1]); i?lg.lineTo(x,y):lg.moveTo(x,y); });
+    lg.closePath();
+    const gr = lg.createLinearGradient(0,0,0,H);
+    gr.addColorStop(0,'#8a9070'); gr.addColorStop(0.2,'#5c7a48');
+    gr.addColorStop(0.5,'#67854e'); gr.addColorStop(0.8,'#5f7a4c'); gr.addColorStop(1,'#e8eef2');
+    lg.fillStyle = gr; lg.fill();
+  }
+  /* biomas por cima, presos na mascara da terra */
+  lg.globalCompositeOperation = 'source-atop';
+  for(const b of BIOMAS){
+    if(b.tipo === 'el'){
+      const [x,y] = px(b.c[0], b.c[1]);
+      const rx = b.r[0]/360*W, ry = b.r[1]/180*H;
+      const gr = lg.createRadialGradient(x,y,0,x,y,Math.max(rx,ry));
+      gr.addColorStop(0,b.cor); gr.addColorStop(1,'rgba(0,0,0,0)');
+      lg.fillStyle = gr;
+      lg.beginPath(); lg.ellipse(x,y,rx,ry,0,0,Math.PI*2); lg.fill();
+    } else {
+      const [x0,y0] = px(b.l0[0], b.l0[1]), [x1,y1] = px(b.l1[0], b.l1[1]);
+      lg.strokeStyle = b.cor; lg.lineWidth = b.w; lg.lineCap = 'round';
+      lg.beginPath(); lg.moveTo(x0,y0); lg.lineTo(x1,y1); lg.stroke();
+    }
+  }
+  /* tundra e gelo nas altas latitudes, tambem so na terra */
+  const tun = lg.createLinearGradient(0,0,0,H*0.30);
+  tun.addColorStop(0,'rgba(226,232,236,.95)'); tun.addColorStop(0.55,'rgba(168,164,140,.4)'); tun.addColorStop(1,'rgba(0,0,0,0)');
+  lg.fillStyle = tun; lg.fillRect(0,0,W,H*0.30);
+  const ant = lg.createLinearGradient(0,H,0,H*0.80);
+  ant.addColorStop(0,'rgba(240,246,250,.98)'); ant.addColorStop(1,'rgba(0,0,0,0)');
+  lg.fillStyle = ant; lg.fillRect(0,H*0.80,W,H*0.20);
+  lg.globalCompositeOperation = 'source-over';
+  /* costa: um traco fino escuro para o olho achar o contorno */
+  for(const poly of CONTINENTES){
+    lg.beginPath();
+    poly.forEach((pt,i)=>{ const [x,y]=px(pt[0],pt[1]); i?lg.lineTo(x,y):lg.moveTo(x,y); });
+    lg.closePath();
+    lg.strokeStyle = 'rgba(40,64,52,.5)'; lg.lineWidth = 1.5; lg.stroke();
+  }
+  g.drawImage(lc, 0, 0);
+  _mascaraTerra = lc;   /* as luzes das cidades leem esta mascara */
   const t = new THREE.CanvasTexture(c);
   t.anisotropy = 4;
   return (_texTerra = t);
@@ -3867,21 +3937,43 @@ function texturaPreta(){
    lendo os pixels do proprio mapa desenhado */
 function texturaLuzes(){
   if(_texLuzes) return _texLuzes;
-  const src = texturaTerra().image;
+  texturaTerra();   /* garante a mascara de terra firme */
   const W = 1024, H = 512, c = document.createElement('canvas');
   c.width = W; c.height = H;
   const g = c.getContext('2d');
   g.fillStyle = '#000'; g.fillRect(0,0,W,H);
-  const dados = src.getContext('2d').getImageData(0,0,src.width,src.height).data;
-  let n = 0;
-  for(let i=0; i<30000 && n<3400; i++){
-    const x = Math.random(), y = 0.14 + Math.random()*0.66;   /* evita os polos */
-    const k = (Math.floor(y*src.height)*src.width + Math.floor(x*src.width))*4;
-    if(dados[k+1] > dados[k] && dados[k+1] > dados[k+2]+8){   /* pixel de terra firme */
-      g.fillStyle = 'rgba(255,198,112,' + (0.30 + Math.random()*0.55) + ')';
-      const t = Math.random() < 0.10 ? 1.7 : 0.9;
-      g.fillRect(x*W, y*H, t, t); n++;
+  const md = _mascaraTerra.getContext('2d').getImageData(0,0,_mascaraTerra.width,_mascaraTerra.height).data;
+  const emTerra = (x,y)=>{
+    const k = (Math.floor(y*_mascaraTerra.height)*_mascaraTerra.width + Math.floor(x*_mascaraTerra.width))*4;
+    return md[k+3] > 40;
+  };
+  /* metropoles reais: um nucleo forte e um borrifo em volta */
+  const METROS = [[-74,41],[-87.6,41.8],[-95,29.7],[-118,34],[-80.2,25.8],[-79.4,43.7],[-99,19.4],
+    [-46.6,-23.5],[-43.2,-22.9],[-58.4,-34.6],[-70.7,-33.4],[-77,-12],[-74.1,4.7],
+    [-9,38.7],[-4,40.4],[2.3,48.8],[0,51.5],[4.9,52.4],[13.4,52.5],[12.5,41.9],[21,52.2],[30.5,50.4],
+    [29,41],[37.6,55.7],[31.2,30],[3.4,6.5],[36.8,-1.3],[15.3,-4.3],[28,-26.2],[18.4,-33.9],[-7.6,33.6],
+    [51.4,35.7],[44.4,33.3],[46.7,24.7],[55.3,25.3],[67,24.9],[77.2,28.6],[72.8,19],[88.4,22.6],[90.4,23.7],
+    [100.5,13.7],[103.8,1.35],[106.7,10.8],[107,-6.2],[121,14.6],[116.4,39.9],[121.5,31.2],[113.3,23.1],
+    [114.2,22.3],[127,37.5],[139.7,35.7],[135.5,34.7],[151.2,-33.9],[145,-37.8]];
+  for(const [lon,lat] of METROS){
+    const x = (lon+180)/360, y = (90-lat)/180;
+    g.fillStyle = 'rgba(255,214,140,.95)';
+    g.fillRect(x*W-1, y*H-1, 2.4, 2.4);
+    for(let i=0;i<26;i++){
+      const dx = (Math.random()+Math.random()+Math.random()-1.5)*0.016;
+      const dy = (Math.random()+Math.random()+Math.random()-1.5)*0.011;
+      if(!emTerra(x+dx, y+dy)) continue;
+      g.fillStyle = 'rgba(255,200,116,' + (0.25 + Math.random()*0.5) + ')';
+      g.fillRect((x+dx)*W, (y+dy)*H, 1, 1);
     }
+  }
+  /* preenchimento esparso pelo resto da terra habitada */
+  let n = 0;
+  for(let i=0; i<26000 && n<2200; i++){
+    const x = Math.random(), y = 0.12 + Math.random()*0.66;
+    if(!emTerra(x,y)) continue;
+    g.fillStyle = 'rgba(255,198,112,' + (0.16 + Math.random()*0.34) + ')';
+    g.fillRect(x*W, y*H, 0.9, 0.9); n++;
   }
   return (_texLuzes = new THREE.CanvasTexture(c));
 }
@@ -3912,19 +4004,34 @@ function nomeDaFase(i){
 }
 function podeLive(id){ return id === 'terra' || id === 'lua'; }
 const LIVE_VERT = `
-varying vec2 vUv; varying vec3 vN;
+varying vec2 vUv; varying vec3 vN; varying vec3 vV;
 void main(){ vUv = uv; vN = normalize(normalMatrix * normal);
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
+  vec4 mv = modelViewMatrix * vec4(position, 1.0);
+  vV = -mv.xyz;
+  gl_Position = projectionMatrix * mv; }`;
 const LIVE_FRAG = `
 uniform sampler2D uMap; uniform sampler2D uLuzes; uniform vec3 uL; uniform float uAmb;
-varying vec2 vUv; varying vec3 vN;
+varying vec2 vUv; varying vec3 vN; varying vec3 vV;
 void main(){
   vec3 col = texture2D(uMap, vUv).rgb;
-  float dif = max(dot(normalize(vN), normalize(uL)), 0.0);
-  float lum = uAmb + (1.0 - uAmb) * smoothstep(0.0, 0.30, dif);
+  vec3 N = normalize(vN), L = normalize(uL);
+  float dif = dot(N, L);
+  float dia = smoothstep(-0.08, 0.25, dif);
+  /* a noite nao e preta: e um luar azulado */
+  vec3 noite = col * vec3(0.22, 0.27, 0.38) * (uAmb + 0.26);
+  vec3 diaCol = col * (0.35 + 0.75 * smoothstep(0.0, 0.55, dif));
+  vec3 c = mix(noite, diaCol, dia);
+  /* faixa quente do crepusculo sobre o terminador */
+  float tw = smoothstep(-0.04, 0.10, dif) * (1.0 - smoothstep(0.10, 0.30, dif));
+  c += vec3(0.9, 0.42, 0.16) * tw * 0.12;
+  /* reflexo do sol so na agua (pixel azulado) */
+  float oce = smoothstep(0.02, 0.12, col.b - col.r);
+  vec3 R = reflect(-L, N);
+  float spec = pow(max(dot(R, normalize(vV)), 0.0), 28.0);
+  c += vec3(1.0, 0.95, 0.8) * spec * oce * 0.55 * max(dia, 0.0);
   /* as cidades acendem so do lado da noite */
-  vec3 noite = texture2D(uLuzes, vUv).rgb * (1.0 - smoothstep(0.0, 0.22, dif));
-  gl_FragColor = vec4(col * lum + noite, 1.0);
+  vec3 luzes = texture2D(uLuzes, vUv).rgb * (1.0 - smoothstep(0.0, 0.18, dif));
+  gl_FragColor = vec4(c + luzes, 1.0);
 }`;
 function liveMaterial(id){
   return new THREE.ShaderMaterial({vertexShader:LIVE_VERT, fragmentShader:LIVE_FRAG,
@@ -3948,8 +4055,8 @@ function grupoLive(id, raio, seg){
     /* nuvens sutis por cima do mapa, com o shader que os planetas ja usam */
     const cm = new THREE.ShaderMaterial({vertexShader:PLANET_VERT, fragmentShader:CLOUD_FRAG,
       transparent:true, depthWrite:false,
-      uniforms:{uL:{value:LDIR.clone()}, uTime:{value:0}, uCAmt:{value:0.42},
-                uCScale:{value:3.6}, uCCol:{value:C('#ffffff')}}});
+      uniforms:{uL:{value:LDIR.clone()}, uTime:{value:0}, uCAmt:{value:0.5},
+                uCScale:{value:3.1}, uCCol:{value:C('#ffffff')}}});
     ANIM_MATS.push(cm);
     const nuvens = new THREE.Mesh(new THREE.SphereGeometry(raio*1.02, seg, seg), cm);
     nuvens.userData.isClouds = true;
@@ -6069,7 +6176,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r56';
+const BUILD = 'r57';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
