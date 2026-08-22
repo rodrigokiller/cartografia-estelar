@@ -4065,37 +4065,281 @@ function grupoLive(id, raio, seg){
   malha.rotation.y = giroAtual() + LIVE_FASE;
   return {group:g, mesh:malha};
 }
-/* ============================ MODELO DE SONDA ============================
-   Na cena de foco, sonda aparece como sonda: prato, corpo, hastes e o gerador
-   nuclear, em silhueta estilizada (e o disco de ouro na lateral). */
+/* ============================ MODELOS DE NAVE ============================
+   Na cena de foco, sonda aparece como sonda e satélite como satélite.
+   Tudo em primitivas (a cena não tem luzes: MeshBasicMaterial com cores
+   escolhidas peça a peça faz o papel do sombreado). */
+function _cil(mat, r0, r1, len, seg){ return new THREE.Mesh(new THREE.CylinderGeometry(r0, r1, len, seg||8), mat); }
+function _box(mat, x, y, z){ return new THREE.Mesh(new THREE.BoxGeometry(x, y, z), mat); }
+/* treliça: três longarinas finas em triângulo com travessas */
+function _trelica(mat, comp, r){
+  const t = new THREE.Group();
+  for(let i=0;i<3;i++){
+    const a = i/3*Math.PI*2;
+    const l = _cil(mat, r*0.13, r*0.13, comp, 5);
+    l.rotation.z = Math.PI/2;
+    l.position.set(0, Math.sin(a)*r, Math.cos(a)*r);
+    t.add(l);
+  }
+  const nb = Math.max(3, Math.round(comp/(r*4)));
+  for(let j=0;j<nb;j++){
+    const x = -comp/2 + (j+0.5)*comp/nb;
+    const anel = new THREE.Mesh(new THREE.TorusGeometry(r, r*0.10, 4, 6), mat);
+    anel.rotation.y = Math.PI/2;
+    anel.position.x = x;
+    t.add(anel);
+  }
+  return t;
+}
 function grupoSonda(raio){
   const g = new THREE.Group();
-  const mCorpo = new THREE.MeshBasicMaterial({color:0xb8b2a2});
-  const mEscuro = new THREE.MeshBasicMaterial({color:0x6e685c});
+  const mCorpo = new THREE.MeshBasicMaterial({color:0x9a8f78});
+  const mEscuro = new THREE.MeshBasicMaterial({color:0x5e584c});
+  const mKapton = new THREE.MeshBasicMaterial({color:0x8a6428});
   const mPrato = new THREE.MeshBasicMaterial({color:0xe6e0d0, side:THREE.DoubleSide});
+  const mPratoIn = new THREE.MeshBasicMaterial({color:0xc4bcac, side:THREE.DoubleSide});
   const mOuro = new THREE.MeshBasicMaterial({color:0xd8a545});
-  const corpo = new THREE.Mesh(new THREE.CylinderGeometry(raio*0.34, raio*0.34, raio*0.30, 10), mCorpo);
-  corpo.rotation.x = Math.PI/2;
-  g.add(corpo);
-  const disco = new THREE.Mesh(new THREE.CylinderGeometry(raio*0.10, raio*0.10, raio*0.02, 20), mOuro);
-  disco.rotation.z = Math.PI/2; disco.position.set(raio*0.36, 0, 0);
-  g.add(disco);
-  const prato = new THREE.Mesh(new THREE.CylinderGeometry(raio*0.80, raio*0.16, raio*0.34, 40, 1, true), mPrato);
-  prato.rotation.x = -Math.PI/2; prato.position.z = raio*0.42;
-  g.add(prato);
-  const foco = new THREE.Mesh(new THREE.CylinderGeometry(raio*0.015, raio*0.015, raio*0.55, 6), mEscuro);
-  foco.rotation.x = Math.PI/2; foco.position.z = raio*0.55;
-  g.add(foco);
-  const haste = new THREE.Mesh(new THREE.CylinderGeometry(raio*0.02, raio*0.02, raio*1.9, 6), mEscuro);
-  haste.rotation.z = Math.PI/2; haste.position.x = -raio*0.95;
-  g.add(haste);
-  const rtg = new THREE.Mesh(new THREE.CylinderGeometry(raio*0.07, raio*0.07, raio*0.5, 8), mEscuro);
-  rtg.rotation.z = Math.PI/2; rtg.position.set(raio*0.75, -raio*0.35, 0);
-  g.add(rtg);
+  /* corpo: caixa decagonal embrulhada em kapton, com a lateral escura */
+  const corpo = _cil(mKapton, raio*0.34, raio*0.34, raio*0.26, 10);
+  corpo.rotation.x = Math.PI/2; g.add(corpo);
+  const tampa = _cil(mCorpo, raio*0.30, raio*0.30, raio*0.05, 10);
+  tampa.rotation.x = Math.PI/2; tampa.position.z = raio*0.15; g.add(tampa);
+  /* o disco de ouro na lateral */
+  const disco = _cil(mOuro, raio*0.10, raio*0.10, raio*0.02, 20);
+  disco.rotation.z = Math.PI/2; disco.position.set(raio*0.36, 0, 0); g.add(disco);
+  /* prato: casca externa, casca interna, aro e a corneta em três hastes */
+  const prato = _cil(mPrato, raio*0.95, raio*0.18, raio*0.30, 40);
+  prato.geometry = new THREE.CylinderGeometry(raio*0.95, raio*0.18, raio*0.30, 40, 1, true);
+  prato.rotation.x = -Math.PI/2; prato.position.z = raio*0.42; g.add(prato);
+  const pratoIn = _cil(mPratoIn, raio*0.80, raio*0.20, raio*0.24, 40);
+  pratoIn.geometry = new THREE.CylinderGeometry(raio*0.80, raio*0.20, raio*0.24, 40, 1, true);
+  pratoIn.rotation.x = -Math.PI/2; pratoIn.position.z = raio*0.45; g.add(pratoIn);
+  const aro = new THREE.Mesh(new THREE.TorusGeometry(raio*0.95, raio*0.018, 6, 48), mCorpo);
+  aro.position.z = raio*0.57; g.add(aro);
+  for(let i=0;i<3;i++){
+    const a = i/3*Math.PI*2;
+    const h = _cil(mEscuro, raio*0.012, raio*0.012, raio*0.52, 5);
+    h.position.set(Math.cos(a)*raio*0.30, Math.sin(a)*raio*0.30, raio*0.52);
+    h.rotation.x = Math.PI/2;
+    h.rotation.z = a;
+    h.rotation.y = 0.5*Math.cos(a);
+    g.add(h);
+  }
+  const foco = _cil(mEscuro, raio*0.03, raio*0.015, raio*0.10, 8);
+  foco.rotation.x = Math.PI/2; foco.position.z = raio*0.72; g.add(foco);
+  /* lança de ciência em treliça, com o magnetômetro na ponta */
+  const tre = _trelica(mEscuro, raio*1.7, raio*0.035);
+  tre.position.x = -raio*0.95; g.add(tre);
+  const mag = new THREE.Mesh(new THREE.SphereGeometry(raio*0.045, 8, 8), mCorpo);
+  mag.position.x = -raio*1.82; g.add(mag);
+  /* gerador nuclear com aletas, na lança curta de baixo */
+  const bra = _cil(mEscuro, raio*0.02, raio*0.02, raio*0.55, 5);
+  bra.rotation.z = Math.PI/2; bra.rotation.y = -0.5;
+  bra.position.set(raio*0.55, -raio*0.30, -raio*0.10); g.add(bra);
+  const rtg = _cil(mEscuro, raio*0.06, raio*0.06, raio*0.44, 8);
+  rtg.rotation.z = Math.PI/2; rtg.rotation.y = -0.5;
+  rtg.position.set(raio*0.82, -raio*0.42, -raio*0.22); g.add(rtg);
+  for(let i=0;i<5;i++){
+    const al = _cil(mCorpo, raio*0.095, raio*0.095, raio*0.012, 8);
+    al.rotation.z = Math.PI/2; al.rotation.y = -0.5;
+    const t = (i-2)*raio*0.085;
+    al.position.set(raio*0.82 + Math.cos(-0.5)*0, -raio*0.42, -raio*0.22);
+    al.translateY(t);
+    g.add(al);
+  }
   const wrap = new THREE.Group();
   wrap.add(g);
-  g.rotation.set(0.45, 1.15, 0.08);   /* prato de perfil: le-se como sonda, nao como disco */
+  g.rotation.set(0.35, -0.5, 0.1);
   return {group:wrap, mesh:g};
+}
+function grupoISS(raio){
+  const g = new THREE.Group();
+  const mTruss = new THREE.MeshBasicMaterial({color:0x9aa0aa});
+  const mTruss2 = new THREE.MeshBasicMaterial({color:0x7a8089});
+  const mMod = new THREE.MeshBasicMaterial({color:0xd8d8dc});
+  const mMod2 = new THREE.MeshBasicMaterial({color:0xb4b6bc});
+  const mPainel = new THREE.MeshBasicMaterial({color:0x9a6428, side:THREE.DoubleSide});
+  const mPainel2 = new THREE.MeshBasicMaterial({color:0xb4783a, side:THREE.DoubleSide});
+  const mRad = new THREE.MeshBasicMaterial({color:0xcdd4da, side:THREE.DoubleSide});
+  /* a espinha: treliça comprida com segmentos alternados */
+  for(let i=0;i<7;i++){
+    const seg = _box(i%2 ? mTruss : mTruss2, raio*0.36, raio*0.075, raio*0.075);
+    seg.position.x = (i-3)*raio*0.36;
+    g.add(seg);
+  }
+  /* os quatro pares de asas solares, cor de cobre */
+  for(const sx of [-1.26, -0.90, 0.90, 1.26]){
+    for(const sz of [1, -1]){
+      const asa = _box(sz > 0 ? mPainel : mPainel2, raio*0.30, raio*0.02, raio*0.78);
+      asa.position.set(sx*raio, 0, sz*raio*0.46);
+      g.add(asa);
+      const mastro = _cil(mTruss2, raio*0.015, raio*0.015, raio*0.16, 5);
+      mastro.rotation.x = Math.PI/2;
+      mastro.position.set(sx*raio, 0, sz*raio*0.08);
+      g.add(mastro);
+    }
+  }
+  /* radiadores brancos, inclinados perto do centro */
+  for(const sx of [-0.42, 0.42]){
+    const rad = _box(mRad, raio*0.34, raio*0.015, raio*0.30);
+    rad.position.set(sx*raio, -raio*0.14, raio*0.10);
+    rad.rotation.x = 0.6;
+    g.add(rad);
+  }
+  /* os módulos habitados, cruzando a treliça */
+  const eixo = [[0.11, 0.42, mMod], [0.095, 0.34, mMod2], [0.11, 0.40, mMod], [0.08, 0.28, mMod2]];
+  let z = -raio*0.72;
+  for(const [r, len, m] of eixo){
+    const mod = _cil(m, raio*r, raio*r, raio*len, 12);
+    mod.rotation.x = Math.PI/2;
+    mod.position.set(0, -raio*0.02, z + raio*len/2);
+    z += raio*len;
+    g.add(mod);
+  }
+  /* módulo atravessado (o nó com as naves acopladas) */
+  const no = _cil(mMod2, raio*0.075, raio*0.075, raio*0.5, 10);
+  no.rotation.z = Math.PI/2;
+  no.position.set(0, -raio*0.02, -raio*0.30);
+  g.add(no);
+  const wrap = new THREE.Group();
+  wrap.add(g);
+  g.rotation.set(0.42, 0.55, 0.10);
+  return {group:wrap, mesh:g};
+}
+function grupoHubble(raio){
+  const g = new THREE.Group();
+  const mTubo = new THREE.MeshBasicMaterial({color:0xc0c4cc});
+  const mTubo2 = new THREE.MeshBasicMaterial({color:0x8f939b});
+  const mEscuro = new THREE.MeshBasicMaterial({color:0x3c4046});
+  const mPainel = new THREE.MeshBasicMaterial({color:0x35497e, side:THREE.DoubleSide});
+  /* o tubo prateado, em duas seções */
+  const t1 = _cil(mTubo, raio*0.30, raio*0.30, raio*0.85, 20);
+  t1.rotation.x = Math.PI/2; t1.position.z = raio*0.22; g.add(t1);
+  const t2 = _cil(mTubo2, raio*0.34, raio*0.34, raio*0.55, 20);
+  t2.rotation.x = Math.PI/2; t2.position.z = -raio*0.42; g.add(t2);
+  /* a boca do telescópio com a tampa aberta */
+  const boca = new THREE.Mesh(new THREE.TorusGeometry(raio*0.29, raio*0.03, 6, 24), mTubo2);
+  boca.position.z = raio*0.64; g.add(boca);
+  const fundo = _cil(mEscuro, raio*0.27, raio*0.27, raio*0.02, 20);
+  fundo.rotation.x = Math.PI/2; fundo.position.z = raio*0.62; g.add(fundo);
+  const porta = _box(mTubo, raio*0.52, raio*0.02, raio*0.52);
+  porta.position.set(0, raio*0.48, raio*0.78);
+  porta.rotation.x = -1.9;
+  g.add(porta);
+  /* os dois painéis solares azuis */
+  for(const sx of [-1, 1]){
+    const bra = _cil(mEscuro, raio*0.02, raio*0.02, raio*0.22, 5);
+    bra.rotation.z = Math.PI/2;
+    bra.position.set(sx*raio*0.40, 0, -raio*0.05);
+    g.add(bra);
+    const pai = _box(mPainel, raio*0.72, raio*0.015, raio*0.30);
+    pai.position.set(sx*raio*0.88, 0, -raio*0.05);
+    g.add(pai);
+  }
+  /* antenas de prato pequenas */
+  for(const sy of [-1, 1]){
+    const h = _cil(mEscuro, raio*0.012, raio*0.012, raio*0.30, 5);
+    h.position.set(0, sy*raio*0.40, -raio*0.30);
+    g.add(h);
+    const d = _cil(mTubo, raio*0.07, raio*0.015, raio*0.04, 12);
+    d.position.set(0, sy*raio*0.56, -raio*0.30);
+    if(sy < 0) d.rotation.x = Math.PI;
+    g.add(d);
+  }
+  const wrap = new THREE.Group();
+  wrap.add(g);
+  g.rotation.set(0.35, -0.75, 0.12);
+  return {group:wrap, mesh:g};
+}
+function grupoSputnik(raio){
+  const g = new THREE.Group();
+  const mBola = new THREE.MeshBasicMaterial({color:0xd4d8e0});
+  const mBrilho = new THREE.MeshBasicMaterial({color:0xf2f4f8});
+  const mHaste = new THREE.MeshBasicMaterial({color:0xaab0ba});
+  const bola = new THREE.Mesh(new THREE.SphereGeometry(raio*0.42, 28, 28), mBola);
+  g.add(bola);
+  /* o reflexo polido: uma calota clara */
+  const calota = new THREE.Mesh(new THREE.SphereGeometry(raio*0.42*1.002, 20, 20, 0.6, 1.1, 0.5, 0.7), mBrilho);
+  g.add(calota);
+  /* as quatro antenas compridas, varridas para trás */
+  for(let i=0;i<4;i++){
+    const a = i/4*Math.PI*2 + Math.PI/4;
+    const ant = _cil(mHaste, raio*0.008, raio*0.014, raio*1.55, 5);
+    const piv = new THREE.Group();
+    ant.position.y = -raio*1.55/2;
+    piv.add(ant);
+    piv.position.set(Math.cos(a)*raio*0.26, 0, Math.sin(a)*raio*0.26);
+    piv.rotation.z = Math.cos(a)*0.55;
+    piv.rotation.x = -Math.sin(a)*0.55;
+    piv.rotateOnWorldAxis(new THREE.Vector3(1,0,0), 0.35);
+    g.add(piv);
+  }
+  const wrap = new THREE.Group();
+  wrap.add(g);
+  g.rotation.set(0.30, 0.2, -0.15);
+  return {group:wrap, mesh:g};
+}
+function grupoJWST(raio){
+  const g = new THREE.Group();
+  const mOuro = new THREE.MeshBasicMaterial({color:0xd8b054});
+  const mOuro2 = new THREE.MeshBasicMaterial({color:0xc09a40});
+  const mEscuro = new THREE.MeshBasicMaterial({color:0x3c4046});
+  /* o espelho: 18 hexágonos de ouro em dois anéis (o centro é vazio) */
+  const d = raio*0.21, hexes = [];
+  const ring1 = [[1,0],[0,1],[-1,1],[-1,0],[0,-1],[1,-1]];
+  const ring2 = [[2,0],[2,-1],[2,-2],[1,-2],[0,-2],[-1,-1],[-2,0],[-2,1],[-2,2],[-1,2],[0,2],[1,1]];
+  ring1.forEach(q=>hexes.push(q)); ring2.forEach(q=>hexes.push(q));
+  for(let i=0;i<hexes.length;i++){
+    const [q,r] = hexes[i];
+    const hx = d*Math.sqrt(3)*(q + r/2), hy = d*1.5*r;
+    const h = _cil(i%3 ? mOuro : mOuro2, d*0.96, d*0.96, raio*0.015, 6);
+    h.rotation.x = Math.PI/2;
+    h.rotation.y = Math.PI/6;
+    h.position.set(hx, hy + raio*0.18, 0);
+    g.add(h);
+  }
+  /* o espelho secundário: três hastes saem da borda e convergem no foco */
+  const alvo = new THREE.Vector3(0, raio*0.30, raio*0.85);
+  for(const a of [Math.PI/2, Math.PI*7/6, Math.PI*11/6]){
+    const anc = new THREE.Vector3(Math.cos(a)*raio*0.58, raio*0.18 + Math.sin(a)*raio*0.58, raio*0.01);
+    const dir = alvo.clone().sub(anc), len = dir.length();
+    const h = _cil(mEscuro, raio*0.012, raio*0.012, len, 5);
+    h.position.copy(anc).add(alvo).multiplyScalar(0.5);
+    h.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.normalize());
+    g.add(h);
+  }
+  const sec = _cil(mEscuro, raio*0.06, raio*0.06, raio*0.05, 12);
+  sec.rotation.x = Math.PI/2;
+  sec.position.copy(alvo);
+  g.add(sec);
+  /* o parassol: cinco camadas prateadas em forma de pipa */
+  const kite = new THREE.Shape();
+  kite.moveTo(-raio*1.05, 0); kite.lineTo(0, raio*0.62);
+  kite.lineTo(raio*1.05, 0); kite.lineTo(0, -raio*0.62); kite.closePath();
+  const kgeo = new THREE.ShapeGeometry(kite);
+  for(let i=0;i<5;i++){
+    const m = new THREE.MeshBasicMaterial({color: i%2 ? 0xd8dce4 : 0xe6dcd0, side:THREE.DoubleSide});
+    const capa = new THREE.Mesh(kgeo, m);
+    capa.rotation.x = Math.PI/2 - 0.06*i;
+    capa.position.y = -raio*0.28 - i*raio*0.045;
+    g.add(capa);
+  }
+  /* a torre que liga o espelho ao parassol */
+  const torre = _cil(mEscuro, raio*0.035, raio*0.05, raio*0.42, 8);
+  torre.position.y = -raio*0.06;
+  g.add(torre);
+  const wrap = new THREE.Group();
+  wrap.add(g);
+  g.rotation.set(0.35, 0.55, 0.05);
+  return {group:wrap, mesh:g};
+}
+/* despacho: cada nave famosa tem o próprio modelo; o resto usa a sonda */
+function grupoNave(id, raio){
+  if(id === 'iss') return grupoISS(raio);
+  if(id === 'hubble') return grupoHubble(raio);
+  if(id === 'sputnik') return grupoSputnik(raio);
+  if(id === 'jwst') return grupoJWST(raio);
+  return grupoSonda(raio);
 }
 function buildFocus(bodyId, spin0){
   const b = ALLBODIES[bodyId];
@@ -4219,7 +4463,7 @@ function buildFocus(bodyId, spin0){
   const radius = (b.visual.mode==='star') ? 2.35 : (b.comet ? 1.2 : 2.2);
   const aoVivo = LIVE && podeLive(bodyId);
   bg = aoVivo ? grupoLive(bodyId, radius, QLOW?96:128)
-     : ((b.sonda || b.satelite) ? grupoSonda(radius) : makeBodyGroup(b, radius, QLOW?96:128));
+     : ((b.sonda || b.satelite) ? grupoNave(bodyId, radius) : makeBodyGroup(b, radius, QLOW?96:128));
   wrap.add(bg.group);
   if(spin0) bg.mesh.rotation.y = spin0;   /* continua de onde a cena do sistema parou */
   bg.group.traverse(o=>{ if(o.userData && o.userData.isClouds) clouds = o; });
@@ -6176,7 +6420,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r57';
+const BUILD = 'r58';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
