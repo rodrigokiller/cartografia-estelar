@@ -4843,7 +4843,8 @@ function trajStart(id){
           local, obj:o.obj, t0:performance.now(), ln:performance.now(),
           base:(b.comet && !b.escape) ? 30000 : 24000, id,
           d0:CAM.dist, dAlvo:Math.min(CAM.dist, 16), p0:CAM.pivot.clone(),
-          marcos:b.marcos || null, mAtual:null, anosPorSeg:0,
+          marcos:b.marcos || null, mAtual:null,
+          kmh:(((b.quick||[]).find(r=>/VELOC/.test(r[0]))||[])[1]) || null, anosPorSeg:0,
           _a:new THREE.Vector3(), _b:new THREE.Vector3(), _c:new THREE.Vector3(),
           ano0:(b.traj && b.traj.de) || anoDe(b),
           ano1:(b.traj && b.traj.ate) || (new Date()).getFullYear()};
@@ -4926,6 +4927,7 @@ function trajStep(now){
     TRAJ.mAtual = null;   /* recalcula sempre: o arrasto pode voltar no tempo */
     if(TRAJ.marcos) for(const m of TRAJ.marcos) if(ano >= m[0]) TRAJ.mAtual = m;
     if(TRAJ.mAtual) txt += ' · ' + TRAJ.mAtual[1];
+    if(TRAJ.kmh) txt += ' · ' + TRAJ.kmh;
     $('#trajtxt').textContent = txt;
   }
   if(TRAJ.prog >= 1 && !TRAJ.pausado){ TRAJ.pausado = true; $('#trajplay').textContent = '▶'; }
@@ -6469,12 +6471,44 @@ function pick(x, y){
 }
 const HOVERQ = matchMedia('(hover: hover)').matches; let hoverT = 0;
 let LPT = 0; /* timer do toque longo (modo foto no touch) */
+let SCRUB3D = false;   /* arrastando o objeto pela própria trajetória */
+function trajPerto(x, y){
+  if(!TRAJ || TRAJ.fase !== 'vai') return false;
+  const v = new THREE.Vector3().copy(CAM.pivot);
+  v.project(camera);
+  if(v.z > 1) return false;
+  const px = ( v.x*0.5+0.5)*CRECT.width  + CRECT.left;
+  const py = (-v.y*0.5+0.5)*CRECT.height + CRECT.top;
+  const R = matchMedia('(pointer: coarse)').matches ? 52 : 30;
+  return Math.hypot(px-x, py-y) < R;
+}
+function trajScrubTo(x, y){
+  if(!TRAJ || TRAJ.fase !== 'vai') return;
+  const v = new THREE.Vector3();
+  let best = TRAJ.prog, bd = 1e18;
+  for(let i=0;i<=160;i++){
+    const e = i/160;
+    trajPonto(e, v); v.project(camera);
+    const px = ( v.x*0.5+0.5)*CRECT.width  + CRECT.left;
+    const py = (-v.y*0.5+0.5)*CRECT.height + CRECT.top;
+    const d = Math.hypot(px-x, py-y);
+    if(d < bd){ bd = d; best = e; }
+  }
+  if(TRAJ._mk) for(const pm of TRAJ._mk) if(Math.abs(best - pm) < 0.028){ best = pm; break; }
+  TRAJ.prog = best;
+}
 canvas.addEventListener('pointerdown', e=>{
   if(TOUR.on) tourStop();   /* tocou na cena, o controle volta pra você */
   if(DIVE) return;          /* durante o mergulho a câmera é da animação */
   canvas.setPointerCapture(e.pointerId);
   pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
   if(pts.size===1){
+    /* na linha do tempo, pegar o próprio objeto arrasta ele pela rota */
+    if(TRAJ && TRAJ.fase==='vai' && trajPerto(e.clientX, e.clientY)){
+      SCRUB3D = true; TRAJ.arrasto = true; PD = null;
+      canvas.classList.add('dragging');
+      return;
+    }
     CAMTW = null; PD = {x:e.clientX, y:e.clientY, sx:e.clientX, sy:e.clientY, t:performance.now(), moved:false}; canvas.classList.add('dragging');
     if(e.pointerType==='touch'){
       clearTimeout(LPT);
@@ -6496,6 +6530,7 @@ canvas.addEventListener('pointermove', e=>{
     return;
   }
   p.x = e.clientX; p.y = e.clientY;
+  if(SCRUB3D){ trajScrubTo(e.clientX, e.clientY); return; }
   if(pts.size===2){
     const a = [...pts.values()];
     const d = Math.hypot(a[0].x-a[1].x, a[0].y-a[1].y);
@@ -6520,6 +6555,7 @@ canvas.addEventListener('pointermove', e=>{
 });
 function endPtr(e){
   clearTimeout(LPT);
+  if(SCRUB3D){ SCRUB3D = false; if(TRAJ) TRAJ.arrasto = false; }
   pts.delete(e.pointerId);
   if(pts.size<2) pinchD = 0;
   canvas.classList.remove('dragging');
@@ -6618,7 +6654,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r62';
+const BUILD = 'r63';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
