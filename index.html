@@ -702,11 +702,13 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-cls="cometa"><span>COMETAS E VISITANTES</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="sonda"><span>SONDAS</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="satelite"><span>SATÉLITES</span><b>LIGADA</b></div>
+    <div class="filtrow" data-cls="foguete"><span>MISSÕES TRIPULADAS</span><b>LIGADA</b></div>
     <div class="fp-n">Esconde só a linha. O corpo selecionado sempre mostra a própria rota.</div>
     <div class="fp-t fp-t2">◌ OBJETOS NO MAPA</div>
     <div class="filtrow" data-obj="cometa"><span>COMETAS E VISITANTES</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="sonda"><span>SONDAS</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="satelite"><span>SATÉLITES</span><b>VISÍVEL</b></div>
+    <div class="filtrow" data-obj="foguete"><span>MISSÕES TRIPULADAS</span><b>VISÍVEL</b></div>
     <div class="fp-n">Some com o objeto inteiro: corpo, rótulo e rota. Planetas e luas ficam sempre.</div>
   </div>
   <div id="trajclock">
@@ -1050,7 +1052,7 @@ const PLANETS = [
   fict:'The Expanse, o "incidente Arboghast" acontece na órbita de Vênus.', moons:[]
 },
 {
-  id:'terra', name:'TERRA', desig:'SOL-3 · PLANETA', kind:'Rochoso · habitável', hab:100, gbar:1.0, pop:'8,1 bilhões (+ ~7 em órbita)', moonsMeta:'1 LUA · 4 SATÉLITES FAMOSOS',
+  id:'terra', name:'TERRA', desig:'SOL-3 · PLANETA', kind:'Rochoso · habitável', hab:100, gbar:1.0, pop:'8,1 bilhões (+ ~7 em órbita)', moonsMeta:'1 LUA · SATÉLITES E MISSÕES FAMOSAS',
   quick:[['GRAVIDADE','1 g'],['TEMP. MÉDIA','15 °C'],['DIA','24 h'],['ANO','365,25 d'],['LUAS','1'],['ÁGUA','71%']],
   sys:{orbit:15, size:0.9, speed:1.0, angle:4.2},
   visual:{mode:'earth', c1:'#3f7d43', c2:'#8a9a55', c3:'#c2a06a', seaCol:'#0d3f78', sea:0.52, scale:3.4, seed:12.3, cap:0.78, capAmt:0.9, capCol:'#eef4f8', lights:1, atmo:{col:'#6fb7ff', i:1.5}, clouds:{amt:0.95, scale:4.2, col:'#ffffff'}},
@@ -1405,6 +1407,35 @@ const SATELITES = [
   fict:'A primeira imagem dele foi revelada pelo presidente dos Estados Unidos ao vivo, um evento de TV planetário.', moons:[]}
 ];
 SATELITES.forEach(x=>PLANETS.push(x));
+
+/* ============================ MISSÕES TRIPULADAS ============================ */
+const FOGUETES = [
+ {id:'apollo11', name:'APOLLO 11', desig:'MISSÃO · 1969', kind:'O Saturn V que levou a humanidade à Lua', hab:0, gbar:0, pop:'0',
+  foguete:true, satOf:'terra',
+  quick:[['LANÇAMENTO','16/7/1969'],['FOGUETE','Saturn V, 110 m'],['TRIPULAÇÃO','Armstrong · Aldrin · Collins'],['POUSO','20/7/1969, Mar da Tranquilidade'],['NA SUPERFÍCIE','21 h 36 min'],['RETORNO','24/7/1969']],
+  sys:{orbit:2.5, size:0.11, speed:1.0, angle:3.6},
+  visual:{mode:'rocky', c1:'#d8d8dc', c2:'#f0f0f4', c3:'#8a8a92', scale:7.0, seed:19.69, crater:0.05},
+  sections:[
+    {t:'O SATURN V', rows:[['O tamanho','110 metros, um prédio de 36 andares subindo inteiro'],['A potência','O foguete mais poderoso já lançado até o Starship, meio século depois'],['Os motores','Cinco F-1 queimando 13 toneladas de combustível POR SEGUNDO'],['Posição aqui','Simbólica: a rota real foi Terra, órbita lunar, Mar da Tranquilidade']]},
+    {t:'O POUSO', rows:[['A Eagle','Armstrong assumiu o manual com alarmes tocando e pedras no alvo'],['O combustível','Pousou com uns 25 segundos de margem no tanque'],['A frase','"Um pequeno passo para um homem, um salto gigante para a humanidade"'],['O público','600 milhões de pessoas assistindo ao vivo, recorde absoluto da época']]},
+    {t:'REGISTRO', rows:[['O computador','Menos memória que uma calculadora de bolso, e bastou'],['A bandeira','Caiu com o sopro da decolagem da Eagle, Aldrin viu pela janela'],['A volta','Mergúlho no Pacífico e quarentena de 21 dias contra "germes lunares"']]}
+  ],
+  facts:['O computador de bordo tinha 72 kB: seu micro-ondas tem mais.','Armstrong pousou no manual com 25 segundos de combustível de margem.','600 milhões de pessoas pararam para assistir, quase um quárto da humanidade de 1969.'],
+  fict:'De 2001 a First Man, é o evento mais filmado da era espacial, e as teorias de conspiração sobre ele viraram piada cultural.', moons:[]},
+ {id:'apollo13', name:'APOLLO 13', desig:'MISSÃO · 1970', kind:'O fracasso mais bem-sucedido da história', hab:0, gbar:0, pop:'0',
+  foguete:true, satOf:'terra',
+  quick:[['LANÇAMENTO','11/4/1970'],['A EXPLOSÃO','13/4, tanque de O₂'],['TRIPULAÇÃO','Lovell · Swigert · Haise'],['A ROTA','contorno livre da Lua'],['SPLASHDOWN','17/4/1970'],['SALDO','todos vivos']],
+  sys:{orbit:2.8, size:0.10, speed:0.9, angle:1.7},
+  visual:{mode:'rocky', c1:'#c8c8cc', c2:'#e4e4e8', c3:'#7a7a82', scale:7.0, seed:19.70, crater:0.08},
+  sections:[
+    {t:'HOUSTON, TIVEMOS UM PROBLEMA', rows:[['13/4/1970','Um tanque de oxigênio explode a 330 mil km da Terra'],['A frase real','"Houston, we\'ve had a problem", no passado, Lovell corrigia todo mundo'],['A decisão','Sem combustível para dar meia-volta: a rota foi CONTORNAR a Lua'],['O bote','A tripulação migrou para o módulo lunar, projetado para 2 pessoas por 2 dias']]},
+    {t:'A GAMBIARRA', rows:[['O CO₂','Filtros quadrados em encaixes redondos: fita adesiva, meia e capa de manual'],['O frio','4 °C, paredes suando, quase nada de água e energia'],['O retorno','Correções de rota no olho, mirando a Terra pela janela'],['17/4','Splashdown perfeito no Pacífico: o mundo inteiro respirou']]}
+  ],
+  facts:['A explosão foi a 330 mil km de casa, e mesmo assim todos voltaram vivos.','O conserto do filtro de CO₂ usou fita adesiva, uma meia e a capa de um manual.','Eles detêm o recorde de distância da Terra: 400.171 km, no contorno da Lua.'],
+  fict:'O filme de 1995 com Tom Hanks eternizou a frase no presente, "Houston, we have a problem", e Lovell corrigia: era no passado.', moons:[]}
+];
+FOGUETES.forEach(x=>PLANETS.push(x));
+
 
 const BELT_BODIES = [
  {id:'ceres', name:'CERES', desig:'CINTURÃO-1 · PLANETA ANÃO', kind:'Planeta anão', hab:10, gbar:0.029, pop:'0',
@@ -3518,14 +3549,18 @@ function disposeScene(act){
    ganha elipse: ele nao volta, entao a linha dele e um arco aberto. */
 /* linhas visíveis por classe. PADRÃO: só planetas; cometa, sonda e toda classe
    futura (satelite, foguete) nascem DESLIGADAS, o mapa fica limpo por default */
-const FILTROS = {planeta:true, cometa:false, sonda:false, satelite:false};
+const FILTROS = {planeta:true, cometa:false, sonda:false, satelite:false, foguete:false};
 /* segundo grupo do filtro: esconder o OBJETO inteiro (corpo, rótulo e rota).
    Planetas e luas nunca somem. Vale também para a cena de foco e os chips. */
-const FILTROBJ = {cometa:true, sonda:true, satelite:true};
+const FILTROBJ = {cometa:true, sonda:true, satelite:true, foguete:true};
 function satelitesDe(id){
-  if(FILTROBJ.satelite === false) return [];
   const r = [];
-  for(const k in ALLBODIES){ const b = ALLBODIES[k]; if(b.satOf === id) r.push(b); }
+  for(const k in ALLBODIES){
+    const b = ALLBODIES[k];
+    if(b.satOf !== id) continue;
+    if(FILTROBJ[b.foguete ? 'foguete' : 'satelite'] === false) continue;
+    r.push(b);
+  }
   return r;
 }
 const ORB_TERRA = 15;   /* orbita da Terra na cena do sol: 15 unidades = 1 UA */
@@ -3533,9 +3568,11 @@ const LINHA = {
   planeta: {cor:0x2a4a7a, op:0.50},
   cometa:  {cor:0x2f5f6b, op:0.26},
   sonda:   {cor:0x4a4a72, op:0.22},
-  satelite:{cor:0x4a6b7a, op:0.30}
+  satelite:{cor:0x4a6b7a, op:0.30},
+  foguete: {cor:0x7a5548, op:0.30}
 };
 function classeDaLinha(p){
+  if(p.foguete) return 'foguete';
   if(p.satelite) return 'satelite';
   if(p.sonda) return 'sonda';
   if(p.comet || p.escape) return 'cometa';
@@ -4423,8 +4460,46 @@ function grupoJWST(raio){
   g.rotation.set(0.35, 0.55, 0.05);
   return {group:wrap, mesh:g};
 }
+function grupoFoguete(raio){
+  const g = new THREE.Group();
+  const mBranco = new THREE.MeshBasicMaterial({color:0xe8e8ec});
+  const mPreto = new THREE.MeshBasicMaterial({color:0x26262c});
+  const mMotor = new THREE.MeshBasicMaterial({color:0x8a7a60});
+  const k = raio*0.92;
+  /* os três estágios do Saturn V, com as faixas pretas do padrão de rolagem */
+  const s1 = _cil(mBranco, k*0.155, k*0.155, k*0.90, 16); s1.position.y = -k*0.45; g.add(s1);
+  const s2 = _cil(mBranco, k*0.155, k*0.155, k*0.48, 16); s2.position.y = k*0.26;  g.add(s2);
+  const s3 = _cil(mBranco, k*0.125, k*0.125, k*0.34, 16); s3.position.y = k*0.70;  g.add(s3);
+  for(const [y,r,h] of [[-0.88,0.158,0.10],[0.02,0.158,0.07],[0.50,0.158,0.055],[0.88,0.128,0.05]]){
+    const faixa = _cil(mPreto, k*r, k*r, k*h, 16); faixa.position.y = k*y; g.add(faixa);
+  }
+  /* adaptador, cápsula e a torre de escape */
+  const ada = _cil(mBranco, k*0.125, k*0.08, k*0.16, 16); ada.position.y = k*0.95; g.add(ada);
+  const csm = _cil(mBranco, k*0.08, k*0.08, k*0.16, 12); csm.position.y = k*1.11; g.add(csm);
+  const cone = _cil(mMotor, k*0.012, k*0.08, k*0.10, 12); cone.position.y = k*1.24; g.add(cone);
+  const tw = _cil(mPreto, k*0.012, k*0.012, k*0.22, 6); tw.position.y = k*1.40; g.add(tw);
+  const twc = _cil(mPreto, k*0.001, k*0.03, k*0.09, 8); twc.position.y = k*1.54; g.add(twc);
+  /* cinco sinos F-1 e as quatro aletas */
+  const eng = [[0,0],[0.09,0],[-0.09,0],[0,0.09],[0,-0.09]];
+  for(const [ex,ez] of eng){
+    const e = _cil(mMotor, k*0.028, k*0.048, k*0.10, 10);
+    e.position.set(k*ex, -k*0.95, k*ez); g.add(e);
+  }
+  for(let i=0;i<4;i++){
+    const a = i/4*Math.PI*2 + Math.PI/4;
+    const fin = _box(mPreto, k*0.015, k*0.16, k*0.10);
+    fin.position.set(Math.cos(a)*k*0.17, -k*0.82, Math.sin(a)*k*0.17);
+    fin.rotation.y = -a;
+    g.add(fin);
+  }
+  const wrap = new THREE.Group();
+  wrap.add(g);
+  g.rotation.set(0.18, 0.35, 0.50);
+  return {group:wrap, mesh:g};
+}
 /* despacho: cada nave famosa tem o próprio modelo; o resto usa a sonda */
 function grupoNave(id, raio){
+  if(id === 'apollo11' || id === 'apollo13') return grupoFoguete(raio);
   if(id === 'iss') return grupoISS(raio);
   if(id === 'hubble') return grupoHubble(raio);
   if(id === 'sputnik') return grupoSputnik(raio);
@@ -4553,7 +4628,7 @@ function buildFocus(bodyId, spin0){
   const radius = (b.visual.mode==='star') ? 2.35 : (b.comet ? 1.2 : 2.2);
   const aoVivo = LIVE && podeLive(bodyId);
   bg = aoVivo ? grupoLive(bodyId, radius, QLOW?96:128)
-     : ((b.sonda || b.satelite) ? grupoNave(bodyId, radius) : makeBodyGroup(b, radius, QLOW?96:128));
+     : ((b.sonda || b.satelite || b.foguete) ? grupoNave(bodyId, radius) : makeBodyGroup(b, radius, QLOW?96:128));
   wrap.add(bg.group);
   if(spin0) bg.mesh.rotation.y = spin0;   /* continua de onde a cena do sistema parou */
   bg.group.traverse(o=>{ if(o.userData && o.userData.isClouds) clouds = o; });
@@ -4903,10 +4978,10 @@ const store = {
 LIVE = store.get('carto:live','0') === '1';   /* modo ao vivo da Terra e da Lua */
 { const v = store.get('carto:linhas', null);
   if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
-    for(const k of ['planeta','cometa','sonda','satelite']) FILTROS[k] = on.has(k); } }
+    for(const k of ['planeta','cometa','sonda','satelite','foguete']) FILTROS[k] = on.has(k); } }
 { const v = store.get('carto:objetos', null);
   if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
-    for(const k of ['cometa','sonda','satelite']) FILTROBJ[k] = on.has(k); } }
+    for(const k of ['cometa','sonda','satelite','foguete']) FILTROBJ[k] = on.has(k); } }
 
 /* ---------- áudio: playlist + ambiente generativo + sfx ---------- */
 const PLAYLIST = [
@@ -6543,7 +6618,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r61';
+const BUILD = 'r62';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -6630,11 +6705,11 @@ $('#filtpop').addEventListener('click', e=>{
   const r = e.target.closest('.filtrow'); if(!r) return;
   if(r.dataset.obj){
     FILTROBJ[r.dataset.obj] = FILTROBJ[r.dataset.obj] === false;
-    store.set('carto:objetos', ['cometa','sonda','satelite'].filter(k=>FILTROBJ[k]!==false).join(','));
+    store.set('carto:objetos', ['cometa','sonda','satelite','foguete'].filter(k=>FILTROBJ[k]!==false).join(','));
     filtSync(); aplicaObjetos(); cardRender();
   } else {
     FILTROS[r.dataset.cls] = FILTROS[r.dataset.cls] === false;
-    store.set('carto:linhas', ['planeta','cometa','sonda','satelite'].filter(k=>FILTROS[k]!==false).join(','));
+    store.set('carto:linhas', ['planeta','cometa','sonda','satelite','foguete'].filter(k=>FILTROS[k]!==false).join(','));
     filtSync(); applySel();
   }
 });
