@@ -441,12 +441,16 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #tut .trow button{background:none;border:1px solid var(--line2);color:var(--dim);
   font-family:var(--mono);font-size:9px;letter-spacing:2px;padding:6px 12px;cursor:pointer}
 #tut .trow button:hover{color:var(--amber);border-color:var(--amber)}
+#tut .tnav{display:flex;gap:6px}
+#tut #tutnext:disabled{opacity:.35;cursor:default;color:var(--dim2);border-color:var(--line2)}
+#tut #tutnext:disabled:hover{color:var(--dim2);border-color:var(--line2)}
 #tut #tutnext{color:var(--amber);border-color:rgba(255,180,84,.5)}
 #tut #tutn{font-family:var(--mono);font-size:8.5px;letter-spacing:2px;color:var(--dim2)}
 #tutdebug{margin-left:10px;background:none;border:1px dashed var(--line2);color:var(--dim2);
   font-family:var(--mono);font-size:7.5px;letter-spacing:1.5px;padding:2px 6px;cursor:pointer;opacity:.6}
 #tutdebug:hover{color:var(--amber);border-color:var(--amber);opacity:1}
 body.touch #tut{top:60px;bottom:auto}
+body.emtraj #tut{bottom:216px}
 .tutfoco{outline:1px solid var(--amber) !important;
   animation:tutnasce .5s ease-out, tutpulsa 1.7s ease-in-out .5s infinite !important}
 @keyframes tutnasce{
@@ -799,7 +803,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   </div>
   <div id="tut">
     <div id="tuttx"></div>
-    <div class="trow"><button id="tutskip">PULAR</button><span id="tutn"></span><button id="tutnext">PRÓXIMO ▸</button></div>
+    <div class="trow"><button id="tutskip">PULAR</button><span id="tutn"></span><span class="tnav"><button id="tutprev">◂ VOLTAR</button><button id="tutnext">PRÓXIMO ▸</button></span></div>
   </div>
   <div id="tip"></div>
   <div id="datepop">
@@ -5460,6 +5464,7 @@ function trajStart(id){
   $('#trajplay').textContent = '⏸';
   $('#trajvel').textContent = '1×';
   $('#trajclock').classList.add('on');
+  tutInicia('linhadotempo', [{tx:'<b>LINHA DO TEMPO:</b> a barra corre os anos da viagem. Os losangos são os marcos, com balão e clique. Arraste a barra, ou o próprio corpo na cena, para ir e voltar no tempo. O ✕ encerra.'}]);
   /* os marcos viram losangos na barra: clicar ali pula direto para o ano */
   { const bar = $('#trajbar');
     bar.querySelectorAll('.tmk').forEach(x=>x.remove());
@@ -6547,11 +6552,14 @@ function missRender(){
   const todos = Object.values(ALLBODIES);
   const total = todos.length;
   const n = todos.filter(b=>VIS.has(b.id)).length;
-  const pat = patenteDe(n, total);
+  /* cada missão de bordo vale 2 corpos na carreira: aprender É progredir */
+  const bonus = FEITO.size * 2;
+  const pat = patenteDe(Math.min(n + bonus, total), total);
   const sis = progressoSistemas();
   const selos = sis.filter(s=>s.vistos>=s.total).length;
   $('#misspat').textContent = pat.cur.t;
   $('#misscnt').innerHTML = '<b>'+n+'</b> / '+total+' VISITADOS'
+    + (FEITO.size ? ' · <b>'+FEITO.size+'</b> MISSÕES (+'+bonus+')' : '')
     + (selos ? ' · <b>'+selos+'</b>/'+sis.length+' SELOS' : '');
   $('#missbar').firstElementChild.style.width = Math.round(n/total*100)+'%';
   $('#missnext').textContent = pat.nxt ? (pat.cur.d+' Faltam '+(pat.nxt.n-n)+' para '+pat.nxt.t+'.') : pat.cur.d;
@@ -7581,7 +7589,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r86';
+const BUILD = 'r87';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -7681,7 +7689,7 @@ $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: c
 /* ============================ TUTORIAL DE BORDO ============================
    Balões sequenciais no nosso estilo, sem tirar o usuário do app. Cada chave
    toca UMA vez (carto:tut); as boas-vindas podem ser revistas pelo manual. */
-const TUT = {v:new Set(String(store.get('carto:tut','')).split(',').filter(Boolean)), fila:null, i:0, alvoEls:[], tick:null, _t0:0};
+const TUT = {v:new Set(String(store.get('carto:tut','')).split(',').filter(Boolean)), fila:null, i:0, max:0, alvoEls:[], tick:null, _t0:0};
 function tutFeito(k){ TUT.v.add(k); store.set('carto:tut', [...TUT.v].join(',')); }
 function tutFecha(){
   if(TUT.tick){ clearInterval(TUT.tick); TUT.tick = null; }
@@ -7697,10 +7705,15 @@ function tutMostra(){
   TUT.alvoEls = [];
   $('#tuttx').innerHTML = p.tx;
   $('#tutn').textContent = TUT.fila.length > 1 ? ((TUT.i+1)+'/'+TUT.fila.length) : '';
+  TUT.max = Math.max(TUT.max, TUT.i);
+  /* relendo um passo já vencido, nada re-arma: só leitura e PRÓXIMO livre */
+  const releitura = TUT.i < TUT.max;
   const nx = $('#tutnext');
   nx.textContent = (TUT.i === TUT.fila.length-1) ? 'ENTENDI' : 'PRÓXIMO ▸';
-  /* passo de ação: o PRÓXIMO some, ou o usuário faz, ou pula o tutorial */
-  nx.style.display = p.espera ? 'none' : '';
+  nx.style.display = '';
+  nx.disabled = !!p.espera && !releitura;
+  const pv = $('#tutprev');
+  pv.style.display = TUT.i > 0 ? '' : 'none';
   $('#tutskip').style.display = (TUT.fila.length > 1 && TUT.i < TUT.fila.length-1) ? '' : 'none';
   if(p.alvo) document.querySelectorAll(p.alvo).forEach(el=>{ el.classList.add('tutfoco'); TUT.alvoEls.push(el); });
   if(p.alvoLabel && ACT && ACT.labels){
@@ -7710,17 +7723,17 @@ function tutMostra(){
       }
   }
   if(TUT.tick){ clearInterval(TUT.tick); TUT.tick = null; }
-  if(p.init){ try{ p.init(); }catch(e){} }
+  if(!releitura && p.init){ try{ p.init(); }catch(e){} }
   TUT._t0 = performance.now();
-  if(p.espera){
+  if(p.espera && !releitura){
     TUT.tick = setInterval(()=>{
       try{
         /* respiro de 900ms: o passo aparece antes de qualquer gatilho valer */
         if(performance.now() - TUT._t0 < 900) return;
         if(p.espera()){
           clearInterval(TUT.tick); TUT.tick = null;
-          nx.style.display = ''; nx.textContent = '✓ FEITO';
-          setTimeout(()=>{ TUT.i++; tutMostra(); }, 900);
+          nx.disabled = false;
+          setTimeout(()=>{ TUT.i++; tutMostra(); }, 350);
         }
       }catch(e){}
     }, 250);
@@ -7730,10 +7743,11 @@ function tutMostra(){
 function tutInicia(chave, passos){
   if(TUT.v.has(chave)) return;
   tutFeito(chave);
-  TUT.fila = passos; TUT.i = 0;
+  TUT.fila = passos; TUT.i = 0; TUT.max = 0;
   tutMostra();
 }
-$('#tutnext').addEventListener('click', ()=>{ TUT.i++; tutMostra(); });
+$('#tutnext').addEventListener('click', ()=>{ if(!$('#tutnext').disabled){ TUT.i++; tutMostra(); } });
+$('#tutprev').addEventListener('click', ()=>{ if(TUT.i > 0){ TUT.i--; tutMostra(); } });
 $('#tutskip').addEventListener('click', tutFecha);
 function tutBoasVindas(){
   const t = matchMedia('(pointer: coarse)').matches;
@@ -7980,7 +7994,7 @@ $('#pl_vol').addEventListener('input', e=>AUDIO.setVol(e.target.value/100));
 $('#navback').addEventListener('click', navBack);
 $('#navfwd').addEventListener('click', navFwd);
 
-const BOOTLINES = ['CARTOGRAFIA ESTELAR v2.47','CALIBRANDO SENSORES ÓPTICOS ......... <span class="ok">OK</span>','LINK DE SATÉLITE 08 ................. <span class="ok">OK</span>','BEM-VINDO A BORDO, NAVEGADOR.'];
+const BOOTLINES = ['CARTOGRAFIA ESTELAR · '+BUILD.toUpperCase(),'CALIBRANDO SENSORES ÓPTICOS ......... <span class="ok">OK</span>','LINK DE SATÉLITE 08 ................. <span class="ok">OK</span>','BEM-VINDO A BORDO, NAVEGADOR.'];
 let bootI = 0;
 function bootNext(){
   if(bootI < BOOTLINES.length){
