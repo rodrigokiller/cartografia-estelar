@@ -443,12 +443,18 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #tut .trow button:hover{color:var(--amber);border-color:var(--amber)}
 #tut #tutnext{color:var(--amber);border-color:rgba(255,180,84,.5)}
 #tut #tutn{font-family:var(--mono);font-size:8.5px;letter-spacing:2px;color:var(--dim2)}
+#tutdebug{margin-left:10px;background:none;border:1px dashed var(--line2);color:var(--dim2);
+  font-family:var(--mono);font-size:7.5px;letter-spacing:1.5px;padding:2px 6px;cursor:pointer;opacity:.6}
+#tutdebug:hover{color:var(--amber);border-color:var(--amber);opacity:1}
 body.touch #tut{top:60px;bottom:auto}
 .tutfoco{outline:1px solid var(--amber) !important;box-shadow:0 0 14px rgba(255,180,84,.4) !important}
 body.touch.emtraj #panel{opacity:0;visibility:hidden;pointer-events:none}
 body.touch #trajclock{bottom:16px}
 .mbadge.vt{color:var(--amber);padding:3px 7px 0;display:inline-flex;align-items:center;justify-content:center;line-height:1}
 #misslist li.mkid .mnm{font-size:10px}
+#cadmiss{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:8px}
+#cadmiss .cmk{font-family:var(--mono);font-size:8px;letter-spacing:1.2px;color:var(--dim2)}
+#cadmiss .cmk.ok{color:var(--amber)}
 #misslist .sysbadge{flex:0 0 auto;width:26px;height:26px;display:flex;align-items:center;justify-content:center;
   border:1px solid var(--line2);transform:rotate(45deg);font-size:10px;color:var(--dim)}
 #misslist .sysbadge span{transform:rotate(-45deg)}
@@ -700,7 +706,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div class="corner c-br"><b class="h"></b><b class="v"></b></div>
 
   <div id="topbar">
-    <div id="brand"><span class="mark"></span>CARTOGRAFIA ESTELAR</div>
+    <div id="brand"><span class="mark"></span>CARTOGRAFIA ESTELAR<button id="tutdebug" title="Resetar os tutoriais (debug)">TUT</button></div>
     <div id="crumbs"></div>
     <div id="statuspod">
       <span id="statled"></span>
@@ -890,6 +896,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
         </div>
         <div id="missbar"><i style="width:0%"></i></div>
         <div id="missnext"></div>
+        <div id="cadmiss"></div>
       </div>
       <div id="missfind">
         <input id="missq" type="text" placeholder="BUSCAR NO CATÁLOGO…" autocomplete="off" spellcheck="false">
@@ -5117,6 +5124,35 @@ function buildFocus(bodyId, spin0){
   wrap.add(bg.group);
   if(spin0) bg.mesh.rotation.y = spin0;   /* continua de onde a cena do sistema parou */
   bg.group.traverse(o=>{ if(o.userData && o.userData.isClouds) clouds = o; });
+  /* toques de cena: a bruma laranja de Titã e os gêiseres do polo sul de Encélado */
+  if(bodyId === 'tita'){
+    const bruma = new THREE.Mesh(new THREE.SphereGeometry(radius*1.12, 48, 48),
+      new THREE.ShaderMaterial({vertexShader:ATMO_VERT, fragmentShader:ATMO_FRAG,
+        uniforms:{uCol:{value:C('#e8923a')}, uI:{value:1.5}},
+        side:THREE.BackSide, blending:THREE.AdditiveBlending, transparent:true, depthWrite:false}));
+    bg.group.add(bruma);
+  }
+  if(bodyId === 'encelado'){
+    const NG = 260, gPos = new Float32Array(NG*3);
+    for(let i=0;i<NG;i++){
+      const t2 = Math.random();
+      const alt = radius*(1.0 + t2*1.9);
+      const ang2 = Math.random()*Math.PI*2, rr2 = radius*0.16*(0.4 + t2*1.4)*Math.random();
+      gPos[i*3] = Math.cos(ang2)*rr2;
+      gPos[i*3+1] = -alt;
+      gPos[i*3+2] = Math.sin(ang2)*rr2;
+    }
+    const gg = new THREE.BufferGeometry();
+    gg.setAttribute('position', new THREE.BufferAttribute(gPos, 3));
+    const geiser = new THREE.Points(gg, new THREE.PointsMaterial({color:0xcfe8ff, size:0.05,
+      transparent:true, opacity:0.7, blending:THREE.AdditiveBlending, depthWrite:false, sizeAttenuation:true}));
+    bg.group.add(geiser);
+    const brilho = new THREE.Sprite(new THREE.SpriteMaterial({map:TEX_GLOW_WARM, color:0xbfe0ff,
+      transparent:true, opacity:0.3, blending:THREE.AdditiveBlending, depthWrite:false}));
+    brilho.scale.setScalar(radius*1.0);
+    brilho.position.y = -radius*1.2;
+    bg.group.add(brilho);
+  }
 
   if(b.comet){
     /* coma ao redor do núcleo e as duas caudas: poeira (clara) e íons (azul) */
@@ -5954,6 +5990,7 @@ function gotoGalaxy(galId, flavor, continuo, deSistema){
   if(!g){ galId = 'vialactea'; g = GALAXIES[0]; }
   const troca = ()=>{
     ST.level='galaxy'; ST.gal=galId; ST.body=null; ST.mapCard=null;
+    feito('galaxia');
     swapScene(buildGalaxy(galId), !!continuo || !!deSistema);
     /* subindo de um sistema: a galáxia nasce colada no marcador dele */
     if(deSistema) riseFrom(deSistema, {semDesvio:true});
@@ -6314,6 +6351,20 @@ function closeCmp(){ $('#cmp').classList.remove('on'); CMP.a = null; cardRender(
 const norm = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 /* ---------- missão: visitados, patentes, lista com filtro e ordenação ---------- */
 const VIS = new Set(String(store.get('carto:vis','')).split(',').filter(Boolean));
+/* missões de bordo: conquistas de ação (além dos visitados), do esboço do Rodrigo */
+const FEITO = new Set(String(store.get('carto:feitos','')).split(',').filter(Boolean));
+const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A LINHA DAS SONDAS',
+  busca:'CAD-03 · LOCALIZAR PELA BUSCA', cinco:'CAD-04 · VISITAR 5 CORPOS DO SISTEMA SOLAR',
+  pause:'CAD-05 · PAUSAR E RETOMAR O RELÓGIO', galaxia:'CAD-06 · SUBIR ATÉ A GALÁXIA',
+  sondavisita:'CAD-07 · VISITAR UMA SONDA'};
+function feito(k){
+  if(FEITO.has(k)) return;
+  FEITO.add(k);
+  store.set('carto:feitos', [...FEITO].join(','));
+  showHint('MISSÃO DE BORDO CONCLUÍDA · ' + (MISS_ROT[k] || '').split(' · ')[0]);
+  if($('#mission').classList.contains('on')) missRender();
+}
+function cadCinco(){ return [...VIS].filter(id=>ALLBODIES[id] && ALLBODIES[id]._sys === 'sol').length; }
 /* os mais recentes primeiro, para o buscar sugerir "voltar aonde eu estava" */
 let REC = String(store.get('carto:rec','')).split(',').filter(Boolean);
 let FRQ = {};
@@ -6331,6 +6382,9 @@ function somDeEpoca(id){
 function markVisited(id){
   if(!id) return;
   somDeEpoca(id);
+  feito('visita');
+  if(ALLBODIES[id] && ALLBODIES[id].sonda) feito('sondavisita');
+  if(cadCinco() >= 4) feito('cinco');   /* esta visita fecha a quinta */
   REC = [id].concat(REC.filter(x=>x!==id)).slice(0, 20);
   store.set('carto:rec', REC.join(','));
   FRQ[id] = (FRQ[id]||0) + 1;
@@ -6464,6 +6518,15 @@ function missRender(){
     + (selos ? ' · <b>'+selos+'</b>/'+sis.length+' SELOS' : '');
   $('#missbar').firstElementChild.style.width = Math.round(n/total*100)+'%';
   $('#missnext').textContent = pat.nxt ? (pat.cur.d+' Faltam '+(pat.nxt.n-n)+' para '+pat.nxt.t+'.') : pat.cur.d;
+  /* as missões de bordo da patente, com o vivo "faltam n" */
+  { const c5 = cadCinco();
+    const linhas = Object.keys(MISS_ROT).map(k=>{
+      let ok = FEITO.has(k), extra = '';
+      if(k === 'cinco'){ ok = ok || c5 >= 5; if(!ok) extra = ' · FALTAM ' + (5 - c5); }
+      return '<span class="cmk'+(ok?' ok':'')+'">'+(ok?'✓':'○')+' '+MISS_ROT[k]+extra+'</span>';
+    }).join('');
+    $('#cadmiss').innerHTML = linhas;
+  }
 
   const q = norm(MISS.q||'');
   $('#missqx').classList.toggle('on', !!q);
@@ -6820,7 +6883,7 @@ function findRender(q){
   $('#findlist').scrollTop = 0;
 }
 function paintSel(){ $('#findlist').querySelectorAll('li').forEach((li,i)=>li.classList.toggle('sel', i===findSel)); }
-function findGo(){ const r = findRes[findSel]; if(r){ findClose(); r.go(); } }
+function findGo(){ const r = findRes[findSel]; if(r){ findClose(); feito('busca'); r.go(); } }
 
 /* RA/DEC real do alvo, quando existe: sistemas usam a posição da estrela no
    NOSSO céu; galáxias idem; sem dado, volta a coordenada cênica */
@@ -7053,6 +7116,14 @@ function uiSync(){
 let SELFX = null, SIMCLK_T = 0;
 const SEGV = new THREE.Vector3();   /* alvo da trava de centro no mapa */
 /* aplica o filtro de objetos: some com corpo, rótulo, rota e cauda */
+/* pulso de camada: ao ligar um filtro de linha, a camada recém-ligada brilha
+   por um segundo, para o olho achar o que acabou de nascer (vale no celular) */
+function pulsoCamada(cls){
+  if(!ACT || !ACT.sel || !ACT.sel.orbits) return;
+  const alvo = ACT.sel.orbits.filter(o=>o.cls === cls);
+  for(const o of alvo){ o.mat.color.setHex(0xffb454); o.mat.opacity = 0.95; }
+  setTimeout(()=>{ for(const o of alvo){ o.mat.color.setHex(o.c); o.mat.opacity = o.o; } applySel(); }, 950);
+}
 function aplicaObjetos(){
   if(!ACT || !ACT.objs) return;
   for(const o of ACT.objs){
@@ -7474,7 +7545,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r84';
+const BUILD = 'r85';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -7574,9 +7645,10 @@ $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: c
 /* ============================ TUTORIAL DE BORDO ============================
    Balões sequenciais no nosso estilo, sem tirar o usuário do app. Cada chave
    toca UMA vez (carto:tut); as boas-vindas podem ser revistas pelo manual. */
-const TUT = {v:new Set(String(store.get('carto:tut','')).split(',').filter(Boolean)), fila:null, i:0, alvoEl:null};
+const TUT = {v:new Set(String(store.get('carto:tut','')).split(',').filter(Boolean)), fila:null, i:0, alvoEl:null, tick:null};
 function tutFeito(k){ TUT.v.add(k); store.set('carto:tut', [...TUT.v].join(',')); }
 function tutFecha(){
+  if(TUT.tick){ clearInterval(TUT.tick); TUT.tick = null; }
   $('#tut').classList.remove('on');
   if(TUT.alvoEl){ TUT.alvoEl.classList.remove('tutfoco'); TUT.alvoEl = null; }
   TUT.fila = null;
@@ -7590,6 +7662,20 @@ function tutMostra(){
   $('#tutnext').textContent = (TUT.i === TUT.fila.length-1) ? 'ENTENDI' : 'PRÓXIMO ▸';
   $('#tutskip').style.display = (TUT.fila.length > 1 && TUT.i < TUT.fila.length-1) ? '' : 'none';
   if(p.alvo){ const el = document.querySelector(p.alvo); if(el){ el.classList.add('tutfoco'); TUT.alvoEl = el; } }
+  if(TUT.tick){ clearInterval(TUT.tick); TUT.tick = null; }
+  if(p.init){ try{ p.init(); }catch(e){} }
+  /* passo com ação esperada: quando o usuário FAZ, avança sozinho */
+  if(p.espera){
+    TUT.tick = setInterval(()=>{
+      try{
+        if(p.espera()){
+          clearInterval(TUT.tick); TUT.tick = null;
+          $('#tutnext').textContent = '✓ FEITO';
+          setTimeout(()=>{ TUT.i++; tutMostra(); }, 650);
+        }
+      }catch(e){}
+    }, 300);
+  }
   $('#tut').classList.add('on');
 }
 function tutInicia(chave, passos){
@@ -7601,16 +7687,35 @@ function tutInicia(chave, passos){
 $('#tutnext').addEventListener('click', ()=>{ TUT.i++; tutMostra(); });
 $('#tutskip').addEventListener('click', tutFecha);
 function tutBoasVindas(){
-  const t = document.body.classList.contains('touch');
+  /* o gesto certo vem do PONTEIRO, não da classe touch: um notebook com tela
+     de toque continua sendo mouse */
+  const t = matchMedia('(pointer: coarse)').matches;
   tutInicia('boasvindas', [
-    {tx:'<b>BEM-VINDO A BORDO.</b><br>Este é o Sistema Solar, a nossa casa. '+(t?'Arraste com um dedo para orbitar e pince para o zoom.':'Arraste para orbitar e role para o zoom.')},
-    {tx:'As distâncias e os tamanhos aqui são <b>cênicos</b>, desenhados para navegação. Os dados das fichas são reais.'},
-    {tx:'Por padrão você vê os planetas. No botão <b>≋</b> ficam os filtros: dá para mostrar Plutão e os planetas anões, as luas e as órbitas de cada grupo.', alvo:'#btnfilt'},
-    {tx:'Ali também se ligam as <b>sondas e os satélites</b>, com as rotas de cada um. E desliga tudo de novo quando quiser.', alvo:'#btnfilt'},
-    {tx:'No canto de baixo: o tempo da sua sessão, a <b>data do sistema</b> correndo, o pause e a viagem para qualquer data.', alvo:'#simclock'},
-    {tx:'E aqui em cima: busca, registro de bordo, som, foto e configurações. O <b>?</b> guarda o manual completo. Boa viagem.', alvo:'#topright'}
+    {tx:'<b>BEM-VINDO A BORDO.</b><br>Este é o Sistema Solar, a nossa casa. '
+       + (t ? 'Arraste com um dedo para orbitar. Pince para aproximar.' : 'Arraste para orbitar. Role para aproximar.'),
+     init:()=>{ TUT._y = CAM.yaw; TUT._d = CAM.dist; },
+     espera:()=>Math.abs(CAM.yaw - TUT._y) > 0.12 || Math.abs(CAM.dist - TUT._d) > 2},
+    {tx:'As distâncias e os tamanhos são <b>cênicos</b>, desenhados para navegação. Os dados das fichas são reais.'},
+    {tx:(t?'Toque':'Clique')+' em um planeta. O primeiro '+(t?'toque':'clique')+' abre a <b>ficha</b> e trava a câmera nele. Ainda não entra.',
+     espera:()=>!!ST.mapCard},
+    {tx:'Agora toque em <b>ENTRAR</b> no topo da ficha, ou de novo no corpo. O mergulho é contínuo, sem cortes.',
+     alvo:'#navgo', espera:()=>ST.level === 'focus'},
+    {tx:'Para voltar, '+(t?'junte os dedos':'afaste o zoom')+' até a cena abrir, ou use o ESC.',
+     espera:()=>ST.level !== 'focus'},
+    {tx:'Filtros: abra o <b>≋</b> e LIGUE a linha das <b>SONDAS</b>. As rotas surgem no mapa. Cada filtro liga ou desliga uma camada.',
+     alvo:'#btnfilt', espera:()=>FILTROS.sonda === true},
+    {tx:'O canto de baixo, seu painel de bordo: <b>CAMPO DE VISÃO</b> é a largura real da tela; abaixo, o endereço no céu (cênico, ou RA/DEC real na engrenagem); <b>T+</b> é a sua sessão; e a <b>data do sistema</b> corre com pause e viagem no tempo.',
+     alvo:'#navpod'},
+    {tx:'E aqui em cima: busca, registro de bordo, som, foto e configurações. O <b>?</b> guarda o manual. Boa viagem, navegador.', alvo:'#topright'}
   ]);
 }
+{ const td = $('#tutdebug'); if(td) td.addEventListener('click', ()=>{
+  TUT.v.clear();
+  store.set('carto:tut', '');
+  tutFecha();
+  showHint('TUTORIAIS RESETADOS');
+  setTimeout(tutBoasVindas, 500);
+}); }
 function tutComparar(){
   tutInicia('comparar', [
     {tx:'<b>COMPARAR:</b> o primeiro corpo ficou marcado. Agora abra qualquer outro, pela busca, pelo mapa ou pelo registro, e toque em <b>◫ COMPARAR</b> de novo: a análise sai em escala real.'},
@@ -7632,7 +7737,12 @@ function dpSync(){
   $('#dp_m').textContent = MESES_N[DP.m];
   $('#dp_a').textContent = DP.a;
 }
-$('#simpp').addEventListener('click', ()=>{ SIMT.pausado = !SIMT.pausado; simClockUI(); });
+$('#simpp').addEventListener('click', ()=>{
+  SIMT.pausado = !SIMT.pausado;
+  if(SIMT.pausado) TUT._pausou = true;
+  else if(TUT._pausou) feito('pause');
+  simClockUI();
+});
 $('#simgo').addEventListener('click', ()=>{
   const dp = $('#datepop');
   if(!dp.classList.contains('on')){
@@ -7763,6 +7873,10 @@ $('#filtpop').addEventListener('click', e=>{
     FILTROS[r.dataset.cls] = FILTROS[r.dataset.cls] === false;
     store.set('carto:linhas', ['planeta','anao','estrela','lua','cometa','sonda','satelite','foguete'].filter(k=>FILTROS[k]!==false).join(','));
     filtSync(); applySel();
+    if(FILTROS[r.dataset.cls] !== false){
+      if(r.dataset.cls === 'sonda') feito('sondas');
+      pulsoCamada(r.dataset.cls);
+    }
   }
 });
 $('#trajplay').addEventListener('click', ()=>{
