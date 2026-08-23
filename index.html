@@ -772,18 +772,22 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div id="cfgpop">
     <div class="fp-t">⚙︎ CONFIGURAÇÕES</div>
     <div class="fp-t fp-t2">VELOCIDADE DO TEMPO</div>
-    <div class="filtrow" data-vel="real"><span>TEMPO REAL · 1 S = 1 S</span><b></b></div>
+    <div class="filtrow" data-vel="real"><span>TEMPO REAL · TRAVADO NO AGORA</span><b></b></div>
+    <div class="filtrow" data-vel="seg"><span>1 SEGUNDO = 1 SEGUNDO</span><b></b></div>
     <div class="filtrow" data-vel="dia"><span>1 SEGUNDO = 1 DIA</span><b></b></div>
     <div class="filtrow" data-vel="semana"><span>1 SEGUNDO = 1 SEMANA</span><b></b></div>
     <div class="filtrow" data-vel="mes"><span>1 SEGUNDO = 1 MÊS</span><b></b></div>
     <div class="fp-t fp-t2">EXTRAS</div>
     <div class="filtrow" data-rastro="1"><span>RASTRO DE 30 DIAS</span><b>DESLIGADO</b></div>
+    <div class="filtrow" data-coord="1"><span>COORDENADAS REAIS (RA/DEC)</span><b>DESLIGADO</b></div>
     <div class="fp-n">O relógio no canto inferior esquerdo mostra a data do sistema. Pausar e viajar no tempo ficam lá.</div>
   </div>
   <div id="filtpop">
     <div class="fp-t">≋ LINHAS DO MAPA</div>
     <div class="filtrow" data-cls="planeta"><span>PLANETAS</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="anao"><span>PLANETAS ANÕES</span><b>LIGADA</b></div>
+    <div class="filtrow" data-cls="estrela"><span>ESTRELAS COMPANHEIRAS</span><b>LIGADA</b></div>
+    <div class="filtrow" data-cls="lua"><span>LUAS</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="cometa"><span>COMETAS E VISITANTES</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="sonda"><span>SONDAS</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="satelite"><span>SATÉLITES</span><b>LIGADA</b></div>
@@ -792,6 +796,8 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="fp-t fp-t2">◌ OBJETOS NO MAPA</div>
     <div class="filtrow" data-obj="planeta"><span>PLANETAS</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="anao"><span>PLANETAS ANÕES</span><b>VISÍVEL</b></div>
+    <div class="filtrow" data-obj="estrela"><span>ESTRELAS COMPANHEIRAS</span><b>VISÍVEL</b></div>
+    <div class="filtrow" data-obj="lua"><span>LUAS</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="cometa"><span>COMETAS E VISITANTES</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="sonda"><span>SONDAS</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="satelite"><span>SATÉLITES</span><b>VISÍVEL</b></div>
@@ -1913,32 +1919,32 @@ const STARSYS = [
 
 /* ============================ GALÁXIAS (nível universo) ============================ */
 const GALAXIES = [
- {id:'vialactea', name:'VIA LÁCTEA', nav:true, pos:[0,0,0], hue:0.58, tilt:[0.4,0.2],
+ {id:'vialactea', radec:'17h46m −29°00′', name:'VIA LÁCTEA', nav:true, pos:[0,0,0], hue:0.58, tilt:[0.4,0.2],
   card:{desig:'GALÁXIA · CASA', kind:'Espiral barrada (SBbc)', hab:null,
    quick:[['DIÂMETRO','~100 mil al'],['ESTRELAS','100–400 bi'],['IDADE','13,6 bi anos'],['BURACO NEGRO','Sgr A*']],
    sections:[{t:'REGISTRO', rows:[['Centro','Sagittarius A*: buraco negro de 4,1 mi de massas solares'],['Nossa posição','Braço de Órion, a 26 mil al do centro'],['Ano galáctico','O Sol leva ~230 mi de anos para dar 1 volta'],['Vizinhança','Grupo Local, ~80 galáxias']]}],
    facts:['Da última volta do Sol na galáxia para cá, os dinossauros surgiram e sumiram.']}},
- {id:'sombrero', name:'SOMBRERO · M104', nav:true, pos:[-14,9,-26], hue:0.09, tilt:[1.35,0.1],
+ {id:'sombrero', radec:'12h40m −11°37′', name:'SOMBRERO · M104', nav:true, pos:[-14,9,-26], hue:0.09, tilt:[1.35,0.1],
   card:{desig:'GALÁXIA · 31 MI AL', kind:'O chapéu mais fotogênico do céu', hab:null,
    quick:[['DISTÂNCIA','31 mi al'],['DIÂMETRO','~50 mil al'],['BURACO NEGRO','1 bi de Sóis'],['AGLOMERADOS','~2.000 globulares']],
    sections:[{t:'REGISTRO', rows:[['A forma','Vista quase de perfil: um bojo gigante cortado pela faixa de poeira, o chapéu'],['O monstro','Um dos maiores buracos negros da vizinhança: 1 bilhão de massas solares'],['Os enxames','Cerca de 2.000 aglomerados globulares, dez vezes mais que a Via Láctea'],['Endereço','Na direção de Virgem, na fronteira do aglomerado']]}],
    facts:['O bojo dela é tão grande que os astrônomos debatem se é espiral ou elíptica: talvez as duas coisas.','A foto do Hubble de 2003 é uma das imagens astronômicas mais reproduzidas de todos os tempos.']}},
- {id:'andromeda', name:'ANDRÔMEDA · M31', nav:true, pos:[27,5,-13], hue:0.62, tilt:[0.9,0.5],
+ {id:'andromeda', radec:'00h43m +41°16′', name:'ANDRÔMEDA · M31', nav:true, pos:[27,5,-13], hue:0.62, tilt:[0.9,0.5],
   card:{desig:'GALÁXIA · 2,5 MI AL', kind:'Espiral gigante', hab:null,
    quick:[['DISTÂNCIA','2,5 mi al'],['DIÂMETRO','~220 mil al'],['ESTRELAS','~1 tri'],['RUMO','colisão']],
    sections:[{t:'REGISTRO', rows:[['Aproximação','Vem a 110 km/s na nossa direção'],['Colisão','Em ~4,5 bi de anos: nasce a "Lactômeda"'],['A olho nu','O objeto mais distante visível sem telescópio'],['Endereço real','Tem um sistema navegável aqui: PA-99-N2, o 1º planeta candidato fora da Via Láctea']]}],
    facts:['Quando colidir com a Via Láctea, quase nenhuma estrela vai se chocar, o espaço é vazio demais.']}},
- {id:'triangulo', name:'TRIÂNGULO · M33', nav:true, pos:[-25,3,-9], hue:0.55, tilt:[0.3,0.8],
+ {id:'triangulo', radec:'01h34m +30°40′', name:'TRIÂNGULO · M33', nav:true, pos:[-25,3,-9], hue:0.55, tilt:[0.3,0.8],
   card:{desig:'GALÁXIA · 2,7 MI AL', kind:'Espiral', hab:null,
    quick:[['DISTÂNCIA','2,73 mi al'],['DIÂMETRO','~60 mil al'],['ESTRELAS','~40 bi'],['RANK','3ª do Grupo Local']],
    sections:[{t:'REGISTRO', rows:[['Grupo Local','A 3ª maior, atrás de Andrômeda e Via Láctea'],['Destaque','NGC 604: um berçário de estrelas 40× maior que a Nebulosa de Órion']]}],
    facts:['Pode ser uma "lua" gigante de Andrômeda, as duas parecem gravitacionalmente ligadas.']}},
- {id:'magalhaes', name:'GRANDE NUVEM DE MAGALHÃES', nav:true, pos:[13,-6,17], hue:0.5, tilt:[1.1,0.3],
+ {id:'magalhaes', radec:'05h24m −69°45′', name:'GRANDE NUVEM DE MAGALHÃES', nav:true, pos:[13,-6,17], hue:0.5, tilt:[1.1,0.3],
   card:{desig:'GALÁXIA SATÉLITE · 160 MIL AL', kind:'Espiral anã irregular', hab:null,
    quick:[['DISTÂNCIA','160 mil al'],['DIÂMETRO','~32 mil al'],['ESTRELAS','~20 bi'],['VISÍVEL','do Brasil ✓']],
    sections:[{t:'REGISTRO', rows:[['Satélite','Orbita a Via Láctea'],['Hemisfério Sul','Visível a olho nu em céu escuro, inclusive do Brasil'],['SN 1987A','Palco da supernova mais estudada da história'],['Endereços reais','Dois sistemas navegáveis aqui: a Nebulosa da Tarântula e a própria SN 1987A']]}],
    facts:['Recebeu o nome dos navegadores de Fernão de Magalhães, que a usavam como referência.']}},
- {id:'pnm', name:'PEQUENA NUVEM DE MAGALHÃES', nav:true, pos:[6,-9,22], hue:0.53, tilt:[0.7,1.2],
+ {id:'pnm', radec:'00h53m −72°48′', name:'PEQUENA NUVEM DE MAGALHÃES', nav:true, pos:[6,-9,22], hue:0.53, tilt:[0.7,1.2],
   card:{desig:'GALÁXIA SATÉLITE · 200 MIL AL', kind:'A irmã menor, também a olho nu', hab:null,
    quick:[['DISTÂNCIA','200 mil al'],['DIÂMETRO','~7 mil al'],['ESTRELAS','~3 bi'],['VISÍVEL','do Brasil ✓']],
    sections:[{t:'REGISTRO', rows:[['O par','Junto com a Grande Nuvem, forma a dupla de satélites que o hemisfério sul enxerga sem telescópio'],['A ponte','Um rio de gás liga as duas, arrancado pela maré da Via Láctea'],['Henrietta Leavitt','Estudando estrelas variáveis daqui, ela descobriu como medir distâncias no universo'],['O futuro','Vai ser dilacerada e absorvida pela Via Láctea']]}],
@@ -1948,7 +1954,7 @@ const GALAXIES = [
    quick:[['DISTÂNCIA','29,3 mi al'],['DIÂMETRO','~50 mil al'],['BURACO NEGRO','1 bi M☉'],['VISUAL','icônica']],
    sections:[{t:'REGISTRO', rows:[['Aparência','Vista de perfil, com uma faixa de poeira, parece um chapéu'],['Núcleo','Um dos buracos negros mais massivos da vizinhança: 1 bilhão de sóis']]}],
    facts:['O bojo brilhante + a faixa escura renderam o apelido mexicano.']}},
- {id:'redemoinho', name:'REDEMOINHO · M51', nav:true, pos:[31,-2,15], hue:0.6, tilt:[0.2,0.1],
+ {id:'redemoinho', radec:'13h30m +47°12′', name:'REDEMOINHO · M51', nav:true, pos:[31,-2,15], hue:0.6, tilt:[0.2,0.1],
   card:{desig:'GALÁXIA · ~28 MI AL', kind:'Espiral interagindo', hab:null,
    quick:[['DISTÂNCIA','~28 mi al'],['DIÂMETRO','~76 mil al'],['COMPANHEIRA','NGC 5195'],['BRAÇOS','livro-texto']],
    sections:[{t:'REGISTRO', rows:[['Dupla','Está "puxando" a anã NGC 5195, a interação acende os braços'],['História','1ª galáxia onde se enxergou estrutura espiral (1845)'],['Endereço real','Tem um sistema navegável aqui: M51-ULS-1, o planeta candidato mais distante já detectado']]}],
@@ -2137,6 +2143,19 @@ PLANETS.push(
   ],
   facts:['Mike Brown, o descobridor, usa o título “o homem que matou Plutão” com orgulho.','No afélio, o Sol visto de lá é só uma estrela muito brilhante.','A órbita dela é tão inclinada e esticada que levou décadas para alguém notar o ponto de luz.'],
   fict:'O nome da deusa da discórdia foi escolhido pela briga astronômica que ela causou, a trivia é a própria história.', moons:[]},
+ {id:'p67', name:'COMETA 67P', desig:'CHURYUMOV-GERASIMENKO · COMETA', kind:'O patinho de borracha da Rosetta', hab:0, gbar:0.00002, pop:'0',
+  comet:true, orbita:{peri:18.5, afel:28.5, pos:0.85, incl:0.12},
+  sys:{orbit:23, size:0.26, speed:2.0, angle:2.4},
+  traj:{de:2015, ate:2028},
+  marcos:[[2015,'PERIÉLIO COM A ROSETTA AO LADO'],[2016,'ADEUS, ROSETTA'],[2022,'AFÉLIO'],[2028,'PRÓXIMO PERIÉLIO']],
+  quick:[['NÚCLEO','4,3 × 4,1 km, dois lobos'],['PERÍODO','6,45 anos'],['DISTÂNCIA','1,24–5,68 UA'],['VISITA','Rosetta, 2014-2016'],['POUSO','Philae, 12/11/2014'],['PRÓXIMO PERIÉLIO','2028']],
+  visual:{mode:'rocky', c1:'#5a5248', c2:'#7a7266', c3:'#3a342c', scale:6.5, seed:67.0, crater:0.9},
+  sections:[
+    {t:'A MISSÃO ROSETTA', rows:[['10 anos de viagem','A sonda europeia perseguiu o cometa por uma década antes de alcançá-lo em 2014'],['O pouso','O módulo Philae quicou DUAS vezes e parou de lado numa fenda, mas trabalhou'],['Dois anos juntos','A Rosetta orbitou o cometa durante o periélio inteiro, vendo os jatos acordarem'],['O fim','Em 2016 ela desceu de vez e ficou lá: está pousada no cometa até hoje']]},
+    {t:'O PATINHO', rows:[['A forma','Dois lobos colados: ou dois cometas que se encontraram, ou um só que se ergueu'],['O canto','O magnetômetro captou oscilações que viraram o famoso "canto" do 67P'],['Água diferente','A água dele não bate com a dos oceanos: nossa água talvez não venha de cometas assim']]}
+  ],
+  facts:['O Philae quicou duas vezes no pouso e ainda assim mandou ciência de dentro de uma fenda.','A Rosetta está pousada nele até hoje, dando a volta no Sol a cada 6,45 anos.','O "canto" do cometa, oscilações magnéticas convertidas em som, virou hit no YouTube.'],
+  fict:'A forma de patinho de borracha e o canto misterioso fizeram do 67P o cometa mais querido da internet.', moons:[]},
  {id:'halley', name:'COMETA HALLEY', desig:'1P · COMETA PERIÓDICO', kind:'O cometa de todas as gerações', hab:0, gbar:0.0001, pop:'0',
   quick:[['NÚCLEO','15 × 8 km'],['PERÍODO','75–76 anos'],['ÚLTIMA VISITA','1986'],['PRÓXIMA','2061'],['VELOCIDADE','até 254 mil km/h'],['REGISTROS','desde 240 a.C.']],
   comet:true, orbita:{peri:8.6, afel:47, incl:0.31},
@@ -3119,25 +3138,25 @@ const SYS = {
           quick:[['ESTRELA','1 (G2V)'],['PLANETAS','8'],['LUAS','290+'],['IDADE','4,6 bi anos'],['HABITADOS','1 confirmado'],['SONDAS FORA','5']],
           sections:[{t:'REGISTRO', rows:[['Endereço','Braço de Órion, a ~26 mil al do centro da galáxia'],['Volta na galáxia','~230 milhões de anos'],['Fronteira','A heliopausa, Voyager 1 e 2 já cruzaram'],['Vizinho mais próximo','Alpha Centauri, a 4,37 al']]}],
           facts:['Toque na estrela ou em um planeta para ver os dados; toque de novo para entrar.']} },
-  trappist:{ id:'trappist', name:'TRAPPIST-1', star:TRAPPIST_STAR, bodies:TRAPPIST_PLANETS, belt:[], beltR:null,
+  trappist:{ id:'trappist', radec:'23h06m −05°02′', name:'TRAPPIST-1', star:TRAPPIST_STAR, bodies:TRAPPIST_PLANETS, belt:[], beltR:null,
         starSize:1.5, camMax:40, hint:'7 MUNDOS EM MENOS ESPAÇO QUE A ÓRBITA DE MERCÚRIO',
         card:{desig:'SISTEMA ESTELAR · AQUÁRIO', kind:'Sete mundos compactos', hab:null,
           quick:[['ESTRELA','1 (M8V)'],['PLANETAS','7 rochosos'],['ZONA HABITÁVEL','3 deles'],['DISTÂNCIA','40,7 al'],['DESCOBERTA','2016–17'],['ESCALA','cabe na órbita de Mercúrio']],
           sections:[{t:'REGISTRO', rows:[['A estrela','Anã vermelha ultrafria, pouco maior que Júpiter'],['O prêmio','e, f e g na zona habitável, e é o favorito'],['James Webb','Veredito parcial: b (~230 °C) e c (~110 °C) parecem rocha nua'],['A aposta','Se um dos da zona habitável tiver atmosfera, será a manchete da década']]}],
           facts:['Vistos de um planeta, os vizinhos apareceriam maiores que a nossa Lua no céu.']} },
-  alphacen:{ id:'alphacen', name:'ALPHA CENTAURI', star:ACEN_A, bodies:ACEN_BODIES, belt:[], beltR:null,
+  alphacen:{ id:'alphacen', radec:'14h40m −60°50′', name:'ALPHA CENTAURI', star:ACEN_A, bodies:ACEN_BODIES, belt:[], beltR:null,
         starSize:3.2, camMax:60, hint:'SISTEMA TRIPLO · PROXIMA GUARDA DOIS PLANETAS',
         card:{desig:'SISTEMA ESTELAR · CENTAURO', kind:'Os vizinhos de porta', hab:null,
           quick:[['ESTRELAS','3 (A, B e Proxima)'],['PLANETAS','2 confirmados'],['DISTÂNCIA','4,24–4,37 al'],['ÓRBITA A–B','79,9 anos'],['ZONA HABITÁVEL','Proxima b'],['VIAGEM (hoje)','~70 mil anos']],
           sections:[{t:'REGISTRO', rows:[['A e B','Um par tipo Sol dançando a 11–36 UA'],['Proxima','Anã vermelha a 0,2 al do par, AQUI fora de escala'],['Por que importa','O sistema mais próximo, alvo nº 1 de sondas interestelares']]}],
           facts:['Breakthrough Starshot: velas de luz chegariam em ~20 anos.']} },
-  sirius:{ id:'sirius', name:'SISTEMA SIRIUS', star:SIR_A, bodies:SIR_BODIES, belt:[], beltR:null,
+  sirius:{ id:'sirius', radec:'06h45m −16°43′', name:'SISTEMA SIRIUS', star:SIR_A, bodies:SIR_BODIES, belt:[], beltR:null,
         starSize:3.6, camMax:46, hint:'A ANÃ BRANCA SIRIUS B ORBITA A CADA 50 ANOS',
         card:{desig:'SISTEMA ESTELAR · CÃO MAIOR', kind:'A mais brilhante + um cadáver estelar', hab:null,
           quick:[['ESTRELAS','2 (A1V + anã branca)'],['DISTÂNCIA','8,6 al'],['ÓRBITA','50,1 anos'],['BRILHO','a mais brilhante do céu'],['PLANETAS','nenhum conhecido'],['IDADE','~240 mi anos']],
           sections:[{t:'REGISTRO', rows:[['Sirius A','Branca, 25× a luz do Sol'],['Sirius B','Massa do Sol no tamanho da Terra'],['História','B foi prevista pela matemática 18 anos antes de ser vista']]}],
           facts:['No Egito antigo, seu nascer anunciava a cheia do Nilo.']} },
-  kepler452:{ id:'kepler452', name:'KEPLER-452', star:KEP_STAR, bodies:KEP_BODIES, belt:[], beltR:null,
+  kepler452:{ id:'kepler452', radec:'19h44m +44°17′', name:'KEPLER-452', star:KEP_STAR, bodies:KEP_BODIES, belt:[], beltR:null,
         starSize:3.3, camMax:40, hint:'LAR DA “TERRA 2.0” · TOQUE PARA VISITAR',
         card:{desig:'SISTEMA ESTELAR · CISNE', kind:'Um vislumbre do nosso futuro', hab:null,
           quick:[['ESTRELA','1 (G2, 6 bi anos)'],['PLANETAS','1 confirmado'],['DISTÂNCIA','~1.800 al'],['DESCOBERTA','2015 · Kepler'],['APELIDO','Terra 2.0'],['ANO LOCAL','385 dias']],
@@ -3185,50 +3204,50 @@ const SYS = {
           quick:[['ESTRELA','M3V'],['PLANETAS','3 conf.'],['DISTÂNCIA','20 al'],['FANTASMA','581g “Zarmina”']],
           sections:[{t:'REGISTRO', rows:[['A novela','O “primeiro mundo habitável” de 2010 evaporou na reanálise'],['Confirmado','581c, a super-Terra que virou lição de humildade'],['2029','Chegam as 501 mensagens que a Terra enviou em 2008']]}],
           facts:['Marque no calendário: nosso “oi” chega em 2029.']} },
-  pegasi51:{ id:'pegasi51', name:'51 PEGASI', star:PEG_STAR, bodies:PEG_BODIES, belt:[], beltR:null,
+  pegasi51:{ id:'pegasi51', radec:'22h57m +20°46′', name:'51 PEGASI', star:PEG_STAR, bodies:PEG_BODIES, belt:[], beltR:null,
         starSize:3.3, camMax:34, hint:'1995: O PRIMEIRO EXOPLANETA EM UMA ESTRELA COMO O SOL',
         card:{desig:'SISTEMA ESTELAR · PÉGASO', kind:'O marco zero dos exoplanetas', hab:null,
           quick:[['ESTRELA','Helvetios (G2IV)'],['PLANETAS','1 confirmado'],['DISTÂNCIA','50,5 al'],['DESCOBERTA','1995'],['NOBEL','Física 2019'],['CLASSE','Júpiter quente nº 1']],
           sections:[{t:'REGISTRO', rows:[['O feito','Mayor & Queloz flagraram Dimidium pelo bamboleio da estrela'],['O impacto','Um gigante gasoso com ano de 4 dias reescreveu a teoria de formação planetária'],['O prêmio','Nobel de Física de 2019, 24 anos depois']]}],
           facts:['Tudo o que este mapa mostra fora do Sistema Solar descende desta descoberta.']} },
-  vega:{ id:'vega', name:'VEGA', star:VEGA_STAR, bodies:VEGA_BODIES, belt:[], beltR:[12.5,15.5], beltLabel:'DISCO DE DETRITOS', beltId:'vegadisk', beltCol:0x9aa8c4,
+  vega:{ id:'vega', radec:'18h37m +38°47′', name:'VEGA', star:VEGA_STAR, bodies:VEGA_BODIES, belt:[], beltR:[12.5,15.5], beltLabel:'DISCO DE DETRITOS', beltId:'vegadisk', beltCol:0x9aa8c4,
         starSize:4.0, camMax:40, hint:'A ESTRELA DE “CONTATO”, DONA DO 1º DISCO DE POEIRA JÁ VISTO',
         card:{desig:'SISTEMA ESTELAR · LIRA', kind:'A estrela-padrão', hab:null,
           quick:[['ESTRELA','A0V azul-branca'],['DISTÂNCIA','25 al'],['DISCO','sim, o 1º descoberto'],['PLANETAS','1 candidato'],['ROTAÇÃO','12,5 h'],['FUTURO','Estrela do Norte em 13.700 d.C.']],
           sections:[{t:'REGISTRO', rows:[['A régua do céu','Definiu a magnitude 0: todo brilho estelar já foi medido contra ela'],['O disco','IRAS (1983) achou aqui o 1º cinturão de detritos fora do Sol'],['JWST (2024)','Fotografou o disco liso demais: talvez não haja planetas gigantes']]}],
           facts:['Primeira estrela fotografada (1850) e primeira com espectro registrado.'],
           fict:'Contato (Carl Sagan): o sinal vem daqui. · No Tanabata, é a tecelã Orihime.'} },
-  fomalhaut:{ id:'fomalhaut', name:'FOMALHAUT', star:FOM_STAR, bodies:FOM_BODIES, belt:[], beltR:[13,16.5], beltLabel:'ANEL DE POEIRA', beltId:'fomdisk', beltCol:0x8fb0d8,
+  fomalhaut:{ id:'fomalhaut', radec:'22h58m −29°37′', name:'FOMALHAUT', star:FOM_STAR, bodies:FOM_BODIES, belt:[], beltR:[13,16.5], beltLabel:'ANEL DE POEIRA', beltId:'fomdisk', beltCol:0x8fb0d8,
         starSize:3.8, camMax:42, hint:'O OLHO DE SAURON: UM ANEL DE POEIRA COM UM FANTASMA DENTRO',
         card:{desig:'SISTEMA ESTELAR · PEIXE AUSTRAL', kind:'O anel mais fotografado do céu', hab:null,
           quick:[['ESTRELA','A3V branca e jovem'],['DISTÂNCIA','25 al'],['ANÉIS','3, vistos pelo JWST'],['PLANETAS','0 confirmados'],['IDADE','440 mi anos'],['FAMA','a foto de 2008']],
           sections:[{t:'REGISTRO', rows:[['A imagem','O anel de poeira com o centro cego virou o "Olho de Sauron" da astronomia'],['O fantasma','Fomalhaut b foi anunciado como planeta em 2008 e sumiu em 2020'],['JWST','Em 2023 revelou três anéis aninhados, sinal de planetas que ainda não vimos']]}],
           facts:['Um sistema em obras: aqui dá pra ver planetas sendo construídos, e escombros colidindo.']} },
-  barnard:{ id:'barnard', name:'ESTRELA DE BARNARD', star:BAR_STAR, bodies:BAR_BODIES, belt:[], beltR:null,
+  barnard:{ id:'barnard', radec:'17h58m +04°42′', name:'ESTRELA DE BARNARD', star:BAR_STAR, bodies:BAR_BODIES, belt:[], beltR:null,
         starSize:2.2, camMax:30, hint:'A ESTRELA MAIS VELOZ DO CÉU, E A 4ª MAIS PRÓXIMA',
         card:{desig:'SISTEMA ESTELAR · OFIÚCO', kind:'A fugitiva, enfim com planetas', hab:null,
           quick:[['ESTRELA','anã vermelha M4V'],['DISTÂNCIA','5,96 al'],['PLANETAS','4 (2024 e 2025)'],['IDADE','~10 bi anos'],['RECORDE','mov. próprio'],['RUMO','vem se aproximando']],
           sections:[{t:'REGISTRO', rows:[['O recorde','Nenhuma estrela cruza o céu tão rápido vista da Terra'],['A novela','Décadas de planetas anunciados e desmentidos, tudo defeito de instrumento'],['A virada','2024: o ESPRESSO confirmou Barnard b. Em 2025, mais três.'],['Futuro','Em 11.800 d.C. será a estrela mais próxima do Sol']]}],
           facts:['Alvo clássico das primeiras propostas sérias de sonda interestelar.']} },
-  m16:{ id:'m16', name:'NEBULOSA DA ÁGUIA', star:M16_STAR, bodies:[], belt:[], beltR:[13,19], beltLabel:'PILARES DA CRIAÇÃO →', beltId:'pilares', beltCol:0xc07a52,
+  m16:{ id:'m16', radec:'18h19m −13°47′', name:'NEBULOSA DA ÁGUIA', star:M16_STAR, bodies:[], belt:[], beltR:[13,19], beltLabel:'PILARES DA CRIAÇÃO →', beltId:'pilares', beltCol:0xc07a52,
         starSize:3.6, camMax:44, hint:'OS PILARES DA CRIAÇÃO: CADA COLUNA TEM ANOS-LUZ DE ALTURA',
         card:{desig:'BERÇÁRIO ESTELAR · SERPENTE', kind:'Onde as estrelas nascem', hab:null,
           quick:[['DISTÂNCIA','6.500 al'],['CATÁLOGO','Messier 16'],['IDADE','1 a 2 mi anos'],['PILARES','4 a 5 al de altura'],['FOTO','Hubble 1995'],['REVISITA','JWST 2022']],
           sections:[{t:'REGISTRO', rows:[['A nebulosa','Uma nuvem gigante de hidrogênio onde centenas de estrelas se formaram'],['Os Pilares','Colunas de gás resistindo à radiação, com estrelas nascendo dentro'],['Escala','Cada coluna é maior que a distância do Sol até Alpha Centauri'],['Aviso','A cena aqui é simbólica: nebulosas não têm órbitas']]}],
           facts:['O primeiro objeto deste mapa que não é nem estrela nem planeta: é o berço dos dois.']} },
-  orion:{ id:'orion', name:'NEBULOSA DE ÓRION', star:ORI_STAR, bodies:[], belt:[], beltR:[12,19], beltLabel:'NEBULOSA DE ÓRION →', beltId:'nebulosaorion', beltCol:0xc0577a,
+  orion:{ id:'orion', radec:'05h35m −05°23′', name:'NEBULOSA DE ÓRION', star:ORI_STAR, bodies:[], belt:[], beltR:[12,19], beltLabel:'NEBULOSA DE ÓRION →', beltId:'nebulosaorion', beltCol:0xc0577a,
         starSize:3.4, camMax:46, hint:'VOCÊ JÁ VIU ESTA NEBULOSA A OLHO NU, NA ESPADA DE ÓRION',
         card:{desig:'BERÇÁRIO ESTELAR · ÓRION', kind:'A fábrica de estrelas mais próxima', hab:null,
           quick:[['DISTÂNCIA','1.344 al'],['CATÁLOGO','M42'],['LARGURA','24 al'],['NASCENDO','~3 mil estrelas'],['A OLHO NU','sim'],['DISCOS','centenas']],
           sections:[{t:'REGISTRO', rows:[['O que é','Uma nuvem gigante acesa por quatro estrelas jovens, o Trapézio'],['Por que importa','É onde vemos sistemas solares se formando em tempo real'],['JWST','Achou moléculas orgânicas e planetas errantes em pares, os JuMBOs']]}],
           facts:['A mancha turva na espada de Órion, que todo mundo já viu sem saber o que era.']} },
-  caranguejo:{ id:'caranguejo', name:'NEBULOSA DO CARANGUEJO', star:CAR_STAR, bodies:[], belt:[], beltR:[11,18], beltLabel:'FILAMENTOS DA EXPLOSÃO →', beltId:'caranguejo', beltCol:0x6ad0c0,
+  caranguejo:{ id:'caranguejo', radec:'05h35m +22°01′', name:'NEBULOSA DO CARANGUEJO', star:CAR_STAR, bodies:[], belt:[], beltR:[11,18], beltLabel:'FILAMENTOS DA EXPLOSÃO →', beltId:'caranguejo', beltCol:0x6ad0c0,
         starSize:1.4, camMax:44, hint:'A EXPLOSÃO DE 1054, ANOTADA POR TESTEMUNHAS HUMANAS',
         card:{desig:'RESTO DE SUPERNOVA · TOURO', kind:'A explosão com data marcada', hab:null,
           quick:[['DISTÂNCIA','6.500 al'],['CATÁLOGO','M1'],['EXPLOSÃO','1054'],['CORAÇÃO','pulsar 30 Hz'],['EXPANSÃO','1.500 km/s'],['LARGURA','11 al']],
           sections:[{t:'REGISTRO', rows:[['1054','Chineses registram uma estrela nova visível de dia por 23 dias'],['O que sobrou','Filamentos em expansão e, no centro, um pulsar girando 30 vezes por segundo'],['Messier 1','O objeto que deu início ao catálogo Messier']]}],
           facts:['A única supernova da nossa galáxia com data anotada por testemunhas.']} },
-  m57:{ id:'m57', name:'NEBULOSA DO ANEL', star:M57_STAR, bodies:[], belt:[], beltR:[11,16], beltLabel:'O ANEL →', beltId:'anel', beltCol:0x6fd8c0,
+  m57:{ id:'m57', radec:'18h53m +33°02′', name:'NEBULOSA DO ANEL', star:M57_STAR, bodies:[], belt:[], beltR:[11,16], beltLabel:'O ANEL →', beltId:'anel', beltCol:0x6fd8c0,
         starSize:1.5, camMax:36, hint:'O FUTURO DO SOL: UM ANEL DE GÁS E UM CAROÇO BRANCO NO MEIO',
         card:{desig:'NEBULOSA PLANETÁRIA · LIRA', kind:'A prévia do fim do Sistema Solar', hab:null,
           quick:[['DISTÂNCIA','2.600 al'],['CATÁLOGO','M57'],['LARGURA','~1 al'],['IDADE','20 mil anos'],['NÚCLEO','anã branca'],['PERTO DE','Vega']],
@@ -3276,7 +3295,7 @@ const SYS = {
           quick:[['MASSA','4,3 mi Sóis'],['DISTÂNCIA','26.000 al'],['FOTO','EHT · 2022'],['NOBEL','2020'],['TESTEMUNHA','a estrela S2'],['VOLTA DO SOL','230 mi anos']],
           sections:[{t:'REGISTRO', rows:[['Como sabemos','Décadas medindo estrelas que orbitam um ponto invisível'],['S2','Passa a 3% da velocidade da luz e dá a volta em 16 anos'],['2022','O Event Horizon Telescope fotografou a sombra dele']]}],
           facts:['Tudo o que existe na Via Láctea, inclusive você, está orbitando este ponto.']} },
-  pleiades:{ id:'pleiades', name:'PLÊIADES', star:PLE_STAR, bodies:[], belt:[], beltR:[9,20], beltShape:'shell', beltLabel:'AS SETE IRMÃS →', beltId:'pleiades', beltCol:0xa8c8ff,
+  pleiades:{ id:'pleiades', radec:'03h47m +24°07′', name:'PLÊIADES', star:PLE_STAR, bodies:[], belt:[], beltR:[9,20], beltShape:'shell', beltLabel:'AS SETE IRMÃS →', beltId:'pleiades', beltCol:0xa8c8ff,
         starSize:2.2, camMax:40, hint:'O AGLOMERADO QUE TODA CULTURA DA TERRA BATIZOU',
         card:{desig:'AGLOMERADO ABERTO · TOURO', kind:'As Sete Irmãs', hab:null,
           quick:[['DISTÂNCIA','444 al'],['ESTRELAS','~1.000'],['DIÂMETRO','~15 al'],['IDADE','~100 mi anos'],['A OLHO NU','6 a 7'],['CATÁLOGO','M45']],
@@ -3338,19 +3357,19 @@ const SYS = {
           quick:[['DISTÂNCIA','~4.500 al'],['CATÁLOGO','Menzel 3'],['JATOS','>1.000 km/s'],['CONSTELAÇÃO','Norma']],
           sections:[{t:'REGISTRO', rows:[['O que é','Uma estrela tipo o Sol expelindo as camadas finais'],['A forma','Dois lóbulos com cintura apertada: uma formiga'],['O aviso','É assim que o nosso sistema termina']]}],
           facts:['O retrato do fim do Sol, daqui a 5 bilhões de anos.']} },
-  olhodegato:{ id:'olhodegato', name:'OLHO DE GATO', star:OLHO_STAR, bodies:[], belt:[], beltR:[9,14], beltLabel:'O OLHO →', beltId:'olhoneb', beltCol:0x5ac8b0,
+  olhodegato:{ id:'olhodegato', radec:'17h59m +66°38′', name:'OLHO DE GATO', star:OLHO_STAR, bodies:[], belt:[], beltR:[9,14], beltLabel:'O OLHO →', beltId:'olhoneb', beltCol:0x5ac8b0,
         starSize:2.0, camMax:36, hint:'ONZE ANÉIS, UM SOPRO A CADA 1.500 ANOS',
         card:{desig:'NGC 6543 · PLANETÁRIA', kind:'O olho que encara de volta', hab:null,
           quick:[['DISTÂNCIA','~3.300 al'],['CATÁLOGO','NGC 6543'],['CASCAS','11'],['CONSTELAÇÃO','Dragão']],
           sections:[{t:'REGISTRO', rows:[['O que é','Uma planetária de cascas concêntricas'],['O marco','Aqui Huggins provou em 1864 que nebulosa é gás'],['O apelido','O olho de gato que a internet chama de Sauron']]}],
           facts:['Foi aqui que nasceu a astrofísica, num espectroscópio de 1864.']} },
-  carina:{ id:'carina', name:'NEBULOSA DE CARINA', star:ETA_STAR, bodies:[], belt:[], beltR:[12,20], beltLabel:'A NEBULOSA →', beltId:'carinaneb', beltCol:0xd88a5a,
+  carina:{ id:'carina', radec:'10h45m −59°41′', name:'NEBULOSA DE CARINA', star:ETA_STAR, bodies:[], belt:[], beltR:[12,20], beltLabel:'A NEBULOSA →', beltId:'carinaneb', beltCol:0xd88a5a,
         starSize:3.2, camMax:46, hint:'A MAIOR NEBULOSA DO CÉU, VISÍVEL A OLHO NU DO BRASIL',
         card:{desig:'BERÇÁRIO GIGANTE · QUILHA', kind:'Quatro vezes Órion, e com a estrela-bomba', hab:null,
           quick:[['DISTÂNCIA','7.500 al'],['CATÁLOGO','NGC 3372'],['LARGURA','~300 al'],['A OLHO NU','sim'],['MORADORA','Eta Carinae'],['JWST','1ª imagem, 2022']],
           sections:[{t:'REGISTRO', rows:[['O que é','O maior berçário estelar visível da Terra'],['Eta Carinae','A binária que quase explodiu em 1843 e pode terminar o serviço'],['JWST','Os Penhascos Cósmicos de 2022 vieram da borda daqui']]}],
           facts:['O hemisfério sul enxerga a maior nebulosa do céu a olho nu, e quase ninguém sabe.']} },
-  omega:{ id:'omega', name:'ÔMEGA CENTAURI', star:OME_STAR, bodies:[], belt:[], beltR:[9,20], beltShape:'shell', beltLabel:'O ENXAME →', beltId:'omegacentauri', beltCol:0xffe0b8,
+  omega:{ id:'omega', radec:'13h27m −47°29′', name:'ÔMEGA CENTAURI', star:OME_STAR, bodies:[], belt:[], beltR:[9,20], beltShape:'shell', beltLabel:'O ENXAME →', beltId:'omegacentauri', beltCol:0xffe0b8,
         starSize:2.0, camMax:40, hint:'DEZ MILHÕES DE ESTRELAS, E DÁ PARA VER A OLHO NU DO BRASIL',
         card:{desig:'AGLOMERADO GLOBULAR · CENTAURO', kind:'O maior do céu, e visível sem telescópio', hab:null,
           quick:[['DISTÂNCIA','17.000 al'],['ESTRELAS','~10 milhões'],['DIÂMETRO','~150 al'],['IDADE','12 bi anos'],['A OLHO NU','sim'],['NO CÉU','1 lua cheia']],
@@ -3393,7 +3412,7 @@ const SYS = {
           quick:[['GALÁXIA','Redemoinho · M51'],['DISTÂNCIA','28 mi al'],['PLANETAS','1 candidato'],['MÉTODO','trânsito em raios X'],['DETECTADO','2021'],['ANO LOCAL','~70 anos']],
           sections:[{t:'REGISTRO', rows:[['2021','Um trânsito de 3 horas apagou os raios X da binária'],['O candidato','Do tamanho de Saturno, orbitando os restos de uma estrela morta'],['Por que importa','Provou que dá para procurar planetas em outras galáxias']]}],
           facts:['Mil vezes mais longe que qualquer exoplaneta confirmado.']} },
-  betelgeuse:{ id:'betelgeuse', name:'BETELGEUSE', star:BET_STAR, bodies:[], belt:[], beltR:null,
+  betelgeuse:{ id:'betelgeuse', radec:'05h55m +07°24′', name:'BETELGEUSE', star:BET_STAR, bodies:[], belt:[], beltR:null,
         starSize:9, camMax:70, hint:'NENHUM PLANETA CATALOGADO · SUPERGIGANTE EM FIM DE VIDA',
         card:{desig:'SISTEMA ESTELAR · ÓRION', kind:'Uma bomba-relógio magnífica', hab:null,
           quick:[['ESTRELA','1 supergigante'],['RAIO','~760 R☉'],['PLANETAS','nenhum catalogado'],['DISTÂNCIA','~550 al'],['IDADE','~10 mi anos'],['DESTINO','supernova']],
@@ -3676,16 +3695,17 @@ function disposeScene(act){
    ganha elipse: ele nao volta, entao a linha dele e um arco aberto. */
 /* linhas visíveis por classe. PADRÃO: só planetas; cometa, sonda e toda classe
    futura (satelite, foguete) nascem DESLIGADAS, o mapa fica limpo por default */
-const FILTROS = {planeta:true, anao:true, cometa:false, sonda:false, satelite:false, foguete:false};
+const FILTROS = {planeta:true, anao:true, estrela:true, lua:false, cometa:false, sonda:false, satelite:false, foguete:false};
 /* segundo grupo do filtro: esconder o OBJETO inteiro (corpo, rótulo e rota).
    Planetas e luas nunca somem. Vale também para a cena de foco e os chips. */
-const FILTROBJ = {planeta:true, anao:true, cometa:true, sonda:true, satelite:true, foguete:true, cinturao:true};
+const FILTROBJ = {planeta:true, anao:true, lua:true, estrela:true, cometa:true, sonda:true, satelite:true, foguete:true, cinturao:true};
 /* relógio de simulação: o sistema tem uma DATA que corre (padrão 1 s = 1 dia),
    pode pausar e pular para qualquer data. As posições vêm de Kepler. */
 const SIM_HOJE = Date.now(), MS_ANO = 365.25*86400000;
 const RASTRO = {on:false};   /* rastro de 30 dias atrás de cada planeta */
+const COORD = {real:false};  /* coordenadas: cênicas (nossas) ou RA/DEC reais onde há dado */
 const SIMT = {data: Date.now(), vel:'dia', pausado:false,
-  diasPorSeg(){ return this.vel==='mes' ? 30.44 : (this.vel==='semana' ? 7 : (this.vel==='real' ? 1/86400 : 1)); }};
+  diasPorSeg(){ return this.vel==='mes' ? 30.44 : (this.vel==='semana' ? 7 : ((this.vel==='real' || this.vel==='seg') ? 1/86400 : 1)); }};
 function satelitesDe(id){
   /* só o que está ATIVO e em órbita: foguete histórico e satélite morto
      ficam nas listas do card e do registro, não na cena */
@@ -3705,9 +3725,12 @@ const LINHA = {
   sonda:   {cor:0x4a4a72, op:0.22},
   satelite:{cor:0x4a6b7a, op:0.30},
   anao:    {cor:0x5c4d80, op:0.42},
+  lua:     {cor:0x3a4f60, op:0.16},
+  estrela: {cor:0x8a7a3a, op:0.42},
   foguete: {cor:0x7a5548, op:0.30}
 };
 function classeDaLinha(p){
+  if(p.visual && p.visual.mode === 'star') return 'estrela';
   if(p.anao) return 'anao';
   if(p.foguete) return 'foguete';
   if(p.satelite) return 'satelite';
@@ -3901,9 +3924,22 @@ function buildSystem(sysId, spin0){
         const qOrb = (m.quick || []).find(q=>/ÓRBITA/.test(q[0]));
         const mDias = qOrb ? (parseFloat(String(qOrb[1]).replace(',', '.')) || 0) : 0;
         orbiters.push({holder:mh, spd:1.5 + (mi%3)*0.5, orb:0, tDias:(/\bd\b|dias|,\d+ d| d$/.test(qOrb ? qOrb[1] : '') ? mDias : 0)});
+        /* anel de órbita da lua, bem apagado, e registro no filtro de objetos:
+           esconder o planeta esconde as luas junto (são filhas do holder dele) */
+        const aseg = 40, aPos = new Float32Array(aseg*3);
+        for(let i2=0;i2<aseg;i2++){ const aa = i2/aseg*Math.PI*2;
+          aPos[i2*3] = Math.cos(aa)*mr; aPos[i2*3+2] = Math.sin(aa)*mr; }
+        const ag = new THREE.BufferGeometry();
+        ag.setAttribute('position', new THREE.BufferAttribute(aPos, 3));
+        const anelLua = new THREE.LineLoop(ag, new THREE.LineBasicMaterial({color:LINHA.lua.cor, transparent:true, opacity:LINHA.lua.op}));
+        anelLua.position.set(obX, 0, obZ);
+        holder.add(anelLua);
+        if(elip) elip.extras.push(anelLua);
+        selReg.orbits.push({id:m.id, mat:anelLua.material, obj:anelLua, cls:'lua', c:LINHA.lua.cor, o:LINHA.lua.op});
         const mgp = mg2.group;
         labels.push({el:makeLabel(m.name, 'faint mini', ()=>ACTION('focus', m.id)),
           mini:true, get:v=>{ mgp.getWorldPosition(v); v.y += ms + 0.28; }});
+        objReg.push({id:m.id, cls:'lua', holder:mh, pick:mpk, lbl:labels[labels.length-1], tails:[anelLua]});
         kidCount[p.id] = (kidCount[p.id]||0) + 1;
       });
     }
@@ -5477,12 +5513,13 @@ const store = {
 LIVE = store.get('carto:live','0') === '1';   /* modo ao vivo da Terra e da Lua */
 { const v = store.get('carto:linhas', null);
   if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
-    for(const k of ['planeta','anao','cometa','sonda','satelite','foguete']) FILTROS[k] = on.has(k); } }
+    for(const k of ['planeta','anao','estrela','lua','cometa','sonda','satelite','foguete']) FILTROS[k] = on.has(k); } }
 SIMT.vel = store.get('carto:vel', 'dia');
 RASTRO.on = store.get('carto:rastro', '0') === '1';
+COORD.real = store.get('carto:coord', '0') === '1';
 { const v = store.get('carto:objetos', null);
   if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
-    for(const k of ['planeta','anao','cometa','sonda','satelite','foguete','cinturao']) FILTROBJ[k] = on.has(k); } }
+    for(const k of ['planeta','anao','lua','estrela','cometa','sonda','satelite','foguete','cinturao']) FILTROBJ[k] = on.has(k); } }
 
 /* ---------- áudio: playlist + ambiente generativo + sfx ---------- */
 const PLAYLIST = [
@@ -6730,6 +6767,17 @@ function findRender(q){
 function paintSel(){ $('#findlist').querySelectorAll('li').forEach((li,i)=>li.classList.toggle('sel', i===findSel)); }
 function findGo(){ const r = findRes[findSel]; if(r){ findClose(); r.go(); } }
 
+/* RA/DEC real do alvo, quando existe: sistemas usam a posição da estrela no
+   NOSSO céu; galáxias idem; sem dado, volta a coordenada cênica */
+function coordReal(){
+  if(!COORD.real) return null;
+  if(ST.level === 'galaxy' || ST.level === 'universe'){
+    const g = GALAXIES.find(x=>x.id === ST.gal);
+    return (g && g.radec) || null;
+  }
+  const S = SYS[ST.sys];
+  return (S && S.radec) || null;
+}
 function crumbsRender(){
   const el = $('#crumbs'); el.innerHTML = '';
   const items = [];
@@ -6940,7 +6988,7 @@ function uiSync(){
   if(ST.level==='system') coord = SYS[ST.sys].star.coord;
   if(ST.level==='focus') coord = ALLBODIES[ST.body].coord;
   if(mcCoord) coord = mcCoord;
-  $('#coordval').textContent = coord;
+  $('#coordval').textContent = coordReal() || coord;
   crumbsRender();
   cardRender();
   applySel();
@@ -7368,7 +7416,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r82';
+const BUILD = 'r83';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -7469,7 +7517,7 @@ function simClockUI(){
   const el = $('#simdata'); if(!el) return;
   const d = new Date(SIMT.data);
   let txt = d.getDate() + ' ' + MESES_N[d.getMonth()] + ' ' + d.getFullYear();
-  if(SIMT.vel==='real') txt += ' · ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  if(SIMT.vel==='real' || SIMT.vel==='seg') txt += ' · ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
   el.textContent = txt;
   const pp = $('#simpp'); if(pp) pp.textContent = SIMT.pausado ? '▶' : '⏸';
 }
@@ -7492,6 +7540,7 @@ $('#simgo').addEventListener('click', ()=>{
 $('#datepop').addEventListener('click', e=>{
   const ev = e.target.closest('button[data-evt]');
   if(ev){
+    if(SIMT.vel === 'real'){ SIMT.vel = 'seg'; store.set('carto:vel', 'seg'); }
     SIMT.data = new Date(ev.dataset.evt + 'T12:00:00').getTime();
     $('#datepop').classList.remove('on');
     simClockUI();
@@ -7509,6 +7558,7 @@ $('#datepop').addEventListener('click', e=>{
 });
 $('#dp_ir').addEventListener('click', ()=>{
   const dias = new Date(DP.a, DP.m + 1, 0).getDate();
+  if(SIMT.vel === 'real'){ SIMT.vel = 'seg'; store.set('carto:vel', 'seg'); showHint('SAIU DO TEMPO REAL'); }
   SIMT.data = new Date(DP.a, DP.m, Math.min(DP.d, dias), 12).getTime();
   $('#datepop').classList.remove('on');
   simClockUI();
@@ -7522,6 +7572,8 @@ $('#dp_hoje').addEventListener('click', ()=>{
 function cfgSync(){
   const rr = $('#cfgpop').querySelector('[data-rastro]');
   if(rr){ rr.classList.toggle('off', !RASTRO.on); rr.querySelector('b').textContent = RASTRO.on ? 'LIGADO' : 'DESLIGADO'; }
+  const rc = $('#cfgpop').querySelector('[data-coord]');
+  if(rc){ rc.classList.toggle('off', !COORD.real); rc.querySelector('b').textContent = COORD.real ? 'LIGADO' : 'DESLIGADO'; }
   $('#cfgpop').querySelectorAll('[data-vel]').forEach(r=>{
     const on = SIMT.vel === r.dataset.vel;
     r.classList.toggle('off', !on);
@@ -7534,6 +7586,13 @@ $('#btncfg').addEventListener('click', ()=>{
   cfgSync();
 });
 $('#cfgpop').addEventListener('click', e=>{
+  const rC = e.target.closest('[data-coord]');
+  if(rC){
+    COORD.real = !COORD.real;
+    store.set('carto:coord', COORD.real ? '1' : '0');
+    cfgSync(); crumbsRender();
+    return;
+  }
   const rt = e.target.closest('[data-rastro]');
   if(rt){
     RASTRO.on = !RASTRO.on;
@@ -7544,6 +7603,7 @@ $('#cfgpop').addEventListener('click', e=>{
   }
   const r = e.target.closest('[data-vel]'); if(!r) return;
   SIMT.vel = r.dataset.vel;
+  if(SIMT.vel === 'real') SIMT.data = Date.now();   /* tempo real puxa para o agora */
   store.set('carto:vel', SIMT.vel);
   cfgSync(); simClockUI();
 });
@@ -7565,16 +7625,28 @@ $('#btnfilt').addEventListener('click', ()=>{
   $('#cfgpop').classList.remove('on');
   $('#filtpop').classList.toggle('on');
   filtSync();
+  /* o popover só mostra as classes que EXISTEM no sistema atual */
+  const emSis = ACT && ACT.kind === 'system';
+  $('#filtpop').querySelectorAll('.filtrow').forEach(r=>{
+    const k = r.dataset.cls || r.dataset.obj;
+    if(!emSis || !k){ r.style.display = ''; return; }
+    let tem;
+    if(k === 'planeta') tem = true;
+    else if(k === 'cinturao') tem = !!(ACT.objs && ACT.objs.some(o=>o.cls === 'cinturao'));
+    else if(r.dataset.cls) tem = !!(ACT.sel && ACT.sel.orbits && ACT.sel.orbits.some(o=>o.cls === k));
+    else tem = !!(ACT.objs && ACT.objs.some(o=>o.cls === k));
+    r.style.display = tem ? '' : 'none';
+  });
 });
 $('#filtpop').addEventListener('click', e=>{
   const r = e.target.closest('.filtrow'); if(!r) return;
   if(r.dataset.obj){
     FILTROBJ[r.dataset.obj] = FILTROBJ[r.dataset.obj] === false;
-    store.set('carto:objetos', ['planeta','anao','cometa','sonda','satelite','foguete','cinturao'].filter(k=>FILTROBJ[k]!==false).join(','));
+    store.set('carto:objetos', ['planeta','anao','lua','estrela','cometa','sonda','satelite','foguete','cinturao'].filter(k=>FILTROBJ[k]!==false).join(','));
     filtSync(); aplicaObjetos(); cardRender();
   } else {
     FILTROS[r.dataset.cls] = FILTROS[r.dataset.cls] === false;
-    store.set('carto:linhas', ['planeta','anao','cometa','sonda','satelite','foguete'].filter(k=>FILTROS[k]!==false).join(','));
+    store.set('carto:linhas', ['planeta','anao','estrela','lua','cometa','sonda','satelite','foguete'].filter(k=>FILTROS[k]!==false).join(','));
     filtSync(); applySel();
   }
 });
@@ -7707,8 +7779,10 @@ function loop(){
     RLOG.push('heal-d');
   }
   /* a data do sistema corre aqui (para na linha do tempo e no pause) */
-  if(ACT && ACT.kind==='system' && !SIMT.pausado && !TRAJ && !DIVE)
-    SIMT.data += dt * SIMT.diasPorSeg() * 86400000;
+  if(ACT && ACT.kind==='system' && !SIMT.pausado && !TRAJ && !DIVE){
+    if(SIMT.vel==='real') SIMT.data = Date.now();   /* travado no AGORA */
+    else SIMT.data += dt * SIMT.diasPorSeg() * 86400000;
+  }
   if(now - SIMCLK_T > 400){ SIMCLK_T = now; if(typeof simClockUI === 'function') simClockUI(); }
   /* trava de centro no mapa: o corpo selecionado vira o pivô da câmera,
      e soltar a seleção devolve o centro suavemente */
