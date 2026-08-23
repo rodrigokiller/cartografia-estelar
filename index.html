@@ -186,7 +186,11 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #datepop .dcol button:hover{color:var(--amber);border-color:var(--amber)}
 #datepop .drow{display:flex;gap:8px}
 #datepop .drow .xbtn{margin:0;flex:1}
-#simclock{display:none;align-items:center;gap:7px;position:absolute;left:24px;bottom:3px;z-index:11;
+#datepop .devt{display:block;width:100%;text-align:left;background:none;border:1px solid var(--line2);
+  color:var(--ok);font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;padding:6px 8px;
+  margin-top:5px;cursor:pointer}
+#datepop .devt:hover{color:var(--amber);border-color:var(--amber)}
+#simclock{display:none;align-items:center;gap:7px;position:absolute;left:112px;bottom:8px;z-index:11;
   font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;color:var(--dim2);pointer-events:auto}
 body.emsistema #simclock{display:flex}
 #simclock button{background:none;border:none;color:var(--dim);opacity:.55;cursor:pointer;
@@ -760,6 +764,10 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <div class="dcol"><button data-d="a1">▲</button><b id="dp_a"></b><button data-d="a0">▼</button><span>ANO</span></div>
     </div>
     <div class="drow"><button class="xbtn primary" id="dp_ir">VER NESSA DATA</button><button class="xbtn" id="dp_hoje">HOJE</button></div>
+    <div class="fp-t fp-t2">EVENTOS</div>
+    <button class="devt" data-evt="2061-07-28">PERIÉLIO DO HALLEY · 2061</button>
+    <button class="devt" data-evt="2076-07-01">SEDNA NO PERIÉLIO · ~2076</button>
+    <button class="devt" data-evt="2227-01-01">PLUTÃO CRUZA NETUNO · 2227</button>
   </div>
   <div id="cfgpop">
     <div class="fp-t">⚙︎ CONFIGURAÇÕES</div>
@@ -768,6 +776,8 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-vel="dia"><span>1 SEGUNDO = 1 DIA</span><b></b></div>
     <div class="filtrow" data-vel="semana"><span>1 SEGUNDO = 1 SEMANA</span><b></b></div>
     <div class="filtrow" data-vel="mes"><span>1 SEGUNDO = 1 MÊS</span><b></b></div>
+    <div class="fp-t fp-t2">EXTRAS</div>
+    <div class="filtrow" data-rastro="1"><span>RASTRO DE 30 DIAS</span><b>DESLIGADO</b></div>
     <div class="fp-n">O relógio no canto inferior esquerdo mostra a data do sistema. Pausar e viajar no tempo ficam lá.</div>
   </div>
   <div id="filtpop">
@@ -1908,6 +1918,11 @@ const GALAXIES = [
    quick:[['DIÂMETRO','~100 mil al'],['ESTRELAS','100–400 bi'],['IDADE','13,6 bi anos'],['BURACO NEGRO','Sgr A*']],
    sections:[{t:'REGISTRO', rows:[['Centro','Sagittarius A*: buraco negro de 4,1 mi de massas solares'],['Nossa posição','Braço de Órion, a 26 mil al do centro'],['Ano galáctico','O Sol leva ~230 mi de anos para dar 1 volta'],['Vizinhança','Grupo Local, ~80 galáxias']]}],
    facts:['Da última volta do Sol na galáxia para cá, os dinossauros surgiram e sumiram.']}},
+ {id:'sombrero', name:'SOMBRERO · M104', nav:true, pos:[-14,9,-26], hue:0.09, tilt:[1.35,0.1],
+  card:{desig:'GALÁXIA · 31 MI AL', kind:'O chapéu mais fotogênico do céu', hab:null,
+   quick:[['DISTÂNCIA','31 mi al'],['DIÂMETRO','~50 mil al'],['BURACO NEGRO','1 bi de Sóis'],['AGLOMERADOS','~2.000 globulares']],
+   sections:[{t:'REGISTRO', rows:[['A forma','Vista quase de perfil: um bojo gigante cortado pela faixa de poeira, o chapéu'],['O monstro','Um dos maiores buracos negros da vizinhança: 1 bilhão de massas solares'],['Os enxames','Cerca de 2.000 aglomerados globulares, dez vezes mais que a Via Láctea'],['Endereço','Na direção de Virgem, na fronteira do aglomerado']]}],
+   facts:['O bojo dela é tão grande que os astrônomos debatem se é espiral ou elíptica: talvez as duas coisas.','A foto do Hubble de 2003 é uma das imagens astronômicas mais reproduzidas de todos os tempos.']}},
  {id:'andromeda', name:'ANDRÔMEDA · M31', nav:true, pos:[27,5,-13], hue:0.62, tilt:[0.9,0.5],
   card:{desig:'GALÁXIA · 2,5 MI AL', kind:'Espiral gigante', hab:null,
    quick:[['DISTÂNCIA','2,5 mi al'],['DIÂMETRO','~220 mil al'],['ESTRELAS','~1 tri'],['RUMO','colisão']],
@@ -3668,6 +3683,7 @@ const FILTROBJ = {planeta:true, anao:true, cometa:true, sonda:true, satelite:tru
 /* relógio de simulação: o sistema tem uma DATA que corre (padrão 1 s = 1 dia),
    pode pausar e pular para qualquer data. As posições vêm de Kepler. */
 const SIM_HOJE = Date.now(), MS_ANO = 365.25*86400000;
+const RASTRO = {on:false};   /* rastro de 30 dias atrás de cada planeta */
 const SIMT = {data: Date.now(), vel:'dia', pausado:false,
   diasPorSeg(){ return this.vel==='mes' ? 30.44 : (this.vel==='semana' ? 7 : (this.vel==='real' ? 1/86400 : 1)); }};
 function satelitesDe(id){
@@ -3730,6 +3746,7 @@ function buildSystem(sysId, spin0){
   const objReg = [];     /* cometas, sondas e satélites, para o filtro de objetos */
   const labelDe = {}, kidCount = {}, satN = {};
   const elipticos = [];   /* corpos de elipse: Kepler por áreas iguais */
+  const rastros = [];     /* os rastros de 30 dias, ligados na configuração */
   for(const p of S.bodies){
     /* desativado (Sputnik): fica só na ficha e nas listas, sem orbitar */
     if(p.satOf && p.morto) continue;
@@ -3806,6 +3823,26 @@ function buildSystem(sysId, spin0){
     const mat = new THREE.LineBasicMaterial({color:est.cor, transparent:true, opacity:est.op});
     const orbit = fuga ? new THREE.Line(og, mat) : new THREE.LineLoop(og, mat);
     holder.add(fade(orbit));
+    /* rastro dos últimos 30 dias: um arco que nasce no corpo e evapora atrás.
+       Só para órbitas circulares; o comprimento vem direto de Kepler */
+    if(!fuga && !p.orbita && !p.satOf){
+      const _T = Math.pow(p.sys.orbit/ORB_TERRA, 1.5);
+      const dTh = Math.min(2.6, (Math.PI*2)*(30/365.25)/_T);
+      const NP = 24, tPos = new Float32Array(NP*3), tCol = new Float32Array(NP*3);
+      for(let i=0;i<NP;i++){
+        const f = i/(NP-1), a = dTh*(1-f);
+        tPos[i*3] = Math.cos(a)*p.sys.orbit; tPos[i*3+2] = Math.sin(a)*p.sys.orbit;
+        tCol[i*3] = f; tCol[i*3+1] = f*0.63; tCol[i*3+2] = f*0.29;
+      }
+      const tg2 = new THREE.BufferGeometry();
+      tg2.setAttribute('position', new THREE.BufferAttribute(tPos, 3));
+      tg2.setAttribute('color', new THREE.BufferAttribute(tCol, 3));
+      const rastro = new THREE.Line(tg2, new THREE.LineBasicMaterial({vertexColors:true,
+        transparent:true, opacity:0.9, blending:THREE.AdditiveBlending, depthWrite:false}));
+      rastro.visible = RASTRO.on;
+      holder.add(rastro);
+      rastros.push(rastro);
+    }
     selReg.orbits.push({id:p.id, mat:orbit.material, obj:orbit, cls, c:est.cor, o:est.op, oculto:!!p.foguete});
     const bg = (p.sonda || p.satelite || p.foguete)
       ? grupoNave(p.id, p.sys.size*2.6)
@@ -3859,7 +3896,11 @@ function buildSystem(sysId, spin0){
         const mpk = new THREE.Mesh(new THREE.SphereGeometry(0.30, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
         mpk.position.x = mr; mpk.userData = {act:'focus', id:m.id, r:ms};
         mh.add(mpk); pickables.push(mpk);
-        orbiters.push({holder:mh, spd:1.5 + (mi%3)*0.5, orb:0});
+        /* período real da lua, lido da ficha: com 1 s = 1 dia, a Lua dá a
+           volta em 27 s e Io em 1,8 s. Sem dado, fica o balé simbólico. */
+        const qOrb = (m.quick || []).find(q=>/ÓRBITA/.test(q[0]));
+        const mDias = qOrb ? (parseFloat(String(qOrb[1]).replace(',', '.')) || 0) : 0;
+        orbiters.push({holder:mh, spd:1.5 + (mi%3)*0.5, orb:0, tDias:(/\bd\b|dias|,\d+ d| d$/.test(qOrb ? qOrb[1] : '') ? mDias : 0)});
         const mgp = mg2.group;
         labels.push({el:makeLabel(m.name, 'faint mini', ()=>ACTION('focus', m.id)),
           mini:true, get:v=>{ mgp.getWorldPosition(v); v.y += ms + 0.28; }});
@@ -3972,7 +4013,7 @@ function buildSystem(sysId, spin0){
   if(S.kuiperR) alcance = Math.max(alcance, S.kuiperR[1]);
   for(const pb of S.bodies) alcance = Math.max(alcance, pb.orbita ? pb.orbita.afel : (pb.sys ? pb.sys.orbit : 0));
   const camMaxDin = Math.max(S.camMax || 60, alcance * 1.7);
-  return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg,
+  return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg, rastros,
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
@@ -4002,7 +4043,10 @@ function buildSystem(sysId, spin0){
       simPrev = SIMT.data;
       if(!emViagem){
         if(danos) avancarAnos(danos);
-        for(const o of orbiters) if(!o.orb) o.holder.rotation.y += o.spd*dt*0.05;
+        for(const o of orbiters) if(!o.orb){
+          if(o.tDias){ if(danos) o.holder.rotation.y += (Math.PI*2)*danos*365.25/o.tDias; }
+          else o.holder.rotation.y += o.spd*dt*0.05;
+        }
       }
       spinAcc += 0.25*dt;
       for(const s of spinners) s.obj.rotation.y += s.spd*dt;
@@ -5435,6 +5479,7 @@ LIVE = store.get('carto:live','0') === '1';   /* modo ao vivo da Terra e da Lua 
   if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
     for(const k of ['planeta','anao','cometa','sonda','satelite','foguete']) FILTROS[k] = on.has(k); } }
 SIMT.vel = store.get('carto:vel', 'dia');
+RASTRO.on = store.get('carto:rastro', '0') === '1';
 { const v = store.get('carto:objetos', null);
   if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
     for(const k of ['planeta','anao','cometa','sonda','satelite','foguete','cinturao']) FILTROBJ[k] = on.has(k); } }
@@ -7323,7 +7368,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r81';
+const BUILD = 'r82';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -7445,6 +7490,14 @@ $('#simgo').addEventListener('click', ()=>{
   dp.classList.toggle('on');
 });
 $('#datepop').addEventListener('click', e=>{
+  const ev = e.target.closest('button[data-evt]');
+  if(ev){
+    SIMT.data = new Date(ev.dataset.evt + 'T12:00:00').getTime();
+    $('#datepop').classList.remove('on');
+    simClockUI();
+    showHint('SISTEMA EM ' + ev.textContent);
+    return;
+  }
   const st = e.target.closest('button[data-d]');
   if(st){
     const k = st.dataset.d[0], up = st.dataset.d[1]==='1' ? 1 : -1;
@@ -7467,6 +7520,8 @@ $('#dp_hoje').addEventListener('click', ()=>{
   simClockUI();
 });
 function cfgSync(){
+  const rr = $('#cfgpop').querySelector('[data-rastro]');
+  if(rr){ rr.classList.toggle('off', !RASTRO.on); rr.querySelector('b').textContent = RASTRO.on ? 'LIGADO' : 'DESLIGADO'; }
   $('#cfgpop').querySelectorAll('[data-vel]').forEach(r=>{
     const on = SIMT.vel === r.dataset.vel;
     r.classList.toggle('off', !on);
@@ -7479,6 +7534,14 @@ $('#btncfg').addEventListener('click', ()=>{
   cfgSync();
 });
 $('#cfgpop').addEventListener('click', e=>{
+  const rt = e.target.closest('[data-rastro]');
+  if(rt){
+    RASTRO.on = !RASTRO.on;
+    store.set('carto:rastro', RASTRO.on ? '1' : '0');
+    if(ACT && ACT.rastros) for(const l of ACT.rastros) l.visible = RASTRO.on;
+    cfgSync();
+    return;
+  }
   const r = e.target.closest('[data-vel]'); if(!r) return;
   SIMT.vel = r.dataset.vel;
   store.set('carto:vel', SIMT.vel);
