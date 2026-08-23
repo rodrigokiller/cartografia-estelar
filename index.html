@@ -431,7 +431,7 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #tip.on{opacity:1}
 #tip.amber{color:var(--amber);border-color:rgba(255,180,84,.5)}
 #tip.baixo{transform:translate(-50%,0)}
-#tut{position:absolute;left:50%;bottom:118px;transform:translateX(-50%);z-index:32;
+#tut{position:absolute;left:50%;bottom:118px;transform:translateX(-50%);z-index:70;
   width:min(430px,92vw);display:none;background:var(--panel);border:1px solid rgba(255,180,84,.45);
   padding:14px 16px 10px}
 #tut.on{display:block}
@@ -447,7 +447,16 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
   font-family:var(--mono);font-size:7.5px;letter-spacing:1.5px;padding:2px 6px;cursor:pointer;opacity:.6}
 #tutdebug:hover{color:var(--amber);border-color:var(--amber);opacity:1}
 body.touch #tut{top:60px;bottom:auto}
-.tutfoco{outline:1px solid var(--amber) !important;box-shadow:0 0 14px rgba(255,180,84,.4) !important}
+.tutfoco{outline:1px solid var(--amber) !important;
+  animation:tutnasce .5s ease-out, tutpulsa 1.7s ease-in-out .5s infinite !important}
+@keyframes tutnasce{
+  0%{outline-offset:14px;outline-color:rgba(255,180,84,0);box-shadow:none}
+  100%{outline-offset:2px;outline-color:var(--amber);box-shadow:0 0 14px rgba(255,180,84,.4)}
+}
+@keyframes tutpulsa{
+  0%,100%{outline-offset:2px;box-shadow:0 0 10px rgba(255,180,84,.30)}
+  50%{outline-offset:5px;box-shadow:0 0 22px rgba(255,180,84,.55)}
+}
 body.touch.emtraj #panel{opacity:0;visibility:hidden;pointer-events:none}
 body.touch #trajclock{bottom:16px}
 .mbadge.vt{color:var(--amber);padding:3px 7px 0;display:inline-flex;align-items:center;justify-content:center;line-height:1}
@@ -455,6 +464,13 @@ body.touch #trajclock{bottom:16px}
 #cadmiss{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:8px}
 #cadmiss .cmk{font-family:var(--mono);font-size:8px;letter-spacing:1.2px;color:var(--dim2)}
 #cadmiss .cmk.ok{color:var(--amber)}
+#mtoast{position:fixed;left:50%;bottom:150px;transform:translate(-50%,16px);z-index:72;
+  background:var(--panel);border:1px solid rgba(255,180,84,.55);padding:10px 18px;
+  display:flex;flex-direction:column;gap:3px;align-items:center;opacity:0;pointer-events:none;
+  transition:opacity .35s, transform .35s}
+#mtoast.on{opacity:1;transform:translate(-50%,0)}
+#mtoast b{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--amber)}
+#mtoast span{font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;color:var(--dim)}
 #misslist .sysbadge{flex:0 0 auto;width:26px;height:26px;display:flex;align-items:center;justify-content:center;
   border:1px solid var(--line2);transform:rotate(45deg);font-size:10px;color:var(--dim)}
 #misslist .sysbadge span{transform:rotate(-45deg)}
@@ -5393,6 +5409,7 @@ function trajStart(id){
   CAMTW = null;
   /* base = metade da velocidade antiga; o botao de velocidade multiplica */
   document.body.classList.add('emtraj');
+  if(b.foguete) feito('apollo');
   TRAJ = {fase:'chega', prog:0, vel:1, pausado:false, arrasto:false,
           local, obj:o.obj, t0:performance.now(), ln:performance.now(),
           base:(b.comet && !b.escape) ? 30000 : 24000, id,
@@ -6278,6 +6295,7 @@ function cotidianoDe(km){
   return 'na casa de ' + ref[1];
 }
 function openCompare(A, B){
+  feito('comparar');
   const dA = parseDia(A), dB = parseDia(B);
   let viz = '';
   if(dA && dB){
@@ -6356,13 +6374,31 @@ const FEITO = new Set(String(store.get('carto:feitos','')).split(',').filter(Boo
 const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A LINHA DAS SONDAS',
   busca:'CAD-03 · LOCALIZAR PELA BUSCA', cinco:'CAD-04 · VISITAR 5 CORPOS DO SISTEMA SOLAR',
   pause:'CAD-05 · PAUSAR E RETOMAR O RELÓGIO', galaxia:'CAD-06 · SUBIR ATÉ A GALÁXIA',
-  sondavisita:'CAD-07 · VISITAR UMA SONDA'};
+  sondavisita:'CAD-07 · VISITAR UMA SONDA',
+  comparar:'TIM-01 · COMPARAR DOIS CORPOS', tempo:'TIM-02 · VIAJAR NO TEMPO',
+  apollo:'TIM-03 · REVIVER UMA MISSÃO APOLLO', sistemacompleto:'TIM-04 · COMPLETAR UM SISTEMA'};
 function feito(k){
   if(FEITO.has(k)) return;
   FEITO.add(k);
   store.set('carto:feitos', [...FEITO].join(','));
-  showHint('MISSÃO DE BORDO CONCLUÍDA · ' + (MISS_ROT[k] || '').split(' · ')[0]);
+  toastMissao(k);
   if($('#mission').classList.contains('on')) missRender();
+}
+/* selo de conquista, estilo jogo: código + nome, desliza e some */
+function toastMissao(k){
+  const rot = MISS_ROT[k]; if(!rot) return;
+  let el = $('#mtoast');
+  if(!el){
+    el = document.createElement('div'); el.id = 'mtoast';
+    document.body.appendChild(el);
+  }
+  const par = rot.split(' · ');
+  el.innerHTML = '<b>✓ MISSÃO CONCLUÍDA</b><span>' + esc(par[0]) + ' · ' + esc(par[1]) + '</span>';
+  el.classList.remove('on');
+  void el.offsetWidth;
+  el.classList.add('on');
+  clearTimeout(toastMissao._t);
+  toastMissao._t = setTimeout(()=>el.classList.remove('on'), 3200);
 }
 function cadCinco(){ return [...VIS].filter(id=>ALLBODIES[id] && ALLBODIES[id]._sys === 'sol').length; }
 /* os mais recentes primeiro, para o buscar sugerir "voltar aonde eu estava" */
@@ -6385,6 +6421,7 @@ function markVisited(id){
   feito('visita');
   if(ALLBODIES[id] && ALLBODIES[id].sonda) feito('sondavisita');
   if(cadCinco() >= 4) feito('cinco');   /* esta visita fecha a quinta */
+  if(typeof progressoSistemas === 'function' && progressoSistemas().some(x=>x.total > 1 && x.vistos >= x.total)) feito('sistemacompleto');
   REC = [id].concat(REC.filter(x=>x!==id)).slice(0, 20);
   store.set('carto:rec', REC.join(','));
   FRQ[id] = (FRQ[id]||0) + 1;
@@ -7506,7 +7543,6 @@ window.addEventListener('keydown', e=>{
   else if(e.key==='Escape'){
     if(TOUR.on) tourStop();
     else if(TRAJ && TRAJ.fase!=='volta') trajCancelar();
-    else if($('#tut').classList.contains('on')) tutFecha();
     else if($('#datepop').classList.contains('on')) $('#datepop').classList.remove('on');
     else if($('#cfgpop').classList.contains('on')) $('#cfgpop').classList.remove('on');
     else if($('#filtpop').classList.contains('on')) $('#filtpop').classList.remove('on');
@@ -7545,7 +7581,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r85';
+const BUILD = 'r86';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -7645,36 +7681,49 @@ $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: c
 /* ============================ TUTORIAL DE BORDO ============================
    Balões sequenciais no nosso estilo, sem tirar o usuário do app. Cada chave
    toca UMA vez (carto:tut); as boas-vindas podem ser revistas pelo manual. */
-const TUT = {v:new Set(String(store.get('carto:tut','')).split(',').filter(Boolean)), fila:null, i:0, alvoEl:null, tick:null};
+const TUT = {v:new Set(String(store.get('carto:tut','')).split(',').filter(Boolean)), fila:null, i:0, alvoEls:[], tick:null, _t0:0};
 function tutFeito(k){ TUT.v.add(k); store.set('carto:tut', [...TUT.v].join(',')); }
 function tutFecha(){
   if(TUT.tick){ clearInterval(TUT.tick); TUT.tick = null; }
   $('#tut').classList.remove('on');
-  if(TUT.alvoEl){ TUT.alvoEl.classList.remove('tutfoco'); TUT.alvoEl = null; }
+  for(const el of TUT.alvoEls) el.classList.remove('tutfoco');
+  TUT.alvoEls = [];
   TUT.fila = null;
 }
 function tutMostra(){
   const p = TUT.fila && TUT.fila[TUT.i];
   if(!p){ tutFecha(); return; }
-  if(TUT.alvoEl){ TUT.alvoEl.classList.remove('tutfoco'); TUT.alvoEl = null; }
+  for(const el of TUT.alvoEls) el.classList.remove('tutfoco');
+  TUT.alvoEls = [];
   $('#tuttx').innerHTML = p.tx;
   $('#tutn').textContent = TUT.fila.length > 1 ? ((TUT.i+1)+'/'+TUT.fila.length) : '';
-  $('#tutnext').textContent = (TUT.i === TUT.fila.length-1) ? 'ENTENDI' : 'PRÓXIMO ▸';
+  const nx = $('#tutnext');
+  nx.textContent = (TUT.i === TUT.fila.length-1) ? 'ENTENDI' : 'PRÓXIMO ▸';
+  /* passo de ação: o PRÓXIMO some, ou o usuário faz, ou pula o tutorial */
+  nx.style.display = p.espera ? 'none' : '';
   $('#tutskip').style.display = (TUT.fila.length > 1 && TUT.i < TUT.fila.length-1) ? '' : 'none';
-  if(p.alvo){ const el = document.querySelector(p.alvo); if(el){ el.classList.add('tutfoco'); TUT.alvoEl = el; } }
+  if(p.alvo) document.querySelectorAll(p.alvo).forEach(el=>{ el.classList.add('tutfoco'); TUT.alvoEls.push(el); });
+  if(p.alvoLabel && ACT && ACT.labels){
+    for(const L of ACT.labels)
+      if(L.el && (L.el.textContent === p.alvoLabel || (L.base && L.base === p.alvoLabel))){
+        L.el.classList.add('tutfoco'); TUT.alvoEls.push(L.el); break;
+      }
+  }
   if(TUT.tick){ clearInterval(TUT.tick); TUT.tick = null; }
   if(p.init){ try{ p.init(); }catch(e){} }
-  /* passo com ação esperada: quando o usuário FAZ, avança sozinho */
+  TUT._t0 = performance.now();
   if(p.espera){
     TUT.tick = setInterval(()=>{
       try{
+        /* respiro de 900ms: o passo aparece antes de qualquer gatilho valer */
+        if(performance.now() - TUT._t0 < 900) return;
         if(p.espera()){
           clearInterval(TUT.tick); TUT.tick = null;
-          $('#tutnext').textContent = '✓ FEITO';
-          setTimeout(()=>{ TUT.i++; tutMostra(); }, 650);
+          nx.style.display = ''; nx.textContent = '✓ FEITO';
+          setTimeout(()=>{ TUT.i++; tutMostra(); }, 900);
         }
       }catch(e){}
-    }, 300);
+    }, 250);
   }
   $('#tut').classList.add('on');
 }
@@ -7687,8 +7736,6 @@ function tutInicia(chave, passos){
 $('#tutnext').addEventListener('click', ()=>{ TUT.i++; tutMostra(); });
 $('#tutskip').addEventListener('click', tutFecha);
 function tutBoasVindas(){
-  /* o gesto certo vem do PONTEIRO, não da classe touch: um notebook com tela
-     de toque continua sendo mouse */
   const t = matchMedia('(pointer: coarse)').matches;
   tutInicia('boasvindas', [
     {tx:'<b>BEM-VINDO A BORDO.</b><br>Este é o Sistema Solar, a nossa casa. '
@@ -7696,16 +7743,20 @@ function tutBoasVindas(){
      init:()=>{ TUT._y = CAM.yaw; TUT._d = CAM.dist; },
      espera:()=>Math.abs(CAM.yaw - TUT._y) > 0.12 || Math.abs(CAM.dist - TUT._d) > 2},
     {tx:'As distâncias e os tamanhos são <b>cênicos</b>, desenhados para navegação. Os dados das fichas são reais.'},
-    {tx:(t?'Toque':'Clique')+' em um planeta. O primeiro '+(t?'toque':'clique')+' abre a <b>ficha</b> e trava a câmera nele. Ainda não entra.',
-     espera:()=>!!ST.mapCard},
-    {tx:'Agora toque em <b>ENTRAR</b> no topo da ficha, ou de novo no corpo. O mergulho é contínuo, sem cortes.',
+    {tx:(t?'Toque':'Clique')+' na <b>TERRA</b>, ou em qualquer planeta. O primeiro '+(t?'toque':'clique')+' abre a ficha e trava a câmera nele. Ainda não entra.',
+     alvoLabel:'TERRA', espera:()=>!!ST.mapCard},
+    {tx:'Agora toque em <b>ENTRAR</b> no topo da ficha, ou de novo no corpo.',
      alvo:'#navgo', espera:()=>ST.level === 'focus'},
     {tx:'Para voltar, '+(t?'junte os dedos':'afaste o zoom')+' até a cena abrir, ou use o ESC.',
      espera:()=>ST.level !== 'focus'},
+    {tx:'Também dá para navegar pelo <b>rastro</b> aqui de cima: UNIVERSO, galáxia e sistema são clicáveis.',
+     alvo:'#crumbs'},
     {tx:'Filtros: abra o <b>≋</b> e LIGUE a linha das <b>SONDAS</b>. As rotas surgem no mapa. Cada filtro liga ou desliga uma camada.',
-     alvo:'#btnfilt', espera:()=>FILTROS.sonda === true},
+     alvo:'#btnfilt',
+     init:()=>{ if(ACT && ACT.kind === 'system' && CAM.dist < 44) tweenCam({dist:48}, 900); },
+     espera:()=>FILTROS.sonda === true},
     {tx:'O canto de baixo, seu painel de bordo: <b>CAMPO DE VISÃO</b> é a largura real da tela; abaixo, o endereço no céu (cênico, ou RA/DEC real na engrenagem); <b>T+</b> é a sua sessão; e a <b>data do sistema</b> corre com pause e viagem no tempo.',
-     alvo:'#navpod'},
+     alvo:'#navpod, #simclock'},
     {tx:'E aqui em cima: busca, registro de bordo, som, foto e configurações. O <b>?</b> guarda o manual. Boa viagem, navegador.', alvo:'#topright'}
   ]);
 }
@@ -7774,6 +7825,7 @@ $('#datepop').addEventListener('click', e=>{
 $('#dp_ir').addEventListener('click', ()=>{
   const dias = new Date(DP.a, DP.m + 1, 0).getDate();
   if(SIMT.vel === 'real'){ SIMT.vel = 'seg'; store.set('carto:vel', 'seg'); showHint('SAIU DO TEMPO REAL'); }
+  feito('tempo');
   SIMT.data = new Date(DP.a, DP.m, Math.min(DP.d, dias), 12).getTime();
   $('#datepop').classList.remove('on');
   simClockUI();
