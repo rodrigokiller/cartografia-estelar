@@ -5260,11 +5260,11 @@ function buildFocus(bodyId, spin0){
   }
 
   /* marcador de seleção reaproveitado pelos dois modos */
-  function addKid(m, pos, size, seg){
+  function addKid(m, pos, size, seg, host0){
     const nave = !!(m.sonda || m.satelite || m.foguete);
     const mg = nave ? grupoNave(m.id, size*2.2) : makeBodyGroup(m, size, seg||24);
     mg.group.position.copy(pos);
-    const host = moonHolder || wrap;
+    const host = host0 || moonHolder || wrap;
     host.add(mg.group);
     fadeObjs[m.id] = mg.group;
     const pk = new THREE.Mesh(new THREE.SphereGeometry(Math.max(0.55, size*2.2), 6, 6),
@@ -5401,6 +5401,8 @@ function buildFocus(bodyId, spin0){
   }
 
   moonHolder = new THREE.Group(); scene.add(moonHolder);
+  const subKids = [];              /* uma entrada por lua: holder, período, raio */
+  const subEstado = {alvo:0, t:0}; /* o modo SISTEMA PLANETÁRIO desta visita */
   const vv = new THREE.Vector3();
   kids.forEach((m, i)=>{
     let ang = i * (Math.PI*2/Math.max(3, kids.length)) + 0.55;
@@ -5423,12 +5425,30 @@ function buildFocus(bodyId, spin0){
     let r = 3.15 + (i%3)*0.5, tamK = 0.20 + hashStr(m.id)*0.10;
     /* escala real: a Lua fica a 60 raios terrestres, do tamanho certo */
     if(ESCR.on && bodyId === 'terra' && m.id === 'lua'){ r = radius*60.3; tamK = radius*0.273/1.3; }
-    vv.set(Math.cos(ang)*r, 0.42*Math.sin(i*2.13) + 0.15, Math.sin(ang)*r);
-    addKid(m, vv, tamK, 24);
+    /* cada lua no PRÓPRIO holder: gira no período real dela e pode se
+       espalhar no modo SISTEMA PLANETÁRIO sem mexer nas outras */
+    const kh = new THREE.Object3D();
+    kh.rotation.y = -ang;   /* rotation.y gira +x para -z: o mundo vê o ângulo ang */
+    moonHolder.add(kh);
+    vv.set(r, 0.42*Math.sin(i*2.13) + 0.15, 0);
+    addKid(m, vv, tamK, 24, kh);
+    const qOrbK = (m.quick || []).find(q=>/ÓRBITA/.test(q[0]));
+    const tDk = (qOrbK && /\bd\b|dias|,\d+ d| d$/.test(String(qOrbK[1]))) ? (parseFloat(String(qOrbK[1]).replace(',', '.')) || 0) : 0;
+    /* a órbita desenhada, invisível até o modo sistema planetário acender */
+    const oseg = 64, orPos = new Float32Array(oseg*3);
+    for(let i2=0;i2<oseg;i2++){ const aa = i2/(oseg-1)*Math.PI*2; orPos[i2*3]=Math.cos(aa); orPos[i2*3+1]=0; orPos[i2*3+2]=Math.sin(aa); }
+    const og = new THREE.BufferGeometry(); og.setAttribute('position', new THREE.BufferAttribute(orPos, 3));
+    const ringMat = new THREE.LineBasicMaterial({color:0x3f5a78, transparent:true, opacity:0});
+    const ring = new THREE.Line(og, ringMat);
+    ring.position.y = vv.y; ring.scale.set(r, 1, r);
+    moonHolder.add(ring);
+    const ringFade = {m:ringMat, o:0};
+    fadeMats.push(ringFade);
+    subKids.push({kh, tDias:tDk, base:r, alvo:Math.max(r, radius + 2.6 + i*1.5), ring, ringFade, rAtual:r});
   });
 
   let simPrevF = SIMT.data;
-  return {kind:'focus', scene, labels, pickables, wrap, bodyId, sel:selReg, raioCorpo:radius, objs:objsFoco,
+  return {kind:'focus', scene, labels, pickables, wrap, bodyId, sel:selReg, raioCorpo:radius, objs:objsFoco, subKids, sub:subEstado,
     get spin(){ return bg ? bg.mesh.rotation.y : 0; },
     dim:(v, exceto)=>{
       for(const f of fadeMats) f.m.opacity = f.o * v;
@@ -5442,9 +5462,29 @@ function buildFocus(bodyId, spin0){
          Nos rápidos, mantém o balé visual, mas respeita o pause. */
       const lento = SIMT.vel === 'real' || SIMT.vel === 'seg';
       const danosF = (SIMT.data - simPrevF)/MS_ANO; simPrevF = SIMT.data;
+      /* cada lua gira no próprio holder: período REAL quando a ficha dá o
+         número, balé simbólico quando não dá (respeitando o pause) */
       if(moonHolder && !aoVivo){
-        if(lento) moonHolder.rotation.y += (Math.PI*2)*danosF*365.25/27.3;
-        else if(!RM && !SIMT.pausado) moonHolder.rotation.y += dt*0.03;
+        for(const sk of subKids){
+          if(sk.tDias) sk.kh.rotation.y += (Math.PI*2)*danosF*365.25/sk.tDias;
+          else if(!RM && !SIMT.pausado && !lento) sk.kh.rotation.y += dt*0.03;
+        }
+      }
+      /* SISTEMA PLANETÁRIO: as luas se espalham e as órbitas acendem */
+      if(subKids.length){
+        const alvoT = subEstado.alvo ? 1 : 0;
+        subEstado.t += (alvoT - subEstado.t)*Math.min(1, dt*3.0);
+        if(Math.abs(alvoT - subEstado.t) < 0.002) subEstado.t = alvoT;
+        for(const sk of subKids){
+          const rNow = sk.base + (sk.alvo - sk.base)*subEstado.t;
+          if(Math.abs(rNow - sk.rAtual) > 1e-4){
+            sk.rAtual = rNow;
+            for(const ch of sk.kh.children) ch.position.x = rNow;
+            sk.ring.scale.set(rNow, 1, rNow);
+          }
+          sk.ringFade.o = 0.32*subEstado.t;
+          if(!DIVE && !TRANSITO) sk.ring.material.opacity = sk.ringFade.o;
+        }
       }
       if(aoVivo){ bg.mesh.rotation.y = giroAtual() + LIVE_FASE; }
       else if(lento){
@@ -5653,6 +5693,23 @@ function anoDe(b){
 }
 /* leva até a linha do tempo de onde estiver: volta ao sistema e dá o play */
 function temLinhaDoTempo(b){ return !!(b && (ehEscape(b) || b.comet || (b.foguete && b.traj))); }
+/* SISTEMA PLANETÁRIO: o corpo focado vira o centro de um mini sistema, as
+   luas se espalham em anéis com as órbitas desenhadas e a câmera recua */
+function subSistema(){
+  if(!ACT || ACT.kind !== 'focus' || !ACT.subKids || !ACT.subKids.length) return;
+  ACT.sub.alvo = ACT.sub.alvo ? 0 : 1;
+  if(ACT.sub.alvo){
+    let maxR = 0;
+    for(const sk of ACT.subKids) maxR = Math.max(maxR, sk.alvo);
+    const alvoDist = Math.max(ACT.cam.dist, maxR*2.3);
+    CAM.max = Math.max(ACT.cam.max, alvoDist*1.25);
+    tweenCam({dist:alvoDist}, 950);
+    showHint('SISTEMA PLANETÁRIO: o corpo vira o centro e as luas orbitam no período real');
+  } else {
+    tweenCam({dist:ACT.cam.dist}, 950, ()=>{ if(ACT && ACT.cam) CAM.max = ACT.cam.max; });
+  }
+  cardRender();
+}
 function verLinhaDoTempo(id){
   const b = ALLBODIES[id];
   if(!b || !temLinhaDoTempo(b)) return;
@@ -7689,6 +7746,10 @@ function cardRender(){
   { const alvoVT = (cur.type==='body') ? b : ((cur.type==='map' && cur.navKind==='body') ? ALLBODIES[cur.navId] : null);
     if(alvoVT && temLinhaDoTempo(alvoVT) && !(ACT && ACT.kind==='system' && alvoVT._sys===ST.sys))
       h += '<button class="xbtn primary" id="vertraj" data-vt="'+alvoVT.id+'">≋ VER A LINHA DO TEMPO</button>'; }
+  /* SISTEMA PLANETÁRIO: só no card do corpo focado que tem luas na cena */
+  if(cur.type==='body' && ST.level==='focus' && ST.body===b.id && ACT && ACT.kind==='focus'
+     && ACT.subKids && ACT.subKids.length)
+    h += '<button class="xbtn" id="btnsubsis">'+((ACT.sub && ACT.sub.alvo) ? '◈ FECHAR O SISTEMA PLANETÁRIO' : '◈ VER O SISTEMA PLANETÁRIO')+'</button>';
   const bodyish = (cur.type==='body') ? b : (cur.navKind==='body' ? b : null);
   if(bodyish){
     const parent = bodyish._parent ? ALLBODIES[bodyish._parent] : (bodyish.satOf ? ALLBODIES[bodyish.satOf] : null);
@@ -7807,6 +7868,7 @@ function cardRender(){
   const ng = $('#navgo'); if(ng) ng.addEventListener('click', ()=>{ enterTarget(cur.navKind==='gal' ? 'galaxy' : (cur.navKind==='sys' ? 'starsys' : 'focus'), cur.navId); });
   const cx = $('#cardx2'); if(cx) cx.addEventListener('click', ()=>{ ST.mapCard = null; uiSync(); });
   const bts = $('#btntoursis'); if(bts) bts.addEventListener('click', ()=>tourDoSistema(bts.dataset.sistour));
+  const bss = $('#btnsubsis'); if(bss) bss.addEventListener('click', subSistema);
   pb.querySelectorAll('[data-vt]').forEach(el=>el.addEventListener('click', ()=>verLinhaDoTempo(el.dataset.vt)));
   const bp = $('#backpan'); if(bp) bp.addEventListener('click', ()=>{ ST.mapCard=null; uiSync(); });
 }
@@ -8288,7 +8350,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r102';
+const BUILD = 'r103';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
