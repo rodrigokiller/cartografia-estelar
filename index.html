@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>CARTOGRAFIA ESTELAR // NAV-CON</title>
+<title>NEBULASTRA // CARTOGRAFIA ESTELAR</title>
 <meta name="theme-color" content="#04070f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='14' fill='%233f8cff'/%3E%3Cellipse cx='32' cy='32' rx='27' ry='8' fill='none' stroke='%237dc4ff' stroke-width='3' transform='rotate(-18 32 32)'/%3E%3C/svg%3E">
 <style>
@@ -462,12 +462,19 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #tut .tnav{display:flex;gap:6px}
 #tut #tutnext:disabled{opacity:.35;cursor:default;color:var(--dim2);border-color:var(--line2)}
 #tut #tutnext:disabled:hover{color:var(--dim2);border-color:var(--line2)}
+#tutpausa{display:none}
+#tut.modotour #tutpausa{display:inline-block}
+#tut.modotour{border-color:rgba(63,140,255,.55)}
+#tut.modotour #tuthead{color:var(--ion)}
+#tut.modotour::before{background:linear-gradient(-45deg,transparent calc(50% - 1px),var(--line2) calc(50% - 1px),var(--line2) 50%,transparent 50%)}
+#tut.modotour::after{background:linear-gradient(-45deg,transparent 50%,var(--line2) 50%,var(--line2) calc(50% + 1px),transparent calc(50% + 1px))}
 #tut #tutnext{color:var(--amber);border-color:rgba(255,180,84,.5)}
 #tut #tutn{font-family:var(--mono);font-size:8.5px;letter-spacing:2px;color:var(--dim2)}
 #tutcheck{display:flex;flex-direction:column;gap:4px;margin-top:8px}
 #tutcheck:empty{display:none}
 #tutcheck .tchk{font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;color:var(--dim2)}
 #tutcheck .tchk.ok{color:var(--amber)}
+#brandnm i{color:#8f76c8;font-style:normal}
 #tutdebug,#dbgtoast,#dbgpromo,#dbgconq{margin-left:8px;background:none;border:1px dashed var(--line2);color:var(--dim2);
   font-family:var(--mono);font-size:7.5px;letter-spacing:1.5px;padding:2px 6px;cursor:pointer;opacity:.6}
 #tutdebug:hover,#dbgtoast:hover,#dbgpromo:hover,#dbgconq:hover{color:var(--amber);border-color:var(--amber);opacity:1}
@@ -741,7 +748,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div class="corner c-br"><b class="h"></b><b class="v"></b></div>
 
   <div id="topbar">
-    <div id="brand"><span class="mark"></span>CARTOGRAFIA ESTELAR<button id="tutdebug" title="Resetar os tutoriais (debug)">TUT</button><button id="dbgtoast" title="Testar o toast de conquista (debug)">TST</button><button id="dbgpromo" title="Testar o toast de promoção (debug)">PRM</button><button id="dbgconq" title="Resetar as conquistas (debug)">RSC</button></div>
+    <div id="brand"><span class="mark"></span><span id="brandnm"><i>NEBUL</i>ASTRA</span><button id="tutdebug" title="Resetar os tutoriais (debug)">TUT</button><button id="dbgtoast" title="Testar o toast de conquista (debug)">TST</button><button id="dbgpromo" title="Testar o toast de promoção (debug)">PRM</button><button id="dbgconq" title="Resetar as conquistas (debug)">RSC</button></div>
     <div id="crumbs"></div>
     <div id="statuspod">
       <span id="statled"></span>
@@ -821,7 +828,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div id="tuthead"><span>▸ TUTORIAL DE BORDO</span><span id="tutn"></span></div>
     <div id="tuttx"></div>
     <div id="tutcheck"></div>
-    <div class="trow"><button id="tutskip">PULAR</button><span class="tnav"><button id="tutprev">◂ VOLTAR</button><button id="tutnext">PRÓXIMO ▸</button></span></div>
+    <div class="trow"><button id="tutskip">PULAR</button><span class="tnav"><button id="tutpausa">⏸</button><button id="tutprev">◂ VOLTAR</button><button id="tutnext">PRÓXIMO ▸</button></span></div>
   </div>
   <div id="tip"></div>
   <div id="datepop">
@@ -918,7 +925,13 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <p><b>▶ Modo tour:</b> dentro do registro de bordo<span class="kb"> (ou pela tecla <b>T</b>)</span>, o mapa se guia sozinho por uma rota comentada. Toque na cena a qualquer momento para assumir o controle.</p>
       <p><b>Compartilhe:</b> o endereço da página acompanha o objeto (ex.: <span style="font-family:var(--mono)">#corpo=europa</span>), copie o link e envie.</p>
       <p class="sub kb">ESC volta um nível · / ou S busca · M registro · T tour · P foto · ? este manual</p>
+      <p><b>Relógio do sistema:</b> a data real corre no canto inferior esquerdo, com pause e viagem a qualquer data (◈). A velocidade fica nas configurações ⚙︎, do tempo real a 1 s = 1 mês.</p>
+      <p><b>⬡ Conquistas:</b> ações especiais (comparar, viajar no tempo, reviver uma Apollo) valem 2 corpos cada na carreira. A lista completa mora no registro de bordo.</p>
+      <p><b>Trava de centro:</b> selecionar um corpo no mapa faz a câmera orbitá-lo: dá para chegar perto de Saturno sem trocar de escala. ESC ou ✕ soltam.</p>
+      <p><b>≋ Linha do tempo:</b> sondas, cometas e as Apollo têm a viagem reconstruída, com os planetas NA ÉPOCA certa e marcos clicáveis.</p>
+      <p><button class="xbtn" id="tourespacial">▸ INICIAR O TOUR ESPACIAL · OS OITO PLANETAS</button></p>
       <p><button class="xbtn" id="tutrever">▸ REVER O TUTORIAL DE BOAS-VINDAS</button></p>
+      <p class="sub">NEBULASTRA · nebulastra.com · o mapa Cartografia Estelar</p>
       <p class="sub">Dados: NASA/ESA/IAU, valores aproximados. Linhas em âmbar são referências de ficção.</p>
       <p class="credito">IDEALIZADO E DESENVOLVIDO POR<b>RODRIGO SANGUANINI</b>
         <a href="https://sanguanini.dev" target="_blank" rel="noopener">SANGUANINI.DEV</a></p>
@@ -6443,13 +6456,15 @@ const CONQ_DESC = {visita:'Selecione um corpo e entre nele.', sondas:'No filtro 
   pause:'No relógio do canto, pause o tempo e retome.', galaxia:'Suba até a escala da galáxia.',
   sondavisita:'Selecione uma sonda (Voyager, Pioneer...) e entre nela.',
   comparar:'Use o ◫ para comparar dois corpos em escala real.', tempo:'No ◈ do relógio, viaje para outra data.',
-  apollo:'Abra a linha do tempo da Apollo 11 ou 13.', sistemacompleto:'Visite todos os corpos de um sistema.'};
+  apollo:'Abra a linha do tempo da Apollo 11 ou 13.', sistemacompleto:'Visite todos os corpos de um sistema.',
+  tourespacial:'No manual ?, inicie o TOUR ESPACIAL dos oito planetas e vá até o fim.'};
 const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A LINHA DAS SONDAS',
   busca:'CAD-03 · LOCALIZAR PELA BUSCA', cinco:'CAD-04 · VISITAR 5 CORPOS DO SISTEMA SOLAR',
   pause:'CAD-05 · PAUSAR E RETOMAR O RELÓGIO', galaxia:'CAD-06 · SUBIR ATÉ A GALÁXIA',
   sondavisita:'CAD-07 · VISITAR UMA SONDA',
   comparar:'TIM-01 · COMPARAR DOIS CORPOS', tempo:'TIM-02 · VIAJAR NO TEMPO',
-  apollo:'TIM-03 · REVIVER UMA MISSÃO APOLLO', sistemacompleto:'TIM-04 · COMPLETAR UM SISTEMA'};
+  apollo:'TIM-03 · REVIVER UMA MISSÃO APOLLO', sistemacompleto:'TIM-04 · COMPLETAR UM SISTEMA',
+  tourespacial:'EXP-01 · COMPLETAR UM TOUR ESPACIAL'};
 function feito(k){
   if(FEITO.has(k)) return;
   FEITO.add(k);
@@ -6776,8 +6791,11 @@ function missOpen(){
   tutInicia('registro', [
     {tx:'<b>REGISTRO DE BORDO:</b> tudo que você visita fica anotado aqui, com busca, filtros e ordenações.'},
     {tx:'Clique no chip <b>★ SISTEMAS</b>.',
-     alvo:'#misschips .mchip[data-k="sistemas"]', espera:()=>MISS.filtro === 'sistemas'},
+     alvo:'#misschips .mchip[data-k="sistemas"]', auto:true, checks:[{tx:'Abra a árvore de sistemas', ok:()=>MISS.filtro === 'sistemas'}]},
     {tx:'A lista virou uma <b>árvore</b>: galáxias abrem sistemas, sistemas abrem corpos, e os + expandem cada nível.'},
+    {tx:'Agora o chip <b>⬡ CONQUISTAS</b>.',
+     alvo:'#misschips .mchip[data-k="conquistas"]', auto:true, checks:[{tx:'Abra as conquistas', ok:()=>MISS.filtro === 'conquistas'}]},
+    {tx:'Cada conquista mostra como fazer e, quando feita, a data. E cada uma vale <b>2 corpos</b> na carreira.'},
     {tx:'E as <b>PATENTES</b>: visitando mundos e fechando conquistas você sobe de CADETE a CARTÓGRAFO-MOR. A barra de progresso mora aqui.'}
   ]);
 }
@@ -7267,16 +7285,18 @@ const SEGV = new THREE.Vector3();   /* alvo da trava de centro no mapa */
 /* aplica o filtro de objetos: some com corpo, rótulo, rota e cauda */
 /* pulso de camada: ao ligar um filtro de linha, a camada recém-ligada brilha
    por um segundo, para o olho achar o que acabou de nascer (vale no celular) */
-function pulsoCamada(cls){
-  if(!ACT || !ACT.sel || !ACT.sel.orbits) return;
-  const alvo = ACT.sel.orbits.filter(o=>o.cls === cls);
-  if(!alvo.length) return;
-  /* respiro discreto: só um pouco acima da cor normal, e rápido */
-  const t0 = performance.now(), dur = 750;
+/* liga: fade in do zero até a cor normal. Desliga: fade out. A órbita
+   SELECIONADA (âmbar) nunca entra na dança: fica intocável. */
+function fadeInCamada(cls){
+  if(!ACT || !ACT.sel || !ACT.sel.orbits){ applySel(); return; }
+  const selId = ST.mapCard ? ST.mapCard.id : null;
+  const alvo = ACT.sel.orbits.filter(o=>o.cls === cls && o.id !== selId);
+  if(!alvo.length){ applySel(); return; }
+  for(const o of alvo){ o.mat.opacity = 0; if(o.obj) o.obj.visible = true; }
+  const t0 = performance.now(), dur = 420;
   const anda = (now)=>{
     const k = Math.min(1, (now - t0)/dur);
-    const e = Math.sin(k * Math.PI);
-    for(const o of alvo) o.mat.opacity = o.o + Math.min(0.25, 0.9 - o.o) * e;
+    for(const o of alvo) o.mat.opacity = o.o * k;
     if(k < 1) requestAnimationFrame(anda);
     else { for(const o of alvo) o.mat.opacity = o.o; applySel(); }
   };
@@ -7284,7 +7304,8 @@ function pulsoCamada(cls){
 }
 function fadeCamada(cls){
   if(!ACT || !ACT.sel || !ACT.sel.orbits){ applySel(); return; }
-  const alvo = ACT.sel.orbits.filter(o=>o.cls === cls && o.obj && o.obj.visible);
+  const selId = ST.mapCard ? ST.mapCard.id : null;
+  const alvo = ACT.sel.orbits.filter(o=>o.cls === cls && o.id !== selId && o.obj && o.obj.visible);
   if(!alvo.length){ applySel(); return; }
   const t0 = performance.now(), dur = 420;
   const anda = (now)=>{
@@ -7717,7 +7738,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r89';
+const BUILD = 'r90';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -7817,11 +7838,15 @@ $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: c
 /* ============================ TUTORIAL DE BORDO ============================
    Balões sequenciais no nosso estilo, sem tirar o usuário do app. Cada chave
    toca UMA vez (carto:tut); as boas-vindas podem ser revistas pelo manual. */
-const TUT = {v:new Set(String(store.get('carto:tut','')).split(',').filter(Boolean)), fila:null, i:0, max:0, alvoEls:[], tick:null, _t0:0, aoFechar:null};
+const TUT = {v:new Set(String(store.get('carto:tut','')).split(',').filter(Boolean)), fila:null, i:0, max:0, alvoEls:[], tick:null, timer:null, pausaTour:false, chave:null, _t0:0, aoFechar:null};
 function tutFeito(k){ TUT.v.add(k); store.set('carto:tut', [...TUT.v].join(',')); }
 function tutFecha(){
   if(TUT.tick){ clearInterval(TUT.tick); TUT.tick = null; }
-  $('#tut').classList.remove('on');
+  if(TUT.timer){ clearTimeout(TUT.timer); TUT.timer = null; }
+  if(TUT.chave === 'boasvindas'){ tutFeito('boasvindas'); store.set('carto:tutp', '0'); }
+  TUT.chave = null; TUT.pausaTour = false;
+  $('#tut').classList.remove('on', 'modotour');
+  $('#tuthead').firstElementChild.textContent = '▸ TUTORIAL DE BORDO';
   $('#tutcaixa').classList.remove('on');
   TUT.alvoEls = [];
   TUT.fila = null;
@@ -7857,6 +7882,7 @@ function tutMostra(){
   $('#tuttx').innerHTML = p.tx;
   $('#tutn').textContent = TUT.fila.length > 1 ? ((TUT.i+1)+'/'+TUT.fila.length) : '';
   TUT.max = Math.max(TUT.max, TUT.i);
+  if(TUT.chave === 'boasvindas') store.set('carto:tutp', String(TUT.i));
   /* relendo um passo já vencido, nada re-arma: só leitura e PRÓXIMO livre */
   const releitura = TUT.i < TUT.max;
   const nx = $('#tutnext');
@@ -7900,6 +7926,11 @@ function tutMostra(){
   lst.innerHTML = cks.some(c=>c.tx)
     ? cks.map((c,ix)=>'<span class="tchk" data-ix="'+ix+'">○ '+c.tx+'</span>').join('')
     : '';
+  if(TUT.timer){ clearTimeout(TUT.timer); TUT.timer = null; }
+  if(p.tempo && !TUT.pausaTour)
+    TUT.timer = setTimeout(()=>{ TUT.i++; tutMostra(); }, p.tempo);
+  const bp = $('#tutpausa');
+  if(bp) bp.textContent = TUT.pausaTour ? '▶' : '⏸';
   if(cks.length && !releitura){
     nx.disabled = true;
     TUT.tick = setInterval(()=>{
@@ -7914,7 +7945,12 @@ function tutMostra(){
             if(elc && !elc.classList.contains('ok')){ elc.textContent = '✓ ' + c.tx; elc.classList.add('ok'); }
           }
         });
-        if(todos){ clearInterval(TUT.tick); TUT.tick = null; nx.disabled = false; }
+        if(todos){
+          clearInterval(TUT.tick); TUT.tick = null;
+          nx.disabled = false;
+          $('#tutcaixa').classList.remove('on');   /* fez: para de piscar */
+          if(p.auto) setTimeout(()=>{ if(TUT.fila && TUT.fila[TUT.i] === p){ TUT.i++; tutMostra(); } }, 600);
+        }
       }catch(e){}
     }, 220);
   }
@@ -7922,13 +7958,27 @@ function tutMostra(){
 }
 function tutInicia(chave, passos){
   if(TUT.v.has(chave)) return;
-  tutFeito(chave);
+  TUT.chave = chave;
+  /* as boas-vindas só contam como vistas ao FECHAR: fechar o navegador no
+     meio faz retomar do mesmo passo na próxima visita */
+  if(chave !== 'boasvindas') tutFeito(chave);
   TUT.fila = passos; TUT.i = 0; TUT.max = 0;
+  if(chave === 'boasvindas'){
+    const sv = Math.min(passos.length - 1, (+store.get('carto:tutp', '0')) || 0);
+    TUT.i = sv; TUT.max = sv;
+  }
   tutMostra();
 }
 $('#tutnext').addEventListener('click', ()=>{ if(!$('#tutnext').disabled){ TUT.i++; tutMostra(); } });
 $('#tutprev').addEventListener('click', ()=>{ if(TUT.i > 0){ TUT.i--; tutMostra(); } });
 $('#tutskip').addEventListener('click', tutFecha);
+$('#tutpausa').addEventListener('click', ()=>{
+  TUT.pausaTour = !TUT.pausaTour;
+  $('#tutpausa').textContent = TUT.pausaTour ? '▶' : '⏸';
+  if(TUT.pausaTour && TUT.timer){ clearTimeout(TUT.timer); TUT.timer = null; }
+  else if(!TUT.pausaTour && TUT.fila && TUT.fila[TUT.i] && TUT.fila[TUT.i].tempo)
+    TUT.timer = setTimeout(()=>{ TUT.i++; tutMostra(); }, TUT.fila[TUT.i].tempo);
+});
 function tutBoasVindas(){
   const t = matchMedia('(pointer: coarse)').matches;
   tutInicia('boasvindas', [
@@ -7942,19 +7992,19 @@ function tutBoasVindas(){
      ]},
     {tx:'As distâncias e os tamanhos são <b>cênicos</b>, desenhados para navegação. Os dados das fichas são reais.'},
     {tx:(t?'Toque':'Clique')+' na <b>TERRA</b>, ou em qualquer planeta. O primeiro '+(t?'toque':'clique')+' abre a ficha e trava a câmera nele.',
-     alvoLabel:'TERRA', espera:()=>!!ST.mapCard},
+     alvoLabel:'TERRA', checks:[{tx:'Abra a ficha de um planeta', ok:()=>!!ST.mapCard}]},
     {tx:'Agora toque em <b>ENTRAR</b> no topo da ficha, ou de novo no corpo.',
-     alvo:'#navgo', espera:()=>ST.level === 'focus'},
+     alvo:'#navgo', checks:[{tx:'Entre no corpo', ok:()=>ST.level === 'focus'}]},
     {tx:'Para voltar, '+(t?'junte os dedos':'afaste o zoom')+' até a cena abrir, ou use o ESC.',
-     espera:()=>ST.level !== 'focus'},
+     auto:true, checks:[{tx:'Volte para a cena do sistema', ok:()=>ST.level !== 'focus'}]},
     {tx:'Também dá para navegar pelo <b>rastro</b> aqui de cima: clique em <b>VIA LÁCTEA</b> para subir até a galáxia.',
-     alvo:'#crumbs', espera:()=>ST.level === 'galaxy'},
+     alvo:'#crumbs', auto:true, checks:[{tx:'Suba para a galáxia', ok:()=>ST.level === 'galaxy'}]},
     {tx:'O mapa da galáxia. Agora volte para casa: clique no <b>SISTEMA SOLAR</b> (piscando) e depois em ENTRAR, ou use o botão « voltar.',
-     alvoLabel:'SISTEMA SOLAR', alvo:'#navback', espera:()=>ST.level === 'system' && ST.sys === 'sol'},
+     alvoLabel:'SISTEMA SOLAR', alvo:'#navback', auto:true, checks:[{tx:'Volte ao Sistema Solar', ok:()=>ST.level === 'system' && ST.sys === 'sol'}]},
     {tx:'Filtros: abra o <b>≋</b> e LIGUE a linha das <b>SONDAS</b>. As rotas surgem no mapa. Cada filtro liga ou desliga uma camada.',
      alvo:'#btnfilt',
      init:()=>{ if(ACT && ACT.kind === 'system' && CAM.dist < 44) tweenCam({dist:48}, 900); },
-     espera:()=>FILTROS.sonda === true},
+     checks:[{tx:'Ligue a linha das SONDAS', ok:()=>FILTROS.sonda === true}]},
     {tx:'Seu painel de bordo: <b>CAMPO DE VISÃO</b> é a largura real da tela; abaixo, o endereço no espaço (cênico, ou RA/DEC, altere nas configurações); <b>T+</b> é o tempo da sua sessão; e abaixo a <b>data real do sistema solar</b>, com opção de pausar ou viajar pelo tempo.',
      alvo:'#navpod, #simclock'},
     {tx:'Aqui temos o menu: navegação, música e sons, modo foto, filtros, diário de bordo, pesquisa e ajuda. O <b>?</b> guarda o manual. Boa viagem, navegador.',
@@ -7976,6 +8026,34 @@ function tutBoasVindas(){
     showHint('CONQUISTAS RESETADAS');
     if($('#mission').classList.contains('on')) missRender();
   }); }
+/* TOUR ESPACIAL: o motor do tutorial em azul, viajando de corpo em corpo
+   com um texto curto por parada, tempo, pause e saída livre */
+function tourEspacial(){
+  $('#help').classList.remove('on');
+  missClose();
+  const R = [
+    ['mercurio','Um dia aqui dura 59 dias terrestres, e a superfície varia 600 graus entre o sol e a sombra.'],
+    ['venus','A pressão esmagadora de 92 atmosferas e chuva de ácido: o planeta mais quente de todos.'],
+    ['terra','O único endereço confirmado com vida no universo. Casa.'],
+    ['marte','Vulcões de 22 km, canyons continentais e dois robôs ativos explorando agora.'],
+    ['jupiter','Maior que todos os outros juntos: a Grande Mancha é uma tempestade de séculos.'],
+    ['saturno','Os anéis têm 280 mil km de largura e menos de 1 km de espessura.'],
+    ['urano','Rola deitado pelo espaço, com estações de 21 anos em cada polo.'],
+    ['netuno','Descoberto pela matemática antes do telescópio, com os ventos mais violentos do sistema.']
+  ];
+  const passos = R.map(par=>({
+    tx:'<b>'+(ALLBODIES[par[0]] ? ALLBODIES[par[0]].name : par[0])+'</b> · '+par[1],
+    tempo:10000,
+    init:()=>gotoFocus(par[0])
+  }));
+  passos.push({tx:'<b>FIM DA ROTA.</b> Oito mundos, um só sistema. O mapa é seu, navegador.',
+    init:()=>feito('tourespacial')});
+  TUT.fila = passos; TUT.i = 0; TUT.max = 999; TUT.chave = null; TUT.pausaTour = false;
+  $('#tut').classList.add('modotour');
+  $('#tuthead').firstElementChild.textContent = '▸ TOUR ESPACIAL · OS OITO PLANETAS';
+  tutMostra();
+}
+{ const te = $('#tourespacial'); if(te) te.addEventListener('click', tourEspacial); }
 function tutComparar(){
   tutInicia('comparar', [
     {tx:'<b>COMPARAR:</b> o primeiro corpo ficou marcado. Agora abra qualquer outro, pela busca, pelo mapa ou pelo registro, e toque em <b>◫ COMPARAR</b> de novo: a análise sai em escala real.'},
@@ -8146,9 +8224,8 @@ $('#filtpop').addEventListener('click', e=>{
     store.set('carto:linhas', ['planeta','anao','estrela','lua','cometa','sonda','satelite','foguete'].filter(k=>FILTROS[k]!==false).join(','));
     filtSync();
     if(FILTROS[r.dataset.cls] !== false){
-      applySel();
       if(r.dataset.cls === 'sonda') feito('sondas');
-      pulsoCamada(r.dataset.cls);
+      fadeInCamada(r.dataset.cls);
     } else {
       fadeCamada(r.dataset.cls);   /* apagar tem saída suave, não supetão */
     }
@@ -8203,7 +8280,7 @@ $('#pl_vol').addEventListener('input', e=>AUDIO.setVol(e.target.value/100));
 $('#navback').addEventListener('click', navBack);
 $('#navfwd').addEventListener('click', navFwd);
 
-const BOOTLINES = ['CARTOGRAFIA ESTELAR · '+BUILD.toUpperCase(),'CALIBRANDO SENSORES ÓPTICOS ......... <span class="ok">OK</span>','LINK DE SATÉLITE 08 ................. <span class="ok">OK</span>','BEM-VINDO A BORDO, NAVEGADOR.'];
+const BOOTLINES = ['NEBULASTRA · '+BUILD.toUpperCase(),'CALIBRANDO SENSORES ÓPTICOS ......... <span class="ok">OK</span>','LINK DE SATÉLITE 08 ................. <span class="ok">OK</span>','BEM-VINDO A BORDO, NAVEGADOR.'];
 let bootI = 0;
 function bootNext(){
   if(bootI < BOOTLINES.length){
