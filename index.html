@@ -5617,6 +5617,9 @@ function distCasada(b, pk){
           : ((b && b.sys && b.sys.size) ? b.sys.size : 0.6);
   /* k é a razão distância/raio da cena de destino (padrão: a cena de foco) */
   const k = (pk && pk.userData && pk.userData.k) ? pk.userData.k : (FOCUS_DIST/FOCUS_RAIO);
+  /* na escala real não há piso: o vôo fecha até o grão encher a tela na
+     MESMA fração da cena de foco, e só então troca (sem pulo de tamanho) */
+  if(ACT && ACT.escr) return Math.max(0.0012, s * k);
   return Math.max(0.25, s * k);
 }
 /* converte a câmera de foco em órbita mantendo posição e direção exatas,
@@ -8209,8 +8212,14 @@ function dolly(f){
     return;
   }
   /* com um corpo travado no centro, o zoom entra bem mais perto dele */
-  const minEf = (ACT && ACT.kind==='system' && ACT.escr) ? 0.075
-              : ((ACT && ACT.kind==='system' && ST.mapCard) ? Math.min(CAM.min, 4.2) : CAM.min);
+  let minEf = CAM.min;
+  if(ACT && ACT.kind==='system'){
+    if(ACT.escr){
+      /* corpo travado na escala real: o zoom desce até o grão encher a tela */
+      const pkSel = ST.mapCard ? acharPick(ST.mapCard) : null;
+      minEf = (pkSel && pkSel.userData.r) ? Math.max(0.0012, pkSel.userData.r*3.2) : 0.075;
+    } else if(ST.mapCard) minEf = Math.min(CAM.min, 4.2);
+  }
   CAM.dist = clamp(alvo, minEf, CAM.max);
   if(CAM.dist > minEf + 1e-3) ZLIM.over = 0;
 }
@@ -8431,7 +8440,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r105';
+const BUILD = 'r106';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -9083,6 +9092,13 @@ function loop(){
   if(ACT){
     if(ACT.update) ACT.update(dt, t);
     applyCam();
+    /* escala real: perto de um grão de planeta o plano de corte encolhe
+       junto, senão a câmera atravessa o corpo antes de conseguir vê-lo */
+    const nearAlvo = (ACT && ACT.escr && CAM.dist < 2) ? Math.max(0.00004, CAM.dist*0.018) : 0.05;
+    if(Math.abs(camera.near - nearAlvo) > nearAlvo*0.2){
+      camera.near = nearAlvo;
+      camera.updateProjectionMatrix();
+    }
     if(TRANSITO){
       /* dois mundos no mesmo quadro: o velho atrás, o novo por cima */
       renderer.render(TRANSITO.de.scene, camera);
