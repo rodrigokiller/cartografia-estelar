@@ -6490,14 +6490,18 @@ const CONQ_DESC = {visita:'Selecione um corpo e entre nele.', sondas:'No filtro 
   sondavisita:'Selecione uma sonda (Voyager, Pioneer...) e entre nela.',
   comparar:'Use o ◫ para comparar dois corpos em escala real.', tempo:'No ◈ do relógio, viaje para outra data.',
   apollo:'Abra a linha do tempo da Apollo 11 ou 13.', sistemacompleto:'Visite todos os corpos de um sistema.',
-  tourespacial:'Deixe o TOUR (tecla T, ou ▶ no registro) completar uma rota inteira.'};
+  tourespacial:'Deixe o TOUR (tecla T, ou ▶ no registro) completar uma rota inteira.',
+  rotastodas:'Complete as seis rotas oficiais da caixinha do tour.',
+  tourfora:'Abra o card de um sistema fora da Via Láctea e rode o TOUR dele até o fim.'};
 const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A LINHA DAS SONDAS',
   busca:'CAD-03 · LOCALIZAR PELA BUSCA', cinco:'CAD-04 · VISITAR 5 CORPOS DO SISTEMA SOLAR',
   pause:'CAD-05 · PAUSAR E RETOMAR O RELÓGIO', galaxia:'CAD-06 · SUBIR ATÉ A GALÁXIA',
   sondavisita:'CAD-07 · VISITAR UMA SONDA',
   comparar:'TIM-01 · COMPARAR DOIS CORPOS', tempo:'TIM-02 · VIAJAR NO TEMPO',
   apollo:'TIM-03 · REVIVER UMA MISSÃO APOLLO', sistemacompleto:'TIM-04 · COMPLETAR UM SISTEMA',
-  tourespacial:'EXP-01 · COMPLETAR UMA ROTA DO TOUR'};
+  tourespacial:'EXP-01 · COMPLETAR UMA ROTA DO TOUR',
+  rotastodas:'EXP-02 · COMPLETAR TODAS AS ROTAS OFICIAIS',
+  tourfora:'EXP-03 · TOUR EM OUTRA GALÁXIA'};
 function feito(k){
   if(FEITO.has(k)) return;
   FEITO.add(k);
@@ -7023,6 +7027,12 @@ function tourIr(p){
     return;
   }
   const b = ALLBODIES[p.corpo]; if(!b) return;
+  /* do planeta para a PRÓPRIA lua: mergulha direto na cena de foco,
+     sem subir ao sistema (a lua já está desenhada orbitando ali) */
+  if(ST.level==='focus' && (b._parent === ST.body || b.satOf === ST.body) && acharPick(p.corpo)){
+    diveInto(p.corpo, ()=>gotoFocus(p.corpo, true));
+    return;
+  }
   if(ACT && ACT.kind==='system' && acharPick(p.corpo) && b._sys===ST.sys){
     diveInto(p.corpo, ()=>gotoFocus(p.corpo, true));   /* mergulho contínuo */
   } else if(ST.level==='focus' && ALLBODIES[ST.body] && ALLBODIES[ST.body]._sys === b._sys && ST.body !== p.corpo){
@@ -7086,6 +7096,11 @@ function tourAvanca(){
     feito('tourespacial');
     ROTAS_OK.add(TOUR.rota);
     store.set('carto:rotasok', [...ROTAS_OK].join(','));
+    if(Object.keys(ROTAS).every(k=>ROTAS_OK.has(k))) feito('rotastodas');
+    if(String(TOUR.rota).indexOf('sys:') === 0){
+      const sid = String(TOUR.rota).slice(4);
+      if(SYS[sid] && (SYS[sid].gal || 'vialactea') !== 'vialactea') feito('tourfora');
+    }
     tourStop(true, true);
     showHint('ROTA CONCLUÍDA · DE VOLTA AO SEU POSTO');
     return;
@@ -7948,7 +7963,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r93';
+const BUILD = 'r94';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
