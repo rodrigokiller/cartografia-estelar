@@ -890,6 +890,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-vel="mes"><span>1 SEGUNDO = 1 MÊS</span><b></b></div>
     <div class="fp-t fp-t2">EXTRAS</div>
     <div class="filtrow" data-rastro="1"><span>RASTRO DE 30 DIAS</span><b>DESLIGADO</b></div>
+    <div class="filtrow" data-viagemx="1"><span>VIAGEM INTERPLANETAR NO TOUR (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-coord="1"><span>COORDENADAS REAIS (RA/DEC)</span><b>DESLIGADO</b></div>
     <div class="fp-t fp-t2">SOM</div>
     <div class="filtrow" data-som="mus"><span>MÚSICA</span><b></b></div>
@@ -3829,6 +3830,7 @@ const FILTROBJ = {planeta:true, anao:true, lua:true, estrela:true, cometa:true, 
    pode pausar e pular para qualquer data. As posições vêm de Kepler. */
 const SIM_HOJE = Date.now(), MS_ANO = 365.25*86400000;
 const RASTRO = {on:false};   /* rastro de 30 dias atrás de cada planeta */
+const VIAGEMX = {on:false};  /* EXPERIMENTAL: vôo direto planeta a planeta no tour */
 const COORD = {real:false};  /* coordenadas: cênicas (nossas) ou RA/DEC reais onde há dado */
 const SIMT = {data: Date.now(), vel:'dia', pausado:false,
   diasPorSeg(){ return this.vel==='mes' ? 30.44 : (this.vel==='semana' ? 7 : ((this.vel==='real' || this.vel==='seg') ? 1/86400 : 1)); }};
@@ -5439,6 +5441,42 @@ function diveStep(now){
    Para objetos em rota de escape: a câmera pega carona do lançamento até onde o
    objeto está hoje, com um relógio de anos correndo junto. Toque encerra. */
 let TRAJ = null;
+/* TRÂNSITO INTERPLANETAR (experimental): a cena velha desliza para trás da
+   câmera enquanto a nova chega de frente, as duas vivas por 1,5 s. */
+let TRANSITO = null;
+function vooInterplanetario(alvoId){
+  if(TRANSITO || DIVE || TRAJ) return;
+  const de = ACT;
+  if(!de || de.kind !== 'focus' || !de.wrap) return;
+  const novo = buildFocus(alvoId, 0);
+  if(!novo.wrap){ gotoFocus(alvoId); return; }
+  for(const L of de.labels) L.off = true;
+  if(novo.dim) novo.dim(0, null);
+  novo.wrap.position.z = -70;
+  TRANSITO = {de, novo, t0:performance.now(), ms:1500};
+  ACT = novo;
+  setCam(novo.cam);
+  CAM.pivot.set(0, 0, 0);
+  ST.level = 'focus'; ST.body = alvoId; ST.mapCard = null;
+  markVisited(alvoId);
+  uiSync(); pushNav(); syncHash();
+}
+function transitoStep(now){
+  if(!TRANSITO) return;
+  const k = Math.min(1, (now - TRANSITO.t0)/TRANSITO.ms), e = easeIO(k);
+  TRANSITO.de.wrap.position.z = 90*e;
+  TRANSITO.de.wrap.position.x = -14*e;
+  if(TRANSITO.de.dim) TRANSITO.de.dim(Math.max(0, 1 - e*1.4), null);
+  TRANSITO.novo.wrap.position.z = -70*(1 - e);
+  if(TRANSITO.novo.dim) TRANSITO.novo.dim(Math.min(1, Math.max(0.04, e*1.2)), null);
+  if(k >= 1){
+    const velha = TRANSITO.de;
+    TRANSITO = null;
+    disposeScene(velha);
+    if(ACT && ACT.dim) ACT.dim(1, null);
+    if(ACT && ACT.wrap) ACT.wrap.position.set(0, 0, 0);
+  }
+}
 function anoDe(b){
   for(const q of (b.quick||[])){
     if(/LANÇAMENTO|DETECTADO|DESCOBERTA/i.test(q[0])){
@@ -5719,6 +5757,7 @@ LIVE = store.get('carto:live','0') === '1';   /* modo ao vivo da Terra e da Lua 
     for(const k of ['planeta','anao','estrela','lua','cometa','sonda','satelite','foguete']) FILTROS[k] = on.has(k); } }
 SIMT.vel = store.get('carto:vel', 'dia');
 RASTRO.on = store.get('carto:rastro', '0') === '1';
+VIAGEMX.on = store.get('carto:viagemx', '0') === '1';
 COORD.real = store.get('carto:coord', '0') === '1';
 { const v = store.get('carto:objetos', null);
   if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
@@ -7065,6 +7104,13 @@ function tourIr(p){
     return;
   }
   const b = ALLBODIES[p.corpo]; if(!b) return;
+  /* EXPERIMENTAL ligado: planeta a planeta sem subir, os dois mundos se cruzam */
+  if(VIAGEMX.on && ST.level === 'focus' && !TRANSITO
+     && ALLBODIES[ST.body] && ALLBODIES[ST.body]._sys === b._sys && ST.body !== p.corpo
+     && !b._parent && !b.satOf && !ALLBODIES[ST.body]._parent && !ALLBODIES[ST.body].satOf){
+    vooInterplanetario(p.corpo);
+    return;
+  }
   /* do planeta para a PRÓPRIA lua: mergulha direto na cena de foco,
      sem subir ao sistema (a lua já está desenhada orbitando ali) */
   if(ST.level==='focus' && (b._parent === ST.body || b.satOf === ST.body) && acharPick(p.corpo)){
@@ -8033,7 +8079,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r95';
+const BUILD = 'r96';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -8395,6 +8441,8 @@ document.querySelectorAll('.fpx').forEach(b=>b.addEventListener('click', e=>{
   if(pop) pop.classList.remove('on');
 }));
 function cfgSync(){
+  const rv = $('#cfgpop').querySelector('[data-viagemx]');
+  if(rv){ rv.classList.toggle('off', !VIAGEMX.on); rv.querySelector('b').textContent = VIAGEMX.on ? 'LIGADO' : 'DESLIGADO'; }
   const rr = $('#cfgpop').querySelector('[data-rastro]');
   if(rr){ rr.classList.toggle('off', !RASTRO.on); rr.querySelector('b').textContent = RASTRO.on ? 'LIGADO' : 'DESLIGADO'; }
   const rc = $('#cfgpop').querySelector('[data-coord]');
@@ -8421,6 +8469,13 @@ $('#btncfg').addEventListener('click', ()=>{
   cfgSync();
 });
 $('#cfgpop').addEventListener('click', e=>{
+  const rV = e.target.closest('[data-viagemx]');
+  if(rV){
+    VIAGEMX.on = !VIAGEMX.on;
+    store.set('carto:viagemx', VIAGEMX.on ? '1' : '0');
+    cfgSync();
+    return;
+  }
   const rS = e.target.closest('[data-som]');
   if(rS){
     if(rS.dataset.som === 'mus') AUDIO.toggle();
@@ -8610,6 +8665,7 @@ function loop(){
   }
   if(DIVE) diveStep(now);
   if(TRAJ) trajStep(now);
+  if(TRANSITO) transitoStep(now);
   /* CORREÇÃO do bug da cena preta (r75-r77): o bloco da trava de centro foi
      inserido entre o if(TRAJ) e o "else if(FADEIN)", e o else passou a se
      ligar ao if da trava. Em cena de sistema o if rodava sempre, o else
@@ -8648,7 +8704,16 @@ function loop(){
   if(ACT){
     if(ACT.update) ACT.update(dt, t);
     applyCam();
-    renderer.render(ACT.scene, camera);
+    if(TRANSITO){
+      /* dois mundos no mesmo quadro: o velho atrás, o novo por cima */
+      renderer.render(TRANSITO.de.scene, camera);
+      renderer.autoClear = false;
+      renderer.clearDepth();
+      renderer.render(ACT.scene, camera);
+      renderer.autoClear = true;
+    } else {
+      renderer.render(ACT.scene, camera);
+    }
     updateLabels();
   }
 }
