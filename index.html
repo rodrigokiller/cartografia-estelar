@@ -1307,6 +1307,7 @@ const PLANETS = [
   exLuas:'Modelos sugerem que Marte já teve uma lua bem maior, despedaçada pela maré: Fobos e Deimos seriam os restos, e Fobos repete o destino em ~50 milhões de anos.',
   quick:[['GRAVIDADE','0,38 g'],['TEMP. MÉDIA','−63 °C'],['DIA','24 h 37'],['ANO','687 d'],['LUAS','2'],['ÁGUA','gelo']],
   sys:{orbit:18, size:0.68, speed:0.53, angle:1.1},
+  orbita:{peri:16.33, afel:19.67, pos:0.22},   /* e=0,093: a mais oval depois de Mercúrio */
   visual:{mode:'rocky', c1:'#a35634', c2:'#c98757', c3:'#7c3c22', scale:4.6, seed:9.9, crater:0.5, cap:0.82, capAmt:0.55, capCol:'#f2e6da', atmo:{col:'#e0a37e', i:0.55}},
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','227,9 mi km (1,52 UA)'],['Ano','687 dias terrestres'],['Dia ("sol")','24 h 37 min'],['Tipo de rotação','Prógrada'],['Veloc. orbital','24,1 km/s'],['Inclinação axial','25,2°'],['Estações','Sim, parecidas com as nossas, 2× mais longas']]},
@@ -1339,6 +1340,7 @@ PLANETS.push(
   id:'jupiter', name:'JÚPITER', desig:'SOL-5 · PLANETA', kind:'Gigante gasoso', hab:0, gbar:2.53, pop:'0, não tem superfície',
   quick:[['GRAVIDADE','2,53 g'],['TEMP. TOPO','−110 °C'],['DIA','9 h 56'],['ANO','11,9 anos'],['LUAS','95'],['ANÉIS','tênues']],
   sys:{orbit:27, size:2.5, speed:0.084, angle:3.4},
+  orbita:{peri:25.68, afel:28.32, pos:0.55},   /* e=0,049 */
   visual:{mode:'gas', c1:'#d9c5a3', c2:'#a4713e', c3:'#efe6d4', c4:'#8a5330', bandF:9.0, turb:1.4, seed:2.2, spot:{pos:[1.1,-0.35], r:0.34, col:'#c25438', on:1}, atmo:{col:'#e8d4b0', i:0.55}},
   moonsMeta:'95 CONFIRMADAS · 4 PRINCIPAIS',
   sections:[
@@ -1397,8 +1399,9 @@ PLANETS.push(
   id:'saturno', name:'SATURNO', desig:'SOL-6 · PLANETA', kind:'Gigante gasoso · anelado', hab:0, gbar:1.06, pop:'0',
   quick:[['GRAVIDADE','1,06 g'],['TEMP. TOPO','−139 °C'],['DIA','10 h 33'],['ANO','29,4 anos'],['LUAS','274'],['ANÉIS','SIM']],
   sys:{orbit:34, size:2.15, speed:0.034, angle:5.6},
+  orbita:{peri:32.06, afel:35.94, pos:0.78},   /* e=0,057 */
   visual:{mode:'gas', c1:'#e2d3ac', c2:'#c6b184', c3:'#f0e8d2', c4:'#a98f60', bandF:8.0, turb:0.9, seed:4.7, atmo:{col:'#f0e2b8', i:0.5}, rings:{rin:1.35, rout:2.35, col:'#d8caa6', op:0.9, tilt:26.7, seed:2.0}},
-  moonsMeta:'274 CONFIRMADAS · 6 PRINCIPAIS',
+  moonsMeta:'274 CONFIRMADAS · 7 PRINCIPAIS',
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','1,43 bi km (9,5 UA)'],['Ano','29,4 anos'],['Dia','10 h 33 min'],['Tipo de rotação','Prógrada'],['Veloc. orbital','9,7 km/s'],['Inclinação axial','26,7°'],['Estações','Sim, ~7 anos cada']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','116.460 km'],['Massa','5,68 × 10²⁶ kg (95 Terras)'],['Densidade','0,69 g/cm³, flutuaria na água'],['Área','42,7 bi km²'],['Anéis','282.000 km de largura · ~10 m a 1 km de espessura']]},
@@ -1447,6 +1450,15 @@ PLANETS.push(
     ],
     facts:['Os riscos brilhantes que intrigavam os astrônomos são penhascos de gelo expostos por fraturas na crosta.','Divide a própria órbita com duas luas troianas, Helena e Polideuces, uma na frente e outra atrás.'],
     fict:null},
+   {id:'tetis', name:'TÉTIS', desig:'SATURNO-III · LUA', kind:'A bola de gelo quase pura', hab:4, gbar:0.015, pop:'0',
+    quick:[['DIÂMETRO','1.062 km'],['GRAVIDADE','0,015 g'],['ÓRBITA','1,9 d'],['DESCOBERTA','1684'],['DENSIDADE','0,98, quase só gelo'],['TEMP.','−187 °C']],
+    visual:{mode:'rocky', c1:'#cdd2d6', c2:'#e8ecef', c3:'#9aa2a8', scale:4.6, seed:16.84, crater:0.8, spot:{pos:[1.4,0.1], r:0.38, col:'#b8c0c6', on:1}},
+    sections:[
+      {t:'ITHACA CHASMA', rows:[['O canyon','2.000 km de comprimento, 100 de largura, até 4 de profundidade'],['A volta','Corre três quartos da circunferência da lua'],['A origem','Talvez a crosta tenha rachado quando o oceano interno antigo congelou e expandiu']]},
+      {t:'REGISTRO', rows:[['Descoberta','1684 · Giovanni Cassini, no mesmo ano de Dione'],['A cratera Odysseus','450 km de boca, dois quintos do diâmetro da lua'],['A composição','Densidade 0,98: praticamente uma bola de gelo de água pura'],['As companheiras','Divide a órbita com as troianas Telesto e Calipso']]}
+    ],
+    facts:['A densidade de 0,98 faz dela praticamente uma bola de gelo de água quase pura, mais leve que a água líquida.','O canyon Ithaca Chasma percorre três quartos da volta da lua.'],
+    fict:null},
    {id:'mimas', name:'MIMAS', desig:'SATURNO-I · LUA', kind:'A pequena com cara de Estrela da Morte', hab:24, gbar:0.006, pop:'0',
     quick:[['DIÂMETRO','396 km'],['GRAVIDADE','0,006 g'],['ÓRBITA','0,9 d'],['DESCOBERTA','1789'],['CRATERA','Herschel, 130 km'],['TEMP.','−200 °C']],
     visual:{mode:'rocky', c1:'#b8b2a9', c2:'#9c968d', c3:'#7d7871', scale:5.5, seed:9.4, crater:1.0, spot:{pos:[2.0,0.15], r:0.42, col:'#55504b', on:1}},
@@ -1473,6 +1485,7 @@ PLANETS.push(
   id:'urano', name:'URANO', desig:'SOL-7 · PLANETA', kind:'Gigante de gelo', hab:0, gbar:0.89, pop:'0',
   quick:[['GRAVIDADE','0,89 g'],['TEMP. MÉDIA','−195 °C'],['DIA','17 h 14'],['ANO','84 anos'],['LUAS','28'],['ANÉIS','13']],
   sys:{orbit:40, size:1.45, speed:0.012, angle:0.9},
+  orbita:{peri:38.16, afel:41.84, pos:0.4},   /* e=0,046; Vênus, Terra e Netuno (e<0,02) ficam círculos */
   visual:{mode:'gas', c1:'#9fd8dc', c2:'#8ccbd3', c3:'#b8e6e8', c4:'#7fc0c8', bandF:5.0, turb:0.5, seed:7.1, atmo:{col:'#bdf0f2', i:0.75}, rings:{rin:1.5, rout:1.95, col:'#a9c9cd', op:0.45, tilt:98, seed:5.0}},
   moonsMeta:'28 CONFIRMADAS · 3 PRINCIPAIS',
   sections:[
@@ -3908,8 +3921,9 @@ const ESCR_UA = 15;
 const ESCALA_REAL = {   /* [UA, raio em km] */
   mercurio:[0.387, 2440], venus:[0.723, 6052], terra:[1.0, 6371], marte:[1.524, 3390],
   jupiter:[5.203, 69911], saturno:[9.537, 58232], urano:[19.19, 25362], netuno:[30.07, 24622]};
-const ESCALA_REAL_EL = {   /* [peri UA, afel UA]; Mercúrio é o único planeta com excentricidade visível */
-  mercurio:[0.307, 0.467],
+const ESCALA_REAL_EL = {   /* [peri UA, afel UA]: na escala real TODA órbita é a elipse verdadeira */
+  mercurio:[0.307, 0.467], venus:[0.718, 0.728], terra:[0.983, 1.017], marte:[1.381, 1.666],
+  jupiter:[4.951, 5.457], saturno:[9.041, 10.124], urano:[18.286, 20.096], netuno:[29.81, 30.33],
   plutao:[29.7, 49.3], eris:[38, 97.5], sedna:[76, 900], halley:[0.586, 35.1], p67:[1.24, 5.68]};
 function escrTam(km){ return Math.max(0.0002, km/149597870*ESCR_UA); }
 const COORD = {real:false};  /* coordenadas: cênicas (nossas) ou RA/DEC reais onde há dado */
@@ -3982,6 +3996,8 @@ function buildSystem(sysId, spin0){
   const objReg = [];     /* cometas, sondas e satélites, para o filtro de objetos */
   const labelDe = {}, kidCount = {}, satN = {};
   const elipticos = [];   /* corpos de elipse: Kepler por áreas iguais */
+  const elipDe = {}, posDe = {};   /* para filhos (satélites) seguirem o pai elíptico */
+  let luaFix = null;               /* a mini da Lua, para nascer na fase real */
   const rastros = [];     /* os rastros de 30 dias, ligados na configuração */
   for(let p of S.bodies){
     /* desativado (Sputnik): fica só na ficha e nas listas, sem orbitar */
@@ -4008,6 +4024,8 @@ function buildSystem(sysId, spin0){
         grupo:null, pick:null, extras:[]});
     }
     const elip = p.orbita ? elipticos[elipticos.length-1] : null;
+    if(elip) elipDe[p.id] = elip;
+    posDe[p.id] = {x:obX, z:obZ};
     /* teto de 6 satélites por corpo: o enxame do futuro não polui o mapa */
     if(p.satOf && !p.foguete){ satN[p.satOf] = (satN[p.satOf]||0) + 1; if(satN[p.satOf] > 6) continue; }
     const holder = new THREE.Object3D();
@@ -4017,7 +4035,11 @@ function buildSystem(sysId, spin0){
     if(p.satOf && holderDe[p.satOf]){
       /* satélite: a órbita é um anel pequeno EM VOLTA do corpo-mãe (sys.orbit
          vira o raio desse anel) e o conjunto viaja preso ao holder dele */
-      holder.position.x = ALLBODIES[p.satOf].sys.orbit;
+      const pp0 = posDe[p.satOf];
+      if(pp0) holder.position.set(pp0.x, 0, pp0.z);
+      else holder.position.x = ALLBODIES[p.satOf].sys.orbit;
+      /* pai elíptico: o conjunto de satélites viaja preso à posição dele */
+      if(elipDe[p.satOf]) elipDe[p.satOf].extras.push(holder);
       holderDe[p.satOf].add(holder);
     } else scene.add(holder);
     holderDe[p.id] = holder;
@@ -4131,6 +4153,7 @@ function buildSystem(sysId, spin0){
         mh.position.set(obX, 0, obZ);
         if(elip) elip.extras.push(mh);
         mh.rotation.y = mi*2.1 + hashStr(m.id)*6;
+        if(p.id === 'terra' && m.id === 'lua') luaFix = {mh, holder};
         holder.add(mh);
         const mr = p.sys.size + 0.42 + mi*0.30;
         const ms = Math.max(0.055, Math.min(0.16, p.sys.size*0.16));
@@ -4243,29 +4266,43 @@ function buildSystem(sysId, spin0){
 
   /* motor do tempo: gira as órbitas circulares por Kepler e anda as elipses
      por áreas iguais (rápido no periélio, lento no afélio, como manda a lei) */
+  /* um passo de Kepler por áreas iguais; com anos=0 só reassenta as posições */
+  function elipAvanca(e, anos){
+    let resta = anos % e.T;
+    const bMe = e.a2*Math.sqrt(1-e.ex*e.ex);
+    const passoMax = e.T/240;
+    while(Math.abs(resta) > 1e-9){
+      const d = Math.max(-passoMax, Math.min(passoMax, resta));
+      const r = e.a2*(1-e.ex*e.ex)/(1+e.ex*Math.cos(e.th));
+      e.th += d * (Math.PI*2) * e.a2 * bMe / (e.T * r * r);
+      resta -= d;
+    }
+    const r2 = e.a2*(1-e.ex*e.ex)/(1+e.ex*Math.cos(e.th));
+    const x = Math.cos(e.th)*r2, z = Math.sin(e.th)*r2;
+    if(e.grupo) e.grupo.position.set(x, 0, z);
+    if(e.pick) e.pick.position.set(x, 0, z);
+    for(const ex2 of e.extras) ex2.position.set(x, 0, z);
+  }
   function avancarAnos(anos){
     if(!anos) return;
-    for(const o of orbiters) if(o.orb)
-      o.holder.rotation.y += (Math.PI*2)*anos/Math.pow(o.orb/ORB_TERRA, 1.5);
-    for(const e of elipticos){
-      let resta = anos % e.T;
-      const bMe = e.a2*Math.sqrt(1-e.ex*e.ex);
-      const passoMax = e.T/240;
-      while(Math.abs(resta) > 1e-9){
-        const d = Math.max(-passoMax, Math.min(passoMax, resta));
-        const r = e.a2*(1-e.ex*e.ex)/(1+e.ex*Math.cos(e.th));
-        e.th += d * (Math.PI*2) * e.a2 * bMe / (e.T * r * r);
-        resta -= d;
-      }
-      const r2 = e.a2*(1-e.ex*e.ex)/(1+e.ex*Math.cos(e.th));
-      const x = Math.cos(e.th)*r2, z = Math.sin(e.th)*r2;
-      if(e.grupo) e.grupo.position.set(x, 0, z);
-      if(e.pick) e.pick.position.set(x, 0, z);
-      for(const ex2 of e.extras) ex2.position.set(x, 0, z);
+    for(const o of orbiters){
+      if(o.orb) o.holder.rotation.y += (Math.PI*2)*anos/Math.pow(o.orb/ORB_TERRA, 1.5);
+      /* luas com período real respondem ao relógio E aos saltos de data */
+      else if(o.tDias) o.holder.rotation.y += (Math.PI*2)*anos*365.25/o.tDias;
     }
+    for(const e of elipticos) elipAvanca(e, anos);
   }
   /* se o relógio já foi viajado para outra data, a cena nasce sincronizada */
   avancarAnos((SIMT.data - SIM_HOJE)/MS_ANO);
+  /* a Lua nasce na FASE real: o mesmo ângulo em relação ao Sol que a cena de
+     foco usa, então entrar na Terra não teleporta a Lua de lugar */
+  if(luaFix){
+    const pT = luaFix.mh.getWorldPosition(new THREE.Vector3());
+    const sunAz = Math.atan2(-pT.z, -pT.x);
+    const alvoLua = sunAz + Math.PI + faseDaLua().ang;
+    /* rotation.y gira +x para -z: o ângulo de mundo é o negativo da soma */
+    luaFix.mh.rotation.y = -alvoLua - luaFix.holder.rotation.y;
+  }
   let simPrev = SIMT.data;
   /* limite de zoom calculado pelo objeto mais distante em órbita */
   let alcance = 0;
@@ -4285,8 +4322,17 @@ function buildSystem(sysId, spin0){
         if(o.base == null) o.base = o.holder.rotation.y;
         o.holder.rotation.y = o.base + (Math.PI*2)*anos/Math.pow(o.orb/ORB_TERRA, 1.5);
       }
+      /* as elipses também viajam: guardam o ângulo e reintegram do zero */
+      for(const e of elipticos){
+        if(e.base == null) e.base = e.th;
+        e.th = e.base;
+        elipAvanca(e, anos);
+      }
     },
-    tempoLivre:()=>{ for(const o of orbiters){ if(o.base != null){ o.holder.rotation.y = o.base; o.base = null; } } },
+    tempoLivre:()=>{
+      for(const o of orbiters){ if(o.base != null){ o.holder.rotation.y = o.base; o.base = null; } }
+      for(const e of elipticos){ if(e.base != null){ e.th = e.base; e.base = null; elipAvanca(e, 0); } }
+    },
     /* v=1 cena cheia, v=0 só o corpo visado. É o que deixa a troca sem piscar. */
     dim:(v, exceto)=>{
       for(const f of fadeMats) f.m.opacity = f.o * v;
@@ -4304,10 +4350,8 @@ function buildSystem(sysId, spin0){
       simPrev = SIMT.data;
       if(!emViagem){
         if(danos) avancarAnos(danos);
-        for(const o of orbiters) if(!o.orb){
-          if(o.tDias){ if(danos) o.holder.rotation.y += (Math.PI*2)*danos*365.25/o.tDias; }
-          else o.holder.rotation.y += o.spd*dt*0.05;
-        }
+        /* luas com período real já avançam dentro de avancarAnos(danos) */
+        for(const o of orbiters) if(!o.orb && !o.tDias) o.holder.rotation.y += o.spd*dt*0.05;
       }
       spinAcc += 0.25*dt;
       for(const s of spinners) s.obj.rotation.y += s.spd*dt;
@@ -4748,7 +4792,9 @@ function giroAtual(){
 function faseDaLua(){
   const novaRef = Date.UTC(2000,0,6,18,14);      /* lua nova de referencia */
   const SIN = 29.530588853 * 86400000;
-  const idade = (((Date.now() - novaRef) % SIN) + SIN) % SIN / 86400000;
+  /* usa a data SIMULADA: viajar no tempo muda a fase junto (typeof evita TDZ) */
+  const agora = (typeof SIMT !== 'undefined') ? SIMT.data : Date.now();
+  const idade = (((agora - novaRef) % SIN) + SIN) % SIN / 86400000;
   const ang = idade/29.530588853 * Math.PI*2;
   return {idade, ang, ilum:(1 - Math.cos(ang))/2};
 }
@@ -5358,7 +5404,21 @@ function buildFocus(bodyId, spin0){
   const vv = new THREE.Vector3();
   kids.forEach((m, i)=>{
     let ang = i * (Math.PI*2/Math.max(3, kids.length)) + 0.55;
-    /* ao vivo, a Lua fica no angulo real em relacao ao Sol: a fase fica certa */
+    /* a lua entra no MESMO ângulo em que está agora na cena do sistema (o
+       giro do holder do planeta mais o giro da mini pelo relógio): o mergulho
+       não teleporta ninguém. Sem período real, fica o arco simbólico. */
+    const bMoons = b.moons || [], mi = bMoons.indexOf(m);
+    if(mi >= 0 && b.sys && b.sys.orbit){
+      const anosSim = (SIMT.data - SIM_HOJE)/MS_ANO;
+      const eliptico = !!b.orbita || (ESCR.on && b._sys === 'sol' && ESCALA_REAL_EL[b.id]);
+      const H = b.sys.angle + (eliptico ? 0 : (Math.PI*2)*anosSim/Math.pow(b.sys.orbit/ORB_TERRA, 1.5));
+      const qOrbF = (m.quick || []).find(q=>/ÓRBITA/.test(q[0]));
+      const tDf = (qOrbF && /\bd\b|dias|,\d+ d| d$/.test(String(qOrbF[1]))) ? (parseFloat(String(qOrbF[1]).replace(',', '.')) || 0) : 0;
+      const Y = mi*2.1 + hashStr(m.id)*6 + (tDf ? (Math.PI*2)*anosSim*365.25/tDf : 0);
+      /* rotation.y gira +x para -z: o ângulo de mundo é o negativo da soma */
+      ang = -(H + Y);
+    }
+    /* a Lua da Terra fica na FASE real em relação ao Sol, como no sistema */
     if(bodyId === 'terra' && m.id === 'lua') ang = LIVE_FASE + Math.PI + faseDaLua().ang;
     let r = 3.15 + (i%3)*0.5, tamK = 0.20 + hashStr(m.id)*0.10;
     /* escala real: a Lua fica a 60 raios terrestres, do tamanho certo */
@@ -8006,7 +8066,8 @@ function dolly(f){
     return;
   }
   /* com um corpo travado no centro, o zoom entra bem mais perto dele */
-  const minEf = (ACT && ACT.kind==='system' && ST.mapCard) ? Math.min(CAM.min, (ACT.escr ? 0.12 : 4.2)) : CAM.min;
+  const minEf = (ACT && ACT.kind==='system' && ACT.escr) ? 0.075
+              : ((ACT && ACT.kind==='system' && ST.mapCard) ? Math.min(CAM.min, 4.2) : CAM.min);
   CAM.dist = clamp(alvo, minEf, CAM.max);
   if(CAM.dist > minEf + 1e-3) ZLIM.over = 0;
 }
@@ -8227,7 +8288,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r101';
+const BUILD = 'r102';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -8628,7 +8689,7 @@ $('#cfgpop').addEventListener('click', e=>{
       if(ST.level === 'system') gotoSystem('sol', ESCR.on ? 'ESCALA REAL · OS CORPOS VIRAM POEIRA' : 'ESCALA CÊNICA · DE VOLTA AO MAPA');
       else if(ST.level === 'focus' && ST.body) gotoFocus(ST.body);
     }
-    showHint(ESCR.on ? 'ESCALA REAL: as distâncias e os tamanhos são os verdadeiros. Procure os planetas pelos RÓTULOS.' : 'ESCALA CÊNICA RESTAURADA');
+    showHint(ESCR.on ? 'ESCALA REAL: distâncias, tamanhos e órbitas verdadeiros. Procure os planetas pelos RÓTULOS e acelere o RELÓGIO para ver Mercúrio correr.' : 'ESCALA CÊNICA RESTAURADA');
     return;
   }
   const rV = e.target.closest('[data-viagemx]');
