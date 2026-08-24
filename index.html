@@ -1397,7 +1397,7 @@ PLANETS.push(
   quick:[['GRAVIDADE','1,06 g'],['TEMP. TOPO','−139 °C'],['DIA','10 h 33'],['ANO','29,4 anos'],['LUAS','274'],['ANÉIS','SIM']],
   sys:{orbit:34, size:2.15, speed:0.034, angle:5.6},
   visual:{mode:'gas', c1:'#e2d3ac', c2:'#c6b184', c3:'#f0e8d2', c4:'#a98f60', bandF:8.0, turb:0.9, seed:4.7, atmo:{col:'#f0e2b8', i:0.5}, rings:{rin:1.35, rout:2.35, col:'#d8caa6', op:0.9, tilt:26.7, seed:2.0}},
-  moonsMeta:'274 CONFIRMADAS · 4 PRINCIPAIS',
+  moonsMeta:'274 CONFIRMADAS · 6 PRINCIPAIS',
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','1,43 bi km (9,5 UA)'],['Ano','29,4 anos'],['Dia','10 h 33 min'],['Tipo de rotação','Prógrada'],['Veloc. orbital','9,7 km/s'],['Inclinação axial','26,7°'],['Estações','Sim, ~7 anos cada']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','116.460 km'],['Massa','5,68 × 10²⁶ kg (95 Terras)'],['Densidade','0,69 g/cm³, flutuaria na água'],['Área','42,7 bi km²'],['Anéis','282.000 km de largura · ~10 m a 1 km de espessura']]},
@@ -1437,17 +1437,35 @@ PLANETS.push(
     ],
     facts:['A Cassini provou que existe um oceano de água salgada e quente ali embaixo, com atividade hidrotermal como nas fontes onde a vida pode ter começado na Terra.','Os gêiseres alimentam o anel E de Saturno: essa lua está literalmente pintando um anel do planeta.','É o corpo mais refletivo do Sistema Solar, devolve 81% da luz que recebe.','Uma missão futura não precisa nem pousar: basta atravessar a pluma e coletar o oceano de graça.'],
     fict:'Star Trek Enterprise faz de Encélado uma parada de reabastecimento de água. Em 2017, a NASA anunciou o achado do hidrogênio com a frase que virou meme: "é comida de micróbio".'},
-   {id:'mimas', name:'MIMAS', desig:'SATURNO-I', kind:'Lua craterizada', hab:0, gbar:0.006, pop:'0',
-    quick:[['DIÂMETRO','396 km'],['ÓRBITA','0,9 d'],['DESCOBERTA','1789'],['CRATERA','Herschel']],
+   {id:'dione', name:'DIONE', desig:'SATURNO-IV · LUA', kind:'A dos penhascos de gelo', hab:12, gbar:0.024, pop:'0',
+    quick:[['DIÂMETRO','1.123 km'],['GRAVIDADE','0,024 g'],['ÓRBITA','2,7 d'],['DESCOBERTA','1684'],['ATMOSFERA','O₂, raríssima'],['TEMP.','−186 °C']],
+    visual:{mode:'rocky', c1:'#c4beb4', c2:'#e0dad0', c3:'#96908a', scale:4.2, seed:26.84, crater:0.7},
+    sections:[
+      {t:'OS PENHASCOS', rows:[['Os riscos claros','As listras brilhantes vistas de longe são penhascos de gelo de centenas de metros'],['A origem','Fraturas tectônicas: a crosta de Dione rachou e expôs gelo limpo'],['A surpresa','A Cassini mostrou que a lua "morta" teve geologia ativa'],['O oceano','O campo de gravidade sugere um oceano interno sob dezenas de km de gelo']]},
+      {t:'REGISTRO', rows:[['Descoberta','1684 · Giovanni Cassini, a quarta dele em Saturno'],['O nome','Dione, titânide mãe de Afrodite'],['O ar raro','Em 2010 a Cassini detectou uma exosfera de oxigênio, como a de Reia'],['As companheiras','Divide a órbita com duas luazinhas troianas, Helena e Polideuces']]}
+    ],
+    facts:['Os riscos brilhantes que intrigavam os astrônomos são penhascos de gelo expostos por fraturas na crosta.','Divide a própria órbita com duas luas troianas, Helena e Polideuces, uma na frente e outra atrás.'],
+    fict:null},
+   {id:'mimas', name:'MIMAS', desig:'SATURNO-I · LUA', kind:'A pequena com cara de Estrela da Morte', hab:24, gbar:0.006, pop:'0',
+    quick:[['DIÂMETRO','396 km'],['GRAVIDADE','0,006 g'],['ÓRBITA','0,9 d'],['DESCOBERTA','1789'],['CRATERA','Herschel, 130 km'],['TEMP.','−200 °C']],
     visual:{mode:'rocky', c1:'#b8b2a9', c2:'#9c968d', c3:'#7d7871', scale:5.5, seed:9.4, crater:1.0, spot:{pos:[2.0,0.15], r:0.42, col:'#55504b', on:1}},
-    sections:[{t:'REGISTRO', rows:[['Descoberta','1789 · William Herschel'],['Cratera Herschel','130 km, 1/3 do diâmetro da lua'],['Oceano','Descoberta recente: provável oceano interno jovem']]}],
-    facts:['O impacto que criou a cratera Herschel quase partiu Mimas ao meio.'],
-    fict:'A semelhança com certa estação de batalha "que não é uma lua" é pura coincidência (Star Wars).'},
-   {id:'japeto', name:'JÁPETO', desig:'SATURNO-VIII', kind:'Lua bicolor', hab:0, gbar:0.023, pop:'0',
-    quick:[['DIÂMETRO','1.469 km'],['ÓRBITA','79 d'],['DESCOBERTA','1671'],['CORES','duas']],
+    sections:[
+      {t:'A CRATERA HERSCHEL', rows:[['O tamanho','130 km de boca numa lua de 396: um terço do diâmetro'],['O impacto','Um pouco mais forte e teria partido Mimas ao meio; as fraturas do lado oposto contam a história'],['O pico central','6 km de altura, quase um Everest, no centro da cicatriz'],['A cara famosa','Quando a Voyager 1 mostrou a cratera em 1980, o mundo inteiro pensou na mesma coisa']]},
+      {t:'O OCEANO ESCONDIDO', rows:[['A surpresa de 2024','O bamboleio da órbita, medido nos dados da Cassini, revelou um oceano interno'],['A profundidade','A água começa uns 20 a 30 km abaixo do gelo'],['A juventude','O oceano tem menos de 25 milhões de anos, um recém-nascido em escala cósmica'],['O disfarce','A superfície toda craterizada não mostra NENHUM sinal dele, por isso ninguém desconfiava']]},
+      {t:'REGISTRO', rows:[['Descoberta','1789 · William Herschel'],['O nome','Mimas, um dos gigantes da mitologia grega'],['A composição','Quase só gelo de água, densidade de 1,15'],['O vizinho dos anéis','É a lua grande mais próxima dos anéis, e a divisão de Cassini é obra da gravidade dela']]}
+    ],
+    facts:['O bamboleio medido pela Cassini revelou em 2024 um oceano interno jovem, escondido sob uma superfície que não mostra nenhum sinal dele.','A divisão de Cassini, o vão escuro dos anéis de Saturno, é aberta pela gravidade de Mimas.'],
+    fict:'Quando a Voyager 1 fotografou a cratera Herschel em 1980, três anos depois de Star Wars, a comparação com a Estrela da Morte foi inevitável e Mimas nunca mais se livrou do apelido.'},
+   {id:'japeto', name:'JÁPETO', desig:'SATURNO-VIII · LUA', kind:'A lua de duas caras', hab:3, gbar:0.023, pop:'0',
+    quick:[['DIÂMETRO','1.469 km'],['GRAVIDADE','0,023 g'],['ÓRBITA','79,3 d'],['DESCOBERTA','1671'],['ALBEDO','0,04 no escuro, 0,6 no claro'],['TEMP.','−143 a −173 °C']],
     visual:{mode:'rocky', c1:'#d8d2c8', c2:'#4a3a2c', c3:'#8a7c68', scale:2.2, seed:5.9, crater:0.4},
-    sections:[{t:'REGISTRO', rows:[['Descoberta','1671 · Giovanni Cassini'],['Duas caras','Um hemisfério claro como neve, outro escuro como carvão'],['Crista equatorial','Cadeia de montanhas de 13 km na linha do equador']]}],
-    facts:['Cassini notou que Jápeto "sumia" de um lado da órbita, só via o hemisfério escuro.'], fict:null}
+    sections:[
+      {t:'AS DUAS CARAS', rows:[['O contraste','Um hemisfério escuro como carvão, o outro claro como neve: o maior contraste de brilho do Sistema Solar'],['A causa','Poeira escura da lua Febe cai no lado da frente da órbita'],['A bola de neve','Quanto mais escuro, mais quente: o gelo evapora e migra para o lado claro, escurecendo ainda mais o outro'],['A solução','O mistério de 300 anos foi fechado pela Cassini no sobrevoo de 2007']]},
+      {t:'A CRISTA EQUATORIAL', rows:[['A muralha','Uma cordilheira de até 13 km de altura correndo EXATAMENTE sobre o equador'],['A extensão','1.300 km, um terço da volta da lua'],['A forma','Vista de longe, a crista dá a Jápeto o formato de uma noz'],['O enigma','Ninguém sabe a origem: talvez um anel antigo que desabou sobre a superfície']]},
+      {t:'REGISTRO', rows:[['Descoberta','1671 · Giovanni Cassini'],['O sumiço','Cassini notou que a lua sumia de um lado da órbita: só o hemisfério escuro apontava para nós'],['O nome','Jápeto, o titã pai de Prometeu e de Atlas'],['A órbita','79 dias, longe e inclinada: é a única lua grande de onde se veriam os anéis abertos']]}
+    ],
+    facts:['A poeira que cai de um lado e o gelo que migra para o outro fazem de Jápeto o mundo mais bicolor que se conhece.','Uma cordilheira de 13 km de altura corre exatamente sobre o equador, e uma das hipóteses é que seja um anel antigo que desabou.'],
+    fict:'No livro 2001: Uma Odisseia no Espaço, de Arthur C. Clarke, o monólito TMA-2 espera a Discovery em Jápeto; o filme mudou o destino para Júpiter.'}
   ]
 },
 {
@@ -5524,8 +5542,13 @@ function vooInterplanetario(alvoId){
   if(!novo.wrap){ gotoFocus(alvoId); return; }
   for(const L of de.labels) L.off = true;
   if(novo.dim) novo.dim(0, null);
+  /* destino lua: a chegada entra de LADO, contornando o planeta-mãe que
+     espera ao fundo à esquerda; a composição final já nasce orientada */
+  const alvoB = ALLBODIES[alvoId] || {};
+  const ladoX = ((alvoB._parent || alvoB.satOf) && !alvoB.sonda && !alvoB.satelite && !alvoB.foguete) ? 26 : 0;
   novo.wrap.position.z = -70;
-  TRANSITO = {de, novo, t0:performance.now(), ms:1500};
+  novo.wrap.position.x = ladoX;
+  TRANSITO = {de, novo, t0:performance.now(), ms:1500, ladoX};
   ACT = novo;
   setCam(novo.cam);
   CAM.pivot.set(0, 0, 0);
@@ -5540,6 +5563,7 @@ function transitoStep(now){
   TRANSITO.de.wrap.position.x = -14*e;
   if(TRANSITO.de.dim) TRANSITO.de.dim(Math.max(0, 1 - e*1.4), null);
   TRANSITO.novo.wrap.position.z = -70*(1 - e);
+  TRANSITO.novo.wrap.position.x = (TRANSITO.ladoX || 0)*(1 - e);
   if(TRANSITO.novo.dim) TRANSITO.novo.dim(Math.min(1, Math.max(0.04, e*1.2)), null);
   if(k >= 1){
     const velha = TRANSITO.de;
@@ -8194,7 +8218,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r99';
+const BUILD = 'r100';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
