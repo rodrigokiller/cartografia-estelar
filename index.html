@@ -7875,7 +7875,7 @@ function trajScrubTo(x, y){
 canvas.addEventListener('pointerdown', e=>{
   /* girar e dar zoom durante o tour é livre; só NAVEGAR encerra */
   if(DIVE) return;          /* durante o mergulho a câmera é da animação */
-  canvas.setPointerCapture(e.pointerId);
+  try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
   pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
   if(pts.size===1){
     /* na linha do tempo, pegar o próprio objeto arrasta ele pela rota */
