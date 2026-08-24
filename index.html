@@ -828,6 +828,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
         <option value="solar">SISTEMA SOLAR</option>
         <option value="aguas">MUNDOS DE ÁGUA</option>
         <option value="viajantes">AS VIAJANTES</option>
+        <option value="moradas">AS MORADAS DA VIDA</option>
         <option value="nebulosas">NEBULOSAS</option>
         <option value="galaxias">GALÁXIAS</option>
       </select>
@@ -1414,6 +1415,15 @@ PLANETS.push(
     ],
     facts:['Com a pressão certa e gravidade baixa, um humano com asas nos braços conseguiria voar em Titã.','É o único outro lugar conhecido com líquido estável na superfície, só que de metano, não de água.','A Dragonfly será a primeira aeronave a explorar outro mundo saltando de um ponto a outro.'],
     fict:'Gattaca: o destino sonhado de Vincent é uma missão a Titã. Também é a lua colonizada em Titan (2018) e um refúgio recorrente na ficção científica.'},
+   {id:'reia', name:'REIA', desig:'SATURNO-V · LUA', kind:'A segunda de Saturno, a do ar raro', hab:8, gbar:0.027, pop:'0',
+    quick:[['DIÂMETRO','1.528 km'],['GRAVIDADE','0,027 g'],['ÓRBITA','4,5 d'],['DESCOBERTA','1672'],['ATMOSFERA','O₂ e CO₂, raríssima'],['TEMP.','−174 °C']],
+    visual:{mode:'rocky', c1:'#b8b2a8', c2:'#d4cec4', c3:'#8a847a', scale:5.0, seed:16.72, crater:0.85},
+    sections:[
+      {t:'O AR RARO', rows:[['A descoberta','Em 2010 a Cassini detectou uma exosfera de oxigênio e gás carbônico'],['A origem','A radiação de Saturno quebra o gelo da superfície e liberta o O₂'],['A medida','Trilhões de vezes mais rarefeita que o nosso ar, mas é ATMOSFERA'],['O marco','Foi a primeira vez que se respirou... digo, se detectou O₂ num mundo gelado assim']]},
+      {t:'REGISTRO', rows:[['Descoberta','1672 · Giovanni Cassini, o próprio'],['O nome','Reia, a titã mãe de Zeus'],['A superfície','Gelo sujo craterizado, com os riscos claros dos penhascos de gelo'],['O mistério dos anéis','Em 2008 suspeitou-se que Reia teria ANÉIS próprios; a Cassini depois não confirmou']]}
+    ],
+    facts:['Tem uma atmosfera raríssima de oxigênio, arrancada do próprio gelo pela radiação de Saturno.','Chegou a ser suspeita de ter anéis próprios, o que a tornaria a única lua com anéis conhecida.'],
+    fict:'A suspeita dos anéis de Reia rendeu manchetes de "a lua com anéis" antes de a Cassini desmentir.'},
    {id:'encelado', name:'ENCÉLADO', desig:'SATURNO-II · LUA', kind:'A lua que cospe oceano no espaço', hab:72, gbar:0.011, pop:'0 (que a gente saiba)',
     quick:[['DIÂMETRO','504 km'],['GRAVIDADE','0,011 g'],['ÓRBITA','1,37 d'],['GÊISERES','101 jatos'],['OCEANO','global, 10 km'],['ALBEDO','0,81 · recorde']],
     visual:{mode:'rocky', c1:'#eef3f6', c2:'#cfdde6', c3:'#aec6d4', scale:5.0, seed:2.8, crater:0.2, atmo:{col:'#cfe6ff', i:0.5}},
@@ -1911,6 +1921,12 @@ const STARSYS = [
    sections:[{t:'REGISTRO', rows:[['A forma','Onze cascas concêntricas, jatos e laços'],['1864','Provou que nebulosas são gás, não estrelas'],['O futuro do Sol','Ele vai terminar parecido, só que mais simples']]}],
    facts:['A forma é tão complexa que ninguém explicou completamente como ela se formou.'],
    fict:'Uma das imagens mais reproduzidas do Hubble.'}},
+ {id:'norteamerica', name:'AMÉRICA DO NORTE', nav:true, pos:[6.5,0,-19], hot:false,
+  card:{desig:'NGC 7000 · ~2.590 AL', kind:'O continente de gás no Cisne', hab:null,
+   quick:[['DISTÂNCIA','~2.590 al'],['CATÁLOGO','NGC 7000'],['TAMANHO','4× a Lua cheia'],['CONSTELAÇÃO','Cisne']],
+   sections:[{t:'REGISTRO', rows:[['A forma','O recorte exato da América do Norte, com o Golfo do México'],['A estrela','Bajamar, a ionizadora escondida achada em 2004']]}],
+   facts:['Quatro luas cheias de céu que só aparecem em longa exposição.'],
+   fict:'A favorita dos astrofotógrafos de quintal.'}},
  {id:'formiga', name:'NEBULOSA DA FORMIGA', nav:true, pos:[16.5,0,7.5], hot:true,
   card:{desig:'NEBULOSA BIPOLAR · 8.000 AL', kind:'A estrela que morre em duas direções', hab:null,
    quick:[['DISTÂNCIA','8.000 al'],['CATÁLOGO','Menzel 3'],['JATOS','1.000 km/s'],['LASER','sim']],
@@ -3166,6 +3182,27 @@ const OLHO_NEBULA = {
   ],
   facts:['Cada anel do olho é um sopro da estrela central, um a cada 1.500 anos: dá para contar onze.','Foi aqui, em 1864, que a humanidade descobriu que nebulosas são gás: o espectro não mente.','O miolo é tão complexo que até hoje se debate o que esculpe os jatos e os nós.'],
   fict:'Concorre com os Pilares da Criação ao posto de foto mais famosa do Hubble, e rende comparações com o Olho de Sauron desde 2004.', moons:[]};
+const NAM_STAR = {
+  id:'bajamar', name:'ESTRELA BAJAMAR', desig:'AMÉRICA DO NORTE · IONIZADORA', kind:'A estrela escondida que acende um continente', hab:null, gbar:7,
+  quick:[['TIPO','O3.5, raríssima'],['RAIO','~10 R☉'],['MASSA','~60 Sóis'],['DISTÂNCIA','~2.600 al'],['ACHADA EM','2004'],['NOME','Bajamar, 2020']],
+  visual:{mode:'star', c1:'#d8e8ff', c2:'#7aa8ff'},
+  sections:[
+    {t:'A ESCONDIDA', rows:[['O enigma','Por décadas ninguém sabia QUEM acendia a nebulosa: a estrela estava atrás da poeira'],['2004','Acharam a responsável escondida na faixa escura do "Golfo do México"'],['O monstro','Uma classe O3.5: entre as estrelas mais quentes e raras da galáxia'],['O nome','Bajamar, "maré baixa": o nome antigo das Bahamas, homenagem ao mapa que ela ilumina']]}
+  ],
+  facts:['A estrela que acende a nebulosa ficou escondida atrás da poeira até 2004.','É uma classe O3.5, das estrelas mais quentes que existem: 60 massas solares.'],
+  fict:'Ganhou o nome oficial de Bajamar em 2020, uma referência ao nome antigo das Bahamas, dentro do mapa que ela própria ilumina.'
+};
+const NAM_NEBULA = {
+  id:'namneb', name:'AMÉRICA DO NORTE', desig:'NGC 7000 · NEBULOSA', kind:'O continente de gás no Cisne', hab:0, gbar:0.0001, pop:'0',
+  region:true, field:{shape:'cloud', r0:5, r1:22, col:0xd87a6a, rock:0x6a3028, size:0.24},
+  quick:[['DISTÂNCIA','~2.590 al'],['CATÁLOGO','NGC 7000'],['TAMANHO','4× a Lua cheia'],['CONSTELAÇÃO','Cisne'],['FORMA','a América do Norte'],['VIZINHA','Nebulosa do Pelicano']],
+  visual:{mode:'haze', c1:'#4a2018', c2:'#d87a6a', c3:'#f0b090', seed:70.0, atmo:{col:'#ff9a7a', i:1.6}},
+  sections:[
+    {t:'O CONTINENTE', rows:[['A forma','O recorte da poeira desenha a América do Norte, com direito ao Golfo do México'],['O tamanho','No céu ocupa quatro luas cheias, mas só aparece em fotos de longa exposição'],['A vizinha','Do outro lado da faixa escura fica a Nebulosa do Pelicano: o mesmo gás, dois nomes'],['Posição aqui','Simbólica: a nuvem envolve a estrela ionizadora']]},
+    {t:'REGISTRO', rows:[['Descoberta','1786 · William Herschel, de novo ele'],['A distância','Só o Gaia cravou: 2.590 anos-luz, muito mais perto do que se pensava'],['Endereço','Na asa do Cisne, pertinho de Deneb no céu']]}
+  ],
+  facts:['A poeira desenha o mapa da América do Norte tão bem que até o Golfo do México existe.','Ocupa quatro luas cheias no céu e quase ninguém a viu: precisa de foto de longa exposição.','A estrela que a acende só foi encontrada em 2004, escondida na própria poeira.'],
+  fict:'É a nebulosa favorita dos astrofotógrafos de quintal: toda galeria de astrofotografia tem uma América do Norte.', moons:[]};
 /* ---- fora da Via Láctea: os únicos candidatos a planeta em outras galáxias ---- */
 const AND_STAR = {
   id:'pa99lente', name:'ESTRELA-LENTE PA-99-N2', desig:'M31 · ESTRELA ANÔNIMA', kind:'Uma estrela de Andrômeda que piscou uma vez', hab:null, gbar:20,
@@ -3410,6 +3447,12 @@ const SYS = {
           quick:[['DISTÂNCIA','3.300 al'],['CATÁLOGO','NGC 6543'],['LARGURA','~0,5 al'],['CAMADAS','11 anéis'],['IDADE','~1.000 anos'],['HALO','3 al']],
           sections:[{t:'REGISTRO', rows:[['A forma','Jatos, bolhas e onze cascas concêntricas no mesmo objeto'],['1864','Foi ela que provou que nebulosas são feitas de gás'],['O futuro do Sol','Ele vai terminar assim, só que bem mais simples']]}],
           facts:['Ninguém explicou completamente como uma estrela produz uma forma tão complexa.']} },
+  norteamerica:{ id:'norteamerica', radec:'20h59m +44°32′', name:'AMÉRICA DO NORTE', star:NAM_STAR, bodies:[], belt:[], beltR:[10,18], beltLabel:'O CONTINENTE →', beltId:'namneb', beltCol:0xd87a6a,
+        starSize:2.4, camMax:40, hint:'O CONTINENTE DE GÁS NA ASA DO CISNE',
+        card:{desig:'NGC 7000 · NEBULOSA', kind:'A América do Norte desenhada em gás', hab:null,
+          quick:[['DISTÂNCIA','~2.590 al'],['CATÁLOGO','NGC 7000'],['TAMANHO','4× a Lua cheia'],['CONSTELAÇÃO','Cisne']],
+          sections:[{t:'REGISTRO', rows:[['O que é','Uma nuvem de gás com o recorte de um continente'],['A ionizadora','A estrela Bajamar, escondida até 2004'],['A vizinha','A Nebulosa do Pelicano, do outro lado da poeira']]}],
+          facts:['O Golfo do México existe na nebulosa também: é a faixa de poeira escura.']} },
   formiga:{ id:'formiga', name:'NEBULOSA DA FORMIGA', star:FORM_STAR, bodies:[], belt:[], beltR:[11,18], beltLabel:'OS LOBOS →', beltId:'formiganeb', beltCol:0xe86a5a,
         starSize:1.4, camMax:36, hint:'UMA ESTRELA MORRENDO EM DUAS DIREÇÕES, E NINGUÉM SABE POR QUÊ',
         card:{desig:'NEBULOSA BIPOLAR · NORMA', kind:'A nebulosa com forma de inseto', hab:null,
@@ -3584,6 +3627,7 @@ reg(R136_STAR,'tarantula'); reg(TAR_NEBULA,'tarantula');
 reg(SN87_STAR,'sn1987a');
 reg(K186_STAR,'kepler186'); K186_BODIES.forEach(p=>reg(p,'kepler186'));
 reg(ROS_STAR,'roseta'); reg(ROS_NEBULA,'roseta');
+reg(NAM_STAR,'norteamerica'); reg(NAM_NEBULA,'norteamerica');
 reg(MZ3_STAR,'formiga'); reg(FORMIGA_NEBULA,'formiga');
 reg(OLHO_STAR,'olhodegato'); reg(OLHO_NEBULA,'olhodegato');
 reg(ETA_STAR,'carina'); reg(CARINA_NEBULA,'carina');
@@ -6696,7 +6740,7 @@ const TITULOS = {
   cavalo:'CAÇADOR DE SOMBRAS', pa99:'EMBAIXADOR EM ANDRÔMEDA', m51uls:'ALCANCE MÁXIMO',
   mayall2:'CONTADOR DE MULTIDÕES', nucleoM31:'MERGULHADOR DO ABISMO',
   lagoa:'PESCADOR DA LAGOA', trifida:'TRÊS EM UM',
-  formiga:'ENCANTADOR DE FORMIGAS', olhodegato:'VIGIA DO OLHO DE GATO',
+  norteamerica:'CARTÓGRAFO DO CISNE', formiga:'ENCANTADOR DE FORMIGAS', olhodegato:'VIGIA DO OLHO DE GATO',
   carina:'ESCALADOR DA MONTANHA MÍSTICA', omega:'SENHOR DAS MULTIDÕES', veu:'ARQUEÓLOGO DA EXPLOSÃO',
   kepler186:'AGRÔNOMO VERMELHO', roseta:'JARDINEIRO CÓSMICO',
   tarantula:'DOMADOR DE ARANHAS', sn1987a:'CAÇADOR DE NEUTRINOS',
@@ -6981,6 +7025,17 @@ const ROTA_VIAJANTES = [
   {corpo:'oumuamua', ms:12000},
   {sis:'sol', ms:8000, texto:'Cinco máquinas já cruzaram ou cruzarão a heliopausa. Nenhuma volta: são as garrafas ao mar da humanidade.'}
 ];
+const ROTA_MORADAS = [
+  {corpo:'terra', ms:11000, texto:'A única morada confirmada. Tudo que a vida precisa, no lugar certo.'},
+  {corpo:'marte', ms:11000, texto:'Já teve rios e mares. A vida pode ter existido, e os robôs procuram os fósseis.'},
+  {corpo:'europa', ms:11000},
+  {corpo:'encelado', ms:11000},
+  {corpo:'tita', ms:11000},
+  {corpo:'t1e', ms:12000, texto:'TRAPPIST-1e: o tamanho da Terra, a zona certa, e um sol vermelho eterno no céu.'},
+  {corpo:'kepler452b', ms:12000},
+  {corpo:'proximab', ms:12000, texto:'A morada possível mais PRÓXIMA de todas: 4,2 anos-luz. Uma geração de nave, talvez.'},
+  {gal:'vialactea', ms:8000, texto:'Oito moradas possíveis, uma confirmada. Por enquanto.'}
+];
 const ROTA_AGUAS = [
   {corpo:'europa', ms:13000},
   {corpo:'encelado', ms:13000},
@@ -6992,6 +7047,7 @@ const ROTAS = {
   completo:  {nome:'ROTA COMPLETA',  lista:ROTEIRO_COMPLETO},
   aguas:     {nome:'MUNDOS DE ÁGUA', lista:ROTA_AGUAS},
   viajantes: {nome:'AS VIAJANTES',   lista:ROTA_VIAJANTES},
+  moradas:   {nome:'AS MORADAS DA VIDA', lista:ROTA_MORADAS},
   solar:     {nome:'SISTEMA SOLAR',  lista:ROTA_SOLAR},
   nebulosas: {nome:'NEBULOSAS',      lista:ROTA_NEBULOSAS},
   galaxias:  {nome:'GALÁXIAS',       lista:ROTA_GALAXIAS}
@@ -7115,6 +7171,18 @@ function tourIr(p){
      sem subir ao sistema (a lua já está desenhada orbitando ali) */
   if(ST.level==='focus' && (b._parent === ST.body || b.satOf === ST.body) && acharPick(p.corpo)){
     diveInto(p.corpo, ()=>gotoFocus(p.corpo, true));
+    return;
+  }
+  if(b._sys && ST.sys !== b._sys && ST.level !== 'universe'){
+    /* corpo em OUTRO sistema: voa até o sistema e mergulha no corpo */
+    tourIr({sis:b._sys});
+    const pollC = (n)=>{
+      if(!TOUR.on) return;
+      if(!DIVE && ACT && ACT.kind==='system' && ST.sys === b._sys && acharPick(p.corpo))
+        diveInto(p.corpo, ()=>gotoFocus(p.corpo, true));
+      else if(n < 80) setTimeout(()=>pollC(n+1), 300);
+    };
+    setTimeout(()=>pollC(0), 600);
     return;
   }
   if(ACT && ACT.kind==='system' && acharPick(p.corpo) && b._sys===ST.sys){
@@ -8079,7 +8147,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r96';
+const BUILD = 'r97';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
