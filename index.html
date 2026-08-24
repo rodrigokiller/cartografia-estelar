@@ -126,12 +126,13 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
    sobre o corte do clip-path. Geometria fechada, sem números ajustados na mão. */
 #panel::before,#panel::after,#findbox::before,#findbox::after,#cmpcard::before,#cmpcard::after,
 #helpcard::before,#helpcard::after,#player::before,#player::after,#misscard::before,#misscard::after,
-#filtpop::before,#filtpop::after,#cfgpop::before,#cfgpop::after,#tut::before,#tut::after{
+#filtpop::before,#filtpop::after,#cfgpop::before,#cfgpop::after,#tut::before,#tut::after,
+#datepop::before,#datepop::after,#tourpop::before,#tourpop::after{
   content:'';position:absolute;pointer-events:none;z-index:2}
-#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before,#filtpop::before,#cfgpop::before,#tut::before{
+#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before,#filtpop::before,#cfgpop::before,#tut::before,#datepop::before,#tourpop::before{
   left:-1px;top:-1px;
   background:linear-gradient(-45deg,transparent calc(50% - 1px),var(--line2) calc(50% - 1px),var(--line2) 50%,transparent 50%)}
-#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after,#filtpop::after,#cfgpop::after,#tut::after{
+#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after,#filtpop::after,#cfgpop::after,#tut::after,#datepop::after,#tourpop::after{
   right:-1px;bottom:-1px;
   background:linear-gradient(-45deg,transparent 50%,var(--line2) 50%,var(--line2) calc(50% + 1px),transparent calc(50% + 1px))}
 #panel::before,#panel::after{width:18px;height:18px}
@@ -144,6 +145,9 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #filtpop::before,#filtpop::after{width:10px;height:10px}
 #cfgpop::before,#cfgpop::after{width:10px;height:10px}
 #tut::before,#tut::after{width:12px;height:12px}
+#datepop::before,#datepop::after{width:10px;height:10px}
+#tourpop::before,#tourpop::after{width:10px;height:10px}
+#tourpoplista .filtrow b{color:var(--amber)}
 #tut::before{background:linear-gradient(-45deg,transparent calc(50% - 1px),rgba(255,180,84,.45) calc(50% - 1px),rgba(255,180,84,.45) 50%,transparent 50%)}
 #tut::after{background:linear-gradient(-45deg,transparent 50%,rgba(255,180,84,.45) 50%,rgba(255,180,84,.45) calc(50% + 1px),transparent calc(50% + 1px))}
 #nowplay{position:absolute;top:64px;left:50%;transform:translateX(-50%);z-index:15;
@@ -182,7 +186,12 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
   line-height:1;cursor:pointer;padding:0;z-index:3}
 .fpx:hover{color:var(--amber);border-color:var(--amber)}
 #datepop{position:absolute;left:14px;bottom:118px;z-index:22;display:none;
-  background:var(--panel);border:1px solid var(--line2);padding:12px 14px}
+  background:var(--panel);border:1px solid var(--line2);padding:12px 14px;
+  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+#tourpop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:26;display:none;
+  width:min(340px,90vw);background:var(--panel);border:1px solid var(--line2);padding:12px 14px 10px;
+  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+#tourpop.on{display:block;animation:popnasce .26s ease-out}
 #datepop.on{display:block}
 #datepop .dcols{display:flex;gap:14px;margin:8px 0 10px}
 #datepop .dcol{display:flex;flex-direction:column;align-items:center;gap:4px}
@@ -259,7 +268,7 @@ body.photo.hudpeek #photoexit{opacity:1}
   #trajclock{width:94vw}
   #trajclock .ttx{width:100%}
 }
-body.photo #filtpop,body.photo #trajclock,body.photo #simclock,body.photo #cfgpop,body.photo #datepop{opacity:0 !important;visibility:hidden}
+body.photo #filtpop,body.photo #trajclock,body.photo #simclock,body.photo #cfgpop,body.photo #datepop,body.photo #tourpop{opacity:0 !important;visibility:hidden}
 /* telemetria de debug: escondida por padrão, sai com Shift+D (ver CLAUDE.md) */
 #diagchip{display:none;position:absolute;right:8px;bottom:6px;z-index:14;font-family:var(--mono);font-size:9px;
   letter-spacing:1px;color:var(--dim);background:rgba(4,8,18,.72);border:1px solid var(--line);
@@ -801,6 +810,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
         <option value="completo">ROTA COMPLETA</option>
         <option value="solar">SISTEMA SOLAR</option>
         <option value="aguas">MUNDOS DE ÁGUA</option>
+        <option value="viajantes">AS VIAJANTES</option>
         <option value="nebulosas">NEBULOSAS</option>
         <option value="galaxias">GALÁXIAS</option>
       </select>
@@ -832,6 +842,12 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="trow"><button id="tutskip">PULAR</button><span class="tnav"><button id="tutpausa">⏸</button><button id="tutprev">◂ VOLTAR</button><button id="tutnext">PRÓXIMO ▸</button></span></div>
   </div>
   <div id="tip"></div>
+  <div id="tourpop">
+    <button class="fpx">✕</button>
+    <div class="fp-t">▸ ROTAS DO TOUR</div>
+    <div id="tourpoplista"></div>
+    <div class="fp-n">Escolha uma rota e sente: a nave navega sozinha. Qualquer toque na cena devolve o controle. Rotas concluídas rendem a conquista EXP-01.</div>
+  </div>
   <div id="datepop">
     <button class="fpx">✕</button>
     <div class="fp-t">VER O SISTEMA EM OUTRA DATA</div>
@@ -6895,6 +6911,14 @@ const ROTA_GALAXIAS = [
   {corpo:'m51ulsb', ms:11000},
   {uni:true, ms:10000}
 ];
+const ROTAS_OK = new Set(String(store.get('carto:rotasok','')).split(',').filter(Boolean));
+const ROTA_VIAJANTES = [
+  {corpo:'voyager1', ms:12000},
+  {corpo:'voyager2', ms:11000},
+  {corpo:'newhorizons', ms:11000},
+  {corpo:'oumuamua', ms:12000},
+  {sis:'sol', ms:8000, texto:'Cinco máquinas já cruzaram ou cruzarão a heliopausa. Nenhuma volta: são as garrafas ao mar da humanidade.'}
+];
 const ROTA_AGUAS = [
   {corpo:'europa', ms:13000},
   {corpo:'encelado', ms:13000},
@@ -6905,6 +6929,7 @@ const ROTA_AGUAS = [
 const ROTAS = {
   completo:  {nome:'ROTA COMPLETA',  lista:ROTEIRO_COMPLETO},
   aguas:     {nome:'MUNDOS DE ÁGUA', lista:ROTA_AGUAS},
+  viajantes: {nome:'AS VIAJANTES',   lista:ROTA_VIAJANTES},
   solar:     {nome:'SISTEMA SOLAR',  lista:ROTA_SOLAR},
   nebulosas: {nome:'NEBULOSAS',      lista:ROTA_NEBULOSAS},
   galaxias:  {nome:'GALÁXIAS',       lista:ROTA_GALAXIAS}
@@ -6920,10 +6945,39 @@ function tourIr(p){
   if(p.uni){ gotoUniverse('TOUR · PANORAMA FINAL'); return; }
   if(p.gal){ gotoGalaxy(p.gal, 'TOUR · '+tourNome(p)); return; }
   if(p.sis){
-    /* saindo de um corpo do mesmo sistema, recua em vez de cortar */
-    const deCorpo = (ST.level==='focus' && ALLBODIES[ST.body] && ALLBODIES[ST.body]._sys===p.sis
-                     && ALLBODIES[ST.body].sys) ? ST.body : null;
-    gotoSystem(p.sis, 'TOUR · '+tourNome(p), deCorpo);
+    /* mesmo sistema: recua contínuo de QUALQUER corpo, lua inclusive
+       (as luas têm miniatura no mapa desde o r74, então a subida existe) */
+    if(ST.sys === p.sis && ST.level !== 'universe' && ST.level !== 'galaxy'){
+      const deCorpo = (ST.level==='focus' && ALLBODIES[ST.body] && ALLBODIES[ST.body]._sys===p.sis)
+                      ? ST.body : null;
+      gotoSystem(p.sis, deCorpo ? null : ('TOUR · '+tourNome(p)), deCorpo);
+      return;
+    }
+    /* outro sistema da MESMA galáxia: sobe contínuo até a galáxia e mergulha
+       no marcador do destino: dá para VER o caminho, como numa nave */
+    const galPara = (SYS[p.sis] && SYS[p.sis].gal) || 'vialactea';
+    const galDe = (SYS[ST.sys] && SYS[ST.sys].gal) || 'vialactea';
+    if((ST.level==='system' || ST.level==='focus') && galDe === galPara){
+      const mergulha = ()=>{
+        const tenta = (n)=>{
+          if(!TOUR.on) return;
+          if(!DIVE && ACT && ACT.kind==='galaxy' && acharPick(p.sis))
+            diveInto(p.sis, ()=>gotoSystem(p.sis, null, null, true), {yaw:0.65, pitch:0.55, semDesvio:true});
+          else if(n < 24) setTimeout(()=>tenta(n+1), 200);
+        };
+        setTimeout(()=>tenta(0), 980);
+      };
+      if(ST.level === 'focus'){
+        const meu = ST.sys;
+        gotoSystem(meu, null, ST.body);
+        setTimeout(()=>{ if(!TOUR.on) return; gotoGalaxy(galPara, null, false, meu); mergulha(); }, 1500);
+      } else {
+        gotoGalaxy(galPara, null, false, ST.sys);
+        mergulha();
+      }
+      return;
+    }
+    gotoSystem(p.sis, 'TOUR · '+tourNome(p));
     return;
   }
   const b = ALLBODIES[p.corpo]; if(!b) return;
@@ -6967,13 +7021,31 @@ function tourSync(){
 }
 function tourPasso(){
   const p = ROTEIRO[TOUR.i];
+  /* parada de sistema que era só transição entre dois corpos: o vôo direto
+     já mostra o sistema no caminho, então pula sem gastar relógio */
+  if(p && p.sis && !p.texto && ST.level==='focus'
+     && ALLBODIES[ST.body] && ALLBODIES[ST.body]._sys === p.sis){
+    const nx = ROTEIRO[TOUR.i + 1];
+    if(nx && nx.corpo && ALLBODIES[nx.corpo] && ALLBODIES[nx.corpo]._sys === p.sis){
+      TOUR.i = TOUR.i + 1;
+      tourPasso();
+      return;
+    }
+  }
   TOUR.t0 = performance.now(); TOUR.ms = p.ms;
   tourSync(); tourIr(p);
   clearTimeout(TOUR.tm);
   TOUR.tm = setTimeout(()=>{
     if(!TOUR.on) return;
     TOUR.i = TOUR.i + 1;
-    if(TOUR.i >= ROTEIRO.length){ TOUR.i = 0; feito('tourespacial'); }
+    if(TOUR.i >= ROTEIRO.length){
+      feito('tourespacial');
+      ROTAS_OK.add(TOUR.rota);
+      store.set('carto:rotasok', [...ROTAS_OK].join(','));
+      tourStop(true);
+      showHint('ROTA CONCLUÍDA · O MAPA É SEU, NAVEGADOR');
+      return;
+    }
     tourPasso();
   }, p.ms);
 }
@@ -7001,7 +7073,28 @@ function tourStop(quieto){
   $('#tourprog').style.width = '0%';
   if(!quieto) showHint('TOUR ENCERRADO');
 }
-function tourToggle(){ TOUR.on ? tourStop() : tourStart(); }
+/* a caixinha de rotas: escolher, ver o que já concluiu, e partir */
+function tourPopAbre(){
+  const el = $('#tourpoplista');
+  el.innerHTML = Object.keys(ROTAS).map(k=>{
+    const r = ROTAS[k];
+    return '<div class="filtrow" data-rotasel="'+k+'"><span>'+esc(r.nome)+' · '+r.lista.length+' PARADAS</span><b>'+(ROTAS_OK.has(k)?'✓':'')+'</b></div>';
+  }).join('');
+  $('#tourpop').classList.add('on');
+}
+{ const tp = $('#tourpop');
+  tp.addEventListener('click', e=>{
+    const r = e.target.closest('[data-rotasel]');
+    if(!r) return;
+    tp.classList.remove('on');
+    tourRota(r.dataset.rotasel, true);
+    tourStart();
+  }); }
+function tourToggle(){
+  if(TOUR.on){ tourStop(); return; }
+  if($('#tourpop').classList.contains('on')) $('#tourpop').classList.remove('on');
+  else tourPopAbre();
+}
 
 /* ---------- busca rápida ---------- */
 let FINDIDX = null, findSel = 0, findRes = [];
@@ -7720,6 +7813,7 @@ window.addEventListener('keydown', e=>{
   else if(e.key==='Escape'){
     if(TOUR.on) tourStop();
     else if(TRAJ && TRAJ.fase!=='volta') trajCancelar();
+    else if($('#tourpop').classList.contains('on')) $('#tourpop').classList.remove('on');
     else if($('#datepop').classList.contains('on')) $('#datepop').classList.remove('on');
     else if($('#cfgpop').classList.contains('on')) $('#cfgpop').classList.remove('on');
     else if($('#filtpop').classList.contains('on')) $('#filtpop').classList.remove('on');
@@ -7758,7 +7852,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r91';
+const BUILD = 'r92';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -8253,7 +8347,7 @@ $('#trajx2').addEventListener('click', ()=>trajCancelar());
   bar.addEventListener('pointermove', e=>{ if(TRAJ && TRAJ.arrasto) pega(e); });
   bar.addEventListener('pointerup', ()=>{ if(TRAJ) TRAJ.arrasto = false; });
 })();
-$('#misstour').addEventListener('click', ()=>{ const on = TOUR.on; missClose(); if(on) tourStop(); else tourStart(); });
+$('#misstour').addEventListener('click', ()=>{ const on = TOUR.on; missClose(); if(on) tourStop(); else setTimeout(tourPopAbre, 180); });
 $('#tourx').addEventListener('click', ()=>tourStop());
 $('#tourrota').addEventListener('change', e=>tourRota(e.target.value));
 tourRota(store.get('carto:rota','completo'), true);
