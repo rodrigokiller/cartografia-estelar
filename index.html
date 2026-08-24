@@ -3932,6 +3932,9 @@ const ESCALA_REAL_LUAS = {
   iss:6790, hubble:6910, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61};
+/* dia sideral de cada planeta em dias terrestres (negativo = retrógrado) */
+const ESCALA_REAL_DIA = {mercurio:58.65, venus:-243.0, terra:0.997, marte:1.026,
+  jupiter:0.414, saturno:0.444, urano:-0.718, netuno:0.671};
 function escrTam(km){ return Math.max(0.0002, km/149597870*ESCR_UA); }
 const COORD = {real:false};  /* coordenadas: cênicas (nossas) ou RA/DEC reais onde há dado */
 const SIMT = {data: Date.now(), vel:'dia', pausado:false,
@@ -3994,7 +3997,7 @@ function buildSystem(sysId, spin0){
   starPick.userData = {act:'focus', id:S.star.id, r:starSizeEf};
   scene.add(starPick); pickables.push(starPick);
   labels.push({el:makeLabel(S.star.name, '', ()=>ACTION('focus', S.star.id)),
-    get:v=>v.set(0, starSizeEf+0.6, 0)});
+    get:v=>v.set(0, starSizeEf + (escrAtivo ? Math.min(0.6, Math.max(0.02, CAM.dist*0.05)) : 0.6), 0)});
 
   const orbiters = [];
   const selReg = {orbits:[], markers:[], belt:null};
@@ -4063,7 +4066,7 @@ function buildSystem(sysId, spin0){
     holderDe[p.id] = holder;
     /* linha: elipse fechada para quem volta, arco aberto para quem vai embora */
     const cls = classeDaLinha(p), est = LINHA[cls], fuga = ehEscape(p);
-    const seg = 128, oPos = new Float32Array(seg*3);
+    const seg = escrAtivo ? 512 : 128, oPos = new Float32Array(seg*3);   /* na escala real a corda de 128 segmentos passava LONGE do corpo no zoom fechado */
     if(fuga){
       const r1 = p.sys.orbit;
       if(p.sonda){
@@ -4173,7 +4176,7 @@ function buildSystem(sysId, spin0){
     labels.push({el:makeLabel(p.name, p.satOf?'faint mini':'', ()=>ACTION('focus', p.id)),
       mini:!!p.satOf,
       escrOrb:(escrAtivo ? (p.orbita ? (p.orbita.peri+p.orbita.afel)/2 : p.sys.orbit) : 0),
-      get:v=>{ gp.getWorldPosition(v); v.y += p.sys.size + 0.55; }});
+      get:v=>{ gp.getWorldPosition(v); v.y += p.sys.size + (escrAtivo ? Math.min(0.55, Math.max(0.0025, CAM.dist*0.05)) : 0.55); }});
     labelDe[p.id] = labels[labels.length-1];
     objReg.push({id:p.id, cls, holder, pick, lbl:labels[labels.length-1],
       corpo:bg.group, sempreOculto:!!p.foguete,
@@ -4213,7 +4216,7 @@ function buildSystem(sysId, spin0){
         orbiters.push({holder:mh, spd:1.5 + (mi%3)*0.5, orb:0, tDias:(/\bd\b|dias|,\d+ d| d$/.test(qOrb ? qOrb[1] : '') ? mDias : 0)});
         /* anel de órbita da lua, bem apagado, e registro no filtro de objetos:
            esconder o planeta esconde as luas junto (são filhas do holder dele) */
-        const aseg = 40, aPos = new Float32Array(aseg*3);
+        const aseg = escrAtivo ? 96 : 40, aPos = new Float32Array(aseg*3);
         for(let i2=0;i2<aseg;i2++){ const aa = i2/aseg*Math.PI*2;
           aPos[i2*3] = Math.cos(aa)*mr; aPos[i2*3+2] = Math.sin(aa)*mr; }
         const ag = new THREE.BufferGeometry();
@@ -4225,7 +4228,7 @@ function buildSystem(sysId, spin0){
         selReg.orbits.push({id:m.id, mat:anelLua.material, obj:anelLua, cls:'lua', c:LINHA.lua.cor, o:LINHA.lua.op});
         const mgp = mg2.group;
         labels.push({el:makeLabel(m.name, 'faint mini', ()=>ACTION('focus', m.id)),
-          mini:true, get:v=>{ mgp.getWorldPosition(v); v.y += ms + 0.28; }});
+          mini:true, get:v=>{ mgp.getWorldPosition(v); v.y += ms + (escrAtivo ? Math.min(0.28, Math.max(0.0015, CAM.dist*0.04)) : 0.28); }});
         objReg.push({id:m.id, cls:'lua', holder:mh, pick:mpk, lbl:labels[labels.length-1], tails:[anelLua]});
         kidCount[p.id] = (kidCount[p.id]||0) + 1;
       });
@@ -4409,6 +4412,17 @@ function buildSystem(sysId, spin0){
         if(danos) avancarAnos(danos);
         /* luas com período real já avançam dentro de avancarAnos(danos) */
         for(const o of orbiters) if(!o.orb && !o.tDias) o.holder.rotation.y += o.spd*dt*0.05;
+      }
+      /* escala real: os alvos de clique RESPIRAM com o zoom (longe: generosos;
+         perto: justos). Com raio fixo a Terra engolia a Lua, e a câmera
+         entrava DENTRO do alvo e o clique morria (bug que o Rodrigo achou) */
+      if(escrAtivo){
+        for(const pk of pickables){
+          const g0 = (pk.geometry && pk.geometry.parameters) ? pk.geometry.parameters.radius : 0;
+          if(!g0) continue;
+          const alvoR = Math.max((pk.userData.r || 0)*1.6, CAM.dist*0.035);
+          pk.scale.setScalar(alvoR/g0);
+        }
       }
       /* rastro elíptico acompanha o relógio (e a linha do tempo) */
       if(RASTRO.on) for(const rt of rastros) if(rt.userData.elip) rastroElip(rt);
@@ -5288,8 +5302,8 @@ function grupoNave(id, raio){
 function buildFocus(bodyId, spin0){
   const b = ALLBODIES[bodyId];
   const scene = new THREE.Scene();
-  scene.add(makeStars(QLOW?750:1100, 130, 1.4, 0.8));
-  scene.add(makeStars(300, 110, 2.2, 0.95));
+  const stF1 = makeStars(QLOW?750:1100, 130, 1.4, 0.8), stF2 = makeStars(300, 110, 2.2, 0.95);
+  scene.add(stF1); scene.add(stF2);
   const wrap = new THREE.Group();
   scene.add(wrap);
   const labels = [], pickables = [];
@@ -5310,12 +5324,17 @@ function buildFocus(bodyId, spin0){
     scene.add(pg.group);
     fadeObjs['_mae'] = pg.group;
   } else if(b.visual.mode !== 'star'){
+    /* na ESCALA REAL do sol o brilho cenográfico sai de cena: fica um disco
+       pequeno e vivo no tamanho APARENTE certo (~0,5 grau), como o Sol é visto
+       da Terra, na mesma direção de sempre (a fase da Lua continua batendo) */
+    const escrSolF = ESCR.on && b._sys === 'sol' && !b.comet;
     const sunGlow = new THREE.Sprite(new THREE.SpriteMaterial({
       map:(b._sys==='trappist')?TEX_GLOW_RED:TEX_GLOW_WARM,
-      blending:THREE.AdditiveBlending, depthWrite:false, transparent:true, opacity:0.85}));
-    sunGlow.scale.setScalar(b.comet ? 3.0 : 2.6);
+      blending:THREE.AdditiveBlending, depthWrite:false, transparent:true, opacity:escrSolF ? 1.0 : 0.85}));
+    sunGlow.scale.setScalar(escrSolF ? 3.4 : (b.comet ? 3.0 : 2.6));
     /* no cometa o Sol fica em cima à direita: a cauda cai para o lado livre da tela */
-    sunGlow.position.set(b.comet ? 9 : -10, b.comet ? 6.5 : 5, b.comet ? -9 : -18);
+    if(escrSolF) sunGlow.position.set(-152, 76, -273);
+    else sunGlow.position.set(b.comet ? 9 : -10, b.comet ? 6.5 : 5, b.comet ? -9 : -18);
     scene.add(fade(sunGlow));
   }
 
@@ -5518,6 +5537,13 @@ function buildFocus(bodyId, spin0){
     subKids.push({kh, tDias:tDk, base:r, alvo:Math.max(r, radius + 2.6 + i*1.5), ring, ringFade, rAtual:r});
   });
 
+  /* escala real: a casca de estrelas vai para ALÉM da lua mais distante,
+     senão o céu aparece DENTRO da órbita da Lua (print do Rodrigo) */
+  if(maxKidR > 40){
+    const kEsc = maxKidR*3.2/130;
+    stF1.scale.setScalar(kEsc); stF2.scale.setScalar(kEsc);
+  }
+
   let simPrevF = SIMT.data;
   return {kind:'focus', scene, labels, pickables, wrap, bodyId, sel:selReg, raioCorpo:radius, objs:objsFoco, subKids, sub:subEstado,
     get spin(){ return bg ? bg.mesh.rotation.y : 0; },
@@ -5526,7 +5552,12 @@ function buildFocus(bodyId, spin0){
       const s = Math.max(0.0001, v);
       for(const id in fadeObjs) if(id !== exceto) fadeObjs[id].scale.setScalar(s);
     },
-    cam:{mode:'focus', dist:b.comet?8.2:9.0, min:b.comet?4.0:3.7, max:Math.max(b.comet?10.5:9.6, (ESCR.on && b._sys==='sol') ? maxKidR*1.45 : 0)},
+    /* na escala real do sol a câmera é ORBITAL: arrastar roda EM VOLTA do
+       corpo, nunca o corpo feito pião (pedido do Rodrigo); a rotação que se
+       vê é a do DIA real do planeta, movida pelo relógio */
+    cam:(ESCR.on && b._sys === 'sol' && !b.comet)
+      ? {mode:'orbit', yaw:0, pitch:0.06, dist:9.0, min:3.7, max:Math.max(9.6, maxKidR*1.45)}
+      : {mode:'focus', dist:b.comet?8.2:9.0, min:b.comet?4.0:3.7, max:Math.max(b.comet?10.5:9.6, (ESCR.on && b._sys==='sol') ? maxKidR*1.45 : 0)},
     update:(dt)=>{
       /* nos modos lentos (tempo real, 1 s = 1 s) o foco obedece o relógio:
          gira 1 volta por dia simulado e a lua orbita nos 27,3 dias reais.
@@ -5563,6 +5594,13 @@ function buildFocus(bodyId, spin0){
         }
       }
       if(aoVivo){ bg.mesh.rotation.y = giroAtual() + LIVE_FASE; }
+      else if(ESCR.on && b._sys === 'sol' && ESCALA_REAL_DIA[bodyId]){
+        /* rotação REAL: o dia de cada planeta pelo relógio (Vênus ao contrário,
+           Júpiter em 10 horas; com 1 s = 1 dia a Terra dá uma volta por segundo) */
+        const giroDia = (Math.PI*2)*danosF*365.25/ESCALA_REAL_DIA[bodyId];
+        bg.mesh.rotation.y += giroDia;
+        if(clouds) clouds.rotation.y += giroDia*0.4;
+      }
       else if(lento){
         bg.mesh.rotation.y += (Math.PI*2)*danosF*365.25;
         if(clouds) clouds.rotation.y += (Math.PI*2)*danosF*365.25*0.4;
@@ -5672,7 +5710,7 @@ function riseFrom(id, opt){
   const y0 = (opt && opt.yaw !== undefined) ? opt.yaw : 0;
   const p0 = (opt && opt.pitch !== undefined) ? opt.pitch : 0;
   DIVE = {dir:-1, id, obj:pk, off, extra:(opt && opt.extra) || null,
-          done: paraFoco ? (()=>{ CAM.mode='focus'; CAM.dist=ACT.cam.dist; }) : null,
+          done: paraFoco ? (()=>{ CAM.mode = (ACT.cam && ACT.cam.mode) || 'focus'; CAM.dist=ACT.cam.dist; }) : null,
           t0:performance.now(), ms:(opt && opt.ms) || 1050,
           d0:distCasada(b, pk), d1:ACT.cam.dist, p1:new THREE.Vector3(),
           yaw0:y0, yaw1:curtoParaAngulo(y0, paraFoco ? 0 : ACT.cam.yaw),
@@ -5789,7 +5827,7 @@ function subSistema(){
     showHint('SISTEMA PLANETÁRIO: o corpo vira o centro e as luas orbitam no período real');
     tutInicia('subsis', [{tx:'O corpo focado virou o CENTRO do próprio sistema: cada lua gira no período real dela, na órbita desenhada. Arraste para inclinar o plano, use o zoom à vontade e toque numa lua para abrir a ficha. O mesmo botão fecha o modo.', alvo:'#btnsubsis'}]);
   } else {
-    CAM.mode = 'focus';
+    CAM.mode = (ACT.cam && ACT.cam.mode) || 'focus';   /* na escala real o foco JÁ é orbital */
     tweenCam({dist:ACT.cam.dist}, 950, ()=>{ if(ACT && ACT.cam) CAM.max = ACT.cam.max; });
   }
   cardRender();
@@ -8440,7 +8478,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r106';
+const BUILD = 'r107';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
