@@ -189,9 +189,27 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
   background:var(--panel);border:1px solid var(--line2);padding:12px 14px;
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
 #tourpop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:26;display:none;
-  width:min(340px,90vw);background:var(--panel);border:1px solid var(--line2);padding:12px 14px 10px;
+  width:min(370px,92vw);background:var(--panel);border:1px solid var(--line2);padding:14px 16px 12px;
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
-#tourpop.on{display:block;animation:popnasce .26s ease-out}
+#tourpop.on{display:block;animation:tourpopnasce .24s ease-out}
+@keyframes tourpopnasce{0%{opacity:0;transform:translate(-50%,-48.5%)}100%{opacity:1;transform:translate(-50%,-50%)}}
+#tourpop .tphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:2.5px;color:var(--amber)}
+#tourpop .tphead button{width:20px;height:20px;background:none;border:1px solid var(--line2);color:var(--dim);
+  font-family:var(--mono);font-size:9px;line-height:1;cursor:pointer;padding:0}
+#tourpop .tphead button:hover{color:var(--amber);border-color:var(--amber)}
+#tourpoplista{display:flex;flex-direction:column;gap:6px}
+.tprota{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;align-items:center;
+  gap:1px 10px;text-align:left;background:rgba(63,140,255,.05);border:1px solid var(--line2);
+  padding:9px 12px;cursor:pointer;transition:border-color .15s, background .15s}
+.tprota:hover{border-color:var(--amber);background:rgba(255,180,84,.07)}
+.tprota .tpnm{font-family:var(--mono);font-size:10.5px;letter-spacing:2px;color:var(--txt)}
+.tprota .tpsub{grid-column:1;font-family:var(--mono);font-size:8px;letter-spacing:1.4px;color:var(--dim2)}
+.tprota .tpgo{grid-column:2;grid-row:1 / span 2;font-family:var(--mono);font-size:13px;color:var(--dim)}
+.tprota:hover .tpgo{color:var(--amber)}
+.tprota.feita .tpnm{color:var(--amber)}
+#tourpop .tpn{margin-top:10px;font-family:var(--mono);font-size:8.5px;letter-spacing:1.4px;
+  color:var(--dim2);line-height:1.8}
 #datepop.on{display:block}
 #datepop .dcols{display:flex;gap:14px;margin:8px 0 10px}
 #datepop .dcol{display:flex;flex-direction:column;align-items:center;gap:4px}
@@ -657,11 +675,10 @@ body.touch .touchonly{display:inline}
 #liveinfo{font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;color:var(--ok);margin-top:6px}
 /* ---------- hint toast ---------- */
 /* ---------- modo tour ---------- */
-#tourbar{position:absolute;left:22px;bottom:22px;z-index:16;display:none;flex-direction:column;gap:7px;
-  width:min(430px,46vw);padding:11px 14px 13px;border:1px solid var(--line2);
-  background:rgba(6,12,24,.86);backdrop-filter:blur(8px);
-  font-family:var(--mono);font-size:10px;letter-spacing:2px;overflow:hidden;
-  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+#tourbar{position:absolute;left:50%;top:60px;transform:translateX(-50%);z-index:16;display:none;flex-direction:column;gap:7px;
+  width:min(500px,92vw);padding:11px 14px 13px;border:1px solid var(--line2);
+  background:rgba(6,12,24,.88);backdrop-filter:blur(8px);
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;overflow:hidden}
 body.tour #tourbar{display:flex}
 #tourbar .trow{display:flex;align-items:center;gap:12px}
 #tourbar .tnarra{font-family:var(--disp);font-size:12px;letter-spacing:.3px;color:var(--dim);line-height:1.55;
@@ -679,7 +696,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
 #tourbar button:hover{border-color:var(--line2);color:var(--ion)}
 #tourprog{position:absolute;left:0;bottom:0;height:2px;background:var(--amber);width:0;opacity:.85}
 @media (max-width:899px){
-  #tourbar{left:12px;right:12px;width:auto;bottom:calc(var(--sheetpeek,34dvh) + 12px)}
+  #tourbar{left:12px;right:12px;width:auto;top:56px;transform:none}
   #tourbar .tnarra{font-size:11.5px}
 }
 #hint{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:11;
@@ -816,7 +833,8 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       </select>
       <span class="tnm" id="tournm"></span>
       <span class="tct" id="tourct"></span>
-      <button id="tourx" title="Encerrar tour">✕</button>
+      <button id="tourpausa2" title="Pausar e continuar">⏸</button>
+      <button id="tourx" title="Encerrar e voltar">✕</button>
     </div>
     <div class="tnarra" id="tournarra"></div>
     <i id="tourprog"></i>
@@ -843,10 +861,9 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   </div>
   <div id="tip"></div>
   <div id="tourpop">
-    <button class="fpx">✕</button>
-    <div class="fp-t">▸ ROTAS DO TOUR</div>
+    <div class="tphead"><span>▸ ROTAS DO TOUR</span><button id="tourpopx">✕</button></div>
     <div id="tourpoplista"></div>
-    <div class="fp-n">Escolha uma rota e sente: a nave navega sozinha. Qualquer toque na cena devolve o controle. Rotas concluídas rendem a conquista EXP-01.</div>
+    <div class="tpn">Sente e assista: a nave navega sozinha, sem cortes. Qualquer toque na cena devolve o controle. Rota concluída rende a conquista EXP-01.</div>
   </div>
   <div id="datepop">
     <button class="fpx">✕</button>
@@ -6943,7 +6960,32 @@ function tourNome(p){
 }
 function tourIr(p){
   if(p.uni){ gotoUniverse('TOUR · PANORAMA FINAL'); return; }
-  if(p.gal){ gotoGalaxy(p.gal, 'TOUR · '+tourNome(p)); return; }
+  if(p.gal){
+    if(ST.level === 'galaxy' && ST.gal === p.gal) return;
+    if(ST.level === 'galaxy'){
+      /* atravessa o universo: sobe contínuo e mergulha na miniatura do destino */
+      gotoUniverse(null, ST.gal);
+      const tenta = (n)=>{
+        if(!TOUR.on) return;
+        if(!DIVE && ACT && ACT.kind === 'universe' && acharPick(p.gal)){
+          const niv = ACT.nivelar ? (e)=>ACT.nivelar(p.gal, e) : null;
+          diveInto(p.gal, ()=>gotoGalaxy(p.gal, null, true), {yaw:0.4, pitch:0.95, ms:1250, semDesvio:true, extra:niv});
+        } else if(n < 24) setTimeout(()=>tenta(n+1), 200);
+      };
+      setTimeout(()=>tenta(0), 980);
+      return;
+    }
+    if(ST.level === 'system' || ST.level === 'focus'){
+      /* sobe até a própria galáxia primeiro, e repete o passo de lá */
+      const minhaGal = (SYS[ST.sys] && SYS[ST.sys].gal) || 'vialactea';
+      if(ST.level === 'focus'){ gotoSystem(ST.sys, null, ST.body); }
+      else gotoGalaxy(minhaGal, null, false, ST.sys);
+      setTimeout(()=>{ if(TOUR.on) tourIr(p); }, 1500);
+      return;
+    }
+    gotoGalaxy(p.gal, 'TOUR · ' + tourNome(p));
+    return;
+  }
   if(p.sis){
     /* mesmo sistema: recua contínuo de QUALQUER corpo, lua inclusive
        (as luas têm miniatura no mapa desde o r74, então a subida existe) */
@@ -7035,19 +7077,45 @@ function tourPasso(){
   TOUR.t0 = performance.now(); TOUR.ms = p.ms;
   tourSync(); tourIr(p);
   clearTimeout(TOUR.tm);
-  TOUR.tm = setTimeout(()=>{
-    if(!TOUR.on) return;
-    TOUR.i = TOUR.i + 1;
-    if(TOUR.i >= ROTEIRO.length){
-      feito('tourespacial');
-      ROTAS_OK.add(TOUR.rota);
-      store.set('carto:rotasok', [...ROTAS_OK].join(','));
-      tourStop(true);
-      showHint('ROTA CONCLUÍDA · O MAPA É SEU, NAVEGADOR');
-      return;
-    }
-    tourPasso();
-  }, p.ms);
+  TOUR.tm = setTimeout(tourAvanca, p.ms);
+}
+function tourAvanca(){
+  if(!TOUR.on) return;
+  TOUR.i = TOUR.i + 1;
+  if(TOUR.i >= ROTEIRO.length){
+    feito('tourespacial');
+    ROTAS_OK.add(TOUR.rota);
+    store.set('carto:rotasok', [...ROTAS_OK].join(','));
+    tourStop(true, true);
+    showHint('ROTA CONCLUÍDA · DE VOLTA AO SEU POSTO');
+    return;
+  }
+  tourPasso();
+}
+function tourPause(){
+  if(!TOUR.on) return;
+  TOUR.pausado = !TOUR.pausado;
+  const b = $('#tourpausa2'); if(b) b.textContent = TOUR.pausado ? '▶' : '⏸';
+  if(TOUR.pausado){
+    clearTimeout(TOUR.tm);
+    TOUR.rest = Math.max(400, TOUR.ms - (performance.now() - TOUR.t0));
+    TOUR.pEm = performance.now();
+  } else {
+    TOUR.t0 += performance.now() - TOUR.pEm;
+    TOUR.tm = setTimeout(tourAvanca, TOUR.rest);
+  }
+}
+/* encerrar pelo ✕ ou terminar a rota devolve o navegador AO PONTO DE PARTIDA;
+   tomar o controle tocando na cena deixa onde está */
+function tourVoltar(v){
+  if(!v) return;
+  if(v.level === ST.level && v.sys === ST.sys && v.gal === ST.gal && v.body === ST.body) return;
+  setTimeout(()=>{
+    if(v.level === 'focus' && v.body) gotoFocus(v.body);
+    else if(v.level === 'system') gotoSystem(v.sys);
+    else if(v.level === 'galaxy') gotoGalaxy(v.gal);
+    else gotoUniverse();
+  }, 300);
 }
 function tourRota(k, quieto){
   if(!ROTAS[k]) return;
@@ -7058,30 +7126,54 @@ function tourRota(k, quieto){
 }
 function tourStart(){
   if(TOUR.on) return;
-  TOUR.on = true; TOUR.i = 0;
+  TOUR.volta = {level:ST.level, sys:ST.sys, gal:ST.gal, body:ST.body};
+  TOUR.on = true; TOUR.i = 0; TOUR.pausado = false;
+  { const b = $('#tourpausa2'); if(b) b.textContent = '⏸'; }
   document.body.classList.add('tour');
   const bt = $('#misstour'); if(bt) bt.textContent = '⏹ PARAR TOUR';
   showHint('TOUR INICIADO · TOQUE NA CENA PARA ASSUMIR O CONTROLE');
   tourPasso();
 }
-function tourStop(quieto){
+function tourStop(quieto, voltar){
   if(!TOUR.on) return;
-  TOUR.on = false;
+  TOUR.on = false; TOUR.pausado = false;
   clearTimeout(TOUR.tm);
+  if(voltar) tourVoltar(TOUR.volta);
   document.body.classList.remove('tour');
   const bt = $('#misstour'); if(bt) bt.textContent = '▶ TOUR';
   $('#tourprog').style.width = '0%';
   if(!quieto) showHint('TOUR ENCERRADO');
 }
 /* a caixinha de rotas: escolher, ver o que já concluiu, e partir */
+/* TOUR do próprio sistema: o Solar usa a rota oficial; os outros ganham uma
+   rota automática (visão geral, estrela, corpos e o cinturão da casa) */
+function tourDoSistema(sysId){
+  ST.mapCard = null; uiSync();
+  if(sysId === 'sol'){ tourRota('solar', true); tourStart(); return; }
+  const S = SYS[sysId]; if(!S) return;
+  const lista = [{sis:sysId, ms:8000}];
+  if(S.star && ALLBODIES[S.star.id]) lista.push({corpo:S.star.id, ms:9500});
+  for(const b of (S.bodies || []).slice(0, 8)) if(ALLBODIES[b.id]) lista.push({corpo:b.id, ms:9500});
+  if(S.beltId && ALLBODIES[S.beltId]) lista.push({corpo:S.beltId, ms:9500});
+  if(lista.length < 2) return;
+  ROTEIRO = lista;
+  TOUR.rota = 'sys:' + sysId;
+  tourStart();
+}
 function tourPopAbre(){
   const el = $('#tourpoplista');
   el.innerHTML = Object.keys(ROTAS).map(k=>{
     const r = ROTAS[k];
-    return '<div class="filtrow" data-rotasel="'+k+'"><span>'+esc(r.nome)+' · '+r.lista.length+' PARADAS</span><b>'+(ROTAS_OK.has(k)?'✓':'')+'</b></div>';
+    const min = Math.max(1, Math.round(r.lista.reduce((a,x)=>a+(x.ms||0), 0)/60000));
+    return '<button class="tprota'+(ROTAS_OK.has(k)?' feita':'')+'" data-rotasel="'+k+'">'
+      + '<span class="tpnm">'+esc(r.nome)+'</span>'
+      + '<span class="tpsub">'+r.lista.length+' PARADAS · ~'+min+' MIN'+(ROTAS_OK.has(k)?' · ✓ CONCLUÍDA':'')+'</span>'
+      + '<span class="tpgo">▸</span>'
+      + '</button>';
   }).join('');
   $('#tourpop').classList.add('on');
 }
+{ const x = $('#tourpopx'); if(x) x.addEventListener('click', ()=>$('#tourpop').classList.remove('on')); }
 { const tp = $('#tourpop');
   tp.addEventListener('click', e=>{
     const r = e.target.closest('[data-rotasel]');
@@ -7252,6 +7344,8 @@ function cardRender(){
   let h = '';
   /* ENTRAR agora mora no TOPO do card, como o Rodrigo pediu */
   if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='body'?'▶ ENTRAR · TRAVAR LINK':'▶ ENTRAR · TRAVAR ROTA')+'</button>';
+  { const sisTour = (cur.type==='map' && cur.navKind==='sys') ? cur.navId : (cur.sysd ? ST.sys : null);
+    if(sisTour && SYS[sisTour]) h += '<button class="xbtn" id="btntoursis" data-sistour="'+sisTour+'">▶ TOUR</button>'; }
 
   { const alvoVT = (cur.type==='body') ? b : ((cur.type==='map' && cur.navKind==='body') ? ALLBODIES[cur.navId] : null);
     if(alvoVT && temLinhaDoTempo(alvoVT) && !(ACT && ACT.kind==='system' && alvoVT._sys===ST.sys))
@@ -7373,6 +7467,7 @@ function cardRender(){
   });
   const ng = $('#navgo'); if(ng) ng.addEventListener('click', ()=>{ enterTarget(cur.navKind==='gal' ? 'galaxy' : (cur.navKind==='sys' ? 'starsys' : 'focus'), cur.navId); });
   const cx = $('#cardx2'); if(cx) cx.addEventListener('click', ()=>{ ST.mapCard = null; uiSync(); });
+  const bts = $('#btntoursis'); if(bts) bts.addEventListener('click', ()=>tourDoSistema(bts.dataset.sistour));
   pb.querySelectorAll('[data-vt]').forEach(el=>el.addEventListener('click', ()=>verLinhaDoTempo(el.dataset.vt)));
   const bp = $('#backpan'); if(bp) bp.addEventListener('click', ()=>{ ST.mapCard=null; uiSync(); });
 }
@@ -7814,6 +7909,7 @@ window.addEventListener('keydown', e=>{
     if(TOUR.on) tourStop();
     else if(TRAJ && TRAJ.fase!=='volta') trajCancelar();
     else if($('#tourpop').classList.contains('on')) $('#tourpop').classList.remove('on');
+    else if(TOUR.on && TOUR.pausado) tourPause();
     else if($('#datepop').classList.contains('on')) $('#datepop').classList.remove('on');
     else if($('#cfgpop').classList.contains('on')) $('#cfgpop').classList.remove('on');
     else if($('#filtpop').classList.contains('on')) $('#filtpop').classList.remove('on');
@@ -7852,7 +7948,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r92';
+const BUILD = 'r93';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -8348,7 +8444,8 @@ $('#trajx2').addEventListener('click', ()=>trajCancelar());
   bar.addEventListener('pointerup', ()=>{ if(TRAJ) TRAJ.arrasto = false; });
 })();
 $('#misstour').addEventListener('click', ()=>{ const on = TOUR.on; missClose(); if(on) tourStop(); else setTimeout(tourPopAbre, 180); });
-$('#tourx').addEventListener('click', ()=>tourStop());
+$('#tourx').addEventListener('click', ()=>tourStop(false, true));
+$('#tourpausa2').addEventListener('click', tourPause);
 $('#tourrota').addEventListener('change', e=>tourRota(e.target.value));
 tourRota(store.get('carto:rota','completo'), true);
 $('#photoexit').addEventListener('click', e=>{ e.stopPropagation(); togglePhoto(); });
@@ -8462,7 +8559,7 @@ function loop(){
       SEGV.set(0,0,0); CAM.pivot.lerp(SEGV, Math.min(1, dt*5.2));
     }
   }
-  if(TOUR.on && TOUR.ms) $('#tourprog').style.width = Math.min(100, (now-TOUR.t0)/TOUR.ms*100).toFixed(1)+'%';
+  if(TOUR.on && TOUR.ms && !TOUR.pausado) $('#tourprog').style.width = Math.min(100, (now-TOUR.t0)/TOUR.ms*100).toFixed(1)+'%';
   if(ACT){
     if(ACT.update) ACT.update(dt, t);
     applyCam();
