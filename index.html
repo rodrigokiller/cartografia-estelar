@@ -1246,6 +1246,7 @@ const PLANETS = [
   id:'mercurio', name:'MERCÚRIO', desig:'SOL-1 · PLANETA', kind:'Rochoso', hab:1, gbar:0.38, pop:'0',
   quick:[['GRAVIDADE','0,38 g'],['TEMP. MÉDIA','167 °C'],['DIA SOLAR','176 d'],['ANO','88 d'],['LUAS','0'],['ÁGUA','gelo polar']],
   sys:{orbit:9, size:0.5, speed:4.15, angle:0.5},
+  orbita:{peri:7.15, afel:10.85, pos:0.28, incl:0.12},   /* e=0,206: a única órbita visivelmente fora de centro */
   visual:{mode:'rocky', c1:'#776f6b', c2:'#958c85', c3:'#584f4b', scale:5.5, seed:3.1, crater:1.0},
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','57,9 mi km (0,39 UA)'],['Ano','88 dias terrestres'],['Dia sideral','58,6 dias'],['Dia solar','176 dias'],['Tipo de rotação','Prógrada · ressonância 3:2'],['Veloc. orbital','47,4 km/s'],['Inclinação axial','0,03°'],['Estações','Praticamente nenhuma']]},
@@ -3854,6 +3855,9 @@ function updateLabels(){
   }
   for(const L of ACT.labels){
     if(L.off){ L.el.style.display = 'none'; continue; }
+    /* escala real: cada nome descansa quando a própria órbita fica pequena na
+       tela, senão os internos se amontoam todos no centro no zoom aberto */
+    if(L.escrOrb && CAM.dist > L.escrOrb*8){ L.el.style.display = 'none'; continue; }
     if(L.mini && longe){ L.el.style.display = 'none'; continue; }
     if(L.cinturao && FILTROBJ.cinturao === false){ L.el.style.display = 'none'; continue; }
     L.get(tmpV);
@@ -3904,9 +3908,10 @@ const ESCR_UA = 15;
 const ESCALA_REAL = {   /* [UA, raio em km] */
   mercurio:[0.387, 2440], venus:[0.723, 6052], terra:[1.0, 6371], marte:[1.524, 3390],
   jupiter:[5.203, 69911], saturno:[9.537, 58232], urano:[19.19, 25362], netuno:[30.07, 24622]};
-const ESCALA_REAL_EL = {   /* [peri UA, afel UA] */
+const ESCALA_REAL_EL = {   /* [peri UA, afel UA]; Mercúrio é o único planeta com excentricidade visível */
+  mercurio:[0.307, 0.467],
   plutao:[29.7, 49.3], eris:[38, 97.5], sedna:[76, 900], halley:[0.586, 35.1], p67:[1.24, 5.68]};
-function escrTam(km){ return Math.max(0.0008, km/149597870*ESCR_UA); }
+function escrTam(km){ return Math.max(0.0002, km/149597870*ESCR_UA); }
 const COORD = {real:false};  /* coordenadas: cênicas (nossas) ou RA/DEC reais onde há dado */
 const SIMT = {data: Date.now(), vel:'dia', pausado:false,
   diasPorSeg(){ return this.vel==='mes' ? 30.44 : (this.vel==='semana' ? 7 : ((this.vel==='real' || this.vel==='seg') ? 1/86400 : 1)); }};
@@ -3951,8 +3956,10 @@ function buildSystem(sysId, spin0){
   /* móveis da cena: o que some no mergulho para sobrar só o corpo visado */
   const fadeMats = [], fadeObjs = {};
   const fade = o => { if(o && o.material){ fadeMats.push({m:o.material, o:(o.material.opacity!==undefined?o.material.opacity:1)}); } return o; };
-  scene.add(fade(makeStars(QLOW?900:1400, 600, 1.3, 0.75)));
-  scene.add(fade(makeStars(QLOW?250:400, 500, 2.1, 0.9)));
+  /* no modo real o alcance cresce 15x: a casca de estrelas acompanha, senão a
+     câmera atravessa o fundo e o céu vira uma bola de pontos amontoados */
+  scene.add(fade(makeStars(QLOW?900:1400, escrAtivo?2600:600, 1.3, 0.75)));
+  scene.add(fade(makeStars(QLOW?250:400, escrAtivo?2200:500, 2.1, 0.9)));
   const labels = [], pickables = [], spinners = [];
 
   const starSizeEf = escrAtivo ? escrTam(696000) : S.starSize;
@@ -3979,12 +3986,13 @@ function buildSystem(sysId, spin0){
   for(let p of S.bodies){
     /* desativado (Sputnik): fica só na ficha e nas listas, sem orbitar */
     if(p.satOf && p.morto) continue;
-    /* escala real: o corpo é clonado com órbita e tamanho VERDADEIROS */
+    /* escala real: o corpo é clonado com órbita e tamanho VERDADEIROS
+       (elipse tem prioridade e pega o raio da outra tabela quando existe) */
     if(escrAtivo){
       const er = ESCALA_REAL[p.id], el = ESCALA_REAL_EL[p.id];
-      if(er) p = Object.assign({}, p, {sys:Object.assign({}, p.sys, {orbit:er[0]*ESCR_UA, size:escrTam(er[1])})});
-      else if(el) p = Object.assign({}, p, {sys:Object.assign({}, p.sys, {size:escrTam(1200)}),
+      if(el) p = Object.assign({}, p, {sys:Object.assign({}, p.sys, {size:escrTam(er ? er[1] : 1200)}),
         orbita:Object.assign({}, p.orbita, {peri:el[0]*ESCR_UA, afel:el[1]*ESCR_UA})});
+      else if(er) p = Object.assign({}, p, {sys:Object.assign({}, p.sys, {orbit:er[0]*ESCR_UA, size:escrTam(er[1])})});
     }
     /* posição na elipse: pos é a fração da volta a partir do periélio
        (padrão 0,5 = afélio); incl próprio da órbita quando dado */
@@ -4107,6 +4115,7 @@ function buildSystem(sysId, spin0){
     const gp = bg.group;
     labels.push({el:makeLabel(p.name, p.satOf?'faint mini':'', ()=>ACTION('focus', p.id)),
       mini:!!p.satOf,
+      escrOrb:(escrAtivo ? (p.orbita ? (p.orbita.peri+p.orbita.afel)/2 : p.sys.orbit) : 0),
       get:v=>{ gp.getWorldPosition(v); v.y += p.sys.size + 0.55; }});
     labelDe[p.id] = labels[labels.length-1];
     objReg.push({id:p.id, cls, holder, pick, lbl:labels[labels.length-1],
@@ -4197,7 +4206,7 @@ function buildSystem(sysId, spin0){
       selReg.kbelt = {id:'kuiper', mat:kbelt.material, c:0x5a6a8a, o:0.5};
       objReg.push({id:'kuiper_pts', cls:'cinturao', holder:kbelt, pick:null, lbl:null});
       const kmid = (kuiperREf[0]+kuiperREf[1])/2, kang = 0.55;
-      labels.push({cinturao:true, el:makeLabel('CINTURÃO DE KUIPER', 'faint', ()=>ACTION('focus','kuiper')),
+      labels.push({cinturao:true, escrOrb:(escrAtivo?kmid:0), el:makeLabel('CINTURÃO DE KUIPER', 'faint', ()=>ACTION('focus','kuiper')),
         get:v=>v.set(Math.cos(kang)*kmid, 1.2, Math.sin(kang)*kmid)});
       /* alvo invisível na região: é o que permite mergulhar para dentro do cinturão */
       const kpick = new THREE.Mesh(new THREE.SphereGeometry(1.8, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
@@ -4209,7 +4218,7 @@ function buildSystem(sysId, spin0){
     }
     const bmid = (beltREf[0]+beltREf[1])/2, bang = 2.35;
     const beltId = S.beltId || 'cinturao';
-    labels.push({cinturao:true, el:makeLabel(S.beltLabel || 'CINTURÃO', 'faint', ()=>ACTION('focus', beltId)),
+    labels.push({cinturao:true, escrOrb:(escrAtivo?bmid:0), el:makeLabel(S.beltLabel || 'CINTURÃO', 'faint', ()=>ACTION('focus', beltId)),
       get:v=>v.set(Math.cos(bang)*bmid, 0.9, Math.sin(bang)*bmid)});
     if(ALLBODIES[beltId]){
       const bpick = new THREE.Mesh(new THREE.SphereGeometry(1.8, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
@@ -4264,8 +4273,8 @@ function buildSystem(sysId, spin0){
   if(S.beltR) alcance = Math.max(alcance, S.beltR[1]);
   if(S.kuiperR) alcance = Math.max(alcance, S.kuiperR[1]);
   for(const pb of S.bodies) alcance = Math.max(alcance, pb.orbita ? pb.orbita.afel : (pb.sys ? pb.sys.orbit : 0));
-  const camMaxDin = Math.max(S.camMax || 60, alcance * 1.7);
-  return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg, rastros,
+  const camMaxDin = escrAtivo ? alcance*2.5 : Math.max(S.camMax || 60, alcance * 1.7);
+  return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo,
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
@@ -6329,7 +6338,7 @@ function enterTarget(act, id){
   if(act==='focus'){
     /* se o alvo está desenhado na cena atual, entra mergulhando nele */
     if(ACT && (ACT.kind==='system' || ACT.kind==='focus') && acharPick(id)){
-      uiSync(); diveInto(id, ()=>gotoFocus(id, true)); return;
+      uiSync(); diveInto(id, ()=>gotoFocus(id, true), (ACT && ACT.escr) ? {ms:2600} : undefined); return;
     }
     flyThen(id, ()=>gotoFocus(id));
   }
@@ -6449,7 +6458,7 @@ const _escCache = {};
 function escalaSistema(sysId){
   if(_escCache[sysId] !== undefined) return _escCache[sysId];
   const S = SYS[sysId]; let km = 0;
-  if(sysId === 'sol') km = UA_KM / ORB_TERRA;      /* a Terra orbita a 22 unidades */
+  if(sysId === 'sol') km = UA_KM / ORB_TERRA;      /* a Terra orbita a 15 unidades */
   else for(const b of (S.bodies||[])){
     if(!b.sys || !b.sys.orbit) continue;
     const real = distReal(b, RE_ORB);
@@ -7997,7 +8006,7 @@ function dolly(f){
     return;
   }
   /* com um corpo travado no centro, o zoom entra bem mais perto dele */
-  const minEf = (ACT && ACT.kind==='system' && ST.mapCard) ? Math.min(CAM.min, 4.2) : CAM.min;
+  const minEf = (ACT && ACT.kind==='system' && ST.mapCard) ? Math.min(CAM.min, (ACT.escr ? 0.12 : 4.2)) : CAM.min;
   CAM.dist = clamp(alvo, minEf, CAM.max);
   if(CAM.dist > minEf + 1e-3) ZLIM.over = 0;
 }
@@ -8218,7 +8227,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r100';
+const BUILD = 'r101';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
