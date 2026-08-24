@@ -1246,7 +1246,7 @@ const PLANETS = [
   id:'mercurio', name:'MERCÚRIO', desig:'SOL-1 · PLANETA', kind:'Rochoso', hab:1, gbar:0.38, pop:'0',
   quick:[['GRAVIDADE','0,38 g'],['TEMP. MÉDIA','167 °C'],['DIA SOLAR','176 d'],['ANO','88 d'],['LUAS','0'],['ÁGUA','gelo polar']],
   sys:{orbit:9, size:0.5, speed:4.15, angle:0.5},
-  orbita:{peri:7.15, afel:10.85, pos:0.28, incl:0.12},   /* e=0,206: a única órbita visivelmente fora de centro */
+  orbita:{peri:7.15, afel:10.85, epoca:Date.UTC(2026,10,10), incl:0.12},   /* e=0,206 · periélio real: 10 NOV 2026 */
   visual:{mode:'rocky', c1:'#776f6b', c2:'#958c85', c3:'#584f4b', scale:5.5, seed:3.1, crater:1.0},
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','57,9 mi km (0,39 UA)'],['Ano','88 dias terrestres'],['Dia sideral','58,6 dias'],['Dia solar','176 dias'],['Tipo de rotação','Prógrada · ressonância 3:2'],['Veloc. orbital','47,4 km/s'],['Inclinação axial','0,03°'],['Estações','Praticamente nenhuma']]},
@@ -1307,7 +1307,7 @@ const PLANETS = [
   exLuas:'Modelos sugerem que Marte já teve uma lua bem maior, despedaçada pela maré: Fobos e Deimos seriam os restos, e Fobos repete o destino em ~50 milhões de anos.',
   quick:[['GRAVIDADE','0,38 g'],['TEMP. MÉDIA','−63 °C'],['DIA','24 h 37'],['ANO','687 d'],['LUAS','2'],['ÁGUA','gelo']],
   sys:{orbit:18, size:0.68, speed:0.53, angle:1.1},
-  orbita:{peri:16.33, afel:19.67, pos:0.22},   /* e=0,093: a mais oval depois de Mercúrio */
+  orbita:{peri:16.33, afel:19.67, epoca:Date.UTC(2026,2,26)},   /* e=0,093 · periélio real: 26 MAR 2026 */
   visual:{mode:'rocky', c1:'#a35634', c2:'#c98757', c3:'#7c3c22', scale:4.6, seed:9.9, crater:0.5, cap:0.82, capAmt:0.55, capCol:'#f2e6da', atmo:{col:'#e0a37e', i:0.55}},
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','227,9 mi km (1,52 UA)'],['Ano','687 dias terrestres'],['Dia ("sol")','24 h 37 min'],['Tipo de rotação','Prógrada'],['Veloc. orbital','24,1 km/s'],['Inclinação axial','25,2°'],['Estações','Sim, parecidas com as nossas, 2× mais longas']]},
@@ -1340,7 +1340,7 @@ PLANETS.push(
   id:'jupiter', name:'JÚPITER', desig:'SOL-5 · PLANETA', kind:'Gigante gasoso', hab:0, gbar:2.53, pop:'0, não tem superfície',
   quick:[['GRAVIDADE','2,53 g'],['TEMP. TOPO','−110 °C'],['DIA','9 h 56'],['ANO','11,9 anos'],['LUAS','95'],['ANÉIS','tênues']],
   sys:{orbit:27, size:2.5, speed:0.084, angle:3.4},
-  orbita:{peri:25.68, afel:28.32, pos:0.55},   /* e=0,049 */
+  orbita:{peri:25.68, afel:28.32, epoca:Date.UTC(2023,0,21)},   /* e=0,049 · periélio real: 21 JAN 2023 */
   visual:{mode:'gas', c1:'#d9c5a3', c2:'#a4713e', c3:'#efe6d4', c4:'#8a5330', bandF:9.0, turb:1.4, seed:2.2, spot:{pos:[1.1,-0.35], r:0.34, col:'#c25438', on:1}, atmo:{col:'#e8d4b0', i:0.55}},
   moonsMeta:'95 CONFIRMADAS · 4 PRINCIPAIS',
   sections:[
@@ -1399,7 +1399,7 @@ PLANETS.push(
   id:'saturno', name:'SATURNO', desig:'SOL-6 · PLANETA', kind:'Gigante gasoso · anelado', hab:0, gbar:1.06, pop:'0',
   quick:[['GRAVIDADE','1,06 g'],['TEMP. TOPO','−139 °C'],['DIA','10 h 33'],['ANO','29,4 anos'],['LUAS','274'],['ANÉIS','SIM']],
   sys:{orbit:34, size:2.15, speed:0.034, angle:5.6},
-  orbita:{peri:32.06, afel:35.94, pos:0.78},   /* e=0,057 */
+  orbita:{peri:32.06, afel:35.94, epoca:Date.UTC(2032,10,24)},   /* e=0,057 · periélio real: 24 NOV 2032 */
   visual:{mode:'gas', c1:'#e2d3ac', c2:'#c6b184', c3:'#f0e8d2', c4:'#a98f60', bandF:8.0, turb:0.9, seed:4.7, atmo:{col:'#f0e2b8', i:0.5}, rings:{rin:1.35, rout:2.35, col:'#d8caa6', op:0.9, tilt:26.7, seed:2.0}},
   moonsMeta:'274 CONFIRMADAS · 7 PRINCIPAIS',
   sections:[
@@ -1485,7 +1485,7 @@ PLANETS.push(
   id:'urano', name:'URANO', desig:'SOL-7 · PLANETA', kind:'Gigante de gelo', hab:0, gbar:0.89, pop:'0',
   quick:[['GRAVIDADE','0,89 g'],['TEMP. MÉDIA','−195 °C'],['DIA','17 h 14'],['ANO','84 anos'],['LUAS','28'],['ANÉIS','13']],
   sys:{orbit:40, size:1.45, speed:0.012, angle:0.9},
-  orbita:{peri:38.16, afel:41.84, pos:0.4},   /* e=0,046; Vênus, Terra e Netuno (e<0,02) ficam círculos */
+  orbita:{peri:38.16, afel:41.84, epoca:Date.UTC(2050,7,4)},   /* e=0,046 · periélio real: 4 AGO 2050; Vênus, Terra e Netuno (e<0,02) ficam círculos */
   visual:{mode:'gas', c1:'#9fd8dc', c2:'#8ccbd3', c3:'#b8e6e8', c4:'#7fc0c8', bandF:5.0, turb:0.5, seed:7.1, atmo:{col:'#bdf0f2', i:0.75}, rings:{rin:1.5, rout:1.95, col:'#a9c9cd', op:0.45, tilt:98, seed:5.0}},
   moonsMeta:'28 CONFIRMADAS · 3 PRINCIPAIS',
   sections:[
@@ -4016,12 +4016,20 @@ function buildSystem(sysId, spin0){
     if(p.orbita){
       const _a2 = (p.orbita.peri + p.orbita.afel)/2;
       const _ex = (p.orbita.afel - p.orbita.peri)/(p.orbita.afel + p.orbita.peri);
-      const _th = (p.orbita.pos !== undefined ? p.orbita.pos : 0.5) * Math.PI * 2;
-      const _r = _a2*(1-_ex*_ex)/(1+_ex*Math.cos(_th));
-      obX = Math.cos(_th)*_r; obZ = Math.sin(_th)*_r;
-      elipticos.push({th:_th, a2:_a2, ex:_ex,
+      const eNovo = {th:(p.orbita.pos !== undefined ? p.orbita.pos : 0.5) * Math.PI * 2,
+        a2:_a2, ex:_ex,
         T:Math.max(0.4, Math.pow(_a2/ORB_TERRA, 1.5)),
-        grupo:null, pick:null, extras:[]});
+        grupo:null, pick:null, extras:[]};
+      /* âncora de PERIÉLIO real: com a data conhecida, a posição de hoje vem
+         de integrar desde o periélio, não de um pos chutado (data futura
+         também vale: a integração anda para trás) */
+      if(p.orbita.epoca){
+        eNovo.th = 0;
+        elipAvanca(eNovo, (SIM_HOJE - p.orbita.epoca)/MS_ANO);
+      }
+      const _r = _a2*(1-_ex*_ex)/(1+_ex*Math.cos(eNovo.th));
+      obX = Math.cos(eNovo.th)*_r; obZ = Math.sin(eNovo.th)*_r;
+      elipticos.push(eNovo);
     }
     const elip = p.orbita ? elipticos[elipticos.length-1] : null;
     if(elip) elipDe[p.id] = elip;
@@ -4108,6 +4116,23 @@ function buildSystem(sysId, spin0){
       rastro.visible = RASTRO.on;
       holder.add(rastro);
       rastros.push(rastro);
+    }
+    /* rastro para ÓRBITA ELÍPTICA (cometa fica de fora: 30 dias no Halley
+       é um risquinho imóvel no afélio) */
+    if(!fuga && !p.satOf && p.orbita && !p.comet && elip){
+      const NP = 24, tPos = new Float32Array(NP*3), tCol = new Float32Array(NP*3);
+      for(let i=0;i<NP;i++){ const f = i/(NP-1); tCol[i*3]=f; tCol[i*3+1]=f*0.63; tCol[i*3+2]=f*0.29; }
+      const tg3 = new THREE.BufferGeometry();
+      tg3.setAttribute('position', new THREE.BufferAttribute(tPos, 3));
+      tg3.setAttribute('color', new THREE.BufferAttribute(tCol, 3));
+      const rastro = new THREE.Line(tg3, new THREE.LineBasicMaterial({vertexColors:true,
+        transparent:true, opacity:0.9, blending:THREE.AdditiveBlending, depthWrite:false}));
+      rastro.visible = RASTRO.on;
+      rastro.frustumCulled = false;   /* posições dinâmicas: sem culling errado */
+      rastro.userData.elip = elip;
+      holder.add(rastro);
+      rastros.push(rastro);
+      rastroElip(rastro);
     }
     selReg.orbits.push({id:p.id, mat:orbit.material, obj:orbit, cls, c:est.cor, o:est.op, oculto:!!p.foguete});
     const bg = (p.sonda || p.satelite || p.foguete)
@@ -4266,6 +4291,21 @@ function buildSystem(sysId, spin0){
 
   /* motor do tempo: gira as órbitas circulares por Kepler e anda as elipses
      por áreas iguais (rápido no periélio, lento no afélio, como manda a lei) */
+  /* o rastro de uma ELIPSE: os pontos são reintegrados para trás no tempo a
+     partir da posição atual (a elipse não gira no holder como o círculo,
+     então o arco precisa ser recalculado quando o relógio anda) */
+  function rastroElip(rt){
+    const e = rt.userData.elip;
+    const pos = rt.geometry.getAttribute('position');
+    const NP = pos.count, bMe = e.a2*Math.sqrt(1-e.ex*e.ex);
+    let th = e.th;
+    for(let i=NP-1;i>=0;i--){
+      const r = e.a2*(1-e.ex*e.ex)/(1+e.ex*Math.cos(th));
+      pos.setXYZ(i, Math.cos(th)*r, 0, Math.sin(th)*r);
+      th -= (30/365.25)/(NP-1) * (Math.PI*2) * e.a2 * bMe / (e.T * r * r);
+    }
+    pos.needsUpdate = true;
+  }
   /* um passo de Kepler por áreas iguais; com anos=0 só reassenta as posições */
   function elipAvanca(e, anos){
     let resta = anos % e.T;
@@ -4353,6 +4393,8 @@ function buildSystem(sysId, spin0){
         /* luas com período real já avançam dentro de avancarAnos(danos) */
         for(const o of orbiters) if(!o.orb && !o.tDias) o.holder.rotation.y += o.spd*dt*0.05;
       }
+      /* rastro elíptico acompanha o relógio (e a linha do tempo) */
+      if(RASTRO.on) for(const rt of rastros) if(rt.userData.elip) rastroElip(rt);
       spinAcc += 0.25*dt;
       for(const s of spinners) s.obj.rotation.y += s.spd*dt;
       if(starGlow){
@@ -8350,7 +8392,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r103';
+const BUILD = 'r104';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
