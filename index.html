@@ -3697,7 +3697,7 @@ try{
 const QLOW = matchMedia('(pointer: coarse)').matches;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, QLOW ? 1.75 : 2));
 renderer.setClearColor(0x03060f, 1);
-const camera = new THREE.PerspectiveCamera(55, 1, 0.05, 60000);
+const camera = new THREE.PerspectiveCamera(55, 1, 0.05, 150000);
 const LDIR = new THREE.Vector3(-0.55, 0.35, 0.8).normalize();
 const ANIM_MATS = [];
 const raycaster = new THREE.Raycaster();
@@ -3872,9 +3872,10 @@ function updateLabels(){
     if(L.escrOrb && CAM.dist > L.escrOrb*8){ L.el.style.display = 'none'; continue; }
     /* zoom fundo na escala real: só o corpo travado e as luas dele mantêm o
        nome, o mapa vira sistema planetário só de aproximar (ideia do Rodrigo) */
-    if(ACT.escr && ACT.kind==='system' && CAM.dist < 0.8 && L.lid){
+    if(ACT.escr && ACT.kind==='system' && CAM.dist < 0.8){
       const dono = ST.mapCard ? (ST.mapCard.id || ST.mapCard) : null;
-      if(!dono || (L.lid !== dono && L.lidPai !== dono)){ L.el.style.display = 'none'; continue; }
+      const fica = dono && L.lid && (L.lid === dono || L.lidPai === dono);
+      if(!fica){ L.el.style.display = 'none'; continue; }
     }
     if(L.mini && longe){ L.el.style.display = 'none'; continue; }
     if(L.cinturao && FILTROBJ.cinturao === false){ L.el.style.display = 'none'; continue; }
@@ -3994,8 +3995,8 @@ function buildSystem(sysId, spin0){
   const fade = o => { if(o && o.material){ fadeMats.push({m:o.material, o:(o.material.opacity!==undefined?o.material.opacity:1)}); } return o; };
   /* no modo real o alcance cresce 15x: a casca de estrelas acompanha, senão a
      câmera atravessa o fundo e o céu vira uma bola de pontos amontoados */
-  scene.add(fade(makeStars(QLOW?900:1400, escrAtivo?7400:600, 1.3, 0.75)));
-  scene.add(fade(makeStars(QLOW?250:400, escrAtivo?6600:500, 2.1, 0.9)));
+  scene.add(fade(makeStars(QLOW?900:1400, escrAtivo?62000:600, 1.3, 0.75)));
+  scene.add(fade(makeStars(QLOW?250:400, escrAtivo?56000:500, 2.1, 0.9)));
   const labels = [], pickables = [], spinners = [];
 
   const starSizeEf = escrAtivo ? escrTam(696000) : S.starSize;
@@ -4379,11 +4380,17 @@ function buildSystem(sysId, spin0){
   let simPrev = SIMT.data;
   /* limite de zoom calculado pelo objeto mais distante em órbita */
   let alcance = 0;
-  if(escrAtivo) alcance = 31*ESCR_UA;   /* até Netuno; Sedna real fica além do horizonte, e é essa a lição */
+  if(escrAtivo){
+    /* o teto abraça TUDO que tem órbita real: dá para afastar até o sistema
+       inteiro virar um pontinho, com a elipse da Sedna cabendo na tela */
+    let mxUA = 31;
+    for(const k in ESCALA_REAL_EL) mxUA = Math.max(mxUA, ESCALA_REAL_EL[k][1]);
+    alcance = mxUA*ESCR_UA;
+  }
   if(S.beltR) alcance = Math.max(alcance, S.beltR[1]);
   if(S.kuiperR) alcance = Math.max(alcance, S.kuiperR[1]);
   for(const pb of S.bodies) alcance = Math.max(alcance, pb.orbita ? pb.orbita.afel : (pb.sys ? pb.sys.orbit : 0));
-  const camMaxDin = escrAtivo ? alcance*7 : Math.max(S.camMax || 60, alcance * 1.7);   /* real: Netuno vira um circulinho antes de subir de escala */
+  const camMaxDin = escrAtivo ? alcance*2.3 : Math.max(S.camMax || 60, alcance * 1.7);   /* real: a maior órbita inteira na tela antes de subir de escala */
   return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo,
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
@@ -4437,6 +4444,25 @@ function buildSystem(sysId, spin0){
         } else if(ACT._zf){
           for(const z of ACT._zf) z.m.opacity = z.o;
           ACT._zf = null;
+        }
+        /* e as órbitas das LUAS do corpo travado acendem sozinhas: o mapa vira
+           o sistema planetário só de aproximar (ideia dele). Respeita o filtro
+           de objetos; ao afastar, applySel restaura o estado normal. */
+        const dono2 = ST.mapCard ? (ST.mapCard.id || ST.mapCard) : null;
+        const dzL = (dono2 && CAM.dist < 1.2) ? Math.min(1, (1.2 - CAM.dist)/0.6) : 0;
+        if(dzL > 0){
+          ACT._zLua = true;
+          for(const ol of selReg.orbits){
+            if(ol.cls !== 'lua' && ol.cls !== 'satelite') continue;
+            const mb = ALLBODIES[ol.id];
+            if(!mb || (mb._parent !== dono2 && mb.satOf !== dono2)) continue;
+            if(FILTROBJ[ol.cls] === false) continue;
+            ol.obj.visible = true;
+            ol.obj.material.opacity = 0.34*dzL;
+          }
+        } else if(ACT._zLua){
+          ACT._zLua = false;
+          applySel();
         }
       }
       /* escala real: os alvos de clique RESPIRAM com o zoom (longe: generosos;
@@ -5464,6 +5490,10 @@ function buildFocus(bodyId, spin0){
      Urano quase deitado; o giro do dia acontece em volta do eixo torto) */
   if(ESCR.on && b._sys === 'sol' && ESCALA_REAL_INCL[bodyId])
     bg.group.rotation.z = -ESCALA_REAL_INCL[bodyId]*Math.PI/180;
+  /* item 3: orbitando o corpo, o lado oposto ao Sol é NOITE de verdade
+     (uAmb já existia no shader: o luar azulado desce para quase breu) */
+  if(ESCR.on && b._sys === 'sol' && bg.mesh && bg.mesh.material && bg.mesh.material.uniforms && bg.mesh.material.uniforms.uAmb)
+    bg.mesh.material.uniforms.uAmb.value = -0.18;
   if(spin0) bg.mesh.rotation.y = spin0;   /* continua de onde a cena do sistema parou */
   bg.group.traverse(o=>{ if(o.userData && o.userData.isClouds) clouds = o; });
   /* toques de cena: a bruma laranja de Titã e os gêiseres do polo sul de Encélado */
@@ -5630,12 +5660,20 @@ function buildFocus(bodyId, spin0){
         }
       }
       if(aoVivo){ bg.mesh.rotation.y = giroAtual() + LIVE_FASE; }
-      else if(ESCR.on && b._sys === 'sol' && ESCALA_REAL_DIA[bodyId]){
-        /* rotação REAL: o dia de cada planeta pelo relógio (Vênus ao contrário,
-           Júpiter em 10 horas; com 1 s = 1 dia a Terra dá uma volta por segundo) */
-        const giroDia = (Math.PI*2)*danosF*365.25/ESCALA_REAL_DIA[bodyId];
-        bg.mesh.rotation.y += giroDia;
-        if(clouds) clouds.rotation.y += giroDia*0.4;
+      else if(b._sys === 'sol' && ESCALA_REAL_DIA[bodyId]){
+        if(ESCR.on || lento){
+          /* rotação REAL: o dia de cada planeta pelo relógio (Vênus ao contrário,
+             Júpiter em 10 horas; com 1 s = 1 dia a Terra dá uma volta por segundo) */
+          const giroDia = (Math.PI*2)*danosF*365.25/ESCALA_REAL_DIA[bodyId];
+          bg.mesh.rotation.y += giroDia;
+          if(clouds) clouds.rotation.y += giroDia*0.4;
+        } else if(!RM && !SIMT.pausado && (performance.now() - lastDragT > 2600)){
+          /* cênico rápido: balé suave mas PROPORCIONAL ao dia real de cada um
+             (Júpiter 2,4x a Terra, Vênus quase parada e ao contrário) */
+          const rel = 0.997/ESCALA_REAL_DIA[bodyId];
+          bg.mesh.rotation.y += dt*0.055*rel;
+          if(clouds) clouds.rotation.y += dt*0.028*rel;
+        }
       }
       else if(lento){
         bg.mesh.rotation.y += (Math.PI*2)*danosF*365.25;
@@ -5949,27 +5987,33 @@ function trajStart(id){
   /* missão tripulada: em vez do anel simbólico, a rota REAL Terra-Lua,
      com a Lua aparecendo como destino e a nave fazendo a volta por trás */
   if(TRAJ.dias){
-    const D = 4.6, R = 0.62, pts = [];
+    /* escala real: a MESMA rota, só que na distância verdadeira (conversor:
+       os 4.6 un simbólicos viram 0.0385 un = 384 mil km, Lua em tamanho real) */
+    const fatorTL = (ESCR.on && ST.sys === 'sol') ? (0.0385/4.6) : 1;
+    const D = 4.6*fatorTL, R = 0.62*fatorTL, pts = [];
     const bez = (a,b,c2,t)=>{ const u = 1-t; return a*u*u + b*2*u*t + c2*t*t; };
     const aIni = 2.28, aFim = -2.44;
     for(let i=0;i<=64;i++){ const t = i/64;
-      pts.push(new THREE.Vector3(bez(0.5, 2.4, D+Math.cos(aIni)*R, t), 0, bez(0.25, 1.5, Math.sin(aIni)*R, t))); }
+      pts.push(new THREE.Vector3(bez(0.5*fatorTL, 2.4*fatorTL, D+Math.cos(aIni)*R, t), 0, bez(0.25*fatorTL, 1.5*fatorTL, Math.sin(aIni)*R, t))); }
     for(let i=1;i<=48;i++){ const t = i/48;
       const a = aIni + (aFim-aIni)*t;
       pts.push(new THREE.Vector3(D+Math.cos(a)*R, 0, Math.sin(a)*R)); }
     for(let i=1;i<=64;i++){ const t = i/64;
-      pts.push(new THREE.Vector3(bez(D+Math.cos(aFim)*R, 2.4, 0.5, t), 0, bez(Math.sin(aFim)*R, -1.5, -0.25, t))); }
+      pts.push(new THREE.Vector3(bez(D+Math.cos(aFim)*R, 2.4*fatorTL, 0.5*fatorTL, t), 0, bez(Math.sin(aFim)*R, -1.5*fatorTL, -0.25*fatorTL, t))); }
     TRAJ.local = pts;
     const lg = new THREE.BufferGeometry().setFromPoints(pts);
     TRAJ.rotaViz = new THREE.Line(lg, new THREE.LineBasicMaterial({color:0xffb454, transparent:true, opacity:0.45}));
     o.obj.parent.add(TRAJ.rotaViz);
-    TRAJ.luaViz = new THREE.Mesh(new THREE.SphereGeometry(0.30, 20, 20),
+    TRAJ.luaViz = new THREE.Mesh(new THREE.SphereGeometry(fatorTL === 1 ? 0.30 : 0.000174, 20, 20),
       new THREE.MeshBasicMaterial({color:0x9a958c}));
     TRAJ.luaViz.position.set(D, 0, 0);
     o.obj.parent.add(TRAJ.luaViz);
     TRAJ.luaLbl = {el:makeLabel('LUA', 'faint', null),
-      get:(v)=>{ if(TRAJ && TRAJ.luaViz) TRAJ.luaViz.getWorldPosition(v); v.y += 0.55; }};
+      get:(v)=>{ if(TRAJ && TRAJ.luaViz) TRAJ.luaViz.getWorldPosition(v); v.y += (TRAJ && TRAJ.fatorTL && TRAJ.fatorTL !== 1) ? 0.002 : 0.55; }};
     ACT.labels.push(TRAJ.luaLbl);
+    TRAJ.fatorTL = fatorTL;
+    /* na escala real a câmera fecha sozinha para enquadrar os 384 mil km */
+    if(fatorTL !== 1) tweenCam({dist:0.11}, 900);
   }
   $('#trajtxt').textContent = b.name;
   $('#trajano0').textContent = TRAJ.dias ? b.traj.d0 : (TRAJ.ano0 || '');
@@ -8521,7 +8565,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r108';
+const BUILD = 'r109';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
