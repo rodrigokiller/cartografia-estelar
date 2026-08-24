@@ -6158,6 +6158,7 @@ function gotoFocus(bodyId, continuo, deCorpo){
   else fadeSwap('ESTABELECENDO LINK ORBITAL · '+b.name, troca);
 }
 function up(){
+  if(TOUR.on) tourStop();
   if(ST.level==='focus'){
     const b = ALLBODIES[ST.body];
     /* sai de dentro do corpo recuando, o inverso exato do mergulho */
@@ -6168,6 +6169,7 @@ function up(){
 }
 function ACTION(act, id){
   if(TRAJ && TRAJ.fase!=='volta') return;   /* na linha do tempo a cena não navega */
+  if(TOUR.on) tourStop();   /* escolher um destino é assumir o controle */
   hideHint();
   if(act==='focus' && ST.level==='focus' && ST.body===id) return;
   if(ST.mapCard && ST.mapCard.id===id && ST.mapCard.act===act){ enterTarget(act, id); return; }
@@ -6963,9 +6965,33 @@ function tourNome(p){
   return 'UNIVERSO OBSERVÁVEL';
 }
 function tourIr(p){
-  if(p.uni){ gotoUniverse('TOUR · PANORAMA FINAL'); return; }
+  if(p.corpo && ST.level === 'focus' && ST.body === p.corpo) return;
+  if(p.uni){
+    /* volta ao universo SEM corte: recua pela galáxia */
+    if(ST.level === 'galaxy'){ gotoUniverse(null, ST.gal); return; }
+    if(ST.level === 'system' || ST.level === 'focus'){
+      const minhaGal = (SYS[ST.sys] && SYS[ST.sys].gal) || 'vialactea';
+      if(ST.level === 'focus') gotoSystem(ST.sys, null, ST.body);
+      else gotoGalaxy(minhaGal, null, false, ST.sys);
+      setTimeout(()=>{ if(TOUR.on) tourIr(p); }, 1500);
+      return;
+    }
+    gotoUniverse('TOUR · PANORAMA FINAL');
+    return;
+  }
   if(p.gal){
     if(ST.level === 'galaxy' && ST.gal === p.gal) return;
+    if(ST.level === 'universe'){
+      const tenta0 = (n)=>{
+        if(!TOUR.on) return;
+        if(!DIVE && ACT && ACT.kind === 'universe' && acharPick(p.gal)){
+          const niv0 = ACT.nivelar ? (e)=>ACT.nivelar(p.gal, e) : null;
+          diveInto(p.gal, ()=>gotoGalaxy(p.gal, null, true), {yaw:0.4, pitch:0.95, ms:1250, semDesvio:true, extra:niv0});
+        } else if(n < 24) setTimeout(()=>tenta0(n+1), 200);
+      };
+      setTimeout(()=>tenta0(0), 300);
+      return;
+    }
     if(ST.level === 'galaxy'){
       /* atravessa o universo: sobe contínuo e mergulha na miniatura do destino */
       gotoUniverse(null, ST.gal);
@@ -7003,26 +7029,38 @@ function tourIr(p){
        no marcador do destino: dá para VER o caminho, como numa nave */
     const galPara = (SYS[p.sis] && SYS[p.sis].gal) || 'vialactea';
     const galDe = (SYS[ST.sys] && SYS[ST.sys].gal) || 'vialactea';
-    if((ST.level==='system' || ST.level==='focus') && galDe === galPara){
-      const mergulha = ()=>{
-        const tenta = (n)=>{
-          if(!TOUR.on) return;
-          if(!DIVE && ACT && ACT.kind==='galaxy' && acharPick(p.sis))
-            diveInto(p.sis, ()=>gotoSystem(p.sis, null, null, true), {yaw:0.65, pitch:0.55, semDesvio:true});
-          else if(n < 24) setTimeout(()=>tenta(n+1), 200);
-        };
-        setTimeout(()=>tenta(0), 980);
+    const mergulha = ()=>{
+      const tenta = (n)=>{
+        if(!TOUR.on) return;
+        if(!DIVE && ACT && ACT.kind==='galaxy' && ST.gal === galPara && acharPick(p.sis))
+          diveInto(p.sis, ()=>gotoSystem(p.sis, null, null, true), {yaw:0.65, pitch:0.55, semDesvio:true});
+        else if(n < 40) setTimeout(()=>tenta(n+1), 250);
       };
-      if(ST.level === 'focus'){
-        const meu = ST.sys;
-        gotoSystem(meu, null, ST.body);
-        setTimeout(()=>{ if(!TOUR.on) return; gotoGalaxy(galPara, null, false, meu); mergulha(); }, 1500);
+      setTimeout(()=>tenta(0), 400);
+    };
+    if(ST.level === 'galaxy'){
+      if(ST.gal === galPara){ mergulha(); }
+      else { tourIr({gal:galPara}); mergulha(); }
+      return;
+    }
+    if(ST.level === 'system' || ST.level === 'focus'){
+      if(galDe === galPara){
+        if(ST.level === 'focus'){
+          const meu = ST.sys;
+          gotoSystem(meu, null, ST.body);
+          setTimeout(()=>{ if(!TOUR.on) return; gotoGalaxy(galPara, null, false, meu); mergulha(); }, 1500);
+        } else {
+          gotoGalaxy(galPara, null, false, ST.sys);
+          mergulha();
+        }
       } else {
-        gotoGalaxy(galPara, null, false, ST.sys);
+        /* outra galáxia: sobe a própria, cruza o universo, e então mergulha */
+        tourIr({gal:galPara});
         mergulha();
       }
       return;
     }
+    if(ST.level === 'universe'){ tourIr({gal:galPara}); mergulha(); return; }
     gotoSystem(p.sis, 'TOUR · '+tourNome(p));
     return;
   }
@@ -7087,7 +7125,22 @@ function tourPasso(){
   TOUR.t0 = performance.now(); TOUR.ms = p.ms;
   tourSync(); tourIr(p);
   clearTimeout(TOUR.tm);
-  TOUR.tm = setTimeout(tourAvanca, p.ms);
+  if(p.corpo){
+    /* viajar não gasta o relógio: a contagem só começa com o corpo travado */
+    TOUR.ms = 0;
+    $('#tourprog').style.width = '0%';
+    const espera = (n)=>{
+      if(!TOUR.on || TOUR.pausado) return;
+      if(ST.level === 'focus' && ST.body === p.corpo && !DIVE){
+        TOUR.t0 = performance.now(); TOUR.ms = p.ms;
+        TOUR.tm = setTimeout(tourAvanca, p.ms);
+      } else if(n < 90) TOUR.tm = setTimeout(()=>espera(n+1), 250);
+      else { TOUR.t0 = performance.now(); TOUR.ms = p.ms; TOUR.tm = setTimeout(tourAvanca, p.ms); }
+    };
+    espera(0);
+  } else {
+    TOUR.tm = setTimeout(tourAvanca, p.ms);
+  }
 }
 function tourAvanca(){
   if(!TOUR.on) return;
@@ -7116,8 +7169,10 @@ function tourPause(){
     TOUR.rest = Math.max(400, TOUR.ms - (performance.now() - TOUR.t0));
     TOUR.pEm = performance.now();
   } else {
-    TOUR.t0 += performance.now() - TOUR.pEm;
-    TOUR.tm = setTimeout(tourAvanca, TOUR.rest);
+    if(TOUR.ms){
+      TOUR.t0 += performance.now() - TOUR.pEm;
+      TOUR.tm = setTimeout(tourAvanca, TOUR.rest);
+    } else tourPasso();   /* pausou em pleno vôo: retoma a viagem */
   }
 }
 /* encerrar pelo ✕ ou terminar a rota devolve o navegador AO PONTO DE PARTIDA;
@@ -7162,14 +7217,29 @@ function tourStop(quieto, voltar){
 /* a caixinha de rotas: escolher, ver o que já concluiu, e partir */
 /* TOUR do próprio sistema: o Solar usa a rota oficial; os outros ganham uma
    rota automática (visão geral, estrela, corpos e o cinturão da casa) */
+/* aberturas e falas escritas à mão para os tours de sistema mais especiais */
+const SIS_TOUR_TXT = {
+  alphacen: {abre:'O vizinho de porta: três sóis dançando a 4,37 anos-luz, e um planeta na zona habitável do menor deles.',
+    corpos:{proximab:'Proxima b: um ano de 11 dias, e a eterna dúvida: a atmosfera sobreviveu às fúrias da anã vermelha?'}},
+  trappist: {abre:'Sete mundos do tamanho da Terra em volta de uma estrela anã: o sistema mais parecido com uma miniatura do nosso.',
+    corpos:{t1e:'O favorito: TRAPPIST-1e, denso e rochoso, no meio exato da zona habitável.'}},
+  kepler16: {abre:'O sistema com dois sóis de verdade: aqui, todo pôr do sol é dobrado.',
+    corpos:{kepler16b:'Kepler-16b, o planeta circumbinário: Tatooine existe, só que gelado.'}},
+  carina: {abre:'O maior berçário de estrelas visível da Terra, com a estrela que quase explodiu morando dentro.',
+    corpos:{etacarinae:'Eta Carinae: expeliu dez sóis de massa em 1843 e sobreviveu. Por enquanto.',
+            carinaneb:'A nebulosa inteira: 300 anos-luz de poeira parindo estrelas, visível a olho nu do Brasil.'}},
+  betelgeuse: {abre:'A gigante vermelha no ombro de Órion: tão grande que, no lugar do Sol, engoliria Júpiter.'}
+};
 function tourDoSistema(sysId){
   ST.mapCard = null; uiSync();
   if(sysId === 'sol'){ tourRota('solar', true); tourStart(); return; }
   const S = SYS[sysId]; if(!S) return;
-  const lista = [{sis:sysId, ms:8000}];
-  if(S.star && ALLBODIES[S.star.id]) lista.push({corpo:S.star.id, ms:9500});
-  for(const b of (S.bodies || []).slice(0, 8)) if(ALLBODIES[b.id]) lista.push({corpo:b.id, ms:9500});
-  if(S.beltId && ALLBODIES[S.beltId]) lista.push({corpo:S.beltId, ms:9500});
+  const TXT = SIS_TOUR_TXT[sysId] || {};
+  const lista = [{sis:sysId, ms:8000, texto:TXT.abre}];
+  const fala = id => (TXT.corpos && TXT.corpos[id]) || undefined;
+  if(S.star && ALLBODIES[S.star.id]) lista.push({corpo:S.star.id, ms:9500, texto:fala(S.star.id)});
+  for(const b of (S.bodies || []).slice(0, 8)) if(ALLBODIES[b.id]) lista.push({corpo:b.id, ms:9500, texto:fala(b.id)});
+  if(S.beltId && ALLBODIES[S.beltId]) lista.push({corpo:S.beltId, ms:9500, texto:fala(S.beltId)});
   if(lista.length < 2) return;
   ROTEIRO = lista;
   TOUR.rota = 'sys:' + sysId;
@@ -7803,7 +7873,7 @@ function trajScrubTo(x, y){
   TRAJ.prog = best;
 }
 canvas.addEventListener('pointerdown', e=>{
-  if(TOUR.on) tourStop();   /* tocou na cena, o controle volta pra você */
+  /* girar e dar zoom durante o tour é livre; só NAVEGAR encerra */
   if(DIVE) return;          /* durante o mergulho a câmera é da animação */
   canvas.setPointerCapture(e.pointerId);
   pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
@@ -7963,7 +8033,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r94';
+const BUILD = 'r95';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
