@@ -878,6 +878,9 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     </div>
     <div class="drow"><button class="xbtn primary" id="dp_ir">VER NESSA DATA</button><button class="xbtn" id="dp_hoje">HOJE</button></div>
     <div class="fp-t fp-t2">EVENTOS</div>
+    <button class="devt" data-evt="2026-08-28">ECLIPSE PARCIAL DA LUA · 28 AGO 2026</button>
+    <button class="devt" data-evt="2027-08-02">ECLIPSE TOTAL DO SOL · 2 AGO 2027</button>
+    <button class="devt" data-evt="2028-07-22">ECLIPSE TOTAL DO SOL · 22 JUL 2028</button>
     <button class="devt" data-evt="2061-07-28">PERIÉLIO DO HALLEY · 2061</button>
     <button class="devt" data-evt="2076-07-01">SEDNA NO PERIÉLIO · ~2076</button>
     <button class="devt" data-evt="2227-01-01">PLUTÃO CRUZA NETUNO · 2227</button>
@@ -3867,6 +3870,12 @@ function updateLabels(){
     /* escala real: cada nome descansa quando a própria órbita fica pequena na
        tela, senão os internos se amontoam todos no centro no zoom aberto */
     if(L.escrOrb && CAM.dist > L.escrOrb*8){ L.el.style.display = 'none'; continue; }
+    /* zoom fundo na escala real: só o corpo travado e as luas dele mantêm o
+       nome, o mapa vira sistema planetário só de aproximar (ideia do Rodrigo) */
+    if(ACT.escr && ACT.kind==='system' && CAM.dist < 0.8 && L.lid){
+      const dono = ST.mapCard ? (ST.mapCard.id || ST.mapCard) : null;
+      if(!dono || (L.lid !== dono && L.lidPai !== dono)){ L.el.style.display = 'none'; continue; }
+    }
     if(L.mini && longe){ L.el.style.display = 'none'; continue; }
     if(L.cinturao && FILTROBJ.cinturao === false){ L.el.style.display = 'none'; continue; }
     L.get(tmpV);
@@ -3935,6 +3944,9 @@ const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizon
 /* dia sideral de cada planeta em dias terrestres (negativo = retrógrado) */
 const ESCALA_REAL_DIA = {mercurio:58.65, venus:-243.0, terra:0.997, marte:1.026,
   jupiter:0.414, saturno:0.444, urano:-0.718, netuno:0.671};
+/* obliquidade em graus (o retrógrado já vive no sinal do dia: Vênus e Urano) */
+const ESCALA_REAL_INCL = {mercurio:0.03, venus:2.6, terra:23.4, marte:25.2,
+  jupiter:3.1, saturno:26.7, urano:82.2, netuno:28.3};
 function escrTam(km){ return Math.max(0.0002, km/149597870*ESCR_UA); }
 const COORD = {real:false};  /* coordenadas: cênicas (nossas) ou RA/DEC reais onde há dado */
 const SIMT = {data: Date.now(), vel:'dia', pausado:false,
@@ -3982,8 +3994,8 @@ function buildSystem(sysId, spin0){
   const fade = o => { if(o && o.material){ fadeMats.push({m:o.material, o:(o.material.opacity!==undefined?o.material.opacity:1)}); } return o; };
   /* no modo real o alcance cresce 15x: a casca de estrelas acompanha, senão a
      câmera atravessa o fundo e o céu vira uma bola de pontos amontoados */
-  scene.add(fade(makeStars(QLOW?900:1400, escrAtivo?2600:600, 1.3, 0.75)));
-  scene.add(fade(makeStars(QLOW?250:400, escrAtivo?2200:500, 2.1, 0.9)));
+  scene.add(fade(makeStars(QLOW?900:1400, escrAtivo?7400:600, 1.3, 0.75)));
+  scene.add(fade(makeStars(QLOW?250:400, escrAtivo?6600:500, 2.1, 0.9)));
   const labels = [], pickables = [], spinners = [];
 
   const starSizeEf = escrAtivo ? escrTam(696000) : S.starSize;
@@ -4175,6 +4187,7 @@ function buildSystem(sysId, spin0){
     const gp = bg.group;
     labels.push({el:makeLabel(p.name, p.satOf?'faint mini':'', ()=>ACTION('focus', p.id)),
       mini:!!p.satOf,
+      lid:p.id, lidPai:(p._parent || p.satOf || 0),
       escrOrb:(escrAtivo ? (p.orbita ? (p.orbita.peri+p.orbita.afel)/2 : p.sys.orbit) : 0),
       get:v=>{ gp.getWorldPosition(v); v.y += p.sys.size + (escrAtivo ? Math.min(0.55, Math.max(0.0025, CAM.dist*0.05)) : 0.55); }});
     labelDe[p.id] = labels[labels.length-1];
@@ -4228,7 +4241,7 @@ function buildSystem(sysId, spin0){
         selReg.orbits.push({id:m.id, mat:anelLua.material, obj:anelLua, cls:'lua', c:LINHA.lua.cor, o:LINHA.lua.op});
         const mgp = mg2.group;
         labels.push({el:makeLabel(m.name, 'faint mini', ()=>ACTION('focus', m.id)),
-          mini:true, get:v=>{ mgp.getWorldPosition(v); v.y += ms + (escrAtivo ? Math.min(0.28, Math.max(0.0015, CAM.dist*0.04)) : 0.28); }});
+          mini:true, lid:m.id, lidPai:p.id, get:v=>{ mgp.getWorldPosition(v); v.y += ms + (escrAtivo ? Math.min(0.28, Math.max(0.0015, CAM.dist*0.04)) : 0.28); }});
         objReg.push({id:m.id, cls:'lua', holder:mh, pick:mpk, lbl:labels[labels.length-1], tails:[anelLua]});
         kidCount[p.id] = (kidCount[p.id]||0) + 1;
       });
@@ -4370,7 +4383,7 @@ function buildSystem(sysId, spin0){
   if(S.beltR) alcance = Math.max(alcance, S.beltR[1]);
   if(S.kuiperR) alcance = Math.max(alcance, S.kuiperR[1]);
   for(const pb of S.bodies) alcance = Math.max(alcance, pb.orbita ? pb.orbita.afel : (pb.sys ? pb.sys.orbit : 0));
-  const camMaxDin = escrAtivo ? alcance*2.5 : Math.max(S.camMax || 60, alcance * 1.7);
+  const camMaxDin = escrAtivo ? alcance*7 : Math.max(S.camMax || 60, alcance * 1.7);   /* real: Netuno vira um circulinho antes de subir de escala */
   return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo,
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
@@ -4412,6 +4425,19 @@ function buildSystem(sysId, spin0){
         if(danos) avancarAnos(danos);
         /* luas com período real já avançam dentro de avancarAnos(danos) */
         for(const o of orbiters) if(!o.orb && !o.tDias) o.holder.rotation.y += o.spd*dt*0.05;
+      }
+      /* zoom fundo: as linhas de órbita se apagam e o mapa vira, na prática,
+         o sistema planetário (a seleção é restaurada ao afastar; applySel
+         também zera o registro para não guardar opacidade velha) */
+      if(escrAtivo){
+        const dz = Math.min(1, Math.max(0, (CAM.dist - 0.35)/1.2));
+        if(dz < 1){
+          if(!ACT._zf) ACT._zf = selReg.orbits.map(o=>({m:o.obj.material, o:o.obj.material.opacity}));
+          for(const z of ACT._zf) z.m.opacity = z.o * dz;
+        } else if(ACT._zf){
+          for(const z of ACT._zf) z.m.opacity = z.o;
+          ACT._zf = null;
+        }
       }
       /* escala real: os alvos de clique RESPIRAM com o zoom (longe: generosos;
          perto: justos). Com raio fixo a Terra engolia a Lua, e a câmera
@@ -5331,10 +5357,11 @@ function buildFocus(bodyId, spin0){
     const sunGlow = new THREE.Sprite(new THREE.SpriteMaterial({
       map:(b._sys==='trappist')?TEX_GLOW_RED:TEX_GLOW_WARM,
       blending:THREE.AdditiveBlending, depthWrite:false, transparent:true, opacity:escrSolF ? 1.0 : 0.85}));
-    sunGlow.scale.setScalar(escrSolF ? 3.4 : (b.comet ? 3.0 : 2.6));
+    sunGlow.scale.setScalar(escrSolF ? 3.4 : (b.comet ? 3.0 : 3.1));
     /* no cometa o Sol fica em cima à direita: a cauda cai para o lado livre da tela */
     if(escrSolF) sunGlow.position.set(-152, 76, -273);
-    else sunGlow.position.set(b.comet ? 9 : -10, b.comet ? 6.5 : 5, b.comet ? -9 : -18);
+    else if(b.comet) sunGlow.position.set(9, 6.5, -9);
+    else sunGlow.position.set(-35, 17.5, -63);   /* mais longe e menor no céu, mesmo rumo (a fase da Lua continua batendo) */
     scene.add(fade(sunGlow));
   }
 
@@ -5433,6 +5460,10 @@ function buildFocus(bodyId, spin0){
   bg = aoVivo ? grupoLive(bodyId, radius, QLOW?96:128)
      : ((b.sonda || b.satelite || b.foguete) ? grupoNave(bodyId, radius) : makeBodyGroup(b, radius, QLOW?96:128));
   wrap.add(bg.group);
+  /* escala real: o eixo de rotação entortado de verdade (Terra 23,4 graus,
+     Urano quase deitado; o giro do dia acontece em volta do eixo torto) */
+  if(ESCR.on && b._sys === 'sol' && ESCALA_REAL_INCL[bodyId])
+    bg.group.rotation.z = -ESCALA_REAL_INCL[bodyId]*Math.PI/180;
   if(spin0) bg.mesh.rotation.y = spin0;   /* continua de onde a cena do sistema parou */
   bg.group.traverse(o=>{ if(o.userData && o.userData.isClouds) clouds = o; });
   /* toques de cena: a bruma laranja de Titã e os gêiseres do polo sul de Encélado */
@@ -5555,9 +5586,14 @@ function buildFocus(bodyId, spin0){
     /* na escala real do sol a câmera é ORBITAL: arrastar roda EM VOLTA do
        corpo, nunca o corpo feito pião (pedido do Rodrigo); a rotação que se
        vê é a do DIA real do planeta, movida pelo relógio */
-    cam:(ESCR.on && b._sys === 'sol' && !b.comet)
-      ? {mode:'orbit', yaw:0, pitch:0.06, dist:9.0, min:3.7, max:Math.max(9.6, maxKidR*1.45)}
-      : {mode:'focus', dist:b.comet?8.2:9.0, min:b.comet?4.0:3.7, max:Math.max(b.comet?10.5:9.6, (ESCR.on && b._sys==='sol') ? maxKidR*1.45 : 0)},
+    /* foco ORBITAL nos dois modos: arrastar roda EM VOLTA do corpo, nunca o
+       corpo feito pião. No cênico o pivô fica no desvio do card (pivFoco).
+       Cometa segue no modo antigo: a composição das caudas depende dele. */
+    cam:b.comet
+      ? {mode:'focus', dist:8.2, min:4.0, max:10.5}
+      : ((ESCR.on && b._sys === 'sol')
+          ? {mode:'orbit', yaw:0, pitch:0.06, dist:9.0, min:3.7, max:Math.max(9.6, maxKidR*1.45)}
+          : {mode:'orbit', yaw:0, pitch:0.06, dist:9.0, min:3.7, max:9.6, pivFoco:true}),
     update:(dt)=>{
       /* nos modos lentos (tempo real, 1 s = 1 s) o foco obedece o relógio:
          gira 1 volta por dia simulado e a lua orbita nos 27,3 dias reais.
@@ -5628,6 +5664,8 @@ function setCam(cfg){
   if(cfg.mode==='orbit'){ CAM.yaw = cfg.yaw; CAM.pitch = cfg.pitch; }
   CAM.pivot.set(0,0,0);
   computeFocusOff();
+  /* foco cênico orbital: o corpo continua deslocado do card */
+  if(cfg.mode==='orbit' && cfg.pivFoco) CAM.pivot.copy(CAM.focusOff);
 }
 function applyCam(){
   if(CAM.mode==='orbit'){
@@ -8064,6 +8102,8 @@ function aplicaObjetos(){
   }
 }
 function applySel(){
+  /* o fade do zoom fundo guarda opacidades: seleção nova zera o registro */
+  if(ACT && ACT._zf) ACT._zf = null;
   aplicaObjetos();
   if(!ACT || !ACT.sel){ SELFX = null; return; }
   const selId = ST.mapCard ? ST.mapCard.id : null;
@@ -8254,7 +8294,9 @@ function dolly(f){
   if(ACT && ACT.kind==='system'){
     if(ACT.escr){
       /* corpo travado na escala real: o zoom desce até o grão encher a tela */
-      const pkSel = ST.mapCard ? acharPick(ST.mapCard) : null;
+      /* ST.mapCard é um OBJETO (a trava usa .id): passar ele inteiro fazia o
+         acharPick falhar sempre e o zoom parava no piso (o 1,5 MI KM dele) */
+      const pkSel = ST.mapCard ? acharPick(ST.mapCard.id || ST.mapCard) : null;
       minEf = (pkSel && pkSel.userData.r) ? Math.max(0.0012, pkSel.userData.r*3.2) : 0.075;
     } else if(ST.mapCard) minEf = Math.min(CAM.min, 4.2);
   }
@@ -8370,7 +8412,8 @@ canvas.addEventListener('pointermove', e=>{
     }
   } else {
     CAM.yaw -= dx*0.0052;
-    CAM.pitch = clamp(CAM.pitch + dy*0.004, 0.12, 1.4);
+    /* vertical LIVRE: dá para ver o plano por baixo (era só um guarda antigo) */
+    CAM.pitch = clamp(CAM.pitch + dy*0.004, -1.45, 1.45);
   }
 });
 function endPtr(e){
@@ -8478,7 +8521,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r107';
+const BUILD = 'r108';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -9118,12 +9161,15 @@ function loop(){
   if(typeof tutCaixaSegue === 'function' && TUT && TUT.fila) tutCaixaSegue();   /* mira recalculada a cada quadro, mesmo em vôo */
   /* trava de centro no mapa: o corpo selecionado vira o pivô da câmera,
      e soltar a seleção devolve o centro suavemente */
-  if(ACT && ACT.kind==='system' && !DIVE && !TRAJ && !CAMTW){
+  if(ACT && (ACT.kind==='system' || (ACT.kind==='focus' && CAM.mode==='orbit')) && !DIVE && !TRAJ && !CAMTW){
     if(ST.mapCard){
       const pk = ACT.pickables.find(x=>x.userData.id===ST.mapCard.id);
       if(pk){ pk.getWorldPosition(SEGV); CAM.pivot.lerp(SEGV, Math.min(1, dt*5.2)); }
-    } else if(CAM.pivot.lengthSq() > 1e-6){
-      SEGV.set(0,0,0); CAM.pivot.lerp(SEGV, Math.min(1, dt*5.2));
+    } else {
+      /* sem seleção o pivô volta ao centro (ou ao desvio do card, no foco cênico) */
+      if(ACT.kind==='focus' && ACT.cam && ACT.cam.pivFoco) SEGV.copy(CAM.focusOff);
+      else SEGV.set(0,0,0);
+      if(CAM.pivot.distanceToSquared(SEGV) > 1e-6) CAM.pivot.lerp(SEGV, Math.min(1, dt*5.2));
     }
   }
   if(TOUR.on && TOUR.ms && !TOUR.pausado) $('#tourprog').style.width = Math.min(100, (now-TOUR.t0)/TOUR.ms*100).toFixed(1)+'%';
