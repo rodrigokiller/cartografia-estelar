@@ -834,7 +834,9 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       </select>
       <span class="tnm" id="tournm"></span>
       <span class="tct" id="tourct"></span>
+      <button id="tourprev2" title="Parada anterior">◂</button>
       <button id="tourpausa2" title="Pausar e continuar">⏸</button>
+      <button id="tournext2" title="Próxima parada">▸</button>
       <button id="tourx" title="Encerrar e voltar">✕</button>
     </div>
     <div class="tnarra" id="tournarra"></div>
@@ -6225,6 +6227,13 @@ function gotoUniverse(flavor, deGalaxia){
   else fadeSwap(flavor || 'EXPANDINDO ESCALA', troca);
 }
 function gotoFocus(bodyId, continuo, deCorpo){
+  /* com a viagem interplanetar ligada, ir de um corpo a outro (busca, chips,
+     registro) também cruza os mundos em vôo, fora do tour inclusive */
+  if(VIAGEMX.on && !continuo && !deCorpo && ST.level === 'focus' && ST.body && ST.body !== bodyId
+     && ALLBODIES[bodyId] && !DIVE && !TRAJ && !TRANSITO && ACT && ACT.kind === 'focus'){
+    vooInterplanetario(bodyId);
+    return;
+  }
   const b = ALLBODIES[bodyId]; if(!b) return;
   const troca = ()=>{
     const spin = (continuo && ACT && ACT.kind==='system') ? ACT.spin : 0;
@@ -6802,6 +6811,7 @@ function missRender(){
     el.innerHTML = Object.keys(MISS_ROT).map(k=>{
       let ok = FEITO.has(k), extra = '';
       if(k === 'cinco'){ ok = ok || c5 >= 5; if(!ok && c5 > 0) extra = ' · FALTAM ' + (5 - c5); }
+      if(k === 'rotastodas' && !ok && ROTAS_OK.size > 0) extra = ' · FALTAM ' + (Object.keys(ROTAS).length - Object.keys(ROTAS).filter(x=>ROTAS_OK.has(x)).length);
       const par = MISS_ROT[k].split(' · ');
       const quando = ok && FEITO_TS[k]
         ? new Date(FEITO_TS[k]).toLocaleDateString('pt-BR') + ' ' + new Date(FEITO_TS[k]).toLocaleTimeString('pt-BR').slice(0,5)
@@ -7160,10 +7170,9 @@ function tourIr(p){
     return;
   }
   const b = ALLBODIES[p.corpo]; if(!b) return;
-  /* EXPERIMENTAL ligado: planeta a planeta sem subir, os dois mundos se cruzam */
-  if(VIAGEMX.on && ST.level === 'focus' && !TRANSITO
-     && ALLBODIES[ST.body] && ALLBODIES[ST.body]._sys === b._sys && ST.body !== p.corpo
-     && !b._parent && !b.satOf && !ALLBODIES[ST.body]._parent && !ALLBODIES[ST.body].satOf){
+  /* EXPERIMENTAL ligado: corpo a corpo sem subir, os dois mundos se cruzam.
+     Vale de lua para planeta, de lua para lua, de sonda para onde for. */
+  if(VIAGEMX.on && ST.level === 'focus' && !TRANSITO && ST.body !== p.corpo && ALLBODIES[ST.body]){
     vooInterplanetario(p.corpo);
     return;
   }
@@ -7239,22 +7248,30 @@ function tourPasso(){
   TOUR.t0 = performance.now(); TOUR.ms = p.ms;
   tourSync(); tourIr(p);
   clearTimeout(TOUR.tm);
-  if(p.corpo){
-    /* viajar não gasta o relógio: a contagem só começa com o corpo travado */
-    TOUR.ms = 0;
-    $('#tourprog').style.width = '0%';
-    const espera = (n)=>{
-      if(!TOUR.on || TOUR.pausado) return;
-      if(ST.level === 'focus' && ST.body === p.corpo && !DIVE){
-        TOUR.t0 = performance.now(); TOUR.ms = p.ms;
-        TOUR.tm = setTimeout(tourAvanca, p.ms);
-      } else if(n < 90) TOUR.tm = setTimeout(()=>espera(n+1), 250);
-      else { TOUR.t0 = performance.now(); TOUR.ms = p.ms; TOUR.tm = setTimeout(tourAvanca, p.ms); }
-    };
-    espera(0);
-  } else {
-    TOUR.tm = setTimeout(tourAvanca, p.ms);
-  }
+  /* a contagem só começa quando o DESTINO trava (corpo, sistema, galáxia ou
+     universo), e a viagem desconta do relógio: o ritmo total volta ao de
+     antes, com um mínimo garantido de contemplação */
+  const chegou = ()=>{
+    if(DIVE || TRANSITO) return false;
+    if(p.corpo) return ST.level === 'focus' && ST.body === p.corpo;
+    if(p.sis)   return ST.level === 'system' && ST.sys === p.sis;
+    if(p.gal)   return ST.level === 'galaxy' && ST.gal === p.gal;
+    if(p.uni)   return ST.level === 'universe';
+    return true;
+  };
+  const ini = performance.now();
+  TOUR.ms = 0;
+  $('#tourprog').style.width = '0%';
+  const espera = (n)=>{
+    if(!TOUR.on || TOUR.pausado) return;
+    if(chegou() || n >= 110){
+      const gasto = performance.now() - ini;
+      const resta = Math.max(3800, p.ms - gasto);
+      TOUR.t0 = performance.now(); TOUR.ms = resta;
+      TOUR.tm = setTimeout(tourAvanca, resta);
+    } else TOUR.tm = setTimeout(()=>espera(n+1), 250);
+  };
+  espera(0);
 }
 function tourAvanca(){
   if(!TOUR.on) return;
@@ -7360,6 +7377,9 @@ function tourDoSistema(sysId){
   tourStart();
 }
 function tourPopAbre(){
+  const tot = Object.keys(ROTAS).length;
+  const ok = Object.keys(ROTAS).filter(k=>ROTAS_OK.has(k)).length;
+  $('#tourpop .tphead span').textContent = '▸ ROTAS DO TOUR · ' + ok + '/' + tot + ' CONCLUÍDAS';
   const el = $('#tourpoplista');
   el.innerHTML = Object.keys(ROTAS).map(k=>{
     const r = ROTAS[k];
@@ -8147,7 +8167,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r97';
+const BUILD = 'r98';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -8654,6 +8674,19 @@ $('#trajx2').addEventListener('click', ()=>trajCancelar());
 $('#misstour').addEventListener('click', ()=>{ const on = TOUR.on; missClose(); if(on) tourStop(); else setTimeout(tourPopAbre, 180); });
 $('#tourx').addEventListener('click', ()=>tourStop(false, true));
 $('#tourpausa2').addEventListener('click', tourPause);
+$('#tourprev2').addEventListener('click', ()=>{
+  if(!TOUR.on) return;
+  clearTimeout(TOUR.tm);
+  TOUR.pausado = false; $('#tourpausa2').textContent = '⏸';
+  TOUR.i = Math.max(0, TOUR.i - 1);
+  tourPasso();
+});
+$('#tournext2').addEventListener('click', ()=>{
+  if(!TOUR.on) return;
+  clearTimeout(TOUR.tm);
+  TOUR.pausado = false; $('#tourpausa2').textContent = '⏸';
+  tourAvanca();
+});
 $('#tourrota').addEventListener('change', e=>tourRota(e.target.value));
 tourRota(store.get('carto:rota','completo'), true);
 $('#photoexit').addEventListener('click', e=>{ e.stopPropagation(); togglePhoto(); });
