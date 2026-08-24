@@ -800,6 +800,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <select id="tourrota" title="Escolher rota">
         <option value="completo">ROTA COMPLETA</option>
         <option value="solar">SISTEMA SOLAR</option>
+        <option value="aguas">MUNDOS DE ÁGUA</option>
         <option value="nebulosas">NEBULOSAS</option>
         <option value="galaxias">GALÁXIAS</option>
       </select>
@@ -929,7 +930,6 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <p><b>⬡ Conquistas:</b> ações especiais (comparar, viajar no tempo, reviver uma Apollo) valem 2 corpos cada na carreira. A lista completa mora no registro de bordo.</p>
       <p><b>Trava de centro:</b> selecionar um corpo no mapa faz a câmera orbitá-lo: dá para chegar perto de Saturno sem trocar de escala. ESC ou ✕ soltam.</p>
       <p><b>≋ Linha do tempo:</b> sondas, cometas e as Apollo têm a viagem reconstruída, com os planetas NA ÉPOCA certa e marcos clicáveis.</p>
-      <p><button class="xbtn" id="tourespacial">▸ INICIAR O TOUR ESPACIAL · OS OITO PLANETAS</button></p>
       <p><button class="xbtn" id="tutrever">▸ REVER O TUTORIAL DE BOAS-VINDAS</button></p>
       <p class="sub">NEBULASTRA · nebulastra.com · o mapa Cartografia Estelar</p>
       <p class="sub">Dados: NASA/ESA/IAU, valores aproximados. Linhas em âmbar são referências de ficção.</p>
@@ -6457,14 +6457,14 @@ const CONQ_DESC = {visita:'Selecione um corpo e entre nele.', sondas:'No filtro 
   sondavisita:'Selecione uma sonda (Voyager, Pioneer...) e entre nela.',
   comparar:'Use o ◫ para comparar dois corpos em escala real.', tempo:'No ◈ do relógio, viaje para outra data.',
   apollo:'Abra a linha do tempo da Apollo 11 ou 13.', sistemacompleto:'Visite todos os corpos de um sistema.',
-  tourespacial:'No manual ?, inicie o TOUR ESPACIAL dos oito planetas e vá até o fim.'};
+  tourespacial:'Deixe o TOUR (tecla T, ou ▶ no registro) completar uma rota inteira.'};
 const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A LINHA DAS SONDAS',
   busca:'CAD-03 · LOCALIZAR PELA BUSCA', cinco:'CAD-04 · VISITAR 5 CORPOS DO SISTEMA SOLAR',
   pause:'CAD-05 · PAUSAR E RETOMAR O RELÓGIO', galaxia:'CAD-06 · SUBIR ATÉ A GALÁXIA',
   sondavisita:'CAD-07 · VISITAR UMA SONDA',
   comparar:'TIM-01 · COMPARAR DOIS CORPOS', tempo:'TIM-02 · VIAJAR NO TEMPO',
   apollo:'TIM-03 · REVIVER UMA MISSÃO APOLLO', sistemacompleto:'TIM-04 · COMPLETAR UM SISTEMA',
-  tourespacial:'EXP-01 · COMPLETAR UM TOUR ESPACIAL'};
+  tourespacial:'EXP-01 · COMPLETAR UMA ROTA DO TOUR'};
 function feito(k){
   if(FEITO.has(k)) return;
   FEITO.add(k);
@@ -6895,8 +6895,16 @@ const ROTA_GALAXIAS = [
   {corpo:'m51ulsb', ms:11000},
   {uni:true, ms:10000}
 ];
+const ROTA_AGUAS = [
+  {corpo:'europa', ms:13000},
+  {corpo:'encelado', ms:13000},
+  {corpo:'tita', ms:13000},
+  {corpo:'ganimedes', ms:13000},
+  {sis:'sol', ms:7000, texto:'Quatro oceanos escondidos num só sistema. No universo, a água é a regra, não a exceção.'}
+];
 const ROTAS = {
   completo:  {nome:'ROTA COMPLETA',  lista:ROTEIRO_COMPLETO},
+  aguas:     {nome:'MUNDOS DE ÁGUA', lista:ROTA_AGUAS},
   solar:     {nome:'SISTEMA SOLAR',  lista:ROTA_SOLAR},
   nebulosas: {nome:'NEBULOSAS',      lista:ROTA_NEBULOSAS},
   galaxias:  {nome:'GALÁXIAS',       lista:ROTA_GALAXIAS}
@@ -6919,8 +6927,19 @@ function tourIr(p){
     return;
   }
   const b = ALLBODIES[p.corpo]; if(!b) return;
-  if(ACT && ACT.kind==='system' && b.sys && b._sys===ST.sys){
+  if(ACT && ACT.kind==='system' && acharPick(p.corpo) && b._sys===ST.sys){
     diveInto(p.corpo, ()=>gotoFocus(p.corpo, true));   /* mergulho contínuo */
+  } else if(ST.level==='focus' && ALLBODIES[ST.body] && ALLBODIES[ST.body]._sys === b._sys && ST.body !== p.corpo){
+    /* VÔO DIRETO: sobe contínuo do corpo atual e mergulha no próximo,
+       sem tela preta e sem parada: a câmera varre o sistema como uma nave */
+    gotoSystem(b._sys, null, ST.body);
+    const tenta = (n)=>{
+      if(!TOUR.on) return;
+      if(!DIVE && ACT && ACT.kind==='system' && acharPick(p.corpo))
+        diveInto(p.corpo, ()=>gotoFocus(p.corpo, true));
+      else if(n < 22) setTimeout(()=>tenta(n+1), 200);
+    };
+    setTimeout(()=>tenta(0), 980);
   } else {
     gotoFocus(p.corpo);
   }
@@ -6953,7 +6972,8 @@ function tourPasso(){
   clearTimeout(TOUR.tm);
   TOUR.tm = setTimeout(()=>{
     if(!TOUR.on) return;
-    TOUR.i = (TOUR.i + 1) % ROTEIRO.length;
+    TOUR.i = TOUR.i + 1;
+    if(TOUR.i >= ROTEIRO.length){ TOUR.i = 0; feito('tourespacial'); }
     tourPasso();
   }, p.ms);
 }
@@ -7738,7 +7758,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r90';
+const BUILD = 'r91';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -8026,34 +8046,6 @@ function tutBoasVindas(){
     showHint('CONQUISTAS RESETADAS');
     if($('#mission').classList.contains('on')) missRender();
   }); }
-/* TOUR ESPACIAL: o motor do tutorial em azul, viajando de corpo em corpo
-   com um texto curto por parada, tempo, pause e saída livre */
-function tourEspacial(){
-  $('#help').classList.remove('on');
-  missClose();
-  const R = [
-    ['mercurio','Um dia aqui dura 59 dias terrestres, e a superfície varia 600 graus entre o sol e a sombra.'],
-    ['venus','A pressão esmagadora de 92 atmosferas e chuva de ácido: o planeta mais quente de todos.'],
-    ['terra','O único endereço confirmado com vida no universo. Casa.'],
-    ['marte','Vulcões de 22 km, canyons continentais e dois robôs ativos explorando agora.'],
-    ['jupiter','Maior que todos os outros juntos: a Grande Mancha é uma tempestade de séculos.'],
-    ['saturno','Os anéis têm 280 mil km de largura e menos de 1 km de espessura.'],
-    ['urano','Rola deitado pelo espaço, com estações de 21 anos em cada polo.'],
-    ['netuno','Descoberto pela matemática antes do telescópio, com os ventos mais violentos do sistema.']
-  ];
-  const passos = R.map(par=>({
-    tx:'<b>'+(ALLBODIES[par[0]] ? ALLBODIES[par[0]].name : par[0])+'</b> · '+par[1],
-    tempo:10000,
-    init:()=>gotoFocus(par[0])
-  }));
-  passos.push({tx:'<b>FIM DA ROTA.</b> Oito mundos, um só sistema. O mapa é seu, navegador.',
-    init:()=>feito('tourespacial')});
-  TUT.fila = passos; TUT.i = 0; TUT.max = 999; TUT.chave = null; TUT.pausaTour = false;
-  $('#tut').classList.add('modotour');
-  $('#tuthead').firstElementChild.textContent = '▸ TOUR ESPACIAL · OS OITO PLANETAS';
-  tutMostra();
-}
-{ const te = $('#tourespacial'); if(te) te.addEventListener('click', tourEspacial); }
 function tutComparar(){
   tutInicia('comparar', [
     {tx:'<b>COMPARAR:</b> o primeiro corpo ficou marcado. Agora abra qualquer outro, pela busca, pelo mapa ou pelo registro, e toque em <b>◫ COMPARAR</b> de novo: a análise sai em escala real.'},
