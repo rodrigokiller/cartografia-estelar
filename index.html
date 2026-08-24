@@ -126,12 +126,12 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
    sobre o corte do clip-path. Geometria fechada, sem números ajustados na mão. */
 #panel::before,#panel::after,#findbox::before,#findbox::after,#cmpcard::before,#cmpcard::after,
 #helpcard::before,#helpcard::after,#player::before,#player::after,#misscard::before,#misscard::after,
-#filtpop::before,#filtpop::after,#cfgpop::before,#cfgpop::after{
+#filtpop::before,#filtpop::after,#cfgpop::before,#cfgpop::after,#tut::before,#tut::after{
   content:'';position:absolute;pointer-events:none;z-index:2}
-#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before,#filtpop::before,#cfgpop::before{
+#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before,#filtpop::before,#cfgpop::before,#tut::before{
   left:-1px;top:-1px;
   background:linear-gradient(-45deg,transparent calc(50% - 1px),var(--line2) calc(50% - 1px),var(--line2) 50%,transparent 50%)}
-#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after,#filtpop::after,#cfgpop::after{
+#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after,#filtpop::after,#cfgpop::after,#tut::after{
   right:-1px;bottom:-1px;
   background:linear-gradient(-45deg,transparent 50%,var(--line2) 50%,var(--line2) calc(50% + 1px),transparent calc(50% + 1px))}
 #panel::before,#panel::after{width:18px;height:18px}
@@ -143,6 +143,7 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #player::before,#player::after{width:10px;height:10px}
 #filtpop::before,#filtpop::after{width:10px;height:10px}
 #cfgpop::before,#cfgpop::after{width:10px;height:10px}
+#tut::before,#tut::after{width:12px;height:12px}
 #nowplay{position:absolute;top:64px;left:50%;transform:translateX(-50%);z-index:15;
   font-family:var(--mono);font-size:10px;letter-spacing:2.5px;color:var(--ion);
   background:rgba(6,12,24,.78);border:1px solid var(--line);padding:6px 14px;
@@ -431,9 +432,24 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #tip.on{opacity:1}
 #tip.amber{color:var(--amber);border-color:rgba(255,180,84,.5)}
 #tip.baixo{transform:translate(-50%,0)}
+#filtpop.on,#cfgpop.on,#player.on,#datepop.on{animation:popnasce .26s ease-out}
+@keyframes popnasce{0%{opacity:0;transform:translateY(-7px) scale(.985)}100%{opacity:1;transform:translateY(0) scale(1)}}
 #tut{position:absolute;left:50%;bottom:118px;transform:translateX(-50%);z-index:70;
-  width:min(430px,92vw);display:none;background:var(--panel);border:1px solid rgba(255,180,84,.45);
-  padding:14px 16px 10px}
+  width:min(430px,92vw);height:max-content;display:none;background:var(--panel);
+  border:1px solid rgba(255,180,84,.45);padding:12px 16px 10px;
+  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
+#tuthead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;
+  font-family:var(--mono);font-size:8.5px;letter-spacing:2.5px;color:var(--amber)}
+#tutcaixa{position:fixed;z-index:69;pointer-events:none;border:1px solid var(--amber);opacity:0;
+  clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  animation:caixapulsa 1.8s ease-in-out infinite}
+#tutcaixa.viaja{transition:left .55s cubic-bezier(.22,.9,.34,1), top .55s cubic-bezier(.22,.9,.34,1),
+  width .55s cubic-bezier(.22,.9,.34,1), height .55s cubic-bezier(.22,.9,.34,1), opacity .3s}
+#tutcaixa.on{opacity:1}
+@keyframes caixapulsa{
+  0%,100%{box-shadow:0 0 8px rgba(255,180,84,.22), inset 0 0 8px rgba(255,180,84,.08)}
+  50%{box-shadow:0 0 26px rgba(255,180,84,.6), inset 0 0 14px rgba(255,180,84,.16)}
+}
 #tut.on{display:block}
 #tuttx{font-size:12.5px;line-height:1.75;color:var(--txt)}
 #tuttx b{color:var(--amber);font-weight:600}
@@ -446,28 +462,21 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #tut #tutnext:disabled:hover{color:var(--dim2);border-color:var(--line2)}
 #tut #tutnext{color:var(--amber);border-color:rgba(255,180,84,.5)}
 #tut #tutn{font-family:var(--mono);font-size:8.5px;letter-spacing:2px;color:var(--dim2)}
-#tutdebug{margin-left:10px;background:none;border:1px dashed var(--line2);color:var(--dim2);
+#tutdebug,#dbgtoast,#dbgpromo,#dbgconq{margin-left:8px;background:none;border:1px dashed var(--line2);color:var(--dim2);
   font-family:var(--mono);font-size:7.5px;letter-spacing:1.5px;padding:2px 6px;cursor:pointer;opacity:.6}
-#tutdebug:hover{color:var(--amber);border-color:var(--amber);opacity:1}
+#tutdebug:hover,#dbgtoast:hover,#dbgpromo:hover,#dbgconq:hover{color:var(--amber);border-color:var(--amber);opacity:1}
 body.touch #tut{top:60px;bottom:auto}
-body.emtraj #tut{bottom:216px}
-.tutfoco{outline:1px solid var(--amber) !important;
-  animation:tutnasce .5s ease-out, tutpulsa 1.7s ease-in-out .5s infinite !important}
-@keyframes tutnasce{
-  0%{outline-offset:14px;outline-color:rgba(255,180,84,0);box-shadow:none}
-  100%{outline-offset:2px;outline-color:var(--amber);box-shadow:0 0 14px rgba(255,180,84,.4)}
-}
-@keyframes tutpulsa{
-  0%,100%{outline-offset:2px;box-shadow:0 0 10px rgba(255,180,84,.30)}
-  50%{outline-offset:5px;box-shadow:0 0 22px rgba(255,180,84,.55)}
-}
+body.emtraj #tut{bottom:216px;top:auto}
+
 body.touch.emtraj #panel{opacity:0;visibility:hidden;pointer-events:none}
 body.touch #trajclock{bottom:16px}
 .mbadge.vt{color:var(--amber);padding:3px 7px 0;display:inline-flex;align-items:center;justify-content:center;line-height:1}
 #misslist li.mkid .mnm{font-size:10px}
 #cadmiss{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:8px}
 #cadmiss .cmk{font-family:var(--mono);font-size:8px;letter-spacing:1.2px;color:var(--dim2)}
-#cadmiss .cmk.ok{color:var(--amber)}
+#cadmiss{display:none}
+.lnkconq{cursor:pointer;border-bottom:1px dotted var(--dim2)}
+.lnkconq:hover{color:var(--amber)}
 #mtoast{position:fixed;left:50%;bottom:150px;transform:translate(-50%,16px);z-index:72;
   background:var(--panel);border:1px solid rgba(255,180,84,.55);padding:10px 18px;
   display:flex;flex-direction:column;gap:3px;align-items:center;opacity:0;pointer-events:none;
@@ -726,7 +735,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div class="corner c-br"><b class="h"></b><b class="v"></b></div>
 
   <div id="topbar">
-    <div id="brand"><span class="mark"></span>CARTOGRAFIA ESTELAR<button id="tutdebug" title="Resetar os tutoriais (debug)">TUT</button></div>
+    <div id="brand"><span class="mark"></span>CARTOGRAFIA ESTELAR<button id="tutdebug" title="Resetar os tutoriais (debug)">TUT</button><button id="dbgtoast" title="Testar o toast de conquista (debug)">TST</button><button id="dbgpromo" title="Testar o toast de promoção (debug)">PRM</button><button id="dbgconq" title="Resetar as conquistas (debug)">RSC</button></div>
     <div id="crumbs"></div>
     <div id="statuspod">
       <span id="statled"></span>
@@ -801,9 +810,11 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <ul class="pl-list" id="pl_list"></ul>
     <button class="xbtn pl-mute" id="pl_mute">SOM: LIGADO</button>
   </div>
+  <div id="tutcaixa"></div>
   <div id="tut">
+    <div id="tuthead"><span>▸ TUTORIAL DE BORDO</span><span id="tutn"></span></div>
     <div id="tuttx"></div>
-    <div class="trow"><button id="tutskip">PULAR</button><span id="tutn"></span><span class="tnav"><button id="tutprev">◂ VOLTAR</button><button id="tutnext">PRÓXIMO ▸</button></span></div>
+    <div class="trow"><button id="tutskip">PULAR</button><span class="tnav"><button id="tutprev">◂ VOLTAR</button><button id="tutnext">PRÓXIMO ▸</button></span></div>
   </div>
   <div id="tip"></div>
   <div id="datepop">
@@ -832,6 +843,9 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="fp-t fp-t2">EXTRAS</div>
     <div class="filtrow" data-rastro="1"><span>RASTRO DE 30 DIAS</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-coord="1"><span>COORDENADAS REAIS (RA/DEC)</span><b>DESLIGADO</b></div>
+    <div class="fp-t fp-t2">SOM</div>
+    <div class="filtrow" data-som="mus"><span>MÚSICA</span><b></b></div>
+    <div class="filtrow" data-som="fx"><span>EFEITOS SONOROS</span><b></b></div>
     <div class="fp-n">O relógio no canto inferior esquerdo mostra a data do sistema. Pausar e viajar no tempo ficam lá.</div>
   </div>
   <div id="filtpop">
@@ -5403,6 +5417,12 @@ function trajStart(id){
   const b = ALLBODIES[id];
   const o = (ACT && ACT.sel && ACT.sel.orbits) ? ACT.sel.orbits.find(x=>x.id===id) : null;
   if(!b || !o || !o.obj || !(ehEscape(b) || b.comet || (b.foguete && b.traj)) || DIVE) return;
+  /* primeira viagem: o navegador LÊ o manual antes de decolar */
+  if(!TUT.v.has('linhadotempo')){
+    TUT.aoFechar = ()=>trajStart(id);
+    tutInicia('linhadotempo', [{tx:'<b>LINHA DO TEMPO:</b> a barra corre os anos da viagem. Os losangos são os marcos, com balão e clique. Arraste a barra, ou o próprio corpo na cena, para ir e voltar no tempo. O ✕ encerra.', botao:'INICIAR A VIAGEM ▸'}]);
+    return;
+  }
   /* guarda os pontos LOCAIS e transforma a cada quadro: o Halley continua
      orbitando durante o passeio e a linha acompanha */
   const pos = o.obj.geometry.getAttribute('position');
@@ -5429,9 +5449,30 @@ function trajStart(id){
     TRAJ.base = 20000;
   }
   /* o corpo (sonda, cometa, foguete) navega junto com o ponto do percurso */
-  { const oo = ACT.objs && ACT.objs.find(x=>x.id===id);
-    if(oo && oo.corpo){ TRAJ.corpo = oo.corpo; TRAJ.cpos0 = oo.corpo.position.clone();
-      if(oo.sempreOculto){ oo.corpo.visible = true; TRAJ.corpoTemp = oo.corpo; } } }
+  const oo = ACT.objs && ACT.objs.find(x=>x.id===id);
+  if(oo && oo.corpo){ TRAJ.corpo = oo.corpo; TRAJ.cpos0 = oo.corpo.position.clone();
+    if(oo.sempreOculto){ oo.corpo.visible = true; TRAJ.corpoTemp = oo.corpo; } }
+  /* os planetas ficam na ÉPOCA da viagem: prog 0 mostra o céu do lançamento */
+  TRAJ.dAno = 0;
+  if(!TRAJ.dias && TRAJ.ano0 && ACT.tempoViagem){
+    const anoSim = 1970 + SIMT.data/MS_ANO;
+    TRAJ.dAno = TRAJ.ano0 - anoSim;
+    if(b.sonda && oo && oo.holder){
+      /* e o arco nasce na TERRA de onde a sonda partiu */
+      ACT.tempoViagem(TRAJ.dAno);
+      const pkT = ACT.pickables.find(x=>x.userData.id === 'terra');
+      if(pkT){
+        TRAJ.rotHold0 = oo.holder.rotation.y;
+        TRAJ.holderGirado = oo.holder;
+        trajPonto(0, TRAJ._c);
+        const aArc = Math.atan2(TRAJ._c.z, TRAJ._c.x);
+        pkT.getWorldPosition(TRAJ._b);
+        const aTer = Math.atan2(TRAJ._b.z, TRAJ._b.x);
+        oo.holder.rotation.y += (aArc - aTer);
+        oo.holder.updateMatrixWorld(true);
+      }
+    }
+  }
   /* missão tripulada: em vez do anel simbólico, a rota REAL Terra-Lua,
      com a Lua aparecendo como destino e a nave fazendo a volta por trás */
   if(TRAJ.dias){
@@ -5464,7 +5505,6 @@ function trajStart(id){
   $('#trajplay').textContent = '⏸';
   $('#trajvel').textContent = '1×';
   $('#trajclock').classList.add('on');
-  tutInicia('linhadotempo', [{tx:'<b>LINHA DO TEMPO:</b> a barra corre os anos da viagem. Os losangos são os marcos, com balão e clique. Arraste a barra, ou o próprio corpo na cena, para ir e voltar no tempo. O ✕ encerra.'}]);
   /* os marcos viram losangos na barra: clicar ali pula direto para o ano */
   { const bar = $('#trajbar');
     bar.querySelectorAll('.tmk').forEach(x=>x.remove());
@@ -5499,6 +5539,7 @@ function trajCancelar(){
   $('#trajclock').classList.remove('on');
   TRAJ = {fase:'volta', t0:performance.now(), ms:850, p0:CAM.pivot.clone(), dA:CAM.dist, d1:TRAJ.d0,
           corpo:TRAJ.corpo, cpos0:TRAJ.cpos0, corpoTemp:TRAJ.corpoTemp,
+          rotHold0:TRAJ.rotHold0, holderGirado:TRAJ.holderGirado,
           rotaViz:TRAJ.rotaViz, luaViz:TRAJ.luaViz, luaLbl:TRAJ.luaLbl};
   cardRender();
 }
@@ -5507,6 +5548,10 @@ function trajLimpar(){
   if(ACT && ACT.tempoLivre) ACT.tempoLivre();
   if(TRAJ && TRAJ.corpo && TRAJ.cpos0) TRAJ.corpo.position.copy(TRAJ.cpos0);
   if(TRAJ && TRAJ.corpoTemp) TRAJ.corpoTemp.visible = false;
+  if(TRAJ && TRAJ.holderGirado && TRAJ.rotHold0 !== undefined){
+    TRAJ.holderGirado.rotation.y = TRAJ.rotHold0;
+    TRAJ.holderGirado.updateMatrixWorld(true);
+  }
   if(TRAJ){
     if(TRAJ.rotaViz && TRAJ.rotaViz.parent) TRAJ.rotaViz.parent.remove(TRAJ.rotaViz);
     if(TRAJ.luaViz && TRAJ.luaViz.parent) TRAJ.luaViz.parent.remove(TRAJ.luaViz);
@@ -5550,7 +5595,7 @@ function trajStep(now){
   }
   /* o zoom fica livre: quem quiser afasta e vê o sistema inteiro andando
      (em dias, o sistema não acelera: oito dias não movem planeta nenhum) */
-  if(span && !TRAJ.dias && ACT && ACT.tempoViagem) ACT.tempoViagem(span*TRAJ.prog);
+  if(span && !TRAJ.dias && ACT && ACT.tempoViagem) ACT.tempoViagem(TRAJ.dAno + span*TRAJ.prog);
   $('#trajfill').style.width = (TRAJ.prog*100).toFixed(1)+'%';
   if(span){
     const ano = TRAJ.ano0 + span*TRAJ.prog;
@@ -5646,6 +5691,7 @@ const PLAYLIST = [
 const MUSIC_URL = null; // troque por 'minha-trilha.mp3' (mesmo diretório) para tocar sua própria música em loop
 const AUDIO = (function(){
   let ctx=null, master=null, musGain=null, started=false, amb=null, extEl=null;
+  let sfxMudo = false;   /* efeitos separados da música */
   let muted = store.get('carto:snd','0')==='1';
   let trk = Math.min(PLAYLIST.length-1, Math.max(0, parseInt(store.get('carto:trk','0'),10)||0));
   let vol = Math.min(1, Math.max(0, parseFloat(store.get('carto:vol','0.5'))||0.5));
@@ -5859,7 +5905,7 @@ const AUDIO = (function(){
   }
   let lastEnter = 0;
   function sfx(name){
-    if(muted || !ensure()) return;
+    if(sfxMudo || !ensure()) return;
     if(ctx.state==='suspended'){ try{ ctx.resume(); }catch(e){} }
     if(name==='enter') lastEnter = performance.now();
     if(name==='warp' && performance.now() - lastEnter < 900) return;
@@ -5919,6 +5965,7 @@ const AUDIO = (function(){
     }
   }
   function boot(){
+    sfxMudo = store.get('carto:sfx', '0') === '1';
     ensure();
     if(ctx && ctx.state==='suspended'){ try{ ctx.resume(); }catch(e){} }
     if(!muted) startAmbient();
@@ -5937,7 +5984,9 @@ const AUDIO = (function(){
     plSync();
   }
   function syncBtn(){ const b = $('#btnsnd'); if(b) b.classList.toggle('mut', muted); }
-  return {boot, sfx, toggle, running, setTrack, setVol, next:()=>setTrack(trk+1), prev:()=>setTrack(trk-1), plSync, get trk(){return trk;}, get muted(){return muted;}, get playing(){return !!(audioEl && !audioEl.paused);}, pause:()=>{ killFade(); if(audioEl){ audioEl.volume = vol; audioEl.pause(); } plSync(); }, resume:()=>{ if(muted){ toggle(); return; } if(audioEl){ audioEl.volume = vol; audioEl.play().catch(()=>{}); } else startAmbient(); plSync(); }};
+  return {boot, sfx, toggle, running,
+    toggleSfx(){ sfxMudo = !sfxMudo; store.set('carto:sfx', sfxMudo ? '1' : '0'); },
+    get sfxMudo(){ return sfxMudo; }, setTrack, setVol, next:()=>setTrack(trk+1), prev:()=>setTrack(trk-1), plSync, get trk(){return trk;}, get muted(){return muted;}, get playing(){return !!(audioEl && !audioEl.paused);}, pause:()=>{ killFade(); if(audioEl){ audioEl.volume = vol; audioEl.pause(); } plSync(); }, resume:()=>{ if(muted){ toggle(); return; } if(audioEl){ audioEl.volume = vol; audioEl.play().catch(()=>{}); } else startAmbient(); plSync(); }};
 })();
 
 /* ---------- voo de câmera ---------- */
@@ -6045,6 +6094,9 @@ function gotoFocus(bodyId, continuo, deCorpo){
     const spin = (continuo && ACT && ACT.kind==='system') ? ACT.spin : 0;
     ST.level='focus'; ST.sys=b._sys; ST.body=bodyId; ST.mapCard=null;
     markVisited(bodyId);
+    { const bLT = ALLBODIES[bodyId];
+      if(bLT && typeof temLinhaDoTempo === 'function' && temLinhaDoTempo(bLT))
+        tutInicia('lt_intro', [{tx:'Este corpo tem uma <b>LINHA DO TEMPO</b>: o botão ≋ reconstrói a viagem dele, com os marcos e o relógio dos anos.', alvo:'#vertraj, #btntraj'}]); }
     swapScene(buildFocus(bodyId, spin), continuo || !!deCorpo);
     if(deCorpo) riseFrom(deCorpo);      /* recua de dentro da lua até o planeta */
     uiSync(); pushNav(); syncHash(); hideHint();
@@ -6301,6 +6353,7 @@ function cotidianoDe(km){
 }
 function openCompare(A, B){
   feito('comparar');
+  tutInicia('cmpcard', [{tx:'<b>COMPARAÇÃO EM ESCALA REAL:</b> quando a diferença passa de 3,2 vezes, o menor aparece DENTRO do maior. A razão de volume diz quantas vezes ele caberia ali.'}]);
   const dA = parseDia(A), dB = parseDia(B);
   let viz = '';
   if(dA && dB){
@@ -6376,6 +6429,14 @@ const norm = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLo
 const VIS = new Set(String(store.get('carto:vis','')).split(',').filter(Boolean));
 /* missões de bordo: conquistas de ação (além dos visitados), do esboço do Rodrigo */
 const FEITO = new Set(String(store.get('carto:feitos','')).split(',').filter(Boolean));
+let FEITO_TS = {};
+try{ FEITO_TS = JSON.parse(store.get('carto:feitosts','{}')) || {}; }catch(e){ FEITO_TS = {}; }
+const CONQ_DESC = {visita:'Selecione um corpo e entre nele.', sondas:'No filtro ≋, ligue a linha das SONDAS.',
+  busca:'Tecla S ou ⌕: busque um corpo e vá até ele.', cinco:'Entre em 5 corpos diferentes do Sistema Solar.',
+  pause:'No relógio do canto, pause o tempo e retome.', galaxia:'Suba até a escala da galáxia.',
+  sondavisita:'Selecione uma sonda (Voyager, Pioneer...) e entre nela.',
+  comparar:'Use o ◫ para comparar dois corpos em escala real.', tempo:'No ◈ do relógio, viaje para outra data.',
+  apollo:'Abra a linha do tempo da Apollo 11 ou 13.', sistemacompleto:'Visite todos os corpos de um sistema.'};
 const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A LINHA DAS SONDAS',
   busca:'CAD-03 · LOCALIZAR PELA BUSCA', cinco:'CAD-04 · VISITAR 5 CORPOS DO SISTEMA SOLAR',
   pause:'CAD-05 · PAUSAR E RETOMAR O RELÓGIO', galaxia:'CAD-06 · SUBIR ATÉ A GALÁXIA',
@@ -6385,8 +6446,11 @@ const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A
 function feito(k){
   if(FEITO.has(k)) return;
   FEITO.add(k);
+  FEITO_TS[k] = Date.now();
   store.set('carto:feitos', [...FEITO].join(','));
+  store.set('carto:feitosts', JSON.stringify(FEITO_TS));
   toastMissao(k);
+  checaPromocao();
   if($('#mission').classList.contains('on')) missRender();
 }
 /* selo de conquista, estilo jogo: código + nome, desliza e some */
@@ -6398,7 +6462,7 @@ function toastMissao(k){
     document.body.appendChild(el);
   }
   const par = rot.split(' · ');
-  el.innerHTML = '<b>✓ MISSÃO CONCLUÍDA</b><span>' + esc(par[0]) + ' · ' + esc(par[1]) + '</span>';
+  el.innerHTML = '<b>✓ CONQUISTA REGISTRADA</b><span>' + esc(par[0]) + ' · ' + esc(par[1]) + '</span>';
   el.classList.remove('on');
   void el.offsetWidth;
   el.classList.add('on');
@@ -6406,6 +6470,23 @@ function toastMissao(k){
   toastMissao._t = setTimeout(()=>el.classList.remove('on'), 3200);
 }
 function cadCinco(){ return [...VIS].filter(id=>ALLBODIES[id] && ALLBODIES[id]._sys === 'sol').length; }
+/* subiu de patente? toast de promoção, o momento mais gostoso do jogo */
+function checaPromocao(){
+  const tot = Object.keys(ALLBODIES).length;
+  const n = [...VIS].filter(id=>ALLBODIES[id]).length;
+  const t = patenteDe(Math.min(n + FEITO.size*2, tot), tot).cur.t;
+  const antes = store.get('carto:pat', '');
+  if(antes && antes !== t) toastPromo(t);
+  store.set('carto:pat', t);
+}
+function toastPromo(t){
+  let el = $('#mtoast');
+  if(!el){ el = document.createElement('div'); el.id = 'mtoast'; document.body.appendChild(el); }
+  el.innerHTML = '<b>★ PROMOVIDO</b><span>PATENTE · ' + esc(t) + '</span>';
+  el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
+  clearTimeout(toastMissao._t);
+  toastMissao._t = setTimeout(()=>el.classList.remove('on'), 3600);
+}
 /* os mais recentes primeiro, para o buscar sugerir "voltar aonde eu estava" */
 let REC = String(store.get('carto:rec','')).split(',').filter(Boolean);
 let FRQ = {};
@@ -6427,6 +6508,7 @@ function markVisited(id){
   if(ALLBODIES[id] && ALLBODIES[id].sonda) feito('sondavisita');
   if(cadCinco() >= 4) feito('cinco');   /* esta visita fecha a quinta */
   if(typeof progressoSistemas === 'function' && progressoSistemas().some(x=>x.total > 1 && x.vistos >= x.total)) feito('sistemacompleto');
+  checaPromocao();
   REC = [id].concat(REC.filter(x=>x!==id)).slice(0, 20);
   store.set('carto:rec', REC.join(','));
   FRQ[id] = (FRQ[id]||0) + 1;
@@ -6464,6 +6546,7 @@ function catDe(b){
 const MISSFILTROS = [
   {k:'tudo',     t:'TUDO',       f:()=>true},
   {k:'sistemas', t:'★ SISTEMAS', f:()=>true},
+  {k:'conquistas', t:'⬡ CONQUISTAS', f:()=>true},
   {k:'faltam',   t:'A VISITAR',  f:b=>!VIS.has(b.id)},
   {k:'visto',    t:'VISITADOS',  f:b=>VIS.has(b.id)},
   {k:'hab',      t:'HABITÁVEIS', f:b=>(b.hab||0) >= 30},
@@ -6558,25 +6641,37 @@ function missRender(){
   const sis = progressoSistemas();
   const selos = sis.filter(s=>s.vistos>=s.total).length;
   $('#misspat').textContent = pat.cur.t;
+  $('#misscnt').onclick = (e)=>{ if(e.target.closest('[data-abreconq]')){ MISS.filtro='conquistas'; missRender(); } };
   $('#misscnt').innerHTML = '<b>'+n+'</b> / '+total+' VISITADOS'
-    + (FEITO.size ? ' · <b>'+FEITO.size+'</b> MISSÕES (+'+bonus+')' : '')
+    + ' · <span class="lnkconq" data-abreconq="1"><b>'+FEITO.size+'</b> / '+Object.keys(MISS_ROT).length+' CONQUISTAS</span>'
     + (selos ? ' · <b>'+selos+'</b>/'+sis.length+' SELOS' : '');
   $('#missbar').firstElementChild.style.width = Math.round(n/total*100)+'%';
   $('#missnext').textContent = pat.nxt ? (pat.cur.d+' Faltam '+(pat.nxt.n-n)+' para '+pat.nxt.t+'.') : pat.cur.d;
-  /* as missões de bordo da patente, com o vivo "faltam n" */
-  { const c5 = cadCinco();
-    const linhas = Object.keys(MISS_ROT).map(k=>{
-      let ok = FEITO.has(k), extra = '';
-      if(k === 'cinco'){ ok = ok || c5 >= 5; if(!ok) extra = ' · FALTAM ' + (5 - c5); }
-      return '<span class="cmk'+(ok?' ok':'')+'">'+(ok?'✓':'○')+' '+MISS_ROT[k]+extra+'</span>';
-    }).join('');
-    $('#cadmiss').innerHTML = linhas;
-  }
+  $('#cadmiss').innerHTML = '';
 
   const q = norm(MISS.q||'');
   $('#missqx').classList.toggle('on', !!q);
   const el = $('#misslist');
 
+  if(MISS.filtro==='conquistas'){
+    const c5 = cadCinco();
+    el.innerHTML = Object.keys(MISS_ROT).map(k=>{
+      let ok = FEITO.has(k), extra = '';
+      if(k === 'cinco'){ ok = ok || c5 >= 5; if(!ok && c5 > 0) extra = ' · FALTAM ' + (5 - c5); }
+      const par = MISS_ROT[k].split(' · ');
+      const quando = ok && FEITO_TS[k]
+        ? new Date(FEITO_TS[k]).toLocaleDateString('pt-BR') + ' ' + new Date(FEITO_TS[k]).toLocaleTimeString('pt-BR').slice(0,5)
+        : null;
+      return '<li class="'+(ok?'vis':'')+'">'
+        + '<span class="mdot"></span>'
+        + '<span class="minfo"><span class="mnm">'+(ok?'✓ ':'○ ')+esc(par[0])+' · '+esc(par[1])+extra+'</span>'
+        + '<span class="msub">'+(quando ? 'CONCLUÍDA EM '+quando : esc(CONQ_DESC[k]||''))+'</span></span>'
+        + '</li>';
+    }).join('');
+    $('#missfootcnt').textContent = FEITO.size + ' DE ' + Object.keys(MISS_ROT).length + ' CONQUISTAS · CADA UMA VALE 2 CORPOS NA CARREIRA';
+    $('#misschips').querySelectorAll('.mchip').forEach(c=>c.classList.toggle('on', c.dataset.k===MISS.filtro));
+    return;
+  }
   if(MISS.filtro==='sistemas'){
     const gals = progressoGalaxias(sis);
     let html = '', achou = 0;
@@ -6673,8 +6768,10 @@ function missOpen(){
   $('#mission').classList.add('on'); missRender();
   tutInicia('registro', [
     {tx:'<b>REGISTRO DE BORDO:</b> tudo que você visita fica anotado aqui, com busca, filtros e ordenações.'},
-    {tx:'No chip <b>★ SISTEMAS</b> a lista vira uma árvore: galáxias abrem sistemas, sistemas abrem corpos, e os + expandem cada nível.'},
-    {tx:'E as <b>PATENTES</b>: visitando mundos você sobe de CADETE a CARTÓGRAFO-MOR. A barra de progresso e as conquistas por sistema moram aqui.'}
+    {tx:'Clique no chip <b>★ SISTEMAS</b>.',
+     alvo:'#misschips .mchip[data-k="sistemas"]', espera:()=>MISS.filtro === 'sistemas'},
+    {tx:'A lista virou uma <b>árvore</b>: galáxias abrem sistemas, sistemas abrem corpos, e os + expandem cada nível.'},
+    {tx:'E as <b>PATENTES</b>: visitando mundos e fechando conquistas você sobe de CADETE a CARTÓGRAFO-MOR. A barra de progresso mora aqui.'}
   ]);
 }
 function missClose(){ $('#mission').classList.remove('on'); }
@@ -7166,8 +7263,17 @@ const SEGV = new THREE.Vector3();   /* alvo da trava de centro no mapa */
 function pulsoCamada(cls){
   if(!ACT || !ACT.sel || !ACT.sel.orbits) return;
   const alvo = ACT.sel.orbits.filter(o=>o.cls === cls);
-  for(const o of alvo){ o.mat.color.setHex(0xffb454); o.mat.opacity = 0.95; }
-  setTimeout(()=>{ for(const o of alvo){ o.mat.color.setHex(o.c); o.mat.opacity = o.o; } applySel(); }, 950);
+  if(!alvo.length) return;
+  /* fade suave na PRÓPRIA cor: sobe até clarear e volta, sem trocar de paleta */
+  const t0 = performance.now(), dur = 1100;
+  const anda = (now)=>{
+    const k = Math.min(1, (now - t0)/dur);
+    const e = Math.sin(k * Math.PI);
+    for(const o of alvo) o.mat.opacity = o.o + (0.9 - o.o) * e;
+    if(k < 1) requestAnimationFrame(anda);
+    else { for(const o of alvo) o.mat.opacity = o.o; applySel(); }
+  };
+  requestAnimationFrame(anda);
 }
 function aplicaObjetos(){
   if(!ACT || !ACT.objs) return;
@@ -7261,6 +7367,8 @@ $('#mission').addEventListener('click', e=>{ if(e.target.id==='mission') missClo
   $('#missqx').addEventListener('click', ()=>{ MISS.q=''; $('#missq').value=''; missRender(); $('#missq').focus(); });
   $('#misslist').addEventListener('click', e=>{
     /* balança: arma o primeiro corpo, o segundo abre a análise sem sair do painel */
+    const lc = e.target.closest('[data-abreconq]');
+    if(lc){ MISS.filtro = 'conquistas'; missRender(); return; }
     const cmpBtn = e.target.closest('button[data-cmp]');
     if(cmpBtn){
       e.stopPropagation();
@@ -7589,7 +7697,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r87';
+const BUILD = 'r88';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -7652,7 +7760,7 @@ $('#diagchip').addEventListener('click', function(){ this.classList.remove('on')
   }
   ['pointerdown','pointerup','keydown','touchend'].forEach(ev=>window.addEventListener(ev, tryBoot));
 })();
-$('#btnsnd').addEventListener('click', ()=>{ $('#filtpop').classList.remove('on'); $('#player').classList.toggle('on'); AUDIO.plSync(); });
+$('#btnsnd').addEventListener('click', ()=>{ $('#filtpop').classList.remove('on'); $('#cfgpop').classList.remove('on'); $('#datepop').classList.remove('on'); $('#player').classList.toggle('on'); AUDIO.plSync(); });
 $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: coarse)').matches));
 /* balãozinho no nosso estilo: qualquer elemento com data-tip ganha um */
 (function(){
@@ -7689,14 +7797,37 @@ $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: c
 /* ============================ TUTORIAL DE BORDO ============================
    Balões sequenciais no nosso estilo, sem tirar o usuário do app. Cada chave
    toca UMA vez (carto:tut); as boas-vindas podem ser revistas pelo manual. */
-const TUT = {v:new Set(String(store.get('carto:tut','')).split(',').filter(Boolean)), fila:null, i:0, max:0, alvoEls:[], tick:null, _t0:0};
+const TUT = {v:new Set(String(store.get('carto:tut','')).split(',').filter(Boolean)), fila:null, i:0, max:0, alvoEls:[], tick:null, _t0:0, aoFechar:null};
 function tutFeito(k){ TUT.v.add(k); store.set('carto:tut', [...TUT.v].join(',')); }
 function tutFecha(){
   if(TUT.tick){ clearInterval(TUT.tick); TUT.tick = null; }
   $('#tut').classList.remove('on');
-  for(const el of TUT.alvoEls) el.classList.remove('tutfoco');
+  $('#tutcaixa').classList.remove('on');
   TUT.alvoEls = [];
   TUT.fila = null;
+  const fim = TUT.aoFechar; TUT.aoFechar = null;
+  if(fim) setTimeout(fim, 80);
+}
+/* a caixa única: nasce do balão, viaja e cresce até abraçar o(s) alvo(s),
+   e segue alvos que se mexem (labels de planetas orbitando) */
+function tutCaixaRect(){
+  if(!TUT.alvoEls.length) return null;
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  for(const el of TUT.alvoEls){
+    const r = el.getBoundingClientRect();
+    if(!r.width && !r.height) continue;
+    x0 = Math.min(x0, r.left); y0 = Math.min(y0, r.top);
+    x1 = Math.max(x1, r.right); y1 = Math.max(y1, r.bottom);
+  }
+  if(x1 < x0) return null;
+  return {x:x0-7, y:y0-7, w:(x1-x0)+14, h:(y1-y0)+14};
+}
+function tutCaixaSegue(){
+  if(!TUT.fila || !TUT.alvoEls.length) return;
+  const c = $('#tutcaixa'), r = tutCaixaRect();
+  if(!r){ c.classList.remove('on'); return; }
+  c.style.left = r.x + 'px'; c.style.top = r.y + 'px';
+  c.style.width = r.w + 'px'; c.style.height = r.h + 'px';
 }
 function tutMostra(){
   const p = TUT.fila && TUT.fila[TUT.i];
@@ -7709,18 +7840,34 @@ function tutMostra(){
   /* relendo um passo já vencido, nada re-arma: só leitura e PRÓXIMO livre */
   const releitura = TUT.i < TUT.max;
   const nx = $('#tutnext');
-  nx.textContent = (TUT.i === TUT.fila.length-1) ? 'ENTENDI' : 'PRÓXIMO ▸';
+  nx.textContent = p.botao ? p.botao
+    : (TUT.i === TUT.fila.length-1 ? (TUT.fila.length > 1 ? 'CONCLUIR' : 'ENTENDI') : 'PRÓXIMO ▸');
   nx.style.display = '';
   nx.disabled = !!p.espera && !releitura;
   const pv = $('#tutprev');
   pv.style.display = TUT.i > 0 ? '' : 'none';
   $('#tutskip').style.display = (TUT.fila.length > 1 && TUT.i < TUT.fila.length-1) ? '' : 'none';
-  if(p.alvo) document.querySelectorAll(p.alvo).forEach(el=>{ el.classList.add('tutfoco'); TUT.alvoEls.push(el); });
+  TUT.alvoEls = [];
+  if(p.alvo) document.querySelectorAll(p.alvo).forEach(el=>TUT.alvoEls.push(el));
   if(p.alvoLabel && ACT && ACT.labels){
     for(const L of ACT.labels)
       if(L.el && (L.el.textContent === p.alvoLabel || (L.base && L.base === p.alvoLabel))){
-        L.el.classList.add('tutfoco'); TUT.alvoEls.push(L.el); break;
+        TUT.alvoEls.push(L.el); break;
       }
+  }
+  /* a caixa parte do balão e viaja até o alvo */
+  { const c = $('#tutcaixa');
+    if(TUT.alvoEls.length){
+      const b = $('#tut').getBoundingClientRect();
+      c.classList.remove('viaja');
+      c.style.left = (b.left + b.width/2 - 20) + 'px';
+      c.style.top = (b.top + b.height/2 - 12) + 'px';
+      c.style.width = '40px'; c.style.height = '24px';
+      void c.offsetWidth;
+      c.classList.add('viaja', 'on');
+      tutCaixaSegue();
+      setTimeout(()=>c.classList.remove('viaja'), 620);
+    } else c.classList.remove('on');
   }
   if(TUT.tick){ clearInterval(TUT.tick); TUT.tick = null; }
   if(!releitura && p.init){ try{ p.init(); }catch(e){} }
@@ -7752,26 +7899,30 @@ $('#tutskip').addEventListener('click', tutFecha);
 function tutBoasVindas(){
   const t = matchMedia('(pointer: coarse)').matches;
   tutInicia('boasvindas', [
-    {tx:'<b>BEM-VINDO A BORDO.</b><br>Este é o Sistema Solar, a nossa casa. '
-       + (t ? 'Arraste com um dedo para orbitar. Pince para aproximar.' : 'Arraste para orbitar. Role para aproximar.'),
+    {tx:'<b>BEM-VINDO A BORDO, NAVEGADOR.</b><br>Um mapa vivo do nosso pedaço de universo, com dados reais e navegação livre. Quer um giro rápido pelos controles?',
+     botao:'COMEÇAR ▸'},
+    {tx:(t ? 'Arraste com um dedo para orbitar. Pince para aproximar.' : 'Arraste para orbitar. Role para aproximar.'),
      init:()=>{ TUT._y = CAM.yaw; TUT._d = CAM.dist; },
      espera:()=>Math.abs(CAM.yaw - TUT._y) > 0.12 || Math.abs(CAM.dist - TUT._d) > 2},
     {tx:'As distâncias e os tamanhos são <b>cênicos</b>, desenhados para navegação. Os dados das fichas são reais.'},
-    {tx:(t?'Toque':'Clique')+' na <b>TERRA</b>, ou em qualquer planeta. O primeiro '+(t?'toque':'clique')+' abre a ficha e trava a câmera nele. Ainda não entra.',
+    {tx:(t?'Toque':'Clique')+' na <b>TERRA</b>, ou em qualquer planeta. O primeiro '+(t?'toque':'clique')+' abre a ficha e trava a câmera nele.',
      alvoLabel:'TERRA', espera:()=>!!ST.mapCard},
     {tx:'Agora toque em <b>ENTRAR</b> no topo da ficha, ou de novo no corpo.',
      alvo:'#navgo', espera:()=>ST.level === 'focus'},
     {tx:'Para voltar, '+(t?'junte os dedos':'afaste o zoom')+' até a cena abrir, ou use o ESC.',
      espera:()=>ST.level !== 'focus'},
-    {tx:'Também dá para navegar pelo <b>rastro</b> aqui de cima: UNIVERSO, galáxia e sistema são clicáveis.',
-     alvo:'#crumbs'},
+    {tx:'Também dá para navegar pelo <b>rastro</b> aqui de cima: clique em <b>VIA LÁCTEA</b> para subir até a galáxia.',
+     alvo:'#crumbs', espera:()=>ST.level === 'galaxy'},
+    {tx:'O mapa da galáxia. Agora volte para casa: clique no <b>SISTEMA SOLAR</b> (piscando) e depois em ENTRAR, ou use o botão « voltar.',
+     alvoLabel:'SISTEMA SOLAR', alvo:'#navback', espera:()=>ST.level === 'system' && ST.sys === 'sol'},
     {tx:'Filtros: abra o <b>≋</b> e LIGUE a linha das <b>SONDAS</b>. As rotas surgem no mapa. Cada filtro liga ou desliga uma camada.',
      alvo:'#btnfilt',
      init:()=>{ if(ACT && ACT.kind === 'system' && CAM.dist < 44) tweenCam({dist:48}, 900); },
      espera:()=>FILTROS.sonda === true},
-    {tx:'O canto de baixo, seu painel de bordo: <b>CAMPO DE VISÃO</b> é a largura real da tela; abaixo, o endereço no céu (cênico, ou RA/DEC real na engrenagem); <b>T+</b> é a sua sessão; e a <b>data do sistema</b> corre com pause e viagem no tempo.',
+    {tx:'Seu painel de bordo: <b>CAMPO DE VISÃO</b> é a largura real da tela; abaixo, o endereço no espaço (cênico, ou RA/DEC, altere nas configurações); <b>T+</b> é o tempo da sua sessão; e abaixo a <b>data real do sistema solar</b>, com opção de pausar ou viajar pelo tempo.',
      alvo:'#navpod, #simclock'},
-    {tx:'E aqui em cima: busca, registro de bordo, som, foto e configurações. O <b>?</b> guarda o manual. Boa viagem, navegador.', alvo:'#topright'}
+    {tx:'Aqui temos o menu: navegação, música e sons, modo foto, filtros, diário de bordo, pesquisa e ajuda. O <b>?</b> guarda o manual. Boa viagem, navegador.',
+     alvo:'#topright'}
   ]);
 }
 { const td = $('#tutdebug'); if(td) td.addEventListener('click', ()=>{
@@ -7781,6 +7932,14 @@ function tutBoasVindas(){
   showHint('TUTORIAIS RESETADOS');
   setTimeout(tutBoasVindas, 500);
 }); }
+{ const d1 = $('#dbgtoast'); if(d1) d1.addEventListener('click', ()=>toastMissao('busca'));
+  const d2 = $('#dbgpromo'); if(d2) d2.addEventListener('click', ()=>toastPromo('TIMONEIRO'));
+  const d3 = $('#dbgconq'); if(d3) d3.addEventListener('click', ()=>{
+    FEITO.clear(); FEITO_TS = {};
+    store.set('carto:feitos', ''); store.set('carto:feitosts', '{}'); store.set('carto:pat', '');
+    showHint('CONQUISTAS RESETADAS');
+    if($('#mission').classList.contains('on')) missRender();
+  }); }
 function tutComparar(){
   tutInicia('comparar', [
     {tx:'<b>COMPARAR:</b> o primeiro corpo ficou marcado. Agora abra qualquer outro, pela busca, pelo mapa ou pelo registro, e toque em <b>◫ COMPARAR</b> de novo: a análise sai em escala real.'},
@@ -7859,6 +8018,10 @@ function cfgSync(){
   if(rr){ rr.classList.toggle('off', !RASTRO.on); rr.querySelector('b').textContent = RASTRO.on ? 'LIGADO' : 'DESLIGADO'; }
   const rc = $('#cfgpop').querySelector('[data-coord]');
   if(rc){ rc.classList.toggle('off', !COORD.real); rc.querySelector('b').textContent = COORD.real ? 'LIGADO' : 'DESLIGADO'; }
+  const rm2 = $('#cfgpop').querySelector('[data-som="mus"]');
+  if(rm2){ rm2.classList.toggle('off', AUDIO.muted); rm2.querySelector('b').textContent = AUDIO.muted ? 'DESLIGADA' : 'LIGADA'; }
+  const rf2 = $('#cfgpop').querySelector('[data-som="fx"]');
+  if(rf2){ rf2.classList.toggle('off', AUDIO.sfxMudo); rf2.querySelector('b').textContent = AUDIO.sfxMudo ? 'DESLIGADOS' : 'LIGADOS'; }
   $('#cfgpop').querySelectorAll('[data-vel]').forEach(r=>{
     const on = SIMT.vel === r.dataset.vel;
     r.classList.toggle('off', !on);
@@ -7877,6 +8040,13 @@ $('#btncfg').addEventListener('click', ()=>{
   cfgSync();
 });
 $('#cfgpop').addEventListener('click', e=>{
+  const rS = e.target.closest('[data-som]');
+  if(rS){
+    if(rS.dataset.som === 'mus') AUDIO.toggle();
+    else AUDIO.toggleSfx();
+    cfgSync();
+    return;
+  }
   const rC = e.target.closest('[data-coord]');
   if(rC){
     COORD.real = !COORD.real;
@@ -8079,6 +8249,7 @@ function loop(){
     else SIMT.data += dt * SIMT.diasPorSeg() * 86400000;
   }
   if(now - SIMCLK_T > 400){ SIMCLK_T = now; if(typeof simClockUI === 'function') simClockUI(); }
+  if(typeof tutCaixaSegue === 'function' && TUT && TUT.fila && !$('#tutcaixa').classList.contains('viaja')) tutCaixaSegue();
   /* trava de centro no mapa: o corpo selecionado vira o pivô da câmera,
      e soltar a seleção devolve o centro suavemente */
   if(ACT && ACT.kind==='system' && !DIVE && !TRAJ && !CAMTW){
