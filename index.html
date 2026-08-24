@@ -144,6 +144,8 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #filtpop::before,#filtpop::after{width:10px;height:10px}
 #cfgpop::before,#cfgpop::after{width:10px;height:10px}
 #tut::before,#tut::after{width:12px;height:12px}
+#tut::before{background:linear-gradient(-45deg,transparent calc(50% - 1px),rgba(255,180,84,.45) calc(50% - 1px),rgba(255,180,84,.45) 50%,transparent 50%)}
+#tut::after{background:linear-gradient(-45deg,transparent 50%,rgba(255,180,84,.45) 50%,rgba(255,180,84,.45) calc(50% + 1px),transparent calc(50% + 1px))}
 #nowplay{position:absolute;top:64px;left:50%;transform:translateX(-50%);z-index:15;
   font-family:var(--mono);font-size:10px;letter-spacing:2.5px;color:var(--ion);
   background:rgba(6,12,24,.78);border:1px solid var(--line);padding:6px 14px;
@@ -433,6 +435,7 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #tip.amber{color:var(--amber);border-color:rgba(255,180,84,.5)}
 #tip.baixo{transform:translate(-50%,0)}
 #filtpop.on,#cfgpop.on,#player.on,#datepop.on{animation:popnasce .26s ease-out}
+#mission.on #misscard,#help.on #helpcard,#cmp.on #cmpcard,#finder.on #findbox{animation:popnasce .26s ease-out}
 @keyframes popnasce{0%{opacity:0;transform:translateY(-7px) scale(.985)}100%{opacity:1;transform:translateY(0) scale(1)}}
 #tut{position:absolute;left:50%;bottom:118px;transform:translateX(-50%);z-index:70;
   width:min(430px,92vw);height:max-content;display:none;background:var(--panel);
@@ -441,14 +444,13 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #tuthead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;
   font-family:var(--mono);font-size:8.5px;letter-spacing:2.5px;color:var(--amber)}
 #tutcaixa{position:fixed;z-index:69;pointer-events:none;border:1px solid var(--amber);opacity:0;
-  clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
-  animation:caixapulsa 1.8s ease-in-out infinite}
+  animation:caixapulsa 1.5s ease-in-out infinite}
 #tutcaixa.viaja{transition:left .55s cubic-bezier(.22,.9,.34,1), top .55s cubic-bezier(.22,.9,.34,1),
   width .55s cubic-bezier(.22,.9,.34,1), height .55s cubic-bezier(.22,.9,.34,1), opacity .3s}
 #tutcaixa.on{opacity:1}
 @keyframes caixapulsa{
-  0%,100%{box-shadow:0 0 8px rgba(255,180,84,.22), inset 0 0 8px rgba(255,180,84,.08)}
-  50%{box-shadow:0 0 26px rgba(255,180,84,.6), inset 0 0 14px rgba(255,180,84,.16)}
+  0%,100%{box-shadow:0 0 8px rgba(255,180,84,.22);transform:scale(1)}
+  50%{box-shadow:0 0 22px rgba(255,180,84,.55);transform:scale(1.03)}
 }
 #tut.on{display:block}
 #tuttx{font-size:12.5px;line-height:1.75;color:var(--txt)}
@@ -462,6 +464,10 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #tut #tutnext:disabled:hover{color:var(--dim2);border-color:var(--line2)}
 #tut #tutnext{color:var(--amber);border-color:rgba(255,180,84,.5)}
 #tut #tutn{font-family:var(--mono);font-size:8.5px;letter-spacing:2px;color:var(--dim2)}
+#tutcheck{display:flex;flex-direction:column;gap:4px;margin-top:8px}
+#tutcheck:empty{display:none}
+#tutcheck .tchk{font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;color:var(--dim2)}
+#tutcheck .tchk.ok{color:var(--amber)}
 #tutdebug,#dbgtoast,#dbgpromo,#dbgconq{margin-left:8px;background:none;border:1px dashed var(--line2);color:var(--dim2);
   font-family:var(--mono);font-size:7.5px;letter-spacing:1.5px;padding:2px 6px;cursor:pointer;opacity:.6}
 #tutdebug:hover,#dbgtoast:hover,#dbgpromo:hover,#dbgconq:hover{color:var(--amber);border-color:var(--amber);opacity:1}
@@ -814,6 +820,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div id="tut">
     <div id="tuthead"><span>▸ TUTORIAL DE BORDO</span><span id="tutn"></span></div>
     <div id="tuttx"></div>
+    <div id="tutcheck"></div>
     <div class="trow"><button id="tutskip">PULAR</button><span class="tnav"><button id="tutprev">◂ VOLTAR</button><button id="tutnext">PRÓXIMO ▸</button></span></div>
   </div>
   <div id="tip"></div>
@@ -7264,12 +7271,25 @@ function pulsoCamada(cls){
   if(!ACT || !ACT.sel || !ACT.sel.orbits) return;
   const alvo = ACT.sel.orbits.filter(o=>o.cls === cls);
   if(!alvo.length) return;
-  /* fade suave na PRÓPRIA cor: sobe até clarear e volta, sem trocar de paleta */
-  const t0 = performance.now(), dur = 1100;
+  /* respiro discreto: só um pouco acima da cor normal, e rápido */
+  const t0 = performance.now(), dur = 750;
   const anda = (now)=>{
     const k = Math.min(1, (now - t0)/dur);
     const e = Math.sin(k * Math.PI);
-    for(const o of alvo) o.mat.opacity = o.o + (0.9 - o.o) * e;
+    for(const o of alvo) o.mat.opacity = o.o + Math.min(0.25, 0.9 - o.o) * e;
+    if(k < 1) requestAnimationFrame(anda);
+    else { for(const o of alvo) o.mat.opacity = o.o; applySel(); }
+  };
+  requestAnimationFrame(anda);
+}
+function fadeCamada(cls){
+  if(!ACT || !ACT.sel || !ACT.sel.orbits){ applySel(); return; }
+  const alvo = ACT.sel.orbits.filter(o=>o.cls === cls && o.obj && o.obj.visible);
+  if(!alvo.length){ applySel(); return; }
+  const t0 = performance.now(), dur = 420;
+  const anda = (now)=>{
+    const k = Math.min(1, (now - t0)/dur);
+    for(const o of alvo) o.mat.opacity = o.o * (1 - k);
     if(k < 1) requestAnimationFrame(anda);
     else { for(const o of alvo) o.mat.opacity = o.o; applySel(); }
   };
@@ -7697,7 +7717,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r88';
+const BUILD = 'r89';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -7843,7 +7863,7 @@ function tutMostra(){
   nx.textContent = p.botao ? p.botao
     : (TUT.i === TUT.fila.length-1 ? (TUT.fila.length > 1 ? 'CONCLUIR' : 'ENTENDI') : 'PRÓXIMO ▸');
   nx.style.display = '';
-  nx.disabled = !!p.espera && !releitura;
+  nx.disabled = false;
   const pv = $('#tutprev');
   pv.style.display = TUT.i > 0 ? '' : 'none';
   $('#tutskip').style.display = (TUT.fila.length > 1 && TUT.i < TUT.fila.length-1) ? '' : 'none';
@@ -7872,18 +7892,31 @@ function tutMostra(){
   if(TUT.tick){ clearInterval(TUT.tick); TUT.tick = null; }
   if(!releitura && p.init){ try{ p.init(); }catch(e){} }
   TUT._t0 = performance.now();
-  if(p.espera && !releitura){
+  /* checklist: as ações vão sendo marcadas e SÓ ENTÃO o PRÓXIMO libera.
+     Nada avança sozinho: o navegador lê, faz, e segue quando quiser. */
+  const cks = p.checks || (p.espera ? [{tx:null, ok:p.espera}] : []);
+  TUT._oks = cks.map(()=>false);
+  const lst = $('#tutcheck');
+  lst.innerHTML = cks.some(c=>c.tx)
+    ? cks.map((c,ix)=>'<span class="tchk" data-ix="'+ix+'">○ '+c.tx+'</span>').join('')
+    : '';
+  if(cks.length && !releitura){
+    nx.disabled = true;
     TUT.tick = setInterval(()=>{
       try{
-        /* respiro de 900ms: o passo aparece antes de qualquer gatilho valer */
-        if(performance.now() - TUT._t0 < 900) return;
-        if(p.espera()){
-          clearInterval(TUT.tick); TUT.tick = null;
-          nx.disabled = false;
-          setTimeout(()=>{ TUT.i++; tutMostra(); }, 350);
-        }
+        if(performance.now() - TUT._t0 < 700) return;
+        let todos = true;
+        cks.forEach((c,ix)=>{
+          if(!TUT._oks[ix]){ try{ if(c.ok()) TUT._oks[ix] = true; }catch(e){} }
+          if(!TUT._oks[ix]) todos = false;
+          else if(c.tx){
+            const elc = lst.querySelector('[data-ix="'+ix+'"]');
+            if(elc && !elc.classList.contains('ok')){ elc.textContent = '✓ ' + c.tx; elc.classList.add('ok'); }
+          }
+        });
+        if(todos){ clearInterval(TUT.tick); TUT.tick = null; nx.disabled = false; }
       }catch(e){}
-    }, 250);
+    }, 220);
   }
   $('#tut').classList.add('on');
 }
@@ -7903,7 +7936,10 @@ function tutBoasVindas(){
      botao:'COMEÇAR ▸'},
     {tx:(t ? 'Arraste com um dedo para orbitar. Pince para aproximar.' : 'Arraste para orbitar. Role para aproximar.'),
      init:()=>{ TUT._y = CAM.yaw; TUT._d = CAM.dist; },
-     espera:()=>Math.abs(CAM.yaw - TUT._y) > 0.12 || Math.abs(CAM.dist - TUT._d) > 2},
+     checks:[
+       {tx:'Arraste e gire o mapa', ok:()=>Math.abs(CAM.yaw - TUT._y) > 0.12},
+       {tx:'Aproxime ou afaste o zoom', ok:()=>Math.abs(CAM.dist - TUT._d) > 2}
+     ]},
     {tx:'As distâncias e os tamanhos são <b>cênicos</b>, desenhados para navegação. Os dados das fichas são reais.'},
     {tx:(t?'Toque':'Clique')+' na <b>TERRA</b>, ou em qualquer planeta. O primeiro '+(t?'toque':'clique')+' abre a ficha e trava a câmera nele.',
      alvoLabel:'TERRA', espera:()=>!!ST.mapCard},
@@ -8108,10 +8144,13 @@ $('#filtpop').addEventListener('click', e=>{
   } else {
     FILTROS[r.dataset.cls] = FILTROS[r.dataset.cls] === false;
     store.set('carto:linhas', ['planeta','anao','estrela','lua','cometa','sonda','satelite','foguete'].filter(k=>FILTROS[k]!==false).join(','));
-    filtSync(); applySel();
+    filtSync();
     if(FILTROS[r.dataset.cls] !== false){
+      applySel();
       if(r.dataset.cls === 'sonda') feito('sondas');
       pulsoCamada(r.dataset.cls);
+    } else {
+      fadeCamada(r.dataset.cls);   /* apagar tem saída suave, não supetão */
     }
   }
 });
@@ -8249,7 +8288,7 @@ function loop(){
     else SIMT.data += dt * SIMT.diasPorSeg() * 86400000;
   }
   if(now - SIMCLK_T > 400){ SIMCLK_T = now; if(typeof simClockUI === 'function') simClockUI(); }
-  if(typeof tutCaixaSegue === 'function' && TUT && TUT.fila && !$('#tutcaixa').classList.contains('viaja')) tutCaixaSegue();
+  if(typeof tutCaixaSegue === 'function' && TUT && TUT.fila) tutCaixaSegue();   /* mira recalculada a cada quadro, mesmo em vôo */
   /* trava de centro no mapa: o corpo selecionado vira o pivô da câmera,
      e soltar a seleção devolve o centro suavemente */
   if(ACT && ACT.kind==='system' && !DIVE && !TRAJ && !CAMTW){
