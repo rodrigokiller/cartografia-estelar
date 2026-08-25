@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>NEBULASTRA // CARTOGRAFIA ESTELAR</title>
+<title>UNIVERSATLAS</title>
 <meta name="theme-color" content="#04070f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='14' fill='%233f8cff'/%3E%3Cellipse cx='32' cy='32' rx='27' ry='8' fill='none' stroke='%237dc4ff' stroke-width='3' transform='rotate(-18 32 32)'/%3E%3C/svg%3E">
 <style>
@@ -501,7 +501,11 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #tutcheck:empty{display:none}
 #tutcheck .tchk{font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;color:var(--dim2)}
 #tutcheck .tchk.ok{color:var(--amber)}
-#brandnm i{color:#8f76c8;font-style:normal}
+/* wordmark UNIVERSATLAS: UNIVERS leve em roxo, ATLAS firme em branco com um
+   halo roxo discreto; o corte é UNIVERS|ATLAS de propósito (decisão do Rodrigo) */
+#brandnm{display:inline-flex;align-items:baseline}
+#brandnm i{color:#8f76c8;font-style:normal;font-weight:400;opacity:.92}
+#brandnm b{color:#eaf2ff;font-weight:700;letter-spacing:3.4px;margin-left:1px;text-shadow:0 0 9px rgba(143,118,200,.45)}
 #tutdebug,#dbgtoast,#dbgpromo,#dbgconq{margin-left:8px;background:none;border:1px dashed var(--line2);color:var(--dim2);
   font-family:var(--mono);font-size:7.5px;letter-spacing:1.5px;padding:2px 6px;cursor:pointer;opacity:.6}
 #tutdebug:hover,#dbgtoast:hover,#dbgpromo:hover,#dbgconq:hover{color:var(--amber);border-color:var(--amber);opacity:1}
@@ -774,7 +778,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div class="corner c-br"><b class="h"></b><b class="v"></b></div>
 
   <div id="topbar">
-    <div id="brand"><span class="mark"></span><span id="brandnm"><i>NEBUL</i>ASTRA</span><button id="tutdebug" title="Resetar os tutoriais (debug)">TUT</button><button id="dbgtoast" title="Testar o toast de conquista (debug)">TST</button><button id="dbgpromo" title="Testar o toast de promoção (debug)">PRM</button><button id="dbgconq" title="Resetar as conquistas (debug)">RSC</button></div>
+    <div id="brand"><span class="mark"></span><span id="brandnm"><i>UNIVERS</i><b>ATLAS</b></span><button id="tutdebug" title="Resetar os tutoriais (debug)">TUT</button><button id="dbgtoast" title="Testar o toast de conquista (debug)">TST</button><button id="dbgpromo" title="Testar o toast de promoção (debug)">PRM</button><button id="dbgconq" title="Resetar as conquistas (debug)">RSC</button></div>
     <div id="crumbs"></div>
     <div id="statuspod">
       <span id="statled"></span>
@@ -975,7 +979,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <p><b>Trava de centro:</b> selecionar um corpo no mapa faz a câmera orbitá-lo: dá para chegar perto de Saturno sem trocar de escala. ESC ou ✕ soltam.</p>
       <p><b>≋ Linha do tempo:</b> sondas, cometas e as Apollo têm a viagem reconstruída, com os planetas NA ÉPOCA certa e marcos clicáveis.</p>
       <p><button class="xbtn" id="tutrever">▸ REVER O TUTORIAL DE BOAS-VINDAS</button></p>
-      <p class="sub">NEBULASTRA · nebulastra.com · o mapa Cartografia Estelar</p>
+      <p class="sub">UNIVERSATLAS · universatlas.com · o mapa Cartografia Estelar</p>
       <p class="sub">Dados: NASA/ESA/IAU, valores aproximados. Linhas em âmbar são referências de ficção.</p>
       <p class="credito">IDEALIZADO E DESENVOLVIDO POR<b>RODRIGO SANGUANINI</b>
         <a href="https://sanguanini.dev" target="_blank" rel="noopener">SANGUANINI.DEV</a></p>
@@ -8241,6 +8245,14 @@ function cardRender(){
 }
 
 function uiSync(){
+  /* a aba do navegador diz ONDE você está, e a marca vem depois: com várias
+     guias abertas é o local que diferencia (pedido do Rodrigo) */
+  { let local = 'UNIVERSO';
+    if(ST.level === 'focus' && ST.body && ALLBODIES[ST.body]) local = ALLBODIES[ST.body].name;
+    else if(ST.level === 'system' && SYS[ST.sys]) local = SYS[ST.sys].name;
+    else if(ST.level === 'galaxy'){ const g = GALAXIES.find(x=>x.id===ST.gal); if(g) local = g.name; }
+    document.title = local + ' // UNIVERSATLAS';
+  }
   $('#scaleval').textContent = {universe:'UNIVERSO', galaxy:'GALÁXIA', system:'SISTEMA', focus:'CORPO'}[ST.level];
   let stat = {universe:'ESCALA MÁXIMA', galaxy:'NAVEGANDO', system:'EM ÓRBITA', focus:'LINK TRAVADO'}[ST.level];
   if(ST.mapCard) stat = 'ALVO CATALOGADO';
@@ -8732,7 +8744,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r114';
+const BUILD = 'r115';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -9306,7 +9318,7 @@ $('#pl_vol').addEventListener('input', e=>AUDIO.setVol(e.target.value/100));
 $('#navback').addEventListener('click', navBack);
 $('#navfwd').addEventListener('click', navFwd);
 
-const BOOTLINES = ['NEBULASTRA · '+BUILD.toUpperCase(),'CALIBRANDO SENSORES ÓPTICOS ......... <span class="ok">OK</span>','LINK DE SATÉLITE 08 ................. <span class="ok">OK</span>','BEM-VINDO A BORDO, NAVEGADOR.'];
+const BOOTLINES = ['UNIVERSATLAS · '+BUILD.toUpperCase(),'CALIBRANDO SENSORES ÓPTICOS ......... <span class="ok">OK</span>','LINK DE SATÉLITE 08 ................. <span class="ok">OK</span>','BEM-VINDO A BORDO, NAVEGADOR.'];
 let bootI = 0;
 function bootNext(){
   if(bootI < BOOTLINES.length){
