@@ -1557,7 +1557,7 @@ PLANETS.push(
   facts:['Foi descoberto "no papel": Le Verrier calculou onde ele deveria estar pelas perturbações em Urano.','Desde a descoberta (1846), só completou 1 volta ao redor do Sol.','Recebe 900× menos luz solar que a Terra, e mesmo assim tem os ventos mais violentos.','Lá dentro, a pressão provavelmente faz chover DIAMANTES de verdade.'],
   fict:'Ad Astra, a estação final da jornada orbita Netuno.',
   moons:[
-   {id:'tritao', name:'TRITÃO', desig:'NETUNO-I', kind:'Lua capturada', hab:6, gbar:0.08, pop:'0',
+   {id:'tritao', name:'TRITÃO', desig:'NETUNO-I · LUA', kind:'Lua capturada', hab:6, gbar:0.08, pop:'0', retro:true,
     quick:[['DIÂMETRO','2.707 km'],['ÓRBITA','5,9 d'],['DESCOBERTA','1846'],['SENTIDO','retrógrado'],['TEMP.','−235 °C'],['GÊISERES','ativos']],
     visual:{mode:'rocky', c1:'#e8d9d2', c2:'#cbb4ab', c3:'#a88d84', scale:4.2, seed:10.7, crater:0.3, cap:0.55, capAmt:0.5, capCol:'#f4eeea', atmo:{col:'#e8c8d8', i:0.35}},
     sections:[
@@ -4262,7 +4262,9 @@ function buildSystem(sysId, spin0){
            volta em 27 s e Io em 1,8 s. Sem dado, fica o balé simbólico. */
         const qOrb = (m.quick || []).find(q=>/ÓRBITA/.test(q[0]));
         const mDias = qOrb ? (parseFloat(String(qOrb[1]).replace(',', '.')) || 0) : 0;
-        orbiters.push({holder:mh, spd:1.5 + (mi%3)*0.5, orb:0, tDias:(/\bd\b|dias|,\d+ d| d$/.test(qOrb ? qOrb[1] : '') ? mDias : 0)});
+        /* lua retrógrada (Tritão): período NEGATIVO, a mini orbita ao contrário */
+        orbiters.push({holder:mh, spd:1.5 + (mi%3)*0.5, orb:0,
+          tDias:(/\bd\b|dias|,\d+ d| d$/.test(qOrb ? qOrb[1] : '') ? mDias : 0) * (m.retro ? -1 : 1)});
         /* anel de órbita da lua, bem apagado, e registro no filtro de objetos:
            esconder o planeta esconde as luas junto (são filhas do holder dele) */
         const aseg = escrAtivo ? 96 : 40, aPos = new Float32Array(aseg*3);
@@ -4446,6 +4448,22 @@ function buildSystem(sysId, spin0){
       sizeAttenuation:false, transparent:true, opacity:0.4, depthWrite:false}))));
     labels.push({el:makeLabel('HELIOPAUSA', 'faint', null), escrOrb:1800,
       get:v=>v.set(Math.cos(0.9)*1800, 120, Math.sin(0.9)*1800)});
+    /* a borda interna da NUVEM DE OORT: ~2.000 UA. No teto do zoom a câmera
+       está DENTRO dela, e ela segue por quase um ano-luz, essa é a lição */
+    const ooN = QLOW ? 700 : 1200, ooPos = new Float32Array(ooN*3);
+    for(let i=0;i<ooN;i++){
+      const th2 = Math.random()*Math.PI*2, ph2 = Math.acos(2*Math.random()-1);
+      const r2 = 30000*(1 + Math.random()*0.75);
+      ooPos[i*3] = r2*Math.sin(ph2)*Math.cos(th2);
+      ooPos[i*3+1] = r2*Math.cos(ph2);
+      ooPos[i*3+2] = r2*Math.sin(ph2)*Math.sin(th2);
+    }
+    const ooG = new THREE.BufferGeometry();
+    ooG.setAttribute('position', new THREE.BufferAttribute(ooPos, 3));
+    scene.add(fade(new THREE.Points(ooG, new THREE.PointsMaterial({color:0x8fa8c8, size:1.0,
+      sizeAttenuation:false, transparent:true, opacity:0.26, depthWrite:false}))));
+    labels.push({el:makeLabel('NUVEM DE OORT', 'faint', null), escrOrb:30000,
+      get:v=>v.set(Math.cos(2.2)*30000, 1500, Math.sin(2.2)*30000)});
   }
   /* limite de zoom calculado pelo objeto mais distante em órbita */
   let alcance = 0;
@@ -5603,6 +5621,24 @@ function buildFocus(bodyId, spin0){
     bg.group.add(brilho);
   }
 
+  if(bodyId === 'tritao'){
+    /* as plumas de nitrogênio da Voyager 2: jatos finos que sobem 8 km retos
+       da calota sul e depois DOBRAM no vento, deixando o risco escuro */
+    const NG = 200, gPos = new Float32Array(NG*3);
+    for(let i=0;i<NG;i++){
+      const t2 = Math.random(), coluna = (i%4)*1.6 - 2.4;
+      const alt = radius*(1.0 + t2*1.15);
+      const deriva = radius*0.55*Math.max(0, t2 - 0.55);
+      gPos[i*3] = Math.cos(coluna)*radius*0.3 + deriva;
+      gPos[i*3+1] = -alt;
+      gPos[i*3+2] = Math.sin(coluna)*radius*0.3 + (Math.random()-0.5)*radius*0.05;
+    }
+    const gg2 = new THREE.BufferGeometry();
+    gg2.setAttribute('position', new THREE.BufferAttribute(gPos, 3));
+    bg.group.add(new THREE.Points(gg2, new THREE.PointsMaterial({color:0x9fb8c8, size:0.045,
+      transparent:true, opacity:0.55, blending:THREE.AdditiveBlending, depthWrite:false, sizeAttenuation:true})));
+  }
+
   if(b.comet){
     /* coma ao redor do núcleo e as duas caudas: poeira (clara) e íons (azul) */
     const sprite = (map, col, sx, sy, op, x, y, z, rot)=>{
@@ -5633,7 +5669,7 @@ function buildFocus(bodyId, spin0){
       const eliptico = !!b.orbita || (ESCR.on && b._sys === 'sol' && ESCALA_REAL_EL[b.id]);
       const H = b.sys.angle + (eliptico ? 0 : (Math.PI*2)*anosSim/Math.pow(b.sys.orbit/ORB_TERRA, 1.5));
       const qOrbF = (m.quick || []).find(q=>/ÓRBITA/.test(q[0]));
-      const tDf = (qOrbF && /\bd\b|dias|,\d+ d| d$/.test(String(qOrbF[1]))) ? (parseFloat(String(qOrbF[1]).replace(',', '.')) || 0) : 0;
+      const tDf = ((qOrbF && /\bd\b|dias|,\d+ d| d$/.test(String(qOrbF[1]))) ? (parseFloat(String(qOrbF[1]).replace(',', '.')) || 0) : 0) * (m.retro ? -1 : 1);
       const Y = mi*2.1 + hashStr(m.id)*6 + (tDf ? (Math.PI*2)*anosSim*365.25/tDf : 0);
       /* rotation.y gira +x para -z: o ângulo de mundo é o negativo da soma */
       ang = -(H + Y);
@@ -5661,7 +5697,7 @@ function buildFocus(bodyId, spin0){
     vv.set(r, 0.42*Math.sin(i*2.13) + 0.15, 0);
     addKid(m, vv, tamK, 24, kh);
     const qOrbK = (m.quick || []).find(q=>/ÓRBITA/.test(q[0]));
-    const tDk = (qOrbK && /\bd\b|dias|,\d+ d| d$/.test(String(qOrbK[1]))) ? (parseFloat(String(qOrbK[1]).replace(',', '.')) || 0) : 0;
+    const tDk = ((qOrbK && /\bd\b|dias|,\d+ d| d$/.test(String(qOrbK[1]))) ? (parseFloat(String(qOrbK[1]).replace(',', '.')) || 0) : 0) * (m.retro ? -1 : 1);
     /* a órbita desenhada, invisível até o modo sistema planetário acender */
     const oseg = 64, orPos = new Float32Array(oseg*3);
     for(let i2=0;i2<oseg;i2++){ const aa = i2/(oseg-1)*Math.PI*2; orPos[i2*3]=Math.cos(aa); orPos[i2*3+1]=0; orPos[i2*3+2]=Math.sin(aa); }
@@ -8427,7 +8463,9 @@ function dolly(f){
       ZLIM.over = 0; ZLIM.t = now;
       if(podeSubir && now - ZLIM.hint > 2400){
         ZLIM.hint = now;
-        showHint('LIMITE DESTA ESCALA · AFASTE DE NOVO PARA SUBIR');
+        showHint((ACT && ACT.escr)
+          ? 'VOCÊ ESTÁ NA NUVEM DE OORT: ela continua por quase um ANO-LUZ além daqui. Afaste de novo para subir à galáxia'
+          : 'LIMITE DESTA ESCALA · AFASTE DE NOVO PARA SUBIR');
       }
       return;
     }
@@ -8672,7 +8710,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r112';
+const BUILD = 'r113';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
