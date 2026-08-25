@@ -1,0 +1,11 @@
+# UNIVERSATLAS
+
+> Mapa 3D interativo do universo em portugues (pt-BR). Sistema Solar completo com planetas, luas, sondas, cometas e missoes tripuladas em posicoes reais; modo experimental de ESCALA REAL (distancias e tamanhos verdadeiros); relogio de simulacao com viagem no tempo; tours guiados; fichas com dados cientificos e referencias de cultura pop.
+
+- URL: https://www.universatlas.com/
+- Autor: Rodrigo Sanguanini (https://sanguanini.dev)
+- Idioma: portugues do Brasil
+- Conteudo: mais de 160 corpos catalogados, 47 sistemas estelares e 8 galaxias navegaveis, cada um com ficha propria (dados, curiosidades e trivia de ficcao)
+- Fontes dos dados: literatura cientifica publica (NASA, missoes Voyager/Cassini/Juno/JWST, efemerides de dominio publico)
+- Tecnologia: aplicacao estatica em HTML + JavaScript + Three.js, sem build, codigo em um unico arquivo
+- Crawlers de IA sao bem-vindos neste site (ver robots.txt)

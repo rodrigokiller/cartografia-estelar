@@ -3,7 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>UNIVERSATLAS</title>
+<title>UNIVERSATLAS // mapa 3D interativo do universo</title>
+<meta name="description" content="Explore o Sistema Solar e além em 3D: planetas, luas, sondas, cometas e as missões Apollo com posições reais. Viaje no tempo, compare mundos e navegue do corpo à galáxia. Em português.">
+<link rel="canonical" href="https://www.universatlas.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="UNIVERSATLAS">
+<meta property="og:title" content="UNIVERSATLAS // mapa 3D interativo do universo">
+<meta property="og:description" content="Sistema Solar em escala e tempo reais: viaje no tempo, siga sondas e cometas, reviva as Apollo.">
+<meta property="og:url" content="https://www.universatlas.com/">
+<meta property="og:image" content="https://www.universatlas.com/og.jpg">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication",
+"name":"UNIVERSATLAS","alternateName":"Cartografia Estelar",
+"url":"https://www.universatlas.com/",
+"description":"Mapa 3D interativo do universo em português: Sistema Solar, luas, sondas, cometas e missões tripuladas com posições reais, escala real opcional, viagem no tempo e tours guiados.",
+"applicationCategory":"EducationalApplication","operatingSystem":"Web",
+"inLanguage":"pt-BR","isAccessibleForFree":true,
+"author":{"@type":"Person","name":"Rodrigo Sanguanini","url":"https://sanguanini.dev"}}
+</script>
 <meta name="theme-color" content="#04070f">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='14' fill='%233f8cff'/%3E%3Cellipse cx='32' cy='32' rx='27' ry='8' fill='none' stroke='%237dc4ff' stroke-width='3' transform='rotate(-18 32 32)'/%3E%3C/svg%3E">
 <style>
@@ -501,11 +520,12 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #tutcheck:empty{display:none}
 #tutcheck .tchk{font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;color:var(--dim2)}
 #tutcheck .tchk.ok{color:var(--amber)}
-/* wordmark UNIVERSATLAS: UNIVERS leve em roxo, ATLAS firme em branco com um
-   halo roxo discreto; o corte é UNIVERS|ATLAS de propósito (decisão do Rodrigo) */
+/* wordmark UNIVERSATLAS em AZUL (o roxo era herança da era NEBULASTRA):
+   UNIVERS leve no azul-íon, ATLAS firme em branco com halo azul; o corte é
+   UNIVERS|ATLAS de propósito (decisão do Rodrigo) */
 #brandnm{display:inline-flex;align-items:baseline}
-#brandnm i{color:#8f76c8;font-style:normal;font-weight:400;opacity:.92}
-#brandnm b{color:#eaf2ff;font-weight:700;letter-spacing:3.4px;margin-left:1px;text-shadow:0 0 9px rgba(143,118,200,.45)}
+#brandnm i{color:#6fb7ff;font-style:normal;font-weight:400;opacity:.92}
+#brandnm b{color:#eef6ff;font-weight:700;letter-spacing:3.4px;margin-left:1px;text-shadow:0 0 9px rgba(125,196,255,.5)}
 #tutdebug,#dbgtoast,#dbgpromo,#dbgconq{margin-left:8px;background:none;border:1px dashed var(--line2);color:var(--dim2);
   font-family:var(--mono);font-size:7.5px;letter-spacing:1.5px;padding:2px 6px;cursor:pointer;opacity:.6}
 #tutdebug:hover,#dbgtoast:hover,#dbgpromo:hover,#dbgconq:hover{color:var(--amber);border-color:var(--amber);opacity:1}
@@ -634,8 +654,18 @@ body.touch #trajclock{bottom:16px}
 #fadertxt::after{content:'▮';animation:blink 1s steps(2,start) infinite;margin-left:6px}
 #boot{position:absolute;inset:0;background:#02040a;z-index:50;display:flex;align-items:center;justify-content:center;transition:opacity .5s}
 #boot.off{opacity:0;pointer-events:none}
+#bootinner{display:flex;flex-direction:column;align-items:center;gap:20px;padding:24px}
+#bootlogo{width:92px;height:92px;animation:bootpulso 2.6s ease-in-out infinite alternate}
+@keyframes bootpulso{from{transform:scale(.97);opacity:.9}to{transform:scale(1.03);opacity:1}}
+#bootword{font-family:var(--mono);font-size:clamp(20px,6vw,30px);letter-spacing:.2em;font-weight:600;white-space:nowrap}
+#bootword i{font-style:normal;background:linear-gradient(100deg,#bfe2ff,#4f9cf6);-webkit-background-clip:text;background-clip:text;color:transparent}
+#bootword b{color:#fff;text-shadow:0 0 6px rgba(255,255,255,.9),0 0 18px rgba(125,196,255,.55),0 0 44px rgba(63,140,255,.35)}
+#bootbar{width:min(300px,70vw);height:2px;background:rgba(63,140,255,.18);overflow:hidden;border-radius:2px}
+#bootbar i{display:block;height:100%;width:38%;background:linear-gradient(90deg,#3f8cff,#bfe2ff);animation:bootcarrega 2.4s ease-in-out infinite}
+@keyframes bootcarrega{0%{transform:translateX(-110%)}55%{transform:translateX(120%)}100%{transform:translateX(260%)}}
 #bootlines{font-family:var(--mono);font-size:12px;letter-spacing:2.5px;color:var(--ion);line-height:2.4;min-width:280px}
 #bootlines .ok{color:var(--ok)}
+@media (prefers-reduced-motion: reduce){#bootlogo,#bootbar i{animation:none}}
 
 /* ---------- help ---------- */
 #help{position:absolute;inset:0;z-index:45;background:rgba(2,4,10,.82);display:none;align-items:center;justify-content:center;padding:20px}
@@ -1040,7 +1070,27 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     </div></div>
   </div>
 
-  <div id="boot"><div id="bootlines"></div></div>
+  <div id="boot"><div id="bootinner">
+    <svg id="bootlogo" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="UNIVERSATLAS">
+      <defs>
+        <radialGradient id="uaPl" cx=".38" cy=".32" r=".9">
+          <stop offset="0" stop-color="#8fd0ff"/><stop offset=".55" stop-color="#3f8cff"/><stop offset="1" stop-color="#1c4d95"/>
+        </radialGradient>
+        <linearGradient id="uaAn" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stop-color="#d6ecff"/><stop offset="1" stop-color="#6fb7ff"/>
+        </linearGradient>
+      </defs>
+      <g transform="rotate(-20 64 64)">
+        <path d="M23 64 A41 15 0 0 1 105 64" fill="none" stroke="#2c5e9e" stroke-width="5.5" stroke-linecap="round"/>
+        <circle cx="64" cy="64" r="26" fill="url(#uaPl)"/>
+        <path d="M23 64 A41 15 0 0 0 105 64" fill="none" stroke="url(#uaAn)" stroke-width="7" stroke-linecap="round"/>
+        <circle cx="100" cy="71" r="4.2" fill="#e2f2ff"/>
+      </g>
+    </svg>
+    <div id="bootword"><i>UNIVERS</i><b>ATLAS</b></div>
+    <div id="bootbar"><i></i></div>
+    <div id="bootlines"></div>
+  </div></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -8744,7 +8794,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r115';
+const BUILD = 'r116';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
