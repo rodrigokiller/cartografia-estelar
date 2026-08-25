@@ -891,6 +891,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="fp-t fp-t2">VELOCIDADE DO TEMPO</div>
     <div class="filtrow" data-vel="real"><span>TEMPO REAL · TRAVADO NO AGORA</span><b></b></div>
     <div class="filtrow" data-vel="seg"><span>1 SEGUNDO = 1 SEGUNDO</span><b></b></div>
+    <div class="filtrow" data-vel="hora"><span>1 SEGUNDO = 1 HORA</span><b></b></div>
     <div class="filtrow" data-vel="dia"><span>1 SEGUNDO = 1 DIA</span><b></b></div>
     <div class="filtrow" data-vel="semana"><span>1 SEGUNDO = 1 SEMANA</span><b></b></div>
     <div class="filtrow" data-vel="mes"><span>1 SEGUNDO = 1 MÊS</span><b></b></div>
@@ -1087,6 +1088,7 @@ uniform float uScale; uniform float uSeed;
 uniform float uBandF; uniform float uTurb;
 uniform float uCap; uniform float uCapAmt; uniform vec3 uCapCol;
 uniform float uSpotOn; uniform vec2 uSpotPos; uniform float uSpotR; uniform vec3 uSpotCol;
+uniform float uSombraOn; uniform vec2 uSombraPos; uniform float uSombraR;
 uniform float uMode;   /* 0 rocky · 1 gas · 2 haze · 3 earth */
 uniform float uLights; uniform float uCrater;
 uniform vec3 uL; uniform float uTime; uniform float uAmb;
@@ -1134,6 +1136,16 @@ void main(){
     float d = length(d2*vec2(1.0,2.4));
     float spot = smoothstep(uSpotR, uSpotR*0.35, d);
     col = mix(col, uSpotCol, spot*0.85);
+  }
+
+  /* sombra de eclipse: a lua entre o Sol e o corpo projeta um disco escuro
+     que passeia pela face iluminada (Io em Júpiter, a Lua na Terra) */
+  if(uSombraOn > 0.5){
+    vec2 dS2 = vec2(lon, lat) - uSombraPos;
+    dS2.x = mod(dS2.x + 3.14159, 6.28318) - 3.14159;
+    float dS = length(dS2*vec2(1.0,2.4));
+    float smb = smoothstep(uSombraR, uSombraR*0.45, dS);
+    col = mix(col, col*0.10, smb*0.92);
   }
 
   /* calotas polares */
@@ -3788,7 +3800,8 @@ function planetMaterial(v){
     uSpotR:{value:sp?sp.r:0.3}, uSpotCol:{value:C(sp?sp.col:'#ffffff')},
     uMode:{value:(MODEMAP[v.mode]!==undefined)?MODEMAP[v.mode]:0},
     uLights:{value:v.lights?1.0:0.0}, uCrater:{value:v.crater||0.0},
-    uL:{value:LDIR.clone()}, uTime:{value:0}, uAmb:{value:0.10}
+    uL:{value:LDIR.clone()}, uTime:{value:0}, uAmb:{value:0.10},
+    uSombraOn:{value:0}, uSombraPos:{value:new THREE.Vector2()}, uSombraR:{value:0.05}
   };
   const m = new THREE.ShaderMaterial({vertexShader:PLANET_VERT, fragmentShader:PLANET_FRAG, uniforms:u});
   ANIM_MATS.push(m); return m;
@@ -3951,7 +3964,7 @@ const ESCALA_REAL_INCL = {mercurio:0.03, venus:2.6, terra:23.4, marte:25.2,
 function escrTam(km){ return Math.max(0.0002, km/149597870*ESCR_UA); }
 const COORD = {real:false};  /* coordenadas: cênicas (nossas) ou RA/DEC reais onde há dado */
 const SIMT = {data: Date.now(), vel:'dia', pausado:false,
-  diasPorSeg(){ return this.vel==='mes' ? 30.44 : (this.vel==='semana' ? 7 : ((this.vel==='real' || this.vel==='seg') ? 1/86400 : 1)); }};
+  diasPorSeg(){ return this.vel==='mes' ? 30.44 : (this.vel==='semana' ? 7 : (this.vel==='hora' ? 1/24 : ((this.vel==='real' || this.vel==='seg') ? 1/86400 : 1))); }};
 function satelitesDe(id){
   /* só o que está ATIVO e em órbita: foguete histórico e satélite morto
      ficam nas listas do card e do registro, não na cena */
@@ -5595,7 +5608,7 @@ function buildFocus(bodyId, spin0){
     moonHolder.add(ring);
     const ringFade = {m:ringMat, o:0};
     fadeMats.push(ringFade);
-    subKids.push({kh, tDias:tDk, base:r, alvo:Math.max(r, radius + 2.6 + i*1.5), ring, ringFade, rAtual:r});
+    subKids.push({kh, tDias:tDk, rm:tamK, base:r, alvo:Math.max(r, radius + 2.6 + i*1.5), ring, ringFade, rAtual:r});
   });
 
   /* escala real: a casca de estrelas vai para ALÉM da lua mais distante,
@@ -5605,6 +5618,7 @@ function buildFocus(bodyId, spin0){
     stF1.scale.setScalar(kEsc); stF2.scale.setScalar(kEsc);
   }
 
+  const _smA = new THREE.Vector3(), _smB = new THREE.Vector3(), _smC = new THREE.Vector3();
   let simPrevF = SIMT.data;
   return {kind:'focus', scene, labels, pickables, wrap, bodyId, sel:selReg, raioCorpo:radius, objs:objsFoco, subKids, sub:subEstado,
     get spin(){ return bg ? bg.mesh.rotation.y : 0; },
@@ -5628,7 +5642,7 @@ function buildFocus(bodyId, spin0){
       /* nos modos lentos (tempo real, 1 s = 1 s) o foco obedece o relógio:
          gira 1 volta por dia simulado e a lua orbita nos 27,3 dias reais.
          Nos rápidos, mantém o balé visual, mas respeita o pause. */
-      const lento = SIMT.vel === 'real' || SIMT.vel === 'seg';
+      const lento = SIMT.vel === 'real' || SIMT.vel === 'seg' || SIMT.vel === 'hora';
       const danosF = (SIMT.data - simPrevF)/MS_ANO; simPrevF = SIMT.data;
       /* cada lua gira no próprio holder: período REAL quando a ficha dá o
          número, balé simbólico quando não dá (respeitando o pause) */
@@ -5637,6 +5651,28 @@ function buildFocus(bodyId, spin0){
           if(sk.tDias) sk.kh.rotation.y += (Math.PI*2)*danosF*365.25/sk.tDias;
           else if(!RM && !SIMT.pausado && !lento) sk.kh.rotation.y += dt*0.03;
         }
+      }
+      /* sombra das luas na escala real: geometria no plano do equador (o Sol
+         do foco fica um pouco alto, então a projeção usa o rumo achatado) */
+      if(ESCR.on && b._sys === 'sol' && bg && bg.mesh.material.uniforms && bg.mesh.material.uniforms.uSombraOn){
+        const uS = bg.mesh.material.uniforms;
+        let achou = false;
+        for(const sk of subKids){
+          if(!sk.tDias || !sk.kh.children.length) continue;
+          sk.kh.children[0].getWorldPosition(_smA);
+          _smB.set(-152, 0, -273).normalize();          /* rumo do Sol, achatado */
+          const proj = _smA.dot(_smB);
+          if(proj <= 0) continue;                        /* lua do lado da noite */
+          _smC.copy(_smA).addScaledVector(_smB, -proj);  /* pé da perpendicular */
+          if(_smC.length() > radius*0.9) continue;       /* passa ao largo do disco */
+          _smC.addScaledVector(_smB, Math.sqrt(Math.max(0, radius*radius - _smC.lengthSq())));
+          bg.mesh.worldToLocal(_smC).normalize();
+          uS.uSombraOn.value = 1;
+          uS.uSombraPos.value.set(Math.atan2(_smC.z, _smC.x), _smC.y);
+          uS.uSombraR.value = Math.min(0.07, Math.max(0.035, (sk.rm/radius)*1.15));
+          achou = true; break;
+        }
+        if(!achou) uS.uSombraOn.value = 0;
       }
       /* SISTEMA PLANETÁRIO: as luas se espalham e as órbitas acendem */
       if(subKids.length){
@@ -6534,6 +6570,7 @@ function syncHash(){
   if(ST.level==='focus') h = '#corpo='+ST.body;
   else if(ST.level==='system') h = '#sistema='+ST.sys;
   else if(ST.level==='galaxy') h = '#galaxia=' + ST.gal;
+  if(ESCR.on) h += '&escala=real';   /* o link leva junto o modo de escala */
   try{ history.replaceState(null, '', h); }catch(e){}
   store.set('carto:loc', h);
 }
@@ -8565,7 +8602,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r109';
+const BUILD = 'r110';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -8593,7 +8630,13 @@ resize();
     const sv = store.get('carto:loc','');
     if(sv){ try{ history.replaceState(null, '', sv); }catch(e){} }
   }
-  const [k, v] = (location.hash||'').slice(1).split('=');
+  let hh0 = (location.hash||'').slice(1);
+  if(hh0.indexOf('&escala=real') >= 0){
+    ESCR.on = true; store.set('carto:escr', '1');
+    hh0 = hh0.replace('&escala=real', '');
+    try{ history.replaceState(null, '', '#'+hh0+'&escala=real'); }catch(e){}
+  }
+  const [k, v] = hh0.split('=');
   if(k==='corpo' && ALLBODIES[v]){
     ST.level='focus'; ST.sys=ALLBODIES[v]._sys; ST.body=v;
     markVisited(v);
@@ -8612,7 +8655,12 @@ uiSync();
 pushNav();
 syncHash();
 window.addEventListener('hashchange', ()=>{
-  const [k, v] = (location.hash||'').slice(1).split('=');
+  let hh1 = (location.hash||'').slice(1);
+  if(hh1.indexOf('&escala=real') >= 0){
+    if(!ESCR.on){ ESCR.on = true; store.set('carto:escr', '1'); cfgSync(); }
+    hh1 = hh1.replace('&escala=real', '');
+  }
+  const [k, v] = hh1.split('=');
   if(k==='corpo' && ALLBODIES[v] && ST.body!==v) gotoFocus(v);
   else if(k==='sistema' && SYS[v] && !(ST.level==='system' && ST.sys===v)) gotoSystem(v);
   else if(k==='galaxia'){ const gid=(v && GALAXIES.find(x=>x.id===v))?v:'vialactea'; if(ST.level!=='galaxy'||ST.gal!==gid) gotoGalaxy(gid); }
@@ -8864,7 +8912,7 @@ function simClockUI(){
   const el = $('#simdata'); if(!el) return;
   const d = new Date(SIMT.data);
   let txt = d.getDate() + ' ' + MESES_N[d.getMonth()] + ' ' + d.getFullYear();
-  if(SIMT.vel==='real' || SIMT.vel==='seg') txt += ' · ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  if(SIMT.vel==='real' || SIMT.vel==='seg' || SIMT.vel==='hora') txt += ' · ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
   el.textContent = txt;
   const pp = $('#simpp'); if(pp) pp.textContent = SIMT.pausado ? '▶' : '⏸';
 }
@@ -8962,6 +9010,7 @@ $('#cfgpop').addEventListener('click', e=>{
     ESCR.on = !ESCR.on;
     store.set('carto:escr', ESCR.on ? '1' : '0');
     cfgSync();
+    syncHash();   /* o link compartilhável acompanha o toggle */
     if(ST.sys === 'sol'){
       if(ST.level === 'system') gotoSystem('sol', ESCR.on ? 'ESCALA REAL · OS CORPOS VIRAM POEIRA' : 'ESCALA CÊNICA · DE VOLTA AO MAPA');
       else if(ST.level === 'focus' && ST.body) gotoFocus(ST.body);
