@@ -2389,9 +2389,10 @@ PLANETS.push(
   visual:{mode:'rocky', c1:'#a85a48', c2:'#c87a5e', c3:'#7a3e32', scale:4.4, seed:90.3, crater:0.3},
   sections:[
     {t:'A ÓRBITA IMPOSSÍVEL', rows:[['Excentricidade','De 76 a 900 UA: uma volta leva 11.400 anos, mais que toda a civilização escrita'],['O mistério','Nada conhecido explica como ela foi parar lá: nem planetas, nem o Kuiper'],['As hipóteses','Uma estrela que passou perto no berço do Sol, ou o Planeta Nove, ainda não visto'],['Posição aqui','Chegando ao periélio de ~2076: a única visita dela na nossa era. As distâncias seguem a escala comprimida da cena']]},
+    {t:'OORT INTERNA OU O QUÊ?', rows:[['A turma nova','Sedna inaugurou uma classe própria: os SEDNOIDES, hoje com 2012 VP113 e Leleakuhonua'],['A leitura moderna','Muitos astrônomos a chamam de objeto da NUVEM DE OORT INTERNA: o periélio dela nem encosta no Kuiper'],['O que ela é afinal','Oficialmente candidata a planeta anão; na prática, a embaixadora dos confins'],['Por que importa','Cada sednoide novo aperta o cerco: ou uma estrela mexeu no berço do Sol, ou há um planeta escondido lá fora']]},
     {t:'REGISTRO', rows:[['Descoberta','2003 · Mike Brown, de novo ele'],['Nome','A deusa inuit do mar gelado, que vive no fundo do Ártico'],['Cor','Avermelhada como quase nada no sistema, talvez tolinas de bilhões de anos'],['Temperatura','Nunca acima de −240 °C']]}
   ],
-  facts:['Da última vez que Sedna passou perto do Sol, a humanidade ainda não tinha inventado a escrita.','A órbita dela é tão esticada que nenhuma explicação conhecida dá conta: algo a jogou lá.','É um dos objetos mais vermelhos já observados, e ninguém sabe exatamente por quê.'],
+  facts:['Da última vez que Sedna passou perto do Sol, a humanidade ainda não tinha inventado a escrita.','A órbita dela é tão esticada que nenhuma explicação conhecida dá conta: algo a jogou lá.','É um dos objetos mais vermelhos já observados, e ninguém sabe exatamente por quê.','É a primeira da família dos sednoides, os prováveis moradores da borda interna da Nuvem de Oort.'],
   fict:'Sedna é a musa das teorias do Planeta Nove: toda simulação do nono planeta começa tentando explicar a órbita dela.', moons:[]},
  {id:'eris', name:'ÉRIS', desig:'PLANETA ANÃO · TRANSNETUNIANO', kind:'A que destronou Plutão', hab:1, gbar:0.084, pop:'0',
   anao:true, sys:{orbit:70, size:0.38, speed:0.002, angle:2.2},
@@ -3958,8 +3959,9 @@ function updateLabels(){
   const longe = !!(ACT.zoomMini && CAM.dist > ACT.zoomMini);
   if(ACT._longe !== longe){
     ACT._longe = longe;
+    /* o +N saiu de cena (pedido do Rodrigo): de longe fica SÓ o nome do dono */
     for(const L of ACT.labels)
-      if(L.badge) L.el.textContent = L.base + (longe ? ' +' + L.badge : '');
+      if(L.badge) L.el.textContent = L.base;
   }
   for(const L of ACT.labels){
     if(L.off){ L.el.style.display = 'none'; continue; }
@@ -3974,6 +3976,9 @@ function updateLabels(){
       if(!fica){ L.el.style.display = 'none'; continue; }
     }
     if(L.mini && longe){ L.el.style.display = 'none'; continue; }
+    /* escala real: a lua só tem nome quando a órbita dela ABRE na tela,
+       senão os rótulos empilham em cima do nome do planeta */
+    if(L.escrMr && CAM.dist > L.escrMr*260){ L.el.style.display = 'none'; continue; }
     if(L.cinturao && FILTROBJ.cinturao === false){ L.el.style.display = 'none'; continue; }
     L.get(tmpV);
     tmpV.project(camera);
@@ -4050,7 +4055,9 @@ const ESCALA_REAL_LUAS = {
   miranda:129390, titania:435910, oberon:583520, tritao:354759, caronte:19591,
   iss:6790, hubble:6910, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
-const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61};
+const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45};
+/* pedras do cinturão: [UA, raio km] (no cênico elas moram no anel desenhado) */
+const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4]};
 /* dia sideral de cada planeta em dias terrestres (negativo = retrógrado) */
 const ESCALA_REAL_DIA = {mercurio:58.65, venus:-243.0, terra:0.997, marte:1.026,
   jupiter:0.414, saturno:0.444, urano:-0.718, netuno:0.671};
@@ -4143,7 +4150,7 @@ function buildSystem(sysId, spin0){
       else if(er) p = Object.assign({}, p, {sys:Object.assign({}, p.sys, {orbit:er[0]*ESCR_UA, size:escrTam(er[1])})});
       /* satélites e sondas também: distância e tamanho verdadeiros (pontinhos) */
       else if(p.satOf && ESCALA_REAL_LUAS[p.id]) p = Object.assign({}, p, {sys:Object.assign({}, p.sys, {orbit:ESCALA_REAL_LUAS[p.id]/149597870*ESCR_UA, size:escrTam(0.06)})});
-      else if(p.sonda && ESCALA_REAL_SONDA[p.id]) p = Object.assign({}, p, {sys:Object.assign({}, p.sys, {orbit:ESCALA_REAL_SONDA[p.id]*ESCR_UA, size:escrTam(0.01)})});
+      else if((p.sonda || p.escape) && ESCALA_REAL_SONDA[p.id]) p = Object.assign({}, p, {sys:Object.assign({}, p.sys, {orbit:ESCALA_REAL_SONDA[p.id]*ESCR_UA, size:escrTam(p.escape ? 0.2 : 0.01)})});
     }
     /* posição na elipse: pos é a fração da volta a partir do periélio
        (padrão 0,5 = afélio); incl próprio da órbita quando dado */
@@ -4353,7 +4360,7 @@ function buildSystem(sysId, spin0){
         selReg.orbits.push({id:m.id, mat:anelLua.material, obj:anelLua, cls:'lua', c:LINHA.lua.cor, o:LINHA.lua.op});
         const mgp = mg2.group;
         labels.push({el:makeLabel(m.name, 'faint mini', ()=>ACTION('focus', m.id)),
-          mini:true, lid:m.id, lidPai:p.id, get:v=>{ mgp.getWorldPosition(v); v.y += ms + (escrAtivo ? Math.min(0.28, Math.max(0.0015, CAM.dist*0.04)) : 0.28); }});
+          mini:true, lid:m.id, lidPai:p.id, escrMr:(escrAtivo ? mr : 0), get:v=>{ mgp.getWorldPosition(v); v.y += ms + (escrAtivo ? Math.min(0.28, Math.max(0.0015, CAM.dist*0.04)) : 0.28); }});
         objReg.push({id:m.id, cls:'lua', holder:mh, pick:mpk, lbl:labels[labels.length-1], tails:[anelLua]});
         kidCount[p.id] = (kidCount[p.id]||0) + 1;
       });
@@ -4423,14 +4430,20 @@ function buildSystem(sysId, spin0){
     orbiters.push({holder:belt, spd:0.02});
     objReg.push({id:'cinturao_pts', cls:'cinturao', holder:belt, pick:null, lbl:null});
     for(const a of S.belt){
-      const x = Math.cos(a.belt.angle)*a.belt.r, z = Math.sin(a.belt.angle)*a.belt.r;
-      const dot = new THREE.Mesh(new THREE.SphereGeometry(0.17, 10, 10), new THREE.MeshBasicMaterial({color:0xa8b2be}));
+      /* escala real: cada pedra na distância VERDADEIRA (Ceres a 2,77 UA;
+         no cênico elas moram no anel desenhado, como sempre). Era o bug do
+         Rodrigo: Ceres e Vesta apareciam na linha de Marte no mapa real */
+      const astE = escrAtivo ? ESCALA_REAL_AST[a.id] : null;
+      const rB = astE ? astE[0]*ESCR_UA : a.belt.r;
+      const x = Math.cos(a.belt.angle)*rB, z = Math.sin(a.belt.angle)*rB;
+      const dot = new THREE.Mesh(new THREE.SphereGeometry(astE ? escrTam(astE[1]) : 0.17, 10, 10), new THREE.MeshBasicMaterial({color:0xa8b2be}));
       dot.position.set(x, 0, z); scene.add(dot);
       const pick = new THREE.Mesh(new THREE.SphereGeometry(1.0, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
-      pick.position.copy(dot.position); pick.userData = {act:'focus', id:a.id, r:0.17};
+      pick.position.copy(dot.position); pick.userData = {act:'focus', id:a.id, r:(astE ? escrTam(astE[1]) : 0.17)};
       scene.add(pick); pickables.push(pick);
       labels.push({el:makeLabel(a.name, 'faint', ()=>ACTION('focus', a.id)),
-        get:v=>v.set(x, 0.8, z)});
+        escrOrb:(escrAtivo ? rB : 0),
+        get:v=>v.set(x, escrAtivo ? 0.02 : 0.8, z)});
     }
   }
 
@@ -6172,7 +6185,11 @@ function trajStart(id){
   /* o corpo (sonda, cometa, foguete) navega junto com o ponto do percurso */
   const oo = ACT.objs && ACT.objs.find(x=>x.id===id);
   if(oo && oo.corpo){ TRAJ.corpo = oo.corpo; TRAJ.cpos0 = oo.corpo.position.clone();
-    if(oo.sempreOculto){ oo.corpo.visible = true; TRAJ.corpoTemp = oo.corpo; } }
+    if(oo.sempreOculto){
+      oo.corpo.visible = true; TRAJ.corpoTemp = oo.corpo;
+      /* escala real: o foguete não pode ser um gigante de milhares de km */
+      if(ESCR.on && ST.sys === 'sol'){ TRAJ.corpoEsc0 = oo.corpo.scale.x; oo.corpo.scale.multiplyScalar(0.0084); }
+    } }
   /* os planetas ficam na ÉPOCA da viagem: prog 0 mostra o céu do lançamento */
   TRAJ.dAno = 0;
   if(!TRAJ.dias && TRAJ.ano0 && ACT.tempoViagem){
@@ -6220,6 +6237,15 @@ function trajStart(id){
     o.obj.parent.add(TRAJ.luaViz);
     TRAJ.luaLbl = {el:makeLabel('LUA', 'faint', null),
       get:(v)=>{ if(TRAJ && TRAJ.luaViz) TRAJ.luaViz.getWorldPosition(v); v.y += (TRAJ && TRAJ.fatorTL && TRAJ.fatorTL !== 1) ? 0.002 : 0.55; }};
+    /* esconde a Lua da CENA enquanto a da linha do tempo existe, senão
+       aparecem DUAS Luas (bug que o Rodrigo viu no modo normal) */
+    const oLua = ACT.objs && ACT.objs.find(x=>x.id==='lua');
+    if(oLua){
+      TRAJ.luaCena = oLua;
+      if(oLua.holder) oLua.holder.visible = false;
+      if(oLua.lbl) oLua.lbl.off = true;
+      (oLua.tails||[]).forEach(t=>{ if(t) t.visible = false; });
+    }
     ACT.labels.push(TRAJ.luaLbl);
     TRAJ.fatorTL = fatorTL;
     /* na escala real a câmera fecha sozinha para enquadrar os 384 mil km */
@@ -6274,7 +6300,10 @@ function trajLimpar(){
   document.body.classList.remove('emtraj');
   if(ACT && ACT.tempoLivre) ACT.tempoLivre();
   if(TRAJ && TRAJ.corpo && TRAJ.cpos0) TRAJ.corpo.position.copy(TRAJ.cpos0);
-  if(TRAJ && TRAJ.corpoTemp) TRAJ.corpoTemp.visible = false;
+  if(TRAJ && TRAJ.corpoTemp){
+    TRAJ.corpoTemp.visible = false;
+    if(TRAJ.corpoEsc0 !== undefined) TRAJ.corpoTemp.scale.setScalar(TRAJ.corpoEsc0);
+  }
   if(TRAJ && TRAJ.holderGirado && TRAJ.rotHold0 !== undefined){
     TRAJ.holderGirado.rotation.y = TRAJ.rotHold0;
     TRAJ.holderGirado.updateMatrixWorld(true);
@@ -6285,6 +6314,13 @@ function trajLimpar(){
     if(TRAJ.luaLbl){
       if(ACT && ACT.labels){ const i = ACT.labels.indexOf(TRAJ.luaLbl); if(i >= 0) ACT.labels.splice(i, 1); }
       if(TRAJ.luaLbl.el && TRAJ.luaLbl.el.remove) TRAJ.luaLbl.el.remove();
+    }
+    if(TRAJ.luaCena){
+      const oL = TRAJ.luaCena;
+      if(oL.holder) oL.holder.visible = true;
+      if(oL.lbl) oL.lbl.off = false;
+      (oL.tails||[]).forEach(t=>{ if(t) t.visible = true; });
+      if(typeof applySel === 'function') applySel();
     }
   }
   TRAJ = null;
@@ -6391,7 +6427,9 @@ LIVE = store.get('carto:live','0') === '1';   /* modo ao vivo da Terra e da Lua 
 { const v = store.get('carto:linhas', null);
   if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
     for(const k of ['planeta','anao','estrela','lua','cometa','sonda','satelite','foguete']) FILTROS[k] = on.has(k); } }
-SIMT.vel = store.get('carto:vel', 'dia');
+/* abre SEMPRE em TEMPO REAL travado no agora (decisão do Rodrigo): mudar
+   vale só na sessão, F5 volta ao tempo real */
+SIMT.vel = 'real';
 RASTRO.on = store.get('carto:rastro', '0') === '1';
 VIAGEMX.on = store.get('carto:viagemx', '0') === '1';
 ESCR.on = store.get('carto:escr', '0') === '1';
@@ -8794,7 +8832,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r116';
+const BUILD = 'r117';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
