@@ -1335,16 +1335,24 @@ const PLANETS = [
   facts:['Tem o maior vulcão do Sistema Solar: o Monte Olimpo, 2,5× o Everest.','O pôr do sol marciano é AZUL, a poeira espalha a luz ao contrário da Terra.','Fobos orbita tão rápido que nasce no oeste e cruza o céu 2× por dia.'],
   fict:'The Expanse, República Congressional de Marte (MCRN). Total Recall · O Marciano.',
   moons:[
-   {id:'fobos', name:'FOBOS', desig:'MARTE-I', kind:'Lua irregular', hab:0, gbar:0.0006, pop:'0',
-    quick:[['DIÂMETRO','22,5 km'],['ÓRBITA','7 h 39'],['DESCOBERTA','1877'],['DESTINO','colisão']],
+   {id:'fobos', name:'FOBOS', desig:'MARTE-I · LUA', kind:'A lua condenada', hab:0, gbar:0.0006, pop:'0',
+    quick:[['DIMENSÕES','27 × 22 × 18 km'],['ÓRBITA','7 h 39 min'],['DESCOBERTA','1877'],['ALTITUDE','6.000 km, a mais baixa'],['DESTINO','anel em ~50 mi de anos'],['MISSÃO','MMX (JAXA) a caminho']],
     visual:{mode:'rocky', c1:'#6b625c', c2:'#847a72', c3:'#4e4741', scale:7.0, seed:5.5, crater:1.0},
-    sections:[{t:'REGISTRO', rows:[['Descoberta','1877 · Asaph Hall'],['Órbita','Mais rápida que a rotação de Marte'],['Futuro','Cai ~1,8 m/século: vai virar anel ou colidir em ~50 mi anos'],['Cratera Stickney','9 km, quase o partiu']]}],
-    facts:['Nasce no oeste e se põe no leste, 2× por dia marciano.'], fict:null},
-   {id:'deimos', name:'DEIMOS', desig:'MARTE-II', kind:'Lua irregular', hab:0, gbar:0.0003, pop:'0',
-    quick:[['DIÂMETRO','12,4 km'],['ÓRBITA','30,3 h'],['DESCOBERTA','1877'],['FORMA','irregular']],
+    sections:[
+      {t:'A CONDENADA', rows:[['A queda','Desce ~1,8 m por século: a maré de Marte puxa ela para dentro'],['O fim','Em ~50 milhões de anos cruza o limite de Roche e vira um ANEL em volta de Marte'],['As estrias','Os sulcos compridos da superfície podem ser o começo do despedaçamento'],['Stickney','A cratera de 9 km: o impacto quase partiu a lua ao meio']]},
+      {t:'REGISTRO', rows:[['Descoberta','1877 · Asaph Hall, seis dias depois de Deimos'],['O nome','Fobos, o Medo, filho de Ares'],['O céu de Marte','Nasce no OESTE e cruza o céu duas vezes por dia marciano'],['A missão','A MMX, da JAXA, vai pousar nela e trazer amostra de volta']]}
+    ],
+    facts:['Orbita mais rápido do que Marte gira: nasce no oeste e cruza o céu duas vezes por dia marciano.','Desce 1,8 metro por século: em uns 50 milhões de anos vira um anel em volta de Marte.'],
+    fict:'Fobos é o cenário do primeiro Doom (1993): a base da UAC onde tudo começa fica exatamente nela.'},
+   {id:'deimos', name:'DEIMOS', desig:'MARTE-II · LUA', kind:'A luazinha que se despede', hab:0, gbar:0.0003, pop:'0',
+    quick:[['DIMENSÕES','15 × 12 × 11 km'],['ÓRBITA','30,3 h'],['DESCOBERTA','1877'],['SUPERFÍCIE','lisa, coberta de poeira'],['RUMO','se afastando devagar'],['TEMP.','−40 a −112 °C']],
     visual:{mode:'rocky', c1:'#8a807a', c2:'#a39890', c3:'#6b625c', scale:7.0, seed:6.1, crater:0.9},
-    sections:[{t:'REGISTRO', rows:[['Descoberta','1877 · Asaph Hall'],['Nome','"Pavor", filho de Ares'],['Visto de Marte','Parece uma estrela brilhante']]}],
-    facts:['Tão pequeno que, pulando forte, você quase entraria em órbita.'], fict:null}
+    sections:[
+      {t:'A QUE SE DESPEDE', rows:[['O rumo','Ao contrário de Fobos, orbita além do ponto de equilíbrio: se AFASTA devagar'],['A superfície','Uma manta de poeira fina encheu quase todas as crateras: a lua mais lisa que se conhece'],['Visto de Marte','Um ponto brilhante que leva 2,7 dias para cruzar o céu'],['A origem','Talvez um asteroide capturado, talvez sobra de um impacto gigante em Marte']]},
+      {t:'REGISTRO', rows:[['Descoberta','1877 · Asaph Hall, na mesma semana de Fobos'],['O nome','Deimos, o Pavor, irmão gêmeo do Medo'],['O tamanho','15 km: pulando com força, você quase entra em órbita'],['A gravidade','0,0003 g: uma pessoa pesaria menos que uma laranja']]}
+    ],
+    facts:['Enquanto Fobos cai, Deimos foge: orbita além do ponto de equilíbrio e se afasta devagar de Marte.','A poeira fina encheu quase todas as crateras: é a lua mais lisa que se conhece.'],
+    fict:'Deimos é a segunda fase do Doom (1993): no jogo, a lua inteira some e reaparece flutuando sobre o inferno.'}
   ]
 }];
 </script>
@@ -2355,6 +2363,17 @@ PLANETS.push(
   ],
   facts:['O Philae quicou duas vezes no pouso e ainda assim mandou ciência de dentro de uma fenda.','A Rosetta está pousada nele até hoje, dando a volta no Sol a cada 6,45 anos.','O "canto" do cometa, oscilações magnéticas convertidas em som, virou hit no YouTube.'],
   fict:'A forma de patinho de borracha e o canto misterioso fizeram do 67P o cometa mais querido da internet.', moons:[]},
+ {id:'halebopp', name:'HALE-BOPP', desig:'C/1995 O1 · COMETA DE LONGO PERÍODO', kind:'O Grande Cometa de 1997', hab:0, gbar:0.0001, pop:'0',
+  quick:[['NÚCLEO','~60 km, um gigante'],['PERÍODO','~2.530 anos'],['PERIÉLIO','1 ABR 1997'],['DESCOBERTA','23 JUL 1995'],['A OLHO NU','18 meses, recorde'],['AFÉLIO','~370 UA']],
+  comet:true, orbita:{peri:13.9, afel:120, incl:1.56, epoca:Date.UTC(1997,3,1)},
+  sys:{orbit:60, size:0.36, speed:2.2, angle:2.7},
+  visual:{mode:'rocky', c1:'#4a4640', c2:'#6b665c', c3:'#33302b', scale:6.0, seed:19.97, crater:0.85, atmo:{col:'#bfe0f0', i:0.55}},
+  sections:[
+    {t:'O GRANDE COMETA', rows:[['O show','Ficou 18 MESES visível a olho nu, o recorde de toda a história registrada'],['As duas caudas','A branca de poeira e a azul de íons, separadas no céu: a foto clássica de 1997'],['O núcleo','Cerca de 60 km, quatro vezes o do Halley: um dos maiores já medidos'],['A descoberta','Alan Hale e Thomas Bopp, na MESMA noite de 1995, um sem saber do outro']]},
+    {t:'A VIAGEM', rows:[['De onde vem','Da fronteira da Nuvem de Oort: o afélio fica a ~370 UA'],['A órbita em pé','Inclinada quase 90 graus: ele fura o plano dos planetas de cima a baixo'],['Onde está agora','Já passou da órbita de Netuno, rumo ao gelo profundo'],['A volta','Só retorna por volta do ano 4500']]}
+  ],
+  facts:['Ficou dezoito meses visível a olho nu, o recorde de qualquer cometa na história registrada.','A órbita é quase perpendicular ao plano dos planetas: ele fura o Sistema Solar de cima a baixo.'],
+  fict:'O Grande Cometa de 1997 pairou sobre uma geração: entrou em fotos de família, capas de disco e na memória de quem olhou para o céu naquele ano.', moons:[]},
  {id:'halley', name:'COMETA HALLEY', desig:'1P · COMETA PERIÓDICO', kind:'O cometa de todas as gerações', hab:0, gbar:0.0001, pop:'0',
   quick:[['NÚCLEO','15 × 8 km'],['PERÍODO','75–76 anos'],['ÚLTIMA VISITA','1986'],['PRÓXIMA','2061'],['VELOCIDADE','até 254 mil km/h'],['REGISTROS','desde 240 a.C.']],
   comet:true, orbita:{peri:8.6, afel:47, incl:0.31},
@@ -3967,6 +3986,7 @@ const ESCALA_REAL_EL = {   /* [peri UA, afel UA, data do periélio real quando c
   terra:[0.983, 1.017, Date.UTC(2026,0,3)], marte:[1.381, 1.666, Date.UTC(2026,2,26)],
   jupiter:[4.951, 5.457, Date.UTC(2023,0,21)], saturno:[9.041, 10.124, Date.UTC(2032,10,24)],
   urano:[18.286, 20.096, Date.UTC(2050,7,4)], netuno:[29.81, 30.33],
+  halebopp:[0.914, 370],
   plutao:[29.7, 49.3], eris:[38, 97.5], sedna:[76, 900], halley:[0.586, 35.1], p67:[1.24, 5.68]};
 /* distância real de cada lua ao centro do corpo, em km (semi-eixo maior) */
 const ESCALA_REAL_LUAS = {
@@ -7317,7 +7337,9 @@ function missRender(){
   const selos = sis.filter(s=>s.vistos>=s.total).length;
   $('#misspat').textContent = pat.cur.t;
   $('#misscnt').onclick = (e)=>{ if(e.target.closest('[data-abreconq]')){ MISS.filtro='conquistas'; missRender(); } };
-  $('#misscnt').innerHTML = '<b>'+n+'</b> / '+total+' VISITADOS'
+  /* o balanço vivo do atlas: quanto mundo existe e quanto já foi visto */
+  $('#misscnt').innerHTML = '<b>'+n+'</b> / '+total+' CORPOS VISITADOS'
+    + ' · '+Object.keys(SYS).length+' SISTEMAS · '+GALAXIES.length+' GALÁXIAS'
     + ' · <span class="lnkconq" data-abreconq="1"><b>'+FEITO.size+'</b> / '+Object.keys(MISS_ROT).length+' CONQUISTAS</span>'
     + (selos ? ' · <b>'+selos+'</b>/'+sis.length+' SELOS' : '');
   $('#missbar').firstElementChild.style.width = Math.round(n/total*100)+'%';
@@ -8710,7 +8732,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r113';
+const BUILD = 'r114';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
