@@ -1764,8 +1764,34 @@ SATELITES.forEach(x=>PLANETS.push(x));
 
 /* ============================ MISSÕES TRIPULADAS ============================ */
 const FOGUETES = [
+ {id:'artemis1', name:'ARTEMIS I', desig:'MISSÃO · 2022', kind:'A volta do caminho da Lua, sem ninguém a bordo', hab:0, gbar:0, pop:'0',
+  foguete:true, satOf:'terra', trajPerfil:'dro',
+  traj:{dias:25.5, d0:'16/11/2022', d1:'11/12/2022'},
+  marcos:[[0,'LANÇAMENTO · SLS'],[5,'CHEGADA À LUA'],[10,'ÓRBITA RETRÓGRADA DISTANTE'],[16,'ADEUS À LUA'],[20,'RECORDE DE DISTÂNCIA'],[25.5,'AMERISSAGEM']],
+  quick:[['LANÇAMENTO','16/11/2022'],['FOGUETE','SLS Block 1, 98 m'],['CÁPSULA','Orion'],['TRIPULAÇÃO','manequins Campos, Helga e Zohar'],['DURAÇÃO','25,5 dias'],['RECORDE','432 mil km da Terra']],
+  sys:{orbit:2.6, size:0.11, speed:1.0, angle:2.2},
+  visual:{mode:'rocky', c1:'#e8e4dc', c2:'#f4f0e8', c3:'#9a948a', scale:7.0, seed:20.22, crater:0.05},
+  sections:[
+    {t:'A MISSÃO', rows:[['O teste','O primeiro voo do SLS com a Orion: tudo novo, ninguém a bordo'],['A rota','Órbita RETRÓGRADA distante da Lua: larga, estável e econômica'],['O recorde','432 mil km da Terra: nenhuma nave feita para gente foi tão longe'],['A volta','Reentrada a 40 mil km/h testando o escudo, amerissagem no Pacífico']]},
+    {t:'REGISTRO', rows:[['O comandante','O manequim Moonikin Campos, homenagem a Arturo Campos, engenheiro que ajudou a salvar a Apollo 13'],['As passageiras','Helga e Zohar, torsos que mediram radiação para as futuras tripulações'],['O legado','Abriu o caminho: a Artemis II leva gente pelo mesmo corredor']]}
+  ],
+  facts:['A cápsula foi mais longe que qualquer nave feita para humanos: 432 mil km da Terra.','O comandante era um manequim batizado em homenagem ao engenheiro que ajudou a salvar a Apollo 13.'],
+  fict:'A Snoopy de pelúcia flutuando na cabine servia de indicador oficial de gravidade zero.', moons:[]},
+ {id:'artemis2', name:'ARTEMIS II', desig:'MISSÃO TRIPULADA · PREVISTA', kind:'Os primeiros humanos rumo à Lua desde 1972', hab:0, gbar:0, pop:'4 a bordo',
+  foguete:true, satOf:'terra', trajPerfil:'retorno',
+  traj:{dias:10, d0:'PREVISTA', d1:'~10 dias'},
+  marcos:[[0,'LANÇAMENTO'],[1,'ÓRBITA ALTA DE TESTES'],[4,'CONTORNO DA LUA'],[4.2,'O LADO OCULTO'],[10,'SPLASHDOWN']],
+  quick:[['STATUS','aguardando lançamento'],['TRIPULAÇÃO','Wiseman · Glover · Koch · Hansen'],['PERFIL','sobrevoo com volta livre'],['DURAÇÃO','~10 dias'],['FOGUETE','SLS Block 1'],['CÁPSULA','Orion']],
+  sys:{orbit:2.7, size:0.11, speed:1.0, angle:5.0},
+  visual:{mode:'rocky', c1:'#e0e2ea', c2:'#f0f2f8', c3:'#8e929e', scale:7.0, seed:20.26, crater:0.05},
+  sections:[
+    {t:'A MISSÃO', rows:[['O plano','Sobrevoo da Lua em VOLTA LIVRE: a mesma rota de segurança que salvou a Apollo 13'],['A tripulação','Reid Wiseman, Victor Glover, Christina Koch e Jeremy Hansen'],['Os primeiros','Koch: a primeira mulher numa missão lunar; Hansen: o primeiro não americano'],['O que testa','A Orion com gente a bordo, o suporte de vida e o caminho da Artemis III']]},
+    {t:'REGISTRO', rows:[['Sem pouso','Esta missão contorna a Lua e volta: o pouso fica para a Artemis III'],['O lado oculto','A tripulação verá o lado que a Terra nunca vê, como a Apollo 8 em 1968'],['A linha do tempo aqui','Perfil PLANEJADO da missão; as datas finais dependem do lançamento']]}
+  ],
+  facts:['Será a primeira missão tripulada rumo à Lua desde a Apollo 17, em 1972.','Christina Koch será a primeira mulher e Jeremy Hansen o primeiro não americano a viajar até a Lua.'],
+  fict:'Os quatro viraram celebridades no anúncio de 2023: o primeiro elenco lunar apresentado ao mundo em meio século.', moons:[]},
  {id:'apollo11', name:'APOLLO 11', desig:'MISSÃO · 1969', kind:'O Saturn V que levou a humanidade à Lua', hab:0, gbar:0, pop:'0',
-  foguete:true, satOf:'terra',
+  foguete:true, satOf:'terra', trajPerfil:'pouso',
   traj:{dias:8, d0:'16/7/1969', d1:'24/7/1969'},
   marcos:[[0,'LANÇAMENTO'],[0.2,'RUMO À LUA'],[3,'ÓRBITA LUNAR'],[4,'O POUSO'],[4.4,'UM PEQUENO PASSO'],[5.1,'DECOLAGEM DA LUA'],[8,'SPLASHDOWN']],
   quick:[['LANÇAMENTO','16/7/1969'],['TAMANHO','110 m, o Saturn V'],['TRIPULAÇÃO','Armstrong · Aldrin · Collins'],['POUSO','20/7/1969, Mar da Tranquilidade'],['NA SUPERFÍCIE','21 h 36 min'],['RETORNO','24/7/1969']],
@@ -1781,7 +1807,7 @@ const FOGUETES = [
   fict:'De 2001 a First Man, é o evento mais filmado da era espacial, e as teorias de conspiração sobre ele viraram piada cultural.', moons:[]},
  {id:'apollo13', name:'APOLLO 13', desig:'MISSÃO · 1970', kind:'O fracasso mais bem-sucedido da história', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra',
-  traj:{dias:6, d0:'11/4/1970', d1:'17/4/1970'},
+  traj:{dias:6, d0:'11/4/1970', d1:'17/4/1970'}, trajPerfil:'retorno',
   marcos:[[0,'LANÇAMENTO'],[2.3,'A EXPLOSÃO'],[3.2,'CONTORNO DA LUA'],[3.3,'RECORDE DE DISTÂNCIA'],[6,'SPLASHDOWN']],
   quick:[['LANÇAMENTO','11/4/1970'],['A EXPLOSÃO','13/4, tanque de O₂'],['TRIPULAÇÃO','Lovell · Swigert · Haise'],['A ROTA','contorno livre da Lua'],['SPLASHDOWN','17/4/1970'],['SALDO','todos vivos']],
   sys:{orbit:2.8, size:0.10, speed:0.9, angle:1.7},
@@ -4119,6 +4145,10 @@ const CEU_LINHAS = {
     ['th2tau','aldeb'],['aldeb','zetau']]},
   gemeos:{nome:'GÊMEOS', seg:[['castorceu','pollux'],['castorceu','mebsuta'],['mebsuta','tejat'],
     ['tejat','propus'],['pollux','wasat'],['wasat','alhena'],['alhena','alzirr']]}};
+/* distância das famosas em anos-luz (vai junto no rótulo: a lição de que
+   as estrelas de uma constelação nem são vizinhas) */
+const CEU_AL = {sirius:'8,6', canopus:'310', rigilkent:'4,4', arcturus:'37', vegaceu:'25',
+  rigel:'~860', betelg:'~550', acrux:'~320', aldeb:'65', antares:'~550', spica:'250', polaris:'~430'};
 const CEUV = {on:true};   /* o desenho das constelações liga e desliga */
 /* dia sideral de cada planeta em dias terrestres (negativo = retrógrado) */
 const ESCALA_REAL_DIA = {mercurio:58.65, venus:-243.0, terra:0.997, marte:1.026,
@@ -4567,6 +4597,7 @@ function buildSystem(sysId, spin0){
   /* zona habitável: o anel verde tênue onde água líquida é possível */
   let hzRing = null, hzLbl = null;
   let ceuLinhas = null; const ceuLbls = [];
+  const ceuCruzDir = new THREE.Vector3();
   const hzFx = HZ_SIS[sysId];
   if(hzFx){
     const hg = new THREE.RingGeometry(hzFx[0], hzFx[1], 96, 1);
@@ -4650,7 +4681,7 @@ function buildSystem(sysId, spin0){
     for(const e of ESTRELAS_CEU){
       if(!e[1]) continue;
       const vv2 = ceuPos[e[0]];
-      labels.push({el:makeLabel(e[1], 'faint', null), sempre:true, get:(t)=>t.copy(vv2)});
+      labels.push({el:makeLabel(e[1] + (CEU_AL[e[0]] ? ' · ' + CEU_AL[e[0]] + ' AL' : ''), 'faint', null), sempre:true, get:(t)=>t.copy(vv2)});
     }
     /* estrelas que JÁ são sistemas do atlas são clicáveis no céu: o primeiro
        toque abre a ficha do sistema, o segundo viaja (two-step de sempre) */
@@ -4671,8 +4702,8 @@ function buildSystem(sysId, spin0){
     }
     const lgeo = new THREE.BufferGeometry();
     lgeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(lseg), 3));
-    ceuLinhas = new THREE.LineSegments(lgeo, new THREE.LineBasicMaterial({color:0x3f6a9e,
-      transparent:true, opacity:0.32, depthWrite:false}));
+    ceuLinhas = new THREE.LineSegments(lgeo, new THREE.LineBasicMaterial({color:0x6f9fd8,
+      transparent:true, opacity:0, blending:THREE.AdditiveBlending, depthWrite:false}));
     ceuLinhas.visible = CEUV.on;
     scene.add(fade(ceuLinhas));
     for(const k in CEU_LINHAS){
@@ -4681,6 +4712,7 @@ function buildSystem(sysId, spin0){
       for(const par of cc.seg){ if(ceuPos[par[0]]){ cen.add(ceuPos[par[0]]); nC++; } }
       if(nC){
         cen.multiplyScalar(1/nC).normalize().multiplyScalar(RCEU);
+        if(k === 'cruzeiro') ceuCruzDir.copy(cen).normalize();
         const cv = cen.clone();
         const lb = {el:makeLabel(cc.nome, 'faint', null), off:!CEUV.on, sempre:true, get:(t)=>t.copy(cv)};
         labels.push(lb); ceuLbls.push(lb);
@@ -4700,7 +4732,7 @@ function buildSystem(sysId, spin0){
   if(S.kuiperR) alcance = Math.max(alcance, S.kuiperR[1]);
   for(const pb of S.bodies) alcance = Math.max(alcance, pb.orbita ? pb.orbita.afel : (pb.sys ? pb.sys.orbit : 0));
   const camMaxDin = escrAtivo ? alcance*2.3 : Math.max(S.camMax || 60, alcance * 1.7);   /* real: a maior órbita inteira na tela antes de subir de escala */
-  return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, hzRing, hzLbl, ceuLinhas, ceuLbls,
+  return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir,
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
@@ -4774,6 +4806,9 @@ function buildSystem(sysId, spin0){
           applySel();
         }
       }
+      /* as linhas do céu ACENDEM suaves (fade até 0.3) quando visíveis */
+      if(ceuLinhas && ceuLinhas.visible && !DIVE && !TRANSITO && !FADEIN && ceuLinhas.material.opacity < 0.3)
+        ceuLinhas.material.opacity = Math.min(0.3, ceuLinhas.material.opacity + dt*0.4);
       /* escala real: os alvos de clique RESPIRAM com o zoom (longe: generosos;
          perto: justos). Com raio fixo a Terra engolia a Lua, e a câmera
          entrava DENTRO do alvo e o clique morria (bug que o Rodrigo achou) */
@@ -6351,17 +6386,73 @@ function trajStart(id){
   if(TRAJ.dias){
     /* escala real: a MESMA rota, só que na distância verdadeira (conversor:
        os 4.6 un simbólicos viram 0.0385 un = 384 mil km, Lua em tamanho real) */
+    /* ---------- ROTA FIEL POR PERFIL (v2 das missões lunares) ----------
+       Fases: 1,5 voltas de ESTACIONAMENTO na Terra, injeção translunar
+       TANGENTE à órbita, cruzeiro de ida, fase LUNAR conforme a missão
+       (pouso com a descida da Eagle / volta livre / DRO retrógrada da
+       Artemis), cruzeiro de volta e splashdown. A fase lunar ocupa a MESMA
+       janela (prog 0.36-0.64) em que a Lua segura no ponto de encontro. */
     const fatorTL = (ESCR.on && ST.sys === 'sol') ? (0.0385/4.6) : 1;
-    const D = 4.6*fatorTL, R = 0.62*fatorTL, pts = [];
-    const bez = (a,b,c2,t)=>{ const u = 1-t; return a*u*u + b*2*u*t + c2*t*t; };
+    const escrT = (ESCR.on && ST.sys === 'sol');
+    const perfil = b.trajPerfil || 'retorno';
+    const D = 4.6*fatorTL;
+    const R = escrT ? ({pouso:0.0006, dro:0.0070, retorno:0.00045}[perfil] || 0.0006)
+                    : ({pouso:0.5, dro:1.05, retorno:0.68}[perfil] || 0.62);
+    const rEst = escrT ? 0.0011 : 1.35;
+    const pts = [];
+    const cub = (p0,p1,p2,p3,t)=>{ const u = 1-t; return p0*u*u*u + 3*p1*u*u*t + 3*p2*u*t*t + p3*t*t*t; };
     const aIni = 2.28, aFim = -2.44;
-    for(let i=0;i<=64;i++){ const t = i/64;
-      pts.push(new THREE.Vector3(bez(0.5*fatorTL, 2.4*fatorTL, D+Math.cos(aIni)*R, t), 0, bez(0.25*fatorTL, 1.5*fatorTL, Math.sin(aIni)*R, t))); }
-    for(let i=1;i<=48;i++){ const t = i/48;
-      const a = aIni + (aFim-aIni)*t;
-      pts.push(new THREE.Vector3(D+Math.cos(a)*R, 0, Math.sin(a)*R)); }
-    for(let i=1;i<=64;i++){ const t = i/64;
-      pts.push(new THREE.Vector3(bez(D+Math.cos(aFim)*R, 2.4*fatorTL, 0.5*fatorTL, t), 0, bez(Math.sin(aFim)*R, -1.5*fatorTL, -0.25*fatorTL, t))); }
+    /* A · estacionamento: 1,5 voltas coladas na Terra antes da queima */
+    for(let i=0;i<=15;i++){
+      const a = -Math.PI/2 + (i/15)*3*Math.PI;
+      pts.push(new THREE.Vector3(Math.cos(a)*rEst, 0, Math.sin(a)*rEst));
+    }
+    /* B · cruzeiro de ida: sai tangente e faz o arco até a entrada lunar */
+    const px2 = D + Math.cos(aIni)*R, pz2 = Math.sin(aIni)*R;
+    for(let i=1;i<=75;i++){
+      const t = i/75;
+      pts.push(new THREE.Vector3(
+        cub(0, -1.1*fatorTL, D*0.45, px2, t), 0,
+        cub(rEst, rEst + 2.2*fatorTL, pz2 + 1.4*fatorTL, pz2, t)));
+    }
+    /* C · fase lunar (a Lua espera em (D,0,0) nesta janela) */
+    if(perfil === 'pouso'){
+      /* Apollo 11: órbitas lunares com a DESCIDA no meio: o raio mergulha
+         até quase a superfície (o pouso) e sobe para o reencontro */
+      const voltas = 2.751;   /* termina exatamente no ângulo de saída */
+      for(let i=1;i<=70;i++){
+        const t = i/70;
+        const a = aIni - t*voltas*2*Math.PI;
+        let rr = R;
+        if(t > 0.40 && t < 0.62){
+          const q = Math.sin((t-0.40)/0.22*Math.PI);
+          rr = R - (R - R*0.28)*q;
+        }
+        pts.push(new THREE.Vector3(D + Math.cos(a)*rr, 0, Math.sin(a)*rr));
+      }
+    } else if(perfil === 'dro'){
+      /* Artemis I: órbita retrógrada distante, 1,25 voltas AO CONTRÁRIO */
+      for(let i=1;i<=70;i++){
+        const t = i/70;
+        const a = aIni + t*1.249*2*Math.PI;
+        pts.push(new THREE.Vector3(D + Math.cos(a)*R, 0, Math.sin(a)*R));
+      }
+    } else {
+      /* volta livre (Apollo 13, Artemis II): UM contorno por trás, sem órbita */
+      for(let i=1;i<=70;i++){
+        const t = i/70;
+        const a = aIni + (aFim - aIni)*t;
+        pts.push(new THREE.Vector3(D + Math.cos(a)*R, 0, Math.sin(a)*R));
+      }
+    }
+    /* D · cruzeiro de volta + splashdown */
+    const qx = D + Math.cos(aFim)*R, qz = Math.sin(aFim)*R;
+    for(let i=1;i<=90;i++){
+      const t = i/90;
+      pts.push(new THREE.Vector3(
+        cub(qx, D*0.45, -0.9*fatorTL, 0.30*fatorTL, t), 0,
+        cub(qz, qz - 1.6*fatorTL, -1.9*fatorTL, -0.55*fatorTL, t)));
+    }
     TRAJ.local = pts;
     const lg = new THREE.BufferGeometry().setFromPoints(pts);
     TRAJ.rotaViz = new THREE.Line(lg, new THREE.LineBasicMaterial({color:0xffb454, transparent:true, opacity:0.45}));
@@ -7369,7 +7460,8 @@ const CONQ_DESC = {visita:'Selecione um corpo e entre nele.', sondas:'No filtro 
   tourespacial:'Deixe o TOUR (tecla T, ou ▶ no registro) completar uma rota inteira.',
   rotastodas:'Complete as seis rotas oficiais da caixinha do tour.',
   tourfora:'Abra o card de um sistema fora da Via Láctea e rode o TOUR dele até o fim.',
-  escalareal:'Ligue a ESCALA REAL na engrenagem, entre na Terra e depois afaste até o sistema inteiro virar um pontinho.'};
+  escalareal:'Ligue a ESCALA REAL na engrenagem, entre na Terra e depois afaste até o sistema inteiro virar um pontinho.',
+  ceucruzeiro:'Na escala real, com as constelações ligadas, aproxime da Terra e gire o céu até encontrar o CRUZEIRO DO SUL.'};
 const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A LINHA DAS SONDAS',
   busca:'CAD-03 · LOCALIZAR PELA BUSCA', cinco:'CAD-04 · VISITAR 5 CORPOS DO SISTEMA SOLAR',
   pause:'CAD-05 · PAUSAR E RETOMAR O RELÓGIO', galaxia:'CAD-06 · SUBIR ATÉ A GALÁXIA',
@@ -7379,7 +7471,8 @@ const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A
   tourespacial:'EXP-01 · COMPLETAR UMA ROTA DO TOUR',
   rotastodas:'EXP-02 · COMPLETAR TODAS AS ROTAS OFICIAIS',
   tourfora:'EXP-03 · TOUR EM OUTRA GALÁXIA',
-  escalareal:'EXP-04 · O SISTEMA EM VERDADEIRA GRANDEZA'};
+  escalareal:'EXP-04 · O SISTEMA EM VERDADEIRA GRANDEZA',
+  ceucruzeiro:'CEU-01 · ACHAR O CRUZEIRO DO SUL'};
 function feito(k){
   if(FEITO.has(k)) return;
   FEITO.add(k);
@@ -8982,7 +9075,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r119';
+const BUILD = 'r120';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -9394,7 +9487,10 @@ $('#cfgpop').addEventListener('click', e=>{
     CEUV.on = !CEUV.on;
     store.set('carto:ceu', CEUV.on ? '1' : '0');
     cfgSync();
-    if(ACT && ACT.ceuLinhas) ACT.ceuLinhas.visible = CEUV.on;
+    if(ACT && ACT.ceuLinhas){
+      ACT.ceuLinhas.visible = CEUV.on;
+      if(CEUV.on) ACT.ceuLinhas.material.opacity = 0;   /* redesenha suave */
+    }
     if(ACT && ACT.ceuLbls) ACT.ceuLbls.forEach(l=>{ l.off = !CEUV.on; });
     return;
   }
@@ -9651,6 +9747,12 @@ function loop(){
   if(ACT && (ACT.kind==='system' || ACT.kind==='focus') && !SIMT.pausado && !TRAJ && !DIVE){
     if(SIMT.vel==='real') SIMT.data = Date.now();   /* travado no AGORA */
     else SIMT.data += dt * SIMT.diasPorSeg() * 86400000;
+  }
+  /* CEU-01: achar o Cruzeiro do Sul no céu real, coladinho na Terra */
+  if(ACT && ACT.escr && ACT.ceuCruzDir && CEUV.on && CAM.dist < 6
+     && typeof FEITO !== 'undefined' && !FEITO.has('ceucruzeiro')){
+    camera.getWorldDirection(SEGV);
+    if(SEGV.dot(ACT.ceuCruzDir) > 0.988) feito('ceucruzeiro');
   }
   if(now - SIMCLK_T > 400){ SIMCLK_T = now; if(typeof simClockUI === 'function') simClockUI(); }
   if(typeof tutCaixaSegue === 'function' && TUT && TUT.fila) tutCaixaSegue();   /* mira recalculada a cada quadro, mesmo em vôo */
