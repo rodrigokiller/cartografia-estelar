@@ -6402,53 +6402,59 @@ function trajStart(id){
     const pts = [];
     const cub = (p0,p1,p2,p3,t)=>{ const u = 1-t; return p0*u*u*u + 3*p1*u*u*t + 3*p2*u*t*t + p3*t*t*t; };
     const aIni = 2.28, aFim = -2.44;
-    /* A · estacionamento: 1,5 voltas coladas na Terra antes da queima */
-    for(let i=0;i<=15;i++){
-      const a = -Math.PI/2 + (i/15)*3*Math.PI;
-      pts.push(new THREE.Vector3(Math.cos(a)*rEst, 0, Math.sin(a)*rEst));
+    /* A · estacionamento DENSO e suave: 1,5 voltas coladas na Terra, com a
+       última meia-volta abrindo em ESPIRAL (a órbita desenrola na queima
+       translunar, como nas animações reais; curvas agudas eram pontos de
+       menos, bug que o Rodrigo viu) */
+    const NA = 32, NB = 160, NC = 150, ND = 190;
+    const NTOT = NA + NB + NC + ND;
+    for(let i=0;i<=NA;i++){
+      const t = i/NA, a = -Math.PI/2 + t*3*Math.PI;
+      const rr = rEst*(1 + (t > 0.66 ? (t-0.66)/0.34*0.35 : 0));
+      pts.push(new THREE.Vector3(Math.cos(a)*rr, 0, Math.sin(a)*rr));
     }
-    /* B · cruzeiro de ida: sai tangente e faz o arco até a entrada lunar */
+    /* B · injeção TANGENTE de verdade (o controle sai na direção exata da
+       órbita) e arco de cruzeiro até a entrada lunar */
+    const rSai = rEst*1.35;
     const px2 = D + Math.cos(aIni)*R, pz2 = Math.sin(aIni)*R;
-    for(let i=1;i<=75;i++){
-      const t = i/75;
+    for(let i=1;i<=NB;i++){
+      const t = i/NB;
       pts.push(new THREE.Vector3(
-        cub(0, -1.1*fatorTL, D*0.45, px2, t), 0,
-        cub(rEst, rEst + 2.2*fatorTL, pz2 + 1.4*fatorTL, pz2, t)));
+        cub(0, -1.5*fatorTL, D*0.45, px2, t), 0,
+        cub(rSai, rSai + 0.2*fatorTL, pz2 + 1.4*fatorTL, pz2, t)));
     }
-    /* C · fase lunar (a Lua espera em (D,0,0) nesta janela) */
-    if(perfil === 'pouso'){
-      /* Apollo 11: órbitas lunares com a DESCIDA no meio: o raio mergulha
-         até quase a superfície (o pouso) e sobe para o reencontro */
-      const voltas = 2.751;   /* termina exatamente no ângulo de saída */
-      for(let i=1;i<=70;i++){
-        const t = i/70;
-        const a = aIni - t*voltas*2*Math.PI;
-        let rr = R;
+    /* C · fase lunar com a LUA EM MOVIMENTO: ela NÃO para (segue orbitando a
+       Terra o tempo todo, física de verdade); cada ponto já nasce acompanhando
+       a posição da Lua naquele instante, então a nave desenha as laçadas
+       reais em volta de um alvo que anda */
+    const k27C = (Math.PI*2)/27.3, TTC = (b.traj && b.traj.dias) || 8;
+    const aLuaEm = (pr)=> (0.36 - pr)*TTC*k27C;
+    for(let i=1;i<=NC;i++){
+      const t = i/NC;
+      const prog_i = (NA + NB + i)/NTOT;
+      const aL = aLuaEm(prog_i);
+      let th, rr = R;
+      if(perfil === 'pouso'){
+        th = aIni - t*2.751*2*Math.PI;
         if(t > 0.40 && t < 0.62){
           const q = Math.sin((t-0.40)/0.22*Math.PI);
           rr = R - (R - R*0.28)*q;
         }
-        pts.push(new THREE.Vector3(D + Math.cos(a)*rr, 0, Math.sin(a)*rr));
+      } else if(perfil === 'dro'){
+        th = aIni + t*1.249*2*Math.PI;
+      } else {
+        th = aIni + (aFim - aIni)*t;
       }
-    } else if(perfil === 'dro'){
-      /* Artemis I: órbita retrógrada distante, 1,25 voltas AO CONTRÁRIO */
-      for(let i=1;i<=70;i++){
-        const t = i/70;
-        const a = aIni + t*1.249*2*Math.PI;
-        pts.push(new THREE.Vector3(D + Math.cos(a)*R, 0, Math.sin(a)*R));
-      }
-    } else {
-      /* volta livre (Apollo 13, Artemis II): UM contorno por trás, sem órbita */
-      for(let i=1;i<=70;i++){
-        const t = i/70;
-        const a = aIni + (aFim - aIni)*t;
-        pts.push(new THREE.Vector3(D + Math.cos(a)*R, 0, Math.sin(a)*R));
-      }
+      /* a laçada gira JUNTO com a direção da Lua */
+      pts.push(new THREE.Vector3(
+        D*Math.cos(aL) + Math.cos(th + aL)*rr, 0,
+        D*Math.sin(aL) + Math.sin(th + aL)*rr));
     }
-    /* D · cruzeiro de volta + splashdown */
-    const qx = D + Math.cos(aFim)*R, qz = Math.sin(aFim)*R;
-    for(let i=1;i<=90;i++){
-      const t = i/90;
+    /* D · cruzeiro de volta a partir de onde a nave REALMENTE largou a Lua */
+    const ultC = pts[pts.length-1];
+    const qx = ultC.x, qz = ultC.z;
+    for(let i=1;i<=ND;i++){
+      const t = i/ND;
       pts.push(new THREE.Vector3(
         cub(qx, D*0.45, -0.9*fatorTL, 0.30*fatorTL, t), 0,
         cub(qz, qz - 1.6*fatorTL, -1.9*fatorTL, -0.55*fatorTL, t)));
@@ -6478,7 +6484,7 @@ function trajStart(id){
     /* na escala real a câmera JÁ ABRE enquadrando os 384 mil km: o tween era
        cancelado pelo resto do trajStart e a rota ficava minúscula com cara de
        zoom travado (bug que o Rodrigo viu) */
-    if(fatorTL !== 1) CAM.dist = 0.12;
+    if(fatorTL !== 1){ CAMTW = null; CAM.dist = 0.12; }   /* o tween de entrada do swapScene devolvia o zoom para longe */
   }
   $('#trajtxt').textContent = b.name;
   $('#trajano0').textContent = TRAJ.dias ? b.traj.d0 : (TRAJ.ano0 || '');
@@ -6583,11 +6589,10 @@ function trajStep(now){
      ponto de encontro JUNTO com a nave, segura durante o contorno (os dois
      viajam juntos ali) e segue órbita adiante depois da despedida */
   if(TRAJ.dias && TRAJ.luaViz && TRAJ.luaD){
+    /* a Lua orbita SEM PARAR a missão inteira (a rota já nasce acompanhando
+       ela na fase lunar, então nave e Lua viajam juntas de verdade) */
     const TT = TRAJ.ano1 || 8, k27 = (Math.PI*2)/27.3;
-    let aL;
-    if(TRAJ.prog < 0.36) aL = (0.36 - TRAJ.prog)*TT*k27;
-    else if(TRAJ.prog > 0.64) aL = -(TRAJ.prog - 0.64)*TT*k27;
-    else aL = 0;
+    const aL = (0.36 - TRAJ.prog)*TT*k27;
     TRAJ.luaViz.position.set(Math.cos(aL)*TRAJ.luaD, 0, Math.sin(aL)*TRAJ.luaD);
   }
   CAM.pivot.copy(TRAJ._c);
@@ -9075,7 +9080,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r120';
+const BUILD = 'r121';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
