@@ -881,6 +881,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <button class="devt" data-evt="2026-08-28">ECLIPSE PARCIAL DA LUA · 28 AGO 2026</button>
     <button class="devt" data-evt="2027-08-02">ECLIPSE TOTAL DO SOL · 2 AGO 2027</button>
     <button class="devt" data-evt="2028-07-22">ECLIPSE TOTAL DO SOL · 22 JUL 2028</button>
+    <button class="devt" data-evt="2032-11-13">TRÂNSITO DE MERCÚRIO · 13 NOV 2032</button>
     <button class="devt" data-evt="2061-07-28">PERIÉLIO DO HALLEY · 2061</button>
     <button class="devt" data-evt="2076-07-01">SEDNA NO PERIÉLIO · ~2076</button>
     <button class="devt" data-evt="2227-01-01">PLUTÃO CRUZA NETUNO · 2227</button>
@@ -1207,7 +1208,7 @@ void main(){
 const RING_FRAG = `
 precision highp float;
 varying vec3 vP; varying vec3 vN; varying vec3 vVp;
-uniform float uIn; uniform float uOut; uniform vec3 uCol; uniform float uOp; uniform float uSeed;
+uniform float uIn; uniform float uOut; uniform vec3 uCol; uniform float uOp; uniform float uSeed; uniform float uGapT;
 float h1(float n){ return fract(sin(n)*43758.5453); }
 float n1(float x){ float i=floor(x); float f=fract(x); f=f*f*(3.0-2.0*f); return mix(h1(i),h1(i+1.0),f); }
 void main(){
@@ -1215,7 +1216,7 @@ void main(){
   float t = (r-uIn)/(uOut-uIn);
   if(t<0.0 || t>1.0) discard;
   float band = mix(0.35, 1.0, n1(t*46.0 + uSeed) * n1(t*13.0 + uSeed*2.0) * 1.6);
-  float gap = smoothstep(0.0, 0.045, abs(t-0.64));
+  float gap = smoothstep(0.0, 0.045, abs(t-uGapT));   /* divisão de Cassini parametrizável */
   float edge = smoothstep(0.0,0.06,t) * smoothstep(1.0,0.93,t);
   float a = band * mix(0.12,1.0,gap) * edge * uOp;
   gl_FragColor = vec4(uCol * (0.65 + 0.5*band), a);
@@ -3848,7 +3849,7 @@ function makeBodyGroup(b, radius, seg){
     const rg = new THREE.RingGeometry(radius*r.rin, radius*r.rout, 128, 1);
     const rm = new THREE.ShaderMaterial({vertexShader:PLANET_VERT, fragmentShader:RING_FRAG,
       uniforms:{uIn:{value:radius*r.rin}, uOut:{value:radius*r.rout}, uCol:{value:C(r.col)},
-        uOp:{value:r.op}, uSeed:{value:r.seed||1}},
+        uOp:{value:r.op}, uSeed:{value:r.seed||1}, uGapT:{value:(r.gapT!==undefined)?r.gapT:0.64}},
       side:THREE.DoubleSide, transparent:true, depthWrite:false});
     const ring = new THREE.Mesh(rg, rm);
     ring.rotation.x = Math.PI/2;
@@ -3936,6 +3937,11 @@ const VIAGEMX = {on:false};  /* EXPERIMENTAL: vôo direto planeta a planeta no t
    tamanhos (1 UA = 15 unidades, como sempre; os corpos viram grãos de poeira,
    e é exatamente essa a lição) */
 const ESCR = {on:false};
+const ESCR_EXP = {terra:false, teto:false};   /* metades da conquista EXP-04 */
+function checaEscalaReal(){
+  store.set('carto:escrexp', (ESCR_EXP.terra?'1':'0')+(ESCR_EXP.teto?'1':'0'));
+  if(ESCR_EXP.terra && ESCR_EXP.teto && typeof feito === 'function') feito('escalareal');
+}
 const ESCR_UA = 15;
 const ESCALA_REAL = {   /* [UA, raio em km] */
   mercurio:[0.387, 2440], venus:[0.723, 6052], terra:[1.0, 6371], marte:[1.524, 3390],
@@ -5366,6 +5372,8 @@ function grupoNave(id, raio){
 }
 function buildFocus(bodyId, spin0){
   const b = ALLBODIES[bodyId];
+  /* metade 1 da EXP-04: entrar na Terra com a escala real ligada */
+  if(ESCR.on && bodyId === 'terra' && !ESCR_EXP.terra){ ESCR_EXP.terra = true; checaEscalaReal(); }
   const scene = new THREE.Scene();
   const stF1 = makeStars(QLOW?750:1100, 130, 1.4, 0.8), stF2 = makeStars(300, 110, 2.2, 0.95);
   scene.add(stF1); scene.add(stF2);
@@ -5496,8 +5504,14 @@ function buildFocus(bodyId, spin0){
   /* ---------- CORPO: esfera + luas orbitando ---------- */
   const radius = (b.visual.mode==='star') ? 2.35 : (b.comet ? 1.2 : 2.2);
   const aoVivo = bodyId === 'lua';   /* só a Lua é real; a Terra ficou procedural de vez */
+  /* anéis de Saturno na escala real: de 1,24 a 2,35 raios do planeta, com a
+     divisão de Cassini no lugar certo (2,02-2,10 R, o vão que Mimas abre) */
+  let bV = b;
+  if(ESCR.on && b._sys === 'sol' && bodyId === 'saturno' && b.visual && b.visual.rings)
+    bV = Object.assign({}, b, {visual:Object.assign({}, b.visual,
+      {rings:Object.assign({}, b.visual.rings, {rin:1.24, rout:2.35, gapT:0.739})})});
   bg = aoVivo ? grupoLive(bodyId, radius, QLOW?96:128)
-     : ((b.sonda || b.satelite || b.foguete) ? grupoNave(bodyId, radius) : makeBodyGroup(b, radius, QLOW?96:128));
+     : ((b.sonda || b.satelite || b.foguete) ? grupoNave(bodyId, radius) : makeBodyGroup(bV, radius, QLOW?96:128));
   wrap.add(bg.group);
   /* escala real: o eixo de rotação entortado de verdade (Terra 23,4 graus,
      Urano quase deitado; o giro do dia acontece em volta do eixo torto) */
@@ -6221,6 +6235,7 @@ SIMT.vel = store.get('carto:vel', 'dia');
 RASTRO.on = store.get('carto:rastro', '0') === '1';
 VIAGEMX.on = store.get('carto:viagemx', '0') === '1';
 ESCR.on = store.get('carto:escr', '0') === '1';
+{ const ee = store.get('carto:escrexp', '00'); ESCR_EXP.terra = ee[0] === '1'; ESCR_EXP.teto = ee[1] === '1'; }
 COORD.real = store.get('carto:coord', '0') === '1';
 { const v = store.get('carto:objetos', null);
   if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
@@ -7004,7 +7019,8 @@ const CONQ_DESC = {visita:'Selecione um corpo e entre nele.', sondas:'No filtro 
   apollo:'Abra a linha do tempo da Apollo 11 ou 13.', sistemacompleto:'Visite todos os corpos de um sistema.',
   tourespacial:'Deixe o TOUR (tecla T, ou ▶ no registro) completar uma rota inteira.',
   rotastodas:'Complete as seis rotas oficiais da caixinha do tour.',
-  tourfora:'Abra o card de um sistema fora da Via Láctea e rode o TOUR dele até o fim.'};
+  tourfora:'Abra o card de um sistema fora da Via Láctea e rode o TOUR dele até o fim.',
+  escalareal:'Ligue a ESCALA REAL na engrenagem, entre na Terra e depois afaste até o sistema inteiro virar um pontinho.'};
 const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A LINHA DAS SONDAS',
   busca:'CAD-03 · LOCALIZAR PELA BUSCA', cinco:'CAD-04 · VISITAR 5 CORPOS DO SISTEMA SOLAR',
   pause:'CAD-05 · PAUSAR E RETOMAR O RELÓGIO', galaxia:'CAD-06 · SUBIR ATÉ A GALÁXIA',
@@ -7013,7 +7029,8 @@ const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A
   apollo:'TIM-03 · REVIVER UMA MISSÃO APOLLO', sistemacompleto:'TIM-04 · COMPLETAR UM SISTEMA',
   tourespacial:'EXP-01 · COMPLETAR UMA ROTA DO TOUR',
   rotastodas:'EXP-02 · COMPLETAR TODAS AS ROTAS OFICIAIS',
-  tourfora:'EXP-03 · TOUR EM OUTRA GALÁXIA'};
+  tourfora:'EXP-03 · TOUR EM OUTRA GALÁXIA',
+  escalareal:'EXP-04 · O SISTEMA EM VERDADEIRA GRANDEZA'};
 function feito(k){
   if(FEITO.has(k)) return;
   FEITO.add(k);
@@ -8354,6 +8371,8 @@ function dolly(f){
     const podeSubir = ST.level !== 'universe';
     if(!jaNoTeto){
       CAM.dist = CAM.max;
+      /* metade 2 da EXP-04: o sistema real inteiro virou um pontinho */
+      if(ACT && ACT.escr && ACT.kind==='system' && !ESCR_EXP.teto){ ESCR_EXP.teto = true; checaEscalaReal(); }
       ZLIM.over = 0; ZLIM.t = now;
       if(podeSubir && now - ZLIM.hint > 2400){
         ZLIM.hint = now;
@@ -8602,7 +8621,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r110';
+const BUILD = 'r111';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
