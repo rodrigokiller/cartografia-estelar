@@ -3971,9 +3971,12 @@ function updateLabels(){
     if(L.escrOrb && CAM.dist > L.escrOrb*8){ L.el.style.display = 'none'; continue; }
     /* zoom fundo na escala real: só o corpo travado e as luas dele mantêm o
        nome, o mapa vira sistema planetário só de aproximar (ideia do Rodrigo) */
-    if(ACT.escr && ACT.kind==='system' && CAM.dist < 0.8){
+    /* colado num planeta é justamente a hora de olhar o CÉU: estrelas e
+       constelações (sempre:true) atravessam o declutter; na linha do tempo
+       a regra descansa inteira (a rota precisa dos nomes) */
+    if(ACT.escr && ACT.kind==='system' && CAM.dist < 0.8 && !TRAJ){
       const dono = ST.mapCard ? (ST.mapCard.id || ST.mapCard) : null;
-      const fica = dono && L.lid && (L.lid === dono || L.lidPai === dono);
+      const fica = (dono && L.lid && (L.lid === dono || L.lidPai === dono)) || L.sempre;
       if(!fica){ L.el.style.display = 'none'; continue; }
     }
     if(L.mini && longe){ L.el.style.display = 'none'; continue; }
@@ -4091,7 +4094,15 @@ const ESTRELAS_CEU = [
   ['megrez',0,12.26,57.03,3.31,'A'], ['mizar',0,13.40,54.93,2.27,'A'],
   ['imai',0,12.25,-58.75,2.79,'B'],
   ['schedar',0,0.68,56.54,2.24,'K'], ['caph',0,0.15,59.15,2.27,'F'],
-  ['navi',0,0.95,60.72,2.47,'B'], ['ruchbah',0,1.43,60.24,2.66,'A'], ['segin',0,1.90,63.67,3.35,'B']];
+  ['navi',0,0.95,60.72,2.47,'B'], ['ruchbah',0,1.43,60.24,2.66,'A'], ['segin',0,1.90,63.67,3.35,'B'],
+  ['acrab',0,16.09,-19.81,2.62,'B'], ['dschubba',0,16.00,-22.62,2.29,'B'], ['pisco',0,15.98,-26.11,2.89,'B'],
+  ['alniyat',0,16.35,-25.59,2.88,'B'], ['tausco',0,16.60,-28.22,2.82,'B'], ['larawag',0,16.84,-34.29,2.29,'K'],
+  ['musco',0,16.87,-38.05,3.00,'B'], ['zetasco',0,16.91,-42.36,3.60,'K'], ['etasco',0,17.20,-43.24,3.33,'F'],
+  ['iotasco',0,17.79,-40.13,2.99,'F'], ['kappasco',0,17.71,-39.03,2.39,'B'], ['lesath',0,17.51,-37.30,2.69,'B'],
+  ['gtau',0,4.33,15.63,3.65,'G'], ['dtau',0,4.38,17.54,3.77,'G'], ['ain',0,4.48,19.18,3.53,'K'],
+  ['th2tau',0,4.48,15.87,3.40,'A'], ['zetau',0,5.63,21.14,3.00,'B'],
+  ['wasat',0,7.34,21.98,3.53,'F'], ['mebsuta',0,6.73,25.13,3.06,'G'], ['tejat',0,6.38,22.51,2.87,'M'],
+  ['propus',0,6.25,22.51,3.31,'M'], ['alzirr',0,6.75,12.90,3.35,'F']];
 /* as linhas de cada constelação, por pares de estrelas */
 const CEU_LINHAS = {
   orion:{nome:'ÓRION', seg:[['betelg','bellatrix'],['betelg','alnitak'],['bellatrix','mintaka'],
@@ -4100,7 +4111,14 @@ const CEU_LINHAS = {
   cruzeiro:{nome:'CRUZEIRO DO SUL', seg:[['acrux','gacrux'],['imai','mimosa']]},
   ursamaior:{nome:'URSA MAIOR', seg:[['dubhe','merak'],['merak','phecda'],['phecda','megrez'],
     ['megrez','dubhe'],['megrez','alioth'],['alioth','mizar'],['mizar','alkaid']]},
-  cassiopeia:{nome:'CASSIOPEIA', seg:[['caph','schedar'],['schedar','navi'],['navi','ruchbah'],['ruchbah','segin']]}};
+  cassiopeia:{nome:'CASSIOPEIA', seg:[['caph','schedar'],['schedar','navi'],['navi','ruchbah'],['ruchbah','segin']]},
+  escorpiao:{nome:'ESCORPIÃO', seg:[['acrab','dschubba'],['dschubba','pisco'],['dschubba','antares'],
+    ['antares','tausco'],['tausco','larawag'],['larawag','musco'],['musco','zetasco'],['zetasco','etasco'],
+    ['etasco','sargas'],['sargas','iotasco'],['iotasco','kappasco'],['kappasco','lesath'],['lesath','shaula']]},
+  touro:{nome:'TOURO', seg:[['gtau','dtau'],['dtau','ain'],['ain','elnath'],['gtau','th2tau'],
+    ['th2tau','aldeb'],['aldeb','zetau']]},
+  gemeos:{nome:'GÊMEOS', seg:[['castorceu','pollux'],['castorceu','mebsuta'],['mebsuta','tejat'],
+    ['tejat','propus'],['pollux','wasat'],['wasat','alhena'],['alhena','alzirr']]}};
 const CEUV = {on:true};   /* o desenho das constelações liga e desliga */
 /* dia sideral de cada planeta em dias terrestres (negativo = retrógrado) */
 const ESCALA_REAL_DIA = {mercurio:58.65, venus:-243.0, terra:0.997, marte:1.026,
@@ -4632,7 +4650,18 @@ function buildSystem(sysId, spin0){
     for(const e of ESTRELAS_CEU){
       if(!e[1]) continue;
       const vv2 = ceuPos[e[0]];
-      labels.push({el:makeLabel(e[1], 'faint', null), get:(t)=>t.copy(vv2)});
+      labels.push({el:makeLabel(e[1], 'faint', null), sempre:true, get:(t)=>t.copy(vv2)});
+    }
+    /* estrelas que JÁ são sistemas do atlas são clicáveis no céu: o primeiro
+       toque abre a ficha do sistema, o segundo viaja (two-step de sempre) */
+    const CEU_SIS = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse'};
+    for(const cid in CEU_SIS){
+      const vv3 = ceuPos[cid];
+      if(!vv3 || !SYS[CEU_SIS[cid]]) continue;
+      const cpk = new THREE.Mesh(new THREE.SphereGeometry(2600, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
+      cpk.position.copy(vv3);
+      cpk.userData = {act:'sys', id:CEU_SIS[cid]};
+      scene.add(cpk); pickables.push(cpk);
     }
     /* as linhas das constelações (toggle na engrenagem) e os nomes delas */
     const lseg = [];
@@ -4653,7 +4682,7 @@ function buildSystem(sysId, spin0){
       if(nC){
         cen.multiplyScalar(1/nC).normalize().multiplyScalar(RCEU);
         const cv = cen.clone();
-        const lb = {el:makeLabel(cc.nome, 'faint', null), off:!CEUV.on, get:(t)=>t.copy(cv)};
+        const lb = {el:makeLabel(cc.nome, 'faint', null), off:!CEUV.on, sempre:true, get:(t)=>t.copy(cv)};
         labels.push(lb); ceuLbls.push(lb);
       }
     }
@@ -6340,6 +6369,7 @@ function trajStart(id){
     TRAJ.luaViz = new THREE.Mesh(new THREE.SphereGeometry(fatorTL === 1 ? 0.30 : 0.000174, 20, 20),
       new THREE.MeshBasicMaterial({color:0x9a958c}));
     TRAJ.luaViz.position.set(D, 0, 0);
+    TRAJ.luaD = D;
     o.obj.parent.add(TRAJ.luaViz);
     TRAJ.luaLbl = {el:makeLabel('LUA', 'faint', null),
       get:(v)=>{ if(TRAJ && TRAJ.luaViz) TRAJ.luaViz.getWorldPosition(v); v.y += (TRAJ && TRAJ.fatorTL && TRAJ.fatorTL !== 1) ? 0.002 : 0.55; }};
@@ -6354,8 +6384,10 @@ function trajStart(id){
     }
     ACT.labels.push(TRAJ.luaLbl);
     TRAJ.fatorTL = fatorTL;
-    /* na escala real a câmera fecha sozinha para enquadrar os 384 mil km */
-    if(fatorTL !== 1) tweenCam({dist:0.11}, 900);
+    /* na escala real a câmera JÁ ABRE enquadrando os 384 mil km: o tween era
+       cancelado pelo resto do trajStart e a rota ficava minúscula com cara de
+       zoom travado (bug que o Rodrigo viu) */
+    if(fatorTL !== 1) CAM.dist = 0.12;
   }
   $('#trajtxt').textContent = b.name;
   $('#trajano0').textContent = TRAJ.dias ? b.traj.d0 : (TRAJ.ano0 || '');
@@ -6456,6 +6488,17 @@ function trajStep(now){
     TRAJ.prog = Math.min(1, TRAJ.prog + dt*1000*TRAJ.vel/TRAJ.base);
   const span = ((TRAJ.dias || TRAJ.ano0) && TRAJ.ano1 > TRAJ.ano0) ? (TRAJ.ano1-TRAJ.ano0) : 0;
   trajPonto(TRAJ.prog, TRAJ._c);
+  /* a Lua da missão ORBITA de verdade com os dias passando (27,3 d): chega ao
+     ponto de encontro JUNTO com a nave, segura durante o contorno (os dois
+     viajam juntos ali) e segue órbita adiante depois da despedida */
+  if(TRAJ.dias && TRAJ.luaViz && TRAJ.luaD){
+    const TT = TRAJ.ano1 || 8, k27 = (Math.PI*2)/27.3;
+    let aL;
+    if(TRAJ.prog < 0.36) aL = (0.36 - TRAJ.prog)*TT*k27;
+    else if(TRAJ.prog > 0.64) aL = -(TRAJ.prog - 0.64)*TT*k27;
+    else aL = 0;
+    TRAJ.luaViz.position.set(Math.cos(aL)*TRAJ.luaD, 0, Math.sin(aL)*TRAJ.luaD);
+  }
   CAM.pivot.copy(TRAJ._c);
   /* o corpo navega junto, em vez de esperar parado no fim da linha */
   if(TRAJ.corpo && TRAJ.corpo.parent){
@@ -8939,7 +8982,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r118';
+const BUILD = 'r119';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
