@@ -900,6 +900,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-rastro="1"><span>RASTRO DE 30 DIAS</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-viagemx="1"><span>VIAGEM INTERPLANETAR NO TOUR (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-escr="1"><span>SISTEMA SOLAR EM ESCALA REAL (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
+    <div class="filtrow" data-hz="1"><span>ZONA HABITÁVEL DA ESTRELA</span><b>LIGADO</b></div>
     <div class="filtrow" data-coord="1"><span>COORDENADAS REAIS (RA/DEC)</span><b>DESLIGADO</b></div>
     <div class="fp-t fp-t2">SOM</div>
     <div class="filtrow" data-som="mus"><span>MÚSICA</span><b></b></div>
@@ -1520,16 +1521,24 @@ PLANETS.push(
     ],
     facts:['Verona Rupes tem 20 km de altura: pulando de lá, a queda duraria 12 minutos.','Parece remontada de pedaços que não combinam, e ninguém sabe ao certo por quê.'],
     fict:'Verona Rupes é sempre citado como o melhor lugar do sistema solar para um salto base, um clássico da divulgação científica.'},
-   {id:'titania', name:'TITÂNIA', desig:'URANO-III', kind:'Lua principal', hab:0, gbar:0.037, pop:'0',
-    quick:[['DIÂMETRO','1.578 km'],['ÓRBITA','8,7 d'],['DESCOBERTA','1787'],['RANK','8ª maior']],
+   {id:'titania', name:'TITÂNIA', desig:'URANO-III · LUA', kind:'A rainha dos cânions de gelo', hab:3, gbar:0.037, pop:'0',
+    quick:[['DIÂMETRO','1.578 km'],['GRAVIDADE','0,037 g'],['ÓRBITA','8,7 d'],['DESCOBERTA','1787'],['CÂNION','Messina, 1.500 km'],['TEMP.','−203 °C']],
     visual:{mode:'rocky', c1:'#b39e8c', c2:'#cdbaa8', c3:'#8a7666', scale:4.8, seed:3.3, crater:0.6},
-    sections:[{t:'REGISTRO', rows:[['Descoberta','1787 · William Herschel'],['Nome','Rainha das fadas em Shakespeare'],['Superfície','Cânions gigantes de gelo']]}],
-    facts:['A maior lua de Urano, e ainda assim só a 8ª do sistema.'], fict:null},
-   {id:'oberon', name:'OBERON', desig:'URANO-IV', kind:'Lua principal', hab:0, gbar:0.035, pop:'0',
-    quick:[['DIÂMETRO','1.523 km'],['ÓRBITA','13,5 d'],['DESCOBERTA','1787'],['COR','avermelhada']],
+    sections:[
+      {t:'OS CÂNIONS', rows:[['Messina Chasma','Um rasgo de 1.500 km, três vezes o comprimento do Grand Canyon'],['A origem','A lua congelou de fora para dentro: a água expandiu e rachou a casca inteira'],['O CO₂','Gelo seco detectado na superfície, talvez uma atmosfera sazonal finíssima']]},
+      {t:'REGISTRO', rows:[['Descoberta','1787 · William Herschel, no mesmo ano de Oberon'],['O nome','A rainha das fadas de Sonho de uma Noite de Verão'],['A tradição','As luas de Urano são batizadas por Shakespeare e Pope, únicas fora da mitologia'],['Única visita','Voyager 2, janeiro de 1986']]}
+    ],
+    facts:['A maior lua de Urano congelou de fora para dentro, e a expansão da água rachou a casca em cânions de 1.500 km.','As luas de Urano são as únicas batizadas fora da mitologia: os nomes vêm de Shakespeare e de Alexander Pope.'],
+    fict:'Titânia é a rainha das fadas de Sonho de uma Noite de Verão, de Shakespeare, casada com Oberon: o casal dá nome às duas maiores luas de Urano.'},
+   {id:'oberon', name:'OBERON', desig:'URANO-IV · LUA', kind:'O rei velho e craterizado', hab:2, gbar:0.035, pop:'0',
+    quick:[['DIÂMETRO','1.523 km'],['GRAVIDADE','0,035 g'],['ÓRBITA','13,5 d'],['DESCOBERTA','1787'],['COR','avermelhada'],['TEMP.','−203 °C']],
     visual:{mode:'rocky', c1:'#9c8676', c2:'#b5a08e', c3:'#6f5d50', scale:5.4, seed:8.1, crater:0.7},
-    sections:[{t:'REGISTRO', rows:[['Descoberta','1787 · William Herschel'],['Nome','Rei das fadas em Shakespeare'],['Superfície','Antiga e craterizada']]}],
-    facts:['Só foi vista de perto uma vez, pela Voyager 2 em 1986.'], fict:null}
+    sections:[
+      {t:'A SUPERFÍCIE ANTIGA', rows:[['As crateras','A face mais bombardeada das grandes luas de Urano, quase intocada desde a formação'],['O material escuro','O fundo de várias crateras guarda um material escuro de origem desconhecida'],['A montanha','Um pico de uns 6 km apontava na borda do disco na única foto de perto'],['A cor','Avermelhada pela radiação, que cozinha o gelo há bilhões de anos']]},
+      {t:'REGISTRO', rows:[['Descoberta','1787 · William Herschel'],['O nome','O rei das fadas de Sonho de uma Noite de Verão'],['A mais distante','A mais externa das cinco grandes: 13,5 dias por volta'],['Única visita','Voyager 2, janeiro de 1986, e nunca mais']]}
+    ],
+    facts:['Tem a face mais antiga e craterizada das grandes luas de Urano, quase intocada desde a formação do sistema.','Na única foto de perto, da Voyager 2, um pico de 6 km apontava na borda do disco.'],
+    fict:'Oberon é o rei das fadas de Sonho de uma Noite de Verão, de Shakespeare, marido de Titânia: o casal reina sobre as duas maiores luas de Urano.'}
   ]
 },
 {
@@ -3938,6 +3947,13 @@ const VIAGEMX = {on:false};  /* EXPERIMENTAL: vôo direto planeta a planeta no t
    e é exatamente essa a lição) */
 const ESCR = {on:false};
 const ESCR_EXP = {terra:false, teto:false};   /* metades da conquista EXP-04 */
+/* zona habitável por sistema, em unidades de cena (no sol, 15 un = 1 UA, então
+   0,95 a 1,67 UA é honesto nos DOIS modos; nos outros é cênico, abraçando os
+   planetas que a ciência põe na zona) */
+const HZ_SIS = {sol:[14.25, 25], trappist:[5.8, 9.4], kepler452:[10.5, 14],
+  kepler186:[9.5, 12.5], toi700:[10, 13.5], gliese581:[10.4, 14],
+  lhs1140:[8.8, 12], k218:[8.6, 12]};
+const HZV = {on:true};
 function checaEscalaReal(){
   store.set('carto:escrexp', (ESCR_EXP.terra?'1':'0')+(ESCR_EXP.teto?'1':'0'));
   if(ESCR_EXP.terra && ESCR_EXP.teto && typeof feito === 'function') feito('escalareal');
@@ -4397,6 +4413,40 @@ function buildSystem(sysId, spin0){
     luaFix.mh.rotation.y = -alvoLua - luaFix.holder.rotation.y;
   }
   let simPrev = SIMT.data;
+  /* zona habitável: o anel verde tênue onde água líquida é possível */
+  let hzRing = null, hzLbl = null;
+  const hzFx = HZ_SIS[sysId];
+  if(hzFx){
+    const hg = new THREE.RingGeometry(hzFx[0], hzFx[1], 96, 1);
+    hzRing = new THREE.Mesh(hg, new THREE.MeshBasicMaterial({color:0x3ec46e, transparent:true,
+      opacity:0.055, side:THREE.DoubleSide, depthWrite:false}));
+    hzRing.rotation.x = Math.PI/2;
+    hzRing.visible = HZV.on;
+    scene.add(fade(hzRing));
+    const hzMid = (hzFx[0]+hzFx[1])/2, hzAng = 3.9;
+    hzLbl = {el:makeLabel('ZONA HABITÁVEL', 'faint', null), off:!HZV.on,
+      escrOrb:(escrAtivo ? hzMid : 0),
+      get:v=>v.set(Math.cos(hzAng)*hzMid, 0.5, Math.sin(hzAng)*hzMid)};
+    labels.push(hzLbl);
+  }
+  /* heliopausa na escala real: a casca tênue a ~120 UA onde o vento solar
+     acaba; as Voyagers e a Pioneer 10 estão DO LADO DE FORA, de verdade */
+  if(escrAtivo){
+    const hpN = QLOW ? 500 : 900, hpPos = new Float32Array(hpN*3);
+    for(let i=0;i<hpN;i++){
+      const th = Math.random()*Math.PI*2, ph = Math.acos(2*Math.random()-1);
+      const r = 1800*(0.97 + Math.random()*0.06);
+      hpPos[i*3] = r*Math.sin(ph)*Math.cos(th);
+      hpPos[i*3+1] = r*Math.cos(ph)*0.55;   /* levemente achatada, como é */
+      hpPos[i*3+2] = r*Math.sin(ph)*Math.sin(th);
+    }
+    const hpG = new THREE.BufferGeometry();
+    hpG.setAttribute('position', new THREE.BufferAttribute(hpPos, 3));
+    scene.add(fade(new THREE.Points(hpG, new THREE.PointsMaterial({color:0x6a9ac8, size:1.3,
+      sizeAttenuation:false, transparent:true, opacity:0.4, depthWrite:false}))));
+    labels.push({el:makeLabel('HELIOPAUSA', 'faint', null), escrOrb:1800,
+      get:v=>v.set(Math.cos(0.9)*1800, 120, Math.sin(0.9)*1800)});
+  }
   /* limite de zoom calculado pelo objeto mais distante em órbita */
   let alcance = 0;
   if(escrAtivo){
@@ -4410,7 +4460,7 @@ function buildSystem(sysId, spin0){
   if(S.kuiperR) alcance = Math.max(alcance, S.kuiperR[1]);
   for(const pb of S.bodies) alcance = Math.max(alcance, pb.orbita ? pb.orbita.afel : (pb.sys ? pb.sys.orbit : 0));
   const camMaxDin = escrAtivo ? alcance*2.3 : Math.max(S.camMax || 60, alcance * 1.7);   /* real: a maior órbita inteira na tela antes de subir de escala */
-  return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo,
+  return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, hzRing, hzLbl,
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
@@ -6235,6 +6285,7 @@ SIMT.vel = store.get('carto:vel', 'dia');
 RASTRO.on = store.get('carto:rastro', '0') === '1';
 VIAGEMX.on = store.get('carto:viagemx', '0') === '1';
 ESCR.on = store.get('carto:escr', '0') === '1';
+HZV.on = store.get('carto:hz', '1') === '1';
 { const ee = store.get('carto:escrexp', '00'); ESCR_EXP.terra = ee[0] === '1'; ESCR_EXP.teto = ee[1] === '1'; }
 COORD.real = store.get('carto:coord', '0') === '1';
 { const v = store.get('carto:objetos', null);
@@ -8621,7 +8672,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r111';
+const BUILD = 'r112';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -8994,6 +9045,8 @@ document.querySelectorAll('.fpx').forEach(b=>b.addEventListener('click', e=>{
   if(pop) pop.classList.remove('on');
 }));
 function cfgSync(){
+  const rh = $('#cfgpop').querySelector('[data-hz]');
+  if(rh){ rh.classList.toggle('off', !HZV.on); rh.querySelector('b').textContent = HZV.on ? 'LIGADO' : 'DESLIGADO'; }
   const re = $('#cfgpop').querySelector('[data-escr]');
   if(re){ re.classList.toggle('off', !ESCR.on); re.querySelector('b').textContent = ESCR.on ? 'LIGADO' : 'DESLIGADO'; }
   const rv = $('#cfgpop').querySelector('[data-viagemx]');
@@ -9024,6 +9077,15 @@ $('#btncfg').addEventListener('click', ()=>{
   cfgSync();
 });
 $('#cfgpop').addEventListener('click', e=>{
+  const rH = e.target.closest('[data-hz]');
+  if(rH){
+    HZV.on = !HZV.on;
+    store.set('carto:hz', HZV.on ? '1' : '0');
+    cfgSync();
+    if(ACT && ACT.hzRing) ACT.hzRing.visible = HZV.on;
+    if(ACT && ACT.hzLbl) ACT.hzLbl.off = !HZV.on;
+    return;
+  }
   const rE = e.target.closest('[data-escr]');
   if(rE){
     ESCR.on = !ESCR.on;
