@@ -935,6 +935,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-viagemx="1"><span>VIAGEM INTERPLANETAR NO TOUR (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-escr="1"><span>SISTEMA SOLAR EM ESCALA REAL (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-hz="1"><span>ZONA HABITÁVEL DA ESTRELA</span><b>LIGADO</b></div>
+    <div class="filtrow" data-ceu="1"><span>CONSTELAÇÕES NO CÉU REAL</span><b>LIGADO</b></div>
     <div class="filtrow" data-coord="1"><span>COORDENADAS REAIS (RA/DEC)</span><b>DESLIGADO</b></div>
     <div class="fp-t fp-t2">SOM</div>
     <div class="filtrow" data-som="mus"><span>MÚSICA</span><b></b></div>
@@ -4058,6 +4059,49 @@ const ESCALA_REAL_LUAS = {
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45};
 /* pedras do cinturão: [UA, raio km] (no cênico elas moram no anel desenhado) */
 const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4]};
+/* O CÉU REAL (só na escala real): as estrelas mais brilhantes do céu em
+   posição VERDADEIRA (RA/DEC J2000 convertidos ao plano da eclíptica da cena)
+   e cor pela classe espectral. É o começo do sonho das constelações. */
+const ESTRELAS_CEU = [
+  /* [id, nome mostrado (0 = sem rótulo), RA horas, DEC graus, magnitude, classe] */
+  ['sirius','SÍRIUS',6.752,-16.72,-1.46,'A'], ['canopus','CANOPUS',6.40,-52.70,-0.74,'F'],
+  ['rigilkent','ALPHA CENTAURI',14.66,-60.83,-0.27,'G'], ['arcturus','ARCTURUS',14.26,19.18,-0.05,'K'],
+  ['vegaceu','VEGA',18.62,38.78,0.03,'A'], ['capella',0,5.28,46.00,0.08,'G'],
+  ['rigel','RIGEL',5.24,-8.20,0.13,'B'], ['procyon',0,7.65,5.22,0.34,'F'],
+  ['achernar',0,1.63,-57.24,0.46,'B'], ['betelg','BETELGEUSE',5.92,7.41,0.45,'M'],
+  ['hadar',0,14.06,-60.37,0.61,'B'], ['altair',0,19.85,8.87,0.77,'A'],
+  ['acrux','ACRUX',12.44,-63.10,0.76,'B'], ['aldeb','ALDEBARAN',4.60,16.51,0.85,'K'],
+  ['antares','ANTARES',16.49,-26.43,1.06,'M'], ['spica','SPICA',13.42,-11.16,0.97,'B'],
+  ['pollux',0,7.76,28.03,1.14,'K'], ['fomalh',0,22.96,-29.62,1.16,'A'],
+  ['deneb',0,20.69,45.28,1.25,'A'], ['mimosa',0,12.79,-59.69,1.25,'B'],
+  ['regulus',0,10.14,11.97,1.36,'B'], ['adhara',0,6.98,-28.97,1.50,'B'],
+  ['castorceu',0,7.58,31.89,1.58,'A'], ['gacrux',0,12.52,-57.11,1.64,'M'],
+  ['shaula',0,17.56,-37.10,1.62,'B'], ['bellatrix',0,5.42,6.35,1.64,'B'],
+  ['elnath',0,5.44,28.61,1.65,'B'], ['miapla',0,9.22,-69.72,1.67,'A'],
+  ['alnilam',0,5.60,-1.20,1.69,'B'], ['alnitak',0,5.68,-1.94,1.74,'O'],
+  ['alioth',0,12.90,55.96,1.77,'A'], ['dubhe',0,11.06,61.75,1.79,'K'],
+  ['mirfak',0,3.41,49.86,1.80,'F'], ['wezen',0,7.14,-26.39,1.84,'F'],
+  ['kausaus',0,18.40,-34.38,1.85,'B'], ['alkaid',0,13.79,49.31,1.86,'B'],
+  ['sargas',0,17.62,-43.00,1.87,'F'], ['menkal',0,6.00,44.95,1.90,'A'],
+  ['atria',0,16.81,-69.03,1.92,'K'], ['alhena',0,6.63,16.40,1.92,'A'],
+  ['peacock',0,20.43,-56.74,1.94,'B'], ['polaris','POLARIS',2.53,89.26,1.98,'F'],
+  ['saiph',0,5.80,-9.67,2.07,'B'], ['mintaka',0,5.53,-0.30,2.23,'O'],
+  ['meissa',0,5.59,9.93,3.39,'O'],
+  ['merak',0,11.03,56.38,2.37,'A'], ['phecda',0,11.90,53.69,2.44,'A'],
+  ['megrez',0,12.26,57.03,3.31,'A'], ['mizar',0,13.40,54.93,2.27,'A'],
+  ['imai',0,12.25,-58.75,2.79,'B'],
+  ['schedar',0,0.68,56.54,2.24,'K'], ['caph',0,0.15,59.15,2.27,'F'],
+  ['navi',0,0.95,60.72,2.47,'B'], ['ruchbah',0,1.43,60.24,2.66,'A'], ['segin',0,1.90,63.67,3.35,'B']];
+/* as linhas de cada constelação, por pares de estrelas */
+const CEU_LINHAS = {
+  orion:{nome:'ÓRION', seg:[['betelg','bellatrix'],['betelg','alnitak'],['bellatrix','mintaka'],
+    ['alnitak','alnilam'],['alnilam','mintaka'],['alnitak','saiph'],['mintaka','rigel'],
+    ['saiph','rigel'],['betelg','meissa'],['bellatrix','meissa']]},
+  cruzeiro:{nome:'CRUZEIRO DO SUL', seg:[['acrux','gacrux'],['imai','mimosa']]},
+  ursamaior:{nome:'URSA MAIOR', seg:[['dubhe','merak'],['merak','phecda'],['phecda','megrez'],
+    ['megrez','dubhe'],['megrez','alioth'],['alioth','mizar'],['mizar','alkaid']]},
+  cassiopeia:{nome:'CASSIOPEIA', seg:[['caph','schedar'],['schedar','navi'],['navi','ruchbah'],['ruchbah','segin']]}};
+const CEUV = {on:true};   /* o desenho das constelações liga e desliga */
 /* dia sideral de cada planeta em dias terrestres (negativo = retrógrado) */
 const ESCALA_REAL_DIA = {mercurio:58.65, venus:-243.0, terra:0.997, marte:1.026,
   jupiter:0.414, saturno:0.444, urano:-0.718, netuno:0.671};
@@ -4504,6 +4548,7 @@ function buildSystem(sysId, spin0){
   let simPrev = SIMT.data;
   /* zona habitável: o anel verde tênue onde água líquida é possível */
   let hzRing = null, hzLbl = null;
+  let ceuLinhas = null; const ceuLbls = [];
   const hzFx = HZ_SIS[sysId];
   if(hzFx){
     const hg = new THREE.RingGeometry(hzFx[0], hzFx[1], 96, 1);
@@ -4551,6 +4596,67 @@ function buildSystem(sysId, spin0){
       sizeAttenuation:false, transparent:true, opacity:0.26, depthWrite:false}))));
     labels.push({el:makeLabel('NUVEM DE OORT', 'faint', null), escrOrb:30000,
       get:v=>v.set(Math.cos(2.2)*30000, 1500, Math.sin(2.2)*30000)});
+    /* ---------- O CÉU REAL: estrelas em posição verdadeira ---------- */
+    const RCEU = 95000, OBLIQ = 23.439*Math.PI/180;
+    const ceuPos = {};
+    const dirDe = (raH, decG)=>{
+      const a = raH/24*Math.PI*2, d = decG*Math.PI/180;
+      const xe = Math.cos(d)*Math.cos(a), ye = Math.cos(d)*Math.sin(a), ze = Math.sin(d);
+      const yl = ye*Math.cos(OBLIQ) + ze*Math.sin(OBLIQ);
+      const zl = -ye*Math.sin(OBLIQ) + ze*Math.cos(OBLIQ);
+      return new THREE.Vector3(xe, zl, -yl);
+    };
+    const CORCEU = {O:0xa8c8ff, B:0xb8d4ff, A:0xe8f0ff, F:0xfff4e0, G:0xfff0c0, K:0xffd9a0, M:0xffb388};
+    const gBril = [], gNorm = [];
+    for(const e of ESTRELAS_CEU){
+      const v = dirDe(e[2], e[3]).multiplyScalar(RCEU);
+      ceuPos[e[0]] = v;
+      (e[4] < 1.0 ? gBril : gNorm).push([v, CORCEU[e[5]] || 0xe8f0ff]);
+    }
+    const mkCeu = (arr, tam, op)=>{
+      const pos = new Float32Array(arr.length*3), col = new Float32Array(arr.length*3);
+      arr.forEach((it, i)=>{
+        pos[i*3] = it[0].x; pos[i*3+1] = it[0].y; pos[i*3+2] = it[0].z;
+        const c = new THREE.Color(it[1]); col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
+      });
+      const g = new THREE.BufferGeometry();
+      g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+      const pts = new THREE.Points(g, new THREE.PointsMaterial({size:tam, vertexColors:true,
+        sizeAttenuation:false, transparent:true, opacity:op, depthWrite:false}));
+      scene.add(fade(pts));
+      return pts;
+    };
+    mkCeu(gBril, 3.6, 0.98);
+    mkCeu(gNorm, 2.3, 0.85);
+    for(const e of ESTRELAS_CEU){
+      if(!e[1]) continue;
+      const vv2 = ceuPos[e[0]];
+      labels.push({el:makeLabel(e[1], 'faint', null), get:(t)=>t.copy(vv2)});
+    }
+    /* as linhas das constelações (toggle na engrenagem) e os nomes delas */
+    const lseg = [];
+    for(const k in CEU_LINHAS) for(const par of CEU_LINHAS[k].seg){
+      const va = ceuPos[par[0]], vb = ceuPos[par[1]];
+      if(va && vb) lseg.push(va.x, va.y, va.z, vb.x, vb.y, vb.z);
+    }
+    const lgeo = new THREE.BufferGeometry();
+    lgeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(lseg), 3));
+    ceuLinhas = new THREE.LineSegments(lgeo, new THREE.LineBasicMaterial({color:0x3f6a9e,
+      transparent:true, opacity:0.32, depthWrite:false}));
+    ceuLinhas.visible = CEUV.on;
+    scene.add(fade(ceuLinhas));
+    for(const k in CEU_LINHAS){
+      const cc = CEU_LINHAS[k], cen = new THREE.Vector3();
+      let nC = 0;
+      for(const par of cc.seg){ if(ceuPos[par[0]]){ cen.add(ceuPos[par[0]]); nC++; } }
+      if(nC){
+        cen.multiplyScalar(1/nC).normalize().multiplyScalar(RCEU);
+        const cv = cen.clone();
+        const lb = {el:makeLabel(cc.nome, 'faint', null), off:!CEUV.on, get:(t)=>t.copy(cv)};
+        labels.push(lb); ceuLbls.push(lb);
+      }
+    }
   }
   /* limite de zoom calculado pelo objeto mais distante em órbita */
   let alcance = 0;
@@ -4565,7 +4671,7 @@ function buildSystem(sysId, spin0){
   if(S.kuiperR) alcance = Math.max(alcance, S.kuiperR[1]);
   for(const pb of S.bodies) alcance = Math.max(alcance, pb.orbita ? pb.orbita.afel : (pb.sys ? pb.sys.orbit : 0));
   const camMaxDin = escrAtivo ? alcance*2.3 : Math.max(S.camMax || 60, alcance * 1.7);   /* real: a maior órbita inteira na tela antes de subir de escala */
-  return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, hzRing, hzLbl,
+  return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, hzRing, hzLbl, ceuLinhas, ceuLbls,
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
@@ -6434,6 +6540,7 @@ RASTRO.on = store.get('carto:rastro', '0') === '1';
 VIAGEMX.on = store.get('carto:viagemx', '0') === '1';
 ESCR.on = store.get('carto:escr', '0') === '1';
 HZV.on = store.get('carto:hz', '1') === '1';
+CEUV.on = store.get('carto:ceu', '1') === '1';
 { const ee = store.get('carto:escrexp', '00'); ESCR_EXP.terra = ee[0] === '1'; ESCR_EXP.teto = ee[1] === '1'; }
 COORD.real = store.get('carto:coord', '0') === '1';
 { const v = store.get('carto:objetos', null);
@@ -8832,7 +8939,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r117';
+const BUILD = 'r118';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -9205,6 +9312,8 @@ document.querySelectorAll('.fpx').forEach(b=>b.addEventListener('click', e=>{
   if(pop) pop.classList.remove('on');
 }));
 function cfgSync(){
+  const rceu = $('#cfgpop').querySelector('[data-ceu]');
+  if(rceu){ rceu.classList.toggle('off', !CEUV.on); rceu.querySelector('b').textContent = CEUV.on ? 'LIGADO' : 'DESLIGADO'; }
   const rh = $('#cfgpop').querySelector('[data-hz]');
   if(rh){ rh.classList.toggle('off', !HZV.on); rh.querySelector('b').textContent = HZV.on ? 'LIGADO' : 'DESLIGADO'; }
   const re = $('#cfgpop').querySelector('[data-escr]');
@@ -9237,6 +9346,15 @@ $('#btncfg').addEventListener('click', ()=>{
   cfgSync();
 });
 $('#cfgpop').addEventListener('click', e=>{
+  const rCeu = e.target.closest('[data-ceu]');
+  if(rCeu){
+    CEUV.on = !CEUV.on;
+    store.set('carto:ceu', CEUV.on ? '1' : '0');
+    cfgSync();
+    if(ACT && ACT.ceuLinhas) ACT.ceuLinhas.visible = CEUV.on;
+    if(ACT && ACT.ceuLbls) ACT.ceuLbls.forEach(l=>{ l.off = !CEUV.on; });
+    return;
+  }
   const rH = e.target.closest('[data-hz]');
   if(rH){
     HZV.on = !HZV.on;
