@@ -108,8 +108,9 @@ Cobre r109, r110 e r111 (ele não testou nada disso ainda). Ao entregar, formata
 (ROTINA ACIMA ENTREGUE em 25 AGO 2026; a próxima acumulação começa no r115.)
 
 ## Publicação
-- Repositório git local iniciado no r25 (branch main). Commits em PT-BR, um por entrega.
-- GitHub Pages: publicar a pasta inteira (index.html na raiz + audio/). Sem build step, o Pages serve direto.
+- CANAL OFICIAL (r115): VERCEL com auto-deploy: todo `git push origin main` publica sozinho em https://www.universatlas.com (apex 308 para www). Verificado no ar em 25 AGO 2026. NÃO precisa mais avisar o Rodrigo de upload por FTP: o ritual "só o index.html para o sanguanini.dev" está APOSENTADO.
+- Repositório git local iniciado no r25 (branch main). Commits em PT-BR, um por entrega. Verificar o deploy com curl no universatlas.com (grep do const BUILD) no lugar do Pages.
+- GitHub Pages segue como espelho (rodrigokiller.github.io/cartografia-estelar); pode ser desativado quando ele quiser. sanguanini.dev/cosmos pode virar redirect futuramente.
 
 ## Roadmap acordado
 - Lotes pop contínuos de corpos reais famosos (r22: 51 Pegasi b, Vega, Trappist/JWST. r26: Fomalhaut, Barnard, Encélado. r27: Pilares da Criação e Titã/Dragonfly. r28: Órion/M42 e Caranguejo/M1. r29: Anel/M57, Cabeça de Cavalo e os dois candidatos extragalácticos, PA-99-N2 em Andrômeda e M51-ULS-1b no Redemoinho. Próximos candidatos: Ceres e Vesta revisitadas pela Dawn, Io pela Juno, Kepler-186f, LHS 1140b, Nebulosa da Lagoa). r30: Mayall II e o núcleo duplo de Andrômeda, mais Ceres, Vesta (Dawn) e Io (Juno) com fichas completas. r31: Lagoa/M8 e Trífida/M20. Próximos: Cabeça de Cavalo já entrou no r29, r32: Ômega Centauri e Véu. r33: Kepler-186f e Roseta. r34: Tarântula/30 Dor e SN 1987A, os dois na Grande Nuvem de Magalhães. r37: Pequena Nuvem de Magalhães (7ª galáxia), 47 Tucanae e NGC 346. r38: LHS 1140b e Nebulosa da Chama. Restam Nebulosa da Formiga, Plêiades, Nebulosa de Carina.
