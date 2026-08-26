@@ -295,6 +295,8 @@ body.photo.hudpeek #photoexit{opacity:1}
 #trajclock .tcol .tbar{width:100%}
 #trajclock .tbar{width:100%;height:7px;background:rgba(63,140,255,.18);position:relative;cursor:pointer;touch-action:none}
 #trajclock .tbar i{position:absolute;left:0;top:0;bottom:0;background:var(--amber);width:0}
+#trajclock .tbar b.tmk.mflash{animation:marcopulsa 1.8s ease-out}
+@keyframes marcopulsa{0%{box-shadow:0 0 2px 3px rgba(255,180,84,.85)}100%{box-shadow:0 0 0 16px rgba(255,180,84,0)}}
 #trajclock .tbar b.tmk{position:absolute;top:50%;width:8px;height:8px;cursor:pointer;
   transform:translate(-50%,-50%) rotate(45deg);background:#0a1526;border:1px solid var(--amber);opacity:.85}
 #trajclock .tanos{display:flex;justify-content:space-between;font-size:8px;letter-spacing:1px;color:var(--dim2)}
@@ -1764,6 +1766,20 @@ SATELITES.forEach(x=>PLANETS.push(x));
 
 /* ============================ MISSÕES TRIPULADAS ============================ */
 const FOGUETES = [
+ {id:'apollo17', name:'APOLLO 17', desig:'MISSÃO · 1972', kind:'A despedida da Lua', hab:0, gbar:0, pop:'0',
+  foguete:true, satOf:'terra', trajPerfil:'pouso',
+  traj:{dias:12.6, d0:'7/12/1972', d1:'19/12/1972'},
+  marcos:[[0,'LANÇAMENTO NOTURNO'],[0.2,'A FOTO BLUE MARBLE'],[3.5,'ÓRBITA DA LUA'],[4.5,'POUSO EM TAURUS-LITTROW'],[7.5,'O ÚLTIMO PASSO'],[8,'DECOLAGEM'],[12.6,'SPLASHDOWN']],
+  quick:[['LANÇAMENTO','7/12/1972, o único noturno'],['TRIPULAÇÃO','Cernan · Evans · Schmitt'],['NA SUPERFÍCIE','3 dias e 3 caminhadas'],['O CIENTISTA','Schmitt, o primeiro geólogo na Lua'],['O JIPE','35,7 km rodados no rover'],['RETORNO','19/12/1972']],
+  sys:{orbit:2.8, size:0.11, speed:1.0, angle:0.6},
+  visual:{mode:'rocky', c1:'#d8d8dc', c2:'#f0f0f4', c3:'#8a8a92', scale:7.0, seed:19.72, crater:0.05},
+  sections:[
+    {t:'A DESPEDIDA', rows:[['A missão','A mais longa e mais científica: 3 dias no vale de Taurus-Littrow'],['O geólogo','Harrison Schmitt, o primeiro e único cientista a pisar na Lua'],['O jipe','35,7 km no rover, o recorde de estrada lunar até hoje'],['O último passo','Gene Cernan subiu a escada por último em 14/12/1972: ninguém voltou desde então']]},
+    {t:'BLUE MARBLE', rows:[['A foto','A caminho da Lua, a tripulação fotografou a Terra INTEIRA e iluminada'],['O retrato','A Blue Marble virou uma das imagens mais reproduzidas da história'],['O par','Earthrise (1968) abriu a era; Blue Marble (1972) fechou']]},
+    {t:'REGISTRO', rows:[['A frase','Cernan: partimos como viemos e, se Deus quiser, voltaremos, com paz e esperança para toda a humanidade'],['As amostras','110 kg de rochas, incluindo o solo laranja que intrigou os geólogos'],['O legado','O encerramento do programa: a Artemis é a tentativa de reabrir a porta']]}
+  ],
+  facts:['Gene Cernan foi o último ser humano a pisar na Lua, em dezembro de 1972: ninguém voltou desde então.','A foto Blue Marble, a Terra inteira e iluminada, foi tirada a caminho da Lua nesta missão.','Harrison Schmitt foi o primeiro e único cientista, um geólogo, a caminhar na Lua.'],
+  fict:'A frase de despedida de Cernan encerra documentários até hoje, e o solo laranja de Taurus-Littrow virou lenda entre os geólogos.', moons:[]},
  {id:'apollo8', name:'APOLLO 8', desig:'MISSÃO · 1968', kind:'Os primeiros humanos a deixar a Terra', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra', trajPerfil:'orbita',
   traj:{dias:6.1, d0:'21/12/1968', d1:'27/12/1968'},
@@ -5729,7 +5745,7 @@ function grupoSLS(raio){
 }
 /* despacho: cada nave famosa tem o próprio modelo; o resto usa a sonda */
 function grupoNave(id, raio){
-  if(id === 'apollo11' || id === 'apollo13' || id === 'apollo8') return grupoFoguete(raio);
+  if(id === 'apollo11' || id === 'apollo13' || id === 'apollo8' || id === 'apollo17') return grupoFoguete(raio);
   if(id === 'artemis1' || id === 'artemis2') return grupoSLS(raio);
   if(id === 'iss') return grupoISS(raio);
   if(id === 'hubble') return grupoHubble(raio);
@@ -6347,8 +6363,10 @@ function verLinhaDoTempo(id){
   const b = ALLBODIES[id];
   if(!b || !temLinhaDoTempo(b)) return;
   if(typeof missClose === 'function') missClose();
-  /* palco do foco real: já estamos DENTRO da Terra? A missão roda aqui mesmo */
-  if(ESCR.on && b.foguete && b.traj && ACT && ACT.kind === 'focus' && ST.body === (b.satOf || '') && !DIVE){ trajStart(id); return; }
+  /* palco do foco (nos DOIS modos): já estamos dentro do corpo-mãe com a
+     lua na cena? A missão roda aqui mesmo (e o vôo interplanetário te deixa
+     exatamente aqui: o ciclo fecha) */
+  if(b.foguete && b.traj && ACT && ACT.kind === 'focus' && ST.body === (b.satOf || '') && ACT.subKids && ACT.subKids.some(k=>k.tDias) && !DIVE){ trajStart(id); return; }
   const alvo = b._sys;
   const sel = ()=>{ if(!(ST.mapCard && ST.mapCard.id === id)) ACTION('focus', id); };
   if(ACT && ACT.kind === 'system' && ST.sys === alvo && !DIVE){ sel(); trajStart(id); return; }
@@ -6365,7 +6383,11 @@ function trajStart(id){
   const b = ALLBODIES[id];
   /* PALCO DO FOCO (escala real): a missão roda DENTRO do foco da Terra, com
      a Lua REAL da cena a 60 raios servindo de alvo (ideia do Rodrigo) */
-  const focoPalco = !!(b && b.foguete && b.traj && ESCR.on && ACT && ACT.kind === 'focus' && ST.body === (b.satOf || ''));
+  const focoPalco = !!(b && b.foguete && b.traj && ACT && ACT.kind === 'focus' && ST.body === (b.satOf || '') && ACT.subKids && ACT.subKids.some(k=>k.tDias));
+  /* o alvo do palco é a Lua REAL da cena, onde quer que ela esteja (60 raios
+     na escala real, o arco simbólico no cênico): a rota nasce na medida dela */
+  const skLuaP = focoPalco ? ACT.subKids.find(k=>k.tDias) : null;
+  const dLuaFoco = skLuaP ? (skLuaP.rAtual || skLuaP.base) : 132.7;
   const o = (!focoPalco && ACT && ACT.sel && ACT.sel.orbits) ? ACT.sel.orbits.find(x=>x.id===id) : null;
   if(!b || (!focoPalco && (!o || !o.obj)) || !(ehEscape(b) || b.comet || (b.foguete && b.traj)) || DIVE) return;
   /* primeira viagem: o navegador LÊ o manual antes de decolar */
@@ -6396,7 +6418,7 @@ function trajStart(id){
           local, obj:objFrame, focoPalco, frameFoco:(focoPalco ? objFrame : null),
           t0:performance.now(), ln:performance.now(),
           base:(b.comet && !b.escape) ? 30000 : 24000, id,
-          d0:CAM.dist, dAlvo:(focoPalco ? 300 : Math.min(CAM.dist, 16)), p0:CAM.pivot.clone(),
+          d0:CAM.dist, dAlvo:(focoPalco ? Math.max(9, dLuaFoco*2.3) : Math.min(CAM.dist, 16)), p0:CAM.pivot.clone(),
           marcos:b.marcos || null, mAtual:null,
           kmh:(((b.quick||[]).find(r=>/VELOC/.test(r[0]))||[])[1]) || null, anosPorSeg:0,
           _a:new THREE.Vector3(), _b:new THREE.Vector3(), _c:new THREE.Vector3(),
@@ -6449,14 +6471,16 @@ function trajStart(id){
        janela (prog 0.36-0.64) em que a Lua segura no ponto de encontro. */
     /* três palcos: foco real (Terra raio 2.2, Lua a 132.7), mapa real
        (0.0385 un) e cênico (4.6) */
-    const fatorTL = focoPalco ? (132.7/4.6) : ((ESCR.on && ST.sys === 'sol') ? (0.0385/4.6) : 1);
+    const fatorTL = focoPalco ? (dLuaFoco/4.6) : ((ESCR.on && ST.sys === 'sol') ? (0.0385/4.6) : 1);
     const escrT = !focoPalco && (ESCR.on && ST.sys === 'sol');
     const perfil = b.trajPerfil || 'retorno';
     const D = 4.6*fatorTL;
-    const R = focoPalco ? ({pouso:0.64, orbita:0.64, dro:24.2, retorno:0.75}[perfil] || 0.7)
-            : escrT ? ({pouso:0.0006, orbita:0.0006, dro:0.0070, retorno:0.00045}[perfil] || 0.0006)
-            : ({pouso:0.5, orbita:0.5, dro:1.05, retorno:0.68}[perfil] || 0.62);
-    const rEst = focoPalco ? 2.33 : (escrT ? 0.0011 : 1.35);
+    const rmLua = skLuaP ? (skLuaP.rm || 0.2) : 0.46;
+    const R = focoPalco
+      ? Math.min(rmLua*({pouso:1.4, orbita:1.4, dro:40, retorno:1.65}[perfil] || 1.5), dLuaFoco*0.45)
+      : escrT ? ({pouso:0.0006, orbita:0.0006, dro:0.0070, retorno:0.00045}[perfil] || 0.0006)
+      : ({pouso:0.5, orbita:0.5, dro:1.05, retorno:0.68}[perfil] || 0.62);
+    const rEst = focoPalco ? FOCUS_RAIO*1.06 : (escrT ? 0.0011 : 1.35);
     const pts = [];
     const cub = (p0,p1,p2,p3,t)=>{ const u = 1-t; return p0*u*u*u + 3*p1*u*u*t + 3*p2*u*t*t + p3*t*t*t; };
     const aIni = 2.28, aFim = -2.44;
@@ -6544,14 +6568,13 @@ function trajStart(id){
     } else {
       /* o palco usa a LUA REAL do foco: guarda o holder dela para DIRIGIR a
          posição durante a missão, e devolve no fim */
-      const skLua = ACT.subKids && ACT.subKids.find(k=>k.tDias && k.base > 60);
-      if(skLua){ TRAJ.luaFoco = skLua; TRAJ.luaRot0 = skLua.kh.rotation.y; }
+      if(skLuaP){ TRAJ.luaFoco = skLuaP; TRAJ.luaRot0 = skLuaP.kh.rotation.y; }
       const cf = grupoNave(id, 4.2);
       TRAJ.frameFoco.add(cf.group);
       TRAJ.corpo = cf.group;
       TRAJ.cpos0 = cf.group.position.clone();
       CAMTW = null;
-      CAM.dist = 300;   /* Terra e Lua enquadradas de saída */
+      CAM.dist = TRAJ.dAlvo;   /* Terra e Lua enquadradas de saída, em qualquer modo */
     }
     TRAJ.luaD = D;
     TRAJ.fatorTL = fatorTL;
@@ -6658,7 +6681,9 @@ function trajStep(now){
   /* fase 'vai': o player comanda */
   const dt = Math.min(0.1, (now-TRAJ.ln)/1000); TRAJ.ln = now;
   if(!TRAJ.pausado && !TRAJ.arrasto)
-    TRAJ.prog = Math.min(1, TRAJ.prog + dt*1000*TRAJ.vel/TRAJ.base);
+    /* pausa dramática: ao cruzar um marco a cena respira 1,8 s */
+    if(!(TRAJ.pausaM && now < TRAJ.pausaM))
+      TRAJ.prog = Math.min(1, TRAJ.prog + dt*1000*TRAJ.vel/TRAJ.base);
   const span = ((TRAJ.dias || TRAJ.ano0) && TRAJ.ano1 > TRAJ.ano0) ? (TRAJ.ano1-TRAJ.ano0) : 0;
   trajPonto(TRAJ.prog, TRAJ._c);
   /* a Lua da missão ORBITA de verdade com os dias passando (27,3 d): chega ao
@@ -6690,6 +6715,18 @@ function trajStep(now){
       + (TRAJ.dias ? ('DIA ' + Math.min(Math.floor(ano)+1, TRAJ.ano1)) : Math.round(ano));
     TRAJ.mAtual = null;   /* recalcula sempre: o arrasto pode voltar no tempo */
     if(TRAJ.marcos) for(const m of TRAJ.marcos) if(ano >= m[0]) TRAJ.mAtual = m;
+    /* marco NOVO alcançado tocando para a frente: o losango BRILHA e a cena
+       respira, dando peso ao momento (EARTHRISE, O POUSO...) */
+    if(TRAJ.dias && TRAJ.mAtual && TRAJ.mAtual !== TRAJ._mPrev){
+      const novoIdx = TRAJ.marcos.indexOf(TRAJ.mAtual);
+      const antesIdx = TRAJ._mPrev ? TRAJ.marcos.indexOf(TRAJ._mPrev) : 0;
+      TRAJ._mPrev = TRAJ.mAtual;
+      if(novoIdx > antesIdx && TRAJ.fase === 'vai' && !TRAJ.arrasto && !TRAJ.pausado){
+        TRAJ.pausaM = now + 1800;
+        const elM = document.querySelectorAll('.tmk')[novoIdx];
+        if(elM){ elM.classList.remove('mflash'); void elM.offsetWidth; elM.classList.add('mflash'); }
+      }
+    }
     if(TRAJ.mAtual) txt += ' · ' + TRAJ.mAtual[1];
     if(TRAJ.kmh) txt += ' · ' + TRAJ.kmh;
     $('#trajtxt').textContent = txt;
@@ -9159,7 +9196,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r123';
+const BUILD = 'r124';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
