@@ -295,6 +295,7 @@ body.photo.hudpeek #photoexit{opacity:1}
 #trajclock .tcol .tbar{width:100%}
 #trajclock .tbar{width:100%;height:7px;background:rgba(63,140,255,.18);position:relative;cursor:pointer;touch-action:none}
 #trajclock .tbar i{position:absolute;left:0;top:0;bottom:0;background:var(--amber);width:0}
+.moonsrow .mk.sub{margin-top:7px;opacity:.72;font-size:9px;letter-spacing:2px}
 #trajclock .tbar b.tmk.mflash{animation:marcopulsa 1.8s ease-out}
 @keyframes marcopulsa{0%{box-shadow:0 0 2px 3px rgba(255,180,84,.85)}100%{box-shadow:0 0 0 16px rgba(255,180,84,0)}}
 #trajclock .tbar b.tmk{position:absolute;top:50%;width:8px;height:8px;cursor:pointer;
@@ -1766,6 +1767,19 @@ SATELITES.forEach(x=>PLANETS.push(x));
 
 /* ============================ MISSÕES TRIPULADAS ============================ */
 const FOGUETES = [
+ {id:'change4', name:'CHANG\'E 4', desig:'MISSÃO ROBÓTICA · 2019', kind:'O primeiro pouso no lado oculto', hab:0, gbar:0, pop:'0',
+  foguete:true, satOf:'terra', trajPerfil:'orbitafinal',
+  traj:{dias:26, d0:'8/12/2018', d1:'3/1/2019'}, trajFases:[0.01, 0.154],
+  marcos:[[0,'LANÇAMENTO · XICHANG'],[4,'ÓRBITA DA LUA'],[12,'A ESPERA DO AMANHECER'],[25.8,'DESCIDA NO LADO OCULTO'],[26,'POUSO · CRATERA VON KÁRMÁN']],
+  quick:[['LANÇAMENTO','8/12/2018'],['PAÍS','China'],['POUSO','3/1/2019, o primeiro do LADO OCULTO'],['ROVER','Yutu-2, o mais longevo da Lua'],['A PONTE','satélite Queqiao, atrás da Lua'],['O BROTO','a primeira planta a nascer na Lua']],
+  sys:{orbit:2.45, size:0.10, speed:1.0, angle:5.6},
+  visual:{mode:'rocky', c1:'#c4b8a8', c2:'#dcd2c2', c3:'#8a8072', scale:7.0, seed:20.19, crater:0.1},
+  sections:[
+    {t:'O LADO OCULTO', rows:[['O problema','O lado oculto NÃO enxerga a Terra: nenhum sinal de rádio chega direto'],['A ponte','O satélite Queqiao, pairando ATRÁS da Lua, repassa cada mensagem'],['O lugar','Cratera Von Kármán, dentro da South Pole-Aitken: a maior bacia de impacto do sistema'],['A espera','Semanas em órbita esperando o SOL nascer no lado oculto para pousar com luz']]},
+    {t:'REGISTRO', rows:[['O rover','Yutu-2, o Coelho de Jade: virou o rover mais longevo da história da Lua'],['O broto','Uma semente de algodão BROTOU a bordo: o primeiro ser vivo a nascer em outro mundo (a noite lunar o levou)'],['Os nomes','Chang\'e é a deusa da Lua; Yutu, o coelho que vive com ela'],['O trio de eras','Luna abriu, Apollo levou gente, Chang\'e pousou onde ninguém via']]}
+  ],
+  facts:['Foi o primeiro pouso da história no lado oculto da Lua, possível só com um satélite-ponte pairando atrás dela.','Uma semente de algodão brotou a bordo: o primeiro ser vivo a nascer em outro mundo.','O rover Yutu-2 virou o mais longevo da história lunar.'],
+  fict:'Chang\'e é a deusa que vive na Lua com o coelho Yutu na mitologia chinesa: a missão levou os dois de volta para casa.', moons:[]},
  {id:'luna9', name:'LUNA 9', desig:'MISSÃO ROBÓTICA · 1966', kind:'O primeiro pouso suave em outro mundo', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra', trajPerfil:'final',
   traj:{dias:3.3, d0:'31/1/1966', d1:'3/2/1966'}, trajFases:[0.03, 0.90],
@@ -6521,7 +6535,7 @@ function trajStart(id){
        última meia-volta abrindo em ESPIRAL (a órbita desenrola na queima
        translunar, como nas animações reais; curvas agudas eram pontos de
        menos, bug que o Rodrigo viu) */
-    const temD = perfil !== 'final';   /* Luna 9 termina NO solo da Lua */
+    const temD = perfil !== 'final' && perfil !== 'orbitafinal';   /* ida única termina NO solo */
     const NA = 32, NB = 160, NC = 150, ND = 190;
     const NTOT = NA + NB + NC + (temD ? ND : 0);
     /* âncoras TEMPO→PONTO: [fim do estacionamento, chegada à Lua, partida];
@@ -6564,6 +6578,11 @@ function trajStart(id){
           const q = Math.sin((t-0.40)/0.22*Math.PI);
           rr = R - (R - R*0.28)*q;
         }
+      } else if(perfil === 'orbitafinal'){
+        /* Chang'e 4: órbitas de ESPERA (o amanhecer do lado oculto) e a
+           descida definitiva no fim, sem volta */
+        th = aIni - t*3.2*2*Math.PI;
+        if(t > 0.86) rr = R*(1 - 0.9*(t-0.86)/0.14);
       } else if(perfil === 'final'){
         /* Luna 9: descida DIRETA, sem órbita e sem volta */
         th = aIni - t*0.9*Math.PI;
@@ -7658,7 +7677,7 @@ const CONQ_DESC = {visita:'Selecione um corpo e entre nele.', sondas:'No filtro 
   comparar:'Use o ◫ para comparar dois corpos em escala real.', tempo:'No ◈ do relógio, viaje para outra data.',
   apollo:'Abra a linha do tempo da Apollo 11 ou 13.', sistemacompleto:'Visite todos os corpos de um sistema.',
   tourespacial:'Deixe o TOUR (tecla T, ou ▶ no registro) completar uma rota inteira.',
-  rotastodas:'Complete as seis rotas oficiais da caixinha do tour.',
+  rotastodas:'Complete todas as rotas oficiais da caixinha do tour.',
   tourfora:'Abra o card de um sistema fora da Via Láctea e rode o TOUR dele até o fim.',
   escalareal:'Ligue a ESCALA REAL na engrenagem, entre na Terra e depois afaste até o sistema inteiro virar um pontinho.',
   ceucruzeiro:'Na escala real, com as constelações ligadas, aproxime da Terra e gire o céu até encontrar o CRUZEIRO DO SUL.',
@@ -8135,6 +8154,17 @@ const ROTA_AGUAS = [
   {corpo:'ganimedes', ms:13000},
   {sis:'sol', ms:7000, texto:'Quatro oceanos escondidos num só sistema. No universo, a água é a regra, não a exceção.'}
 ];
+const ROTA_CORRIDA = [
+  {corpo:'luna9', ms:12000, texto:'1966. O primeiro pouso suave da humanidade em outro mundo. O solo aguentou.'},
+  {corpo:'apollo8', ms:12000, texto:'1968. Os primeiros olhos humanos a ver o lado oculto, e a Terra pequena e inteira.'},
+  {corpo:'apollo11', ms:12000, texto:'1969. Um pequeno passo para um homem.'},
+  {corpo:'apollo13', ms:12000, texto:'1970. O fracasso mais bem-sucedido: a volta livre trouxe os três para casa.'},
+  {corpo:'luna16', ms:12000, texto:'1970. A resposta soviética: um robô trouxe 101 gramas de Lua sozinho.'},
+  {corpo:'apollo17', ms:12000, texto:'1972. Cernan sobe a escada por último. Ninguém voltou desde então.'},
+  {corpo:'change4', ms:12000, texto:'2019. A China pousa onde ninguém via: o lado oculto, com uma ponte no céu.'},
+  {corpo:'artemis1', ms:12000, texto:'2022. O caminho reaberto: a Orion foi mais longe que qualquer nave feita para gente.'},
+  {corpo:'lua', ms:9000, texto:'O alvo de todos eles. A Artemis II leva gente de novo; a III promete o pouso.'}
+];
 const ROTAS = {
   completo:  {nome:'ROTA COMPLETA',  lista:ROTEIRO_COMPLETO},
   aguas:     {nome:'MUNDOS DE ÁGUA', lista:ROTA_AGUAS},
@@ -8142,7 +8172,8 @@ const ROTAS = {
   moradas:   {nome:'AS MORADAS DA VIDA', lista:ROTA_MORADAS},
   solar:     {nome:'SISTEMA SOLAR',  lista:ROTA_SOLAR},
   nebulosas: {nome:'NEBULOSAS',      lista:ROTA_NEBULOSAS},
-  galaxias:  {nome:'GALÁXIAS',       lista:ROTA_GALAXIAS}
+  galaxias:  {nome:'GALÁXIAS',       lista:ROTA_GALAXIAS},
+  corrida:   {nome:'A CORRIDA DA LUA', lista:ROTA_CORRIDA}
 };
 let ROTEIRO = ROTEIRO_COMPLETO;
 function tourNome(p){
@@ -8686,8 +8717,22 @@ function cardRender(){
          + sats.map(x=>badge(x)).join('') + '</div></div>';
     }
     if(missoes.length){
-      h += '<div class="moonsrow"><div class="mk"><span>MISSÕES TRIPULADAS</span><span>HISTÓRICO · ≋ VÊ A VIAGEM</span></div><div class="badges">'
-         + missoes.map(x=>badge(x)+vtb(x)).join('') + '</div></div>';
+      /* as missões agrupadas por ERA, cronológicas dentro de cada uma */
+      const eras = [
+        ['PROGRAMA LUNA · URSS', ['luna9','luna16']],
+        ['ERA APOLLO · EUA', ['apollo8','apollo11','apollo13','apollo17']],
+        ['A NOVA CORRIDA · CHINA E ARTEMIS', ['change4','artemis1','artemis2']]];
+      let hM = '';
+      const usados = new Set();
+      for(const era of eras){
+        const doEra = era[1].map(i2=>missoes.find(m=>m.id===i2)).filter(Boolean);
+        doEra.forEach(m=>usados.add(m.id));
+        if(doEra.length) hM += '<div class="mk sub"><span>'+era[0]+'</span></div><div class="badges">'
+          + doEra.map(x=>badge(x)+vtb(x)).join('') + '</div>';
+      }
+      const resto = missoes.filter(m=>!usados.has(m.id));
+      if(resto.length) hM += '<div class="badges">' + resto.map(x=>badge(x)+vtb(x)).join('') + '</div>';
+      h += '<div class="moonsrow"><div class="mk"><span>MISSÕES LUNARES</span><span>HISTÓRICO · ≋ VÊ A VIAGEM</span></div>' + hM + '</div>';
     }
     if(sondas.length){
       h += '<div class="moonsrow"><div class="mk"><span>SONDAS LANÇADAS DAQUI</span><span>EM VOO · ≋ VÊ A ROTA</span></div><div class="badges">'
@@ -9278,7 +9323,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r125';
+const BUILD = 'r126';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
