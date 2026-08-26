@@ -1663,6 +1663,18 @@ PLANETS.push(
 
 /* ============================ CINTURÃO DE ASTEROIDES ============================ */
 const PLANETAS_SONDAS = [
+ {id:'pathfinder', name:'MARS PATHFINDER', desig:'SONDA · 1996', kind:'O primeiro rover em Marte', hab:0, gbar:0, pop:'0',
+  sonda:true,
+  traj:{de:1996.9, ate:1997.75}, marcos:[[1996.92,'LANÇAMENTO · 4 DEZ 1996'],[1997.5,'POUSO NOS AIRBAGS · 4 JUL 1997','Quicou 15 vezes embrulhada em airbags, e parou inteira.'],[1997.55,'SOJOURNER NA ESTRADA'],[1997.75,'ÚLTIMO SINAL']],
+  quick:[['LANÇAMENTO','4/12/1996'],['POUSO','4/7/1997, Ares Vallis'],['O TRUQUE','airbags: quicou 15 vezes'],['O ROVER','Sojourner, 10,6 kg'],['DURAÇÃO','83 dias (plano: 7)'],['VELOCIDADE','40 mil km/h no cruzeiro']],
+  sys:{orbit:18, size:0.10, speed:0.5, angle:2.0},
+  visual:{mode:'rocky', c1:'#c49a72', c2:'#dcb48a', c3:'#8a6a4e', scale:7.0, seed:19.97, crater:0.1},
+  sections:[
+    {t:'A MISSÃO BARATA', rows:[['A aposta','Provar que dava para pousar em Marte GASTANDO POUCO: custou 1/15 das Viking'],['Os airbags','Nada de retrofoguetes até o fim: a nave quicou 15 vezes embrulhada em bolsas de ar'],['O rover','Sojourner, do tamanho de um micro-ondas, o PRIMEIRO a rodar em outro planeta'],['O lugar','Ares Vallis, uma planície de enchente antiga cheia de pedras variadas']]},
+    {t:'REGISTRO', rows:[['A internet','As fotos derrubaram os servidores da NASA: foi o primeiro grande evento espacial da web'],['Os nomes','A base virou Estação Memorial Carl Sagan; as pedras ganharam nomes de desenho animado'],['A duração','Planejada para 7 dias, durou 83'],['O legado','Abriu o caminho dos rovers: Spirit, Opportunity, Curiosity e Perseverance']]}
+  ],
+  facts:['Pousou quicando 15 vezes dentro de airbags, sem retrofoguete nenhum no contato final.','O Sojourner, de 10,6 kg, foi o primeiro rover a rodar em outro planeta.','As fotos derrubaram os servidores da NASA em 1997: o primeiro evento espacial da era da internet.'],
+  fict:'Em Perdido em Marte, Watney desenterra a Pathfinder para falar com a Terra: a sonda virou personagem de cinema.', moons:[]},
  {id:'voyager1', name:'VOYAGER 1', desig:'SONDA · 1977', kind:'O objeto humano mais distante', hab:0, gbar:0, pop:'0',
   sonda:true,
   marcos:[[1977,'LANÇAMENTO'],[1979,'JÚPITER'],[1980,'SATURNO'],[1990,'PÁLIDO PONTO AZUL'],[2012,'ESPAÇO INTERESTELAR']],
@@ -4170,7 +4182,7 @@ const ESCALA_REAL_LUAS = {
   miranda:129390, titania:435910, oberon:583520, tritao:354759, caronte:19591,
   iss:6790, hubble:6910, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
-const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45};
+const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, pathfinder:1.52};
 /* pedras do cinturão: [UA, raio km] (no cênico elas moram no anel desenhado) */
 const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4]};
 /* O CÉU REAL (só na escala real): as estrelas mais brilhantes do céu em
@@ -9352,7 +9364,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r128';
+const BUILD = 'r129';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
