@@ -1370,6 +1370,7 @@ const PLANETS = [
     visual:{mode:'rocky', c1:'#9a938c', c2:'#b8b2aa', c3:'#6f6963', scale:5.0, seed:4.4, crater:1.0},
     sections:[
       {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância da Terra','384.400 km'],['Período orbital','27,3 dias'],['Rotação','Síncrona, mostra sempre a mesma face'],['Fases','29,5 dias (mês lunar)']]},
+      {t:'AS VISITAS', rows:[['1966','Luna 9 pousa suave: o solo aguenta peso'],['1968 a 1972','A era Apollo: 9 missões tripuladas, 12 pessoas caminharam aqui'],['1970 a 1976','Os robôs Luna trazem amostras sozinhos'],['2019 a 2024','A nova corrida: Chang\'e no lado oculto, SLIM de precisão'],['O futuro','Artemis III promete o retorno com gente']]},
       {t:'ESTRUTURA', rows:[['Diâmetro','3.474 km'],['Densidade','3,34 g/cm³'],['Temp. dia/noite','127 °C / −173 °C'],['Origem','Impacto gigante (Theia, há 4,5 bi anos)']]},
       {t:'REGISTRO', rows:[['Primeira visita','Apollo 11 · 20/07/1969'],['Humanos que pisaram','12'],['Programa atual','Artemis (NASA)']]}
     ],
@@ -1767,10 +1768,23 @@ SATELITES.forEach(x=>PLANETS.push(x));
 
 /* ============================ MISSÕES TRIPULADAS ============================ */
 const FOGUETES = [
+ {id:'slim', name:'SLIM', desig:'MISSÃO ROBÓTICA · 2024', kind:'O atirador de elite que caiu de pé... quase', hab:0, gbar:0, pop:'0',
+  foguete:true, satOf:'terra', trajPerfil:'orbitafinal',
+  traj:{dias:134, d0:'7/9/2023', d1:'19/1/2024'}, trajFases:[0.004, 0.813],
+  marcos:[[0,'LANÇAMENTO · TANEGASHIMA'],[60,'A ROTA ECONÔMICA'],[109,'ÓRBITA DA LUA'],[133.8,'POUSO DE PRECISÃO','A 55 metros do alvo: começou a era do pouso cirúrgico.'],[134,'DE CABEÇA PARA BAIXO, VIVO']],
+  quick:[['LANÇAMENTO','7/9/2023'],['PAÍS','Japão (JAXA)'],['PRECISÃO','pousou a 55 m do alvo'],['O TOMBO','de nariz no chão, e funcionou'],['SOBREVIVEU','a 3 noites lunares'],['ROVERS','LEV-1 e o esférico SORA-Q']],
+  sys:{orbit:2.55, size:0.10, speed:1.0, angle:0.2},
+  visual:{mode:'rocky', c1:'#c8c4bc', c2:'#e0dcd4', c3:'#8e8a82', scale:7.0, seed:20.24, crater:0.1},
+  sections:[
+    {t:'O ATIRADOR DE ELITE', rows:[['A meta','Pousar a menos de 100 m do alvo, quando o normal era errar por quilômetros'],['O resultado','55 metros: começou a era do pouso cirúrgico'],['O tombo','Um motor falhou no fim e ele parou de NARIZ no chão, e mesmo assim funcionou'],['A rota','4 meses numa trajetória econômica de combustível até a órbita da Lua']]},
+    {t:'REGISTRO', rows:[['A sobrevivência','Projetado para UMA noite lunar, aguentou três, a −170 °C'],['Os robôs','O LEV-1 saltitante e o SORA-Q, uma esfera que se abre em rover'],['O brinquedo','O SORA-Q foi feito com a Takara Tomy, a fábrica do Transformers'],['O clube','O Japão virou o 5º país a pousar suave na Lua']]}
+  ],
+  facts:['Pousou a 55 metros do alvo, quando errar por quilômetros era o normal: o primeiro pouso de precisão da Lua.','Um motor falhou, ele parou de cabeça para baixo, e mesmo assim cumpriu a missão e sobreviveu a três noites lunares.'],
+  fict:'O rover esférico SORA-Q foi criado com a Takara Tomy, a fabricante do Transformers: um brinquedo de verdade explorando a Lua.', moons:[]},
  {id:'change4', name:'CHANG\'E 4', desig:'MISSÃO ROBÓTICA · 2019', kind:'O primeiro pouso no lado oculto', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra', trajPerfil:'orbitafinal',
   traj:{dias:26, d0:'8/12/2018', d1:'3/1/2019'}, trajFases:[0.01, 0.154],
-  marcos:[[0,'LANÇAMENTO · XICHANG'],[4,'ÓRBITA DA LUA'],[12,'A ESPERA DO AMANHECER'],[25.8,'DESCIDA NO LADO OCULTO'],[26,'POUSO · CRATERA VON KÁRMÁN']],
+  marcos:[[0,'LANÇAMENTO · XICHANG'],[4,'ÓRBITA DA LUA'],[12,'A ESPERA DO AMANHECER'],[25.8,'DESCIDA NO LADO OCULTO'],[26,'POUSO · CRATERA VON KÁRMÁN','O sinal veio pela ponte Queqiao: pousados onde ninguém via.']],
   quick:[['LANÇAMENTO','8/12/2018'],['PAÍS','China'],['POUSO','3/1/2019, o primeiro do LADO OCULTO'],['ROVER','Yutu-2, o mais longevo da Lua'],['A PONTE','satélite Queqiao, atrás da Lua'],['O BROTO','a primeira planta a nascer na Lua']],
   sys:{orbit:2.45, size:0.10, speed:1.0, angle:5.6},
   visual:{mode:'rocky', c1:'#c4b8a8', c2:'#dcd2c2', c3:'#8a8072', scale:7.0, seed:20.19, crater:0.1},
@@ -1783,7 +1797,7 @@ const FOGUETES = [
  {id:'luna9', name:'LUNA 9', desig:'MISSÃO ROBÓTICA · 1966', kind:'O primeiro pouso suave em outro mundo', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra', trajPerfil:'final',
   traj:{dias:3.3, d0:'31/1/1966', d1:'3/2/1966'}, trajFases:[0.03, 0.90],
-  marcos:[[0,'LANÇAMENTO · BAIKONUR'],[3.05,'DESCIDA DIRETA'],[3.3,'POUSO SUAVE · OCEANUS PROCELLARUM']],
+  marcos:[[0,'LANÇAMENTO · BAIKONUR'],[3.05,'DESCIDA DIRETA'],[3.3,'POUSO SUAVE · OCEANUS PROCELLARUM','O solo aguentou: dava para pisar na Lua.']],
   quick:[['LANÇAMENTO','31/1/1966'],['PAÍS','União Soviética'],['POUSO','3/2/1966, o PRIMEIRO suave'],['MASSA','99 kg no solo'],['AS FOTOS','as primeiras DA superfície'],['TRANSMISSÕES','3 dias de panorâmicas']],
   sys:{orbit:2.3, size:0.10, speed:1.0, angle:2.9},
   visual:{mode:'rocky', c1:'#b8b2a8', c2:'#d0cabe', c3:'#807a70', scale:7.0, seed:19.66, crater:0.1},
@@ -1796,7 +1810,7 @@ const FOGUETES = [
  {id:'luna16', name:'LUNA 16', desig:'MISSÃO ROBÓTICA · 1970', kind:'A Lua entregue por um robô', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra', trajPerfil:'pouso',
   traj:{dias:12, d0:'12/9/1970', d1:'24/9/1970'}, trajFases:[0.015, 0.375, 0.625],
-  marcos:[[0,'LANÇAMENTO'],[4.5,'ÓRBITA DA LUA'],[5.6,'POUSO · MAR DA FERTILIDADE'],[6.7,'DECOLAGEM COM AS AMOSTRAS'],[12,'CÁPSULA NA ESTEPE']],
+  marcos:[[0,'LANÇAMENTO'],[4.5,'ÓRBITA DA LUA'],[5.6,'POUSO · MAR DA FERTILIDADE'],[6.7,'DECOLAGEM COM AS AMOSTRAS','101 gramas de Lua a bordo, sem ninguém no volante.'],[12,'CÁPSULA NA ESTEPE']],
   quick:[['LANÇAMENTO','12/9/1970'],['PAÍS','União Soviética'],['AMOSTRA','101 g de solo lunar'],['A PRIMEIRA','devolução automática da história'],['PERFURAÇÃO','35 cm no Mar da Fertilidade'],['RETORNO','24/9/1970']],
   sys:{orbit:2.35, size:0.10, speed:1.0, angle:4.4},
   visual:{mode:'rocky', c1:'#b0aca4', c2:'#c8c2b8', c3:'#78746c', scale:7.0, seed:19.70, crater:0.1},
@@ -1809,7 +1823,7 @@ const FOGUETES = [
  {id:'apollo17', name:'APOLLO 17', desig:'MISSÃO · 1972', kind:'A despedida da Lua', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra', trajPerfil:'pouso',
   traj:{dias:12.6, d0:'7/12/1972', d1:'19/12/1972'}, trajFases:[0.015, 0.278, 0.635],
-  marcos:[[0,'LANÇAMENTO NOTURNO'],[0.2,'A FOTO BLUE MARBLE'],[3.5,'ÓRBITA DA LUA'],[4.5,'POUSO EM TAURUS-LITTROW'],[7.5,'O ÚLTIMO PASSO'],[8,'DECOLAGEM'],[12.6,'SPLASHDOWN']],
+  marcos:[[0,'LANÇAMENTO NOTURNO'],[0.2,'A FOTO BLUE MARBLE'],[3.5,'ÓRBITA DA LUA'],[4.5,'POUSO EM TAURUS-LITTROW'],[7.5,'O ÚLTIMO PASSO','Cernan: Partimos como viemos e, se Deus quiser, voltaremos.'],[8,'DECOLAGEM'],[12.6,'SPLASHDOWN']],
   quick:[['LANÇAMENTO','7/12/1972, o único noturno'],['TRIPULAÇÃO','Cernan · Evans · Schmitt'],['NA SUPERFÍCIE','3 dias e 3 caminhadas'],['O CIENTISTA','Schmitt, o primeiro geólogo na Lua'],['O JIPE','35,7 km rodados no rover'],['RETORNO','19/12/1972']],
   sys:{orbit:2.8, size:0.11, speed:1.0, angle:0.6},
   visual:{mode:'rocky', c1:'#d8d8dc', c2:'#f0f0f4', c3:'#8a8a92', scale:7.0, seed:19.72, crater:0.05},
@@ -1823,7 +1837,7 @@ const FOGUETES = [
  {id:'apollo8', name:'APOLLO 8', desig:'MISSÃO · 1968', kind:'Os primeiros humanos a deixar a Terra', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra', trajPerfil:'orbita',
   traj:{dias:6.1, d0:'21/12/1968', d1:'27/12/1968'}, trajFases:[0.02, 0.475, 0.607],
-  marcos:[[0,'LANÇAMENTO'],[2.9,'ÓRBITA DA LUA'],[3.1,'EARTHRISE'],[3.3,'A LEITURA DO GÊNESIS'],[3.7,'RUMO À TERRA'],[6.1,'SPLASHDOWN']],
+  marcos:[[0,'LANÇAMENTO'],[2.9,'ÓRBITA DA LUA'],[3.1,'EARTHRISE','Anders: Meu Deus! Olha aquilo... a Terra nascendo. Uau, que bonita!'],[3.3,'A LEITURA DO GÊNESIS','Na véspera de Natal, para a maior audiência da história até então.'],[3.7,'RUMO À TERRA'],[6.1,'SPLASHDOWN']],
   quick:[['LANÇAMENTO','21/12/1968'],['TRIPULAÇÃO','Borman · Lovell · Anders'],['ÓRBITAS DA LUA','10, na véspera de Natal'],['PRIMEIRA VEZ','humanos fora da órbita da Terra'],['A FOTO','Earthrise, 24/12/1968'],['RETORNO','27/12/1968']],
   sys:{orbit:2.4, size:0.11, speed:1.0, angle:1.4},
   visual:{mode:'rocky', c1:'#d8d8dc', c2:'#f0f0f4', c3:'#8a8a92', scale:7.0, seed:19.68, crater:0.05},
@@ -1837,7 +1851,7 @@ const FOGUETES = [
  {id:'artemis1', name:'ARTEMIS I', desig:'MISSÃO · 2022', kind:'A volta do caminho da Lua, sem ninguém a bordo', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra', trajPerfil:'dro',
   traj:{dias:25.5, d0:'16/11/2022', d1:'11/12/2022'}, trajFases:[0.01, 0.196, 0.627],
-  marcos:[[0,'LANÇAMENTO · SLS'],[5,'CHEGADA À LUA'],[10,'ÓRBITA RETRÓGRADA DISTANTE'],[16,'ADEUS À LUA'],[20,'RECORDE DE DISTÂNCIA'],[25.5,'AMERISSAGEM']],
+  marcos:[[0,'LANÇAMENTO · SLS'],[5,'CHEGADA À LUA'],[10,'ÓRBITA RETRÓGRADA DISTANTE'],[16,'ADEUS À LUA'],[20,'RECORDE DE DISTÂNCIA'],[25.5,'AMERISSAGEM','O escudo aguentou os 40 mil km/h: o caminho está reaberto.']],
   quick:[['LANÇAMENTO','16/11/2022'],['FOGUETE','SLS Block 1, 98 m'],['CÁPSULA','Orion'],['TRIPULAÇÃO','manequins Campos, Helga e Zohar'],['DURAÇÃO','25,5 dias'],['RECORDE','432 mil km da Terra']],
   sys:{orbit:2.6, size:0.11, speed:1.0, angle:2.2},
   visual:{mode:'rocky', c1:'#e8e4dc', c2:'#f4f0e8', c3:'#9a948a', scale:7.0, seed:20.22, crater:0.05},
@@ -1863,7 +1877,7 @@ const FOGUETES = [
  {id:'apollo11', name:'APOLLO 11', desig:'MISSÃO · 1969', kind:'O Saturn V que levou a humanidade à Lua', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra', trajPerfil:'pouso',
   traj:{dias:8, d0:'16/7/1969', d1:'24/7/1969'}, trajFases:[0.018, 0.375, 0.64],
-  marcos:[[0,'LANÇAMENTO'],[0.2,'RUMO À LUA'],[3,'ÓRBITA LUNAR'],[4,'O POUSO'],[4.4,'UM PEQUENO PASSO'],[5.1,'DECOLAGEM DA LUA'],[8,'SPLASHDOWN']],
+  marcos:[[0,'LANÇAMENTO'],[0.2,'RUMO À LUA'],[3,'ÓRBITA LUNAR'],[4,'O POUSO','Houston, Base da Tranquilidade aqui. A Águia pousou.'],[4.4,'UM PEQUENO PASSO','Um pequeno passo para um homem, um salto gigante para a humanidade.'],[5.1,'DECOLAGEM DA LUA'],[8,'SPLASHDOWN']],
   quick:[['LANÇAMENTO','16/7/1969'],['TAMANHO','110 m, o Saturn V'],['TRIPULAÇÃO','Armstrong · Aldrin · Collins'],['POUSO','20/7/1969, Mar da Tranquilidade'],['NA SUPERFÍCIE','21 h 36 min'],['RETORNO','24/7/1969']],
   sys:{orbit:2.5, size:0.11, speed:1.0, angle:3.6},
   visual:{mode:'rocky', c1:'#d8d8dc', c2:'#f0f0f4', c3:'#8a8a92', scale:7.0, seed:19.69, crater:0.05},
@@ -1878,7 +1892,7 @@ const FOGUETES = [
  {id:'apollo13', name:'APOLLO 13', desig:'MISSÃO · 1970', kind:'O fracasso mais bem-sucedido da história', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra',
   traj:{dias:6, d0:'11/4/1970', d1:'17/4/1970'}, trajPerfil:'retorno', trajFases:[0.02, 0.53, 0.565],
-  marcos:[[0,'LANÇAMENTO'],[2.3,'A EXPLOSÃO'],[3.2,'CONTORNO DA LUA'],[3.3,'RECORDE DE DISTÂNCIA'],[6,'SPLASHDOWN']],
+  marcos:[[0,'LANÇAMENTO'],[2.3,'A EXPLOSÃO','Swigert: Houston, tivemos um problema aqui.'],[3.2,'CONTORNO DA LUA'],[3.3,'RECORDE DE DISTÂNCIA'],[6,'SPLASHDOWN']],
   quick:[['LANÇAMENTO','11/4/1970'],['A EXPLOSÃO','13/4, tanque de O₂'],['TRIPULAÇÃO','Lovell · Swigert · Haise'],['A ROTA','contorno livre da Lua'],['SPLASHDOWN','17/4/1970'],['SALDO','todos vivos']],
   sys:{orbit:2.8, size:0.10, speed:0.9, angle:1.7},
   visual:{mode:'rocky', c1:'#c8c8cc', c2:'#e4e4e8', c3:'#7a7a82', scale:7.0, seed:19.70, crater:0.08},
@@ -6670,7 +6684,7 @@ function trajStart(id){
       const d = document.createElement('b');
       d.className = 'tmk';
       d.style.left = (pct*100) + '%';
-      d.dataset.tip = m[1] + ' · ' + (TRAJ.dias ? ('DIA ' + m[0]) : m[0]);
+      d.dataset.tip = m[1] + ' · ' + (TRAJ.dias ? ('DIA ' + m[0]) : m[0]) + (m[2] ? ' · ' + m[2] : '');
       d.dataset.tipamber = '1';
       bar.appendChild(d);
     }
@@ -6819,7 +6833,9 @@ function trajStep(now){
       const antesIdx = TRAJ._mPrev ? TRAJ.marcos.indexOf(TRAJ._mPrev) : 0;
       TRAJ._mPrev = TRAJ.mAtual;
       if(novoIdx > antesIdx && TRAJ.fase === 'vai' && !TRAJ.arrasto && !TRAJ.pausado){
-        TRAJ.pausaM = now + 1800;
+        /* marco com história: a pausa estica e a FRASE aparece no hint */
+        TRAJ.pausaM = now + (TRAJ.mAtual[2] ? 3200 : 1800);
+        if(TRAJ.mAtual[2]) showHint(TRAJ.mAtual[2]);
         const elM = document.querySelectorAll('.tmk')[novoIdx];
         if(elM){ elM.classList.remove('mflash'); void elM.offsetWidth; elM.classList.add('mflash'); }
       }
@@ -8721,7 +8737,7 @@ function cardRender(){
       const eras = [
         ['PROGRAMA LUNA · URSS', ['luna9','luna16']],
         ['ERA APOLLO · EUA', ['apollo8','apollo11','apollo13','apollo17']],
-        ['A NOVA CORRIDA · CHINA E ARTEMIS', ['change4','artemis1','artemis2']]];
+        ['A NOVA CORRIDA · CHINA, JAPÃO E ARTEMIS', ['change4','slim','artemis1','artemis2']]];
       let hM = '';
       const usados = new Set();
       for(const era of eras){
@@ -8737,6 +8753,13 @@ function cardRender(){
     if(sondas.length){
       h += '<div class="moonsrow"><div class="mk"><span>SONDAS LANÇADAS DAQUI</span><span>EM VOO · ≋ VÊ A ROTA</span></div><div class="badges">'
          + sondas.map(x=>badge(x)+vtb(x)).join('') + '</div></div>';
+    }
+    /* a Lua é o ÍNDICE do museu: quem já veio, em ordem cronológica */
+    if(bodyish.id === 'lua'){
+      const ordemV = ['luna9','apollo8','apollo11','apollo13','luna16','apollo17','change4','slim','artemis1','artemis2'];
+      const visitas = ordemV.map(i2=>ALLBODIES[i2]).filter(Boolean);
+      if(visitas.length) h += '<div class="moonsrow"><div class="mk"><span>AS VISITAS · 1966 A HOJE</span><span>≋ VÊ CADA VIAGEM</span></div><div class="badges">'
+        + visitas.map(x=>badge(x)+vtb(x)).join('') + '</div></div>';
     }
   }
   if(b.quick){
@@ -9323,7 +9346,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r126';
+const BUILD = 'r127';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
