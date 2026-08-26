@@ -1663,6 +1663,30 @@ PLANETS.push(
 
 /* ============================ CINTURÃO DE ASTEROIDES ============================ */
 const PLANETAS_SONDAS = [
+ {id:'viking1', name:'VIKING 1', desig:'SONDA · 1975', kind:'A primeira foto do chão de Marte', hab:0, gbar:0, pop:'0',
+  sonda:true,
+  traj:{de:1975.6, ate:1976.8}, marcos:[[1975.64,'LANÇAMENTO · TITAN-CENTAUR'],[1976.47,'ÓRBITA DE MARTE'],[1976.55,'POUSO · CHRYSE PLANITIA','20 de julho de 1976: a primeira foto da superfície de Marte.'],[1976.7,'OS EXPERIMENTOS DE VIDA']],
+  quick:[['LANÇAMENTO','20/8/1975'],['POUSO','20/7/1976, 7 anos após a Apollo 11'],['A PRIMEIRA','foto da superfície marciana'],['A BUSCA','4 experimentos de vida a bordo'],['DUROU','6 anos no solo (plano: 90 dias)'],['O PAR','Viking 2 pousou 6 semanas depois']],
+  sys:{orbit:18, size:0.10, speed:0.5, angle:3.8},
+  visual:{mode:'rocky', c1:'#b89478', c2:'#d0ac8e', c3:'#7e6450', scale:7.0, seed:19.76, crater:0.1},
+  sections:[
+    {t:'A PIONEIRA', rows:[['O feito','O primeiro pouso americano em Marte, e a primeira FOTO do chão marciano'],['A data','20 de julho de 1976: sete anos exatos depois do pouso da Apollo 11'],['A dupla','Um orbitador mapeando de cima e o lander trabalhando no solo'],['A vida útil','Planejada para 90 dias, transmitiu por SEIS ANOS']]},
+    {t:'A BUSCA POR VIDA', rows:[['Os experimentos','Quatro testes biológicos, os primeiros feitos em outro planeta'],['O resultado','Um deles deu sinal POSITIVO, os outros não: o debate dura até hoje'],['A lição','Marte não entrega respostas fáceis: por isso os rovers seguem indo'],['O legado','Toda missão marciana moderna desce de Viking']]}
+  ],
+  facts:['Tirou a primeira foto da superfície de Marte, sete anos exatos depois do pouso da Apollo 11.','Um dos quatro experimentos de vida deu sinal positivo, e o debate científico dura até hoje.','Planejada para 90 dias, trabalhou seis anos no solo.'],
+  fict:'O resultado ambíguo do experimento de vida alimenta livros há meio século: e se ela achou, e ninguém acreditou?', moons:[]},
+ {id:'cassini', name:'CASSINI', desig:'SONDA · 1997-2017', kind:'A rainha de Saturno e o mergulho final', hab:0, gbar:0, pop:'0',
+  sonda:true,
+  traj:{de:1997.8, ate:2017.7}, marcos:[[1997.8,'LANÇAMENTO'],[2000.99,'SOBREVOO DE JÚPITER'],[2004.5,'CHEGADA A SATURNO'],[2005.03,'HUYGENS DESCE EM TITÃ','A primeira descida num mundo do sistema solar exterior.'],[2013.55,'O DIA EM QUE A TERRA SORRIU'],[2017.7,'GRAND FINALE · O MERGULHO','Cassini virou parte de Saturno: o mergulho protegeu as luas oceânicas.']],
+  quick:[['LANÇAMENTO','15/10/1997'],['CHEGADA','1/7/2004, 7 anos de viagem'],['EM SATURNO','13 anos e 294 órbitas'],['A CARONA','a sonda Huygens, da ESA'],['DESCOBERTAS','gêiseres de Encélado, mares de Titã'],['O FIM','15/9/2017, mergulho deliberado']],
+  sys:{orbit:34, size:0.10, speed:0.4, angle:1.9},
+  visual:{mode:'rocky', c1:'#c8b894', c2:'#e0d0ac', c3:'#8e7e60', scale:7.0, seed:19.97, crater:0.05},
+  sections:[
+    {t:'A RAINHA DE SATURNO', rows:[['A viagem','7 anos e duas voltas por Vênus para ganhar impulso'],['O reinado','13 anos orbitando Saturno: anéis, tempestades e 6 luas novas'],['A carona','Levou a Huygens, que desceu de paraquedas em TITÃ em 2005'],['As jóias','Os gêiseres de Encélado e os mares de metano de Titã são dela']]},
+    {t:'O GRAND FINALE', rows:[['A decisão','Sem combustível, ela não podia arriscar cair em Encélado ou Titã e contaminá-los'],['O mergulho','22 órbitas POR DENTRO dos anéis e o mergulho final na atmosfera'],['O fim','15/9/2017: Cassini virou parte do planeta que estudou'],['A foto','Em 2013 fotografou a Terra pelos anéis: o Dia em que a Terra Sorriu']]}
+  ],
+  facts:['Passou 13 anos em Saturno e descobriu os gêiseres de Encélado e os mares de metano de Titã.','O mergulho final foi um ato de proteção planetária: ela não podia contaminar as luas oceânicas.','Em 2013, fotografou a Terra através dos anéis enquanto o mundo acenava: o Dia em que a Terra Sorriu.'],
+  fict:'O Grand Finale rendeu ao mundo um luto coletivo por um robô: a despedida correu o planeta em 2017.', moons:[]},
  {id:'pathfinder', name:'MARS PATHFINDER', desig:'SONDA · 1996', kind:'O primeiro rover em Marte', hab:0, gbar:0, pop:'0',
   sonda:true,
   traj:{de:1996.9, ate:1997.75}, marcos:[[1996.92,'LANÇAMENTO · 4 DEZ 1996'],[1997.5,'POUSO NOS AIRBAGS · 4 JUL 1997','Quicou 15 vezes embrulhada em airbags, e parou inteira.'],[1997.55,'SOJOURNER NA ESTRADA'],[1997.75,'ÚLTIMO SINAL']],
@@ -4182,7 +4206,7 @@ const ESCALA_REAL_LUAS = {
   miranda:129390, titania:435910, oberon:583520, tritao:354759, caronte:19591,
   iss:6790, hubble:6910, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
-const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, pathfinder:1.52};
+const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, pathfinder:1.52, viking1:1.52, cassini:9.54};
 /* pedras do cinturão: [UA, raio km] (no cênico elas moram no anel desenhado) */
 const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4]};
 /* O CÉU REAL (só na escala real): as estrelas mais brilhantes do céu em
@@ -6480,6 +6504,8 @@ function trajStart(id){
   CAMTW = null;
   /* base = metade da velocidade antiga; o botao de velocidade multiplica */
   document.body.classList.add('emtraj');
+  /* o endereço carrega a missão: compartilhável */
+  try{ history.replaceState(null, '', '#corpo=' + id + (ESCR.on ? '&escala=real' : '') + '&traj=1'); }catch(e){}
   if(b.foguete){
     feito('apollo');
     TRAJV.add(id);
@@ -6783,6 +6809,7 @@ function trajLimpar(){
     if(TRAJ.frameFoco && TRAJ.frameFoco.parent) TRAJ.frameFoco.parent.remove(TRAJ.frameFoco);
   }
   TRAJ = null;
+  if(typeof syncHash === 'function') syncHash();
   const el = $('#trajclock'); if(el) el.classList.remove('on');
 }
 function trajStep(now){
@@ -9364,7 +9391,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r129';
+const BUILD = 'r130';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -9398,6 +9425,8 @@ resize();
     hh0 = hh0.replace('&escala=real', '');
     try{ history.replaceState(null, '', '#'+hh0+'&escala=real'); }catch(e){}
   }
+  let trajLink = false;
+  if(hh0.indexOf('&traj=1') >= 0){ trajLink = true; hh0 = hh0.replace('&traj=1', ''); }
   const [k, v] = hh0.split('=');
   if(k==='corpo' && ALLBODIES[v]){
     ST.level='focus'; ST.sys=ALLBODIES[v]._sys; ST.body=v;
@@ -9412,6 +9441,9 @@ resize();
   } else {
     swapScene(buildSystem('sol'));
   }
+  /* link direto de missão: abre já com a linha do tempo rodando */
+  if(trajLink && k === 'corpo' && ALLBODIES[v] && ALLBODIES[v].traj)
+    setTimeout(()=>verLinhaDoTempo(v), 1600);
 })();
 uiSync();
 pushNav();
@@ -9422,6 +9454,7 @@ window.addEventListener('hashchange', ()=>{
     if(!ESCR.on){ ESCR.on = true; store.set('carto:escr', '1'); cfgSync(); }
     hh1 = hh1.replace('&escala=real', '');
   }
+  hh1 = hh1.replace('&traj=1', '');
   const [k, v] = hh1.split('=');
   if(k==='corpo' && ALLBODIES[v] && ST.body!==v) gotoFocus(v);
   else if(k==='sistema' && SYS[v] && !(ST.level==='system' && ST.sys===v)) gotoSystem(v);
