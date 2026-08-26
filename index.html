@@ -1766,9 +1766,35 @@ SATELITES.forEach(x=>PLANETS.push(x));
 
 /* ============================ MISSÕES TRIPULADAS ============================ */
 const FOGUETES = [
+ {id:'luna9', name:'LUNA 9', desig:'MISSÃO ROBÓTICA · 1966', kind:'O primeiro pouso suave em outro mundo', hab:0, gbar:0, pop:'0',
+  foguete:true, satOf:'terra', trajPerfil:'final',
+  traj:{dias:3.3, d0:'31/1/1966', d1:'3/2/1966'}, trajFases:[0.03, 0.90],
+  marcos:[[0,'LANÇAMENTO · BAIKONUR'],[3.05,'DESCIDA DIRETA'],[3.3,'POUSO SUAVE · OCEANUS PROCELLARUM']],
+  quick:[['LANÇAMENTO','31/1/1966'],['PAÍS','União Soviética'],['POUSO','3/2/1966, o PRIMEIRO suave'],['MASSA','99 kg no solo'],['AS FOTOS','as primeiras DA superfície'],['TRANSMISSÕES','3 dias de panorâmicas']],
+  sys:{orbit:2.3, size:0.10, speed:1.0, angle:2.9},
+  visual:{mode:'rocky', c1:'#b8b2a8', c2:'#d0cabe', c3:'#807a70', scale:7.0, seed:19.66, crater:0.1},
+  sections:[
+    {t:'A PROVA', rows:[['O medo','Até ali, temia-se que o solo lunar fosse um pó traidor que engoliria qualquer nave'],['A resposta','A Luna 9 pousou, NÃO afundou, e provou que dá para pisar na Lua'],['A técnica','Uma cápsula ejetada que quicou como bola e se abriu em pétalas'],['O feito','O primeiro pouso suave da humanidade em OUTRO MUNDO']]},
+    {t:'REGISTRO', rows:[['As fotos','As primeiras imagens tiradas DA superfície de outro corpo celeste'],['O vazamento','O observatório inglês de Jodrell Bank interceptou o sinal e os jornais publicaram as fotos ANTES dos soviéticos'],['O contexto','Três anos antes da Apollo 11: a corrida estava acirrada'],['A rota aqui','Descida direta, sem órbita: a missão TERMINA no solo da Lua']]}
+  ],
+  facts:['Foi o primeiro pouso suave da humanidade em outro mundo, e provou que o solo lunar aguenta peso.','O observatório de Jodrell Bank interceptou o sinal e os jornais ingleses publicaram as fotos antes da própria União Soviética.'],
+  fict:'O Daily Express estampou as fotos roubadas da Lua na capa, e a URSS descobriu pela imprensa que o mundo já tinha visto.', moons:[]},
+ {id:'luna16', name:'LUNA 16', desig:'MISSÃO ROBÓTICA · 1970', kind:'A Lua entregue por um robô', hab:0, gbar:0, pop:'0',
+  foguete:true, satOf:'terra', trajPerfil:'pouso',
+  traj:{dias:12, d0:'12/9/1970', d1:'24/9/1970'}, trajFases:[0.015, 0.375, 0.625],
+  marcos:[[0,'LANÇAMENTO'],[4.5,'ÓRBITA DA LUA'],[5.6,'POUSO · MAR DA FERTILIDADE'],[6.7,'DECOLAGEM COM AS AMOSTRAS'],[12,'CÁPSULA NA ESTEPE']],
+  quick:[['LANÇAMENTO','12/9/1970'],['PAÍS','União Soviética'],['AMOSTRA','101 g de solo lunar'],['A PRIMEIRA','devolução automática da história'],['PERFURAÇÃO','35 cm no Mar da Fertilidade'],['RETORNO','24/9/1970']],
+  sys:{orbit:2.35, size:0.10, speed:1.0, angle:4.4},
+  visual:{mode:'rocky', c1:'#b0aca4', c2:'#c8c2b8', c3:'#78746c', scale:7.0, seed:19.70, crater:0.1},
+  sections:[
+    {t:'O ROBÔ QUE TROUXE A LUA', rows:[['O feito','Pousou, perfurou, guardou 101 gramas e TROUXE de volta, tudo sem gente'],['O contexto','Um ano depois da Apollo 11: a resposta soviética foi provar o caminho robótico'],['A perfuratriz','35 cm de broca no Mar da Fertilidade'],['A volta','A cápsula caiu de paraquedas na estepe do Cazaquistão']]},
+    {t:'REGISTRO', rows:[['O legado','O caminho robótico da Luna 16 é o mesmo que a China refez com as Chang\'e'],['A troca','Anos depois, URSS e NASA trocaram amostras: gramas da Luna por gramas da Apollo'],['A rota aqui','Órbita, pouso, decolagem só do estágio de subida e a viagem de volta']]}
+  ],
+  facts:['Primeira missão da história a pousar em outro mundo e TRAZER amostra de volta sem nenhum tripulante.','URSS e NASA acabaram trocando amostras: gramas da Luna 16 por gramas das Apollo.'],
+  fict:'Os 101 gramas viraram selos, museus e até leilões: em 2018, três grãozinhos da Luna 16 foram vendidos por 855 mil dólares.', moons:[]},
  {id:'apollo17', name:'APOLLO 17', desig:'MISSÃO · 1972', kind:'A despedida da Lua', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra', trajPerfil:'pouso',
-  traj:{dias:12.6, d0:'7/12/1972', d1:'19/12/1972'},
+  traj:{dias:12.6, d0:'7/12/1972', d1:'19/12/1972'}, trajFases:[0.015, 0.278, 0.635],
   marcos:[[0,'LANÇAMENTO NOTURNO'],[0.2,'A FOTO BLUE MARBLE'],[3.5,'ÓRBITA DA LUA'],[4.5,'POUSO EM TAURUS-LITTROW'],[7.5,'O ÚLTIMO PASSO'],[8,'DECOLAGEM'],[12.6,'SPLASHDOWN']],
   quick:[['LANÇAMENTO','7/12/1972, o único noturno'],['TRIPULAÇÃO','Cernan · Evans · Schmitt'],['NA SUPERFÍCIE','3 dias e 3 caminhadas'],['O CIENTISTA','Schmitt, o primeiro geólogo na Lua'],['O JIPE','35,7 km rodados no rover'],['RETORNO','19/12/1972']],
   sys:{orbit:2.8, size:0.11, speed:1.0, angle:0.6},
@@ -1782,7 +1808,7 @@ const FOGUETES = [
   fict:'A frase de despedida de Cernan encerra documentários até hoje, e o solo laranja de Taurus-Littrow virou lenda entre os geólogos.', moons:[]},
  {id:'apollo8', name:'APOLLO 8', desig:'MISSÃO · 1968', kind:'Os primeiros humanos a deixar a Terra', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra', trajPerfil:'orbita',
-  traj:{dias:6.1, d0:'21/12/1968', d1:'27/12/1968'},
+  traj:{dias:6.1, d0:'21/12/1968', d1:'27/12/1968'}, trajFases:[0.02, 0.475, 0.607],
   marcos:[[0,'LANÇAMENTO'],[2.9,'ÓRBITA DA LUA'],[3.1,'EARTHRISE'],[3.3,'A LEITURA DO GÊNESIS'],[3.7,'RUMO À TERRA'],[6.1,'SPLASHDOWN']],
   quick:[['LANÇAMENTO','21/12/1968'],['TRIPULAÇÃO','Borman · Lovell · Anders'],['ÓRBITAS DA LUA','10, na véspera de Natal'],['PRIMEIRA VEZ','humanos fora da órbita da Terra'],['A FOTO','Earthrise, 24/12/1968'],['RETORNO','27/12/1968']],
   sys:{orbit:2.4, size:0.11, speed:1.0, angle:1.4},
@@ -1796,7 +1822,7 @@ const FOGUETES = [
   fict:'O ano de 1968 tinha sido tão duro que um anônimo mandou um telegrama à NASA: obrigado, Apollo 8, vocês salvaram 1968.', moons:[]},
  {id:'artemis1', name:'ARTEMIS I', desig:'MISSÃO · 2022', kind:'A volta do caminho da Lua, sem ninguém a bordo', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra', trajPerfil:'dro',
-  traj:{dias:25.5, d0:'16/11/2022', d1:'11/12/2022'},
+  traj:{dias:25.5, d0:'16/11/2022', d1:'11/12/2022'}, trajFases:[0.01, 0.196, 0.627],
   marcos:[[0,'LANÇAMENTO · SLS'],[5,'CHEGADA À LUA'],[10,'ÓRBITA RETRÓGRADA DISTANTE'],[16,'ADEUS À LUA'],[20,'RECORDE DE DISTÂNCIA'],[25.5,'AMERISSAGEM']],
   quick:[['LANÇAMENTO','16/11/2022'],['FOGUETE','SLS Block 1, 98 m'],['CÁPSULA','Orion'],['TRIPULAÇÃO','manequins Campos, Helga e Zohar'],['DURAÇÃO','25,5 dias'],['RECORDE','432 mil km da Terra']],
   sys:{orbit:2.6, size:0.11, speed:1.0, angle:2.2},
@@ -1809,7 +1835,7 @@ const FOGUETES = [
   fict:'A Snoopy de pelúcia flutuando na cabine servia de indicador oficial de gravidade zero.', moons:[]},
  {id:'artemis2', name:'ARTEMIS II', desig:'MISSÃO TRIPULADA · PREVISTA', kind:'Os primeiros humanos rumo à Lua desde 1972', hab:0, gbar:0, pop:'4 a bordo',
   foguete:true, satOf:'terra', trajPerfil:'retorno',
-  traj:{dias:10, d0:'PREVISTA', d1:'~10 dias'},
+  traj:{dias:10, d0:'PREVISTA', d1:'~10 dias'}, trajFases:[0.02, 0.40, 0.44],
   marcos:[[0,'LANÇAMENTO'],[1,'ÓRBITA ALTA DE TESTES'],[4,'CONTORNO DA LUA'],[4.2,'O LADO OCULTO'],[10,'SPLASHDOWN']],
   quick:[['STATUS','aguardando lançamento'],['TRIPULAÇÃO','Wiseman · Glover · Koch · Hansen'],['PERFIL','sobrevoo com volta livre'],['DURAÇÃO','~10 dias'],['FOGUETE','SLS Block 1'],['CÁPSULA','Orion']],
   sys:{orbit:2.7, size:0.11, speed:1.0, angle:5.0},
@@ -1822,7 +1848,7 @@ const FOGUETES = [
   fict:'Os quatro viraram celebridades no anúncio de 2023: o primeiro elenco lunar apresentado ao mundo em meio século.', moons:[]},
  {id:'apollo11', name:'APOLLO 11', desig:'MISSÃO · 1969', kind:'O Saturn V que levou a humanidade à Lua', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra', trajPerfil:'pouso',
-  traj:{dias:8, d0:'16/7/1969', d1:'24/7/1969'},
+  traj:{dias:8, d0:'16/7/1969', d1:'24/7/1969'}, trajFases:[0.018, 0.375, 0.64],
   marcos:[[0,'LANÇAMENTO'],[0.2,'RUMO À LUA'],[3,'ÓRBITA LUNAR'],[4,'O POUSO'],[4.4,'UM PEQUENO PASSO'],[5.1,'DECOLAGEM DA LUA'],[8,'SPLASHDOWN']],
   quick:[['LANÇAMENTO','16/7/1969'],['TAMANHO','110 m, o Saturn V'],['TRIPULAÇÃO','Armstrong · Aldrin · Collins'],['POUSO','20/7/1969, Mar da Tranquilidade'],['NA SUPERFÍCIE','21 h 36 min'],['RETORNO','24/7/1969']],
   sys:{orbit:2.5, size:0.11, speed:1.0, angle:3.6},
@@ -1837,7 +1863,7 @@ const FOGUETES = [
   fict:'De 2001 a First Man, é o evento mais filmado da era espacial, e as teorias de conspiração sobre ele viraram piada cultural.', moons:[]},
  {id:'apollo13', name:'APOLLO 13', desig:'MISSÃO · 1970', kind:'O fracasso mais bem-sucedido da história', hab:0, gbar:0, pop:'0',
   foguete:true, satOf:'terra',
-  traj:{dias:6, d0:'11/4/1970', d1:'17/4/1970'}, trajPerfil:'retorno',
+  traj:{dias:6, d0:'11/4/1970', d1:'17/4/1970'}, trajPerfil:'retorno', trajFases:[0.02, 0.53, 0.565],
   marcos:[[0,'LANÇAMENTO'],[2.3,'A EXPLOSÃO'],[3.2,'CONTORNO DA LUA'],[3.3,'RECORDE DE DISTÂNCIA'],[6,'SPLASHDOWN']],
   quick:[['LANÇAMENTO','11/4/1970'],['A EXPLOSÃO','13/4, tanque de O₂'],['TRIPULAÇÃO','Lovell · Swigert · Haise'],['A ROTA','contorno livre da Lua'],['SPLASHDOWN','17/4/1970'],['SALDO','todos vivos']],
   sys:{orbit:2.8, size:0.10, speed:0.9, angle:1.7},
@@ -4085,6 +4111,7 @@ const VIAGEMX = {on:false};  /* EXPERIMENTAL: vôo direto planeta a planeta no t
    e é exatamente essa a lição) */
 const ESCR = {on:false};
 const ESCR_EXP = {terra:false, teto:false};   /* metades da conquista EXP-04 */
+const TRAJV = new Set();   /* linhas do tempo já revividas (TIM-05) */
 /* zona habitável por sistema, em unidades de cena (no sol, 15 un = 1 UA, então
    0,95 a 1,67 UA é honesto nos DOIS modos; nos outros é cênico, abraçando os
    planetas que a ciência põe na zona) */
@@ -6413,7 +6440,13 @@ function trajStart(id){
   CAMTW = null;
   /* base = metade da velocidade antiga; o botao de velocidade multiplica */
   document.body.classList.add('emtraj');
-  if(b.foguete) feito('apollo');
+  if(b.foguete){
+    feito('apollo');
+    TRAJV.add(id);
+    store.set('carto:trajv', [...TRAJV].join(','));
+    const ERA6 = ['apollo8','apollo11','apollo13','apollo17','artemis1','artemis2'];
+    if(ERA6.every(x=>TRAJV.has(x))) feito('eracompleta');
+  }
   TRAJ = {fase:'chega', prog:0, vel:1, pausado:false, arrasto:false,
           local, obj:objFrame, focoPalco, frameFoco:(focoPalco ? objFrame : null),
           t0:performance.now(), ln:performance.now(),
@@ -6488,8 +6521,16 @@ function trajStart(id){
        última meia-volta abrindo em ESPIRAL (a órbita desenrola na queima
        translunar, como nas animações reais; curvas agudas eram pontos de
        menos, bug que o Rodrigo viu) */
+    const temD = perfil !== 'final';   /* Luna 9 termina NO solo da Lua */
     const NA = 32, NB = 160, NC = 150, ND = 190;
-    const NTOT = NA + NB + NC + ND;
+    const NTOT = NA + NB + NC + (temD ? ND : 0);
+    /* âncoras TEMPO→PONTO: [fim do estacionamento, chegada à Lua, partida];
+       sem dado, o mapeamento fica uniforme como antes */
+    const pA0 = NA/NTOT, pCheg = (NA+NB)/NTOT, pPart = (NA+NB+NC)/NTOT;
+    const fasesT = b.trajFases || (temD ? [pA0, pCheg, pPart] : [pA0, 0.9]);
+    const pares = [[fasesT[0], pA0], [fasesT[1], pCheg]].concat((temD && fasesT[2] !== undefined) ? [[fasesT[2], pPart]] : []);
+    TRAJ.remapP = pares;
+    TRAJ.tCheg1 = fasesT[1];
     for(let i=0;i<=NA;i++){
       const t = i/NA, a = -Math.PI/2 + t*3*Math.PI;
       const rr = rEst*(1 + (t > 0.66 ? (t-0.66)/0.34*0.35 : 0));
@@ -6510,11 +6551,12 @@ function trajStart(id){
        a posição da Lua naquele instante, então a nave desenha as laçadas
        reais em volta de um alvo que anda */
     const k27C = (Math.PI*2)/27.3, TTC = (b.traj && b.traj.dias) || 8;
-    const aLuaEm = (pr)=> (0.36 - pr)*TTC*k27C;
+    const aLuaEm = (pr)=> (fasesT[1] - pr)*TTC*k27C;
     for(let i=1;i<=NC;i++){
       const t = i/NC;
-      const prog_i = (NA + NB + i)/NTOT;
-      const aL = aLuaEm(prog_i);
+      /* o bake usa o TEMPO verdadeiro de cada ponto (via remap inverso) */
+      const tempo_i = pontoParaTempo((NA + NB + i)/NTOT, pares);
+      const aL = aLuaEm(tempo_i);
       let th, rr = R;
       if(perfil === 'pouso'){
         th = aIni - t*2.751*2*Math.PI;
@@ -6522,6 +6564,10 @@ function trajStart(id){
           const q = Math.sin((t-0.40)/0.22*Math.PI);
           rr = R - (R - R*0.28)*q;
         }
+      } else if(perfil === 'final'){
+        /* Luna 9: descida DIRETA, sem órbita e sem volta */
+        th = aIni - t*0.9*Math.PI;
+        rr = R*(1 - 0.9*t);
       } else if(perfil === 'orbita'){
         /* Apollo 8: entra em órbita e dá as voltas, sem descida */
         th = aIni - t*2.751*2*Math.PI;
@@ -6535,14 +6581,17 @@ function trajStart(id){
         D*Math.cos(aL) + Math.cos(th + aL)*rr, 0,
         D*Math.sin(aL) + Math.sin(th + aL)*rr));
     }
-    /* D · cruzeiro de volta a partir de onde a nave REALMENTE largou a Lua */
-    const ultC = pts[pts.length-1];
-    const qx = ultC.x, qz = ultC.z;
-    for(let i=1;i<=ND;i++){
-      const t = i/ND;
-      pts.push(new THREE.Vector3(
-        cub(qx, D*0.45, -0.9*fatorTL, 0.30*fatorTL, t), 0,
-        cub(qz, qz - 1.6*fatorTL, -1.9*fatorTL, -0.55*fatorTL, t)));
+    /* D · cruzeiro de volta a partir de onde a nave REALMENTE largou a Lua
+       (missões de ida única, como a Luna 9, terminam no solo) */
+    if(temD){
+      const ultC = pts[pts.length-1];
+      const qx = ultC.x, qz = ultC.z;
+      for(let i=1;i<=ND;i++){
+        const t = i/ND;
+        pts.push(new THREE.Vector3(
+          cub(qx, D*0.45, -0.9*fatorTL, 0.30*fatorTL, t), 0,
+          cub(qz, qz - 1.6*fatorTL, -1.9*fatorTL, -0.55*fatorTL, t)));
+      }
     }
     TRAJ.local = pts;
     const lg = new THREE.BufferGeometry().setFromPoints(pts);
@@ -6611,7 +6660,36 @@ function trajStart(id){
   cardRender();
 }
 /* ponto do percurso em coordenadas do mundo, na fracao pedida */
+/* interpola tempo→ponto por pares [t, p] ((0,0) e (1,1) implícitos) */
+function tempoParaPonto(t, pares){
+  let t0 = 0, p0 = 0;
+  for(const par of pares){
+    if(t <= par[0]){
+      const w = (par[0] - t0) > 1e-9 ? (t - t0)/(par[0] - t0) : 0;
+      return p0 + (par[1] - p0)*w;
+    }
+    t0 = par[0]; p0 = par[1];
+  }
+  const w = (1 - t0) > 1e-9 ? (t - t0)/(1 - t0) : 1;
+  return p0 + (1 - p0)*w;
+}
+function pontoParaTempo(pp, pares){
+  let t0 = 0, p0 = 0;
+  for(const par of pares){
+    if(pp <= par[1]){
+      const w = (par[1] - p0) > 1e-9 ? (pp - p0)/(par[1] - p0) : 0;
+      return t0 + (par[0] - t0)*w;
+    }
+    t0 = par[0]; p0 = par[1];
+  }
+  const w = (1 - p0) > 1e-9 ? (pp - p0)/(1 - p0) : 1;
+  return t0 + (1 - t0)*w;
+}
 function trajPonto(prog, out){
+  /* missões: o TEMPO da barra vira o PONTO da rota pela tabela de fases: o
+     estacionamento dura HORAS e o cruzeiro dura DIAS, então as velocidades
+     na tela ficam certas (o passe final que o Rodrigo pediu) */
+  if(TRAJ.remapP) prog = tempoParaPonto(prog, TRAJ.remapP);
   const f = prog*(TRAJ.local.length-1);
   const i = Math.min(TRAJ.local.length-2, Math.floor(f));
   TRAJ.obj.updateWorldMatrix(true, false);
@@ -6693,7 +6771,7 @@ function trajStep(now){
     /* a Lua orbita SEM PARAR a missão inteira (a rota já nasce acompanhando
        ela na fase lunar, então nave e Lua viajam juntas de verdade) */
     const TT = TRAJ.ano1 || 8, k27 = (Math.PI*2)/27.3;
-    const aL = (0.36 - TRAJ.prog)*TT*k27;
+    const aL = ((TRAJ.tCheg1 !== undefined ? TRAJ.tCheg1 : 0.36) - TRAJ.prog)*TT*k27;
     if(TRAJ.luaViz) TRAJ.luaViz.position.set(Math.cos(aL)*TRAJ.luaD, 0, Math.sin(aL)*TRAJ.luaD);
     /* no palco do foco, quem anda é a Lua REAL da cena (rotation.y = MENOS o
        ângulo de mundo, convenção de sempre) */
@@ -6797,6 +6875,7 @@ ESCR.on = store.get('carto:escr', '0') === '1';
 HZV.on = store.get('carto:hz', '1') === '1';
 CEUV.on = store.get('carto:ceu', '1') === '1';
 { const ee = store.get('carto:escrexp', '00'); ESCR_EXP.terra = ee[0] === '1'; ESCR_EXP.teto = ee[1] === '1'; }
+(store.get('carto:trajv', '') || '').split(',').filter(Boolean).forEach(x=>TRAJV.add(x));
 COORD.real = store.get('carto:coord', '0') === '1';
 { const v = store.get('carto:objetos', null);
   if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
@@ -7582,7 +7661,8 @@ const CONQ_DESC = {visita:'Selecione um corpo e entre nele.', sondas:'No filtro 
   rotastodas:'Complete as seis rotas oficiais da caixinha do tour.',
   tourfora:'Abra o card de um sistema fora da Via Láctea e rode o TOUR dele até o fim.',
   escalareal:'Ligue a ESCALA REAL na engrenagem, entre na Terra e depois afaste até o sistema inteiro virar um pontinho.',
-  ceucruzeiro:'Na escala real, com as constelações ligadas, aproxime da Terra e gire o céu até encontrar o CRUZEIRO DO SUL.'};
+  ceucruzeiro:'Na escala real, com as constelações ligadas, aproxime da Terra e gire o céu até encontrar o CRUZEIRO DO SUL.',
+  eracompleta:'Reviva as linhas do tempo das seis missões lunares: Apollo 8, 11, 13, 17 e Artemis I e II.'};
 const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A LINHA DAS SONDAS',
   busca:'CAD-03 · LOCALIZAR PELA BUSCA', cinco:'CAD-04 · VISITAR 5 CORPOS DO SISTEMA SOLAR',
   pause:'CAD-05 · PAUSAR E RETOMAR O RELÓGIO', galaxia:'CAD-06 · SUBIR ATÉ A GALÁXIA',
@@ -7593,7 +7673,8 @@ const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A
   rotastodas:'EXP-02 · COMPLETAR TODAS AS ROTAS OFICIAIS',
   tourfora:'EXP-03 · TOUR EM OUTRA GALÁXIA',
   escalareal:'EXP-04 · O SISTEMA EM VERDADEIRA GRANDEZA',
-  ceucruzeiro:'CEU-01 · ACHAR O CRUZEIRO DO SUL'};
+  ceucruzeiro:'CEU-01 · ACHAR O CRUZEIRO DO SUL',
+  eracompleta:'TIM-05 · A ERA COMPLETA'};
 function feito(k){
   if(FEITO.has(k)) return;
   FEITO.add(k);
@@ -7812,6 +7893,7 @@ function missRender(){
       let ok = FEITO.has(k), extra = '';
       if(k === 'cinco'){ ok = ok || c5 >= 5; if(!ok && c5 > 0) extra = ' · FALTAM ' + (5 - c5); }
       if(k === 'rotastodas' && !ok && ROTAS_OK.size > 0) extra = ' · FALTAM ' + (Object.keys(ROTAS).length - Object.keys(ROTAS).filter(x=>ROTAS_OK.has(x)).length);
+      if(k === 'eracompleta' && !ok && TRAJV.size > 0){ const ne = ['apollo8','apollo11','apollo13','apollo17','artemis1','artemis2'].filter(x=>!TRAJV.has(x)).length; if(ne < 6) extra = ' · FALTAM ' + ne; }
       const par = MISS_ROT[k].split(' · ');
       const quando = ok && FEITO_TS[k]
         ? new Date(FEITO_TS[k]).toLocaleDateString('pt-BR') + ' ' + new Date(FEITO_TS[k]).toLocaleTimeString('pt-BR').slice(0,5)
@@ -9196,7 +9278,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r124';
+const BUILD = 'r125';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
