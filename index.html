@@ -6474,6 +6474,8 @@ function trajStart(id){
     store.set('carto:trajv', [...TRAJV].join(','));
     const ERA6 = ['apollo8','apollo11','apollo13','apollo17','artemis1','artemis2'];
     if(ERA6.every(x=>TRAJV.has(x))) feito('eracompleta');
+    const MUSEU10 = ['luna9','apollo8','apollo11','apollo13','luna16','apollo17','change4','slim','artemis1','artemis2'];
+    if(MUSEU10.every(x=>TRAJV.has(x))) feito('museuinteiro');
   }
   TRAJ = {fase:'chega', prog:0, vel:1, pausado:false, arrasto:false,
           local, obj:objFrame, focoPalco, frameFoco:(focoPalco ? objFrame : null),
@@ -7697,7 +7699,8 @@ const CONQ_DESC = {visita:'Selecione um corpo e entre nele.', sondas:'No filtro 
   tourfora:'Abra o card de um sistema fora da Via Láctea e rode o TOUR dele até o fim.',
   escalareal:'Ligue a ESCALA REAL na engrenagem, entre na Terra e depois afaste até o sistema inteiro virar um pontinho.',
   ceucruzeiro:'Na escala real, com as constelações ligadas, aproxime da Terra e gire o céu até encontrar o CRUZEIRO DO SUL.',
-  eracompleta:'Reviva as linhas do tempo das seis missões lunares: Apollo 8, 11, 13, 17 e Artemis I e II.'};
+  eracompleta:'Reviva as linhas do tempo das seis missões lunares: Apollo 8, 11, 13, 17 e Artemis I e II.',
+  museuinteiro:'Reviva as DEZ linhas do tempo lunares, da Luna 9 ao SLIM: o museu completo da corrida.'};
 const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A LINHA DAS SONDAS',
   busca:'CAD-03 · LOCALIZAR PELA BUSCA', cinco:'CAD-04 · VISITAR 5 CORPOS DO SISTEMA SOLAR',
   pause:'CAD-05 · PAUSAR E RETOMAR O RELÓGIO', galaxia:'CAD-06 · SUBIR ATÉ A GALÁXIA',
@@ -7709,7 +7712,8 @@ const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A
   tourfora:'EXP-03 · TOUR EM OUTRA GALÁXIA',
   escalareal:'EXP-04 · O SISTEMA EM VERDADEIRA GRANDEZA',
   ceucruzeiro:'CEU-01 · ACHAR O CRUZEIRO DO SUL',
-  eracompleta:'TIM-05 · A ERA COMPLETA'};
+  eracompleta:'TIM-05 · A ERA COMPLETA',
+  museuinteiro:'TIM-06 · O MUSEU INTEIRO'};
 function feito(k){
   if(FEITO.has(k)) return;
   FEITO.add(k);
@@ -7929,6 +7933,7 @@ function missRender(){
       if(k === 'cinco'){ ok = ok || c5 >= 5; if(!ok && c5 > 0) extra = ' · FALTAM ' + (5 - c5); }
       if(k === 'rotastodas' && !ok && ROTAS_OK.size > 0) extra = ' · FALTAM ' + (Object.keys(ROTAS).length - Object.keys(ROTAS).filter(x=>ROTAS_OK.has(x)).length);
       if(k === 'eracompleta' && !ok && TRAJV.size > 0){ const ne = ['apollo8','apollo11','apollo13','apollo17','artemis1','artemis2'].filter(x=>!TRAJV.has(x)).length; if(ne < 6) extra = ' · FALTAM ' + ne; }
+      if(k === 'museuinteiro' && !ok && TRAJV.size > 0){ const nm = ['luna9','apollo8','apollo11','apollo13','luna16','apollo17','change4','slim','artemis1','artemis2'].filter(x=>!TRAJV.has(x)).length; if(nm < 10) extra = ' · FALTAM ' + nm; }
       const par = MISS_ROT[k].split(' · ');
       const quando = ok && FEITO_TS[k]
         ? new Date(FEITO_TS[k]).toLocaleDateString('pt-BR') + ' ' + new Date(FEITO_TS[k]).toLocaleTimeString('pt-BR').slice(0,5)
@@ -8179,6 +8184,7 @@ const ROTA_CORRIDA = [
   {corpo:'apollo17', ms:12000, texto:'1972. Cernan sobe a escada por último. Ninguém voltou desde então.'},
   {corpo:'change4', ms:12000, texto:'2019. A China pousa onde ninguém via: o lado oculto, com uma ponte no céu.'},
   {corpo:'artemis1', ms:12000, texto:'2022. O caminho reaberto: a Orion foi mais longe que qualquer nave feita para gente.'},
+  {corpo:'slim', ms:12000, texto:'2024. O Japão pousa a 55 metros do alvo, de cabeça para baixo, e sobrevive.'},
   {corpo:'lua', ms:9000, texto:'O alvo de todos eles. A Artemis II leva gente de novo; a III promete o pouso.'}
 ];
 const ROTAS = {
@@ -9346,7 +9352,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r127';
+const BUILD = 'r128';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
