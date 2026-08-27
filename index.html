@@ -249,7 +249,13 @@ body.emsistema #simclock{display:flex}
 #simclock button{background:none;border:none;color:var(--dim);opacity:.55;cursor:pointer;
   font-size:10px;padding:0 2px;line-height:1}
 #simclock button:hover{opacity:1;color:var(--amber)}
-#filtpop .fp-t,#cfgpop .fp-t,#datepop .fp-t{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:6px}
+#simlive{font-size:8.5px !important;letter-spacing:1.5px;border:1px solid rgba(122,140,170,.28) !important;padding:2px 7px !important;border-radius:2px}
+#simlive.on{color:#79c98f !important;opacity:.95 !important;border-color:rgba(121,201,143,.5) !important}
+#simvel{font-size:13px !important}
+#velpop{position:absolute;left:12px;bottom:62px;z-index:40;width:min(258px,80vw);display:none;
+  background:rgba(10,16,28,.96);border:1px solid rgba(90,120,170,.35);padding:10px 12px 12px}
+#velpop.on{display:block;animation:popnasce .18s ease-out}
+#filtpop .fp-t,#cfgpop .fp-t,#datepop .fp-t,#velpop .fp-t{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:6px}
 #filtpop .fp-t2,#cfgpop .fp-t2{margin-top:12px;padding-top:10px;border-top:1px solid rgba(63,140,255,.16)}
 .filtrow{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;
   padding:9px 4px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10px;
@@ -298,7 +304,7 @@ body.photo.hudpeek #photoexit{opacity:1}
 .lbl.estrela{color:#ffe3b8}
 .lbl.constel{color:#a8c6ee}
 .lbl.zona{color:#8fd8c8}
-.lbl.regua{color:#7890b4}
+.lbl.regua{color:#c9a8d8}
 .moonsrow .mk.sub{margin-top:7px;opacity:.72;font-size:9px;letter-spacing:2px}
 #trajclock .tbar b.tmk.mflash{animation:marcopulsa 1.8s ease-out}
 @keyframes marcopulsa{0%{box-shadow:0 0 2px 3px rgba(255,180,84,.85)}100%{box-shadow:0 0 0 16px rgba(255,180,84,0)}}
@@ -312,7 +318,7 @@ body.photo.hudpeek #photoexit{opacity:1}
   #trajclock{width:94vw}
   #trajclock .ttx{width:100%}
 }
-body.photo #filtpop,body.photo #trajclock,body.photo #simclock,body.photo #cfgpop,body.photo #datepop,body.photo #tourpop{opacity:0 !important;visibility:hidden}
+body.photo #filtpop,body.photo #trajclock,body.photo #simclock,body.photo #cfgpop,body.photo #datepop,body.photo #tourpop,body.photo #velpop{opacity:0 !important;visibility:hidden}
 /* telemetria de debug: escondida por padrão, sai com Shift+D (ver CLAUDE.md) */
 #diagchip{display:none;position:absolute;right:8px;bottom:6px;z-index:14;font-family:var(--mono);font-size:9px;
   letter-spacing:1px;color:var(--dim);background:rgba(4,8,18,.72);border:1px solid var(--line);
@@ -533,6 +539,11 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 #brandnm{display:inline-flex;align-items:baseline}
 #brandnm i{color:#6fb7ff;font-style:normal;font-weight:400;opacity:.92}
 #brandnm b{color:#eef6ff;font-weight:700;letter-spacing:3.4px;margin-left:1px;text-shadow:0 0 9px rgba(125,196,255,.5)}
+#modebtn{margin-left:12px;background:none;border:1px solid rgba(90,120,170,.4);color:#8fa8c8;cursor:pointer;
+  font-family:inherit;font-size:8.5px;font-weight:600;letter-spacing:1.8px;padding:4px 9px;border-radius:2px}
+#modebtn:hover{color:var(--amber);border-color:rgba(255,190,90,.5)}
+#modebtn.real{color:var(--amber);border-color:rgba(255,190,90,.55)}
+body.touch #modebtn{padding:3px 6px;letter-spacing:1px;margin-left:8px}
 #tutdebug,#dbgtoast,#dbgpromo,#dbgconq{margin-left:8px;background:none;border:1px dashed var(--line2);color:var(--dim2);
   font-family:var(--mono);font-size:7.5px;letter-spacing:1.5px;padding:2px 6px;cursor:pointer;opacity:.6}
 #tutdebug:hover,#dbgtoast:hover,#dbgpromo:hover,#dbgconq:hover{color:var(--amber);border-color:var(--amber);opacity:1}
@@ -815,7 +826,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div class="corner c-br"><b class="h"></b><b class="v"></b></div>
 
   <div id="topbar">
-    <div id="brand"><span class="mark"></span><span id="brandnm"><i>UNIVERS</i><b>ATLAS</b></span><button id="tutdebug" title="Resetar os tutoriais (debug)">TUT</button><button id="dbgtoast" title="Testar o toast de conquista (debug)">TST</button><button id="dbgpromo" title="Testar o toast de promoção (debug)">PRM</button><button id="dbgconq" title="Resetar as conquistas (debug)">RSC</button></div>
+    <div id="brand"><span class="mark"></span><span id="brandnm"><i>UNIVERS</i><b>ATLAS</b></span><button id="modebtn" data-tip="Alterna entre o mapa cênico e a escala 1:1 do sistema solar"></button><button id="tutdebug" title="Resetar os tutoriais (debug)">TUT</button><button id="dbgtoast" title="Testar o toast de conquista (debug)">TST</button><button id="dbgpromo" title="Testar o toast de promoção (debug)">PRM</button><button id="dbgconq" title="Resetar as conquistas (debug)">RSC</button></div>
     <div id="crumbs"></div>
     <div id="statuspod">
       <span id="statled"></span>
@@ -851,7 +862,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     </div>
   </div>
 
-  <div id="simclock"><span id="simdata"></span><button id="simpp" data-tip="Pausar ou continuar o tempo">⏸</button><button id="simgo" data-tip="Ir para uma data">◈</button></div>
+  <div id="simclock"><span id="simdata"></span><button id="simpp" data-tip="Pausar ou continuar o tempo">⏸</button><button id="simgo" data-tip="Ir para uma data">◈</button><button id="simlive" data-tip="Relógio travado no AGORA: clique para voltar ao vivo">● AO VIVO</button><button id="simvel" data-tip="Velocidade do tempo">»</button></div>
 
   <button class="chev" id="chevL" title="Anterior">‹</button>
   <button class="chev" id="chevR" title="Próximo">›</button>
@@ -938,18 +949,23 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-vel="semana"><span>1 SEGUNDO = 1 SEMANA</span><b></b></div>
     <div class="filtrow" data-vel="mes"><span>1 SEGUNDO = 1 MÊS</span><b></b></div>
     <div class="fp-t fp-t2">EXTRAS</div>
-    <div class="filtrow" data-rastro="1"><span>RASTRO DE 30 DIAS</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-viagemx="1"><span>VIAGEM INTERPLANETAR NO TOUR (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
-    <div class="filtrow" data-escr="1"><span>SISTEMA SOLAR EM ESCALA REAL (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
-    <div class="filtrow" data-hz="1"><span>ZONA HABITÁVEL DA ESTRELA</span><b>LIGADO</b></div>
-    <div class="filtrow" data-ceu="1"><span>CONSTELAÇÕES NO CÉU REAL</span><b>LIGADO</b></div>
-    <div class="filtrow" data-ceunomes="1"><span>NOMES DAS ESTRELAS NO CÉU</span><b>LIGADO</b></div>
-    <div class="filtrow" data-regua="1"><span>RÉGUA DE DISTÂNCIAS (ESCALA REAL)</span><b>LIGADO</b></div>
+    <div class="filtrow" data-escr="1"><span>SISTEMA SOLAR EM ESCALA 1:1 (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-coord="1"><span>COORDENADAS REAIS (RA/DEC)</span><b>DESLIGADO</b></div>
     <div class="fp-t fp-t2">SOM</div>
     <div class="filtrow" data-som="mus"><span>MÚSICA</span><b></b></div>
     <div class="filtrow" data-som="fx"><span>EFEITOS SONOROS</span><b></b></div>
     <div class="fp-n">O relógio no canto inferior esquerdo mostra a data do sistema. Pausar e viajar no tempo ficam lá.</div>
+  </div>
+  <div id="velpop">
+    <button class="fpx">✕</button>
+    <div class="fp-t">» VELOCIDADE DO TEMPO</div>
+    <div class="filtrow" data-vel="real"><span>TEMPO REAL · TRAVADO NO AGORA</span><b></b></div>
+    <div class="filtrow" data-vel="seg"><span>1 SEGUNDO = 1 SEGUNDO</span><b></b></div>
+    <div class="filtrow" data-vel="hora"><span>1 SEGUNDO = 1 HORA</span><b></b></div>
+    <div class="filtrow" data-vel="dia"><span>1 SEGUNDO = 1 DIA</span><b></b></div>
+    <div class="filtrow" data-vel="semana"><span>1 SEGUNDO = 1 SEMANA</span><b></b></div>
+    <div class="filtrow" data-vel="mes"><span>1 SEGUNDO = 1 MÊS</span><b></b></div>
   </div>
   <div id="filtpop">
     <button class="fpx">✕</button>
@@ -977,6 +993,12 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-obj="cinturao"><span>CINTURÕES</span><b>VISÍVEL</b></div>
 
     <div class="fp-n">Some com o objeto inteiro: corpo, rótulo e rota. Planetas e luas ficam sempre.</div>
+    <div class="fp-t fp-t2">✦ CAMADAS DO MAPA</div>
+    <div class="filtrow" data-ceu="1"><span>CONSTELAÇÕES NO CÉU REAL</span><b>LIGADO</b></div>
+    <div class="filtrow" data-ceunomes="1"><span>NOMES DAS ESTRELAS NO CÉU</span><b>LIGADO</b></div>
+    <div class="filtrow" data-hz="1"><span>ZONA HABITÁVEL DA ESTRELA</span><b>LIGADO</b></div>
+    <div class="filtrow" data-regua="1"><span>RÉGUA DE DISTÂNCIAS (ESCALA 1:1)</span><b>LIGADO</b></div>
+    <div class="filtrow" data-rastro="1"><span>RASTRO DE 30 DIAS</span><b>DESLIGADO</b></div>
   </div>
   <div id="trajclock">
     <div class="trow1">
@@ -4306,7 +4328,7 @@ const ESCALA_REAL_INCL = {mercurio:0.03, venus:2.6, terra:23.4, marte:25.2,
   jupiter:3.1, saturno:26.7, urano:82.2, netuno:28.3};
 function escrTam(km){ return Math.max(0.0002, km/149597870*ESCR_UA); }
 const COORD = {real:false};  /* coordenadas: cênicas (nossas) ou RA/DEC reais onde há dado */
-const SIMT = {data: Date.now(), vel:'dia', pausado:false,
+const SIMT = {data: Date.now(), vel:'real', pausado:false,   /* nasce AO VIVO (pedido dele); F5 também volta ao agora */
   diasPorSeg(){ return this.vel==='mes' ? 30.44 : (this.vel==='semana' ? 7 : (this.vel==='hora' ? 1/24 : ((this.vel==='real' || this.vel==='seg') ? 1/86400 : 1))); }};
 function satelitesDe(id){
   /* só o que está ATIVO e em órbita: foguete histórico e satélite morto
@@ -4853,13 +4875,17 @@ function buildSystem(sysId, spin0){
       get:v=>v.set(Math.cos(2.2)*30000, 1500, Math.sin(2.2)*30000)});
     /* RÉGUA DE DISTÂNCIAS: anéis discretos que acendem em fade quando o
        zoom passa por eles (1, 10, 100 e 1.000 UA; configurável) */
+    /* v2 (r134): a linha dura saiu; a marca agora é uma FAIXA em degradê,
+       colorida na borda da distância e sumindo para dentro (pedido dele),
+       num lilás quase rosa para não confundir com o verde da zona habitável */
     for(const ua of [1, 10, 100, 1000]){
       const rr3 = ua*ESCR_UA;
-      const rgg = new THREE.BufferGeometry();
-      const rpp = new Float32Array(180*3);
-      for(let i=0;i<180;i++){ const aa = i/180*Math.PI*2; rpp[i*3]=Math.cos(aa)*rr3; rpp[i*3+2]=Math.sin(aa)*rr3; }
-      rgg.setAttribute('position', new THREE.BufferAttribute(rpp, 3));
-      const rl = new THREE.LineLoop(rgg, new THREE.LineBasicMaterial({color:0x50688c, transparent:true, opacity:0}));
+      const rgg = new THREE.RingGeometry(rr3*0.80, rr3, 128, 1);
+      const rl = new THREE.Mesh(rgg, new THREE.ShaderMaterial({transparent:true, depthWrite:false, side:THREE.DoubleSide,
+        uniforms:{op:{value:0}, cor:{value:new THREE.Color(0xd8b0e0)}, r0:{value:rr3*0.80}, r1:{value:rr3}},
+        vertexShader:'varying float vR; void main(){ vR = length(position.xy); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
+        fragmentShader:'uniform float op; uniform float r0; uniform float r1; uniform vec3 cor; varying float vR; void main(){ float t = clamp((vR-r0)/(r1-r0), 0.0, 1.0); gl_FragColor = vec4(cor, op*t*t); }'}));
+      rl.rotation.x = Math.PI/2;
       scene.add(rl);
       const lbR = {el:makeLabel(ua >= 1000 ? '1.000 UA' : (ua + ' UA'), 'faint regua', null), off:true, sempre:true,
         get:(t2)=>t2.set(Math.cos(0.6)*rr3, 0.001*rr3, Math.sin(0.6)*rr3)};
@@ -5036,7 +5062,7 @@ function buildSystem(sysId, spin0){
       /* a régua acende só no anel da vez */
       for(const ra of reguaAneis){
         const f2 = Math.max(0, 1 - Math.abs(Math.log10(CAM.dist/(ra.r*1.1)))*1.6);
-        if(!DIVE && !TRANSITO && !FADEIN) ra.obj.material.opacity = REGUA.on ? 0.22*f2 : 0;
+        if(!DIVE && !TRANSITO && !FADEIN) ra.obj.material.uniforms.op.value = REGUA.on ? 0.17*f2 : 0;
         ra.lbl.off = !REGUA.on || f2 < 0.12;
       }
       /* escala real: os alvos de clique RESPIRAM com o zoom (longe: generosos;
@@ -9514,7 +9540,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r133';
+const BUILD = 'r134';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -9833,7 +9859,24 @@ function simClockUI(){
   if(SIMT.vel==='real' || SIMT.vel==='seg' || SIMT.vel==='hora') txt += ' · ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
   el.textContent = txt;
   const pp = $('#simpp'); if(pp) pp.textContent = SIMT.pausado ? '▶' : '⏸';
+  if(typeof liveSync === 'function') liveSync();
 }
+/* AO VIVO: o estado é derivado (vel real e sem pausa); clicar trava no agora */
+function liveSync(){
+  const b = $('#simlive'); if(!b) return;
+  b.classList.toggle('on', SIMT.vel === 'real' && !SIMT.pausado);
+}
+$('#simlive').addEventListener('click', ()=>{
+  SIMT.vel = 'real'; SIMT.pausado = false; SIMT.data = Date.now();
+  store.set('carto:vel', 'real');
+  cfgSync(); simClockUI();
+  showHint('AO VIVO · O RELÓGIO CORRE NO AGORA');
+});
+$('#simvel').addEventListener('click', ()=>{
+  $('#datepop').classList.remove('on');
+  $('#velpop').classList.toggle('on');
+  cfgSync();
+});
 const DP = {d:1, m:0, a:2026};
 function dpSync(){
   $('#dp_d').textContent = String(DP.d).padStart(2,'0');
@@ -9889,23 +9932,43 @@ $('#dp_hoje').addEventListener('click', ()=>{
   simClockUI();
 });
 document.querySelectorAll('.fpx').forEach(b=>b.addEventListener('click', e=>{
-  const pop = e.target.closest('#filtpop,#cfgpop,#datepop');
+  const pop = e.target.closest('#filtpop,#cfgpop,#datepop,#velpop');
   if(pop) pop.classList.remove('on');
 }));
+/* alternar entre o mapa cênico e a escala 1:1: vale para a linha da
+   engrenagem E para o botão do topo (mesma função, dois lugares) */
+function trocaEscala(){
+  ESCR.on = !ESCR.on;
+  store.set('carto:escr', ESCR.on ? '1' : '0');
+  cfgSync();
+  syncHash();   /* o link compartilhável acompanha o toggle */
+  if(ST.sys === 'sol'){
+    if(ST.level === 'system') gotoSystem('sol', ESCR.on ? 'ESCALA 1:1 · OS CORPOS VIRAM POEIRA' : 'ESCALA CÊNICA · DE VOLTA AO MAPA');
+    else if(ST.level === 'focus' && ST.body) gotoFocus(ST.body);
+  }
+  showHint(ESCR.on ? 'ESCALA 1:1: distâncias, tamanhos e órbitas verdadeiros. Procure os planetas pelos RÓTULOS e acelere o RELÓGIO para ver Mercúrio correr.' : 'ESCALA CÊNICA RESTAURADA');
+}
+function modeSync(){
+  const b = $('#modebtn'); if(!b) return;
+  b.textContent = ESCR.on ? 'ESCALA 1:1' : 'MAPA CÊNICO';
+  b.classList.toggle('real', ESCR.on);
+}
+$('#modebtn').addEventListener('click', trocaEscala);
+modeSync();
 function cfgSync(){
-  const rcn = $('#cfgpop').querySelector('[data-ceunomes]');
+  const rcn = document.querySelector('[data-ceunomes]');
   if(rcn){ rcn.classList.toggle('off', !CEUN.on); rcn.querySelector('b').textContent = CEUN.on ? 'LIGADO' : 'DESLIGADO'; }
-  const rrg = $('#cfgpop').querySelector('[data-regua]');
+  const rrg = document.querySelector('[data-regua]');
   if(rrg){ rrg.classList.toggle('off', !REGUA.on); rrg.querySelector('b').textContent = REGUA.on ? 'LIGADO' : 'DESLIGADO'; }
-  const rceu = $('#cfgpop').querySelector('[data-ceu]');
+  const rceu = document.querySelector('[data-ceu]');
   if(rceu){ rceu.classList.toggle('off', !CEUV.on); rceu.querySelector('b').textContent = CEUV.on ? 'LIGADO' : 'DESLIGADO'; }
-  const rh = $('#cfgpop').querySelector('[data-hz]');
+  const rh = document.querySelector('[data-hz]');
   if(rh){ rh.classList.toggle('off', !HZV.on); rh.querySelector('b').textContent = HZV.on ? 'LIGADO' : 'DESLIGADO'; }
   const re = $('#cfgpop').querySelector('[data-escr]');
   if(re){ re.classList.toggle('off', !ESCR.on); re.querySelector('b').textContent = ESCR.on ? 'LIGADO' : 'DESLIGADO'; }
   const rv = $('#cfgpop').querySelector('[data-viagemx]');
   if(rv){ rv.classList.toggle('off', !VIAGEMX.on); rv.querySelector('b').textContent = VIAGEMX.on ? 'LIGADO' : 'DESLIGADO'; }
-  const rr = $('#cfgpop').querySelector('[data-rastro]');
+  const rr = document.querySelector('[data-rastro]');
   if(rr){ rr.classList.toggle('off', !RASTRO.on); rr.querySelector('b').textContent = RASTRO.on ? 'LIGADO' : 'DESLIGADO'; }
   const rc = $('#cfgpop').querySelector('[data-coord]');
   if(rc){ rc.classList.toggle('off', !COORD.real); rc.querySelector('b').textContent = COORD.real ? 'LIGADO' : 'DESLIGADO'; }
@@ -9913,11 +9976,13 @@ function cfgSync(){
   if(rm2){ rm2.classList.toggle('off', AUDIO.muted); rm2.querySelector('b').textContent = AUDIO.muted ? 'DESLIGADA' : 'LIGADA'; }
   const rf2 = $('#cfgpop').querySelector('[data-som="fx"]');
   if(rf2){ rf2.classList.toggle('off', AUDIO.sfxMudo); rf2.querySelector('b').textContent = AUDIO.sfxMudo ? 'DESLIGADOS' : 'LIGADOS'; }
-  $('#cfgpop').querySelectorAll('[data-vel]').forEach(r=>{
+  document.querySelectorAll('[data-vel]').forEach(r=>{
     const on = SIMT.vel === r.dataset.vel;
     r.classList.toggle('off', !on);
     r.querySelector('b').textContent = on ? 'ATIVA' : '';
   });
+  if(typeof modeSync === 'function') modeSync();
+  if(typeof liveSync === 'function') liveSync();
 }
 { const tr = $('#tutrever'); if(tr) tr.addEventListener('click', ()=>{
   TUT.v.delete('boasvindas');
@@ -9926,11 +9991,11 @@ function cfgSync(){
   setTimeout(tutBoasVindas, 350);
 }); }
 $('#btncfg').addEventListener('click', ()=>{
-  $('#filtpop').classList.remove('on'); $('#player').classList.remove('on');
+  $('#filtpop').classList.remove('on'); $('#player').classList.remove('on'); $('#velpop').classList.remove('on');
   $('#cfgpop').classList.toggle('on');
   cfgSync();
 });
-$('#cfgpop').addEventListener('click', e=>{
+const cfgRowClick = e=>{
   const rNom = e.target.closest('[data-ceunomes]');
   if(rNom){
     CEUN.on = !CEUN.on;
@@ -9969,18 +10034,7 @@ $('#cfgpop').addEventListener('click', e=>{
     return;
   }
   const rE = e.target.closest('[data-escr]');
-  if(rE){
-    ESCR.on = !ESCR.on;
-    store.set('carto:escr', ESCR.on ? '1' : '0');
-    cfgSync();
-    syncHash();   /* o link compartilhável acompanha o toggle */
-    if(ST.sys === 'sol'){
-      if(ST.level === 'system') gotoSystem('sol', ESCR.on ? 'ESCALA REAL · OS CORPOS VIRAM POEIRA' : 'ESCALA CÊNICA · DE VOLTA AO MAPA');
-      else if(ST.level === 'focus' && ST.body) gotoFocus(ST.body);
-    }
-    showHint(ESCR.on ? 'ESCALA REAL: distâncias, tamanhos e órbitas verdadeiros. Procure os planetas pelos RÓTULOS e acelere o RELÓGIO para ver Mercúrio correr.' : 'ESCALA CÊNICA RESTAURADA');
-    return;
-  }
+  if(rE){ trocaEscala(); return; }
   const rV = e.target.closest('[data-viagemx]');
   if(rV){
     VIAGEMX.on = !VIAGEMX.on;
@@ -10015,14 +10069,17 @@ $('#cfgpop').addEventListener('click', e=>{
   if(SIMT.vel === 'real') SIMT.data = Date.now();   /* tempo real puxa para o agora */
   store.set('carto:vel', SIMT.vel);
   cfgSync(); simClockUI();
-});
+};
+$('#cfgpop').addEventListener('click', cfgRowClick);
+$('#filtpop').addEventListener('click', cfgRowClick);
+$('#velpop').addEventListener('click', cfgRowClick);
 function filtSync(){
   $('#filtpop').querySelectorAll('.filtrow').forEach(r=>{
     if(r.dataset.obj){
       const on = FILTROBJ[r.dataset.obj] !== false;
       r.classList.toggle('off', !on);
       r.querySelector('b').textContent = on ? 'VISÍVEL' : 'OCULTO';
-    } else {
+    } else if(r.dataset.cls){
       const on = FILTROS[r.dataset.cls] !== false;
       r.classList.toggle('off', !on);
       r.querySelector('b').textContent = on ? 'LIGADA' : 'OCULTA';
@@ -10032,8 +10089,9 @@ function filtSync(){
 $('#btnfilt').addEventListener('click', ()=>{
   $('#player').classList.remove('on');
   $('#cfgpop').classList.remove('on');
+  $('#velpop').classList.remove('on');
   $('#filtpop').classList.toggle('on');
-  filtSync();
+  filtSync(); cfgSync();
   /* o popover só mostra as classes que EXISTEM no sistema atual */
   const emSis = ACT && ACT.kind === 'system';
   $('#filtpop').querySelectorAll('.filtrow').forEach(r=>{
