@@ -193,6 +193,7 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #player .pl-mute{width:100%;margin-top:8px}
 /* popover de filtros das linhas: mesmo corpo do player */
 #filtpop{position:absolute;top:60px;right:14px;z-index:20;width:min(280px,86vw);display:none;
+  max-height:calc(100vh - 92px);overflow-y:auto;overscroll-behavior:contain;
   background:var(--panel);border:1px solid var(--line2);padding:12px 14px 10px;
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
 #filtpop.on{display:block}
@@ -247,6 +248,14 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
   pointer-events:none;flex-direction:column;align-items:center;gap:3px;opacity:.85}
 #reguabar.on{display:flex}
 #reguabar .rbline{display:flex;align-items:flex-end;height:7px}
+/* o seletor de cor da régua: cinco atalhos e a roda livre do sistema */
+.rgcor{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0 5px;
+  font-family:var(--mono);font-size:8.5px;letter-spacing:1.4px;color:var(--dim)}
+.rgsw{display:flex;align-items:center;gap:5px}
+.rgsw .sw{width:13px;height:13px;border:1px solid rgba(255,255,255,.25);border-radius:2px;cursor:pointer;padding:0}
+.rgsw .sw:hover{border-color:#fff}
+.rgsw .sw.on{border-color:#fff;box-shadow:0 0 6px rgba(255,255,255,.5)}
+#rgpick{width:18px;height:15px;padding:0;border:1px solid var(--line2);background:none;cursor:pointer}
 #reguabar .rbline b{display:block;height:1px;background:var(--reguacor,#c9a8d8);opacity:.8}
 #reguabar .rbline i{display:block;width:1px;height:7px;background:var(--reguacor,#c9a8d8);opacity:.75}
 #rbtxt{font-family:var(--mono);font-size:8.5px;letter-spacing:2px;color:var(--reguacor,#c9a8d8);text-shadow:0 1px 3px #000}
@@ -374,11 +383,11 @@ body.focusmode .chev{display:flex}
 #panelbody{overflow-y:auto;overflow-x:hidden;padding:14px 18px 20px;flex:1;overscroll-behavior:contain}
 /* barra de rolagem do HUD: fina e azul, igual em todas as áreas roláveis */
 #panelbody,#misslist,#findlist,#player .pl-list{scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
-#panelbody::-webkit-scrollbar,#misslist::-webkit-scrollbar,
+#panelbody::-webkit-scrollbar,#misslist::-webkit-scrollbar,#filtpop::-webkit-scrollbar,#cfgpop::-webkit-scrollbar,
 #findlist::-webkit-scrollbar,#player .pl-list::-webkit-scrollbar{width:4px;height:4px}
-#panelbody::-webkit-scrollbar-thumb,#misslist::-webkit-scrollbar-thumb,
+#panelbody::-webkit-scrollbar-thumb,#misslist::-webkit-scrollbar-thumb,#filtpop::-webkit-scrollbar-thumb,#cfgpop::-webkit-scrollbar-thumb,
 #findlist::-webkit-scrollbar-thumb,#player .pl-list::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
-#panelbody::-webkit-scrollbar-track,#misslist::-webkit-scrollbar-track,
+#panelbody::-webkit-scrollbar-track,#misslist::-webkit-scrollbar-track,#filtpop::-webkit-scrollbar-track,#cfgpop::-webkit-scrollbar-track,
 #findlist::-webkit-scrollbar-track,#player .pl-list::-webkit-scrollbar-track{background:transparent}
 #panelbody::-webkit-scrollbar-corner,#misslist::-webkit-scrollbar-corner{background:transparent}
 
@@ -1060,7 +1069,18 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-ceunomes="1"><span>NOMES DAS ESTRELAS NO CÉU</span><b>LIGADO</b></div>
     <div class="filtrow" data-hz="1"><span>ZONA HABITÁVEL DA ESTRELA</span><b>LIGADO</b></div>
     <div class="filtrow" data-regua="1"><span>RÉGUA DE DISTÂNCIAS (ESCALA 1:1)</span><b>LIGADO</b></div>
-    <div class="filtrow" data-reguacor="1"><span>COR DA RÉGUA</span><b>LILÁS</b></div>
+    <div class="filtrow" data-reguadisco="1"><span>DISCO DA RÉGUA</span><b>LIGADO</b></div>
+    <div class="rgcor">
+      <span>COR DA RÉGUA</span>
+      <div class="rgsw">
+        <button class="sw" data-rgc="#7ad8e8" style="background:#7ad8e8" title="Azul-água"></button>
+        <button class="sw" data-rgc="#8fc8ff" style="background:#8fc8ff" title="Azul da casa"></button>
+        <button class="sw" data-rgc="#8fe0d8" style="background:#8fe0d8" title="Verde-água"></button>
+        <button class="sw" data-rgc="#d8b0e0" style="background:#d8b0e0" title="Lilás"></button>
+        <button class="sw" data-rgc="#ffc98a" style="background:#ffc98a" title="Âmbar"></button>
+        <input type="color" id="rgpick" value="#7ad8e8" title="Escolher qualquer cor">
+      </div>
+    </div>
     <div class="filtrow" data-rastro="1"><span>RASTRO DE 30 DIAS</span><b>DESLIGADO</b></div>
   </div>
   <div id="trajclock">
@@ -4302,8 +4322,23 @@ function updateLabels(){
     for(const L of ACT.labels)
       if(L.badge) L.el.textContent = L.base;
   }
+  /* r150 · SAINDO DE CASA (o jeito que ele descreveu): passando de um quarto
+     de ano-luz, o céu desliga os nomes e sobra o SOL; conforme você afasta
+     mais, as estrelas vão aparecendo por ordem de distância (a 5 anos-luz
+     nascem Alpha Centauri e Sírius, a 12 vem Procíon, Altair, Vega...) */
+  const dLy = (ACT.escr && ACT.kind === 'system') ? CAM.dist/(LY_UA*ESCR_UA) : 0;
+  const foraDeCasa = dLy > 0.25;
   for(const L of ACT.labels){
     if(L.off){ L.el.style.display = 'none'; continue; }
+    /* a estrela discreta só se apresenta quando você sai de casa */
+    if(L.soLonge && !foraDeCasa){ L.el.style.display = 'none'; continue; }
+    if(foraDeCasa){
+      /* o nome da estrela só aparece quando o zoom já abraça a distância dela */
+      if(L.ceuNome && !(L.ly && L.ly < dLy*1.25)){ L.el.style.display = 'none'; continue; }
+      /* o desenho das constelações é coisa de quem está em casa */
+      if(L.constelLbl && dLy > 0.35){ L.el.style.display = 'none'; continue; }
+      if(L.cinturao || L.escrOrb && L.escrOrb < 40000){ L.el.style.display = 'none'; continue; }
+    }
     /* escala real: cada nome descansa quando a própria órbita fica pequena na
        tela, senão os internos se amontoam todos no centro no zoom aberto */
     if(L.escrOrb && CAM.dist > L.escrOrb*20){ L.el.style.display = 'none'; continue; }   /* x20: Mercúrio sumia cedo demais (calibrado por ele) */
@@ -4487,7 +4522,12 @@ const ESTRELAS_CEU = [
   ['kochab',0,14.85,74.16,2.08,'K'], ['pherkad',0,15.35,71.83,3.05,'A'], ['yildun',0,17.54,86.59,4.35,'A'],
   ['epsumi',0,16.77,82.04,4.23,'G'], ['zetaumi',0,15.73,77.79,4.32,'A'], ['etaumi',0,16.29,75.76,4.95,'F'],
   /* Cão Menor */
-  ['gomeisa',0,7.45,8.29,2.89,'B']];
+  ['gomeisa',0,7.45,8.29,2.89,'B'],
+  /* r150 · a VIZINHANÇA: estrelas discretas no céu, mas das mais próximas do
+     Sol, que é o que importa quando você sai de casa (lista dele) */
+  ['epseri',0,3.55,-9.46,3.73,'K'], ['tauceti',0,1.73,-15.94,3.50,'G'],
+  ['epsind',0,22.06,-56.79,4.69,'K'], ['61cyg',0,21.11,38.75,5.20,'K'],
+  ['lacaille',0,5.19,-45.02,8.85,'M'], ['barnardceu',0,17.96,4.69,9.51,'M']];
 /* as linhas de cada constelação, por pares de estrelas */
 const CEU_LINHAS = {
   orion:{nome:'ÓRION', seg:[['betelg','bellatrix'],['betelg','alnitak'],['bellatrix','mintaka'],
@@ -4743,7 +4783,8 @@ const CEU_LY = {
   markab:133, scheat:196, algenib:470, enif:690,
   izar:210, seginus:87, nekkar:225, muphrid:37, deltaboo:122,
   kochab:131, pherkad:487, yildun:183, epsumi:300, zetaumi:380, etaumi:97,
-  gomeisa:160};
+  gomeisa:160,
+  epseri:10.5, tauceti:11.9, epsind:11.9, '61cyg':11.4, lacaille:12.9, barnardceu:5.96};
 const LY_UA = 63241.077;   /* 1 ano-luz em unidades astronômicas */
 /* o nome de cada estrela do céu (r142): agora TODAS têm ficha ao clicar, com
    distância, classe, brilho, constelação e o ano em que a luz saiu de lá */
@@ -4815,7 +4856,9 @@ const CEU_NOME = {
   algenib:'ALGENIB', enif:'ENIF', izar:'IZAR', seginus:'SEGINUS', nekkar:'NEKKAR',
   muphrid:'MUPHRID', deltaboo:'DELTA BOOTIS', kochab:'KOCHAB', pherkad:'PHERKAD',
   yildun:'YILDUN', epsumi:'EPSILON URSAE MINORIS', zetaumi:'ZETA URSAE MINORIS',
-  etaumi:'ETA URSAE MINORIS', gomeisa:'GOMEISA'};
+  etaumi:'ETA URSAE MINORIS', gomeisa:'GOMEISA',
+  epseri:'EPSILON ERIDANI', tauceti:'TAU CETI', epsind:'EPSILON INDI',
+  '61cyg':'61 CYGNI', lacaille:'LACAILLE 9352', barnardceu:'ESTRELA DE BARNARD'};
 /* o que cada classe espectral quer dizer, em português de gente */
 const CLASSE_CEU = {
   O:['azul-violeta', 'Gigante azul, das mais quentes e raras do céu: acima de 30 mil graus'],
@@ -4831,7 +4874,7 @@ const CEU_AL = {sirius:'8,6', canopus:'310', rigilkent:'4,4', arcturus:'37', veg
   rigel:'~860', betelg:'~550', acrux:'~320', aldeb:'65', antares:'~550', spica:'250', polaris:'~430'};
 const CEUV = {on:true};   /* o desenho das constelações liga e desliga */
 const CEUN = {on:true};   /* os NOMES das estrelas no céu */
-const REGUA = {on:true, cor:0};  /* a régua de distâncias (1/10/100/1000 UA) */
+const REGUA = {on:true, cor:0, hex:null, disco:true};  /* a régua de distâncias */
 /* três cores para ele escolher no filtro (a forma do degradê ele já aprovou) */
 /* r144: o lilás batia com a linha dos PLANETAS ANÕES (0x5c4d80) e o
    verde-limão ele não curtiu. O padrão agora é AZUL-ÁGUA: fica na família do
@@ -5556,11 +5599,13 @@ function buildSystem(sysId, spin0){
        mágica: em vez de acender quando o anel enche a tela, ele acende quanto
        MAIS você afasta, chegando ao ápice quando vira um círculo médio, e aí
        apaga enquanto o próximo marco (dez vezes maior) começa a nascer */
-    for(const ua of [1, 10, 100, 1000]){
+    /* r150: a régua segue até os ANOS-LUZ (10 mil UA, depois 1, 3 e 10 AL:
+       o teto do zoom é 12 AL, então sempre há um marco no ar) */
+    for(const ua of [1, 10, 100, 1000, 10000, LY_UA, LY_UA*3, LY_UA*10, LY_UA*30]){
       const rr3 = ua*ESCR_UA;
       const rgg = new THREE.RingGeometry(rr3*0.015, rr3, 128, 1);
       const rl = new THREE.Mesh(rgg, new THREE.ShaderMaterial({transparent:true, depthWrite:false, side:THREE.DoubleSide,
-        uniforms:{op:{value:0}, cor:{value:new THREE.Color(REGUA_CORES[REGUA.cor][1])}, r0:{value:0.0}, r1:{value:rr3}},
+        uniforms:{op:{value:0}, cor:{value:new THREE.Color(corDaRegua()[1])}, r0:{value:0.0}, r1:{value:rr3}},
         vertexShader:'varying float vR; void main(){ vR = length(position.xy); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
         /* r149 (o desenho dele, v2): o disco é PREENCHIDO por dentro, feito a
            base da zona habitável; só o miolo perto do núcleo desbota um pouco,
@@ -5641,14 +5686,18 @@ function buildSystem(sysId, spin0){
       ceuPicks.push({obj:epk, alvo:vE, ang:0.021});
     }
     for(const e of ESTRELAS_CEU){
-      if(!e[1]) continue;
+      /* r150: as NÃO famosas também ganham nome, mas nascem dormindo: elas
+         acendem só quando você sai de casa e o zoom alcança a distância
+         delas, e aí a vizinhança do Sol aparece por ordem (ideia dele) */
+      const soLonge = !e[1];
       const vv2 = ceuPos[e[0]];
       const sisCeu = (CEU_SIS[e[0]] && SYS[CEU_SIS[e[0]]]) ? CEU_SIS[e[0]] : null;
       /* o rótulo do céu é projetado na DIREÇÃO da estrela a partir de onde a
          câmera está: assim ele funciona com a estrela a 1,5 bilhão de unidades
          e acompanha a paralaxe sem sair do alcance da câmera principal */
-      labels.push({el:makeLabel(e[1] + (CEU_LY[e[0]] ? ' · ' + (CEU_LY[e[0]] < 100 ? String(CEU_LY[e[0]]).replace('.', ',') : Math.round(CEU_LY[e[0]])) + ' AL' : ''), 'faint estrela', ()=>ACTION('estrela', e[0])),
-        sempre:true, ceuNome:true, off:!CEUN.on,
+      labels.push({el:makeLabel((e[1] || CEU_NOME[e[0]] || e[0].toUpperCase()) + (CEU_LY[e[0]] ? ' · ' + (CEU_LY[e[0]] < 100 ? String(CEU_LY[e[0]]).replace('.', ',') : Math.round(CEU_LY[e[0]])) + ' AL' : ''), 'faint estrela', ()=>ACTION('estrela', e[0])),
+        soLonge,
+        sempre:true, ceuNome:true, ly:(CEU_LY[e[0]] || 900), off:!CEUN.on,
         get:(t)=>{ t.copy(vv2).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()).add(camera.position); }});
     }
     for(const cid in CEU_SIS){
@@ -5700,12 +5749,19 @@ function buildSystem(sysId, spin0){
     for(const k in CEU_LINHAS){
       const cc = CEU_LINHAS[k], cen = new THREE.Vector3();
       let nC = 0;
-      for(const par of cc.seg){ if(ceuDir[par[0]]){ cen.add(ceuDir[par[0]]); nC++; } }
+      /* r150 · O AMONTOADO: o centroide vivia na casca de 95 mil unidades, e a
+         partir de um ano-luz de casa TODOS eles ficavam na mesma direção (a
+         do Sol), empilhando os nomes num bolo (bug dos prints dele). Agora o
+         centroide é a média das POSIÇÕES VERDADEIRAS das estrelas do desenho,
+         então o nome viaja junto com a figura, com paralaxe e tudo */
+      for(const par of cc.seg){ if(ceuPos[par[0]]){ cen.add(ceuPos[par[0]]); nC++; } }
       if(nC){
-        cen.multiplyScalar(1/nC).normalize().multiplyScalar(RCEU);
+        cen.multiplyScalar(1/nC);
         if(k === 'cruzeiro') ceuCruzDir.copy(cen).normalize();
+        /* a distância média do desenho, para ele descansar quando você sai de casa */
+        const lyC = cen.length()/(LY_UA*ESCR_UA);
         const cv = cen.clone();
-        const lb = {el:makeLabel(cc.nome, 'faint constel', CEU_FICHA[k] ? (()=>ACTION('constel', k)) : null), off:!CEUV.on, sempre:true,
+        const lb = {el:makeLabel(cc.nome, 'faint constel', CEU_FICHA[k] ? (()=>ACTION('constel', k)) : null), off:!CEUV.on, sempre:true, constelLbl:true, lyC,
           get:(t)=>{ t.copy(cv).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()).add(camera.position); }};
         labels.push(lb); ceuLbls.push(lb);
         /* além do nome, um alvo largo no céu para clicar na figura */
@@ -5732,7 +5788,9 @@ function buildSystem(sysId, spin0){
   for(const pb of S.bodies) alcance = Math.max(alcance, pb.orbita ? pb.orbita.afel : (pb.sys ? pb.sys.orbit : 0));
   /* na escala 1:1 o teto do zoom foi para 12 ANOS-LUZ (r139): o sistema
      inteiro vira um pontinho e as estrelas vizinhas se separam de verdade */
-  const camMaxDin = escrAtivo ? 12*LY_UA*ESCR_UA : Math.max(S.camMax || 60, alcance * 1.7);
+  /* 30 ANOS-LUZ de teto (r150): cabe a vizinhança inteira que ele listou,
+     de Alpha Centauri a Vega e Fomalhaut */
+  const camMaxDin = escrAtivo ? 30*LY_UA*ESCR_UA : Math.max(S.camMax || 60, alcance * 1.7);
   return {kind:'system', scene, sceneCeu, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
@@ -5839,7 +5897,8 @@ function buildSystem(sysId, spin0){
         const f3 = f2*f2*(3 - 2*f2);   /* suaviza as pontas da subida */
         /* muito mais discreto: o teto agora é da família da zona habitável
            (0.055), senão o disco lava a cena inteira (crítica dele) */
-        if(!DIVE && !TRANSITO && !FADEIN) ra.obj.material.uniforms.op.value = REGUA.on ? 0.085*f3 : 0;
+        /* o DISCO pode ser desligado sozinho: a barra do rodapé continua */
+        if(!DIVE && !TRANSITO && !FADEIN) ra.obj.material.uniforms.op.value = (REGUA.on && REGUA.disco) ? 0.085*f3 : 0;
       }
       /* escala real: os alvos de clique RESPIRAM com o zoom (longe: generosos;
          perto: justos). Com raio fixo a Terra engolia a Lua, e a câmera
@@ -7993,7 +8052,9 @@ CEUV.on = store.get('carto:ceu', '1') === '1';
 CEUN.on = store.get('carto:ceunomes', '1') === '1';
 REGUA.on = store.get('carto:regua', '1') === '1';
 REGUA.cor = Math.max(0, Math.min(REGUA_CORES.length - 1, parseInt(store.get('carto:reguacor', '0'), 10) || 0));
-document.documentElement.style.setProperty('--reguacor', REGUA_CORES[REGUA.cor][2]);
+REGUA.hex = store.get('carto:reguahex', '') || null;
+REGUA.disco = store.get('carto:reguadisco', '1') === '1';
+document.documentElement.style.setProperty('--reguacor', REGUA.hex || REGUA_CORES[REGUA.cor][2]);
 { const ee = store.get('carto:escrexp', '00'); ESCR_EXP.terra = ee[0] === '1'; ESCR_EXP.teto = ee[1] === '1'; }
 (store.get('carto:trajv', '') || '').split(',').filter(Boolean).forEach(x=>TRAJV.add(x));
 COORD.real = store.get('carto:coord', '0') === '1';
@@ -8703,15 +8764,20 @@ function reguaBarra(){
   /* na escala 1:1 a conta vira UA quando o número fica grande demais em km */
   const emUAagora = emUA && (alvoUn/ESCR_UA) > 0.02;
   const valor = emUAagora ? alvoUn/ESCR_UA : alvoUn*kmPorUn;
-  const exp = Math.pow(10, Math.floor(Math.log10(valor)));
-  const m = valor/exp;
+  /* passando de 10 mil UA a conta vira ANOS-LUZ: o número em UA fica grande
+     demais para ler (pedido dele) */
+  const emAL = emUAagora && valor > 12000;
+  const valor2 = emAL ? valor/LY_UA : valor;
+  const exp = Math.pow(10, Math.floor(Math.log10(valor2)));
+  const m = valor2/exp;
   const redondo = (m >= 5 ? 5 : (m >= 2 ? 2 : 1))*exp;
-  const unRedondo = emUAagora ? redondo*ESCR_UA : redondo/kmPorUn;
+  const unRedondo = emUAagora ? redondo*(emAL ? LY_UA : 1)*ESCR_UA : redondo/kmPorUn;
   const px = Math.round(unRedondo/larguraUn*CRECT.width);
   if(!(px > 24 && px < CRECT.width*0.7)){ el.classList.remove('on'); return; }
   el.classList.add('on');
   el.querySelector('b').style.width = px + 'px';
-  $('#rbtxt').textContent = fmtNum(redondo) + (emUAagora ? (redondo === 1 ? ' UNIDADE ASTRONÔMICA' : ' UA') : ' KM');
+  $('#rbtxt').textContent = fmtNum(redondo) + (emAL ? (redondo === 1 ? ' ANO-LUZ' : ' ANOS-LUZ')
+    : (emUAagora ? (redondo === 1 ? ' UNIDADE ASTRONÔMICA' : ' UA') : ' KM'));
 }
 function fmtNum(v){
   if(v >= 1) return v.toLocaleString('pt-BR');
@@ -10744,7 +10810,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r149';
+const BUILD = 'r150';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -11180,12 +11246,21 @@ document.querySelectorAll('.fpx').forEach(b=>b.addEventListener('click', e=>{
 /* alternar entre o mapa cênico e a escala 1:1: vale para a linha da
    engrenagem E para o botão do topo (mesma função, dois lugares) */
 /* a cor da régua vale para as faixas 3D, os rótulos delas e a barra do rodapé */
-function aplicaCorRegua(){
+function corDaRegua(){
+  /* a cor escolhida na roda livre manda; senão vale a paleta rápida */
   const c = REGUA_CORES[REGUA.cor];
+  return REGUA.hex ? [c[0], parseInt(REGUA.hex.slice(1), 16), REGUA.hex] : c;
+}
+function aplicaCorRegua(){
+  const c = corDaRegua();
   if(ACT && ACT.reguaAneis) for(const ra of ACT.reguaAneis){
     if(ra.obj.material.uniforms) ra.obj.material.uniforms.cor.value.setHex(c[1]);
   }
   document.documentElement.style.setProperty('--reguacor', c[2]);
+  const sw = document.querySelectorAll('.rgsw .sw');
+  sw.forEach(b=>b.classList.toggle('on', b.dataset.rgc.toLowerCase() === c[2].toLowerCase()));
+  const pk = document.getElementById('rgpick');
+  if(pk && pk.value.toLowerCase() !== c[2].toLowerCase()) pk.value = c[2];
 }
 function trocaEscala(){
   ESCR.on = !ESCR.on;
@@ -11208,8 +11283,8 @@ modeSync();
 function cfgSync(){
   const rcn = document.querySelector('[data-ceunomes]');
   if(rcn){ rcn.classList.toggle('off', !CEUN.on); rcn.querySelector('b').textContent = CEUN.on ? 'LIGADO' : 'DESLIGADO'; }
-  const rrc = document.querySelector('[data-reguacor]');
-  if(rrc) rrc.querySelector('b').textContent = REGUA_CORES[REGUA.cor][0];
+  const rrd = document.querySelector('[data-reguadisco]');
+  if(rrd){ rrd.classList.toggle('off', !REGUA.disco); rrd.querySelector('b').textContent = REGUA.disco ? 'LIGADO' : 'DESLIGADO'; }
   const rrg = document.querySelector('[data-regua]');
   if(rrg){ rrg.classList.toggle('off', !REGUA.on); rrg.querySelector('b').textContent = REGUA.on ? 'LIGADO' : 'DESLIGADO'; }
   const rceu = document.querySelector('[data-ceu]');
@@ -11259,11 +11334,17 @@ const cfgRowClick = e=>{
     if(ACT && ACT.labels) ACT.labels.forEach(l=>{ if(l.ceuNome) l.off = !CEUN.on; });
     return;
   }
-  const rRC = e.target.closest('[data-reguacor]');
-  if(rRC){
-    REGUA.cor = (REGUA.cor + 1) % REGUA_CORES.length;
-    store.set('carto:reguacor', String(REGUA.cor));
+  const rSw = e.target.closest('.rgsw .sw');
+  if(rSw){
+    REGUA.hex = rSw.dataset.rgc;
+    store.set('carto:reguahex', REGUA.hex);
     aplicaCorRegua();
+    return;
+  }
+  const rDisco = e.target.closest('[data-reguadisco]');
+  if(rDisco){
+    REGUA.disco = !REGUA.disco;
+    store.set('carto:reguadisco', REGUA.disco ? '1' : '0');
     cfgSync();
     return;
   }
@@ -11337,6 +11418,13 @@ const cfgRowClick = e=>{
 $('#cfgpop').addEventListener('click', cfgRowClick);
 $('#filtpop').addEventListener('click', cfgRowClick);
 $('#velpop').addEventListener('click', cfgRowClick);
+/* a roda de cores do sistema: escolha livre da cor da régua */
+{ const pk = $('#rgpick');
+  if(pk) pk.addEventListener('input', ()=>{
+    REGUA.hex = pk.value;
+    store.set('carto:reguahex', REGUA.hex);
+    aplicaCorRegua();
+  }); }
 function filtSync(){
   $('#filtpop').querySelectorAll('.filtrow').forEach(r=>{
     if(r.dataset.obj){
