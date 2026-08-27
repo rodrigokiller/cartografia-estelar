@@ -956,6 +956,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="fp-t">≋ LINHAS DO MAPA</div>
     <div class="filtrow" data-cls="planeta"><span>PLANETAS</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="anao"><span>PLANETAS ANÕES</span><b>LIGADA</b></div>
+    <div class="filtrow" data-cls="asteroide"><span>ASTEROIDES</span><b>DESLIGADA</b></div>
     <div class="filtrow" data-cls="estrela"><span>ESTRELAS COMPANHEIRAS</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="lua"><span>LUAS</span><b>LIGADA</b></div>
     <div class="filtrow" data-cls="cometa"><span>COMETAS E VISITANTES</span><b>LIGADA</b></div>
@@ -966,6 +967,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="fp-t fp-t2">◌ OBJETOS NO MAPA</div>
     <div class="filtrow" data-obj="planeta"><span>PLANETAS</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="anao"><span>PLANETAS ANÕES</span><b>VISÍVEL</b></div>
+    <div class="filtrow" data-obj="asteroide"><span>ASTEROIDES</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="estrela"><span>ESTRELAS COMPANHEIRAS</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="lua"><span>LUAS</span><b>VISÍVEL</b></div>
     <div class="filtrow" data-obj="cometa"><span>COMETAS E VISITANTES</span><b>VISÍVEL</b></div>
@@ -4167,10 +4169,10 @@ function disposeScene(act){
    ganha elipse: ele nao volta, entao a linha dele e um arco aberto. */
 /* linhas visíveis por classe. PADRÃO: só planetas; cometa, sonda e toda classe
    futura (satelite, foguete) nascem DESLIGADAS, o mapa fica limpo por default */
-const FILTROS = {planeta:true, anao:true, estrela:true, lua:false, cometa:false, sonda:false, satelite:false, foguete:false};
+const FILTROS = {planeta:true, anao:true, asteroide:false, estrela:true, lua:false, cometa:false, sonda:false, satelite:false, foguete:false};
 /* segundo grupo do filtro: esconder o OBJETO inteiro (corpo, rótulo e rota).
    Planetas e luas nunca somem. Vale também para a cena de foco e os chips. */
-const FILTROBJ = {planeta:true, anao:true, lua:true, estrela:true, cometa:true, sonda:true, satelite:true, foguete:true, cinturao:true};
+const FILTROBJ = {planeta:true, anao:true, asteroide:true, lua:true, estrela:true, cometa:true, sonda:true, satelite:true, foguete:true, cinturao:true};
 /* relógio de simulação: o sistema tem uma DATA que corre (padrão 1 s = 1 dia),
    pode pausar e pular para qualquer data. As posições vêm de Kepler. */
 const SIM_HOJE = Date.now(), MS_ANO = 365.25*86400000;
@@ -4203,7 +4205,7 @@ const ESCALA_REAL_EL = {   /* [peri UA, afel UA, data do periélio real quando c
   jupiter:[4.951, 5.457, Date.UTC(2023,0,21)], saturno:[9.041, 10.124, Date.UTC(2032,10,24)],
   urano:[18.286, 20.096, Date.UTC(2050,7,4)], netuno:[29.81, 30.33],
   halebopp:[0.914, 370],
-  plutao:[29.7, 49.3], eris:[38, 97.5], sedna:[76, 900], halley:[0.586, 35.1], p67:[1.24, 5.68]};
+  plutao:[29.7, 49.3], eris:[38.2, 97.6], sedna:[76.2, 1012], halley:[0.586, 35.1], p67:[1.24, 5.68]};
 /* distância real de cada lua ao centro do corpo, em km (semi-eixo maior) */
 const ESCALA_REAL_LUAS = {
   lua:384400, fobos:9376, deimos:23463,
@@ -4282,7 +4284,20 @@ const REGUA = {on:true};  /* a régua de distâncias (1/10/100/1000 UA) */
 /* longitude do periélio (graus, J2000): ancora a ELIPSE no espaço real,
    para as posições baterem com o céu (o desalinhamento vs Órion era isso) */
 const ESCALA_REAL_LONPERI = {mercurio:77.46, venus:131.53, terra:102.94, marte:336.04,
-  jupiter:14.75, saturno:92.43, urano:170.96, netuno:44.97};
+  jupiter:14.75, saturno:92.43, urano:170.96, netuno:44.97, plutao:224.07, eris:187.0, sedna:96.0};
+/* âncora ÚNICA de fase: anomalia média (graus) numa época conhecida.
+   O periélio sai de tPeri = ep - ma/360*T: acabou a data artesanal por corpo.
+   Planetas e Plutão: tabela JPL J2000; Eris/Sedna: SBDB época 9/6/2026 */
+const ESCALA_REAL_T = {mercurio:0.2408467, venus:0.6151973, terra:1.0000174,
+  marte:1.8808476, jupiter:11.862615, saturno:29.447498, urano:84.016846,
+  netuno:164.79132, plutao:247.92065, eris:561.2, sedna:12676};
+const ESCALA_REAL_ANC = {
+  mercurio:{ma:174.794, ep:946728000000}, venus:{ma:50.447, ep:946728000000},
+  terra:{ma:357.517, ep:946728000000}, marte:{ma:19.412, ep:946728000000},
+  jupiter:{ma:19.651, ep:946728000000}, saturno:{ma:317.512, ep:946728000000},
+  urano:{ma:142.268, ep:946728000000}, netuno:{ma:259.909, ep:946728000000},
+  plutao:{ma:14.862, ep:946728000000},
+  eris:{ma:212, ep:Date.UTC(2026,5,9)}, sedna:{ma:358.6, ep:Date.UTC(2026,5,9)}};
 /* dia sideral de cada planeta em dias terrestres (negativo = retrógrado) */
 const ESCALA_REAL_DIA = {mercurio:58.65, venus:-243.0, terra:0.997, marte:1.026,
   jupiter:0.414, saturno:0.444, urano:-0.718, netuno:0.671};
@@ -4312,6 +4327,7 @@ const LINHA = {
   sonda:   {cor:0x4a4a72, op:0.22},
   satelite:{cor:0x4a6b7a, op:0.30},
   anao:    {cor:0x5c4d80, op:0.42},
+  asteroide:{cor:0x6b5f4c, op:0.30},
   lua:     {cor:0x3a4f60, op:0.16},
   estrela: {cor:0x8a7a3a, op:0.42},
   foguete: {cor:0x7a5548, op:0.30}
@@ -4371,7 +4387,8 @@ function buildSystem(sysId, spin0){
     if(escrAtivo){
       const er = ESCALA_REAL[p.id], el = ESCALA_REAL_EL[p.id];
       if(el) p = Object.assign({}, p, {sys:Object.assign({}, p.sys, {size:escrTam(er ? er[1] : 1200)}),
-        orbita:Object.assign({}, p.orbita, {peri:el[0]*ESCR_UA, afel:el[1]*ESCR_UA}, el[2] ? {epoca:el[2]} : {},
+        orbita:Object.assign({}, p.orbita, {peri:el[0]*ESCR_UA, afel:el[1]*ESCR_UA},
+          ESCALA_REAL_ANC[p.id] ? {epoca:ESCALA_REAL_ANC[p.id].ep - ESCALA_REAL_ANC[p.id].ma/360*(ESCALA_REAL_T[p.id] || Math.pow((el[0]+el[1])/2, 1.5))*MS_ANO, Treal:ESCALA_REAL_T[p.id]} : (el[2] ? {epoca:el[2]} : {}),
           ESCALA_REAL_LONPERI[p.id] !== undefined ? {omega:ESCALA_REAL_LONPERI[p.id], esp:-1} : {})});
       else if(er) p = Object.assign({}, p, {sys:Object.assign({}, p.sys, {orbit:er[0]*ESCR_UA, size:escrTam(er[1])})});
       /* satélites e sondas também: distância e tamanho verdadeiros (pontinhos) */
@@ -4386,7 +4403,7 @@ function buildSystem(sysId, spin0){
       const _ex = (p.orbita.afel - p.orbita.peri)/(p.orbita.afel + p.orbita.peri);
       const eNovo = {th:(p.orbita.pos !== undefined ? p.orbita.pos : 0.5) * Math.PI * 2,
         a2:_a2, ex:_ex, esp:(p.orbita.esp || 1),
-        T:Math.max(0.4, Math.pow(_a2/ORB_TERRA, 1.5)),
+        T:p.orbita.Treal || Math.max(0.05, Math.pow(_a2/ORB_TERRA, 1.5)),   /* período sideral REAL quando há (a^1.5 do peri/afel arredondado errava 16 graus em Mercúrio); o piso de 0.4 também QUEBRAVA Mercúrio */
         grupo:null, pick:null, extras:[]};
       /* âncora de PERIÉLIO real: com a data conhecida, a posição de hoje vem
          de integrar desde o periélio, não de um pos chutado (data futura
@@ -4658,28 +4675,67 @@ function buildSystem(sysId, spin0){
     scene.add(belt);
     orbiters.push({holder:belt, spd:0.02});
     objReg.push({id:'cinturao_pts', cls:'cinturao', holder:belt, pick:null, lbl:null});
+    /* os 4 grandes do cinturão com elementos COMPLETOS (JPL SBDB, época
+       9/6/2026): a, e, i, nó ascendente, argumento do periélio e anomalia
+       média. No mapa real em UA exatas; no cênico os RAIOS são comprimidos
+       para o anel desenhado, mas o ÂNGULO no céu e a fase orbital são os
+       verdadeiros (era o pedido dele: Eros batia com Marte). Cadeia de nós
+       inteira Ry(no)*Rx(i)*Ry(w), na convenção espelhada do r132 */
+    const ELA = {ceres:{a:2.77, e:0.0797, i:10.6, no:80.2, w:73.3, ma:274},
+                 vesta:{a:2.36, e:0.0902, i:7.14, no:104, w:151, ma:81.2},
+                 palas:{a:2.77, e:0.231, i:34.9, no:173, w:311, ma:254},
+                 eros:{a:1.458, e:0.223, i:10.8, no:304, w:179, ma:62.5}};
+    const ELA_EP = Date.UTC(2026,5,9);
     for(const a of S.belt){
-      /* escala real: cada pedra na distância VERDADEIRA (Ceres a 2,77 UA;
-         no cênico elas moram no anel desenhado, como sempre). Era o bug do
-         Rodrigo: Ceres e Vesta apareciam na linha de Marte no mapa real */
-      const astE = escrAtivo ? ESCALA_REAL_AST[a.id] : null;
-      const rB = astE ? astE[0]*ESCR_UA : a.belt.r;
-      const x = Math.cos(a.belt.angle)*rB, z = Math.sin(a.belt.angle)*rB;
-      const dot = new THREE.Mesh(new THREE.SphereGeometry(astE ? escrTam(astE[1]) : 0.17, 10, 10), new THREE.MeshBasicMaterial({color:0xa8b2be}));
+      const eA = ELA[a.id];
+      if(eA){
+        const rDe = u2 => escrAtivo ? u2*ESCR_UA : (15 + 3.95*(u2 - 1));
+        const aW = rDe(eA.a);
+        /* a FORMA da elipse fica sempre a real: warpar o raio mudava a
+           excentricidade e atrasava a anomalia (14 graus de erro medidos no
+           cênico). O warp comprime só na hora de DESENHAR, ponto a ponto */
+        const a2A = eA.a*ESCR_UA, exA = eA.e;
+        const TA = Math.pow(eA.a, 1.5);
+        const wF = escrAtivo ? null : (rr2 => 15 + 3.95*(rr2/ESCR_UA - 1));
+        const hNo = new THREE.Object3D(); hNo.rotation.y = eA.no*Math.PI/180;
+        const hIn = new THREE.Object3D(); hIn.rotation.x = eA.i*Math.PI/180;
+        const hPe = new THREE.Object3D(); hPe.rotation.y = eA.w*Math.PI/180;
+        hNo.add(hIn); hIn.add(hPe); scene.add(hNo);
+        const rAst = escrAtivo ? escrTam(ESCALA_REAL_AST[a.id][1]) : 0.17;
+        const dot = new THREE.Mesh(new THREE.SphereGeometry(rAst, 10, 10), new THREE.MeshBasicMaterial({color:0xa8b2be}));
+        hPe.add(dot);
+        const pick = new THREE.Mesh(new THREE.SphereGeometry(escrAtivo ? 0.35 : 1.0, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
+        pick.userData = {act:'focus', id:a.id, r:rAst};
+        hPe.add(pick); pickables.push(pick);
+        const eN = {th:0, a2:a2A, ex:exA, esp:-1, T:TA, warp:wF, grupo:dot, pick:pick, extras:[]};
+        elipAvanca(eN, eA.ma/360*TA + (SIM_HOJE - ELA_EP)/MS_ANO);
+        elipticos.push(eN); elipDe[a.id] = eN;
+        /* Ceres é planeta anão desde 2006; as outras pedras estreiam a
+           classe ASTEROIDE nos dois grupos do filtro */
+        const clsA = (a.id === 'ceres') ? 'anao' : 'asteroide', estA = LINHA[clsA];
+        const og2 = new THREE.BufferGeometry(), op2 = new Float32Array(240*3);
+        for(let i2=0;i2<240;i2++){ const t2 = i2/240*Math.PI*2; let r2 = a2A*(1-exA*exA)/(1+exA*Math.cos(t2));
+          if(wF) r2 = wF(r2);
+          op2[i2*3] = Math.cos(t2)*r2; op2[i2*3+2] = -Math.sin(t2)*r2; }
+        og2.setAttribute('position', new THREE.BufferAttribute(op2, 3));
+        const linA = fade(new THREE.LineLoop(og2, new THREE.LineBasicMaterial({color:estA.cor, transparent:true, opacity:estA.op})));
+        hPe.add(linA);
+        selReg.orbits.push({id:a.id, mat:linA.material, obj:linA, cls:clsA, c:estA.cor, o:estA.op});
+        const lblA = {el:makeLabel(a.name, 'faint', ()=>ACTION('focus', a.id)),
+          escrOrb:(escrAtivo ? aW : 0),
+          get:v=>{ dot.getWorldPosition(v); v.y += escrAtivo ? 0.02 : 0.5; }};
+        labels.push(lblA);
+        objReg.push({id:a.id, cls:clsA, holder:hNo, pick:pick, lbl:lblA});
+        continue;
+      }
+      const x = Math.cos(a.belt.angle)*a.belt.r, z = Math.sin(a.belt.angle)*a.belt.r;
+      const dot = new THREE.Mesh(new THREE.SphereGeometry(0.17, 10, 10), new THREE.MeshBasicMaterial({color:0xa8b2be}));
       dot.position.set(x, 0, z); scene.add(dot);
       const pick = new THREE.Mesh(new THREE.SphereGeometry(1.0, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
-      pick.position.copy(dot.position); pick.userData = {act:'focus', id:a.id, r:(astE ? escrTam(astE[1]) : 0.17)};
+      pick.position.copy(dot.position); pick.userData = {act:'focus', id:a.id, r:0.17};
       scene.add(pick); pickables.push(pick);
       labels.push({el:makeLabel(a.name, 'faint', ()=>ACTION('focus', a.id)),
-        escrOrb:(escrAtivo ? rB : 0),
-        get:v=>v.set(x, escrAtivo ? 0.02 : 0.8, z)});
-      /* a órbita da pedra, discreta (pedido dele) */
-      if(astE){
-        const og2 = new THREE.BufferGeometry(), op2 = new Float32Array(180*3);
-        for(let i2=0;i2<180;i2++){ const aa2 = i2/180*Math.PI*2; op2[i2*3]=Math.cos(aa2)*rB; op2[i2*3+2]=Math.sin(aa2)*rB; }
-        og2.setAttribute('position', new THREE.BufferAttribute(op2, 3));
-        scene.add(fade(new THREE.LineLoop(og2, new THREE.LineBasicMaterial({color:0x5c6d8c, transparent:true, opacity:0.10}))));
-      }
+        get:v=>v.set(x, 0.8, z)});
     }
   }
 
@@ -4706,12 +4762,17 @@ function buildSystem(sysId, spin0){
     const bMe = e.a2*Math.sqrt(1-e.ex*e.ex);
     const passoMax = e.T/240;
     while(Math.abs(resta) > 1e-9){
-      const d = Math.max(-passoMax, Math.min(passoMax, resta));
       const r = e.a2*(1-e.ex*e.ex)/(1+e.ex*Math.cos(e.th));
-      e.th += d * (Math.PI*2) * e.a2 * bMe / (e.T * r * r);
+      const veloc = (Math.PI*2) * e.a2 * bMe / (e.T * r * r);   /* rad/ano */
+      /* passo adaptativo: perto do periélio o ângulo voa (Sedna e=0.86 dava
+         39 graus por passo com o passo fixo); teto de 0.06 rad por passo */
+      const passo = Math.min(passoMax, 0.06/veloc);
+      const d = Math.max(-passo, Math.min(passo, resta));
+      e.th += d * veloc;
       resta -= d;
     }
-    const r2 = e.a2*(1-e.ex*e.ex)/(1+e.ex*Math.cos(e.th));
+    let r2 = e.a2*(1-e.ex*e.ex)/(1+e.ex*Math.cos(e.th));
+    if(e.warp) r2 = e.warp(r2);   /* asteroide no cênico: raio comprimido, ângulo real */
     const x = Math.cos(e.th)*r2, z = (e.esp || 1)*Math.sin(e.th)*r2;
     if(e.grupo) e.grupo.position.set(x, 0, z);
     if(e.pick) e.pick.position.set(x, 0, z);
@@ -9453,7 +9514,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r132';
+const BUILD = 'r133';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
