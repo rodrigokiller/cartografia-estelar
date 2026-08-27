@@ -506,6 +506,15 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 .badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .mbadge{font-family:var(--mono);font-size:8.5px;letter-spacing:1.4px;color:var(--ok);
   background:rgba(63,140,255,.07);border:1px solid var(--line2);padding:5px 8px;cursor:pointer}
+/* o ≋ grudado no badge: uma peça só, com um fio no meio */
+.bpar{display:inline-flex}
+.bpar .mbadge{border-right:none}
+.bpar .mbadge.vt{border-left:1px solid rgba(120,185,255,.35);padding:5px 7px 3px}
+.bpar:hover .mbadge{border-color:var(--amber)}
+.bhide{display:none}
+.badges.aberto .bhide{display:inline-flex}
+.mbadge.mais{color:var(--dim);border-style:dashed;letter-spacing:1px}
+.mbadge.mais:hover{color:var(--amber)}
 .mbadge:hover{border-color:var(--amber);color:var(--amber)}
 .mbadge.on{border-color:var(--amber);color:var(--amber)}
 .mbadge.morto{color:#d06a6a;border-color:rgba(208,106,106,.4)}
@@ -4350,6 +4359,65 @@ const CEU_LINHAS = {
     ['th2tau','aldeb'],['aldeb','zetau']]},
   gemeos:{nome:'GÊMEOS', seg:[['castorceu','pollux'],['castorceu','mebsuta'],['mebsuta','tejat'],
     ['tejat','propus'],['pollux','wasat'],['wasat','alhena'],['alhena','alzirr']]}};
+/* a FICHA de cada constelação (r137): clicar no nome do céu abre isto e
+   acende o desenho dela. Sempre sobre o céu real, nunca sobre o app */
+const CEU_FICHA = {
+  orion:{desig:'CONSTELAÇÃO · O CAÇADOR', kind:'A mais reconhecível do céu inteiro',
+    quick:[['ESTRELAS PRINCIPAIS','7'],['A MAIOR','Rigel, azul, ~860 al'],['A VERMELHA','Betelgeuse, ~550 al'],['NO BRASIL','verão, bem alta'],['O BERÇÁRIO','Nebulosa de Órion, M42'],['ÁREA NO CÉU','594 graus quadrados']],
+    sections:[
+      {t:'COMO ACHAR', rows:[['O cinturao','Três estrelas em fila quase perfeita: Alnitak, Alnilam e Mintaka'],['No Brasil','As Três Marias, e o conjunto vira a panela de cabeça para baixo'],['O caminho','Prolongue o cinturao para baixo e chega em Sírius, a mais brilhante do céu'],['A espada','Abaixo do cinturao, a mançha embaciada é a Nebulosa de Órion, berçário de estrelas']]},
+      {t:'AS DIVISÕES', rows:[['Ombros','Betelgeuse (vermelha) e Bellatrix'],['Cinturao','Alnitak, Alnilam e Mintaka'],['Joelhos','Rigel e Saiph'],['Cabeça','Meissa, no alto']]},
+      {t:'A ILUSÃO', rows:[['A verdade','As estrelas do desenho não são vizinhas: Mintaka está a 1.200 al e Bellatrix a 250'],['O que muda','Visto de outra estrela, o desenho simplesmente não existe'],['O futuro','Betelgeuse vai explodir como supernova, e Órion perde um ombro']]}],
+    facts:['As estrelas do desenho estão a distâncias completamente diferentes: a figura só existe vista daqui.','Betelgeuse vai explodir como supernova, e quando isso acontecer Órion perderá um ombro.','O cinturao apontado para baixo leva direto a Sírius, a estrela mais brilhante do céu.'],
+    fict:'As Três Marias e o Cruzeiro do Sul são as figuras que todo brasileiro aprende a achar primeiro.'},
+  cruzeiro:{desig:'CONSTELAÇÃO · CRUX', kind:'A menor do céu, e a nossa',
+    quick:[['ESTRELAS','5 principais'],['A MAIOR','Acrux, ~320 al'],['ÁREA','68 graus quadrados, a MENOR'],['NA BANDEIRA','do Brasil, com 27 estrelas'],['APONTA','o sul celeste'],['VIZINHA','a Bolsa de Carvão, nuvem escura']],
+    sections:[
+      {t:'COMO ACHAR', rows:[['O sinal','Quatro estrelas em cruz, com uma quinta menor, Intrometida, fora do eixo'],['O sul','Prolongue o eixo maior 4,5 vezes: ali fica o polo sul celeste'],['A confusão','O Falso Cruzeiro é maior e não tem a quinta estrela']]},
+      {t:'AS DIVISÕES', rows:[['Pé','Acrux, a mais brilhante'],['Topo','Gacrux, a vermelha'],['Braços','Mimosa e Imai'],['A quinta','Ginan, a Intrometida']]},
+      {t:'NA BANDEIRA', rows:[['O céu','A bandeira mostra o céu do Rio em 15 de novembro de 1889'],['As estrelas','27 no total, uma por estado e mais o Distrito Federal'],['Espiga','Spica, sozinha acima da faixa, representa o Pará']]}],
+    facts:['É a MENOR constelação do céu inteiro, e mesmo assim a mais famosa do hemisfério sul.','Ela não marca o sul: o polo sul celeste fica a 4,5 vezes o eixo maior dela, num pedaço vazio de céu.','Ao lado dela existe a Bolsa de Carvão, uma nuvem de poeira tão densa que aparece como um buraco negro no céu.'],
+    fict:'Está na bandeira do Brasil, na de Austrália, Nova Zelândia, Samoa e Papua-Nova Guiné.'},
+  ursamaior:{desig:'CONSTELAÇÃO · URSA MAJOR', kind:'A pança que aponta o norte',
+    quick:[['ESTRELAS DO CARRO','7'],['ÁREA','1.280 graus quadrados, a 3ª maior'],['O PAR','Mizar e Alcor, teste de vista'],['APONTA','Polaris, a estrela do norte'],['NO BRASIL','baixa no norte, no outono'],['IDADE','a maioria nasceu do mesmo berco']],
+    sections:[
+      {t:'COMO ACHAR', rows:[['O carro','Quatro estrelas fazem a caixa e três fazem o cabo'],['O norte','Prolongue a parede da caixa cinco vezes e chega em Polaris'],['No Brasil','Só aparece perto do horizonte norte, e não em todo o país']]},
+      {t:'AS DIVISÕES', rows:[['A caixa','Dubhe, Merak, Phecda e Megrez'],['O cabo','Alioth, Mizar e Alkaid'],['O truque','Mizar tem Alcor coladinha: quem enxerga as duas tinha vista de arqueiro']]},
+      {t:'A FAMÍLIA', rows:[['O grupo','Cinco das sete nasceram juntas e viajam juntas pelo espaço'],['As de fora','Dubhe e Alkaid vão por outro caminho'],['Daqui 50 mil anos','O carro estará amassado: o desenho se desfaz']]}],
+    facts:['Cinco das sete estrelas do carro nasceram no mesmo berco e viajam juntas pelo espaço.','Daqui a 50 mil anos o desenho estará desfeito, porque cada estrela anda para um lado.','Mizar e Alcor coladas eram o teste de vista dos arqueiros árabes.'],
+    fict:'Nos Estados Unidos ela é a Big Dipper, a concha grande, e guiava quem fugia da escravidão rumo ao norte.'},
+  cassiopeia:{desig:'CONSTELAÇÃO · A RAINHA', kind:'O W que nunca se põe no norte',
+    quick:[['FORMATO','um W ou M, conforme a hora'],['ESTRELAS','5 principais'],['NA VIA LÁCTEA','sim, campo riquíssimo'],['A SUPERNOVA','Tycho, 1572'],['NO BRASIL','muito baixa, só no norte'],['OPOSTA','à Ursa Maior, com Polaris no meio']],
+    sections:[
+      {t:'COMO ACHAR', rows:[['O W','Cinco estrelas em ziguezague, do outro lado de Polaris em relação à Ursa Maior'],['A dica','Se a Ursa está alta, Cassiopeia está baixa, e vice-versa'],['O fundo','Ela fica dentro da faixa da Via Láctea: um binóculo mostra centenas de estrelas']]},
+      {t:'AS DIVISÕES', rows:[['O ziguezague','Caph, Schedar, Gamma Cas, Ruchbah e Segin'],['A instavel','Gamma Cas muda de brilho: gira tão rápido que joga gás para fora'],['O vizinho','Ao lado fica o aglomerado duplo de Perseu']]},
+      {t:'A ESTRELA DE TYCHO', rows:[['1572','Uma estrela nova apareceu aqui e brilhou mais que Vênus por semanas'],['O impacto','Ela provou que o céu MUDA, contra os mil e quinhentos anos de Aristóteles'],['Hoje','Sobrou o resto da supernova, visível só em raios X']]}],
+    facts:['Em 1572 uma supernova brilhou aqui mais que Vênus, e derrubou a ideia de que o céu era imutável.','O W vira M no decorrer da noite, porque a constelação roda em volta do polo.','Ela está mergulhada na Via Láctea: qualquer binóculo revela um enxame de estrelas ali.'],
+    fict:'Na mitologia, a rainha vaidosa foi presa na cadeira e condenada a girar de cabeça para baixo metade da noite.'},
+  escorpiao:{desig:'CONSTELAÇÃO · SCORPIUS', kind:'O gancho que parece mesmo o bicho',
+    quick:[['O CORAÇÃO','Antares, supergigante vermelha'],['ANTARES','~550 al, 700 vezes o Sol'],['O FERRÃO','Shaula e Lesath'],['NO BRASIL','alta no inverno, majestosa'],['ZODÍACO','sim, mas o Sol passa 7 dias'],['O CENTRO','a Via Láctea nasce ao lado']],
+    sections:[
+      {t:'COMO ACHAR', rows:[['O gancho','A cauda curva com o ferrão duplo no fim é inconfundível'],['O coração','Antares, avermelhada, no meio do corpo'],['No inverno','Passa alta no céu brasileiro, com o centro da galáxia ao lado']]},
+      {t:'AS DIVISÕES', rows:[['A cabeça','Acrab, Dschubba e Pi Scorpii, em fila'],['O corpo','Antares no centro'],['A cauda','Curva longa até Sargas'],['O ferrão','Shaula e Lesath, o par no fim']]},
+      {t:'ANTARES', rows:[['O nome','Anti-Ares: a rival de Marte, pela cor'],['O tamanho','Posta no lugar do Sol, engoliria a órbita de Marte'],['O fim','Vai explodir como supernova, e será visível de dia']]}],
+    facts:['Antares significa a rival de Marte: as duas têm a mesma cor avermelhada no céu.','O Sol atravessa Escorpião em apenas sete dias, o mais rápido de todo o zodíaco.','É uma das poucas constelações que se parece de verdade com o bicho que dá nome a ela.'],
+    fict:'É o escorpião que matou o caçador Órion: por isso os dois nunca aparecem juntos no céu.'},
+  touro:{desig:'CONSTELAÇÃO · TAURUS', kind:'O V de chifres com o olho vermelho',
+    quick:[['O OLHO','Aldebaran, laranja, 65 al'],['O V','as Híades, aglomerado real'],['NO OMBRO','as Plêiades, M45'],['A PONTA','Elnath, dividida com o Cocheiro'],['O RESTO','Nebulosa do Caranguejo, M1'],['NO BRASIL','verão, ao lado de Órion']],
+    sections:[
+      {t:'COMO ACHAR', rows:[['O V','Um V de estrelas marca a cara do touro, e Aldebaran é o olho'],['O caminho','Siga o cinturao de Órion para cima e chega nele'],['O bônus','Mais adiante aparecem as Plêiades, o pequeno chuveirinho de estrelas']]},
+      {t:'AS DIVISÕES', rows:[['A cara','As Híades formando o V, com Aldebaran na ponta'],['Os chifres','Elnath e Zeta Tauri, bem separados'],['O truque','Aldebaran NÃO é das Híades: está na frente, na metade da distância']]},
+      {t:'O QUE MORA AQUI', rows:[['Híades','O aglomerado aberto mais próximo da Terra, 153 anos-luz'],['Plêiades','Sete irmãs, jovens e azuis, com poeira brilhando em volta'],['Caranguejo','O resto da supernova que os chineses viram em 1054']]}],
+    facts:['Aldebaran parece fazer parte do V das Híades, mas está na frente delas, na metade da distância.','A Nebulosa do Caranguejo, aqui dentro, é o resto da supernova que os chineses registraram em 1054.','As Híades são o aglomerado aberto mais próximo da Terra.'],
+    fict:'A pintura da caverna de Lascaux, de 17 mil anos, parece mostrar o touro com as Plêiades no lombo.'},
+  gemeos:{desig:'CONSTELAÇÃO · GEMINI', kind:'Os dois irmãos de mãos dadas',
+    quick:[['AS CABEÇAS','Cástor e Pólux'],['PÓLUX','a mais brilhante, 34 al'],['CÁSTOR','na verdade são SEIS estrelas'],['ACHADO AQUI','Plutão, em 1930'],['E TAMBÉM','Urano, em 1781'],['NO BRASIL','verão, acima de Órion']],
+    sections:[
+      {t:'COMO ACHAR', rows:[['As cabeças','Duas estrelas brilhantes lado a lado, e dois corpos paralelos descendo'],['A cor','Pólux é alaranjada e Cástor é branca'],['Onde','Acima de Órion, do lado oposto ao Touro']]},
+      {t:'AS DIVISÕES', rows:[['Cabeças','Cástor e Pólux'],['Corpo de Cástor','Mebsuta, Tejat e Propus'],['Corpo de Pólux','Wasat, Alhena e Alzirr']]},
+      {t:'O QUE ACONTECEU AQUI', rows:[['1781','Herschel achou Urano nesta região do céu'],['1930','Tombaugh achou Plutão aqui, comparando chapas'],['Cástor','O que parece uma estrela são TRÊS pares de estrelas, seis ao todo']]}],
+    facts:['Cástor parece uma estrela, mas são seis: três pares girando uns em volta dos outros.','Urano foi descoberto nesta região em 1781, e Plutão em 1930.','Pólux tem um planeta confirmado, um gigante gasoso com o dobro da massa de Júpiter.'],
+    fict:'Os irmãos do mito: um imortal, outro não, e Zeus os pôs juntos no céu para nunca separá-los.'}};
 /* distância das famosas em anos-luz (vai junto no rótulo: a lição de que
    as estrelas de uma constelação nem são vizinhas) */
 const CEU_AL = {sirius:'8,6', canopus:'310', rigilkent:'4,4', arcturus:'37', vegaceu:'25',
@@ -4955,7 +5023,7 @@ function buildSystem(sysId, spin0){
   let simPrev = SIMT.data;
   /* zona habitável: o anel verde tênue onde água líquida é possível */
   let hzRing = null, hzLbl = null;
-  let ceuLinhas = null; const ceuLbls = [];
+  let ceuLinhas = null, ceuSelFn = null; const ceuLbls = [];
   const ceuCruzDir = new THREE.Vector3();
   const reguaAneis = [];
   const hzFx = HZ_SIS[sysId];
@@ -5085,6 +5153,30 @@ function buildSystem(sysId, spin0){
       transparent:true, opacity:0, blending:THREE.AdditiveBlending, depthWrite:false}));
     ceuLinhas.visible = CEUV.on;
     scene.add(fade(ceuLinhas));
+    /* a linha de DESTAQUE: acende só a constelação escolhida, em âmbar */
+    const ceuSelG = new THREE.BufferGeometry();
+    ceuSelG.setAttribute('position', new THREE.BufferAttribute(new Float32Array(120*6), 3));
+    const ceuSel = new THREE.LineSegments(ceuSelG, new THREE.LineBasicMaterial({color:0xffb454,
+      transparent:true, opacity:0.85, blending:THREE.AdditiveBlending, depthWrite:false}));
+    ceuSel.frustumCulled = false; ceuSel.visible = false;
+    scene.add(ceuSel);
+    ceuSelFn = (k)=>{
+      const cc2 = k ? CEU_LINHAS[k] : null;
+      if(!cc2){ ceuSel.visible = false; return; }
+      const pos2 = ceuSelG.getAttribute('position');
+      let n2 = 0;
+      for(const par of cc2.seg){
+        const a2 = ceuPos[par[0]], b2 = ceuPos[par[1]];
+        if(!a2 || !b2 || n2 >= 118) continue;
+        pos2.setXYZ(n2*2, a2.x, a2.y, a2.z);
+        pos2.setXYZ(n2*2+1, b2.x, b2.y, b2.z);
+        n2++;
+      }
+      for(let i2=n2;i2<120;i2++){ pos2.setXYZ(i2*2, 0,0,0); pos2.setXYZ(i2*2+1, 0,0,0); }
+      pos2.needsUpdate = true;
+      ceuSel.geometry.setDrawRange(0, n2*2);
+      ceuSel.visible = CEUV.on;
+    };
     for(const k in CEU_LINHAS){
       const cc = CEU_LINHAS[k], cen = new THREE.Vector3();
       let nC = 0;
@@ -5093,8 +5185,15 @@ function buildSystem(sysId, spin0){
         cen.multiplyScalar(1/nC).normalize().multiplyScalar(RCEU);
         if(k === 'cruzeiro') ceuCruzDir.copy(cen).normalize();
         const cv = cen.clone();
-        const lb = {el:makeLabel(cc.nome, 'faint constel', null), off:!CEUV.on, sempre:true, get:(t)=>t.copy(cv)};
+        const lb = {el:makeLabel(cc.nome, 'faint constel', CEU_FICHA[k] ? (()=>ACTION('constel', k)) : null), off:!CEUV.on, sempre:true, get:(t)=>t.copy(cv)};
         labels.push(lb); ceuLbls.push(lb);
+        /* além do nome, um alvo largo no céu para clicar na figura */
+        if(CEU_FICHA[k]){
+          const cpk2 = new THREE.Mesh(new THREE.SphereGeometry(7000, 8, 8), new THREE.MeshBasicMaterial({visible:false}));
+          cpk2.position.copy(cv);
+          cpk2.userData = {act:'constel', id:k};
+          scene.add(cpk2); pickables.push(cpk2);
+        }
       }
     }
   }
@@ -5111,7 +5210,7 @@ function buildSystem(sysId, spin0){
   if(S.kuiperR) alcance = Math.max(alcance, S.kuiperR[1]);
   for(const pb of S.bodies) alcance = Math.max(alcance, pb.orbita ? pb.orbita.afel : (pb.sys ? pb.sys.orbit : 0));
   const camMaxDin = escrAtivo ? alcance*2.3 : Math.max(S.camMax || 60, alcance * 1.7);   /* real: a maior órbita inteira na tela antes de subir de escala */
-  return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir,
+  return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
@@ -7707,6 +7806,16 @@ function ACTION(act, id){
   if(TOUR.on) tourStop();   /* escolher um destino é assumir o controle */
   hideHint();
   if(act==='focus' && ST.level==='focus' && ST.body===id) return;
+  /* constelação não é lugar onde se entra: o clique abre a ficha e acende o
+     desenho, e clicar de novo fecha (sem two-step de viagem) */
+  if(act==='constel'){
+    const jaEra = ST.mapCard && ST.mapCard.type==='constel' && ST.mapCard.id===id;
+    ST.mapCard = jaEra ? null : {type:'constel', id, act};
+    AUDIO.sfx('sel');
+    uiSync();
+    if(!jaEra) showHint('CONSTELAÇÃO ' + (CEU_LINHAS[id] ? CEU_LINHAS[id].nome : '') + ' · O DESENHO ESTÁ ACESO NO CÉU');
+    return;
+  }
   if(ST.mapCard && ST.mapCard.id===id && ST.mapCard.act===act){ enterTarget(act, id); return; }
   ST.mapCard = {type:(act==='focus') ? 'body' : act, id, act};
   AUDIO.sfx('sel');
@@ -9025,6 +9134,10 @@ function currentEntity(){
       const bb = ALLBODIES[ST.mapCard.id];
       return {type:'map', b:bb, nav:true, navKind:'body', navId:bb.id};
     }
+    if(ST.mapCard.type==='constel'){
+      const c = CEU_LINHAS[ST.mapCard.id], f = CEU_FICHA[ST.mapCard.id];
+      if(c && f) return {type:'map', b:Object.assign({name:c.nome}, f), nav:false, constel:ST.mapCard.id};
+    }
     if(ST.mapCard.type==='starsys'){
       const s = STARSYS.find(x=>x.id===ST.mapCard.id);
       return {type:'map', b:Object.assign({name:s.name}, s.card), nav:s.nav, navKind:'sys', navId:s.id};
@@ -9100,10 +9213,23 @@ function cardRender(){
     if(dono.exLuas) h += '<div class="exluas">LUAS DO PASSADO · '+esc(dono.exLuas)+'</div>';
     /* satélites em badge de texto (a lista pode crescer), vermelho se desativado */
     const badge = x => '<button class="mbadge'+(x.morto?' morto':'')+(x.id===bodyish.id?' on':'')+'" data-go="'+x.id+'"'+(x.morto?' data-tip="DESATIVADO · SÓ REGISTRO" data-tipamber="1"':'')+'>'+esc(x.name)+'</button>';
+    /* r137: o ≋ GRUDOU no badge (pedido dele): os dois viram uma peça só,
+       com um fio no meio, em vez de dois botões soltos lado a lado */
     const vtb = x => '<button class="mbadge vt" data-vt="'+x.id+'" title="Ver a linha do tempo">≋</button>';
+    const par = x => temLinhaDoTempo(x) ? ('<span class="bpar">'+badge(x)+vtb(x)+'</span>') : badge(x);
+    /* lista longa nasce ENXUTA: mostra os primeiros e o +N abre o resto */
+    let nGrupo = 0;
+    const listaBadges = (arr, corte)=>{
+      corte = corte || 6;
+      if(arr.length <= corte) return '<div class="badges">' + arr.map(par).join('') + '</div>';
+      const gid = 'bg' + (nGrupo++);
+      return '<div class="badges" id="'+gid+'">' + arr.slice(0, corte).map(par).join('')
+        + arr.slice(corte).map(x=>'<span class="bhide">'+par(x)+'</span>').join('')
+        + '<button class="mbadge mais" data-mais="'+gid+'">+'+(arr.length-corte)+'</button></div>';
+    };
     if(sats.length){
-      h += '<div class="moonsrow"><div class="mk"><span>SATÉLITES</span><span>'+sats.filter(x=>!x.morto).length+' ATIVOS · '+sats.length+' NO REGISTRO</span></div><div class="badges">'
-         + sats.map(x=>badge(x)).join('') + '</div></div>';
+      h += '<div class="moonsrow"><div class="mk"><span>SATÉLITES</span><span>'+sats.filter(x=>!x.morto).length+' ATIVOS · '+sats.length+' NO REGISTRO</span></div>'
+         + listaBadges(sats, 6) + '</div>';
     }
     if(missoes.length){
       /* as missões agrupadas por ERA, cronológicas dentro de cada uma */
@@ -9116,23 +9242,22 @@ function cardRender(){
       for(const era of eras){
         const doEra = era[1].map(i2=>missoes.find(m=>m.id===i2)).filter(Boolean);
         doEra.forEach(m=>usados.add(m.id));
-        if(doEra.length) hM += '<div class="mk sub"><span>'+era[0]+'</span></div><div class="badges">'
-          + doEra.map(x=>badge(x)+vtb(x)).join('') + '</div>';
+        if(doEra.length) hM += '<div class="mk sub"><span>'+era[0]+'</span></div>' + listaBadges(doEra, 6);
       }
       const resto = missoes.filter(m=>!usados.has(m.id));
-      if(resto.length) hM += '<div class="badges">' + resto.map(x=>badge(x)+vtb(x)).join('') + '</div>';
+      if(resto.length) hM += listaBadges(resto, 6);
       h += '<div class="moonsrow"><div class="mk"><span>MISSÕES LUNARES</span><span>HISTÓRICO · ≋ VÊ A VIAGEM</span></div>' + hM + '</div>';
     }
     if(sondas.length){
-      h += '<div class="moonsrow"><div class="mk"><span>SONDAS LANÇADAS DAQUI</span><span>EM VOO · ≋ VÊ A ROTA</span></div><div class="badges">'
-         + sondas.map(x=>badge(x)+vtb(x)).join('') + '</div></div>';
+      h += '<div class="moonsrow"><div class="mk"><span>SONDAS LANÇADAS DAQUI</span><span>EM VOO · ≋ VÊ A ROTA</span></div>'
+         + listaBadges(sondas, 5) + '</div>';
     }
     /* a Lua é o ÍNDICE do museu: quem já veio, em ordem cronológica */
     if(bodyish.id === 'lua'){
       const ordemV = ['luna9','apollo8','apollo11','apollo13','luna16','apollo17','change4','slim','artemis1','artemis2'];
       const visitas = ordemV.map(i2=>ALLBODIES[i2]).filter(Boolean);
-      if(visitas.length) h += '<div class="moonsrow"><div class="mk"><span>AS VISITAS · 1966 A HOJE</span><span>≋ VÊ CADA VIAGEM</span></div><div class="badges">'
-        + visitas.map(x=>badge(x)+vtb(x)).join('') + '</div></div>';
+      if(visitas.length) h += '<div class="moonsrow"><div class="mk"><span>AS VISITAS · 1966 A HOJE</span><span>≋ VÊ CADA VIAGEM</span></div>'
+        + listaBadges(visitas, 6) + '</div>';
     }
   }
   if(b.quick){
@@ -9216,6 +9341,11 @@ function cardRender(){
   const bts = $('#btntoursis'); if(bts) bts.addEventListener('click', ()=>tourDoSistema(bts.dataset.sistour));
   const bss = $('#btnsubsis'); if(bss) bss.addEventListener('click', subSistema);
   pb.querySelectorAll('[data-vt]').forEach(el=>el.addEventListener('click', ()=>verLinhaDoTempo(el.dataset.vt)));
+  /* o +N abre o resto da fileira sem recarregar o card */
+  pb.querySelectorAll('[data-mais]').forEach(el=>el.addEventListener('click', ()=>{
+    const box = document.getElementById(el.dataset.mais);
+    if(box){ box.classList.add('aberto'); el.remove(); }
+  }));
   const bp = $('#backpan'); if(bp) bp.addEventListener('click', ()=>{ ST.mapCard=null; uiSync(); });
 }
 
@@ -9301,6 +9431,8 @@ function applySel(){
   aplicaObjetos();
   if(!ACT || !ACT.sel){ SELFX = null; return; }
   const selId = ST.mapCard ? ST.mapCard.id : null;
+  /* a constelação escolhida acende em âmbar por cima do desenho azul */
+  if(ACT.ceuSelFn) ACT.ceuSelFn((ST.mapCard && ST.mapCard.type==='constel') ? ST.mapCard.id : null);
   const S = ACT.sel;
   const targets = [];
   (S.orbits||[]).forEach(o=>{
@@ -9725,7 +9857,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r136';
+const BUILD = 'r137';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -10266,6 +10398,7 @@ const cfgRowClick = e=>{
       if(CEUV.on) ACT.ceuLinhas.material.opacity = 0;   /* redesenha suave */
     }
     if(ACT && ACT.ceuLbls) ACT.ceuLbls.forEach(l=>{ l.off = !CEUV.on; });
+    if(ACT && ACT.ceuSelFn && !CEUV.on) ACT.ceuSelFn(null);
     return;
   }
   const rH = e.target.closest('[data-hz]');
