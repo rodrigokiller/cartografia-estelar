@@ -4757,6 +4757,13 @@ const FRONTEIRAS = {
       {t:'A TRAVESSIA', rows:[['2012','A Voyager 1 registrou a queda das partículas do Sol e a subida dos raios cósmicos'],['2018','A Voyager 2 cruzou em outro ponto e confirmou que a fronteira é fina'],['O silencio','As duas continuam transmitindo do lado de fora, cada vez mais fraco'],['A New Horizons','Ainda está dentro, e deve cruzar nos anos 2040']]}],
     facts:['A Voyager 1 cruzou esta fronteira em 2012 e virou o primeiro objeto humano no espaço interestelar.','Não é o fim do Sistema Solar: a gravidade do Sol governa a Nuvem de Oort até quase um ano-luz daqui.','A bolha não é redonda: como o Sol viaja pela galáxia, ela tem proa na frente e cauda atrás.'],
     fict:null},
+  zodiaco:{name:'O ZODÍACO', desig:'FAIXA · O CAMINHO DO SOL', kind:'A estrada que o Sol percorre no céu', hab:null,
+    quick:[['O QUE É','o plano da nossa órbita, visto de dentro'],['LARGURA','8 graus para cada lado'],['CONSTELAÇÕES','13, contando Ofiúco'],['A VOLTA','365 dias'],['NO ATLAS','Escorpião, Touro, Gêmeos, Leão, Virgem e Sagitário'],['OS PLANETAS','andam todos nessa mesma faixa']],
+    sections:[
+      {t:'POR QUE ELE EXISTE', rows:[['A ideia','A Terra orbita num plano, então o Sol parece percorrer sempre a mesma linha no céu'],['A faixa','Os planetas orbitam quase no mesmo plano, e por isso aparecem sempre por ali'],['O nome','Zodíaco vem do grego, o círculo dos animais'],['Como usar','Achou um planeta brilhante fora dessa faixa? Não é planeta']]},
+      {t:'O QUE MUDOU DESDE A ANTIGUIDADE', rows:[['São 13','O Sol atravessa OFIÚCO entre Escorpião e Sagitário, e ele ficou de fora da lista antiga'],['O tempo em cada uma','Vai de 7 dias em Escorpião a 44 dias em Virgem: nada dos 30 dias iguais'],['A precessão','O eixo da Terra bamboleia e as datas escorregaram quase um signo inteiro em 2.000 anos'],['A conclusão','O céu de hoje não é mais o céu das tabelas antigas']]}],
+    facts:['O Sol atravessa TREZE constelações, e não doze: Ofiúco entrou e nunca virou signo.','O Sol passa 44 dias em Virgem e apenas 7 em Escorpião: nada de trinta dias para cada.','Por causa do bamboleio do eixo da Terra, as datas escorregaram quase uma constelação inteira desde a antiguidade.'],
+    fict:null},
   gelo:{name:'LINHA DE GELO', desig:'FRONTEIRA · ~2,7 UA', kind:'Onde a água virou gelo e nasceram os gigantes', hab:null,
     quick:[['ONDE FICA','~2,7 UA, dentro do cinturão'],['O QUE SEPARA','rochosos de um lado, gigantes do outro'],['POR QUÊ','além dela a água vira gelo sólido'],['O EFEITO','muito mais material para juntar'],['JÚPITER','cresceu logo depois dela'],['HOJE','a linha é outra: o Sol mudou']],
     sections:[
@@ -5471,6 +5478,34 @@ function buildSystem(sysId, spin0){
       sizeAttenuation:false, transparent:true, opacity:0.4, depthWrite:false}))));
     labels.push({el:makeLabel('HELIOPAUSA', 'faint zona', ()=>ACTION('fronteira', 'heliopausa')), escrOrb:1800,
       get:v=>v.set(Math.cos(0.9)*1800, 120, Math.sin(0.9)*1800)});
+    /* o ZODÍACO (r149): a faixa por onde o Sol caminha, desenhada no próprio
+       plano da órbita da Terra, com as constelações que ele atravessa
+       marcadas na altura de cada mês */
+    {
+      const rz = 1.0*ESCR_UA;
+      const zg = new THREE.RingGeometry(rz*0.985, rz*1.015, 128, 1);
+      const zm = new THREE.Mesh(zg, new THREE.MeshBasicMaterial({color:0xd8c890, transparent:true,
+        opacity:0.07, side:THREE.DoubleSide, depthWrite:false}));
+      zm.rotation.x = Math.PI/2;
+      scene.add(fade(zm));
+      labels.push({el:makeLabel('ZODÍACO', 'faint zona', ()=>ACTION('fronteira', 'zodiaco')), escrOrb:rz,
+        get:v=>v.set(Math.cos(2.05)*rz, 0.25, Math.sin(2.05)*rz)});
+      const zpk2 = new THREE.Mesh(new THREE.SphereGeometry(0.9, 8, 8), new THREE.MeshBasicMaterial({visible:false}));
+      zpk2.position.set(Math.cos(2.05)*rz, 0.25, Math.sin(2.05)*rz);
+      zpk2.userData = {act:'fronteira', id:'zodiaco'};
+      scene.add(zpk2); pickables.push(zpk2);
+      /* as datas em que o Sol cruza cada constelação do zodíaco: o rótulo fica
+         na direção OPOSTA ao Sol vista da Terra (é assim que se enxerga) */
+      const ZOD = [['ÁRIES', 4.3], ['TOURO', 5.5], ['GÊMEOS', 6.6], ['CÂNCER', 7.7],
+        ['LEÃO', 8.9], ['VIRGEM', 10.2], ['LIBRA', 11.3], ['ESCORPIÃO', 11.9],
+        ['SAGITÁRIO', 12.6], ['CAPRICÓRNIO', 1.5], ['AQUÁRIO', 2.5], ['PEIXES', 3.4]];
+      for(const z of ZOD){
+        const ang = -(z[1]/12)*Math.PI*2;
+        const rzz = rz*1.10;
+        labels.push({el:makeLabel(z[0], 'faint zona', null), escrOrb:rz*1.4,
+          get:v=>v.set(Math.cos(ang)*rzz, 0.1, Math.sin(ang)*rzz)});
+      }
+    }
     /* a LINHA DE GELO (r147): um anel fino a 2,7 UA, a fronteira que separou
        os rochosos dos gigantes. Discreta, como tudo que ele gosta */
     {
@@ -5527,7 +5562,10 @@ function buildSystem(sysId, spin0){
       const rl = new THREE.Mesh(rgg, new THREE.ShaderMaterial({transparent:true, depthWrite:false, side:THREE.DoubleSide,
         uniforms:{op:{value:0}, cor:{value:new THREE.Color(REGUA_CORES[REGUA.cor][1])}, r0:{value:0.0}, r1:{value:rr3}},
         vertexShader:'varying float vR; void main(){ vR = length(position.xy); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
-        fragmentShader:'uniform float op; uniform float r0; uniform float r1; uniform vec3 cor; varying float vR; void main(){ float t = clamp((vR-r0)/(r1-r0), 0.0, 1.0); float g = smoothstep(0.42, 1.0, t); g = g*g*0.72 + smoothstep(0.955, 1.0, t)*0.5; gl_FragColor = vec4(cor, op*g); }'}));
+        /* r149 (o desenho dele, v2): o disco é PREENCHIDO por dentro, feito a
+           base da zona habitável; só o miolo perto do núcleo desbota um pouco,
+           e a borda ganha um fio de leve para dar contorno */
+        fragmentShader:'uniform float op; uniform float r0; uniform float r1; uniform vec3 cor; varying float vR; void main(){ float t = clamp((vR-r0)/(r1-r0), 0.0, 1.0); float g = 0.35 + 0.65*smoothstep(0.0, 0.42, t); g += smoothstep(0.97, 1.0, t)*0.45; gl_FragColor = vec4(cor, op*g); }'}));
       rl.rotation.x = Math.PI/2;
       scene.add(rl);
       /* o rótulo 3D da régua MORREU no r135: a distância virou o marco fixo do
@@ -5799,7 +5837,9 @@ function buildSystem(sysId, spin0){
         const u = Math.log10(CAM.dist/ra.r) - 0.38;
         const f2 = Math.max(0, 1 - Math.abs(u)/0.72);
         const f3 = f2*f2*(3 - 2*f2);   /* suaviza as pontas da subida */
-        if(!DIVE && !TRANSITO && !FADEIN) ra.obj.material.uniforms.op.value = REGUA.on ? 0.62*f3 : 0;
+        /* muito mais discreto: o teto agora é da família da zona habitável
+           (0.055), senão o disco lava a cena inteira (crítica dele) */
+        if(!DIVE && !TRANSITO && !FADEIN) ra.obj.material.uniforms.op.value = REGUA.on ? 0.085*f3 : 0;
       }
       /* escala real: os alvos de clique RESPIRAM com o zoom (longe: generosos;
          perto: justos). Com raio fixo a Terra engolia a Lua, e a câmera
@@ -8413,6 +8453,17 @@ function up(){
   else if(ST.level==='galaxy') gotoUniverse(null, ST.gal);
 }
 /* o ESC, longe de casa, traz de volta (o voo não é um beco sem saída) */
+/* CEU-03: as 21 figuras do céu, uma a uma (guardadas em carto:ceufig) */
+const CEUFIG = new Set((store.get('carto:ceufig', '') || '').split(',').filter(Boolean));
+function marcaConstel(id){
+  if(!CEU_LINHAS[id] || CEUFIG.has(id)) return;
+  CEUFIG.add(id);
+  store.set('carto:ceufig', [...CEUFIG].join(','));
+  const total = Object.keys(CEU_LINHAS).length;
+  if(CEUFIG.size >= total) feito('ceufiguras');
+  else if(typeof showHint === 'function' && CEUFIG.size > 1)
+    showHint('FIGURA ' + CEUFIG.size + ' DE ' + total + ' · FALTAM ' + (total - CEUFIG.size));
+}
 function ACTION(act, id){
   if(TRAJ && TRAJ.fase!=='volta') return;   /* na linha do tempo a cena não navega */
   if(TOUR.on) tourStop();   /* escolher um destino é assumir o controle */
@@ -8435,6 +8486,7 @@ function ACTION(act, id){
     return;
   }
   if(act==='constel'){
+    marcaConstel(id);
     const jaEra = ST.mapCard && ST.mapCard.type==='constel' && ST.mapCard.id===id;
     ST.mapCard = jaEra ? null : {type:'constel', id, act};
     AUDIO.sfx('sel');
@@ -8805,6 +8857,7 @@ const CONQ_DESC = {visita:'Selecione um corpo e entre nele.', sondas:'No filtro 
   escalareal:'Ligue a ESCALA REAL na engrenagem, entre na Terra e depois afaste até o sistema inteiro virar um pontinho.',
   ceucruzeiro:'Na escala real, com as constelações ligadas, aproxime da Terra e gire o céu até encontrar o CRUZEIRO DO SUL.',
   ceufundo:'Na escala 1:1, afaste o zoom até sair do Sistema Solar e ver as constelações começarem a se desmanchar.',
+  ceufiguras:'Abra a ficha das 21 constelações do céu real, uma a uma.',
   eracompleta:'Reviva as linhas do tempo das seis missões lunares: Apollo 8, 11, 13, 17 e Artemis I e II.',
   museuinteiro:'Reviva as DEZ linhas do tempo lunares, da Luna 9 ao SLIM: o museu completo da corrida.'};
 const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A LINHA DAS SONDAS',
@@ -8819,6 +8872,7 @@ const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A
   escalareal:'EXP-04 · O SISTEMA EM VERDADEIRA GRANDEZA',
   ceucruzeiro:'CEU-01 · ACHAR O CRUZEIRO DO SUL',
   ceufundo:'CEU-02 · O DESENHO SE DESFEZ',
+  ceufiguras:'CEU-03 · AS FIGURAS DO CÉU',
   eracompleta:'TIM-05 · A ERA COMPLETA',
   museuinteiro:'TIM-06 · O MUSEU INTEIRO'};
 function feito(k){
@@ -9361,6 +9415,7 @@ function tourIr(p){
       y0:CAM.yaw, y1:yawC, i0:CAM.pitch, i1:pitC, sis:null, nome:cc.nome, ly:0};
     /* ATENÇÃO: aqui NÃO se chama ACTION, porque ACTION faz tourStop() e a
        parada encerraria o próprio tour. A ficha é aberta na mão */
+    marcaConstel(p.constel);
     ST.mapCard = {type:'constel', id:p.constel, act:'constel'};
     uiSync();
     return;
@@ -10588,11 +10643,20 @@ function endPtr(e){
 }
 canvas.addEventListener('pointerup', endPtr);
 canvas.addEventListener('pointercancel', e=>{ clearTimeout(LPT); pts.delete(e.pointerId); pinchD = 0; PD = null; });
-canvas.addEventListener('wheel', e=>{
+/* a roda do mouse (r149): o ouvinte vivia SÓ no canvas, e os rótulos têm
+   pointer-events próprio para poder clicar: passar o mouse por cima de um
+   nome e girar a roda não dava zoom nenhum (bug que ele viu). Agora a roda é
+   ouvida na CENA INTEIRA e só se afasta quando o ponteiro não está sobre um
+   painel que rola (card, registro, popovers) */
+function rodaZoom(e){
+  if(e.target && e.target.closest && e.target.closest('#panel,#mission,#cfgpop,#filtpop,#velpop,#datepop,#player,#finder,#cmp,#help,#tourpop'))
+    return;
   e.preventDefault();
   const k = e.deltaMode===1 ? 33 : (e.deltaMode===2 ? window.innerHeight : 1);
   dolly(1 + clamp(e.deltaY*k, -240, 240)*0.0011);
-}, {passive:false});
+}
+canvas.addEventListener('wheel', rodaZoom, {passive:false});
+$('#labels').addEventListener('wheel', rodaZoom, {passive:false});
 canvas.addEventListener('contextmenu', e=>e.preventDefault());
 
 $('#chevL').addEventListener('click', ()=>step(-1));
@@ -10680,7 +10744,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r148';
+const BUILD = 'r149';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
