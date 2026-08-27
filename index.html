@@ -1069,6 +1069,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-ceunomes="1"><span>NOMES DAS ESTRELAS NO CÉU</span><b>LIGADO</b></div>
     <div class="filtrow" data-hz="1"><span>ZONA HABITÁVEL DA ESTRELA</span><b>LIGADO</b></div>
     <div class="filtrow" data-regua="1"><span>RÉGUA DE DISTÂNCIAS (ESCALA 1:1)</span><b>LIGADO</b></div>
+    <div class="filtrow" data-ecl="1"><span>ECLÍPTICA E ZODÍACO</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-reguadisco="1"><span>DISCO DA RÉGUA</span><b>LIGADO</b></div>
     <div class="rgcor">
       <span>COR DA RÉGUA</span>
@@ -4798,12 +4799,12 @@ const FRONTEIRAS = {
       {t:'A TRAVESSIA', rows:[['2012','A Voyager 1 registrou a queda das partículas do Sol e a subida dos raios cósmicos'],['2018','A Voyager 2 cruzou em outro ponto e confirmou que a fronteira é fina'],['O silencio','As duas continuam transmitindo do lado de fora, cada vez mais fraco'],['A New Horizons','Ainda está dentro, e deve cruzar nos anos 2040']]}],
     facts:['A Voyager 1 cruzou esta fronteira em 2012 e virou o primeiro objeto humano no espaço interestelar.','Não é o fim do Sistema Solar: a gravidade do Sol governa a Nuvem de Oort até quase um ano-luz daqui.','A bolha não é redonda: como o Sol viaja pela galáxia, ela tem proa na frente e cauda atrás.'],
     fict:null},
-  zodiaco:{name:'O ZODÍACO', desig:'FAIXA · O CAMINHO DO SOL', kind:'A estrada que o Sol percorre no céu', hab:null,
-    quick:[['O QUE É','o plano da nossa órbita, visto de dentro'],['LARGURA','8 graus para cada lado'],['CONSTELAÇÕES','13, contando Ofiúco'],['A VOLTA','365 dias'],['NO ATLAS','Escorpião, Touro, Gêmeos, Leão, Virgem e Sagitário'],['OS PLANETAS','andam todos nessa mesma faixa']],
+  zodiaco:{name:'A ECLÍPTICA', desig:'CÍRCULO DO CÉU · O PLANO DA ÓRBITA', kind:'A linha por onde o Sol e os planetas caminham', hab:null,
+    quick:[['O QUE É','o plano da órbita da Terra esticado até o céu'],['NO CÉU','um círculo completo, não um anel em volta do Sol'],['QUEM ANDA NELA','o Sol, a Lua e todos os planetas'],['INCLINAÇÃO','23,4 graus em relação ao equador'],['ATRAVESSA','13 constelações, contando Ofiúco'],['SERVE PARA','achar planeta no céu: fora dela, não é planeta']],
     sections:[
-      {t:'POR QUE ELE EXISTE', rows:[['A ideia','A Terra orbita num plano, então o Sol parece percorrer sempre a mesma linha no céu'],['A faixa','Os planetas orbitam quase no mesmo plano, e por isso aparecem sempre por ali'],['O nome','Zodíaco vem do grego, o círculo dos animais'],['Como usar','Achou um planeta brilhante fora dessa faixa? Não é planeta']]},
-      {t:'O QUE MUDOU DESDE A ANTIGUIDADE', rows:[['São 13','O Sol atravessa OFIÚCO entre Escorpião e Sagitário, e ele ficou de fora da lista antiga'],['O tempo em cada uma','Vai de 7 dias em Escorpião a 44 dias em Virgem: nada dos 30 dias iguais'],['A precessão','O eixo da Terra bamboleia e as datas escorregaram quase um signo inteiro em 2.000 anos'],['A conclusão','O céu de hoje não é mais o céu das tabelas antigas']]}],
-    facts:['O Sol atravessa TREZE constelações, e não doze: Ofiúco entrou e nunca virou signo.','O Sol passa 44 dias em Virgem e apenas 7 em Escorpião: nada de trinta dias para cada.','Por causa do bamboleio do eixo da Terra, as datas escorregaram quase uma constelação inteira desde a antiguidade.'],
+      {t:'O QUE ELA É, DE VERDADE', rows:[['A definição','É o plano em que a Terra orbita, projetado na esfera do céu'],['Por que o Sol a segue','Visto daqui de dentro, o Sol parece caminhar por ela um grau por dia'],['Por que os planetas também','Todos orbitam quase no mesmo plano, então aparecem sempre nessa mesma linha'],['A obliquidade','Ela cruza o equador celeste a 23,4 graus: é essa inclinação que faz as estações']]},
+      {t:'AS CONSTELAÇÕES QUE ELA CRUZA', rows:[['São treze','A eclíptica passa por OFIÚCO entre Escorpião e Sagitário: a lista antiga de doze deixou ele de fora'],['Tempos diferentes','O Sol leva 44 dias atravessando Virgem e apenas 7 atravessando Escorpião'],['A precessão','O eixo da Terra bamboleia num ciclo de 26 mil anos, e o céu escorregou quase uma constelação desde a antiguidade'],['O uso astronômico','É a régua para achar planetas, eclipses e ocultacoes: tudo acontece perto dela']]}],
+    facts:['A eclíptica é uma LINHA NO CÉU, e não um anel em volta do Sol: é o plano da nossa órbita esticado até as estrelas.','Ela atravessa treze constelações, e o Sol leva 44 dias para cruzar Virgem contra 7 dias em Escorpião.','Todo eclipse acontece quando a Lua cruza exatamente esta linha: por isso o nome.'],
     fict:null},
   gelo:{name:'LINHA DE GELO', desig:'FRONTEIRA · ~2,7 UA', kind:'Onde a água virou gelo e nasceram os gigantes', hab:null,
     quick:[['ONDE FICA','~2,7 UA, dentro do cinturão'],['O QUE SEPARA','rochosos de um lado, gigantes do outro'],['POR QUÊ','além dela a água vira gelo sólido'],['O EFEITO','muito mais material para juntar'],['JÚPITER','cresceu logo depois dela'],['HOJE','a linha é outra: o Sol mudou']],
@@ -4874,6 +4875,7 @@ const CEU_AL = {sirius:'8,6', canopus:'310', rigilkent:'4,4', arcturus:'37', veg
   rigel:'~860', betelg:'~550', acrux:'~320', aldeb:'65', antares:'~550', spica:'250', polaris:'~430'};
 const CEUV = {on:true};   /* o desenho das constelações liga e desliga */
 const CEUN = {on:true};   /* os NOMES das estrelas no céu */
+const ECLV = {on:false};  /* a ECLÍPTICA e o zodíaco: nasce DESLIGADA (ordem dele) */
 const REGUA = {on:true, cor:0, hex:null, disco:true};  /* a régua de distâncias */
 /* três cores para ele escolher no filtro (a forma do degradê ele já aprovou) */
 /* r144: o lilás batia com a linha dos PLANETAS ANÕES (0x5c4d80) e o
@@ -5004,7 +5006,7 @@ function buildSystem(sysId, spin0){
       transparent:true, depthWrite:false, opacity:0}));
     a.renderOrder = 3;
     host.add(a);
-    const reg = {spr:a, r:raioCorpo, dPai:dPai || 0};
+    const reg = {spr:a, r:raioCorpo, dPai:dPai || 0, id:null};
     aneisMira.push(reg);
     fade(a);
     return reg;
@@ -5190,6 +5192,7 @@ function buildSystem(sysId, spin0){
       cometFxs.push(cometFx);
     }
     const anelP = anelMira(bg.group, p.sys.size, p.satOf ? p.sys.orbit : 0);
+    if(anelP) anelP.id = p.id;
     const pick = new THREE.Mesh(new THREE.SphereGeometry(Math.max(p.sys.size + (p.satOf?0.15:0.75), p.satOf?0.35:1.25), 8, 8),
       new THREE.MeshBasicMaterial({visible:false}));
     pick.position.set(obX, 0, obZ); pick.userData = {act:'focus', id:p.id, r:p.sys.size};
@@ -5374,7 +5377,7 @@ function buildSystem(sysId, spin0){
           escrOrb:(escrAtivo ? aW : 0),
           get:v=>{ dot.getWorldPosition(v); v.y += escrAtivo ? 0.02 : 0.5; }};
         labels.push(lblA);
-          anelMira(dot, rAst, 0);
+          { const anelA = anelMira(dot, rAst, 0); if(anelA) anelA.id = a.id; }
         objReg.push({id:a.id, cls:clsA, holder:hNo, pick:pick, lbl:lblA});
         continue;
       }
@@ -5479,7 +5482,8 @@ function buildSystem(sysId, spin0){
   let simPrev = SIMT.data;
   /* zona habitável: o anel verde tênue onde água líquida é possível */
   let hzRing = null, hzLbl = null;
-  let ceuLinhas = null, ceuSelFn = null, sceneCeu = null, solCeu = null;
+  let ceuLinhas = null, ceuSelFn = null, sceneCeu = null, solCeu = null, eclLinha = null;
+  const eclLbls = [];
   const ceuLbls = [], ceuPicks = [], ceuDir = {};
   const CEU_DE = window.__ceuDe || (window.__ceuDe = {});
   const ceuCruzDir = new THREE.Vector3();
@@ -5524,31 +5528,6 @@ function buildSystem(sysId, spin0){
     /* o ZODÍACO (r149): a faixa por onde o Sol caminha, desenhada no próprio
        plano da órbita da Terra, com as constelações que ele atravessa
        marcadas na altura de cada mês */
-    {
-      const rz = 1.0*ESCR_UA;
-      const zg = new THREE.RingGeometry(rz*0.985, rz*1.015, 128, 1);
-      const zm = new THREE.Mesh(zg, new THREE.MeshBasicMaterial({color:0xd8c890, transparent:true,
-        opacity:0.07, side:THREE.DoubleSide, depthWrite:false}));
-      zm.rotation.x = Math.PI/2;
-      scene.add(fade(zm));
-      labels.push({el:makeLabel('ZODÍACO', 'faint zona', ()=>ACTION('fronteira', 'zodiaco')), escrOrb:rz,
-        get:v=>v.set(Math.cos(2.05)*rz, 0.25, Math.sin(2.05)*rz)});
-      const zpk2 = new THREE.Mesh(new THREE.SphereGeometry(0.9, 8, 8), new THREE.MeshBasicMaterial({visible:false}));
-      zpk2.position.set(Math.cos(2.05)*rz, 0.25, Math.sin(2.05)*rz);
-      zpk2.userData = {act:'fronteira', id:'zodiaco'};
-      scene.add(zpk2); pickables.push(zpk2);
-      /* as datas em que o Sol cruza cada constelação do zodíaco: o rótulo fica
-         na direção OPOSTA ao Sol vista da Terra (é assim que se enxerga) */
-      const ZOD = [['ÁRIES', 4.3], ['TOURO', 5.5], ['GÊMEOS', 6.6], ['CÂNCER', 7.7],
-        ['LEÃO', 8.9], ['VIRGEM', 10.2], ['LIBRA', 11.3], ['ESCORPIÃO', 11.9],
-        ['SAGITÁRIO', 12.6], ['CAPRICÓRNIO', 1.5], ['AQUÁRIO', 2.5], ['PEIXES', 3.4]];
-      for(const z of ZOD){
-        const ang = -(z[1]/12)*Math.PI*2;
-        const rzz = rz*1.10;
-        labels.push({el:makeLabel(z[0], 'faint zona', null), escrOrb:rz*1.4,
-          get:v=>v.set(Math.cos(ang)*rzz, 0.1, Math.sin(ang)*rzz)});
-      }
-    }
     /* a LINHA DE GELO (r147): um anel fino a 2,7 UA, a fronteira que separou
        os rochosos dos gigantes. Discreta, como tudo que ele gosta */
     {
@@ -5773,6 +5752,43 @@ function buildSystem(sysId, spin0){
         }
       }
     }
+    /* r151 · a ECLÍPTICA, refeita com honestidade astronômica. O zodíaco do
+       r149 estava ERRADO em dois níveis, ele pegou os dois: era um anel em
+       volta do Sol (a eclíptica é uma linha NO CÉU) e os nomes ficavam em
+       posições de calendário, não na direção real da constelação (LEÃO
+       desenhado em cima e rotulado à esquerda). Agora é um círculo grande no
+       plano, na distância do céu, e cada nome fica na direção VERDADEIRA do
+       desenho, tirada do próprio catálogo. Nasce DESLIGADA (ordem dele: é
+       astronomia legítima, mas não é o foco) */
+    {
+      const rz = 400*LY_UA*ESCR_UA;
+      const zpts = new Float32Array(257*3);
+      for(let i=0;i<=256;i++){ const aa = i/256*Math.PI*2;
+        zpts[i*3] = Math.cos(aa)*rz; zpts[i*3+2] = Math.sin(aa)*rz; }
+      const zgeo = new THREE.BufferGeometry();
+      zgeo.setAttribute('position', new THREE.BufferAttribute(zpts, 3));
+      eclLinha = new THREE.Line(zgeo, new THREE.LineBasicMaterial({color:0xd8c890,
+        transparent:true, opacity:0.22, depthWrite:false}));
+      eclLinha.frustumCulled = false;
+      eclLinha.visible = ECLV.on;
+      sceneCeu.add(eclLinha);
+      /* o nome de cada constelação do zodíaco que temos desenhada, posto na
+         DIREÇÃO real dela, com o mês em que o Sol passa por lá */
+      const ZOD = {leao:'AGOSTO', virgem:'SETEMBRO', escorpiao:'NOVEMBRO',
+        sagitario:'DEZEMBRO', touro:'MAIO', gemeos:'JUNHO'};
+      for(const k in ZOD){
+        const cc2 = CEU_LINHAS[k];
+        if(!cc2) continue;
+        const dz = new THREE.Vector3(); let nz = 0;
+        for(const par of cc2.seg){ if(ceuPos[par[0]]){ dz.add(ceuPos[par[0]]); nz++; } }
+        if(!nz) continue;
+        dz.multiplyScalar(1/nz).normalize().multiplyScalar(rz*0.9);
+        const lz = {el:makeLabel(cc2.nome + ' · O SOL AQUI EM ' + ZOD[k], 'faint zona', ()=>ACTION('fronteira', 'zodiaco')),
+          sempre:true, eclLbl:true, off:!ECLV.on,
+          get:(t2)=>{ t2.copy(dz).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()*0.92).add(camera.position); }};
+        labels.push(lz); eclLbls.push(lz);
+      }
+    }
   }
   /* limite de zoom calculado pelo objeto mais distante em órbita */
   let alcance = 0;
@@ -5791,7 +5807,7 @@ function buildSystem(sysId, spin0){
   /* 30 ANOS-LUZ de teto (r150): cabe a vizinhança inteira que ele listou,
      de Alpha Centauri a Vega e Fomalhaut */
   const camMaxDin = escrAtivo ? 30*LY_UA*ESCR_UA : Math.max(S.camMax || 60, alcance * 1.7);
-  return {kind:'system', scene, sceneCeu, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
+  return {kind:'system', scene, sceneCeu, eclLinha, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
@@ -5921,9 +5937,17 @@ function buildSystem(sysId, spin0){
         for(const am of aneisMira){
           const escondePai = am.dPai && rAnel > am.dPai*0.55;   /* lua colada no dono: só quando dá para separar */
           const somePerto = Math.min(1, Math.max(0, (rAnel*0.9 - am.r)/(rAnel*0.7)));
-          const op = (escondePai || am.spr.userData.off) ? 0 : 0.45*somePerto;
+          /* selecionado: o anel vira âmbar e pulsa junto com a órbita (pedido dele) */
+          const sel = am.id && ST.mapCard && (ST.mapCard.id === am.id) && (!ST.mapCard.type || ST.mapCard.type === 'body');
+          let op = (escondePai || am.spr.userData.off) ? 0 : 0.45*somePerto;
+          if(sel){
+            am.spr.material.color.setHex(0xffb454);
+            op = Math.max(op, 0.35) * (1.25 + 0.55*Math.sin(performance.now()*0.006));
+          } else if(am.spr.material.color.getHex() !== 0x78b9ff){
+            am.spr.material.color.setHex(0x78b9ff);
+          }
           am.spr.material.opacity = op;
-          if(op > 0) am.spr.scale.setScalar(rAnel*2);
+          if(op > 0) am.spr.scale.setScalar(rAnel*(sel ? 2.25 : 2));
         }
       }
       /* rastro elíptico acompanha o relógio (e a linha do tempo) */
@@ -8053,6 +8077,7 @@ CEUN.on = store.get('carto:ceunomes', '1') === '1';
 REGUA.on = store.get('carto:regua', '1') === '1';
 REGUA.cor = Math.max(0, Math.min(REGUA_CORES.length - 1, parseInt(store.get('carto:reguacor', '0'), 10) || 0));
 REGUA.hex = store.get('carto:reguahex', '') || null;
+ECLV.on = store.get('carto:ecl', '0') === '1';
 REGUA.disco = store.get('carto:reguadisco', '1') === '1';
 document.documentElement.style.setProperty('--reguacor', REGUA.hex || REGUA_CORES[REGUA.cor][2]);
 { const ee = store.get('carto:escrexp', '00'); ESCR_EXP.terra = ee[0] === '1'; ESCR_EXP.teto = ee[1] === '1'; }
@@ -10376,13 +10401,29 @@ function applySel(){
   const selId = ST.mapCard ? ST.mapCard.id : null;
   /* a constelação escolhida acende em âmbar por cima do desenho azul */
   if(ACT.ceuSelFn) ACT.ceuSelFn((ST.mapCard && ST.mapCard.type==='constel') ? ST.mapCard.id : null);
+  /* MODO CÉU (r151, ideia dele): com uma constelação ou estrela na ficha, o
+     sistema solar recua para o desenho aparecer. A CÂMERA NÃO SE MEXE: só as
+     linhas e os nomes daqui de dentro é que descansam */
+  {
+    const noCeu = !!(ST.mapCard && (ST.mapCard.type === 'constel' || ST.mapCard.type === 'estrela'));
+    if(ACT._noCeu !== noCeu){
+      ACT._noCeu = noCeu;
+      for(const L of ACT.labels || []){
+        if(L.ceuNome || L.constelLbl || L.sempre) continue;
+        if(noCeu){ L._off0 = L.off; L.off = true; }
+        else if(L._off0 !== undefined){ L.off = L._off0; L._off0 = undefined; }
+      }
+    }
+  }
   const S = ACT.sel;
   const targets = [];
   (S.orbits||[]).forEach(o=>{
     /* o filtro esconde so a linha; a do corpo selecionado sempre aparece */
     if(o.obj) o.obj.visible = o.oculto ? false : ((FILTROS[o.cls || 'planeta'] !== false) || selId===o.id);
     if(selId===o.id) targets.push({mat:o.mat, base:o.c, baseOp:o.o, amber:0xffb454, op:true});
-    else { o.mat.color.setHex(o.c); o.mat.opacity = o.o; }
+    /* no MODO CÉU as órbitas recuam: o fator entra AQUI porque este laço
+       reescreve a opacidade toda vez (era ele que desfazia o recuo) */
+    else { o.mat.color.setHex(o.c); o.mat.opacity = o.o * (ACT._noCeu ? 0.18 : 1); }
   });
   if(S.belt){
     if(selId===(S.belt.id || 'cinturao')) targets.push({mat:S.belt.mat, base:S.belt.c, baseOp:S.belt.o, amber:0xd9a05a, op:true});
@@ -10810,7 +10851,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r150';
+const BUILD = 'r151';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -11283,6 +11324,8 @@ modeSync();
 function cfgSync(){
   const rcn = document.querySelector('[data-ceunomes]');
   if(rcn){ rcn.classList.toggle('off', !CEUN.on); rcn.querySelector('b').textContent = CEUN.on ? 'LIGADO' : 'DESLIGADO'; }
+  const rec = document.querySelector('[data-ecl]');
+  if(rec){ rec.classList.toggle('off', !ECLV.on); rec.querySelector('b').textContent = ECLV.on ? 'LIGADO' : 'DESLIGADO'; }
   const rrd = document.querySelector('[data-reguadisco]');
   if(rrd){ rrd.classList.toggle('off', !REGUA.disco); rrd.querySelector('b').textContent = REGUA.disco ? 'LIGADO' : 'DESLIGADO'; }
   const rrg = document.querySelector('[data-regua]');
@@ -11346,6 +11389,15 @@ const cfgRowClick = e=>{
     REGUA.disco = !REGUA.disco;
     store.set('carto:reguadisco', REGUA.disco ? '1' : '0');
     cfgSync();
+    return;
+  }
+  const rEcl = e.target.closest('[data-ecl]');
+  if(rEcl){
+    ECLV.on = !ECLV.on;
+    store.set('carto:ecl', ECLV.on ? '1' : '0');
+    cfgSync();
+    if(ACT && ACT.eclLinha) ACT.eclLinha.visible = ECLV.on;
+    if(ACT && ACT.labels) ACT.labels.forEach(l=>{ if(l.eclLbl) l.off = !ECLV.on; });
     return;
   }
   const rReg = e.target.closest('[data-regua]');
@@ -11636,7 +11688,13 @@ function loop(){
   /* trava de centro no mapa: o corpo selecionado vira o pivô da câmera,
      e soltar a seleção devolve o centro suavemente */
   if(ACT && (ACT.kind==='system' || (ACT.kind==='focus' && CAM.mode==='orbit')) && !DIVE && !TRAJ && !CAMTW){
-    if(ST.mapCard){
+    /* r151 · a trava vale SÓ para corpo do sistema. Com constelação, estrela
+       ou fronteira selecionada ela perseguia um alvo que fica a milhares de
+       unidades E ANDA JUNTO com a câmera todo quadro: o pivô corria atrás
+       para sempre, e era esse o 'zoom estranho' que ele viu ao clicar numa
+       constelação */
+    const travavel = ST.mapCard && (!ST.mapCard.type || ST.mapCard.type === 'body' || ST.mapCard.type === 'starsys');
+    if(travavel){
       const pk = ACT.pickables.find(x=>x.userData.id===ST.mapCard.id);
       if(pk){ pk.getWorldPosition(SEGV); CAM.pivot.lerp(SEGV, Math.min(1, dt*5.2)); }
     } else {
