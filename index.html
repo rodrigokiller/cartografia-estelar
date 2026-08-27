@@ -1366,12 +1366,25 @@ void main(){
 const ATMO_VERT = `
 varying vec3 vN;
 void main(){ vN = normalize(normalMatrix*normal); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }`;
+/* r147: a atmosfera deixou de ser um halo chapado. Agora ela é um arco fino
+   na BORDA (Fresnel de verdade), acende do lado do Sol, some no lado escuro e
+   deixa só um fio de crepúsculo no terminador: é a faixa azul que os
+   astronautas descrevem ao ver a Terra de perfil */
 const ATMO_FRAG = `
 precision highp float;
-varying vec3 vN; uniform vec3 uCol; uniform float uI;
+varying vec3 vN;
+uniform vec3 uCol; uniform float uI; uniform vec3 uL;
 void main(){
-  float i = pow(clamp(0.68 - dot(vN, vec3(0.0,0.0,1.0)), 0.0, 1.0), 3.2) * uI;
-  gl_FragColor = vec4(uCol, 1.0) * i;
+  vec3 N = normalize(vN);
+  /* borda: quanto mais de perfil, mais grossa a camada de ar atravessada */
+  float borda = pow(clamp(1.0 - abs(dot(N, normalize(vec3(0.0,0.0,1.0)))), 0.0, 1.0), 2.6);
+  float ndl = dot(N, normalize(uL));
+  /* o ar só brilha onde o Sol bate; no terminador sobra um fio quente */
+  float dia = smoothstep(-0.35, 0.35, ndl);
+  float crep = 1.0 - smoothstep(0.0, 0.30, abs(ndl));
+  vec3 cor = mix(uCol, vec3(1.0, 0.55, 0.28), crep*0.55);
+  float i = borda * uI * (0.12 + 1.05*dia);
+  gl_FragColor = vec4(cor, 1.0) * i;
 }`;
 
 const RING_FRAG = `
@@ -4249,7 +4262,7 @@ function makeBodyGroup(b, radius, seg){
   }
   if(v.atmo){
     const am = new THREE.ShaderMaterial({vertexShader:ATMO_VERT, fragmentShader:ATMO_FRAG,
-      uniforms:{uCol:{value:C(v.atmo.col)}, uI:{value:v.atmo.i}},
+      uniforms:{uCol:{value:C(v.atmo.col)}, uI:{value:v.atmo.i}, uL:{value:LDIR.clone()}},
       side:THREE.BackSide, blending:THREE.AdditiveBlending, transparent:true, depthWrite:false});
     tiltG.add(new THREE.Mesh(new THREE.SphereGeometry(radius*1.07, seg, seg), am));
   }
@@ -4743,6 +4756,13 @@ const FRONTEIRAS = {
       {t:'O QUE ACONTECE AQUI', rows:[['A bolha','O Sol sopra partículas em todas as direções e cava uma bolha no gás da galáxia'],['O limite','Aqui a pressão do vento solar iguala a do meio interestelar e ele para'],['Não é o fim','A gravidade do Sol continua muito além: a Nuvem de Oort vai até quase um ano-luz'],['A forma','Não é uma esfera: o Sol se move pela galáxia e a bolha fica com proa e cauda']]},
       {t:'A TRAVESSIA', rows:[['2012','A Voyager 1 registrou a queda das partículas do Sol e a subida dos raios cósmicos'],['2018','A Voyager 2 cruzou em outro ponto e confirmou que a fronteira é fina'],['O silencio','As duas continuam transmitindo do lado de fora, cada vez mais fraco'],['A New Horizons','Ainda está dentro, e deve cruzar nos anos 2040']]}],
     facts:['A Voyager 1 cruzou esta fronteira em 2012 e virou o primeiro objeto humano no espaço interestelar.','Não é o fim do Sistema Solar: a gravidade do Sol governa a Nuvem de Oort até quase um ano-luz daqui.','A bolha não é redonda: como o Sol viaja pela galáxia, ela tem proa na frente e cauda atrás.'],
+    fict:null},
+  gelo:{name:'LINHA DE GELO', desig:'FRONTEIRA · ~2,7 UA', kind:'Onde a água virou gelo e nasceram os gigantes', hab:null,
+    quick:[['ONDE FICA','~2,7 UA, dentro do cinturão'],['O QUE SEPARA','rochosos de um lado, gigantes do outro'],['POR QUÊ','além dela a água vira gelo sólido'],['O EFEITO','muito mais material para juntar'],['JÚPITER','cresceu logo depois dela'],['HOJE','a linha é outra: o Sol mudou']],
+    sections:[
+      {t:'A LINHA QUE DIVIDIU O SISTEMA', rows:[['A ideia','No disco que formou os planetas, até certa distância o calor do Sol mantinha a água em vapor'],['Depois dela','A água congelava, e gelo é material sólido de sobra para colar num planeta'],['O resultado','Do lado de cá sobraram quatro rochosos pequenos; do lado de lá, quatro gigantes'],['O cinturão','Ela cai bem no meio do cinturão de asteroides, e por isso há pedras secas de um lado e geladas do outro']]},
+      {t:'O QUE ISSO EXPLICA', rows:[['O tamanho de Júpiter','Nasceu logo depois da linha, juntou gelo e engordou até puxar gás'],['A água da Terra','A Terra se formou seca: a água provavelmente veio de fora, trazida de além da linha'],['Ceres','Está na fronteira e tem gelo: é um sobrevivente da divisão'],['Nos outros sistemas','A mesma linha explica onde achar gigantes gasosos por aí']]}],
+    facts:['É esta linha que explica por que os quatro planetas pequenos ficaram aqui dentro e os quatro gigantes lá fora.','A Terra provavelmente se formou seca: a água que você bebe veio de corpos nascidos além desta fronteira.','Ela passa bem no meio do cinturão: por isso há asteroides secos de um lado e gelados do outro.'],
     fict:null},
   zonahab:{name:'ZONA HABITÁVEL', desig:'FAIXA · 0,95 A 1,67 UA', kind:'A faixa onde a água pode ser líquida', hab:null,
     quick:[['NO SISTEMA SOLAR','0,95 a 1,67 UA'],['QUEM ESTÁ DENTRO','a Terra, com folga'],['NA BORDA','Marte, na parte fria'],['DE FORA','Vênus, quente demais'],['O APELIDO','zona de Cachinhos Dourados'],['NÃO GARANTE','vida, só permite água líquida']],
@@ -5451,6 +5471,22 @@ function buildSystem(sysId, spin0){
       sizeAttenuation:false, transparent:true, opacity:0.4, depthWrite:false}))));
     labels.push({el:makeLabel('HELIOPAUSA', 'faint zona', ()=>ACTION('fronteira', 'heliopausa')), escrOrb:1800,
       get:v=>v.set(Math.cos(0.9)*1800, 120, Math.sin(0.9)*1800)});
+    /* a LINHA DE GELO (r147): um anel fino a 2,7 UA, a fronteira que separou
+       os rochosos dos gigantes. Discreta, como tudo que ele gosta */
+    {
+      const rg = 2.7*ESCR_UA;
+      const gg = new THREE.RingGeometry(rg*0.995, rg*1.005, 128, 1);
+      const gm = new THREE.Mesh(gg, new THREE.MeshBasicMaterial({color:0x9fd8e8, transparent:true,
+        opacity:0.10, side:THREE.DoubleSide, depthWrite:false}));
+      gm.rotation.x = Math.PI/2;
+      scene.add(fade(gm));
+      labels.push({el:makeLabel('LINHA DE GELO', 'faint zona', ()=>ACTION('fronteira', 'gelo')), escrOrb:rg,
+        get:v=>v.set(Math.cos(5.5)*rg, 0.3, Math.sin(5.5)*rg)});
+      const gpk = new THREE.Mesh(new THREE.SphereGeometry(1.6, 8, 8), new THREE.MeshBasicMaterial({visible:false}));
+      gpk.position.set(Math.cos(5.5)*rg, 0.3, Math.sin(5.5)*rg);
+      gpk.userData = {act:'fronteira', id:'gelo'};
+      scene.add(gpk); pickables.push(gpk);
+    }
     /* alvo de clique na própria casca, não só no nome */
     {
       const hpk = new THREE.Mesh(new THREE.SphereGeometry(90, 8, 8), new THREE.MeshBasicMaterial({visible:false}));
@@ -9187,6 +9223,16 @@ const ROTA_AGUAS = [
   {corpo:'ganimedes', ms:13000},
   {sis:'sol', ms:7000, texto:'Quatro oceanos escondidos num só sistema. No universo, a água é a regra, não a exceção.'}
 ];
+/* r147: a volta pelo céu, só no mapa 1:1 (o tour liga a escala sozinho) */
+const ROTA_CEU = [
+  {constel:'orion', ms:13000, texto:'Órion, o caçador: o cinturao de três estrelas em fila, a espada com a nebulosa pendurada nele e Betelgeuse no ombro, vermelha e condenada.'},
+  {constel:'cruzeiro', ms:12000, texto:'O Cruzeiro do Sul: a MENOR constelação do céu inteiro, e a que está na nossa bandeira. O eixo maior aponta o sul.'},
+  {constel:'escorpiao', ms:12000, texto:'O Escorpião, uma das poucas que parece mesmo o bicho, com Antares vermelha no coração e o ferrão duplo na ponta da cauda.'},
+  {constel:'sagitario', ms:13000, texto:'Sagitário, o bule: o bico dele aponta o centro da nossa galáxia, a 26 mil anos-luz, onde mora um buraco negro de 4 milhões de sois.'},
+  {constel:'ursamaior', ms:11000, texto:'A Ursa Maior: cinco das sete estrelas do carro nasceram juntas e viajam juntas. Em 50 mil anos o desenho estará desfeito.'},
+  {constel:'cisne', ms:11000, texto:'O Cisne, a Cruz do Norte, deitado na faixa da Via Láctea. Aqui foi identificado o primeiro buraco negro reconhecido pela ciência.'},
+  {corpo:'terra', ms:9000, texto:'E tudo isso é desenho visto DAQUI. Saia do sistema e as figuras se desmancham: elas só existem deste ponto do espaço.'}
+];
 const ROTA_CORRIDA = [
   {corpo:'luna9', ms:12000, texto:'1966. O primeiro pouso suave da humanidade em outro mundo. O solo aguentou.'},
   {corpo:'apollo8', ms:12000, texto:'1968. Os primeiros olhos humanos a ver o lado oculto, e a Terra pequena e inteira.'},
@@ -9207,7 +9253,8 @@ const ROTAS = {
   solar:     {nome:'SISTEMA SOLAR',  lista:ROTA_SOLAR},
   nebulosas: {nome:'NEBULOSAS',      lista:ROTA_NEBULOSAS},
   galaxias:  {nome:'GALÁXIAS',       lista:ROTA_GALAXIAS},
-  corrida:   {nome:'A CORRIDA DA LUA', lista:ROTA_CORRIDA}
+  corrida:   {nome:'A CORRIDA DA LUA', lista:ROTA_CORRIDA},
+  ceu:       {nome:'AS FIGURAS DO CÉU', lista:ROTA_CEU}
 };
 let ROTEIRO = ROTEIRO_COMPLETO;
 function tourNome(p){
@@ -9218,6 +9265,47 @@ function tourNome(p){
 }
 function tourIr(p){
   if(p.corpo && ST.level === 'focus' && ST.body === p.corpo) return;
+  /* parada de CONSTELAÇÃO (r147): o tour do céu exige a escala 1:1 no mapa do
+     Sol e as constelações ligadas; a câmera vira para o desenho, a ficha abre
+     e o próprio desenho acende em âmbar */
+  if(p.constel){
+    if(!(ACT && ACT.kind === 'system' && ST.sys === 'sol' && ACT.escr)){
+      if(!ESCR.on){ ESCR.on = true; store.set('carto:escr', '1'); if(typeof cfgSync === 'function') cfgSync(); }
+      if(ST.level === 'focus') gotoSystem('sol', null, ST.body);
+      else gotoSystem('sol');
+      setTimeout(()=>{ if(TOUR.on) tourIr(p); }, 1600);
+      return;
+    }
+    if(!CEUV.on){
+      CEUV.on = true; store.set('carto:ceu', '1');
+      if(ACT.ceuLinhas){ ACT.ceuLinhas.visible = true; ACT.ceuLinhas.material.opacity = 0; }
+      if(ACT.ceuLbls) ACT.ceuLbls.forEach(l=>{ l.off = false; });
+      if(typeof cfgSync === 'function') cfgSync();
+    }
+    const cc = CEU_LINHAS[p.constel];
+    if(!cc) return;
+    /* o rumo do desenho, pela média das estrelas dele */
+    const dirC = new THREE.Vector3();
+    let nC2 = 0;
+    for(const par of cc.seg){
+      const e0 = ESTRELAS_CEU.find(x=>x[0] === par[0]);
+      if(!e0) continue;
+      dirC.add(dirCeu(e0[2], e0[3])); nC2++;
+    }
+    if(!nC2) return;
+    dirC.normalize();
+    CAMTW = null;
+    const yawC = Math.atan2(-dirC.x, -dirC.z);
+    const pitC = Math.max(-1.3, Math.min(1.3, Math.asin(-dirC.y) + 0.05));
+    VOOCEU = {t0:performance.now(), ms:2600, p0:CAM.pivot.clone(), p1:new THREE.Vector3(),
+      d0:CAM.dist, d1:Math.min(CAM.max*0.004, Math.max(600, CAM.dist)),
+      y0:CAM.yaw, y1:yawC, i0:CAM.pitch, i1:pitC, sis:null, nome:cc.nome, ly:0};
+    /* ATENÇÃO: aqui NÃO se chama ACTION, porque ACTION faz tourStop() e a
+       parada encerraria o próprio tour. A ficha é aberta na mão */
+    ST.mapCard = {type:'constel', id:p.constel, act:'constel'};
+    uiSync();
+    return;
+  }
   if(p.uni){
     /* volta ao universo SEM corte: recua pela galáxia */
     if(ST.level === 'galaxy'){ gotoUniverse(null, ST.gal); return; }
@@ -9403,6 +9491,7 @@ function tourPasso(){
     if(p.corpo) return ST.level === 'focus' && ST.body === p.corpo;
     if(p.sis)   return ST.level === 'system' && ST.sys === p.sis;
     if(p.gal)   return ST.level === 'galaxy' && ST.gal === p.gal;
+    if(p.constel) return !VOOCEU && ST.mapCard && ST.mapCard.type === 'constel' && ST.mapCard.id === p.constel;
     if(p.uni)   return ST.level === 'universe';
     return true;
   };
@@ -9636,7 +9725,8 @@ function vooCeuStep(now){
     /* chegou: o sistema entra SEM animação de entrada, emendando na viagem */
     gotoSystem(v.sis, 'VOCÊ CHEGOU A ' + v.nome, null, true);
   } else {
-    VOOLONGE = {nome:v.nome, ly:v.ly};
+    /* só marca 'longe de casa' se a viagem realmente saiu do sistema */
+    if(v.p1.length() > LY_UA*ESCR_UA*0.2) VOOLONGE = {nome:v.nome, ly:v.ly};
     showHint(v.nome + ' · VOCÊ ESTÁ A ' + (v.ly < 100 ? String(v.ly).replace('.', ',') : Math.round(v.ly)) + ' ANOS-LUZ DE CASA. ESTE SISTEMA AINDA NÃO ESTÁ MAPEADO: ESC VOLTA PARA O SOL');
     if(v.idCeu) ACTION('estrela', v.idCeu);
   }
@@ -10531,7 +10621,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r146';
+const BUILD = 'r147';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
