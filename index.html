@@ -260,6 +260,10 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #reguabar .rbline i{display:block;width:1px;height:7px;background:var(--reguacor,#c9a8d8);opacity:.75}
 #rbtxt{font-family:var(--mono);font-size:8.5px;letter-spacing:2px;color:var(--reguacor,#c9a8d8);text-shadow:0 1px 3px #000}
 body.photo #reguabar{opacity:0 !important;visibility:hidden}
+/* MODO AULA: some o que é de configuração e sobra o mapa e a narração */
+body.aula #tutdebug,body.aula #dbgtoast,body.aula #dbgpromo,body.aula #dbgconq,
+body.aula #btnfilt,body.aula #btncfg,body.aula #modebtn,body.aula #radar{display:none !important}
+body.aula #topright{opacity:.55}
 #simclock{display:none;align-items:center;gap:7px;position:absolute;left:106px;bottom:8px;z-index:11;   /* alinhado com o T+ do coordbox: 24 (navpod) + 68 (radar) + 14 (gap) */
   font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;color:var(--dim2);pointer-events:auto}
 body.emsistema #simclock{display:flex}
@@ -4088,7 +4092,9 @@ const camera = new THREE.PerspectiveCamera(55, 1, 0.05, 150000);
 /* câmera exclusiva do céu profundo: mesma posição da principal, mas alcance
    de bilhões de unidades (Deneb mora a 1,5 bilhão daqui) */
 /* alcance de 50 bilhões: cabe a direção do centro da galáxia, a 26 mil AL */
-const camCeu = new THREE.PerspectiveCamera(55, 1, 500, 5e10);
+/* alcance de 300 bilhões de unidades: cabe o disco inteiro da galáxia,
+   que tem 100 mil anos-luz de ponta a ponta */
+const camCeu = new THREE.PerspectiveCamera(55, 1, 500, 3e11);
 let ACT_CEU_FOCO = null;
 const LDIR = new THREE.Vector3(-0.55, 0.35, 0.8).normalize();
 const ANIM_MATS = [];
@@ -4336,7 +4342,10 @@ function updateLabels(){
     if(L.soLonge && !foraDeCasa){ L.el.style.display = 'none'; continue; }
     if(foraDeCasa){
       /* o nome da estrela só aparece quando o zoom já abraça a distância dela */
-      if(L.ceuNome && !(L.ly && L.ly < dLy*1.25)){ L.el.style.display = 'none'; continue; }
+      /* na escala GALÁCTICA a vizinhança inteira vira um grão: os nomes das
+         estrelas descansam e sobram os marcos grandes (o centro da galáxia
+         e o braço onde a gente mora) */
+      if(L.ceuNome && (dLy > 200 || !(L.ly && L.ly < dLy*1.25))){ L.el.style.display = 'none'; continue; }
       /* o desenho das constelações é coisa de quem está em casa */
       if(L.constelLbl && dLy > 0.35){ L.el.style.display = 'none'; continue; }
       if(L.cinturao || L.escrOrb && L.escrOrb < 40000){ L.el.style.display = 'none'; continue; }
@@ -4528,6 +4537,12 @@ const ESTRELAS_CEU = [
   /* r150 · a VIZINHANÇA: estrelas discretas no céu, mas das mais próximas do
      Sol, que é o que importa quando você sai de casa (lista dele) */
   /* Ofiúco: a constelação que a eclíptica atravessa e a lista antiga esqueceu */
+  /* a Serpente, que Ofiúco segura: a única dividida em duas partes no céu */
+  ['unukalhai',0,15.74,6.43,2.63,'K'], ['deltaser',0,15.58,10.53,3.80,'A'],
+  ['betaser',0,15.77,15.42,3.65,'A'], ['epsser',0,15.85,4.48,3.71,'A'],
+  ['muser',0,15.82,-3.43,3.53,'A'], ['etaser',0,18.36,-2.90,3.23,'K'],
+  ['xiser',0,17.63,-15.40,3.54,'F'], ['nuser',0,17.35,-12.85,4.32,'A'],
+  ['thetaser',0,18.94,4.20,4.62,'A'],
   ['rasalhague',0,17.58,12.56,2.08,'A'], ['cebalrai',0,17.72,4.57,2.76,'K'],
   ['yedprior',0,16.24,-3.69,2.73,'M'], ['yedpost',0,16.31,-4.69,3.23,'G'],
   ['zetaoph',0,16.62,-10.57,2.56,'O'], ['sabik',0,17.17,-15.72,2.43,'A'],
@@ -4585,6 +4600,9 @@ const CEU_LINHAS = {
   ursamenor:{nome:'URSA MENOR', seg:[['polaris','yildun'],['yildun','epsumi'],['epsumi','zetaumi'],
     ['zetaumi','etaumi'],['etaumi','pherkad'],['pherkad','kochab'],['kochab','zetaumi']]},
   caomenor:{nome:'CÃO MENOR', seg:[['procyon','gomeisa']]},
+  serpente:{nome:'SERPENTE', seg:[['betaser','deltaser'],['deltaser','unukalhai'],
+    ['unukalhai','epsser'],['epsser','muser'],
+    ['nuser','xiser'],['xiser','etaser'],['etaser','thetaser']]},
   ofiuco:{nome:'OFIÚCO', seg:[['rasalhague','kappaoph'],['kappaoph','yedpost'],['yedpost','yedprior'],
     ['yedpost','zetaoph'],['zetaoph','sabik'],['sabik','cebalrai'],['cebalrai','rasalhague'],
     ['yedprior','lambdaoph'],['lambdaoph','cebalrai']]}};
@@ -4758,6 +4776,13 @@ const CEU_FICHA = {
       {t:'PROCÍON', rows:[['O nome','Vem do grego: aquele que vem antes do cão, porque nasce antes de Sírius'],['A vizinhança','É a 8ª mais brilhante do céu e uma das mais próximas'],['A companheira','Tem uma anã branca ao lado, como Sírius']]}],
     facts:['O nome significa aquele que vem antes do cão: ela nasce um pouco antes de Sírius.','A constelação inteira tem só duas estrelas dignas de nota.','Procíon também tem uma anã branca como companheira, igual a Sírius.'],
     fict:'É o menor dos dois cães que seguem Órion na caçada eterna.'},
+  serpente:{desig:'CONSTELAÇÃO · SERPENS', kind:'A única constelação partida em duas',
+    quick:[['O QUE TEM DE ÚNICO','é a única em DUAS partes separadas'],['A CABEÇA','Serpens Caput, a oeste'],['A CAUDA','Serpens Cauda, a leste'],['NO MEIO','Ofiúco, que a segura'],['A PRINCIPAL','Unukalhai, o pescoço da serpente'],['DENTRO DELA','os Pilares da Criação, na Águia']],
+    sections:[
+      {t:'A CONSTELAÇÃO PARTIDA', rows:[['O caso único','É a única das 88 constelações oficiais dividida em dois pedaços que não se tocam'],['Por quê','Ofiúco segura a serpente no meio do corpo, e as fronteiras de 1930 partiram o bicho ao meio'],['Como achar','A cabeça fica a oeste de Ofiúco, um triângulo pequeno; a cauda desce a leste, na Via Láctea'],['O nome da alfa','Unukalhai quer dizer o pescoço da serpente, em árabe']]},
+      {t:'O QUE MORA POR PERTO', rows:[['M16','A Nebulosa da Águia, com os Pilares da Criação, fica na cauda da Serpente'],['M5','Um dos aglomerados globulares mais bonitos do céu, na cabeça'],['O simétrico','Serpente e Ofiúco formam a figura mais estranha do céu: um homem segurando uma cobra em dois pedaços']]}],
+    facts:['É a única constelação do céu dividida em duas partes separadas, uma de cada lado de Ofiúco.','Os Pilares da Criação, a foto mais famosa do Hubble, ficam na cauda dela.','O nome da estrela principal, Unukalhai, significa o pescoço da serpente em árabe.'],
+    fict:'A serpente enrolada no báculo de Asclepius é o símbolo da medicina até hoje.'},
   ofiuco:{desig:'CONSTELAÇÃO · OPHIUCHUS', kind:'A décima terceira da eclíptica',
     quick:[['O NOME','o portador da serpente'],['NA ECLÍPTICA','sim, entre Escorpião e Sagitário'],['O SOL PASSA','de 30 de novembro a 17 de dezembro'],['ESTRELA VIZINHA','a de Barnard, a 6 anos-luz'],['A SUPERNOVA','a de Kepler, 1604'],['NO BRASIL','inverno, bem alta']],
     sections:[
@@ -4801,6 +4826,8 @@ const CEU_LY = {
   izar:210, seginus:87, nekkar:225, muphrid:37, deltaboo:122,
   kochab:131, pherkad:487, yildun:183, epsumi:300, zetaumi:380, etaumi:97,
   gomeisa:160,
+  unukalhai:74, deltaser:210, betaser:155, epsser:70, muser:156,
+  etaser:61, xiser:105, nuser:200, thetaser:132,
   rasalhague:48.6, cebalrai:81.8, yedprior:171, yedpost:106, zetaoph:366,
   sabik:88, kappaoph:91.5, lambdaoph:166,
   epseri:10.5, tauceti:11.9, epsind:11.9, '61cyg':11.4, lacaille:12.9, barnardceu:5.96};
@@ -4883,6 +4910,9 @@ const CEU_NOME = {
   muphrid:'MUPHRID', deltaboo:'DELTA BOOTIS', kochab:'KOCHAB', pherkad:'PHERKAD',
   yildun:'YILDUN', epsumi:'EPSILON URSAE MINORIS', zetaumi:'ZETA URSAE MINORIS',
   etaumi:'ETA URSAE MINORIS', gomeisa:'GOMEISA',
+  unukalhai:'UNUKALHAI', deltaser:'DELTA SERPENTIS', betaser:'BETA SERPENTIS',
+  epsser:'EPSILON SERPENTIS', muser:'MU SERPENTIS', etaser:'ETA SERPENTIS',
+  xiser:'XI SERPENTIS', nuser:'NU SERPENTIS', thetaser:'THETA SERPENTIS',
   rasalhague:'RASALHAGUE', cebalrai:'CEBALRAI', yedprior:'YED PRIOR', yedpost:'YED POSTERIOR',
   zetaoph:'ZETA OPHIUCHI', sabik:'SABIK', kappaoph:'KAPPA OPHIUCHI', lambdaoph:'LAMBDA OPHIUCHI',
   epseri:'EPSILON ERIDANI', tauceti:'TAU CETI', epsind:'EPSILON INDI',
@@ -5509,7 +5539,7 @@ function buildSystem(sysId, spin0){
   let simPrev = SIMT.data;
   /* zona habitável: o anel verde tênue onde água líquida é possível */
   let hzRing = null, hzLbl = null;
-  let ceuLinhas = null, ceuSelFn = null, sceneCeu = null, solCeu = null, eclLinha = null;
+  let ceuLinhas = null, ceuSelFn = null, sceneCeu = null, solCeu = null, eclLinha = null, viaLactea = null;
   const eclLbls = [];
   const ceuLbls = [], ceuPicks = [], ceuDir = {};
   const CEU_DE = window.__ceuDe || (window.__ceuDe = {});
@@ -5607,7 +5637,8 @@ function buildSystem(sysId, spin0){
        apaga enquanto o próximo marco (dez vezes maior) começa a nascer */
     /* r150: a régua segue até os ANOS-LUZ (10 mil UA, depois 1, 3 e 10 AL:
        o teto do zoom é 12 AL, então sempre há um marco no ar) */
-    for(const ua of [1, 10, 100, 1000, 10000, LY_UA, LY_UA*3, LY_UA*10, LY_UA*30]){
+    for(const ua of [1, 10, 100, 1000, 10000, LY_UA, LY_UA*3, LY_UA*10, LY_UA*30,
+      LY_UA*100, LY_UA*1000, LY_UA*10000, LY_UA*50000]){
       const rr3 = ua*ESCR_UA;
       const rgg = new THREE.RingGeometry(rr3*0.015, rr3, 128, 1);
       const rl = new THREE.Mesh(rgg, new THREE.ShaderMaterial({transparent:true, depthWrite:false, side:THREE.DoubleSide,
@@ -5819,6 +5850,59 @@ function buildSystem(sysId, spin0){
         scene.add(cpk3); pickables.push(cpk3);
         ceuPicks.push({obj:cpk3, alvo:dC, ang:0.02});
       }
+      /* ---------- r153 · A VIA LÁCTEA NO CONTÍNUO ----------
+         O disco da nossa galáxia nasce em volta quando você passa de umas
+         centenas de anos-luz: mesmo motor, mesma cena, sem troca de escala.
+         O eixo vem do polo norte galáctico (RA 12h51m, DEC +27,1) e o centro
+         da direção real de Sagittarius A*, a 26 mil anos-luz: o Sol fica no
+         lugar certo dele, na borda de um braço, e não no meio */
+      {
+        const UNAL = LY_UA*ESCR_UA;
+        const zg = dirCeu(12.8573, 27.1283).normalize();           /* norte galáctico */
+        const xg = dirCeu(17.7603, -28.936).normalize();           /* rumo do centro */
+        const ug = xg.clone().addScaledVector(zg, -xg.dot(zg)).normalize();
+        const vg = new THREE.Vector3().crossVectors(zg, ug).normalize();
+        const C = ug.clone().multiplyScalar(26000*UNAL);            /* o centro da galáxia */
+        const NG = QLOW ? 5200 : 11000;
+        const gp = new Float32Array(NG*3), gc = new Float32Array(NG*3);
+        const cA = new THREE.Color(0xbcd0ff), cB = new THREE.Color(0xffe6c0), cC = new THREE.Color(0xffd0a0);
+        const tanP = Math.tan(12.5*Math.PI/180);
+        for(let i=0;i<NG;i++){
+          const bulbo = i < NG*0.14;
+          let rr, th, hh;
+          if(bulbo){
+            /* o caroço central, gordo e amarelado */
+            rr = Math.pow(Math.random(), 0.55)*5200;
+            th = Math.random()*Math.PI*2;
+            hh = (Math.random()-0.5)*2600*Math.exp(-rr/3000);
+          } else {
+            const braco = Math.floor(Math.random()*4)*(Math.PI/2);
+            const t2 = Math.pow(Math.random(), 0.72);
+            rr = 3200 + t2*46000;
+            th = braco + Math.log(rr/3200)/tanP + (Math.random()-0.5)*0.55;
+            hh = (Math.random()-0.5)*900*(1 + rr/30000);
+          }
+          const px = Math.cos(th)*rr, py = Math.sin(th)*rr;
+          gp[i*3]   = C.x + (ug.x*px + vg.x*py + zg.x*hh)*UNAL;
+          gp[i*3+1] = C.y + (ug.y*px + vg.y*py + zg.y*hh)*UNAL;
+          gp[i*3+2] = C.z + (ug.z*px + vg.z*py + zg.z*hh)*UNAL;
+          const c2 = bulbo ? cC : (Math.random() < 0.3 ? cB : cA);
+          gc[i*3] = c2.r; gc[i*3+1] = c2.g; gc[i*3+2] = c2.b;
+        }
+        const gG = new THREE.BufferGeometry();
+        gG.setAttribute('position', new THREE.BufferAttribute(gp, 3));
+        gG.setAttribute('color', new THREE.BufferAttribute(gc, 3));
+        viaLactea = new THREE.Points(gG, new THREE.PointsMaterial({size:1.6, vertexColors:true,
+          sizeAttenuation:false, transparent:true, opacity:0, depthWrite:false,
+          blending:THREE.AdditiveBlending}));
+        viaLactea.frustumCulled = false;
+        sceneCeu.add(viaLactea);
+        /* o braço onde a gente mora, nomeado no lugar certo */
+        const dOri = ug.clone().multiplyScalar(-1200*UNAL).add(vg.clone().multiplyScalar(900*UNAL));
+        labels.push({el:makeLabel('BRAÇO DE ÓRION · VOCÊ ESTÁ AQUI', 'faint zona', null),
+          sempre:true, galLbl:true, off:true,
+          get:(t2)=>{ t2.copy(dOri).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()*0.8).add(camera.position); }});
+      }
       const ZOD = {leao:'AGOSTO', virgem:'SETEMBRO', escorpiao:'NOVEMBRO',
         sagitario:'DEZEMBRO', touro:'MAIO', gemeos:'JUNHO'};
       for(const k in ZOD){
@@ -5851,8 +5935,11 @@ function buildSystem(sysId, spin0){
      inteiro vira um pontinho e as estrelas vizinhas se separam de verdade */
   /* 30 ANOS-LUZ de teto (r150): cabe a vizinhança inteira que ele listou,
      de Alpha Centauri a Vega e Fomalhaut */
-  const camMaxDin = escrAtivo ? 30*LY_UA*ESCR_UA : Math.max(S.camMax || 60, alcance * 1.7);
-  return {kind:'system', scene, sceneCeu, eclLinha, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
+  /* r153 · o teto foi para 60 MIL ANOS-LUZ: dali o disco inteiro da Via
+     Láctea cabe na tela e o Sistema Solar é um grão num braço. É o mesmo
+     mapa desde a superfície de uma lua: o contínuo que ele queria */
+  const camMaxDin = escrAtivo ? 60000*LY_UA*ESCR_UA : Math.max(S.camMax || 60, alcance * 1.7);
+  return {kind:'system', scene, sceneCeu, eclLinha, aneisMira, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
@@ -5937,6 +6024,14 @@ function buildSystem(sysId, spin0){
           cp.obj.scale.setScalar(cp.ang ? rP*cp.ang : Math.max(1, rP/8000));
         }
         if(solCeu) solCeu.material.opacity = Math.min(0.95, Math.max(0, (CAM.dist - 4000)/12000));
+        /* a galáxia acende quando você passa de umas centenas de anos-luz e o
+           céu perto já não diz mais nada (r153) */
+        if(viaLactea){
+          const dAL = CAM.dist/(LY_UA*ESCR_UA);
+          const fg = Math.min(1, Math.max(0, (dAL - 120)/900));
+          viaLactea.material.opacity = 0.85*fg;
+          for(const L of labels) if(L.galLbl) L.off = fg < 0.35;
+        }
         /* saiu de casa: o aviso de que o desenho do céu é coisa daqui */
         if(CAM.dist > LY_UA*ESCR_UA*0.35 && typeof feito === 'function' && typeof FEITO !== 'undefined' && !FEITO.has('ceufundo')) feito('ceufundo');
       }
@@ -5959,7 +6054,10 @@ function buildSystem(sysId, spin0){
         /* muito mais discreto: o teto agora é da família da zona habitável
            (0.055), senão o disco lava a cena inteira (crítica dele) */
         /* o DISCO pode ser desligado sozinho: a barra do rodapé continua */
-        if(!DIVE && !TRANSITO && !FADEIN) ra.obj.material.uniforms.op.value = (REGUA.on && REGUA.disco) ? 0.085*f3 : 0;
+        /* marca gigante (100 anos-luz para cima) entra com METADE da força:
+           naquela escala o disco cobre a galáxia inteira */
+        const tetoOp = ra.r > 100*LY_UA*ESCR_UA ? 0.042 : 0.085;
+        if(!DIVE && !TRANSITO && !FADEIN) ra.obj.material.uniforms.op.value = (REGUA.on && REGUA.disco) ? tetoOp*f3 : 0;
       }
       /* escala real: os alvos de clique RESPIRAM com o zoom (longe: generosos;
          perto: justos). Com raio fixo a Terra engolia a Lua, e a câmera
@@ -5982,17 +6080,14 @@ function buildSystem(sysId, spin0){
         for(const am of aneisMira){
           const escondePai = am.dPai && rAnel > am.dPai*0.55;   /* lua colada no dono: só quando dá para separar */
           const somePerto = Math.min(1, Math.max(0, (rAnel*0.9 - am.r)/(rAnel*0.7)));
-          /* selecionado: o anel vira âmbar e pulsa junto com a órbita (pedido dele) */
-          const sel = am.id && ST.mapCard && (ST.mapCard.id === am.id) && (!ST.mapCard.type || ST.mapCard.type === 'body');
-          let op = (escondePai || am.spr.userData.off) ? 0 : 0.45*somePerto;
-          if(sel){
-            am.spr.material.color.setHex(0xffb454);
-            op = Math.max(op, 0.35) * (1.25 + 0.55*Math.sin(performance.now()*0.006));
-          } else if(am.spr.material.color.getHex() !== 0x78b9ff){
-            am.spr.material.color.setHex(0x78b9ff);
+          /* o anel do corpo ESCOLHIDO é pintado pelo SELFX, junto com a órbita:
+             aqui só cuidamos do tamanho dele */
+          const op = (escondePai || am.spr.userData.off) ? 0 : 0.45*somePerto;
+          if(!am.selFX){
+            if(am.spr.material.color.getHex() !== 0x78b9ff) am.spr.material.color.setHex(0x78b9ff);
+            am.spr.material.opacity = op;
           }
-          am.spr.material.opacity = op;
-          if(op > 0) am.spr.scale.setScalar(rAnel*(sel ? 2.25 : 2));
+          if(op > 0 || am.selFX) am.spr.scale.setScalar(rAnel*(am.selFX ? 2.25 : 2));
         }
       }
       /* rastro elíptico acompanha o relógio (e a linha do tempo) */
@@ -10527,6 +10622,20 @@ function applySel(){
     if(selId===m.id) targets.push({mat:m.mat, base:m.c, baseOp:m.o, amber:0xffb454, op:true});
     else { m.mat.color.setHex(m.c); m.mat.opacity = m.o; }
   });
+  /* r153 · a BOLINHA e a ÓRBITA pulsam como UMA COISA SÓ (pedido dele): o
+     anel de mira do corpo escolhido entra na MESMA lista de alvos do SELFX,
+     então herda o mesmo acender em âmbar e o mesmo pulso, em fase. Antes
+     cada um tinha a própria fórmula e eles batiam fora de compasso */
+  if(selId && ACT.aneisMira){
+    for(const am of ACT.aneisMira){
+      if(am.id !== selId) continue;
+      am.selFX = true;
+      targets.push({mat:am.spr.material, base:0x78b9ff, baseOp:0.45, amber:0xffb454, op:true});
+    }
+    for(const am of ACT.aneisMira) if(am.id !== selId) am.selFX = false;
+  } else if(ACT.aneisMira){
+    for(const am of ACT.aneisMira) am.selFX = false;
+  }
   SELFX = targets.length ? {t0:performance.now(), targets, cA:new THREE.Color(), cB:new THREE.Color(), cO:new THREE.Color()} : null;
 }
 
@@ -10941,7 +11050,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r152';
+const BUILD = 'r153';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -10975,6 +11084,13 @@ resize();
     hh0 = hh0.replace('&escala=real', '');
     try{ history.replaceState(null, '', '#'+hh0+'&escala=real'); }catch(e){}
   }
+  /* r153 · MODO AULA (?aula=rota): abre direto numa rota do tour, com a
+     interface enxuta para projetar em sala. Anotado desde o r129 */
+  const aula = (new URLSearchParams(location.search)).get('aula');
+  if(aula){
+    document.body.classList.add('aula');
+    TUT.v.add('boasvindas');
+  }
   let trajLink = false;
   if(hh0.indexOf('&traj=1') >= 0){ trajLink = true; hh0 = hh0.replace('&traj=1', ''); }
   const [k, v] = hh0.split('=');
@@ -10994,6 +11110,12 @@ resize();
   /* link direto de missão: abre já com a linha do tempo rodando */
   if(trajLink && k === 'corpo' && ALLBODIES[v] && ALLBODIES[v].traj)
     setTimeout(()=>verLinhaDoTempo(v), 1600);
+  /* a aula começa sozinha na rota pedida (?aula=corrida, ?aula=ceu...) */
+  if(aula) setTimeout(()=>{
+    const rid = ROTAS[aula] ? aula : (aula === 'missoes' ? 'corrida' : 'completo');
+    tourRota(rid, true);
+    tourStart();
+  }, 1800);
 })();
 uiSync();
 pushNav();
