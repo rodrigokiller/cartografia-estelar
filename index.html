@@ -5515,13 +5515,19 @@ function buildSystem(sysId, spin0){
     /* v2 (r134): a linha dura saiu; a marca agora é uma FAIXA em degradê,
        colorida na borda da distância e sumindo para dentro (pedido dele),
        num lilás quase rosa para não confundir com o verde da zona habitável */
+    /* v3 (r148, desenho dele): a marca deixou de ser uma faixa fina na ponta e
+       virou um DISCO inteiro até o núcleo, quase invisível no centro, com o
+       degradê começando lá pela metade do raio e fechando na borda. E a
+       mágica: em vez de acender quando o anel enche a tela, ele acende quanto
+       MAIS você afasta, chegando ao ápice quando vira um círculo médio, e aí
+       apaga enquanto o próximo marco (dez vezes maior) começa a nascer */
     for(const ua of [1, 10, 100, 1000]){
       const rr3 = ua*ESCR_UA;
-      const rgg = new THREE.RingGeometry(rr3*0.80, rr3, 128, 1);
+      const rgg = new THREE.RingGeometry(rr3*0.015, rr3, 128, 1);
       const rl = new THREE.Mesh(rgg, new THREE.ShaderMaterial({transparent:true, depthWrite:false, side:THREE.DoubleSide,
-        uniforms:{op:{value:0}, cor:{value:new THREE.Color(REGUA_CORES[REGUA.cor][1])}, r0:{value:rr3*0.80}, r1:{value:rr3}},
+        uniforms:{op:{value:0}, cor:{value:new THREE.Color(REGUA_CORES[REGUA.cor][1])}, r0:{value:0.0}, r1:{value:rr3}},
         vertexShader:'varying float vR; void main(){ vR = length(position.xy); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
-        fragmentShader:'uniform float op; uniform float r0; uniform float r1; uniform vec3 cor; varying float vR; void main(){ float t = clamp((vR-r0)/(r1-r0), 0.0, 1.0); gl_FragColor = vec4(cor, op*t*t); }'}));
+        fragmentShader:'uniform float op; uniform float r0; uniform float r1; uniform vec3 cor; varying float vR; void main(){ float t = clamp((vR-r0)/(r1-r0), 0.0, 1.0); float g = smoothstep(0.42, 1.0, t); g = g*g*0.72 + smoothstep(0.955, 1.0, t)*0.5; gl_FragColor = vec4(cor, op*g); }'}));
       rl.rotation.x = Math.PI/2;
       scene.add(rl);
       /* o rótulo 3D da régua MORREU no r135: a distância virou o marco fixo do
@@ -5786,8 +5792,14 @@ function buildSystem(sysId, spin0){
         hzRing.material.opacity = 0.055*Math.min(1, Math.max(0, (CAM.dist - 5)/25));
       /* a régua acende só no anel da vez */
       for(const ra of reguaAneis){
-        const f2 = Math.max(0, 1 - Math.abs(Math.log10(CAM.dist/(ra.r*1.1)))*1.6);
-        if(!DIVE && !TRANSITO && !FADEIN) ra.obj.material.uniforms.op.value = REGUA.on ? 0.17*f2 : 0;
+        /* a curva nova: o ápice acontece com a câmera a ~2,4 raios do marco
+           (ele vira um círculo médio na tela) e cai para os dois lados numa
+           década e meia, então os marcos se revezam: um apaga enquanto o
+           seguinte, dez vezes maior, começa a nascer */
+        const u = Math.log10(CAM.dist/ra.r) - 0.38;
+        const f2 = Math.max(0, 1 - Math.abs(u)/0.72);
+        const f3 = f2*f2*(3 - 2*f2);   /* suaviza as pontas da subida */
+        if(!DIVE && !TRANSITO && !FADEIN) ra.obj.material.uniforms.op.value = REGUA.on ? 0.62*f3 : 0;
       }
       /* escala real: os alvos de clique RESPIRAM com o zoom (longe: generosos;
          perto: justos). Com raio fixo a Terra engolia a Lua, e a câmera
@@ -6337,7 +6349,7 @@ function grupoLive(id, raio, seg){
   if(id === 'terra'){
     g.rotation.z = THREE.MathUtils.degToRad(23.4);
     const am = new THREE.ShaderMaterial({vertexShader:ATMO_VERT, fragmentShader:ATMO_FRAG,
-      uniforms:{uCol:{value:C('#7fb0ff')}, uI:{value:1.15}},
+      uniforms:{uCol:{value:C('#7fb0ff')}, uI:{value:1.15}, uL:{value:LDIR.clone()}},
       side:THREE.BackSide, blending:THREE.AdditiveBlending, transparent:true, depthWrite:false});
     g.add(new THREE.Mesh(new THREE.SphereGeometry(raio*1.05, seg, seg), am));
     /* nuvens com clima real, desenhadas em canvas, derivando devagar */
@@ -6881,11 +6893,58 @@ function buildFocus(bodyId, spin0){
     bg.mesh.material.uniforms.uAmb.value = -0.18;
   if(spin0) bg.mesh.rotation.y = spin0;   /* continua de onde a cena do sistema parou */
   bg.group.traverse(o=>{ if(o.userData && o.userData.isClouds) clouds = o; });
+  /* AURORA nos polos (r148): dois anéis finos em volta dos polos magnéticos,
+     acesos SÓ do lado da noite e ondulando devagar, como as cortinas de
+     verdade. É o vento solar batendo no campo magnético e descendo pelas
+     linhas de campo até o ar */
+  if(bodyId === 'terra'){
+    const AUR_FRAG = `
+precision highp float;
+varying vec3 vWP; varying float vT;
+uniform vec3 uCol; uniform vec3 uL; uniform float uTime;
+float hh(float n){ return fract(sin(n)*43758.5453); }
+float nn(float x){ float i = floor(x), f = fract(x); f = f*f*(3.0-2.0*f); return mix(hh(i), hh(i+1.0), f); }
+void main(){
+  vec3 D = normalize(vWP);
+  float ndl = dot(D, normalize(uL));
+  float noite = smoothstep(0.16, -0.22, ndl);          /* só do lado escuro */
+  float ang = atan(vWP.z, vWP.x);
+  /* cortinas: duas ondas lentas em frequências diferentes */
+  float cort = nn(ang*3.5 + uTime*0.22) * nn(ang*8.0 - uTime*0.13);
+  cort = smoothstep(0.10, 0.85, cort);
+  float borda = smoothstep(0.0, 0.35, vT) * smoothstep(1.0, 0.55, vT);
+  gl_FragColor = vec4(uCol, 1.0) * noite * cort * borda * 0.85;
+}`;
+    const AUR_VERT = `
+varying vec3 vWP; varying float vT;
+void main(){
+  vWP = (modelMatrix*vec4(position, 1.0)).xyz;
+  vT = clamp((length(position.xy) - uR0)/(uR1 - uR0), 0.0, 1.0);
+  gl_Position = projectionMatrix*modelViewMatrix*vec4(position, 1.0);
+}`;
+    for(const lado of [1, -1]){
+      const rIn = radius*0.30, rOut = radius*0.46;
+      const ag = new THREE.RingGeometry(rIn, rOut, 96, 1);
+      const am2 = new THREE.ShaderMaterial({
+        /* replace com REGEX GLOBAL: uR0 aparece DUAS vezes na conta e o
+           replace de string troca só a primeira (a sonda pegou o shader
+           quebrando com 'uR0 undeclared') */
+        vertexShader:AUR_VERT.replace(/uR0/g, rIn.toFixed(6)).replace(/uR1/g, rOut.toFixed(6)),
+        fragmentShader:AUR_FRAG,
+        uniforms:{uCol:{value:C(lado > 0 ? '#7dffc0' : '#8ff0d8')}, uL:{value:LDIR.clone()}, uTime:{value:0}},
+        transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, side:THREE.DoubleSide});
+      ANIM_MATS.push(am2);
+      const anel = new THREE.Mesh(ag, am2);
+      anel.rotation.x = Math.PI/2;
+      anel.position.y = lado*radius*0.895;
+      bg.group.add(anel);
+    }
+  }
   /* toques de cena: a bruma laranja de Titã e os gêiseres do polo sul de Encélado */
   if(bodyId === 'tita'){
     const bruma = new THREE.Mesh(new THREE.SphereGeometry(radius*1.12, 48, 48),
       new THREE.ShaderMaterial({vertexShader:ATMO_VERT, fragmentShader:ATMO_FRAG,
-        uniforms:{uCol:{value:C('#e8923a')}, uI:{value:1.5}},
+        uniforms:{uCol:{value:C('#e8923a')}, uI:{value:1.5}, uL:{value:LDIR.clone()}},
         side:THREE.BackSide, blending:THREE.AdditiveBlending, transparent:true, depthWrite:false}));
     bg.group.add(bruma);
   }
@@ -10621,7 +10680,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r147';
+const BUILD = 'r148';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
