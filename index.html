@@ -332,6 +332,15 @@ body.photo.hudpeek #photoexit{opacity:1}
 .lbl.zona{color:#8fd8c8}
 .lbl.regua{color:#c9a8d8}
 .moonsrow .mk.sub{margin-top:7px;opacity:.72;font-size:9px;letter-spacing:2px}
+/* fileiras que dobram: o card da Terra tinha quatro listas empilhadas e
+   empurrava as estatísticas e os textos para baixo demais (crítica dele).
+   Agora cada lista nasce fechada, com a contagem no cabeçalho */
+.moonsrow .mk.dob{cursor:pointer;user-select:none}
+.moonsrow .mk.dob:hover{color:var(--ion)}
+.moonsrow .mk.dob .chev2{display:inline-block;font-style:normal;font-size:8px;margin-left:5px;
+  transition:transform .18s;transform:rotate(0deg)}
+.moonsrow.fechado .mk.dob .chev2{transform:rotate(-90deg)}
+.moonsrow.fechado .dobc{display:none}
 #trajclock .tbar b.tmk.mflash{animation:marcopulsa 1.8s ease-out}
 @keyframes marcopulsa{0%{box-shadow:0 0 2px 3px rgba(255,180,84,.85)}100%{box-shadow:0 0 0 16px rgba(255,180,84,0)}}
 #trajclock .tbar b.tmk{position:absolute;top:50%;width:8px;height:8px;cursor:pointer;
@@ -507,8 +516,10 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 .mbadge{font-family:var(--mono);font-size:8.5px;letter-spacing:1.4px;color:var(--ok);
   background:rgba(63,140,255,.07);border:1px solid var(--line2);padding:5px 8px;cursor:pointer}
 /* o ≋ grudado no badge: uma peça só, com um fio no meio */
+/* o par é UMA peça: só o botão da ESQUERDA perde a borda direita, senão o
+   ≋ fica sem o lado de fora (bug que ele viu no card da Terra) */
 .bpar{display:inline-flex}
-.bpar .mbadge{border-right:none}
+.bpar > .mbadge:first-child{border-right:none}
 .bpar .mbadge.vt{border-left:1px solid rgba(120,185,255,.35);padding:5px 7px 3px}
 .bpar:hover .mbadge{border-color:var(--amber)}
 .bhide{display:none}
@@ -1286,8 +1297,12 @@ void main(){
     vec2 dS2 = vec2(lon, lat) - uSombraPos;
     dS2.x = mod(dS2.x + 3.14159, 6.28318) - 3.14159;
     float dS = length(dS2*vec2(1.0,2.4));
-    float smb = smoothstep(uSombraR, uSombraR*0.45, dS);
-    col = mix(col, col*0.10, smb*0.92);
+    /* r146: sombra com PENUMBRA, como na vida: um halo largo e claro em
+       volta do núcleo escuro (quem está na penumbra vê um eclipse parcial) */
+    float pen = smoothstep(uSombraR*1.75, uSombraR*0.95, dS);
+    float umb = smoothstep(uSombraR*1.00, uSombraR*0.42, dS);
+    col = mix(col, col*0.42, pen*0.60);
+    col = mix(col, col*0.08, umb*0.94);
   }
 
   /* calotas polares */
@@ -1297,13 +1312,24 @@ void main(){
     water *= 1.0-capm;
   }
 
-  /* luz */
+  /* luz (r146: a noite deixou de ser um corte seco). Três coisas mudaram:
+     a luz CONTORNA um pouco o corpo (wrap lighting), o terminador ganhou o
+     rubor quente do entardecer, e o lado escuro tem um piso azulado de luz
+     das estrelas em vez de preto morto */
   vec3 N = normalize(vN);
   vec3 L = normalize(uL);
   vec3 V = normalize(vVp);
-  float dif = max(dot(N,L), 0.0);
-  float wrap = pow(dif, 0.85);
-  vec3 lit = col * (uAmb + wrap*1.12);
+  float ndl = dot(N, L);
+  float dif = max(ndl, 0.0);
+  /* a luz contorna a borda: o dia derrama um pouco para dentro da noite */
+  float envolve = clamp((ndl + 0.22)/1.22, 0.0, 1.0);
+  float wrap = pow(envolve, 0.92);
+  vec3 lit = col * (uAmb + wrap*1.10);
+  /* o entardecer: uma faixa quente exatamente onde o Sol raspa o horizonte */
+  float term = 1.0 - smoothstep(0.0, 0.26, abs(ndl));
+  lit += vec3(0.40, 0.19, 0.07) * term * 0.33 * (0.35 + 0.65*water);
+  /* piso de luz das estrelas: a noite fica escura, não cega */
+  lit += vec3(0.020, 0.028, 0.050) * (1.0 - wrap);
 
   /* especular só na água */
   float spec = pow(max(dot(reflect(-L,N), V), 0.0), 26.0) * water * 0.55;
@@ -1311,10 +1337,12 @@ void main(){
 
   /* luzes noturnas (Terra) */
   if(uLights > 0.5){
-    float nite = smoothstep(0.10, -0.06, dot(N,L));
+    /* acendem DEPOIS do entardecer, e não em cima dele */
+    float nite = smoothstep(0.06, -0.16, ndl);
     float landM = (uMode>2.5) ? smoothstep(uSea-0.02,uSea+0.02, fbm(sp*uScale+uSeed)) : 0.0;
     float dots = step(0.982, noise3(sp*130.0));
-    lit += vec3(1.0,0.72,0.38) * nite * landM * dots * 1.4;
+    float aglom = smoothstep(0.45, 0.85, fbm(sp*9.0 + 17.0));   /* as cidades se agrupam */
+    lit += vec3(1.0,0.74,0.40) * nite * landM * dots * (0.75 + 1.15*aglom) * 1.5;
   }
 
   /* leve tinta azul no terminador */
@@ -4026,6 +4054,7 @@ const camera = new THREE.PerspectiveCamera(55, 1, 0.05, 150000);
 /* câmera exclusiva do céu profundo: mesma posição da principal, mas alcance
    de bilhões de unidades (Deneb mora a 1,5 bilhão daqui) */
 const camCeu = new THREE.PerspectiveCamera(55, 1, 500, 4e9);
+let ACT_CEU_FOCO = null;
 const LDIR = new THREE.Vector3(-0.55, 0.35, 0.8).normalize();
 const ANIM_MATS = [];
 const raycaster = new THREE.Raycaster();
@@ -4056,6 +4085,60 @@ const TEX_ANEL = (function(){
 })();
 const TEX_DOT       = spriteTex([[0,'rgba(255,255,255,1)'],[0.45,'rgba(255,255,255,0.92)'],[0.78,'rgba(255,255,255,0.35)'],[1,'rgba(255,255,255,0)']]);
 
+/* ---------- O CÉU PROFUNDO, COMPARTILHADO (r145) ----------
+   As estrelas em distância real deixaram de ser exclusividade do mapa: a cena
+   de FOCO monta o mesmo céu, com as mesmas estrelas nos mesmos lugares e as
+   mesmas constelações. Era esse o CORTE que sobrava ao entrar num planeta na
+   escala 1:1: o fundo trocava inteiro na troca de cena. Agora ele atravessa. */
+const OBLIQ_CEU = 23.439*Math.PI/180;
+function dirCeu(raH, decG){
+  const a = raH/24*Math.PI*2, d = decG*Math.PI/180;
+  const xe = Math.cos(d)*Math.cos(a), ye = Math.cos(d)*Math.sin(a), ze = Math.sin(d);
+  const yl = ye*Math.cos(OBLIQ_CEU) + ze*Math.sin(OBLIQ_CEU);
+  const zl = -ye*Math.sin(OBLIQ_CEU) + ze*Math.cos(OBLIQ_CEU);
+  return new THREE.Vector3(xe, zl, -yl);
+}
+const CORCEU_G = {O:0xa8c8ff, B:0xb8d4ff, A:0xe8f0ff, F:0xfff4e0, G:0xfff0c0, K:0xffd9a0, M:0xffb388};
+/* devolve {cena, pos} com as estrelas e as linhas das constelações */
+function ceuProfundo(){
+  const cena = new THREE.Scene(), pos = {};
+  const gBril = [], gNorm = [];
+  for(const e of ESTRELAS_CEU){
+    const ly = CEU_LY[e[0]] || 900;
+    const v = dirCeu(e[2], e[3]).multiplyScalar(ly*LY_UA*ESCR_UA);
+    pos[e[0]] = v;
+    (e[4] < 1.0 ? gBril : gNorm).push([v, CORCEU_G[e[5]] || 0xe8f0ff]);
+  }
+  const mk = (arr, tam, op)=>{
+    const ps = new Float32Array(arr.length*3), col = new Float32Array(arr.length*3);
+    arr.forEach((it, i)=>{
+      ps[i*3] = it[0].x; ps[i*3+1] = it[0].y; ps[i*3+2] = it[0].z;
+      const c = new THREE.Color(it[1]); col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
+    });
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(ps, 3));
+    g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    const pts = new THREE.Points(g, new THREE.PointsMaterial({size:tam, vertexColors:true,
+      sizeAttenuation:false, transparent:true, opacity:op, depthWrite:false}));
+    pts.frustumCulled = false;
+    cena.add(pts);
+    return pts;
+  };
+  const p1 = mk(gBril, 3.6, 0.98), p2 = mk(gNorm, 2.3, 0.85);
+  const seg = [];
+  for(const k in CEU_LINHAS) for(const par of CEU_LINHAS[k].seg){
+    const a = pos[par[0]], b = pos[par[1]];
+    if(a && b) seg.push(a.x, a.y, a.z, b.x, b.y, b.z);
+  }
+  const lg = new THREE.BufferGeometry();
+  lg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(seg), 3));
+  const linhas = new THREE.LineSegments(lg, new THREE.LineBasicMaterial({color:0x6f9fd8,
+    transparent:true, opacity:0, blending:THREE.AdditiveBlending, depthWrite:false}));
+  linhas.frustumCulled = false;
+  linhas.visible = CEUV.on;
+  cena.add(linhas);
+  return {cena, pos, linhas, pontos:[p1, p2]};
+}
 function makeStars(count, spread, size, op){
   const pos = new Float32Array(count*3);
   for(let i=0;i<count;i++){
@@ -4651,6 +4734,23 @@ const CEU_LY = {
 const LY_UA = 63241.077;   /* 1 ano-luz em unidades astronômicas */
 /* o nome de cada estrela do céu (r142): agora TODAS têm ficha ao clicar, com
    distância, classe, brilho, constelação e o ano em que a luz saiu de lá */
+/* as fronteiras invisíveis do sistema: agora clicáveis, com ficha própria
+   (pedido antigo dele, junto com a Nuvem de Oort que já era clicável) */
+const FRONTEIRAS = {
+  heliopausa:{name:'HELIOPAUSA', desig:'FRONTEIRA · ~120 UA', kind:'Onde o vento do Sol para de soprar', hab:null,
+    quick:[['DISTÂNCIA','~120 UA do Sol'],['O QUE É','o fim da bolha do vento solar'],['QUEM CRUZOU','Voyager 1 em 2012'],['A SEGUNDA','Voyager 2 em 2018'],['ESPESSURA','~1 UA de transição'],['FORMA','achatada, como a proa de um barco']],
+    sections:[
+      {t:'O QUE ACONTECE AQUI', rows:[['A bolha','O Sol sopra partículas em todas as direções e cava uma bolha no gás da galáxia'],['O limite','Aqui a pressão do vento solar iguala a do meio interestelar e ele para'],['Não é o fim','A gravidade do Sol continua muito além: a Nuvem de Oort vai até quase um ano-luz'],['A forma','Não é uma esfera: o Sol se move pela galáxia e a bolha fica com proa e cauda']]},
+      {t:'A TRAVESSIA', rows:[['2012','A Voyager 1 registrou a queda das partículas do Sol e a subida dos raios cósmicos'],['2018','A Voyager 2 cruzou em outro ponto e confirmou que a fronteira é fina'],['O silencio','As duas continuam transmitindo do lado de fora, cada vez mais fraco'],['A New Horizons','Ainda está dentro, e deve cruzar nos anos 2040']]}],
+    facts:['A Voyager 1 cruzou esta fronteira em 2012 e virou o primeiro objeto humano no espaço interestelar.','Não é o fim do Sistema Solar: a gravidade do Sol governa a Nuvem de Oort até quase um ano-luz daqui.','A bolha não é redonda: como o Sol viaja pela galáxia, ela tem proa na frente e cauda atrás.'],
+    fict:null},
+  zonahab:{name:'ZONA HABITÁVEL', desig:'FAIXA · 0,95 A 1,67 UA', kind:'A faixa onde a água pode ser líquida', hab:null,
+    quick:[['NO SISTEMA SOLAR','0,95 a 1,67 UA'],['QUEM ESTÁ DENTRO','a Terra, com folga'],['NA BORDA','Marte, na parte fria'],['DE FORA','Vênus, quente demais'],['O APELIDO','zona de Cachinhos Dourados'],['NÃO GARANTE','vida, só permite água líquida']],
+    sections:[
+      {t:'O QUE ELA É', rows:[['A conta','A distância em que a luz da estrela deixa a água líquida na superfície'],['Cachinhos Dourados','Nem quente demais, nem frio demais: por isso o apelido'],['Depende da estrela','Numa anã vermelha ela fica coladinha; numa gigante, bem longe'],['Ela muda','O Sol esquenta com o tempo, e a faixa vai se afastando: em 1 bilhão de anos a Terra fica de fora']]},
+      {t:'OS CONTRAEXEMPLOS', rows:[['Vênus','Está quase na borda de dentro e virou um forno de 460 graus por efeito estufa'],['Marte','Está dentro da faixa e mesmo assim perdeu a atmosfera e a água'],['Encélado e Europa','Estão MUITO fora e têm oceanos líquidos, aquecidos por maré'],['A lição','Estar na faixa não basta, e estar fora dela não elimina ninguém']]}],
+    facts:['Vênus está quase na borda da zona habitável e mesmo assim tem 460 graus na superfície.','Europa e Encélado estão muito fora da faixa e têm oceanos de água líquida por aquecimento de maré.','A faixa se afasta com o tempo: o Sol esquenta, e daqui a 1 bilhão de anos a Terra fica do lado de dentro dela.'],
+    fict:null}};
 const CEU_NOME = {
   sirius:'SÍRIUS', canopus:'CANOPUS', rigilkent:'RIGIL KENTAURUS', arcturus:'ARCTURUS',
   vegaceu:'VEGA', capella:'CAPELA', rigel:'RIGEL', procyon:'PRÓCION', achernar:'ACHERNAR',
@@ -4706,11 +4806,13 @@ const CEUV = {on:true};   /* o desenho das constelações liga e desliga */
 const CEUN = {on:true};   /* os NOMES das estrelas no céu */
 const REGUA = {on:true, cor:0};  /* a régua de distâncias (1/10/100/1000 UA) */
 /* três cores para ele escolher no filtro (a forma do degradê ele já aprovou) */
-/* r141: o lilás saiu do padrão porque batia com a linha dos PLANETAS ANÕES
-   (0x5c4d80, roxa). O novo padrão é um verde-limão, longe do verde da zona
-   habitável (que é mais fechado e vive em anel largo e apagado) */
-const REGUA_CORES = [['VERDE-LIMÃO', 0xbce870, '#bce870'], ['VERDE-ÁGUA', 0x8fe0d8, '#8fe0d8'],
-  ['LILÁS', 0xd8b0e0, '#c9a8d8'], ['ÂMBAR', 0xffc98a, '#ffc98a']];
+/* r144: o lilás batia com a linha dos PLANETAS ANÕES (0x5c4d80) e o
+   verde-limão ele não curtiu. O padrão agora é AZUL-ÁGUA: fica na família do
+   azul da casa (--ion #7dc4ff) sem se confundir com as linhas de órbita, que
+   são todas escuras e dessaturadas (planeta 0x2a4a7a, cometa 0x2f5f6b), e sem
+   o peso de um laranja. Nada de cor forte, ordem dele */
+const REGUA_CORES = [['AZUL-ÁGUA', 0x7ad8e8, '#7ad8e8'], ['AZUL DA CASA', 0x8fc8ff, '#8fc8ff'],
+  ['VERDE-ÁGUA', 0x8fe0d8, '#8fe0d8'], ['LILÁS', 0xd8b0e0, '#c9a8d8']];
 /* longitude do periélio (graus, J2000): ancora a ELIPSE no espaço real,
    para as posições baterem com o céu (o desalinhamento vs Órion era isso) */
 const ESCALA_REAL_LONPERI = {mercurio:77.46, venus:131.53, terra:102.94, marte:336.04,
@@ -5321,10 +5423,16 @@ function buildSystem(sysId, spin0){
     hzRing.visible = HZV.on;
     scene.add(fade(hzRing));
     const hzMid = (hzFx[0]+hzFx[1])/2, hzAng = 3.9;
-    hzLbl = {el:makeLabel('ZONA HABITÁVEL', 'faint zona', null), off:!HZV.on,
+    hzLbl = {el:makeLabel('ZONA HABITÁVEL', 'faint zona', ()=>ACTION('fronteira', 'zonahab')), off:!HZV.on,
       escrOrb:(escrAtivo ? hzMid : 0),
       get:v=>v.set(Math.cos(hzAng)*hzMid, 0.5, Math.sin(hzAng)*hzMid)};
     labels.push(hzLbl);
+    if(sysId === 'sol'){
+      const zpk = new THREE.Mesh(new THREE.SphereGeometry(Math.max(0.8, hzMid*0.05), 8, 8), new THREE.MeshBasicMaterial({visible:false}));
+      zpk.position.set(Math.cos(hzAng)*hzMid, 0.5, Math.sin(hzAng)*hzMid);
+      zpk.userData = {act:'fronteira', id:'zonahab'};
+      scene.add(zpk); pickables.push(zpk);
+    }
   }
   /* heliopausa na escala real: a casca tênue a ~120 UA onde o vento solar
      acaba; as Voyagers e a Pioneer 10 estão DO LADO DE FORA, de verdade */
@@ -5341,8 +5449,15 @@ function buildSystem(sysId, spin0){
     hpG.setAttribute('position', new THREE.BufferAttribute(hpPos, 3));
     scene.add(fade(new THREE.Points(hpG, new THREE.PointsMaterial({color:0x6a9ac8, size:1.3,
       sizeAttenuation:false, transparent:true, opacity:0.4, depthWrite:false}))));
-    labels.push({el:makeLabel('HELIOPAUSA', 'faint zona', null), escrOrb:1800,
+    labels.push({el:makeLabel('HELIOPAUSA', 'faint zona', ()=>ACTION('fronteira', 'heliopausa')), escrOrb:1800,
       get:v=>v.set(Math.cos(0.9)*1800, 120, Math.sin(0.9)*1800)});
+    /* alvo de clique na própria casca, não só no nome */
+    {
+      const hpk = new THREE.Mesh(new THREE.SphereGeometry(90, 8, 8), new THREE.MeshBasicMaterial({visible:false}));
+      hpk.position.set(Math.cos(0.9)*1800, 120, Math.sin(0.9)*1800);
+      hpk.userData = {act:'fronteira', id:'heliopausa'};
+      scene.add(hpk); pickables.push(hpk);
+    }
     /* a borda interna da NUVEM DE OORT: ~2.000 UA. No teto do zoom a câmera
        está DENTRO dela, e ela segue por quase um ano-luz, essa é a lição */
     const ooN = QLOW ? 700 : 1200, ooPos = new Float32Array(ooN*3);
@@ -5627,6 +5742,7 @@ function buildSystem(sysId, spin0){
         if(CAM.dist > LY_UA*ESCR_UA*0.35 && typeof feito === 'function' && typeof FEITO !== 'undefined' && !FEITO.has('ceufundo')) feito('ceufundo');
       }
       /* as linhas do céu ACENDEM suaves (fade até 0.3) quando visíveis */
+      /* (o mesmo acender vale na cena de foco, logo abaixo) */
       if(ceuLinhas && ceuLinhas.visible && !DIVE && !TRANSITO && !FADEIN && ceuLinhas.material.opacity < 0.3)
         ceuLinhas.material.opacity = Math.min(0.3, ceuLinhas.material.opacity + dt*0.4);
       /* a zona habitável some no zoom fechado (tudo ficava verde, crítica dele) */
@@ -6577,8 +6693,12 @@ function buildFocus(bodyId, spin0){
   /* metade 1 da EXP-04: entrar na Terra com a escala real ligada */
   if(ESCR.on && bodyId === 'terra' && !ESCR_EXP.terra){ ESCR_EXP.terra = true; checaEscalaReal(); }
   const scene = new THREE.Scene();
+  /* na escala 1:1 do sistema solar o fundo é o CÉU DE VERDADE, o mesmo do
+     mapa: assim entrar num planeta não troca o universo atrás dele */
+  const ceuFoco = (ESCR.on && b._sys === 'sol' && !b.comet) ? ceuProfundo() : null;
+  const sceneCeu = ceuFoco ? ceuFoco.cena : null;
   const stF1 = makeStars(QLOW?750:1100, 130, 1.4, 0.8), stF2 = makeStars(300, 110, 2.2, 0.95);
-  scene.add(stF1); scene.add(stF2);
+  if(!ceuFoco){ scene.add(stF1); scene.add(stF2); }
   const wrap = new THREE.Group();
   scene.add(wrap);
   const labels = [], pickables = [];
@@ -6854,7 +6974,8 @@ function buildFocus(bodyId, spin0){
 
   const _smA = new THREE.Vector3(), _smB = new THREE.Vector3(), _smC = new THREE.Vector3();
   let simPrevF = SIMT.data;
-  return {kind:'focus', scene, labels, pickables, wrap, bodyId, sel:selReg, raioCorpo:radius, objs:objsFoco, subKids, sub:subEstado, escrFoco:(ESCR.on && b._sys === 'sol' && !b.comet),
+  if(ceuFoco) ACT_CEU_FOCO = ceuFoco;
+  return {kind:'focus', scene, sceneCeu, ceuLinhas:(ceuFoco ? ceuFoco.linhas : null), labels, pickables, wrap, bodyId, sel:selReg, raioCorpo:radius, objs:objsFoco, subKids, sub:subEstado, escrFoco:(ESCR.on && b._sys === 'sol' && !b.comet),
     get spin(){ return bg ? bg.mesh.rotation.y : 0; },
     dim:(v, exceto)=>{
       for(const f of fadeMats) f.m.opacity = f.o * v;
@@ -8204,6 +8325,13 @@ function ACTION(act, id){
   if(act==='focus' && ST.level==='focus' && ST.body===id) return;
   /* constelação não é lugar onde se entra: o clique abre a ficha e acende o
      desenho, e clicar de novo fecha (sem two-step de viagem) */
+  if(act==='fronteira'){
+    const jaEra3 = ST.mapCard && ST.mapCard.type==='fronteira' && ST.mapCard.id===id;
+    ST.mapCard = jaEra3 ? null : {type:'fronteira', id, act};
+    AUDIO.sfx('sel');
+    uiSync();
+    return;
+  }
   if(act==='estrela'){
     const jaEra2 = ST.mapCard && ST.mapCard.type==='estrela' && ST.mapCard.id===id;
     ST.mapCard = jaEra2 ? null : {type:'estrela', id, act};
@@ -9658,6 +9786,10 @@ function currentEntity(){
       const bb = ALLBODIES[ST.mapCard.id];
       return {type:'map', b:bb, nav:true, navKind:'body', navId:bb.id};
     }
+    if(ST.mapCard.type==='fronteira'){
+      const fr = FRONTEIRAS[ST.mapCard.id];
+      if(fr) return {type:'map', b:fr, nav:false};
+    }
     if(ST.mapCard.type==='estrela'){
       const f = fichaEstrela(ST.mapCard.id);
       if(f) return {type:'map', b:f, nav:!!f._sis, navKind:'sys', navId:f._sis};
@@ -9747,6 +9879,14 @@ function cardRender(){
     const par = x => temLinhaDoTempo(x) ? ('<span class="bpar">'+badge(x)+vtb(x)+'</span>') : badge(x);
     /* lista longa nasce ENXUTA: mostra os primeiros e o +N abre o resto */
     let nGrupo = 0;
+    /* uma fileira que dobra: cabeçalho clicável com a contagem e o conteúdo
+       escondido até o toque (nasce fechada quando a lista é longa) */
+    const fileira = (tit, dir, cont, n)=>{
+      const fechado = n > 3;
+      return '<div class="moonsrow' + (fechado ? ' fechado' : '') + '">'
+        + '<div class="mk dob"><span>' + tit + ' <i class="chev2">▾</i></span>' + dir + '</div>'
+        + '<div class="dobc">' + cont + '</div></div>';
+    };
     const listaBadges = (arr, corte)=>{
       corte = corte || 6;
       if(arr.length <= corte) return '<div class="badges">' + arr.map(par).join('') + '</div>';
@@ -9756,8 +9896,8 @@ function cardRender(){
         + '<button class="mbadge mais" data-mais="'+gid+'">+'+(arr.length-corte)+'</button></div>';
     };
     if(sats.length){
-      h += '<div class="moonsrow"><div class="mk"><span>SATÉLITES</span><span>'+sats.filter(x=>!x.morto).length+' ATIVOS · '+sats.length+' NO REGISTRO</span></div>'
-         + listaBadges(sats, 6) + '</div>';
+      h += fileira('SATÉLITES', '<span>'+sats.filter(x=>!x.morto).length+' ATIVOS · '+sats.length+' NO REGISTRO</span>',
+        listaBadges(sats, 6), sats.length);
     }
     if(missoes.length){
       /* as missões agrupadas por ERA, cronológicas dentro de cada uma */
@@ -9774,18 +9914,18 @@ function cardRender(){
       }
       const resto = missoes.filter(m=>!usados.has(m.id));
       if(resto.length) hM += listaBadges(resto, 6);
-      h += '<div class="moonsrow"><div class="mk"><span>MISSÕES LUNARES</span><span>HISTÓRICO · ≋ VÊ A VIAGEM</span></div>' + hM + '</div>';
+      h += fileira('MISSÕES LUNARES', '<span>'+missoes.length+' · ≋ VÊ A VIAGEM</span>', hM, missoes.length);
     }
     if(sondas.length){
-      h += '<div class="moonsrow"><div class="mk"><span>SONDAS LANÇADAS DAQUI</span><span>EM VOO · ≋ VÊ A ROTA</span></div>'
-         + listaBadges(sondas, 5) + '</div>';
+      h += fileira('SONDAS LANÇADAS DAQUI', '<span>'+sondas.length+' · ≋ VÊ A ROTA</span>',
+        listaBadges(sondas, 5), sondas.length);
     }
     /* a Lua é o ÍNDICE do museu: quem já veio, em ordem cronológica */
     if(bodyish.id === 'lua'){
       const ordemV = ['luna9','apollo8','apollo11','apollo13','luna16','apollo17','change4','slim','artemis1','artemis2'];
       const visitas = ordemV.map(i2=>ALLBODIES[i2]).filter(Boolean);
-      if(visitas.length) h += '<div class="moonsrow"><div class="mk"><span>AS VISITAS · 1966 A HOJE</span><span>≋ VÊ CADA VIAGEM</span></div>'
-        + listaBadges(visitas, 6) + '</div>';
+      if(visitas.length) h += fileira('AS VISITAS · 1966 A HOJE', '<span>'+visitas.length+' · ≋ CADA VIAGEM</span>',
+        listaBadges(visitas, 6), visitas.length);
     }
   }
   if(b.quick){
@@ -9870,6 +10010,11 @@ function cardRender(){
   const bss = $('#btnsubsis'); if(bss) bss.addEventListener('click', subSistema);
   pb.querySelectorAll('[data-vt]').forEach(el=>el.addEventListener('click', ()=>verLinhaDoTempo(el.dataset.vt)));
   /* o +N abre o resto da fileira sem recarregar o card */
+  /* abre e fecha a fileira (o cabeçalho inteiro é o botão) */
+  pb.querySelectorAll('.mk.dob').forEach(el=>el.addEventListener('click', ()=>{
+    const box = el.closest('.moonsrow');
+    if(box) box.classList.toggle('fechado');
+  }));
   pb.querySelectorAll('[data-mais]').forEach(el=>el.addEventListener('click', ()=>{
     const box = document.getElementById(el.dataset.mais);
     if(box){ box.classList.add('aberto'); el.remove(); }
@@ -10386,7 +10531,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r143';
+const BUILD = 'r146';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -11218,6 +11363,9 @@ function loop(){
     }
     /* o CÉU vem primeiro, com câmera própria de alcance gigante, e a
        profundidade é zerada depois: o sistema solar desenha por cima */
+    /* as constelações acendem em qualquer cena que tenha céu profundo */
+    if(ACT.ceuLinhas && ACT.kind === 'focus' && ACT.ceuLinhas.visible && ACT.ceuLinhas.material.opacity < 0.3)
+      ACT.ceuLinhas.material.opacity = Math.min(0.3, ACT.ceuLinhas.material.opacity + 0.006);
     if(ACT.sceneCeu){
       camCeu.position.copy(camera.position);
       camCeu.quaternion.copy(camera.quaternion);
