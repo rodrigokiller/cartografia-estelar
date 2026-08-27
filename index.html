@@ -4023,6 +4023,9 @@ const QLOW = matchMedia('(pointer: coarse)').matches;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, QLOW ? 1.75 : 2));
 renderer.setClearColor(0x03060f, 1);
 const camera = new THREE.PerspectiveCamera(55, 1, 0.05, 150000);
+/* câmera exclusiva do céu profundo: mesma posição da principal, mas alcance
+   de bilhões de unidades (Deneb mora a 1,5 bilhão daqui) */
+const camCeu = new THREE.PerspectiveCamera(55, 1, 500, 4e9);
 const LDIR = new THREE.Vector3(-0.55, 0.35, 0.8).normalize();
 const ANIM_MATS = [];
 const raycaster = new THREE.Raycaster();
@@ -4609,6 +4612,43 @@ const CEU_FICHA = {
       {t:'PROCÍON', rows:[['O nome','Vem do grego: aquele que vem antes do cão, porque nasce antes de Sírius'],['A vizinhança','É a 8ª mais brilhante do céu e uma das mais próximas'],['A companheira','Tem uma anã branca ao lado, como Sírius']]}],
     facts:['O nome significa aquele que vem antes do cão: ela nasce um pouco antes de Sírius.','A constelação inteira tem só duas estrelas dignas de nota.','Procíon também tem uma anã branca como companheira, igual a Sírius.'],
     fict:'É o menor dos dois cães que seguem Órion na caçada eterna.'}};
+/* DISTÂNCIA de cada estrela do catálogo, em anos-luz (r139). É ela que tira
+   o céu da casca e o põe em PROFUNDIDADE de verdade: cada estrela vai para o
+   lugar dela no espaço, e afastando a câmera as constelações se desmancham,
+   porque o desenho só existe visto da Terra. Valores de catálogo popular,
+   com a precisão boa para navegar, não para astrometria */
+const CEU_LY = {
+  sirius:8.6, canopus:310, rigilkent:4.37, arcturus:36.7, vegaceu:25, capella:42.9,
+  rigel:860, procyon:11.5, achernar:139, betelg:548, hadar:390, altair:16.7,
+  acrux:321, aldeb:65, antares:550, spica:250, pollux:33.8, fomalh:25.1,
+  deneb:1550, mimosa:280, regulus:79, adhara:430, castorceu:51, gacrux:88,
+  shaula:570, bellatrix:250, elnath:134, miapla:113, alnilam:2000, alnitak:1260,
+  alioth:81, dubhe:123, mirfak:510, wezen:1600, kausaus:143, alkaid:104,
+  sargas:270, menkal:250, atria:391, alhena:109, peacock:179, polaris:433,
+  saiph:650, mintaka:1200, meissa:1100, merak:79, phecda:84, megrez:58,
+  mizar:83, imai:345, schedar:228, caph:54, navi:550, ruchbah:99, segin:410,
+  acrab:400, dschubba:400, pisco:590, alniyat:470, tausco:470, larawag:65,
+  musco:65, zetasco:1900, etasco:72, iotasco:1900, kappasco:480, lesath:570,
+  gtau:154, dtau:153, ain:155, th2tau:150, zetau:440,
+  wasat:60, mebsuta:900, tejat:230, propus:380, alzirr:57,
+  c42ori:900, th1ori:1350, iotaori:1300, pi2ori:194, pi3ori:26.3, pi4ori:1300,
+  pi5ori:1300, muori:152, nuori:520, chi1ori:28,
+  denebola:36, algieba:130, zosma:58, chort:165, algenubi:250, adhafera:260,
+  rasalas:124, etaleo:1270,
+  porrima:38, vindem:110, zavijava:36, auva:200, heze:74, syrma:72,
+  sadr:1800, gienah:72, deltacyg:165, albireo:430,
+  sheliak:960, sulafat:620, deltalyr:900, zetalyr:156,
+  tarazed:400, alshain:44.7, okab:83, thetaaql:290, deltaaql:50, lambdaaql:125,
+  kausmedia:306, kausbor:78, nunki:228, ascella:88, phisgr:231, tausgr:122, alnasl:96,
+  menkent:61, muhlifain:130, epscen:430, etacen:308, zetacen:380, deltacen:410, iotacen:59,
+  mirzam:500, aludra:2000, furud:362,
+  algol:90, zetaper:750, epsper:640, gammaper:256, deltaper:520,
+  alpheratz:97, mirach:197, almach:350, deltaand:105,
+  markab:133, scheat:196, algenib:470, enif:690,
+  izar:210, seginus:87, nekkar:225, muphrid:37, deltaboo:122,
+  kochab:131, pherkad:487, yildun:183, epsumi:300, zetaumi:380, etaumi:97,
+  gomeisa:160};
+const LY_UA = 63241.077;   /* 1 ano-luz em unidades astronômicas */
 /* distância das famosas em anos-luz (vai junto no rótulo: a lição de que
    as estrelas de uma constelação nem são vizinhas) */
 const CEU_AL = {sirius:'8,6', canopus:'310', rigilkent:'4,4', arcturus:'37', vegaceu:'25',
@@ -5214,7 +5254,8 @@ function buildSystem(sysId, spin0){
   let simPrev = SIMT.data;
   /* zona habitável: o anel verde tênue onde água líquida é possível */
   let hzRing = null, hzLbl = null;
-  let ceuLinhas = null, ceuSelFn = null; const ceuLbls = [];
+  let ceuLinhas = null, ceuSelFn = null, sceneCeu = null, solCeu = null;
+  const ceuLbls = [], ceuPicks = [], ceuDir = {};
   const ceuCruzDir = new THREE.Vector3();
   const reguaAneis = [];
   const hzFx = HZ_SIS[sysId];
@@ -5283,7 +5324,15 @@ function buildSystem(sysId, spin0){
          quando você arrasta (decisão dele) */
       reguaAneis.push({obj:rl, lbl:null, r:rr3});
     }
-    /* ---------- O CÉU REAL: estrelas em posição verdadeira ---------- */
+    /* ---------- O CÉU REAL: estrelas em posição verdadeira ----------
+       r139: o céu saiu da casca e foi para a DISTÂNCIA de verdade, cada
+       estrela no seu ano-luz. Como isso estoura qualquer plano de corte
+       (Deneb fica a 1,5 bilhão de unidades), ele vive numa CENA PRÓPRIA,
+       desenhada antes com uma câmera de alcance gigante e a profundidade
+       limpa em seguida. A câmera é a mesma posição, então a PARALAXE é
+       honesta: parado em casa nada se move, e a caminho de outra estrela o
+       desenho das constelações se desfaz na sua frente */
+    sceneCeu = new THREE.Scene();
     const RCEU = 95000, OBLIQ = 23.439*Math.PI/180;
     const ceuPos = {};
     const dirDe = (raH, decG)=>{
@@ -5296,9 +5345,20 @@ function buildSystem(sysId, spin0){
     const CORCEU = {O:0xa8c8ff, B:0xb8d4ff, A:0xe8f0ff, F:0xfff4e0, G:0xfff0c0, K:0xffd9a0, M:0xffb388};
     const gBril = [], gNorm = [];
     for(const e of ESTRELAS_CEU){
-      const v = dirDe(e[2], e[3]).multiplyScalar(RCEU);
+      /* sem distância conhecida a estrela fica no fundo, a 900 anos-luz */
+      const ly = CEU_LY[e[0]] || 900;
+      const v = dirDe(e[2], e[3]).multiplyScalar(ly*LY_UA*ESCR_UA);
       ceuPos[e[0]] = v;
+      ceuDir[e[0]] = v.clone().normalize();
       (e[4] < 1.0 ? gBril : gNorm).push([v, CORCEU[e[5]] || 0xe8f0ff]);
+    }
+    /* o SOL vira uma estrela como as outras quando você sai de casa */
+    {
+      const sg = new THREE.BufferGeometry();
+      sg.setAttribute('position', new THREE.BufferAttribute(new Float32Array([0,0,0]), 3));
+      solCeu = new THREE.Points(sg, new THREE.PointsMaterial({color:0xfff0c0, size:4.2,
+        sizeAttenuation:false, transparent:true, opacity:0, depthWrite:false}));
+      sceneCeu.add(solCeu);
     }
     const mkCeu = (arr, tam, op)=>{
       const pos = new Float32Array(arr.length*3), col = new Float32Array(arr.length*3);
@@ -5311,7 +5371,7 @@ function buildSystem(sysId, spin0){
       g.setAttribute('color', new THREE.BufferAttribute(col, 3));
       const pts = new THREE.Points(g, new THREE.PointsMaterial({size:tam, vertexColors:true,
         sizeAttenuation:false, transparent:true, opacity:op, depthWrite:false}));
-      scene.add(fade(pts));
+      sceneCeu.add(pts);
       return pts;
     };
     mkCeu(gBril, 3.6, 0.98);
@@ -5322,15 +5382,20 @@ function buildSystem(sysId, spin0){
       if(!e[1]) continue;
       const vv2 = ceuPos[e[0]];
       const sisCeu = (CEU_SIS[e[0]] && SYS[CEU_SIS[e[0]]]) ? CEU_SIS[e[0]] : null;
-      labels.push({el:makeLabel(e[1] + (CEU_AL[e[0]] ? ' · ' + CEU_AL[e[0]] + ' AL' : ''), 'faint estrela', sisCeu ? (()=>ACTION('sys', sisCeu)) : null), sempre:true, ceuNome:true, off:!CEUN.on, get:(t)=>t.copy(vv2)});
+      /* o rótulo do céu é projetado na DIREÇÃO da estrela a partir de onde a
+         câmera está: assim ele funciona com a estrela a 1,5 bilhão de unidades
+         e acompanha a paralaxe sem sair do alcance da câmera principal */
+      labels.push({el:makeLabel(e[1] + (CEU_AL[e[0]] ? ' · ' + CEU_AL[e[0]] + ' AL' : ''), 'faint estrela', sisCeu ? (()=>ACTION('sys', sisCeu)) : null),
+        sempre:true, ceuNome:true, off:!CEUN.on,
+        get:(t)=>{ t.copy(vv2).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()).add(camera.position); }});
     }
     for(const cid in CEU_SIS){
       const vv3 = ceuPos[cid];
       if(!vv3 || !SYS[CEU_SIS[cid]]) continue;
-      const cpk = new THREE.Mesh(new THREE.SphereGeometry(4500, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
-      cpk.position.copy(vv3);
+      const cpk = new THREE.Mesh(new THREE.SphereGeometry(2400, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
       cpk.userData = {act:'sys', id:CEU_SIS[cid]};
       scene.add(cpk); pickables.push(cpk);
+      ceuPicks.push({obj:cpk, alvo:vv3});
     }
     /* as linhas das constelações (toggle na engrenagem) e os nomes delas */
     const lseg = [];
@@ -5340,17 +5405,19 @@ function buildSystem(sysId, spin0){
     }
     const lgeo = new THREE.BufferGeometry();
     lgeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(lseg), 3));
+    lgeo.computeBoundingSphere();
     ceuLinhas = new THREE.LineSegments(lgeo, new THREE.LineBasicMaterial({color:0x6f9fd8,
       transparent:true, opacity:0, blending:THREE.AdditiveBlending, depthWrite:false}));
     ceuLinhas.visible = CEUV.on;
-    scene.add(fade(ceuLinhas));
+    ceuLinhas.frustumCulled = false;
+    sceneCeu.add(ceuLinhas);
     /* a linha de DESTAQUE: acende só a constelação escolhida, em âmbar */
     const ceuSelG = new THREE.BufferGeometry();
     ceuSelG.setAttribute('position', new THREE.BufferAttribute(new Float32Array(120*6), 3));
     const ceuSel = new THREE.LineSegments(ceuSelG, new THREE.LineBasicMaterial({color:0xffb454,
       transparent:true, opacity:0.85, blending:THREE.AdditiveBlending, depthWrite:false}));
     ceuSel.frustumCulled = false; ceuSel.visible = false;
-    scene.add(ceuSel);
+    sceneCeu.add(ceuSel);
     ceuSelFn = (k)=>{
       const cc2 = k ? CEU_LINHAS[k] : null;
       if(!cc2){ ceuSel.visible = false; return; }
@@ -5371,19 +5438,20 @@ function buildSystem(sysId, spin0){
     for(const k in CEU_LINHAS){
       const cc = CEU_LINHAS[k], cen = new THREE.Vector3();
       let nC = 0;
-      for(const par of cc.seg){ if(ceuPos[par[0]]){ cen.add(ceuPos[par[0]]); nC++; } }
+      for(const par of cc.seg){ if(ceuDir[par[0]]){ cen.add(ceuDir[par[0]]); nC++; } }
       if(nC){
         cen.multiplyScalar(1/nC).normalize().multiplyScalar(RCEU);
         if(k === 'cruzeiro') ceuCruzDir.copy(cen).normalize();
         const cv = cen.clone();
-        const lb = {el:makeLabel(cc.nome, 'faint constel', CEU_FICHA[k] ? (()=>ACTION('constel', k)) : null), off:!CEUV.on, sempre:true, get:(t)=>t.copy(cv)};
+        const lb = {el:makeLabel(cc.nome, 'faint constel', CEU_FICHA[k] ? (()=>ACTION('constel', k)) : null), off:!CEUV.on, sempre:true,
+          get:(t)=>{ t.copy(cv).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()).add(camera.position); }};
         labels.push(lb); ceuLbls.push(lb);
         /* além do nome, um alvo largo no céu para clicar na figura */
         if(CEU_FICHA[k]){
-          const cpk2 = new THREE.Mesh(new THREE.SphereGeometry(7000, 8, 8), new THREE.MeshBasicMaterial({visible:false}));
-          cpk2.position.copy(cv);
+          const cpk2 = new THREE.Mesh(new THREE.SphereGeometry(3600, 8, 8), new THREE.MeshBasicMaterial({visible:false}));
           cpk2.userData = {act:'constel', id:k};
           scene.add(cpk2); pickables.push(cpk2);
+          ceuPicks.push({obj:cpk2, alvo:cv});
         }
       }
     }
@@ -5400,8 +5468,10 @@ function buildSystem(sysId, spin0){
   if(S.beltR) alcance = Math.max(alcance, S.beltR[1]);
   if(S.kuiperR) alcance = Math.max(alcance, S.kuiperR[1]);
   for(const pb of S.bodies) alcance = Math.max(alcance, pb.orbita ? pb.orbita.afel : (pb.sys ? pb.sys.orbit : 0));
-  const camMaxDin = escrAtivo ? alcance*2.3 : Math.max(S.camMax || 60, alcance * 1.7);   /* real: a maior órbita inteira na tela antes de subir de escala */
-  return {kind:'system', scene, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
+  /* na escala 1:1 o teto do zoom foi para 12 ANOS-LUZ (r139): o sistema
+     inteiro vira um pontinho e as estrelas vizinhas se separam de verdade */
+  const camMaxDin = escrAtivo ? 12*LY_UA*ESCR_UA : Math.max(S.camMax || 60, alcance * 1.7);
+  return {kind:'system', scene, sceneCeu, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
@@ -5474,6 +5544,18 @@ function buildSystem(sysId, spin0){
           ACT._zLua = false;
           applySel();
         }
+      }
+      /* o céu em profundidade: os alvos de clique e o brilho do Sol seguem a
+         câmera, e as constelações se desmancham quando você sai de casa */
+      if(sceneCeu){
+        const rP = Math.max(8000, CAM.dist*0.55);
+        for(const cp of ceuPicks){
+          cp.obj.position.copy(cp.alvo).sub(camera.position).normalize().multiplyScalar(rP).add(camera.position);
+          cp.obj.scale.setScalar(Math.max(1, rP/8000));
+        }
+        if(solCeu) solCeu.material.opacity = Math.min(0.95, Math.max(0, (CAM.dist - 4000)/12000));
+        /* saiu de casa: o aviso de que o desenho do céu é coisa daqui */
+        if(CAM.dist > LY_UA*ESCR_UA*0.35 && typeof feito === 'function' && typeof FEITO !== 'undefined' && !FEITO.has('ceufundo')) feito('ceufundo');
       }
       /* as linhas do céu ACENDEM suaves (fade até 0.3) quando visíveis */
       if(ceuLinhas && ceuLinhas.visible && !DIVE && !TRANSITO && !FADEIN && ceuLinhas.material.opacity < 0.3)
@@ -8170,6 +8252,9 @@ function escalaUniverso(){
   razoes.sort((a,b)=>a-b);
   return (_escUni = razoes[Math.floor(razoes.length/2)]);   /* mediana */
 }
+/* o raio onde os rótulos do céu são desenhados: perto o bastante para caber
+   no alcance da câmera principal, longe o bastante para ficar atrás de tudo */
+function RAIO_CEU_LBL(){ return Math.max(40000, CAM.dist*2.2); }
 function larguraDaTela(){
   const un = 2 * CAM.dist * Math.tan(camera.fov*Math.PI/360) * camera.aspect;  /* unidades */
   let kmPorUnidade = 0;
@@ -8366,6 +8451,7 @@ const CONQ_DESC = {visita:'Selecione um corpo e entre nele.', sondas:'No filtro 
   tourfora:'Abra o card de um sistema fora da Via Láctea e rode o TOUR dele até o fim.',
   escalareal:'Ligue a ESCALA REAL na engrenagem, entre na Terra e depois afaste até o sistema inteiro virar um pontinho.',
   ceucruzeiro:'Na escala real, com as constelações ligadas, aproxime da Terra e gire o céu até encontrar o CRUZEIRO DO SUL.',
+  ceufundo:'Na escala 1:1, afaste o zoom até sair do Sistema Solar e ver as constelações começarem a se desmanchar.',
   eracompleta:'Reviva as linhas do tempo das seis missões lunares: Apollo 8, 11, 13, 17 e Artemis I e II.',
   museuinteiro:'Reviva as DEZ linhas do tempo lunares, da Luna 9 ao SLIM: o museu completo da corrida.'};
 const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A LINHA DAS SONDAS',
@@ -8379,6 +8465,7 @@ const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A
   tourfora:'EXP-03 · TOUR EM OUTRA GALÁXIA',
   escalareal:'EXP-04 · O SISTEMA EM VERDADEIRA GRANDEZA',
   ceucruzeiro:'CEU-01 · ACHAR O CRUZEIRO DO SUL',
+  ceufundo:'CEU-02 · O DESENHO SE DESFEZ',
   eracompleta:'TIM-05 · A ERA COMPLETA',
   museuinteiro:'TIM-06 · O MUSEU INTEIRO'};
 function feito(k){
@@ -10048,7 +10135,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r138';
+const BUILD = 'r139';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -10867,14 +10954,32 @@ function loop(){
     applyCam();
     /* escala real: perto de um grão de planeta o plano de corte encolhe
        junto, senão a câmera atravessa o corpo antes de conseguir vê-lo */
-    const nearAlvo = (ACT && ACT.escr && CAM.dist < 2) ? Math.max(0.00004, CAM.dist*0.018) : 0.05;
-    if(Math.abs(camera.near - nearAlvo) > nearAlvo*0.2){
+    const nearAlvo = (ACT && ACT.escr && CAM.dist < 2) ? Math.max(0.00004, CAM.dist*0.018)
+      : ((ACT && ACT.escr && CAM.dist > 20000) ? CAM.dist*0.004 : 0.05);
+    /* longe de casa o alcance da câmera cresce junto, senão o próprio sistema
+       sai pela frente do plano de corte */
+    const farAlvo = (ACT && ACT.escr && CAM.dist > 20000) ? CAM.dist*6 : 150000;
+    if(Math.abs(camera.near - nearAlvo) > nearAlvo*0.2 || Math.abs(camera.far - farAlvo) > farAlvo*0.2){
       camera.near = nearAlvo;
+      camera.far = farAlvo;
       camera.updateProjectionMatrix();
+    }
+    /* o CÉU vem primeiro, com câmera própria de alcance gigante, e a
+       profundidade é zerada depois: o sistema solar desenha por cima */
+    if(ACT.sceneCeu){
+      camCeu.position.copy(camera.position);
+      camCeu.quaternion.copy(camera.quaternion);
+      camCeu.fov = camera.fov; camCeu.aspect = camera.aspect;
+      camCeu.updateProjectionMatrix();
+      renderer.autoClear = false;
+      renderer.clear();
+      renderer.render(ACT.sceneCeu, camCeu);
+      renderer.clearDepth();
     }
     if(TRANSITO){
       /* dois mundos no mesmo quadro: o velho atrás, o novo por cima */
-      renderer.render(TRANSITO.de.scene, camera);
+      if(!ACT.sceneCeu) renderer.render(TRANSITO.de.scene, camera);
+      else { renderer.render(TRANSITO.de.scene, camera); renderer.clearDepth(); }
       renderer.autoClear = false;
       renderer.clearDepth();
       renderer.render(ACT.scene, camera);
@@ -10882,6 +10987,7 @@ function loop(){
     } else {
       renderer.render(ACT.scene, camera);
     }
+    if(ACT.sceneCeu) renderer.autoClear = true;
     updateLabels();
   }
 }
