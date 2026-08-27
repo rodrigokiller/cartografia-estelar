@@ -7177,7 +7177,7 @@ function trajStart(id){
           local, obj:objFrame, focoPalco, frameFoco:(focoPalco ? objFrame : null),
           t0:performance.now(), ln:performance.now(),
           base:(b.comet && !b.escape) ? 30000 : 24000, id,
-          d0:CAM.dist, dAlvo:(focoPalco ? Math.max(9, dLuaFoco*2.3) : Math.min(CAM.dist, 16)), p0:CAM.pivot.clone(),
+          d0:CAM.dist, dAlvo:(focoPalco ? Math.max(9, dLuaFoco*2.3) : Math.min(CAM.dist, (ESCR.on && ST.sys === 'sol') ? 16 : 9)), p0:CAM.pivot.clone(),
           marcos:b.marcos || null, mAtual:null,
           kmh:(((b.quick||[]).find(r=>/VELOC/.test(r[0]))||[])[1]) || null, anosPorSeg:0,
           _a:new THREE.Vector3(), _b:new THREE.Vector3(), _c:new THREE.Vector3(),
@@ -7195,6 +7195,8 @@ function trajStart(id){
       oo.corpo.visible = true; TRAJ.corpoTemp = oo.corpo;
       /* escala real: o foguete não pode ser um gigante de milhares de km */
       if(ESCR.on && ST.sys === 'sol'){ TRAJ.corpoEsc0 = oo.corpo.scale.x; oo.corpo.scale.multiplyScalar(0.0084); }
+      /* mapa cênico: encolhe junto com a rota (r140) */
+      else if(!ESCR.on && ST.level === 'system'){ TRAJ.corpoEsc0 = oo.corpo.scale.x; oo.corpo.scale.multiplyScalar(0.62); }
     } }
   /* os planetas ficam na ÉPOCA da viagem: prog 0 mostra o céu do lançamento */
   TRAJ.dAno = 0;
@@ -7233,13 +7235,20 @@ function trajStart(id){
     const fatorTL = focoPalco ? (dLuaFoco/4.6) : ((ESCR.on && ST.sys === 'sol') ? (0.0385/4.6) : 1);
     const escrT = !focoPalco && (ESCR.on && ST.sys === 'sol');
     const perfil = b.trajPerfil || 'retorno';
-    const D = 4.6*fatorTL;
+    /* r140 · O PALCO CÊNICO ENCOLHEU (pedido dele: objetos e trajetórias
+       menores no modo mapa). No mapa do sistema a rota inteira cabia em 5
+       raios terrestres e comia um terço da órbita da Terra; agora ela é um
+       assunto perto do planeta. A COMPRESSÃO é assumida: a Lua real está a
+       60 raios, aqui fica a 2,9, e em troca os TAMANHOS ficam com a razão
+       honesta (a Lua com 0,27 do raio da Terra, como na vida) */
+    const compC = (!focoPalco && !escrT) ? (2.6/4.6) : 1;
+    const D = 4.6*fatorTL*compC;
     const rmLua = skLuaP ? (skLuaP.rm || 0.2) : 0.46;
     const R = focoPalco
       ? Math.min(rmLua*({pouso:1.4, orbita:1.4, dro:40, retorno:1.65}[perfil] || 1.5), dLuaFoco*0.45)
       : escrT ? ({pouso:0.0006, orbita:0.0006, dro:0.0070, retorno:0.00045}[perfil] || 0.0006)
-      : ({pouso:0.5, orbita:0.5, dro:1.05, retorno:0.68}[perfil] || 0.62);
-    const rEst = focoPalco ? FOCUS_RAIO*1.06 : (escrT ? 0.0011 : 1.35);
+      : ({pouso:0.5, orbita:0.5, dro:1.05, retorno:0.68}[perfil] || 0.62)*compC;
+    const rEst = focoPalco ? FOCUS_RAIO*1.06 : (escrT ? 0.0011 : 1.15);
     const pts = [];
     const cub = (p0,p1,p2,p3,t)=>{ const u = 1-t; return p0*u*u*u + 3*p1*u*u*t + 3*p2*u*t*t + p3*t*t*t; };
     const aIni = 2.28, aFim = -2.44;
@@ -7336,7 +7345,9 @@ function trajStart(id){
     TRAJ.rotaViz = new THREE.Line(lg, new THREE.LineBasicMaterial({color:0xffb454, transparent:true, opacity:0.45}));
     (focoPalco ? TRAJ.frameFoco : o.obj.parent).add(TRAJ.rotaViz);
     if(!focoPalco){
-      TRAJ.luaViz = new THREE.Mesh(new THREE.SphereGeometry(fatorTL === 1 ? 0.30 : 0.000174, 20, 20),
+      /* a Lua do palco cênico agora tem 0,27 do raio da Terra desenhada,
+         que é a razão de verdade (a distância é que é comprimida) */
+      TRAJ.luaViz = new THREE.Mesh(new THREE.SphereGeometry(fatorTL === 1 ? (ALLBODIES.terra.sys.size*0.273) : 0.000174, 20, 20),
         new THREE.MeshBasicMaterial({color:0x9a958c}));
       TRAJ.luaViz.position.set(D, 0, 0);
       o.obj.parent.add(TRAJ.luaViz);
@@ -7356,7 +7367,11 @@ function trajStart(id){
       /* o palco usa a LUA REAL do foco: guarda o holder dela para DIRIGIR a
          posição durante a missão, e devolve no fim */
       if(skLuaP){ TRAJ.luaFoco = skLuaP; TRAJ.luaRot0 = skLuaP.kh.rotation.y; }
-      const cf = grupoNave(id, 4.2);
+      /* o foguete tinha raio 4,2 contra uma Terra de 2,2: era DUAS VEZES o
+         planeta no palco cênico. Agora ele nasce na medida do palco (no 1:1
+         o valor calibrado do r123 fica como estava) */
+      const naveTam = (ESCR.on && ST.sys === 'sol') ? 4.2 : Math.max(0.10, D*0.045);
+      const cf = grupoNave(id, naveTam);
       TRAJ.frameFoco.add(cf.group);
       TRAJ.corpo = cf.group;
       TRAJ.cpos0 = cf.group.position.clone();
@@ -10135,7 +10150,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r139';
+const BUILD = 'r140';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
