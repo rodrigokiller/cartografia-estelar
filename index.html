@@ -4649,6 +4649,55 @@ const CEU_LY = {
   kochab:131, pherkad:487, yildun:183, epsumi:300, zetaumi:380, etaumi:97,
   gomeisa:160};
 const LY_UA = 63241.077;   /* 1 ano-luz em unidades astronômicas */
+/* o nome de cada estrela do céu (r142): agora TODAS têm ficha ao clicar, com
+   distância, classe, brilho, constelação e o ano em que a luz saiu de lá */
+const CEU_NOME = {
+  sirius:'SÍRIUS', canopus:'CANOPUS', rigilkent:'RIGIL KENTAURUS', arcturus:'ARCTURUS',
+  vegaceu:'VEGA', capella:'CAPELA', rigel:'RIGEL', procyon:'PRÓCION', achernar:'ACHERNAR',
+  betelg:'BETELGEUSE', hadar:'HADAR', altair:'ALTAIR', acrux:'ACRUX', aldeb:'ALDEBARAN',
+  antares:'ANTARES', spica:'SPICA', pollux:'PÓLUX', fomalh:'FOMALHAUT', deneb:'DENEB',
+  mimosa:'MIMOSA', regulus:'RÉGULUS', adhara:'ADHARA', castorceu:'CÁSTOR', gacrux:'GACRUX',
+  shaula:'SHAULA', bellatrix:'BELLATRIX', elnath:'ELNATH', miapla:'MIAPLACIDUS',
+  alnilam:'ALNILAM', alnitak:'ALNITAK', alioth:'ALIOTH', dubhe:'DUBHE', mirfak:'MIRFAK',
+  wezen:'WEZEN', kausaus:'KAUS AUSTRALIS', alkaid:'ALKAID', sargas:'SARGAS',
+  menkal:'MENKALINAN', atria:'ATRIA', alhena:'ALHENA', peacock:'PAVÃO', polaris:'POLARIS',
+  saiph:'SAIPH', mintaka:'MINTAKA', meissa:'MEISSA', merak:'MERAK', phecda:'PHECDA',
+  megrez:'MEGREZ', mizar:'MIZAR', imai:'IMAI', schedar:'SCHEDAR', caph:'CAPH', navi:'NAVI',
+  ruchbah:'RUCHBAH', segin:'SEGIN', acrab:'ACRAB', dschubba:'DSCHUBBA', pisco:'PI SCORPII',
+  alniyat:'ALNIYAT', tausco:'TAU SCORPII', larawag:'LARAWAG', musco:'MU SCORPII',
+  zetasco:'ZETA SCORPII', etasco:'ETA SCORPII', iotasco:'IOTA SCORPII', kappasco:'KAPPA SCORPII',
+  lesath:'LESATH', gtau:'GAMMA TAURI', dtau:'DELTA TAURI', ain:'AIN', th2tau:'THETA TAURI',
+  zetau:'ZETA TAURI', wasat:'WASAT', mebsuta:'MEBSUTA', tejat:'TEJAT', propus:'PROPUS',
+  alzirr:'ALZIRR', c42ori:'42 ORIONIS', th1ori:'TRAPÉZIO', iotaori:'NAIR AL SAIF',
+  pi2ori:'PI2 ORIONIS', pi3ori:'TABIT', pi4ori:'PI4 ORIONIS', pi5ori:'PI5 ORIONIS',
+  muori:'MU ORIONIS', nuori:'NU ORIONIS', chi1ori:'CHI1 ORIONIS',
+  denebola:'DENÉBOLA', algieba:'ALGIEBA', zosma:'ZOSMA', chort:'CHORT', algenubi:'ALGENUBI',
+  adhafera:'ADHAFERA', rasalas:'RASALAS', etaleo:'ETA LEONIS',
+  porrima:'PORRIMA', vindem:'VINDEMIATRIX', zavijava:'ZAVIJAVA', auva:'AUVA', heze:'HEZE',
+  syrma:'SYRMA', sadr:'SADR', gienah:'GIENAH', deltacyg:'DELTA CYGNI', albireo:'ALBIREO',
+  sheliak:'SHELIAK', sulafat:'SULAFAT', deltalyr:'DELTA LYRAE', zetalyr:'ZETA LYRAE',
+  tarazed:'TARAZED', alshain:'ALSHAIN', okab:'OKAB', thetaaql:'THETA AQUILAE',
+  deltaaql:'DELTA AQUILAE', lambdaaql:'LAMBDA AQUILAE', kausmedia:'KAUS MEDIA',
+  kausbor:'KAUS BOREALIS', nunki:'NUNKI', ascella:'ASCELLA', phisgr:'PHI SAGITTARII',
+  tausgr:'TAU SAGITTARII', alnasl:'ALNASL', menkent:'MENKENT', muhlifain:'MUHLIFAIN',
+  epscen:'EPSILON CENTAURI', etacen:'ETA CENTAURI', zetacen:'ZETA CENTAURI',
+  deltacen:'DELTA CENTAURI', iotacen:'IOTA CENTAURI', mirzam:'MIRZAM', aludra:'ALUDRA',
+  furud:'FURUD', algol:'ALGOL', zetaper:'ZETA PERSEI', epsper:'EPSILON PERSEI',
+  gammaper:'GAMMA PERSEI', deltaper:'DELTA PERSEI', alpheratz:'ALPHERATZ', mirach:'MIRACH',
+  almach:'ALMACH', deltaand:'DELTA ANDROMEDAE', markab:'MARKAB', scheat:'SCHEAT',
+  algenib:'ALGENIB', enif:'ENIF', izar:'IZAR', seginus:'SEGINUS', nekkar:'NEKKAR',
+  muphrid:'MUPHRID', deltaboo:'DELTA BOOTIS', kochab:'KOCHAB', pherkad:'PHERKAD',
+  yildun:'YILDUN', epsumi:'EPSILON URSAE MINORIS', zetaumi:'ZETA URSAE MINORIS',
+  etaumi:'ETA URSAE MINORIS', gomeisa:'GOMEISA'};
+/* o que cada classe espectral quer dizer, em português de gente */
+const CLASSE_CEU = {
+  O:['azul-violeta', 'Gigante azul, das mais quentes e raras do céu: acima de 30 mil graus'],
+  B:['azul', 'Azul e quente, entre 10 e 30 mil graus, vida curta e fim explosivo'],
+  A:['branca', 'Branca, com uns 8 a 10 mil graus: a classe de Sírius e Vega'],
+  F:['branco-amarelada', 'Amarelo-esbranquiada, um pouco mais quente que o Sol'],
+  G:['amarela', 'Amarela, a mesma classe do nosso Sol, com uns 5.500 graus'],
+  K:['alaranjada', 'Laranja e mais fria que o Sol: as mais longevas da vizinhança'],
+  M:['vermelha', 'Vermelha e fria: ou uma anã pequena, ou uma supergigante moribunda']};
 /* distância das famosas em anos-luz (vai junto no rótulo: a lição de que
    as estrelas de uma constelação nem são vizinhas) */
 const CEU_AL = {sirius:'8,6', canopus:'310', rigilkent:'4,4', arcturus:'37', vegaceu:'25',
@@ -4657,7 +4706,11 @@ const CEUV = {on:true};   /* o desenho das constelações liga e desliga */
 const CEUN = {on:true};   /* os NOMES das estrelas no céu */
 const REGUA = {on:true, cor:0};  /* a régua de distâncias (1/10/100/1000 UA) */
 /* três cores para ele escolher no filtro (a forma do degradê ele já aprovou) */
-const REGUA_CORES = [['LILÁS', 0xd8b0e0, '#c9a8d8'], ['VERDE-ÁGUA', 0x8fe0d8, '#8fe0d8'], ['ÂMBAR', 0xffc98a, '#ffc98a']];
+/* r141: o lilás saiu do padrão porque batia com a linha dos PLANETAS ANÕES
+   (0x5c4d80, roxa). O novo padrão é um verde-limão, longe do verde da zona
+   habitável (que é mais fechado e vive em anel largo e apagado) */
+const REGUA_CORES = [['VERDE-LIMÃO', 0xbce870, '#bce870'], ['VERDE-ÁGUA', 0x8fe0d8, '#8fe0d8'],
+  ['LILÁS', 0xd8b0e0, '#c9a8d8'], ['ÂMBAR', 0xffc98a, '#ffc98a']];
 /* longitude do periélio (graus, J2000): ancora a ELIPSE no espaço real,
    para as posições baterem com o céu (o desalinhamento vs Órion era isso) */
 const ESCALA_REAL_LONPERI = {mercurio:77.46, venus:131.53, terra:102.94, marte:336.04,
@@ -5256,6 +5309,7 @@ function buildSystem(sysId, spin0){
   let hzRing = null, hzLbl = null;
   let ceuLinhas = null, ceuSelFn = null, sceneCeu = null, solCeu = null;
   const ceuLbls = [], ceuPicks = [], ceuDir = {};
+  const CEU_DE = window.__ceuDe || (window.__ceuDe = {});
   const ceuCruzDir = new THREE.Vector3();
   const reguaAneis = [];
   const hzFx = HZ_SIS[sysId];
@@ -5378,6 +5432,19 @@ function buildSystem(sysId, spin0){
     mkCeu(gNorm, 2.3, 0.85);
     /* estrelas-sistema clicáveis pela LABEL e pelo ponto (ele tentou a label) */
     const CEU_SIS = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse'};
+    /* de qual constelação cada estrela faz parte (sai do próprio desenho) */
+    for(const k in CEU_LINHAS) for(const par of CEU_LINHAS[k].seg)
+      for(const id of par) if(!CEU_DE[id]) CEU_DE[id] = CEU_LINHAS[k].nome;
+    /* TODA estrela do catálogo vira um alvo de clique com ficha (r142) */
+    for(const e of ESTRELAS_CEU){
+      if(e[4] > 3.4) continue;   /* as mais fracas ficam só de enfeite */
+      const vE = ceuPos[e[0]];
+      if(!vE) continue;
+      const epk = new THREE.Mesh(new THREE.SphereGeometry(1, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
+      epk.userData = {act:'estrela', id:e[0]};
+      scene.add(epk); pickables.push(epk);
+      ceuPicks.push({obj:epk, alvo:vE, ang:0.021});
+    }
     for(const e of ESTRELAS_CEU){
       if(!e[1]) continue;
       const vv2 = ceuPos[e[0]];
@@ -5385,7 +5452,7 @@ function buildSystem(sysId, spin0){
       /* o rótulo do céu é projetado na DIREÇÃO da estrela a partir de onde a
          câmera está: assim ele funciona com a estrela a 1,5 bilhão de unidades
          e acompanha a paralaxe sem sair do alcance da câmera principal */
-      labels.push({el:makeLabel(e[1] + (CEU_AL[e[0]] ? ' · ' + CEU_AL[e[0]] + ' AL' : ''), 'faint estrela', sisCeu ? (()=>ACTION('sys', sisCeu)) : null),
+      labels.push({el:makeLabel(e[1] + (CEU_LY[e[0]] ? ' · ' + (CEU_LY[e[0]] < 100 ? String(CEU_LY[e[0]]).replace('.', ',') : Math.round(CEU_LY[e[0]])) + ' AL' : ''), 'faint estrela', ()=>ACTION('estrela', e[0])),
         sempre:true, ceuNome:true, off:!CEUN.on,
         get:(t)=>{ t.copy(vv2).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()).add(camera.position); }});
     }
@@ -5551,7 +5618,9 @@ function buildSystem(sysId, spin0){
         const rP = Math.max(8000, CAM.dist*0.55);
         for(const cp of ceuPicks){
           cp.obj.position.copy(cp.alvo).sub(camera.position).normalize().multiplyScalar(rP).add(camera.position);
-          cp.obj.scale.setScalar(Math.max(1, rP/8000));
+          /* alvo com tamanho ANGULAR constante: a estrela tem uma mira fina,
+             a constelação tem uma larga */
+          cp.obj.scale.setScalar(cp.ang ? rP*cp.ang : Math.max(1, rP/8000));
         }
         if(solCeu) solCeu.material.opacity = Math.min(0.95, Math.max(0, (CAM.dist - 4000)/12000));
         /* saiu de casa: o aviso de que o desenho do céu é coisa daqui */
@@ -5582,11 +5651,14 @@ function buildSystem(sysId, spin0){
       /* os anéis de mira respiram com o zoom: tamanho fixo na tela, sumindo
          quando o próprio corpo já ocupa aquele espaço */
       if(escrAtivo && !DIVE && !TRANSITO && !FADEIN){
-        const rAnel = CAM.dist*0.022;
+        /* r141: o anel encolheu para o tamanho do DESVIO DO RÓTULO, então a
+           pontinha do risco que desce do nome encosta na circunferência
+           (pedido dele: estavam grandes demais) */
+        const rAnel = Math.min(0.4, Math.max(0.0015, CAM.dist*0.012));
         for(const am of aneisMira){
           const escondePai = am.dPai && rAnel > am.dPai*0.55;   /* lua colada no dono: só quando dá para separar */
-          const somePerto = Math.min(1, Math.max(0, (rAnel*0.62 - am.r)/(rAnel*0.5)));
-          const op = (escondePai || am.spr.userData.off) ? 0 : 0.5*somePerto;
+          const somePerto = Math.min(1, Math.max(0, (rAnel*0.9 - am.r)/(rAnel*0.7)));
+          const op = (escondePai || am.spr.userData.off) ? 0 : 0.45*somePerto;
           am.spr.material.opacity = op;
           if(op > 0) am.spr.scale.setScalar(rAnel*2);
         }
@@ -7177,8 +7249,19 @@ function trajStart(id){
           local, obj:objFrame, focoPalco, frameFoco:(focoPalco ? objFrame : null),
           t0:performance.now(), ln:performance.now(),
           base:(b.comet && !b.escape) ? 30000 : 24000, id,
-          d0:CAM.dist, dAlvo:(focoPalco ? Math.max(9, dLuaFoco*2.3) : Math.min(CAM.dist, (ESCR.on && ST.sys === 'sol') ? 16 : 9)), p0:CAM.pivot.clone(),
+          d0:CAM.dist,
+          /* r141 · O ZOOM DA MISSÃO, DE VERDADE. A fase 'chega' faz um tween de
+             CAM.dist até dAlvo, e dAlvo era min(CAM.dist, 16): na escala 1:1 a
+             rota inteira mede 0,04 unidade, então o tween largava a câmera 400
+             VEZES longe demais e ainda desfazia, no quadro seguinte, o
+             CAM.dist=0.12 que o r121 tinha posto. Agora cada palco pede a
+             distância dele: o palco de foco enquadra a Lua da cena, o mapa 1:1
+             enquadra a rota de 0,0385 un e o mapa cênico a rota encolhida */
+          dAlvo:(focoPalco ? Math.max(9, dLuaFoco*2.3)
+                 : ((ESCR.on && ST.sys === 'sol') ? 0.125 : Math.min(CAM.dist, 9))),
+          p0:CAM.pivot.clone(),
           marcos:b.marcos || null, mAtual:null,
+          orienta:!!b.foguete,   /* só os foguetes deitam na rota: sonda e cometa têm orientação própria */
           kmh:(((b.quick||[]).find(r=>/VELOC/.test(r[0]))||[])[1]) || null, anosPorSeg:0,
           _a:new THREE.Vector3(), _b:new THREE.Vector3(), _c:new THREE.Vector3(),
           ano0:(b.traj && b.traj.de) || anoDe(b),
@@ -7383,7 +7466,10 @@ function trajStart(id){
     /* na escala real a câmera JÁ ABRE enquadrando os 384 mil km: o tween era
        cancelado pelo resto do trajStart e a rota ficava minúscula com cara de
        zoom travado (bug que o Rodrigo viu) */
-    if(fatorTL !== 1){ CAMTW = null; CAM.dist = 0.12; }   /* o tween de entrada do swapScene devolvia o zoom para longe */
+    /* o tween de entrada do swapScene devolvia o zoom para longe: matar o
+       CAMTW continua necessário, mas quem manda na distância agora é o dAlvo
+       da fase 'chega', que sabe o tamanho do palco */
+    if(fatorTL !== 1) CAMTW = null;
   }
   $('#trajtxt').textContent = b.name;
   $('#trajano0').textContent = TRAJ.dias ? b.traj.d0 : (TRAJ.ano0 || '');
@@ -7462,7 +7548,7 @@ function trajCancelar(){
 function trajLimpar(){
   document.body.classList.remove('emtraj');
   if(ACT && ACT.tempoLivre) ACT.tempoLivre();
-  if(TRAJ && TRAJ.corpo && TRAJ.cpos0) TRAJ.corpo.position.copy(TRAJ.cpos0);
+  if(TRAJ && TRAJ.corpo && TRAJ.cpos0){ TRAJ.corpo.position.copy(TRAJ.cpos0); if(TRAJ.orienta) TRAJ.corpo.quaternion.identity(); }
   if(TRAJ && TRAJ.corpoTemp){
     TRAJ.corpoTemp.visible = false;
     if(TRAJ.corpoEsc0 !== undefined) TRAJ.corpoTemp.scale.setScalar(TRAJ.corpoEsc0);
@@ -7534,6 +7620,27 @@ function trajStep(now){
   if(TRAJ.corpo && TRAJ.corpo.parent){
     TRAJ.corpo.parent.worldToLocal(TRAJ._b.copy(TRAJ._c));
     TRAJ.corpo.position.copy(TRAJ._b);
+    /* r142 · o foguete APONTA para onde vai (o fim do fim, pedido dele): a
+       direção vem do próximo ponto da própria rota, e o modelo, que é
+       construído em pé no eixo Y, é girado para deitar na tangente */
+    if(TRAJ.orienta){
+      const passo = 0.004;
+      trajPonto(Math.min(1, TRAJ.prog + passo), TRAJ._a);
+      if(TRAJ.prog > 1 - passo) trajPonto(TRAJ.prog - passo, TRAJ._b2 || (TRAJ._b2 = new THREE.Vector3()));
+      const de = (TRAJ.prog > 1 - passo) ? TRAJ._b2 : TRAJ._c;
+      const alvo = (TRAJ.prog > 1 - passo) ? TRAJ._c : TRAJ._a;
+      TRAJ._dir = TRAJ._dir || new THREE.Vector3();
+      TRAJ._dir.copy(alvo).sub(de);
+      if(TRAJ._dir.lengthSq() > 1e-18){
+        TRAJ._dir.normalize();
+        TRAJ._q = TRAJ._q || new THREE.Quaternion();
+        TRAJ._up = TRAJ._up || new THREE.Vector3(0, 1, 0);
+        TRAJ._q.setFromUnitVectors(TRAJ._up, TRAJ._dir);
+        /* resposta rápida o bastante para acompanhar a curva fechada do
+           estacionamento sem ficar robótico nas retas */
+        TRAJ.corpo.quaternion.slerp(TRAJ._q, 0.42);
+      }
+    }
   }
   /* o zoom fica livre: quem quiser afasta e vê o sistema inteiro andando
      (em dias, o sistema não acelera: oito dias não movem planeta nenhum) */
@@ -8089,6 +8196,7 @@ function up(){
   } else if(ST.level==='system') gotoGalaxy((SYS[ST.sys] && SYS[ST.sys].gal) || 'vialactea', null, false, ST.sys);
   else if(ST.level==='galaxy') gotoUniverse(null, ST.gal);
 }
+/* o ESC, longe de casa, traz de volta (o voo não é um beco sem saída) */
 function ACTION(act, id){
   if(TRAJ && TRAJ.fase!=='volta') return;   /* na linha do tempo a cena não navega */
   if(TOUR.on) tourStop();   /* escolher um destino é assumir o controle */
@@ -8096,6 +8204,13 @@ function ACTION(act, id){
   if(act==='focus' && ST.level==='focus' && ST.body===id) return;
   /* constelação não é lugar onde se entra: o clique abre a ficha e acende o
      desenho, e clicar de novo fecha (sem two-step de viagem) */
+  if(act==='estrela'){
+    const jaEra2 = ST.mapCard && ST.mapCard.type==='estrela' && ST.mapCard.id===id;
+    ST.mapCard = jaEra2 ? null : {type:'estrela', id, act};
+    AUDIO.sfx('sel');
+    uiSync();
+    return;
+  }
   if(act==='constel'){
     const jaEra = ST.mapCard && ST.mapCard.type==='constel' && ST.mapCard.id===id;
     ST.mapCard = jaEra ? null : {type:'constel', id, act};
@@ -9321,6 +9436,93 @@ function buildFindIdx(){
     FINDIDX.push({name:S.name, sub:'SISTEMA', k:norm(S.name+' sistema'), go:()=>gotoSystem(k2)});
   for(const g of GALAXIES)
     FINDIDX.push({name:g.name, sub:'GALÁXIA', k:norm(g.name+' galaxia'), go:()=>gotoGalaxy(g.id)});
+  /* as estrelas do céu real entram na busca (r143): achar SÍRIUS e IR até lá,
+     sem corte, era o sonho que ele descreveu */
+  for(const e of ESTRELAS_CEU){
+    const nome = CEU_NOME[e[0]] || e[0].toUpperCase();
+    const ly = CEU_LY[e[0]] || 900;
+    FINDIDX.push({name:nome, sub:'ESTRELA · ' + (ly < 100 ? String(ly).replace('.', ',') : Math.round(ly)) + ' AL',
+      k:norm(nome + ' estrela ' + e[0]), go:()=>voarAteEstrela(e[0])});
+  }
+}
+/* ---------- O VOO ATÉ UMA ESTRELA (r143) ----------
+   O pedido dele: travado na Terra no modo 1:1, buscar uma estrela e ir até
+   ela SEM transição. É o que acontece aqui: a câmera mira na direção certa e
+   o PIVÔ viaja pelo espaço até a estrela, com o céu em profundidade real
+   abrindo em paralaxe no caminho (as constelações se desmancham na sua
+   frente). Chegando, se aquele sol tem sistema no atlas, a cena troca sem
+   animação de entrada; se não tem, a viagem para lá mesmo e o ESC traz de
+   volta para casa. */
+let VOOCEU = null;
+function voarAteEstrela(idCeu){
+  const e = ESTRELAS_CEU.find(x=>x[0] === idCeu);
+  if(!e) return;
+  const nome = CEU_NOME[idCeu] || idCeu.toUpperCase();
+  const ly = CEU_LY[idCeu] || 900;
+  const sis = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse'}[idCeu];
+  /* fora da escala 1:1 o céu é cenográfico: aí a busca só abre a ficha
+     (ou entra no sistema, quando ele existe no atlas) */
+  if(!(ACT && ACT.kind === 'system' && ACT.escr && ACT.sceneCeu)){
+    if(sis){ gotoSystem(sis); return; }
+    ACTION('estrela', idCeu);
+    showHint(nome + ' · ' + (ly < 100 ? String(ly).replace('.', ',') : Math.round(ly)) + ' ANOS-LUZ · LIGUE A ESCALA 1:1 PARA VOAR ATÉ LÁ');
+    return;
+  }
+  if(TRAJ || DIVE || TRANSITO) return;
+  const dir = new THREE.Vector3();
+  {
+    const OBQ = 23.439*Math.PI/180;
+    const a = e[2]/24*Math.PI*2, d = e[3]*Math.PI/180;
+    const xe = Math.cos(d)*Math.cos(a), ye = Math.cos(d)*Math.sin(a), ze = Math.sin(d);
+    const yl = ye*Math.cos(OBQ) + ze*Math.sin(OBQ);
+    const zl = -ye*Math.sin(OBQ) + ze*Math.cos(OBQ);
+    dir.set(xe, zl, -yl).normalize();
+  }
+  const alvo = dir.clone().multiplyScalar(ly*LY_UA*ESCR_UA*(sis ? 0.997 : 0.92));
+  /* a câmera olha PARA a estrela: fica atrás do pivô, no rumo contrário */
+  const yawAlvo = Math.atan2(-dir.x, -dir.z);
+  const pitAlvo = Math.max(-1.3, Math.min(1.3, Math.asin(-dir.y) + 0.06));
+  CAMTW = null;
+  ST.mapCard = null; uiSync();
+  VOOCEU = {t0:performance.now(), ms:(sis ? 5200 : 4200), p0:CAM.pivot.clone(), p1:alvo,
+    d0:CAM.dist, d1:Math.max(CAM.min*4, Math.min(CAM.max*0.6, ly*LY_UA*ESCR_UA*0.06)),
+    y0:CAM.yaw, y1:yawAlvo, i0:CAM.pitch, i1:pitAlvo, sis, nome, ly, idCeu, longe:true};
+  showHint('RUMO A ' + nome + ' · ' + (ly < 100 ? String(ly).replace('.', ',') : Math.round(ly)) + ' ANOS-LUZ');
+  AUDIO.sfx('enter');
+}
+function vooCeuStep(now){
+  if(!VOOCEU) return;
+  const k = Math.min(1, (now - VOOCEU.t0)/VOOCEU.ms), ev = easeIO(k);
+  CAM.pivot.lerpVectors(VOOCEU.p0, VOOCEU.p1, ev);
+  CAM.dist = VOOCEU.d0 + (VOOCEU.d1 - VOOCEU.d0)*ev;
+  /* o ângulo mais curto entre os dois rumos, para não dar a volta ao contrário */
+  let dy = VOOCEU.y1 - VOOCEU.y0;
+  while(dy > Math.PI) dy -= Math.PI*2;
+  while(dy < -Math.PI) dy += Math.PI*2;
+  CAM.yaw = VOOCEU.y0 + dy*ev;
+  CAM.pitch = VOOCEU.i0 + (VOOCEU.i1 - VOOCEU.i0)*ev;
+  if(k < 1) return;
+  const v = VOOCEU;
+  VOOCEU = null;
+  if(v.sis && SYS[v.sis]){
+    /* chegou: o sistema entra SEM animação de entrada, emendando na viagem */
+    gotoSystem(v.sis, 'VOCÊ CHEGOU A ' + v.nome, null, true);
+  } else {
+    VOOLONGE = {nome:v.nome, ly:v.ly};
+    showHint(v.nome + ' · VOCÊ ESTÁ A ' + (v.ly < 100 ? String(v.ly).replace('.', ',') : Math.round(v.ly)) + ' ANOS-LUZ DE CASA. ESTE SISTEMA AINDA NÃO ESTÁ MAPEADO: ESC VOLTA PARA O SOL');
+    if(v.idCeu) ACTION('estrela', v.idCeu);
+  }
+}
+let VOOLONGE = null;
+function voltarParaCasa(){
+  if(!VOOLONGE) return false;
+  VOOLONGE = null;
+  CAMTW = null;
+  VOOCEU = {t0:performance.now(), ms:3600, p0:CAM.pivot.clone(), p1:new THREE.Vector3(),
+    d0:CAM.dist, d1:Math.min(CAM.max*0.02, 3000), y0:CAM.yaw, y1:CAM.yaw, i0:CAM.pitch, i1:0.45,
+    sis:null, nome:'SISTEMA SOLAR', ly:0};
+  showHint('DE VOLTA PARA CASA');
+  return true;
 }
 function findOpen(){
   if(!FINDIDX) buildFindIdx();
@@ -9421,11 +9623,44 @@ function crumbsRender(){
   });
 }
 
+/* a ficha de uma estrela do céu, montada do catálogo: nada inventado, só o
+   que os números dizem (distância, brilho, classe, constelação e o ano em
+   que a luz que você está vendo saiu de lá) */
+function fichaEstrela(id){
+  const e = ESTRELAS_CEU.find(x=>x[0] === id);
+  if(!e) return null;
+  const nome = CEU_NOME[id] || id.toUpperCase();
+  const ly = CEU_LY[id] || 900;
+  const cl = CLASSE_CEU[e[5]] || ['', ''];
+  const sis = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse'}[id];
+  const constel = (window.__ceuDe && window.__ceuDe[id]) || null;
+  const anoLuz = Math.round(2026 - ly);
+  const quando = anoLuz > 1900 ? ('em ' + anoLuz) : (anoLuz > 0 ? ('no ano ' + anoLuz) : (Math.round(-anoLuz) + ' anos antes de Cristo'));
+  const q = [['DISTÂNCIA', (ly < 100 ? ly.toFixed(1).replace('.', ',') : Math.round(ly).toLocaleString('pt-BR')) + ' anos-luz'],
+    ['BRILHO', 'magnitude ' + String(e[4]).replace('.', ',')],
+    ['CLASSE', e[5] + ' · ' + cl[0]]];
+  if(constel) q.push(['CONSTELAÇÃO', constel]);
+  q.push(['A OLHO NU', e[4] < 6 ? 'sim' : 'não']);
+  if(sis) q.push(['NO ATLAS', 'sistema visítável']);
+  return {name:nome, desig:'ESTRELA · CLASSE ' + e[5], kind:cl[1], hab:null, _sis:sis,
+    quick:q,
+    sections:[{t:'O QUE A LUZ CONTA', rows:[
+      ['A viagem', 'A luz que chega agora saiu de lá ' + quando],
+      ['A distância', 'Voando como a Voyager 1, seriam ' + Math.round(ly*17700).toLocaleString('pt-BR') + ' anos de viagem'],
+      ['A cor', 'Classe ' + e[5] + ': ' + cl[1].toLowerCase()]
+    ].concat(constel ? [['O desenho', 'Faz parte de ' + constel + ', mas as estrelas do desenho não são vizinhas entre si']] : [])}],
+    facts:[sis ? 'Este sistema tem ficha completa no atlas: use o botão de entrar.' : 'A figura da constelação só existe vista da Terra: de outro lugar do espaço, esse desenho não aparece.'],
+    fict:null};
+}
 function currentEntity(){
   if(ST.mapCard){
     if(ST.mapCard.type==='body'){
       const bb = ALLBODIES[ST.mapCard.id];
       return {type:'map', b:bb, nav:true, navKind:'body', navId:bb.id};
+    }
+    if(ST.mapCard.type==='estrela'){
+      const f = fichaEstrela(ST.mapCard.id);
+      if(f) return {type:'map', b:f, nav:!!f._sis, navKind:'sys', navId:f._sis};
     }
     if(ST.mapCard.type==='constel'){
       const c = CEU_LINHAS[ST.mapCard.id], f = CEU_FICHA[ST.mapCard.id];
@@ -10120,6 +10355,7 @@ window.addEventListener('keydown', e=>{
     else if($('#finder').classList.contains('on')) findClose();
     else if($('#cmp').classList.contains('on')) closeCmp();
     else if($('#help').classList.contains('on')) $('#help').classList.remove('on');
+    else if(typeof voltarParaCasa === 'function' && voltarParaCasa()){}   /* longe de casa, o ESC traz de volta */
     else if(ST.mapCard){ ST.mapCard = null; uiSync(); }
     else up();
   }
@@ -10150,7 +10386,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r140';
+const BUILD = 'r143';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -10917,6 +11153,7 @@ function loop(){
     }
   }
   if(DIVE) diveStep(now);
+  if(VOOCEU) vooCeuStep(now);
   if(TRAJ) trajStep(now);
   if(TRANSITO) transitoStep(now);
   /* CORREÇÃO do bug da cena preta (r75-r77): o bloco da trava de centro foi
