@@ -1265,6 +1265,8 @@ uniform vec3 uSeaCol; uniform float uSea;
 uniform float uScale; uniform float uSeed;
 uniform float uBandF; uniform float uTurb;
 uniform float uCap; uniform float uCapAmt; uniform vec3 uCapCol;
+/* r171 · a estação do ano: +1 é verão no hemisfério norte, -1 é inverno lá */
+uniform float uEst; uniform float uEstAmt;
 uniform float uSpotOn; uniform vec2 uSpotPos; uniform float uSpotR; uniform vec3 uSpotCol;
 uniform float uSombraOn; uniform vec2 uSombraPos; uniform float uSombraR;
 uniform float uMode;   /* 0 rocky · 1 gas · 2 haze · 3 earth */
@@ -1303,6 +1305,15 @@ void main(){
     water = 1.0 - land;
     vec3 landC = mix(uC1, uC2, smoothstep(0.4,0.8,fbm(sp*uScale*2.2+3.1)));
     landC = mix(landC, uC3, (1.0-smoothstep(0.18,0.5,abs(lat)))*0.55);
+    /* r171 · O OUTONO. O hemisfério que está saindo do verão desbota o verde
+       para ocre, e só fora dos trópicos, que é onde a folha cai de verdade.
+       O outro hemisfério está na primavera ao mesmo tempo, de graça, porque a
+       conta troca de sinal com a latitude */
+    if(uEstAmt > 0.001){
+      float lado = (lat > 0.0) ? -uEst : uEst;
+      float outono = clamp(lado, 0.0, 1.0)*smoothstep(0.16, 0.62, abs(lat));
+      landC = mix(landC, landC*vec3(1.18, 0.94, 0.68), outono*0.62*uEstAmt);
+    }
     vec3 seaC = mix(uSeaCol*0.7, uSeaCol, smoothstep(0.1,0.5,n));
     col = mix(seaC, landC, land);
   }
@@ -1332,7 +1343,14 @@ void main(){
 
   /* calotas polares */
   if(uCapAmt > 0.001){
-    float capm = smoothstep(uCap, uCap+0.09, abs(lat) + (fbm(sp*4.0+uSeed)-0.5)*0.14);
+    /* r171 · AS CALOTAS RESPIRAM. O limite deixou de ser simétrico em |lat|:
+       cada hemisfério tem o seu, e no inverno dele a calota AVANÇA enquanto a
+       do outro lado recua. É a mudança mais visível do planeta no ano */
+    /* CUIDADO COM O SINAL: uEst +1 é VERÃO no norte, e verão é calota PEQUENA,
+       ou seja limite mais ALTO. Eu tinha invertido e o Ártico crescia em
+       junho: só apareceu ao comparar os dois prints */
+    float limN = uCap + (lat > 0.0 ? uEst : -uEst)*0.085*uEstAmt;
+    float capm = smoothstep(limN, limN+0.09, abs(lat) + (fbm(sp*4.0+uSeed)-0.5)*0.14);
     col = mix(col, uCapCol, capm*uCapAmt);
     water *= 1.0-capm;
   }
@@ -1507,7 +1525,9 @@ const PLANETS = [
   exLuas:'A hipótese do Grande Impacto Duplo (2011) sugere uma segunda lua menor no passado, que colidiu de leve com a Lua e teria virado as montanhas do lado oculto.',
   quick:[['GRAVIDADE','1 g'],['TEMP. MÉDIA','15 °C'],['DIA','24 h'],['ANO','365,25 d'],['LUAS','1'],['ÁGUA','71%']],
   sys:{orbit:15, size:0.9, speed:1.0, angle:4.2},
-  visual:{mode:'earth', c1:'#3f7d43', c2:'#8a9a55', c3:'#c2a06a', seaCol:'#0d3f78', sea:0.52, scale:3.4, seed:12.3, cap:0.78, capAmt:0.9, capCol:'#eef4f8', lights:1, atmo:{col:'#6fb7ff', i:0.62}, clouds:{amt:0.95, scale:4.2, col:'#ffffff'}},
+  /* estacao:1 liga as ESTAÇÕES no desenho (r171): a calota de cada hemisfério
+     avança no inverno dele e o verde desbota no outono, pelo relógio */
+  visual:{mode:'earth', c1:'#3f7d43', c2:'#8a9a55', c3:'#c2a06a', seaCol:'#0d3f78', sea:0.52, scale:3.4, seed:12.3, cap:0.78, capAmt:0.9, capCol:'#eef4f8', estacao:1, lights:1, atmo:{col:'#6fb7ff', i:0.62}, clouds:{amt:0.95, scale:4.2, col:'#ffffff'}},
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','149,6 mi km (1 UA)'],['Ano','365,25 dias'],['Dia sideral','23 h 56 min'],['Dia solar','24 h'],['Tipo de rotação','Prógrada'],['Veloc. orbital','29,8 km/s'],['Inclinação axial','23,4°'],['Estações','Sim, 4, causadas pela inclinação']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','12.742 km'],['Massa','5,97 × 10²⁴ kg'],['Densidade','5,51 g/cm³ (a maior do sistema)'],['Área','510 mi km²'],['Placas tectônicas','Sim, único confirmado']]},
@@ -4124,6 +4144,14 @@ const LDIR = new THREE.Vector3(-0.55, 0.35, 0.8).normalize();
 /* r161 · apoio para levar o rumo do Sol ao espaço da câmera a cada quadro */
 const _flz = new THREE.Vector3();
 const ANIM_MATS = [];
+/* r171 · EM QUE PONTO DO ANO ESTAMOS. Devolve +1 no solstício de junho (verão
+   no hemisfério norte), -1 no de dezembro e 0 nos equinócios. É a inclinação
+   do eixo que faz as estações, e é ela que a Terra desenhada passa a mostrar */
+const SOLSTICIO_JUN = Date.UTC(2026, 5, 21, 8, 24);
+const ANO_TROP = 365.2422*86400000;
+function estacaoDoAno(ms){
+  return Math.cos(((ms - SOLSTICIO_JUN)/ANO_TROP)*Math.PI*2);
+}
 const raycaster = new THREE.Raycaster();
 const tmpV = new THREE.Vector3();
 
@@ -4272,6 +4300,8 @@ function planetMaterial(v){
     uScale:{value:v.scale||4.0}, uSeed:{value:v.seed||1.0},
     uBandF:{value:v.bandF||7.0}, uTurb:{value:v.turb||1.0},
     uCap:{value:(v.cap!==undefined)?v.cap:0.8}, uCapAmt:{value:v.capAmt||0.0}, uCapCol:{value:C(v.capCol||'#eeeeee')},
+    /* a estação é escrita pelo relógio a cada quadro; uEstAmt liga por corpo */
+    uEst:{value:0}, uEstAmt:{value:v.estacao||0},
     uSpotOn:{value:(sp&&sp.on)?1.0:0.0},
     uSpotPos:{value:new THREE.Vector2(sp?sp.pos[0]:0, sp?sp.pos[1]:0)},
     uSpotR:{value:sp?sp.r:0.3}, uSpotCol:{value:C(sp?sp.col:'#ffffff')},
@@ -12325,7 +12355,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r170';
+const BUILD = 'r171';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13137,6 +13167,12 @@ function loop(){
   dt = Math.min(dt, 0.05);
   const t = now/1000;
   for(const m of ANIM_MATS) if(m.uniforms && m.uniforms.uTime) m.uniforms.uTime.value = t;
+  /* r171 · a estação do ano vai junto: acelere o relógio e o planeta desenhado
+     muda de cara, com a calota crescendo de um lado e recuando do outro */
+  {
+    const est = estacaoDoAno(SIMT.data);
+    for(const m of ANIM_MATS) if(m.uniforms && m.uniforms.uEst) m.uniforms.uEst.value = est;
+  }
   if(CAMTW){
     const k = Math.min(1, (now-CAMTW.t0)/CAMTW.ms), e = easeIO(k);
     CAM.yaw   = CAMTW.f.yaw   + (CAMTW.t.yaw  -CAMTW.f.yaw  )*e;
