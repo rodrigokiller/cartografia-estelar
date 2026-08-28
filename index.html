@@ -4117,6 +4117,8 @@ const camera = new THREE.PerspectiveCamera(55, 1, 0.05, 150000);
 const camCeu = new THREE.PerspectiveCamera(55, 1, 500, 5e12);
 let ACT_CEU_FOCO = null;
 const LDIR = new THREE.Vector3(-0.55, 0.35, 0.8).normalize();
+/* r161 · apoio para levar o rumo do Sol ao espaço da câmera a cada quadro */
+const _flz = new THREE.Vector3();
 const ANIM_MATS = [];
 const raycaster = new THREE.Raycaster();
 const tmpV = new THREE.Vector3();
@@ -5098,7 +5100,7 @@ function buildSystem(sysId, spin0){
      círculo de tamanho constante na tela (pedido dele). Some quando o corpo
      fica maior que o anel, e nunca aparece no Sol */
   const aneisMira = [];
-  const solLuz = [];   /* corpos que recebem a direção real do Sol no 1:1 */
+  const solLuz = [];   /* corpos que recebem a direção real do Sol (r161: nos dois modos) */
   const detalhaveis = [];   /* corpos que ganham malha fina de perto (contínuo) */
   const _lzA = new THREE.Vector3(), _lzB = new THREE.Vector3();
   /* r156 · o anel de mira agora é DESENHADO COMO UMA ÓRBITA (pedido dele): a
@@ -5285,7 +5287,10 @@ function buildSystem(sysId, spin0){
     selReg.orbits.push({id:p.id, mat:orbit.material, obj:orbit, cls, c:est.cor, o:est.op, oculto:!!p.foguete});
     const bg = (p.sonda || p.satelite || p.foguete)
       ? grupoNave(p.id, p.sys.size*2.6)
-      : makeBodyGroup(p, p.sys.size, 40);
+      /* r161 · com o modo de teste ligado, a Terra do MAPA também é a de
+         verdade: no contínuo do 1:1 é aqui que ela é vista de perto */
+      : ((LIVE && p.id === 'terra') ? grupoLive('terra', p.sys.size, QLOW ? 48 : 96)
+      : makeBodyGroup(p, p.sys.size, 40));
     bg.group.position.set(obX, 0, obZ);
     if(elip) elip.grupo = bg.group;
     holder.add(bg.group);
@@ -5304,16 +5309,23 @@ function buildSystem(sysId, spin0){
         v:new THREE.Vector3(), w:new THREE.Vector3(), s1:new THREE.Vector3(), s2:new THREE.Vector3()};
       cometFxs.push(cometFx);
     }
-    /* r156 · no 1:1 cada corpo é iluminado pelo SOL de verdade: a direção da
-       luz é recalculada por quadro no espaço da câmera, então girar em volta
-       do planeta mostra o lado escuro (ele reclamou que não escurecia) */
-    if(escrAtivo && bg.mesh && bg.mesh.material && bg.mesh.material.uniforms && bg.mesh.material.uniforms.uL)
-      solLuz.push({mesh:bg.mesh, grupo:bg.group, mats:[bg.mesh.material]});
+    /* r156 · cada corpo é iluminado pelo SOL de verdade: a direção da luz é
+       recalculada por quadro no espaço da câmera, então girar em volta do
+       planeta mostra o lado escuro.
+       r161 · isso valia SÓ na escala 1:1, e era por isso que o mapa CÊNICO
+       não tinha sombra nenhuma (ele reportou): lá a luz era fixa na CÂMERA,
+       um farol que acompanhava o olhar. Agora vale nos dois modos, e pega
+       todas as peles do corpo (esfera, nuvens e atmosfera) de uma vez */
+    if(bg.mesh){
+      const matsL = [];
+      bg.group.traverse(o=>{ if(o.material && o.material.uniforms && o.material.uniforms.uL) matsL.push(o.material); });
+      if(matsL.length) solLuz.push({mesh:bg.mesh, grupo:bg.group, mats:matsL});
+    }
     /* r157 · O CONTÍNUO PARA DENTRO: no 1:1 não existe mais 'entrar' numa cena
        de foco, existe só CHEGAR PERTO. Para o corpo aguentar o zoom fundo, ele
        troca de pele quando a câmera se aproxima: a esfera ganha malha fina e
        entram as nuvens e a atmosfera, exatamente como na cena de foco */
-    if(escrAtivo && !p.sonda && !p.satelite && !p.foguete)
+    if(escrAtivo && !p.sonda && !p.satelite && !p.foguete && !(LIVE && p.id === 'terra'))
       detalhaveis.push({id:p.id, grupo:bg.group, mesh:bg.mesh, v:p.visual, r:p.sys.size, feito:false});
     /* r157 · OS ANÉIS DE MIRA SAÍRAM (decisão dele, depois de duas tentativas:
        como sprite ficavam grossos demais, como linha viravam elipse conforme o
@@ -5366,11 +5378,11 @@ function buildSystem(sysId, spin0){
         /* r159 · a LUA (e as outras luas) entram no contínuo: ganham malha fina
            quando você chega perto, e o voo do ENTRAR já funciona nelas porque
            elas têm alvo próprio no mapa (item dele) */
-        if(escrAtivo){
+        if(escrAtivo)
           detalhaveis.push({id:m.id, grupo:mg2.group, mesh:mg2.mesh, v:m.visual, r:ms, feito:false});
-          if(mg2.mesh.material && mg2.mesh.material.uniforms && mg2.mesh.material.uniforms.uL)
-            solLuz.push({mesh:mg2.mesh, grupo:mg2.group, mats:[mg2.mesh.material]});
-        }
+        /* a lua também tem dia e noite, nos dois modos (r161) */
+        if(mg2.mesh.material && mg2.mesh.material.uniforms && mg2.mesh.material.uniforms.uL)
+          solLuz.push({mesh:mg2.mesh, grupo:mg2.group, mats:[mg2.mesh.material]});
         const mpk = new THREE.Mesh(new THREE.SphereGeometry(escrAtivo ? Math.max(0.012, mr*0.22) : 0.30, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
         mpk.position.x = mr; mpk.userData = {act:'focus', id:m.id, r:ms};
         mh.add(mpk); pickables.push(mpk);
@@ -6332,8 +6344,8 @@ function buildSystem(sysId, spin0){
           RLOG.push('lod-' + dt2.id);
         }
       }
-      /* a luz do Sol de verdade em cada corpo do mapa 1:1 */
-      if(escrAtivo && solLuz.length){
+      /* a luz do Sol de verdade em cada corpo do mapa (nos dois modos) */
+      if(solLuz.length){
         for(const sl of solLuz){
           sl.grupo.getWorldPosition(_lzA);
           _lzB.copy(_lzA).multiplyScalar(-1).normalize();      /* rumo do Sol (origem) */
@@ -6846,7 +6858,11 @@ function nomeDaFase(i){
 }
 /* DECISÃO FINAL (r79): o AO VIVO da Terra saiu de vez, o Rodrigo não gostou
    nem da v2. NÃO reativar. A Lua real segue como modo padrão dela. */
-function podeLive(id){ return false; }
+/* r161 · o modo AO VIVO da Terra volta como MODO DE TESTE, a pedido dele:
+   botão próprio do lado do nome, que liga e desliga na hora. É o mapa de
+   verdade desenhado em canvas (nada externo, roda em file://) com Greenwich
+   apontado pela hora do navegador */
+function podeLive(id){ return id === 'terra'; }
 const LIVE_VERT = `
 varying vec2 vUv; varying vec3 vN; varying vec3 vV;
 void main(){ vUv = uv; vN = normalize(normalMatrix * normal);
@@ -6895,6 +6911,11 @@ function liveMaterial(id){
 /* Greenwich apontado para o Sol da cena ao meio-dia UTC. O eixo tambem ganha a
    inclinacao real de 23,4 graus, que e o que produz as estacoes. */
 const LIVE_FASE = Math.atan2(LDIR.x, LDIR.z) - Math.PI/2;
+/* r161 · o RUMO DO SOL da cena de foco, no mesmo jeito de medir ângulo que o
+   mapa usa (atan2(z, x)): é daqui que se conta a fase da Lua. LIVE_FASE serve
+   para alinhar Greenwich na textura e por acaso vale o NEGATIVO disso, e era
+   por isso que a Lua entrava torta na cena de foco */
+const SOLAZ_FOCO = Math.atan2(LDIR.z, LDIR.x);
 function grupoLive(id, raio, seg){
   const g = new THREE.Group();
   const malha = new THREE.Mesh(new THREE.SphereGeometry(raio, seg, seg), liveMaterial(id));
@@ -7332,7 +7353,15 @@ function buildFocus(bodyId, spin0){
     /* no cometa o Sol fica em cima à direita: a cauda cai para o lado livre da tela */
     if(escrSolF) sunGlow.position.set(-152, 76, -273);
     else if(b.comet) sunGlow.position.set(9, 6.5, -9);
-    else sunGlow.position.set(-35, 17.5, -63);   /* mais longe e menor no céu, mesmo rumo (a fase da Lua continua batendo) */
+    /* r161 · O BRILHO DO SOL FICA ONDE SEMPRE ESTEVE. Eu tinha levado ele para
+       o rumo exato da luz e ele SUMIU da tela na hora (ele reparou no mesmo
+       minuto), e sumiu por um motivo físico: fonte de luz e objeto CHEIO de
+       luz nunca cabem no mesmo quadro. Ver o Sol exige estar contra a luz, e
+       aí o planeta seria um risquinho de lua nova. A cena de foco escolhe a
+       cara bonita: o Sol desenhado fica atrás do corpo, em cima à esquerda, e
+       a luz vem de frente. O que mudou no r161 é que a luz agora é FIXA NO
+       MUNDO, então girar em volta do corpo mostra a noite */
+    else sunGlow.position.set(-35, 17.5, -63);
     scene.add(fade(sunGlow));
   }
 
@@ -7427,7 +7456,7 @@ function buildFocus(bodyId, spin0){
 
   /* ---------- CORPO: esfera + luas orbitando ---------- */
   const radius = (b.visual.mode==='star') ? 2.35 : (b.comet ? 1.2 : 2.2);
-  const aoVivo = bodyId === 'lua';   /* só a Lua é real; a Terra ficou procedural de vez */
+  const aoVivo = bodyId === 'lua' || (LIVE && bodyId === 'terra');
   /* anéis de Saturno na escala real: de 1,24 a 2,35 raios do planeta, com a
      divisão de Cassini no lugar certo (2,02-2,10 R, o vão que Mimas abre) */
   let bV = b;
@@ -7589,13 +7618,46 @@ void main(){
       const eliptico = !!b.orbita || (ESCR.on && b._sys === 'sol' && ESCALA_REAL_EL[b.id]);
       const H = b.sys.angle + (eliptico ? 0 : (Math.PI*2)*anosSim/Math.pow(b.sys.orbit/ORB_TERRA, 1.5));
       const qOrbF = (m.quick || []).find(q=>/ÓRBITA/.test(q[0]));
-      const tDf = ((qOrbF && /\bd\b|dias|,\d+ d| d$/.test(String(qOrbF[1]))) ? (parseFloat(String(qOrbF[1]).replace(',', '.')) || 0) : 0) * (m.retro ? -1 : 1);
+      /* r161 · este era o QUARTO lugar que lia o período (a auditoria do r160
+         achou três): sem ele, Fobos e Deimos entravam no foco de Marte num
+         ângulo qualquer, diferente do que o mapa mostrava */
+      const tDf = (qOrbF ? diasDaOrbita(qOrbF[1]) : 0) * (m.retro ? -1 : 1);
       const Y = mi*2.1 + hashStr(m.id)*6 + (tDf ? (Math.PI*2)*anosSim*365.25/tDf : 0);
       /* rotation.y gira +x para -z: o ângulo de mundo é o negativo da soma */
       ang = -(H + Y);
     }
     /* a Lua da Terra fica na FASE real em relação ao Sol, como no sistema */
-    if(bodyId === 'terra' && m.id === 'lua') ang = LIVE_FASE + Math.PI + faseDaLua().ang;
+    /* r161 · MEIA VOLTA DE ERRO NA LUA, DE NOVO: o r156 tirou o Math.PI da
+       conta do MAPA, mas a cena de FOCO tinha a própria cópia da fórmula e
+       ficou com ele. Resultado: entrando na Terra, a Lua aparecia do lado
+       oposto ao que o mapa mostrava, e na lua cheia ela ia parar do lado do
+       Sol (foi o que ele viu). LIVE_FASE é o rumo do Sol nesta cena, igual ao
+       sunAz do mapa: a fase se conta a partir dele, sem meia volta nenhuma */
+    /* r161 · O ÂNGULO DE ENTRADA AGORA É MEDIDO, NÃO RECONSTRUÍDO. A conta
+       acima refaz à mão o giro do holder do planeta mais o da lua, e ela só
+       fecha quando a órbita do planeta é um círculo: com elipse o holder do
+       mapa fica parado na longitude do periélio (e no 1:1 ele leva a cadeia
+       de nós inteira num quaternion), e aí a lua entrava na cena de foco num
+       lugar que o mapa não mostrava. Como a cena do mapa ainda está viva
+       neste instante (o swapScene só acontece depois), dá para MEDIR nela a
+       elongação de verdade da lua em relação ao Sol e repetir esse mesmo
+       ângulo aqui. Vale para todo planeta, nos dois modos, sem fórmula. */
+    let angMedido = null;
+    if(ACT && ACT.kind === 'system' && ACT.pickables){
+      const pkP = ACT.pickables.find(x=>x.userData && x.userData.id === b.id);
+      const pkM = ACT.pickables.find(x=>x.userData && x.userData.id === m.id);
+      if(pkP && pkM){
+        const _pw = new THREE.Vector3(), _mw = new THREE.Vector3();
+        pkP.getWorldPosition(_pw); pkM.getWorldPosition(_mw);
+        /* o rumo do Sol visto do planeta é o zero da conta nas duas cenas */
+        const azSolMapa = Math.atan2(-_pw.z, -_pw.x);
+        angMedido = SOLAZ_FOCO + (Math.atan2(_mw.z - _pw.z, _mw.x - _pw.x) - azSolMapa);
+      }
+    }
+    if(angMedido !== null) ang = angMedido;
+    /* sem o mapa por perto (link direto, ou vindo de outra cena de foco) a
+       Lua ainda cai na fase real em relação ao Sol */
+    else if(bodyId === 'terra' && m.id === 'lua') ang = SOLAZ_FOCO + faseDaLua().ang;
     let r = 3.15 + (i%3)*0.5, tamK = 0.20 + hashStr(m.id)*0.10;
     /* escala real: TODA lua e satélite do Sistema Solar entra na distância e
        no tamanho verdadeiros em relação ao corpo (a Terra e a Lua viraram o
@@ -7641,7 +7703,17 @@ void main(){
   const _smA = new THREE.Vector3(), _smB = new THREE.Vector3(), _smC = new THREE.Vector3();
   let simPrevF = SIMT.data;
   if(ceuFoco) ACT_CEU_FOCO = ceuFoco;
-  return {kind:'focus', scene, sceneCeu, ceuLinhas:(ceuFoco ? ceuFoco.linhas : null), labels, pickables, wrap, bodyId, sel:selReg, raioCorpo:radius, objs:objsFoco, subKids, sub:subEstado, escrFoco:(ESCR.on && b._sys === 'sol' && !b.comet),
+  /* r161 · A LUZ DA CENA DE FOCO DEIXOU DE SER UM FAROL. Ela era fixa no
+     espaço da CÂMERA, então o lado aceso acompanhava o olhar e nunca havia
+     noite: girar em volta do planeta (e o modo SISTEMA PLANETÁRIO) mostrava
+     sempre a mesma cara iluminada. Agora o rumo do Sol é FIXO NO MUNDO e é
+     levado ao espaço da câmera a cada quadro, igual ao mapa.
+     Na escala 1:1 a cena de foco fica como estava: o eclipse das luas e a
+     sombra projetada usam a convenção própria dela */
+  const luzFoco = [];
+  if(!(ESCR.on && b._sys === 'sol'))
+    scene.traverse(o=>{ if(o.material && o.material.uniforms && o.material.uniforms.uL) luzFoco.push(o.material); });
+  return {kind:'focus', scene, sceneCeu, ceuLinhas:(ceuFoco ? ceuFoco.linhas : null), labels, pickables, wrap, bodyId, sel:selReg, luzFoco, raioCorpo:radius, objs:objsFoco, subKids, sub:subEstado, escrFoco:(ESCR.on && b._sys === 'sol' && !b.comet),
     get spin(){ return bg ? bg.mesh.rotation.y : 0; },
     dim:(v, exceto)=>{
       for(const f of fadeMats) f.m.opacity = f.o * v;
@@ -7661,6 +7733,10 @@ void main(){
           : {mode:'orbit', yaw:0, pitch:0.06, dist:9.0, min:3.7, max:9.6, pivFoco:true}),
     update:(dt)=>{
       if(marteCalota) marteCalota(SIMT.data);   /* as calotas de Marte seguem o relógio */
+      if(luzFoco.length){
+        _flz.copy(LDIR).transformDirection(camera.matrixWorldInverse);
+        for(const m of luzFoco) m.uniforms.uL.value.copy(_flz);
+      }
       /* nos modos lentos (tempo real, 1 s = 1 s) o foco obedece o relógio:
          gira 1 volta por dia simulado e a lua orbita nos 27,3 dias reais.
          Nos rápidos, mantém o balé visual, mas respeita o pause. */
@@ -7956,8 +8032,14 @@ function subSistema(){
     CAM.max = Math.max(ACT.cam.max, alvoDist*1.25);
     /* câmera vira ORBITAL: arrastar move o espaço em volta do corpo, não o
        corpo em si (pedido do Rodrigo), e dá para inclinar e ver o plano */
-    CAM.mode = 'orbit'; CAM.pivot.set(0, 0, 0); CAM.yaw = 0; CAM.pitch = 0.06;
-    tweenCam({dist:alvoDist, pitch:0.5}, 950);
+    /* r161 · ABRIR deixou de ser um CORTE SECO (ele reportou): antes o pivô
+       era jogado no centro e o yaw zerado NA HORA, e o corpo pulava para a
+       direita, ajustava, e voltava para a esquerda quando o laço do quadro
+       devolvia o pivô ao desvio do card. Agora nada salta: o pivô fica onde
+       já estava e o giro, a inclinação e o afastamento são todos tweenados,
+       exatamente o inverso do fechar, que ele achou bonito */
+    CAM.mode = 'orbit';
+    tweenCam({yaw:0, dist:alvoDist, pitch:0.5}, 950);
     showHint('SISTEMA PLANETÁRIO: o corpo vira o centro e as luas orbitam no período real');
     tutInicia('subsis', [{tx:'O corpo focado virou o CENTRO do próprio sistema: cada lua gira no período real dela, na órbita desenhada. Arraste para inclinar o plano, use o zoom à vontade e toque numa lua para abrir a ficha. O mesmo botão fecha o modo.', alvo:'#btnsubsis'}]);
   } else {
@@ -10656,7 +10738,7 @@ function cardRender(){
     '<div class="eyebrow"><span>'+esc(b.desig||'')+'</span><span class="lock'+(lockOn?'':' off')+'">'+(lockOn?'⬢ LINK TRAVADO':'MODO MAPA')+'</span>'
     +(ST.mapCard ? '<button id="cardx2" title="Fechar esta ficha">✕</button>' : '')+'</div>'+
     '<h1 class="bodyname">'+esc(b.name)
-      + ((lockOn && podeLive(ST.body))
+      + ((podeLive(lockOn ? ST.body : ((ST.mapCard && ST.mapCard.id) || '')))
          ? '<button class="livebtn'+(LIVE?' on':'')+'" id="btnlive" title="Mostrar como está agora, de verdade"><i></i>'+(LIVE?'AO VIVO':'LIVE')+'</button>'
          : '')
       + ((cur.type==='map' && cur.navKind==='body' && ALLBODIES[cur.navId]
@@ -10828,7 +10910,16 @@ function cardRender(){
   const bl = $('#btnlive'); if(bl) bl.addEventListener('click', ()=>{
     LIVE = !LIVE;
     store.set('carto:live', LIVE ? '1' : '0');
-    swapScene(buildFocus(ST.body), true);
+    if(ST.level === 'focus') swapScene(buildFocus(ST.body), true);
+    else if(ACT && ACT.kind === 'system'){
+      /* no mapa a câmera fica exatamente onde estava: trocar a pele da Terra
+         não pode jogar o navegador de volta para longe */
+      const c0 = {mode:CAM.mode, yaw:CAM.yaw, pitch:CAM.pitch, dist:CAM.dist, piv:CAM.pivot.clone(), min:CAM.min, max:CAM.max};
+      swapScene(buildSystem(ST.sys, ACT.spin), true);
+      CAM.mode = c0.mode; CAM.yaw = c0.yaw; CAM.pitch = c0.pitch; CAM.dist = c0.dist;
+      CAM.min = c0.min; CAM.max = c0.max; CAM.pivot.copy(c0.piv);
+      CAMTW = null; applyCam();
+    }
     uiSync();
     showHint(LIVE ? 'MODO AO VIVO: POSIÇÃO E ILUMINAÇÃO REAIS DE AGORA' : 'MODO CARTOGRÁFICO');
   });
@@ -11410,7 +11501,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r160';
+const BUILD = 'r161';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
