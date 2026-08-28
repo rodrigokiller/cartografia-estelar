@@ -896,7 +896,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div class="corner c-br"><b class="h"></b><b class="v"></b></div>
 
   <div id="topbar">
-    <div id="brand"><span class="mark"></span><span id="brandnm"><i>UNIVERS</i><b>ATLAS</b></span><button id="modebtn" data-tip="Alterna entre o mapa cênico e a escala 1:1 do sistema solar"></button><button id="tutdebug" title="Resetar os tutoriais (debug)">TUT</button><button id="dbgtoast" title="Testar o toast de conquista (debug)">TST</button><button id="dbgpromo" title="Testar o toast de promoção (debug)">PRM</button><button id="dbgconq" title="Resetar as conquistas (debug)">RSC</button></div>
+    <div id="brand"><span class="mark"></span><span id="brandnm"><i>UNIVERS</i><b>ATLAS</b></span><button id="modebtn" data-tip="Alterna entre o mapa cênico e a escala 1:1 do sistema solar"></button><span id="dbgbox" hidden><button id="tutdebug" title="Resetar os tutoriais (debug)">TUT</button><button id="dbgtoast" title="Testar o toast de conquista (debug)">TST</button><button id="dbgpromo" title="Testar o toast de promoção (debug)">PRM</button><button id="dbgconq" title="Resetar as conquistas (debug)">RSC</button></span></div>
     <div id="crumbs"></div>
     <div id="statuspod">
       <span id="statled"></span>
@@ -4094,7 +4094,8 @@ const camera = new THREE.PerspectiveCamera(55, 1, 0.05, 150000);
 /* alcance de 50 bilhões: cabe a direção do centro da galáxia, a 26 mil AL */
 /* alcance de 300 bilhões de unidades: cabe o disco inteiro da galáxia,
    que tem 100 mil anos-luz de ponta a ponta */
-const camCeu = new THREE.PerspectiveCamera(55, 1, 500, 3e11);
+/* alcance de 5 trilhões: Andrômeda mora a 2,4 trilhões de unidades daqui */
+const camCeu = new THREE.PerspectiveCamera(55, 1, 500, 5e12);
 let ACT_CEU_FOCO = null;
 const LDIR = new THREE.Vector3(-0.55, 0.35, 0.8).normalize();
 const ANIM_MATS = [];
@@ -4348,7 +4349,9 @@ function updateLabels(){
       if(L.ceuNome && (dLy > 200 || !(L.ly && L.ly < dLy*1.25))){ L.el.style.display = 'none'; continue; }
       /* o desenho das constelações é coisa de quem está em casa */
       if(L.constelLbl && dLy > 0.35){ L.el.style.display = 'none'; continue; }
-      if(L.cinturao || L.escrOrb && L.escrOrb < 40000){ L.el.style.display = 'none'; continue; }
+      /* fora de casa somem os nomes de dentro do sistema, inclusive as
+         cascas (heliopausa e Oort) que só fazem sentido de perto */
+      if(L.cinturao || L.zonaLonge || (L.escrOrb && L.escrOrb < 40000)){ L.el.style.display = 'none'; continue; }
     }
     /* escala real: cada nome descansa quando a própria órbita fica pequena na
        tela, senão os internos se amontoam todos no centro no zoom aberto */
@@ -4399,10 +4402,15 @@ function disposeScene(act){
    ganha elipse: ele nao volta, entao a linha dele e um arco aberto. */
 /* linhas visíveis por classe. PADRÃO: só planetas; cometa, sonda e toda classe
    futura (satelite, foguete) nascem DESLIGADAS, o mapa fica limpo por default */
-const FILTROS = {planeta:true, anao:true, asteroide:false, estrela:true, lua:false, cometa:false, sonda:false, satelite:false, foguete:false};
+/* r154 · PADRÃO ENXUTO (escolha dele): no mapa nascem só as linhas de
+   PLANETA e LUA; o resto liga no filtro ≋ quando o navegador quiser */
+const FILTROS = {planeta:true, anao:false, asteroide:false, estrela:false, lua:true, cometa:false, sonda:false, satelite:false, foguete:false};
 /* segundo grupo do filtro: esconder o OBJETO inteiro (corpo, rótulo e rota).
    Planetas e luas nunca somem. Vale também para a cena de foco e os chips. */
-const FILTROBJ = {planeta:true, anao:true, asteroide:true, lua:true, estrela:true, cometa:true, sonda:true, satelite:true, foguete:true, cinturao:true};
+/* os CORPOS que nascem visíveis: planetas, anões, asteroides, luas,
+   cinturões e as estrelas companheiras (sem elas os sistemas duplos ficam
+   mancos). Cometas, sondas, satélites e foguetes entram pelo filtro */
+const FILTROBJ = {planeta:true, anao:true, asteroide:true, lua:true, estrela:true, cometa:false, sonda:false, satelite:false, foguete:false, cinturao:true};
 /* relógio de simulação: o sistema tem uma DATA que corre (padrão 1 s = 1 dia),
    pode pausar e pular para qualquer data. As posições vêm de Kepler. */
 const SIM_HOJE = Date.now(), MS_ANO = 365.25*86400000;
@@ -4412,6 +4420,8 @@ const VIAGEMX = {on:false};  /* EXPERIMENTAL: vôo direto planeta a planeta no t
    tamanhos (1 UA = 15 unidades, como sempre; os corpos viram grãos de poeira,
    e é exatamente essa a lição) */
 const ESCR = {on:false};
+/* memória da conquista do contínuo: passou por um foco na escala 1:1 */
+const CONT_VIU = {foco:false};
 const ESCR_EXP = {terra:false, teto:false};   /* metades da conquista EXP-04 */
 const TRAJV = new Set();   /* linhas do tempo já revividas (TIM-05) */
 /* zona habitável por sistema, em unidades de cena (no sol, 15 un = 1 UA, então
@@ -4420,7 +4430,7 @@ const TRAJV = new Set();   /* linhas do tempo já revividas (TIM-05) */
 const HZ_SIS = {sol:[14.25, 25], trappist:[5.8, 9.4], kepler452:[10.5, 14],
   kepler186:[9.5, 12.5], toi700:[10, 13.5], gliese581:[10.4, 14],
   lhs1140:[8.8, 12], k218:[8.6, 12]};
-const HZV = {on:true};
+const HZV = {on:false};   /* zona habitável: nasce DESLIGADA */
 function checaEscalaReal(){
   store.set('carto:escrexp', (ESCR_EXP.terra?'1':'0')+(ESCR_EXP.teto?'1':'0'));
   if(ESCR_EXP.terra && ESCR_EXP.teto && typeof feito === 'function') feito('escalareal');
@@ -4930,10 +4940,14 @@ const CLASSE_CEU = {
    as estrelas de uma constelação nem são vizinhas) */
 const CEU_AL = {sirius:'8,6', canopus:'310', rigilkent:'4,4', arcturus:'37', vegaceu:'25',
   rigel:'~860', betelg:'~550', acrux:'~320', aldeb:'65', antares:'~550', spica:'250', polaris:'~430'};
-const CEUV = {on:true};   /* o desenho das constelações liga e desliga */
-const CEUN = {on:true};   /* os NOMES das estrelas no céu */
+const CEUV = {on:false};  /* constelações: nascem DESLIGADAS (padrão dele) */
+const CEUN = {on:false};  /* nomes das estrelas: nascem DESLIGADOS */
+/* os botões de debug (TUT/TST/PRM/RSC) saíram do topo: aparecem só com o
+   mesmo Shift+D que mostra o chip DIAG */
 const ECLV = {on:false};  /* a ECLÍPTICA e o zodíaco: nasce DESLIGADA (ordem dele) */
-const REGUA = {on:true, cor:0, hex:null, disco:true};  /* a régua de distâncias */
+/* a régua nasce LIGADA e o disco dela DESLIGADO: fica só a barra do
+   rodapé, que é discreta (padrão dele) */
+const REGUA = {on:true, cor:0, hex:null, disco:false};
 /* três cores para ele escolher no filtro (a forma do degradê ele já aprovou) */
 /* r144: o lilás batia com a linha dos PLANETAS ANÕES (0x5c4d80) e o
    verde-limão ele não curtiu. O padrão agora é AZUL-ÁGUA: fica na família do
@@ -5368,8 +5382,9 @@ function buildSystem(sysId, spin0){
       kpick.position.set(Math.cos(kang)*kmid, 0.6, Math.sin(kang)*kmid);
       kpick.userData = {act:'focus', id:'kuiper', r:0.9};
       scene.add(kpick); pickables.push(kpick);
-      labels.push({cinturao:true, el:makeLabel('NUVEM DE OORT →', 'faint', ()=>ACTION('focus','oort')),
-        get:v=>v.set(Math.cos(4.1)*70, 2.2, Math.sin(4.1)*70)});
+      /* a SETINHA AZUL saiu (ordem dele): era o ponteiro antigo do mapa
+         cênico e, no 1:1, aparecia perto de Júpiter brigando com a casca
+         verde de verdade a 2.000 UA. Fica só a verde, que é a honesta */
     }
     const bmid = (beltREf[0]+beltREf[1])/2, bang = 2.35;
     const beltId = S.beltId || 'cinturao';
@@ -5540,6 +5555,7 @@ function buildSystem(sysId, spin0){
   /* zona habitável: o anel verde tênue onde água líquida é possível */
   let hzRing = null, hzLbl = null;
   let ceuLinhas = null, ceuSelFn = null, sceneCeu = null, solCeu = null, eclLinha = null, viaLactea = null;
+  const vizinhas = [];   /* Magalhães e Andrômeda, no contínuo */
   const eclLbls = [];
   const ceuLbls = [], ceuPicks = [], ceuDir = {};
   const CEU_DE = window.__ceuDe || (window.__ceuDe = {});
@@ -5622,7 +5638,7 @@ function buildSystem(sysId, spin0){
     ooG.setAttribute('position', new THREE.BufferAttribute(ooPos, 3));
     scene.add(fade(new THREE.Points(ooG, new THREE.PointsMaterial({color:0x8fa8c8, size:1.0,
       sizeAttenuation:false, transparent:true, opacity:0.26, depthWrite:false}))));
-    labels.push({el:makeLabel('NUVEM DE OORT', 'faint zona', ()=>ACTION('focus','oort')), escrOrb:30000,
+    labels.push({el:makeLabel('NUVEM DE OORT', 'faint zona', ()=>ACTION('focus','oort')), escrOrb:30000, zonaLonge:true,
       get:v=>v.set(Math.cos(2.2)*30000, 1500, Math.sin(2.2)*30000)});
     /* RÉGUA DE DISTÂNCIAS: anéis discretos que acendem em fade quando o
        zoom passa por eles (1, 10, 100 e 1.000 UA; configurável) */
@@ -5638,7 +5654,7 @@ function buildSystem(sysId, spin0){
     /* r150: a régua segue até os ANOS-LUZ (10 mil UA, depois 1, 3 e 10 AL:
        o teto do zoom é 12 AL, então sempre há um marco no ar) */
     for(const ua of [1, 10, 100, 1000, 10000, LY_UA, LY_UA*3, LY_UA*10, LY_UA*30,
-      LY_UA*100, LY_UA*1000, LY_UA*10000, LY_UA*50000]){
+      LY_UA*100, LY_UA*1000, LY_UA*10000, LY_UA*50000, LY_UA*5e5, LY_UA*3e6]){
       const rr3 = ua*ESCR_UA;
       const rgg = new THREE.RingGeometry(rr3*0.015, rr3, 128, 1);
       const rl = new THREE.Mesh(rgg, new THREE.ShaderMaterial({transparent:true, depthWrite:false, side:THREE.DoubleSide,
@@ -5897,6 +5913,40 @@ function buildSystem(sysId, spin0){
           blending:THREE.AdditiveBlending}));
         viaLactea.frustumCulled = false;
         sceneCeu.add(viaLactea);
+        /* ---------- r155 · AS GALÁXIAS VIZINHAS NO CONTÍNUO ----------
+           Depois da Via Láctea vem o resto do bairro: as duas Nuvens de
+           Magalhães (163 e 200 mil anos-luz, satélites da nossa) e Andrômeda,
+           a 2,5 MILHÕES de anos-luz, na direção real de cada uma. Todas na
+           mesma cena, sem troca de escala: o contínuo continua */
+        const galVizinha = (raH, decG, lyD, raio, nPt, cor, achata, nome)=>{
+          const dg = dirCeu(raH, decG).multiplyScalar(lyD*UNAL);
+          const eixo = dg.clone().normalize();
+          const u2 = new THREE.Vector3(0,1,0).cross(eixo).normalize();
+          const v2 = new THREE.Vector3().crossVectors(eixo, u2).normalize();
+          const pos = new Float32Array(nPt*3);
+          for(let i=0;i<nPt;i++){
+            const rr = Math.pow(Math.random(), 0.62)*raio;
+            const th = Math.random()*Math.PI*2;
+            const hh = (Math.random()-0.5)*raio*achata;
+            pos[i*3]   = dg.x + (u2.x*Math.cos(th)*rr + v2.x*Math.sin(th)*rr + eixo.x*hh)*UNAL;
+            pos[i*3+1] = dg.y + (u2.y*Math.cos(th)*rr + v2.y*Math.sin(th)*rr + eixo.y*hh)*UNAL;
+            pos[i*3+2] = dg.z + (u2.z*Math.cos(th)*rr + v2.z*Math.sin(th)*rr + eixo.z*hh)*UNAL;
+          }
+          const gg2 = new THREE.BufferGeometry();
+          gg2.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+          const pt = new THREE.Points(gg2, new THREE.PointsMaterial({color:cor, size:1.4,
+            sizeAttenuation:false, transparent:true, opacity:0, depthWrite:false,
+            blending:THREE.AdditiveBlending}));
+          pt.frustumCulled = false;
+          sceneCeu.add(pt);
+          const alvoLbl = dg.clone();
+          labels.push({el:makeLabel(nome, 'faint zona', null), sempre:true, galLbl2:lyD, off:true,
+            get:(t2)=>{ t2.copy(alvoLbl).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()*0.85).add(camera.position); }});
+          return {pt, ly:lyD};
+        };
+        vizinhas.push(galVizinha(5.3939, -69.756, 163000, 9000, QLOW?600:1400, 0xbfd4ff, 0.5, 'GRANDE NUVEM DE MAGALHÃES'));
+        vizinhas.push(galVizinha(0.8767, -72.829, 200000, 5500, QLOW?400:900, 0xc8d8ff, 0.5, 'PEQUENA NUVEM DE MAGALHÃES'));
+        vizinhas.push(galVizinha(0.7122, 41.269, 2537000, 110000, QLOW?900:2200, 0xd8e2ff, 0.14, 'GALÁXIA DE ANDRÔMEDA · 2,5 MILHÕES DE AL'));
         /* o braço onde a gente mora, nomeado no lugar certo */
         const dOri = ug.clone().multiplyScalar(-1200*UNAL).add(vg.clone().multiplyScalar(900*UNAL));
         labels.push({el:makeLabel('BRAÇO DE ÓRION · VOCÊ ESTÁ AQUI', 'faint zona', null),
@@ -5938,7 +5988,9 @@ function buildSystem(sysId, spin0){
   /* r153 · o teto foi para 60 MIL ANOS-LUZ: dali o disco inteiro da Via
      Láctea cabe na tela e o Sistema Solar é um grão num braço. É o mesmo
      mapa desde a superfície de uma lua: o contínuo que ele queria */
-  const camMaxDin = escrAtivo ? 60000*LY_UA*ESCR_UA : Math.max(S.camMax || 60, alcance * 1.7);
+  /* r155 · o teto foi para 4 MILHÕES de anos-luz: cabem as Nuvens de
+     Magalhães e Andrômeda inteira, ainda na mesma cena */
+  const camMaxDin = escrAtivo ? 4e6*LY_UA*ESCR_UA : Math.max(S.camMax || 60, alcance * 1.7);
   return {kind:'system', scene, sceneCeu, eclLinha, aneisMira, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
@@ -6031,6 +6083,15 @@ function buildSystem(sysId, spin0){
           const fg = Math.min(1, Math.max(0, (dAL - 120)/900));
           viaLactea.material.opacity = 0.85*fg;
           for(const L of labels) if(L.galLbl) L.off = fg < 0.35;
+          /* cada vizinha acende quando o zoom chega perto da distância dela */
+          for(const vz of vizinhas){
+            const f2 = Math.min(1, Math.max(0, (dAL - vz.ly*0.10)/(vz.ly*0.35)));
+            vz.pt.material.opacity = 0.8*f2;
+          }
+          for(const L of labels) if(L.galLbl2) L.off = dAL < L.galLbl2*0.16;
+          /* CONQUISTA: da superfície de um corpo até a galáxia inteira, sem corte */
+          if(dAL > 20000 && CONT_VIU.foco && typeof feito === 'function'
+             && typeof FEITO !== 'undefined' && !FEITO.has('continuo')) feito('continuo');
         }
         /* saiu de casa: o aviso de que o desenho do céu é coisa daqui */
         if(CAM.dist > LY_UA*ESCR_UA*0.35 && typeof feito === 'function' && typeof FEITO !== 'undefined' && !FEITO.has('ceufundo')) feito('ceufundo');
@@ -7015,6 +7076,7 @@ function buildFocus(bodyId, spin0){
   const b = ALLBODIES[bodyId];
   /* metade 1 da EXP-04: entrar na Terra com a escala real ligada */
   if(ESCR.on && bodyId === 'terra' && !ESCR_EXP.terra){ ESCR_EXP.terra = true; checaEscalaReal(); }
+  if(ESCR.on && b._sys === 'sol') CONT_VIU.foco = true;   /* entrou num mundo no 1:1 */
   const scene = new THREE.Scene();
   /* na escala 1:1 do sistema solar o fundo é o CÉU DE VERDADE, o mesmo do
      mapa: assim entrar num planeta não troca o universo atrás dele */
@@ -8232,9 +8294,22 @@ const store = {
   set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
 };
 LIVE = store.get('carto:live','0') === '1';   /* modo ao vivo da Terra e da Lua */
+/* r154 · os padrões do mapa mudaram (escolha dele): quem já tinha ajuste
+   salvo recebe a limpeza UMA vez. Apaga as chaves e deixa o padrão do
+   código valer; a partir daí as escolhas do navegador mandam de novo */
+if(store.get('carto:padrao', '') !== 'r154'){
+  store.set('carto:padrao', 'r154');
+  for(const k of ['carto:linhas','carto:objetos']) store.set(k, '');
+  store.set('carto:ceu', '0'); store.set('carto:ceunomes', '0');
+  store.set('carto:hz', '0'); store.set('carto:rastro', '0');
+  store.set('carto:ecl', '0'); store.set('carto:reguadisco', '0');
+  store.set('carto:regua', '1'); store.set('carto:regua2', '1');
+}
 { const v = store.get('carto:linhas', null);
-  if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
-    for(const k of ['planeta','anao','estrela','lua','cometa','sonda','satelite','foguete']) FILTROS[k] = on.has(k); } }
+  /* 'v1:' é o prefixo da escolha do navegador: com ele, até a lista VAZIA
+     é respeitada (sem o prefixo o F5 devolvia o padrão, bug que ele viu) */
+  if(v){ const on = new Set(String(v).replace(/^v1:/, '').split(',').filter(Boolean));
+    for(const k of ['planeta','anao','asteroide','estrela','lua','cometa','sonda','satelite','foguete']) FILTROS[k] = on.has(k); } }
 /* abre SEMPRE em TEMPO REAL travado no agora (decisão do Rodrigo): mudar
    vale só na sessão, F5 volta ao tempo real */
 SIMT.vel = 'real';
@@ -8254,8 +8329,8 @@ document.documentElement.style.setProperty('--reguacor', REGUA.hex || REGUA_CORE
 (store.get('carto:trajv', '') || '').split(',').filter(Boolean).forEach(x=>TRAJV.add(x));
 COORD.real = store.get('carto:coord', '0') === '1';
 { const v = store.get('carto:objetos', null);
-  if(v !== null){ const on = new Set(String(v).split(',').filter(Boolean));
-    for(const k of ['planeta','anao','lua','estrela','cometa','sonda','satelite','foguete','cinturao']) FILTROBJ[k] = on.has(k); } }
+  if(v){ const on = new Set(String(v).replace(/^v1:/, '').split(',').filter(Boolean));
+    for(const k of ['planeta','anao','asteroide','lua','estrela','cometa','sonda','satelite','foguete','cinturao']) FILTROBJ[k] = on.has(k); } }
 
 /* ---------- áudio: playlist + ambiente generativo + sfx ---------- */
 const PLAYLIST = [
@@ -8763,8 +8838,14 @@ function ACTION(act, id){
     if(!jaEra) showHint('CONSTELAÇÃO ' + (CEU_LINHAS[id] ? CEU_LINHAS[id].nome : '') + ' · O DESENHO ESTÁ ACESO NO CÉU');
     return;
   }
-  if(ST.mapCard && ST.mapCard.id===id && ST.mapCard.act===act){ enterTarget(act, id); return; }
-  ST.mapCard = {type:(act==='focus') ? 'body' : act, id, act};
+  if(ST.mapCard && ST.mapCard.id===id && ST.mapCard.act===act){
+    /* dois avisos no MESMO gesto (o rótulo e a cena disparam juntos) não
+       podem contar como os dois passos: senão um clique só já entra, que é o
+       bug que ele viu */
+    if(performance.now() - (ST.mapCard.t || 0) > 340){ enterTarget(act, id); return; }
+    return;
+  }
+  ST.mapCard = {type:(act==='focus') ? 'body' : act, id, act, t:performance.now()};
   AUDIO.sfx('sel');
   somDeEpoca(id);
   uiSync();
@@ -9133,6 +9214,7 @@ const CONQ_DESC = {visita:'Selecione um corpo e entre nele.', sondas:'No filtro 
   ceufundo:'Na escala 1:1, afaste o zoom até sair do Sistema Solar e ver as constelações começarem a se desmanchar.',
   ceufiguras:'Abra a ficha das constelações do céu real, uma a uma.',
   vizinhanca:'Abra a ficha de cada estrela a menos de 25 anos-luz do Sol.',
+  continuo:'Na escala 1:1, entre num corpo e afaste o zoom sem trocar de cena até ver a Via Láctea inteira.',
   eracompleta:'Reviva as linhas do tempo das seis missões lunares: Apollo 8, 11, 13, 17 e Artemis I e II.',
   museuinteiro:'Reviva as DEZ linhas do tempo lunares, da Luna 9 ao SLIM: o museu completo da corrida.'};
 const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A LINHA DAS SONDAS',
@@ -9149,6 +9231,7 @@ const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A
   ceufundo:'CEU-02 · O DESENHO SE DESFEZ',
   ceufiguras:'CEU-03 · AS FIGURAS DO CÉU',
   vizinhanca:'CEU-04 · A VIZINHANÇA DO SOL',
+  continuo:'EXP-05 · DE UM MUNDO À GALÁXIA, SEM CORTES',
   eracompleta:'TIM-05 · A ERA COMPLETA',
   museuinteiro:'TIM-06 · O MUSEU INTEIRO'};
 function feito(k){
@@ -11023,7 +11106,10 @@ window.addEventListener('keydown', e=>{
     else if(ST.mapCard){ ST.mapCard = null; uiSync(); }
     else up();
   }
-  else if(e.key==='D' && e.shiftKey) $('#diagchip').classList.toggle('on'); /* telemetria secreta */
+  else if(e.key==='D' && e.shiftKey){ /* telemetria secreta: chip + botões de debug */
+    $('#diagchip').classList.toggle('on');
+    const dbg = $('#dbgbox'); if(dbg) dbg.hidden = !dbg.hidden;
+  }
   else if(e.key==='?' ) $('#help').classList.toggle('on');
   else if(e.key==='+' || e.key==='=') dolly(0.88);
   else if(e.key==='-' || e.key==='_') dolly(1.13);
@@ -11050,7 +11136,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r153';
+const BUILD = 'r155';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -11349,8 +11435,12 @@ function tutBoasVindas(){
      checks:[{tx:'Ligue a linha das SONDAS', ok:()=>FILTROS.sonda === true}]},
     {tx:'Seu painel de bordo: <b>CAMPO DE VISÃO</b> é a largura real da tela; abaixo, o endereço no espaço (cênico, ou RA/DEC, altere nas configurações); <b>T+</b> é o tempo da sua sessão; e abaixo a <b>data real do sistema solar</b>, com opção de pausar ou viajar pelo tempo.',
      alvo:'#navpod, #simclock'},
-    {tx:'Aqui temos o menu: navegação, música e sons, modo foto, filtros, diário de bordo, pesquisa e ajuda. O <b>?</b> guarda o manual. Boa viagem, navegador.',
-     alvo:'#topright'}
+    {tx:'Aqui temos o menu: navegação, música e sons, modo foto, filtros, diário de bordo, pesquisa e ajuda. O <b>?</b> guarda o manual.',
+     alvo:'#topright'},
+    /* r154 · o último passo apresenta a ESCALA 1:1, que é a joia do atlas e
+       passava despercebida (pedido dele) */
+    {tx:'Uma última coisa, e talvez a melhor. O que você está vendo é o <b>MAPA CÊNICO</b>: as distâncias e os tamanhos foram desenhados para caber na tela e os planetas ficarem grandes o bastante para admirar. Bonito, mas não é o tamanho de verdade.<br><br>Existe a <b>ESCALA 1:1</b>, onde tudo está na medida real: os planetas viram grãos de poeira, as distâncias são honestas, o céu ganha as estrelas nas posições verdadeiras e dá para afastar até ver a Via Láctea inteira. É outro mundo.<br><br>Troque quando quiser neste botão aqui em cima.',
+     alvo:'#modebtn', botao:'CONCLUIR'}
   ]);
 }
 { const td = $('#tutdebug'); if(td) td.addEventListener('click', ()=>{
@@ -11725,11 +11815,11 @@ $('#filtpop').addEventListener('click', e=>{
   const r = e.target.closest('.filtrow'); if(!r) return;
   if(r.dataset.obj){
     FILTROBJ[r.dataset.obj] = FILTROBJ[r.dataset.obj] === false;
-    store.set('carto:objetos', ['planeta','anao','lua','estrela','cometa','sonda','satelite','foguete','cinturao'].filter(k=>FILTROBJ[k]!==false).join(','));
+    store.set('carto:objetos', 'v1:' + ['planeta','anao','asteroide','lua','estrela','cometa','sonda','satelite','foguete','cinturao'].filter(k=>FILTROBJ[k]!==false).join(','));
     filtSync(); aplicaObjetos(); cardRender();
   } else {
     FILTROS[r.dataset.cls] = FILTROS[r.dataset.cls] === false;
-    store.set('carto:linhas', ['planeta','anao','estrela','lua','cometa','sonda','satelite','foguete'].filter(k=>FILTROS[k]!==false).join(','));
+    store.set('carto:linhas', 'v1:' + ['planeta','anao','asteroide','estrela','lua','cometa','sonda','satelite','foguete'].filter(k=>FILTROS[k]!==false).join(','));
     filtSync();
     if(FILTROS[r.dataset.cls] !== false){
       if(r.dataset.cls === 'sonda') feito('sondas');
