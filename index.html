@@ -8465,7 +8465,11 @@ void main(){
       const danosF = (SIMT.data - simPrevF)/MS_ANO; simPrevF = SIMT.data;
       /* cada lua gira no próprio holder: período REAL quando a ficha dá o
          número, balé simbólico quando não dá (respeitando o pause) */
-      if(moonHolder && !aoVivo){
+      /* r169 · o gate era !aoVivo, que nasceu quando aoVivo queria dizer 'esta
+         é a Lua' (e a Lua não tem lua). No r168 aoVivo virou 'usa a foto', e
+         com isso as luas PARARAM de orbitar no foco 1:1 da Terra. O gate não
+         tem mais razão de existir: sem subKids o laço não faz nada mesmo */
+      if(moonHolder){
         for(const sk of subKids){
           if(sk.tDias) sk.kh.rotation.y += (Math.PI*2)*danosF*365.25/sk.tDias;
           else if(!RM && !SIMT.pausado && !lento) sk.kh.rotation.y += dt*0.03;
@@ -8562,14 +8566,29 @@ function setCam(cfg){
   if(cfg.mode==='orbit'){ CAM.yaw = cfg.yaw; CAM.pitch = cfg.pitch; }
   CAM.pivot.set(0,0,0);
   computeFocusOff();
-  /* foco cênico orbital: o corpo continua deslocado do card */
-  if(cfg.mode==='orbit' && cfg.pivFoco) CAM.pivot.copy(CAM.focusOff);
+  /* r170 · O CENTRO DE ROTAÇÃO VOLTOU A SER O CORPO (ele reportou: entrando na
+     Terra no cênico, girar em volta orbitava um ponto entre a Terra e a Lua).
+     A causa: o pivô era jogado no CAM.focusOff, o desvio que tira o corpo de
+     baixo do card. Isso deslocava o corpo na tela, sim, mas também mudava o
+     eixo do giro, porque o desvio ficava preso ao MUNDO. Agora o pivô é o
+     próprio corpo e o desvio é aplicado na CÂMERA (ver applyCam): o corpo
+     continua fora do centro da tela, mas é ele que fica parado quando você
+     gira em volta */
+  CAM.desvioCard = !!(cfg.mode === 'orbit' && cfg.pivFoco);
 }
 function applyCam(){
   if(CAM.mode==='orbit'){
     const cp = Math.cos(CAM.pitch), sp = Math.sin(CAM.pitch), P = CAM.pivot;
     camera.position.set(P.x + Math.sin(CAM.yaw)*cp*CAM.dist, P.y + sp*CAM.dist, P.z + Math.cos(CAM.yaw)*cp*CAM.dist);
     camera.lookAt(P);
+    /* o desvio do card anda com a CÂMERA, não com o mundo: assim ele é sempre o
+       mesmo pedacinho de tela, em qualquer ângulo, e o giro continua em volta
+       do corpo. Cresce com a distância porque na cena de foco ele é um ÂNGULO */
+    if(CAM.desvioCard){
+      const k = CAM.dist/FOCUS_DIST;
+      if(CAM.focusOff.x) camera.translateX(CAM.focusOff.x*k);
+      if(CAM.focusOff.y) camera.translateY(CAM.focusOff.y*k);
+    }
   } else {
     camera.position.set(0,0,CAM.dist);
     camera.lookAt(CAM.focusOff);
@@ -12306,7 +12325,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r169';
+const BUILD = 'r170';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13194,9 +13213,8 @@ function loop(){
       const pk = ACT.pickables.find(x=>x.userData.id===ST.mapCard.id);
       if(pk){ pk.getWorldPosition(SEGV); CAM.pivot.lerp(SEGV, Math.min(1, dt*5.2)); }
     } else {
-      /* sem seleção o pivô volta ao centro (ou ao desvio do card, no foco cênico) */
-      if(ACT.kind==='focus' && ACT.cam && ACT.cam.pivFoco) SEGV.copy(CAM.focusOff);
-      else SEGV.set(0,0,0);
+      /* sem seleção o pivô volta ao centro, que agora é o próprio corpo */
+      SEGV.set(0,0,0);
       if(CAM.pivot.distanceToSquared(SEGV) > 1e-6) CAM.pivot.lerp(SEGV, Math.min(1, dt*5.2));
     }
   }
