@@ -4345,6 +4345,8 @@ function updateLabels(){
     if(L.off){ L.el.style.display = 'none'; continue; }
     /* a estrela discreta só se apresenta quando você sai de casa */
     if(L.soLonge && !foraDeCasa){ L.el.style.display = 'none'; continue; }
+    /* o Sol só tem nome enquanto a casa dele é o assunto */
+    if(L.solLbl && dLy > 3000){ L.el.style.display = 'none'; continue; }
     if(foraDeCasa){
       /* o nome da estrela só aparece quando o zoom já abraça a distância dela */
       /* na escala GALÁCTICA a vizinhança inteira vira um grão: os nomes das
@@ -5061,8 +5063,11 @@ function buildSystem(sysId, spin0){
     new THREE.MeshBasicMaterial({visible:false}));
   starPick.userData = {act:'focus', id:S.star.id, r:starSizeEf};
   scene.add(starPick); pickables.push(starPick);
-  labels.push({el:makeLabel(S.star.name, '', ()=>ACTION('focus', S.star.id)),
-    get:v=>v.set(0, starSizeEf + (escrAtivo ? Math.min(0.45, Math.max(0.01, CAM.dist*0.012)) : 0.6), 0)});
+  /* r159 · o nome SOL descansa quando a vizinhança inteira vira um grão: daí
+     ele é só mais uma estrela no meio da Via Láctea, e o rótulo dele brigava
+     com o da galáxia (print dele a 1 milhão de anos-luz) */
+  labels.push({el:makeLabel(S.star.name, '', ()=>ACTION('focus', S.star.id)), solLbl:escrAtivo,
+    get:v=>v.set(0, starSizeEf + (escrAtivo ? Math.min(0.45, Math.max(starSizeEf*0.5, CAM.dist*0.012)) : 0.6), 0)});
 
   const orbiters = [];
   const selReg = {orbits:[], markers:[], belt:null};
@@ -5334,10 +5339,18 @@ function buildSystem(sysId, spin0){
           const dLua = parseDia(m);
           ms = escrTam(dLua ? dLua.km/2 : 1200);
         }
-        const mg2 = makeBodyGroup(m, ms, 10);
+        const mg2 = makeBodyGroup(m, ms, escrAtivo ? 16 : 10);
         mg2.group.position.x = mr;
         mh.add(mg2.group);
         fadeObjs[m.id] = mg2.group;
+        /* r159 · a LUA (e as outras luas) entram no contínuo: ganham malha fina
+           quando você chega perto, e o voo do ENTRAR já funciona nelas porque
+           elas têm alvo próprio no mapa (item dele) */
+        if(escrAtivo){
+          detalhaveis.push({id:m.id, grupo:mg2.group, mesh:mg2.mesh, v:m.visual, r:ms, feito:false});
+          if(mg2.mesh.material && mg2.mesh.material.uniforms && mg2.mesh.material.uniforms.uL)
+            solLuz.push({mesh:mg2.mesh, grupo:mg2.group, mats:[mg2.mesh.material]});
+        }
         const mpk = new THREE.Mesh(new THREE.SphereGeometry(escrAtivo ? Math.max(0.012, mr*0.22) : 0.30, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
         mpk.position.x = mr; mpk.userData = {act:'focus', id:m.id, r:ms};
         mh.add(mpk); pickables.push(mpk);
@@ -6007,7 +6020,7 @@ function buildSystem(sysId, spin0){
           const alvoLbl = dg.clone();
           labels.push({el:makeLabel(nome, '', null), sempre:true, galLbl2:lyD, off:true,
             get:(t2)=>{ t2.copy(alvoLbl).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()*0.85).add(camera.position); }});
-          return {pt, ly:lyD};
+          return {pt, ly:lyD, raio};
         };
         /* r158: nome do corpo e só isso, como todo rótulo do atlas (ele
            reclamou do 'GALÁXIA DE ANDRÔMEDA · 2,5 MILHÕES DE AL') */
@@ -6046,7 +6059,9 @@ function buildSystem(sysId, spin0){
            só quando você já está longe o bastante para vê-la inteira */
         {
           const cvl = C2.clone();
-          labels.push({el:makeLabel('VIA LÁCTEA', '', null), sempre:true, galLbl2:60000, off:true,
+          /* o nome da nossa galáxia só entra quando ela já é uma mançha na
+             tela (uns 250 mil anos-luz), como qualquer outra galáxia */
+          labels.push({el:makeLabel('VIA LÁCTEA', '', null), sempre:true, galLbl2:1.6e6, off:true,
             get:(t2)=>{ t2.copy(cvl).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()*0.8).add(camera.position); }});
         }
       }
@@ -6178,15 +6193,26 @@ function buildSystem(sysId, spin0){
         if(viaLactea){
           const dAL = CAM.dist/(LY_UA*ESCR_UA);
           const fg = Math.min(1, Math.max(0, (dAL - 120)/900));
-          viaLactea.material.opacity = 0.62*fg;
-          if(viaHalo) viaHalo.material.opacity = 0.10*fg;
+          /* a nossa galáxia obedece a mesma regra: de muito longe ela some
+             em vez de virar um caroço branco */
+          const angVL = (50000/Math.max(1e-9, dAL))*CRECT.height*1.2;
+          const suaveVL = Math.min(1, Math.max(0.08, angVL/70));
+          viaLactea.material.opacity = 0.62*fg*suaveVL;
+          if(viaHalo) viaHalo.material.opacity = 0.10*fg*suaveVL;
           /* o fundo de galáxias entra quando a nossa já fica para trás */
           if(fundoGal) fundoGal.material.opacity = 0.5*Math.min(1, Math.max(0, (dAL - 3e5)/1.2e6));
           for(const L of labels) if(L.galLbl) L.off = fg < 0.35;
           /* cada vizinha acende quando o zoom chega perto da distância dela */
           for(const vz of vizinhas){
             const f2 = Math.min(1, Math.max(0, (dAL - vz.ly*0.10)/(vz.ly*0.35)));
-            vz.pt.material.opacity = 0.8*f2;
+            /* r159 · ANTIBOLA BRANCA: quando a galáxia fica pequena na tela, os
+               pontos se empilham no mesmo pixel e o aditivo satura tudo em
+               branco (print dele a 1 milhão de AL). Então ela DESBOTA conforme
+               encolhe, virando uma mançha suave em vez de uma bola acesa */
+            const angPx = (vz.raio/Math.max(1e-9, dAL))*CRECT.height*1.2;
+            const suave = Math.min(1, Math.max(0.10, angPx/70));
+            vz.pt.material.opacity = 0.8*f2*suave;
+            vz.pt.material.size = 1.4*Math.min(1, Math.max(0.55, angPx/70));
           }
           for(const L of labels) if(L.galLbl2) L.off = dAL < L.galLbl2*0.16;
           /* CONQUISTA: da superfície de um corpo até a galáxia inteira, sem corte */
@@ -9009,6 +9035,17 @@ function ACTION(act, id){
 }
 /* voa até o corpo dentro do PRÓPRIO mapa: sem troca de cena, sem corte, e o
    zoom continua livre depois (o contínuo para dentro que ele pediu) */
+/* o caminho único para 'ir até um corpo': no mapa 1:1 do Sistema Solar isso
+   é um voo dentro da própria cena; em qualquer outro caso, a cena de foco de
+   sempre */
+function irAoCorpo(id){
+  const b = ALLBODIES[id];
+  if(b && b._sys === 'sol' && ESCR.on && ACT && ACT.kind === 'system' && ACT.escr && !TOUR.on && acharPick(id)){
+    aproximarNoMapa(id);
+    return;
+  }
+  gotoFocus(id);
+}
 function aproximarNoMapa(id){
   const pk = acharPick(id);
   if(!pk) return;
@@ -10315,8 +10352,10 @@ function tourToggle(){
 let FINDIDX = null, findSel = 0, findRes = [];
 function buildFindIdx(){
   FINDIDX = [];
+  /* r159 · no 1:1 a busca também é CONTÍNUA: achar MARTE voa até ele dentro
+     do mapa, sem trocar de cena, igual ao clique de entrar (item dele) */
   for(const b of Object.values(ALLBODIES))
-    FINDIDX.push({name:b.name, sub:(b.desig||'').split('·')[0].trim(), k:norm(b.name+' '+(b.desig||'')), go:()=>gotoFocus(b.id)});
+    FINDIDX.push({name:b.name, sub:(b.desig||'').split('·')[0].trim(), k:norm(b.name+' '+(b.desig||'')), go:()=>irAoCorpo(b.id)});
   for(const [k2, S] of Object.entries(SYS))
     FINDIDX.push({name:S.name, sub:'SISTEMA', k:norm(S.name+' sistema'), go:()=>gotoSystem(k2)});
   for(const g of GALAXIES)
@@ -11336,7 +11375,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r158';
+const BUILD = 'r159';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
