@@ -1350,11 +1350,12 @@ void main(){
   float envolve = clamp((ndl + 0.22)/1.22, 0.0, 1.0);
   float wrap = pow(envolve, 0.92);
   vec3 lit = col * (uAmb + wrap*1.10);
-  /* o entardecer: uma faixa quente exatamente onde o Sol raspa o horizonte */
-  float term = 1.0 - smoothstep(0.0, 0.26, abs(ndl));
-  lit += vec3(0.40, 0.19, 0.07) * term * 0.33 * (0.35 + 0.65*water);
-  /* piso de luz das estrelas: a noite fica escura, não cega */
-  lit += vec3(0.020, 0.028, 0.050) * (1.0 - wrap);
+  /* r156: a faixa de entardecer e o piso azulado saíram quase todos (ele
+     achou o conjunto brilhante demais e preferiu o visual antigo); sobra um
+     fio de crepúsculo, só para o corte não ficar seco */
+  float term = 1.0 - smoothstep(0.0, 0.18, abs(ndl));
+  lit += vec3(0.30, 0.15, 0.06) * term * 0.12 * water;
+  lit += vec3(0.010, 0.014, 0.026) * (1.0 - wrap);
 
   /* especular só na água */
   float spec = pow(max(dot(reflect(-L,N), V), 0.0), 26.0) * water * 0.55;
@@ -1400,16 +1401,14 @@ precision highp float;
 varying vec3 vN;
 uniform vec3 uCol; uniform float uI; uniform vec3 uL;
 void main(){
+  /* r156: ele não gostou do halo grosso do r147 e citou o r114 como
+     referência. Voltamos ao arco FINO de antes, mantendo só a modulação pelo
+     Sol (o lado escuro não brilha) e sem o rubor quente do crepúsculo */
   vec3 N = normalize(vN);
-  /* borda: quanto mais de perfil, mais grossa a camada de ar atravessada */
-  float borda = pow(clamp(1.0 - abs(dot(N, normalize(vec3(0.0,0.0,1.0)))), 0.0, 1.0), 2.6);
+  float borda = pow(clamp(0.68 - dot(N, vec3(0.0,0.0,1.0)), 0.0, 1.0), 3.2);
   float ndl = dot(N, normalize(uL));
-  /* o ar só brilha onde o Sol bate; no terminador sobra um fio quente */
-  float dia = smoothstep(-0.35, 0.35, ndl);
-  float crep = 1.0 - smoothstep(0.0, 0.30, abs(ndl));
-  vec3 cor = mix(uCol, vec3(1.0, 0.55, 0.28), crep*0.55);
-  float i = borda * uI * (0.12 + 1.05*dia);
-  gl_FragColor = vec4(cor, 1.0) * i;
+  float dia = smoothstep(-0.30, 0.45, ndl);
+  gl_FragColor = vec4(uCol, 1.0) * (borda * uI * (0.18 + 0.9*dia));
 }`;
 
 const RING_FRAG = `
@@ -5071,11 +5070,25 @@ function buildSystem(sysId, spin0){
      círculo de tamanho constante na tela (pedido dele). Some quando o corpo
      fica maior que o anel, e nunca aparece no Sol */
   const aneisMira = [];
+  const solLuz = [];   /* corpos que recebem a direção real do Sol no 1:1 */
+  const _lzA = new THREE.Vector3(), _lzB = new THREE.Vector3();
+  /* r156 · o anel de mira agora é DESENHADO COMO UMA ÓRBITA (pedido dele): a
+     mesma linha de 1 pixel, a mesma cor da linha de planeta e o mesmo pulso
+     âmbar da seleção. Antes era um sprite grosso, calibrado pela pontinha do
+     rótulo, e ficava com outra cara no meio das órbitas */
+  const ANEL_GEO = (()=>{
+    const n = 96, pos = new Float32Array(n*3);
+    for(let i=0;i<n;i++){ const a2 = i/n*Math.PI*2; pos[i*3] = Math.cos(a2); pos[i*3+1] = Math.sin(a2); }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    return g;
+  })();
   function anelMira(host, raioCorpo, dPai){
     if(!escrAtivo) return null;
-    const a = new THREE.Sprite(new THREE.SpriteMaterial({map:TEX_ANEL, color:0x78b9ff,
+    const a = new THREE.LineLoop(ANEL_GEO, new THREE.LineBasicMaterial({color:LINHA.planeta.cor,
       transparent:true, depthWrite:false, opacity:0}));
     a.renderOrder = 3;
+    a.frustumCulled = false;
     host.add(a);
     const reg = {spr:a, r:raioCorpo, dPai:dPai || 0, id:null};
     aneisMira.push(reg);
@@ -5249,7 +5262,7 @@ function buildSystem(sysId, spin0){
     holder.add(bg.group);
     bg.mesh.rotation.y = spinAcc;
     fadeObjs[p.id] = bg.group;   /* encolhe no mergulho, menos o corpo visado */
-    spinners.push({obj:bg.mesh, spd:0.25});
+    spinners.push({obj:bg.mesh, spd:0.25, id:p.id});
     let cometFx = null;
     if(p.comet){
       const mkTail = (sx, sy, op)=>{
@@ -5262,6 +5275,11 @@ function buildSystem(sysId, spin0){
         v:new THREE.Vector3(), w:new THREE.Vector3(), s1:new THREE.Vector3(), s2:new THREE.Vector3()};
       cometFxs.push(cometFx);
     }
+    /* r156 · no 1:1 cada corpo é iluminado pelo SOL de verdade: a direção da
+       luz é recalculada por quadro no espaço da câmera, então girar em volta
+       do planeta mostra o lado escuro (ele reclamou que não escurecia) */
+    if(escrAtivo && bg.mesh && bg.mesh.material && bg.mesh.material.uniforms && bg.mesh.material.uniforms.uL)
+      solLuz.push({mesh:bg.mesh, grupo:bg.group, mats:[bg.mesh.material]});
     const anelP = anelMira(bg.group, p.sys.size, p.satOf ? p.sys.orbit : 0);
     if(anelP) anelP.id = p.id;
     const pick = new THREE.Mesh(new THREE.SphereGeometry(Math.max(p.sys.size + (p.satOf?0.15:0.75), p.satOf?0.35:1.25), 8, 8),
@@ -5275,7 +5293,9 @@ function buildSystem(sysId, spin0){
       mini:!!p.satOf,
       lid:p.id, lidPai:(p._parent || p.satOf || 0),
       escrOrb:(escrAtivo ? (p.orbita ? (p.orbita.peri+p.orbita.afel)/2 : p.sys.orbit) : 0),
-      get:v=>{ gp.getWorldPosition(v); v.y += p.sys.size + (escrAtivo ? Math.min(0.4, Math.max(0.0015, CAM.dist*0.012)) : 0.55); }});
+      /* r156: perto do corpo o desvio passa a ser o TAMANHO DELE, senão o
+         nome flutua longe demais (o piso fixo de 0.0015 era 2 raios da Terra) */
+      get:v=>{ gp.getWorldPosition(v); v.y += p.sys.size + (escrAtivo ? Math.min(0.4, Math.max(p.sys.size*0.9, CAM.dist*0.012)) : 0.55); }});
     labelDe[p.id] = labels[labels.length-1];
     objReg.push({id:p.id, cls, holder, pick, lbl:labels[labels.length-1],
       corpo:bg.group, sempreOculto:!!p.foguete,
@@ -5547,7 +5567,11 @@ function buildSystem(sysId, spin0){
   if(luaFix){
     const pT = luaFix.mh.getWorldPosition(new THREE.Vector3());
     const sunAz = Math.atan2(-pT.z, -pT.x);
-    const alvoLua = sunAz + Math.PI + faseDaLua().ang;
+    /* r156 · BUG DE MEIA VOLTA: na lua NOVA (ang 0) ela fica ENTRE a Terra e o
+       Sol, e na CHEIA (ang pi) do lado oposto. O código somava um pi a mais,
+       então na cheia a Lua ia parar do lado do Sol. Ele pegou comparando com
+       o eclipse lunar de 28 AGO 2026, que exige Sol, Terra e Lua nessa ordem */
+    const alvoLua = sunAz + faseDaLua().ang;
     /* rotation.y gira +x para -z: o ângulo de mundo é o negativo da soma */
     luaFix.mh.rotation.y = -alvoLua - luaFix.holder.rotation.y;
   }
@@ -6137,24 +6161,50 @@ function buildSystem(sysId, spin0){
         /* r141: o anel encolheu para o tamanho do DESVIO DO RÓTULO, então a
            pontinha do risco que desce do nome encosta na circunferência
            (pedido dele: estavam grandes demais) */
-        const rAnel = Math.min(0.4, Math.max(0.0015, CAM.dist*0.012));
+        /* o raio do anel é puramente ANGULAR: um círculo do mesmo tamanho na
+           tela para todo corpo, independente do zoom */
+        const rAnel = CAM.dist*0.030;
         for(const am of aneisMira){
           const escondePai = am.dPai && rAnel > am.dPai*0.55;   /* lua colada no dono: só quando dá para separar */
           const somePerto = Math.min(1, Math.max(0, (rAnel*0.9 - am.r)/(rAnel*0.7)));
           /* o anel do corpo ESCOLHIDO é pintado pelo SELFX, junto com a órbita:
              aqui só cuidamos do tamanho dele */
-          const op = (escondePai || am.spr.userData.off) ? 0 : 0.45*somePerto;
+          const op = (escondePai || am.spr.userData.off) ? 0 : LINHA.planeta.op*somePerto;
           if(!am.selFX){
-            if(am.spr.material.color.getHex() !== 0x78b9ff) am.spr.material.color.setHex(0x78b9ff);
+            if(am.spr.material.color.getHex() !== LINHA.planeta.cor) am.spr.material.color.setHex(LINHA.planeta.cor);
             am.spr.material.opacity = op;
           }
-          if(op > 0 || am.selFX) am.spr.scale.setScalar(rAnel*(am.selFX ? 2.25 : 2));
+          if(op > 0 || am.selFX){
+            am.spr.scale.setScalar(rAnel);
+            am.spr.quaternion.copy(camera.quaternion);   /* sempre de frente */
+          }
+        }
+      }
+      /* a luz do Sol de verdade em cada corpo do mapa 1:1 */
+      if(escrAtivo && solLuz.length){
+        for(const sl of solLuz){
+          sl.grupo.getWorldPosition(_lzA);
+          _lzB.copy(_lzA).multiplyScalar(-1).normalize();      /* rumo do Sol (origem) */
+          _lzB.transformDirection(camera.matrixWorldInverse);  /* o shader vê em espaço de câmera */
+          for(const m of sl.mats) if(m.uniforms && m.uniforms.uL) m.uniforms.uL.value.copy(_lzB);
         }
       }
       /* rastro elíptico acompanha o relógio (e a linha do tempo) */
       if(RASTRO.on) for(const rt of rastros) if(rt.userData.elip) rastroElip(rt);
       spinAcc += 0.25*dt;
-      for(const s of spinners) s.obj.rotation.y += s.spd*dt;
+      /* r156 · na ESCALA 1:1 o giro é o DIA REAL de cada corpo, pelo relógio:
+         com 1 s = 1 s a Terra praticamente não se mexe, como na vida. O giro
+         decorativo fica só no mapa cênico (ele viu a Terra rodando feito
+         pião com o relógio no tempo real) */
+      if(escrAtivo){
+        for(const s of spinners){
+          const dia = s.id ? ESCALA_REAL_DIA[s.id] : 0;
+          if(dia) s.obj.rotation.y += (Math.PI*2)*danos*365.25/dia;
+          else s.obj.rotation.y += s.spd*dt*0.15;
+        }
+      } else {
+        for(const s of spinners) s.obj.rotation.y += s.spd*dt;
+      }
       if(starGlow){
         const z = Math.min(1, Math.max(0, (CAM.dist-CAM.min)/(CAM.min*1.6)));
         starGlow.material.opacity = 0.28 + 0.72*z;
@@ -9040,10 +9090,12 @@ function larguraDaTela(){
    perto de um corpo (pedido dele) */
 function reguaBarra(){
   const el = $('#reguabar'); if(!el) return;
+  /* r156 · a régua é coisa da ESCALA 1:1: no mapa cênico as distâncias são
+     desenhadas e a barra seria uma mentira (ele pediu para tirar de lá) */
   const podeUA = ACT && ACT.kind === 'system' && ACT.escr;
   let kmPorUn = 0, emUA = false;
   if(podeUA){ kmPorUn = UA_KM/ESCR_UA; emUA = true; }
-  else if(ACT && ACT.kind === 'focus' && ACT.raioCorpo){
+  else if(ESCR.on && ACT && ACT.kind === 'focus' && ACT.raioCorpo){
     const b = ALLBODIES[ST.body], d = b ? parseDia(b) : null;
     if(d) kmPorUn = (d.km/2)/ACT.raioCorpo;
   }
@@ -10713,7 +10765,7 @@ function applySel(){
     for(const am of ACT.aneisMira){
       if(am.id !== selId) continue;
       am.selFX = true;
-      targets.push({mat:am.spr.material, base:0x78b9ff, baseOp:0.45, amber:0xffb454, op:true});
+      targets.push({mat:am.spr.material, base:LINHA.planeta.cor, baseOp:LINHA.planeta.op, amber:0xffb454, op:true});
     }
     for(const am of ACT.aneisMira) if(am.id !== selId) am.selFX = false;
   } else if(ACT.aneisMira){
@@ -11136,7 +11188,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r155';
+const BUILD = 'r156';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
