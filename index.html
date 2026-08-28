@@ -5106,6 +5106,7 @@ function buildSystem(sysId, spin0){
      fica maior que o anel, e nunca aparece no Sol */
   const aneisMira = [];
   const solLuz = [];   /* corpos que recebem a direção real do Sol (r161: nos dois modos) */
+  const liveGiro = [];  /* corpos com mapa de verdade: o giro vem do relógio (r165) */
   const detalhaveis = [];   /* corpos que ganham malha fina de perto (contínuo) */
   const _lzA = new THREE.Vector3(), _lzB = new THREE.Vector3();
   /* r156 · o anel de mira agora é DESENHADO COMO UMA ÓRBITA (pedido dele): a
@@ -5290,6 +5291,7 @@ function buildSystem(sysId, spin0){
       rastroElip(rastro);
     }
     selReg.orbits.push({id:p.id, mat:orbit.material, obj:orbit, cls, c:est.cor, o:est.op, oculto:!!p.foguete});
+    const aoVivoP = LIVE && podeLive(p.id);
     const bg = (p.sonda || p.satelite || p.foguete)
       ? grupoNave(p.id, p.sys.size*2.6)
       /* r161 · com o modo de teste ligado, a Terra do MAPA também é a de
@@ -5299,9 +5301,13 @@ function buildSystem(sysId, spin0){
     bg.group.position.set(obX, 0, obZ);
     if(elip) elip.grupo = bg.group;
     holder.add(bg.group);
-    bg.mesh.rotation.y = spinAcc;
     fadeObjs[p.id] = bg.group;   /* encolhe no mergulho, menos o corpo visado */
-    spinners.push({obj:bg.mesh, spd:0.25, id:p.id});
+    /* r165 · com o mapa de verdade na cara do planeta o giro deixa de ser
+       decorativo: a longitude que está debaixo do Sol tem que ser a de agora.
+       O spinner escrevia spinAcc por cima e jogava tudo para um lugar
+       qualquer, e era esse o bug que ele viu comparando com o NASA Eyes */
+    if(aoVivoP) liveGiro.push({mesh:bg.mesh, grupo:bg.group});
+    else { bg.mesh.rotation.y = spinAcc; spinners.push({obj:bg.mesh, spd:0.25, id:p.id}); }
     let cometFx = null;
     if(p.comet){
       const mkTail = (sx, sy, op)=>{
@@ -6162,7 +6168,7 @@ function buildSystem(sysId, spin0){
     });
   }
   const camMaxDin = escrAtivo ? 4e6*LY_UA*ESCR_UA : Math.max(S.camMax || 60, alcance * 1.7);
-  return {kind:'system', scene, sceneCeu, eclLinha, aneisMira, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
+  return {kind:'system', scene, sceneCeu, eclLinha, aneisMira, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, liveGiro, solLuz, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
@@ -6380,6 +6386,13 @@ function buildSystem(sysId, spin0){
           _lzB.transformDirection(camera.matrixWorldInverse);  /* o shader vê em espaço de câmera */
           for(const m of sl.mats) if(m.uniforms && m.uniforms.uL) m.uniforms.uL.value.copy(_lzB);
         }
+      }
+      /* r165 · o corpo com mapa de verdade aponta a longitude certa para o Sol,
+         refeito por quadro: viajar no tempo gira o planeta junto */
+      for(const lv of liveGiro){
+        lv.grupo.getWorldPosition(_lzA);
+        if(_lzA.lengthSq() < 1e-12) continue;
+        apontarSubsolar(lv.mesh, Math.atan2(-_lzA.z, -_lzA.x), SIMT.data);
       }
       /* rastro elíptico acompanha o relógio (e a linha do tempo) */
       if(RASTRO.on) for(const rt of rastros) if(rt.userData.elip) rastroElip(rt);
@@ -6600,6 +6613,12 @@ const BIOMAS = [
   {tipo:'tr', l0:[-118,52], l1:[-106,35], w:7, cor:'rgba(150,138,116,.35)'} /* Rochosas */
 ];
 let _texTerra = null, _texLua = null, _mascaraTerra = null;
+/* r165 · estas três viviam entre a função das nuvens e a do preto, e a
+   reescrita das nuvens no r164 levou a linha junto: desde então QUALQUER
+   chamada a texturaNuvens ou texturaLuzes estourava ReferenceError, ou seja
+   o modo ao vivo estava quebrado e ninguém viu, porque ele nasce desligado.
+   Agora moram aqui, junto das outras */
+let _texLuzes = null, _texPreta = null, _texNuvens = null;
 /* ====================== r163 · A TERRA REDESENHADA ======================
    Ele pediu para melhorar o modo ao vivo. Os três problemas do desenho antigo
    eram: costa POLIGONAL (dá para contar os vértices), oceano CHAPADO (só um
@@ -6718,30 +6737,36 @@ function texturaTerra(){
   /* 1 · O MAR. O degradê de latitude continua por baixo (o mar quente do
      equador é mais claro mesmo), e por cima entra o FUNDO: planícies abissais
      e elevacões, que é o que tira a cara de papel de parede */
+  /* r165 · o mar ficou mais FUNDO. Comparando com a foto de verdade, o azul
+     estava claro demais e chapado: o oceano aberto é quase marinho, e o que
+     clareia é só a água rasa perto da costa e a faixa do equador */
   const oc = g.createLinearGradient(0, 0, 0, H);
-  oc.addColorStop(0, '#08203a'); oc.addColorStop(0.28, '#0e3c66');
-  oc.addColorStop(0.5, '#134b79'); oc.addColorStop(0.72, '#0e3c66'); oc.addColorStop(1, '#08203a');
+  oc.addColorStop(0, '#061a30'); oc.addColorStop(0.28, '#0a3157');
+  oc.addColorStop(0.5, '#0e4068'); oc.addColorStop(0.72, '#0a3157'); oc.addColorStop(1, '#061a30');
   g.fillStyle = oc; g.fillRect(0, 0, W, H);
   const fundo = _folhaRuido(384, 192, 1337, 5, 6);
   g.save();
   g.globalCompositeOperation = 'overlay';
-  g.globalAlpha = 0.62;
+  g.globalAlpha = 0.72;
   g.drawImage(fundo, 0, 0, W, H);
   /* uma segunda passada bem miúda: a textura fina que tira o ar de papel */
-  const fundo2 = _folhaRuido(384, 192, 9091, 4, 26);
-  g.globalAlpha = 0.20;
+  const fundo2 = _folhaRuido(768, 384, 9091, 5, 28);
+  g.globalAlpha = 0.28;
   g.drawImage(fundo2, 0, 0, W, H);
   g.restore();
   fundo2.width = fundo2.height = 0;
 
   /* 2 · A PLATAFORMA CONTINENTAL: a água rasa que contorna cada costa, em
      duas camadas, da mais larga e fraca para a mais fina e viva */
+  /* r165 · a plataforma continental era um TRAÇO aceso, e de longe virava um
+     contorno de desenho animado em volta de cada continente (dá para ver no
+     print que ele mandou). Agora é uma faixa larga e fraca, sem fio nenhum */
   g.lineJoin = g.lineCap = 'round';
   for(const poly of COSTAS){
     contorno(g, poly);
-    g.strokeStyle = 'rgba(96,178,200,.20)'; g.lineWidth = Math.max(4, W/150); g.stroke();
+    g.strokeStyle = 'rgba(72,150,178,.16)'; g.lineWidth = Math.max(5, W/110); g.stroke();
     contorno(g, poly);
-    g.strokeStyle = 'rgba(128,210,216,.26)'; g.lineWidth = Math.max(2, W/430); g.stroke();
+    g.strokeStyle = 'rgba(96,178,196,.13)'; g.lineWidth = Math.max(3, W/230); g.stroke();
   }
 
   /* 3 · A TERRA num canvas próprio, para os biomas ficarem presos na máscara */
@@ -6750,9 +6775,11 @@ function texturaTerra(){
   lg.lineJoin = lg.lineCap = 'round';
   for(const poly of COSTAS){
     contorno(lg, poly);
+    /* verde mais fechado e terra mais quente: a paleta antiga era clara demais
+       e o planeta ficava lavado ao lado de uma foto */
     const gr = lg.createLinearGradient(0, 0, 0, H);
-    gr.addColorStop(0, '#8a9070'); gr.addColorStop(0.2, '#587645');
-    gr.addColorStop(0.5, '#65834c'); gr.addColorStop(0.8, '#5d7849'); gr.addColorStop(1, '#e8eef2');
+    gr.addColorStop(0, '#7d8467'); gr.addColorStop(0.2, '#46653a');
+    gr.addColorStop(0.5, '#527040'); gr.addColorStop(0.8, '#4c6739'); gr.addColorStop(1, '#e2e9ee');
     lg.fillStyle = gr; lg.fill();
   }
 
@@ -6810,7 +6837,9 @@ function texturaTerra(){
      é claro e escurece o que é escuro sem lavar a cor. Ele é recortado na
      máscara da terra ANTES, porque overlay com fonte transparente não toca no
      destino: é assim que o mar fica de fora */
-  const rel = _folhaRuido(640, 320, 8802, 6, 34);
+  /* folha maior: 640 esticado para 3072 borrava tudo, e o planeta ficava com
+     cara de aquarela ao lado da foto */
+  const rel = _folhaRuido(1024, 512, 8802, 6, 46);
   const rm = document.createElement('canvas'); rm.width = W; rm.height = H;
   const rmg = rm.getContext('2d');
   rmg.lineJoin = rmg.lineCap = 'round';
@@ -6821,14 +6850,16 @@ function texturaTerra(){
   /* soft-light no lugar de overlay: dá textura sem manchar a cor (o overlay
      forte deixava a terra com cara de bolor) */
   lg.globalCompositeOperation = 'soft-light';
-  lg.globalAlpha = 0.75;
+  lg.globalAlpha = 0.95;
   lg.drawImage(rm, 0, 0);
   lg.restore();
 
   /* 6 · a costa: um traço fino e escuro para o olho achar o contorno */
+  /* o fio da costa ficou quase invisível: ele servia para o olho achar o
+     contorno num mapa, mas num PLANETA visto de longe vira desenho */
   for(const poly of COSTAS){
     contorno(lg, poly);
-    lg.strokeStyle = 'rgba(38,60,50,.42)'; lg.lineWidth = Math.max(1, W/2048); lg.stroke();
+    lg.strokeStyle = 'rgba(30,50,42,.16)'; lg.lineWidth = Math.max(1, W/2600); lg.stroke();
   }
 
   g.drawImage(lc, 0, 0);
@@ -6842,79 +6873,177 @@ function texturaTerra(){
 }
 function texturaLua(){
   if(_texLua) return _texLua;
-  const W = 1024, H = 512, c = document.createElement('canvas');
+  /* r165 · A LUA REFEITA. A antiga era de 1024 e usava Math.random, ou seja
+     uma Lua diferente a cada F5, com as crateras desenhadas como bolinha
+     branca mais uma sombra deslocada. Agora: o dobro de resolução, tudo
+     determinístico, o contraste alto entre PLANALTO (claro e socado de
+     cratera) e MAR (escuro e liso) que é a cara dela, e cratera de verdade,
+     com piso fundo, anel de borda e o manto de ejeção em volta */
+  const W = QLOW ? 1536 : 3072, H = W >> 1;
+  const c = document.createElement('canvas');
   c.width = W; c.height = H;
   const g = c.getContext('2d');
-  g.fillStyle = '#8d8880'; g.fillRect(0,0,W,H);
-  const px = (lon,lat)=>[ (lon+180)/360*W, (90-lat)/180*H ];
-  /* mosqueado de terreno alto */
-  for(let i=0;i<900;i++){
-    g.fillStyle = 'rgba(' + (Math.random()<0.5 ? '255,255,255' : '60,58,54') + ',' + (0.02+Math.random()*0.05) + ')';
-    const r = 4+Math.random()*22, x = Math.random()*W, y = Math.random()*H;
-    g.beginPath(); g.arc(x,y,r,0,Math.PI*2); g.fill();
-  }
-  /* os mares com nome e lugar de verdade, no lado que nos encara (lon 0) */
+  const px = (lon, lat)=>[ (lon + 180)/360*W, (90 - lat)/180*H ];
+  let seed = 19690720;                       /* 20 de julho de 1969 */
+  const rnd = ()=>{ seed ^= seed << 13; seed >>>= 0; seed ^= seed >> 17; seed ^= seed << 5; seed >>>= 0; return seed/4294967296; };
+
+  /* 1 · o planalto: o terreno antigo, claro, que cobre quase tudo */
+  g.fillStyle = '#9a9791'; g.fillRect(0, 0, W, H);
+  const alto = _folhaRuido(768, 384, 4477, 6, 30);
+  /* discreto: o planalto de verdade é um cinza claro bem parelho, e o que
+     dá a textura dele é a cratera, não a mancha */
+  g.save(); g.globalCompositeOperation = 'overlay'; g.globalAlpha = 0.42;
+  g.drawImage(alto, 0, 0, W, H);
+  const alto2 = _folhaRuido(512, 256, 8899, 5, 9);
+  g.globalAlpha = 0.34; g.drawImage(alto2, 0, 0, W, H);
+  g.restore();
+  alto.width = alto.height = 0; alto2.width = alto2.height = 0;
+
+  /* 2 · A MÁSCARA DOS MARES, no lugar de verdade: lava que encheu as bacias de
+     impacto há uns 3 bilhões de anos e deixou o lado que nos encara com essas
+     manchas. Ela é desenhada AGORA só num canvas de recorte, porque as
+     crateras precisam saber onde é mar antes de nascer, e a cor dos mares
+     entra DEPOIS delas: no mar de verdade quase não há cratera */
   const MARES = [
-    ['Procellarum', -55, 20, 95, 120, 0.9],
-    ['Imbrium', -17, 33, 75, 60, 1.0],
-    ['Serenitatis', 18, 26, 48, 44, 1.0],
-    ['Tranquillitatis', 31, 9, 52, 42, 0.95],
-    ['Fecunditatis', 52, -8, 40, 42, 0.85],
-    ['Crisium', 59, 17, 32, 26, 1.0],
-    ['Nectaris', 35, -15, 26, 24, 0.85],
-    ['Nubium', -17, -21, 36, 28, 0.85],
-    ['Humorum', -39, -24, 26, 24, 0.9]
+    [-55, 20, 46, 40, 1.00],   /* Oceanus Procellarum */
+    [-17, 34, 32, 26, 1.05],   /* Mare Imbrium */
+    [18, 27, 20, 18, 1.00],    /* Mare Serenitatis */
+    [31, 9, 22, 18, 0.96],     /* Mare Tranquillitatis */
+    [52, -8, 17, 18, 0.88],    /* Mare Fecunditatis */
+    [59, 17, 13, 10, 1.02],    /* Mare Crisium */
+    [35, -15, 11, 10, 0.88],   /* Mare Nectaris */
+    [-17, -21, 15, 12, 0.86],  /* Mare Nubium */
+    [-39, -24, 11, 10, 0.92],  /* Mare Humorum */
+    [-10, 56, 40, 9, 0.72],    /* Mare Frigoris, a faixa comprida do norte */
+    [4, 13, 9, 7, 0.84],       /* Mare Vaporum */
+    [87, -2, 10, 9, 0.80]      /* Mare Smythii */
   ];
-  for(const [nm, lon, lat, rw, rh, dk] of MARES){
-    const [x, y] = px(lon, lat);
-    for(let i=0;i<5;i++){
-      const dx = (Math.random()-0.5)*rw*0.5, dy = (Math.random()-0.5)*rh*0.5;
-      const gr = g.createRadialGradient(x+dx,y+dy,0,x+dx,y+dy,Math.max(rw,rh)*0.8);
-      gr.addColorStop(0,'rgba(74,72,70,'+(0.34*dk)+')'); gr.addColorStop(1,'rgba(74,72,70,0)');
-      g.fillStyle = gr;
-      g.beginPath(); g.ellipse(x+dx, y+dy, rw*0.8, rh*0.8, 0, 0, Math.PI*2); g.fill();
-    }
-  }
-  /* crateras miudas */
-  for(let i=0;i<520;i++){
-    const x = Math.random()*W, y = Math.random()*H, r = 1 + Math.random()*6;
-    g.fillStyle = 'rgba(255,255,255,' + (0.05 + Math.random()*0.12) + ')';
-    g.beginPath(); g.arc(x,y,r,0,Math.PI*2); g.fill();
-    g.fillStyle = 'rgba(0,0,0,.10)';
-    g.beginPath(); g.arc(x+r*0.3,y+r*0.3,r*0.8,0,Math.PI*2); g.fill();
-  }
-  /* Tycho e Copernico com os sistemas de raios */
-  const raios = (lon, lat, n, len, w, a)=>{
-    const [x, y] = px(lon, lat);
-    for(let i=0;i<n;i++){
-      const ang = i/n*Math.PI*2 + Math.random()*0.4;
-      const L = len*(0.5+Math.random()*0.6);
-      const gr = g.createLinearGradient(x, y, x+Math.cos(ang)*L, y+Math.sin(ang)*L);
-      gr.addColorStop(0,'rgba(255,255,255,'+a+')'); gr.addColorStop(1,'rgba(255,255,255,0)');
-      g.strokeStyle = gr; g.lineWidth = w;
-      g.beginPath(); g.moveTo(x,y); g.lineTo(x+Math.cos(ang)*L, y+Math.sin(ang)*L); g.stroke();
-    }
-    g.fillStyle = 'rgba(255,255,255,.85)';
-    g.beginPath(); g.arc(x, y, 4, 0, Math.PI*2); g.fill();
-    g.fillStyle = 'rgba(90,88,84,.9)';
-    g.beginPath(); g.arc(x, y, 2, 0, Math.PI*2); g.fill();
+  const bolhas = [];
+  for(const m of MARES)
+    for(let i = 0; i < 5; i++)
+      bolhas.push([m[0] + (rnd() - 0.5)*m[2]*0.55, m[1] + (rnd() - 0.5)*m[3]*0.55, m[2], m[3], m[4]]);
+  const mareMask = document.createElement('canvas');
+  mareMask.width = W; mareMask.height = H;
+  const mg = mareMask.getContext('2d');
+  const porMar = (ctx, b, cor)=>{
+    const xy = px(b[0], b[1]);
+    const rx = b[2]*0.86/360*W, ry = b[3]*0.86/180*H;
+    ctx.save(); ctx.translate(xy[0], xy[1]); ctx.scale(1, ry/rx);
+    const gr = ctx.createRadialGradient(0, 0, 0, 0, 0, rx);
+    /* borda mais definida: mar de verdade tem contorno, não desbota devagar */
+    gr.addColorStop(0, cor); gr.addColorStop(0.72, cor); gr.addColorStop(1, _semAlfa(cor));
+    ctx.fillStyle = gr;
+    ctx.beginPath(); ctx.arc(0, 0, rx, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
   };
-  raios(-11, -43, 14, 150, 1.6, 0.30);   /* Tycho, o rei dos raios */
-  raios(-20, 10, 10, 70, 1.2, 0.22);     /* Copernico */
-  /* Base da Tranquilidade: onde a Apollo 11 pousou, marcada em ambar */
-  { const [x, y] = px(23.47, 0.67);
-    g.strokeStyle = 'rgba(255,180,84,.9)'; g.lineWidth = 1.2;
-    g.beginPath(); g.arc(x, y, 5, 0, Math.PI*2); g.stroke();
-    g.fillStyle = 'rgba(255,180,84,1)';
-    g.fillRect(x-1, y-1, 2, 2); }
+  for(const b of bolhas) porMar(mg, b, 'rgba(0,0,0,.34)');
+  const mData = mg.getImageData(0, 0, W, H).data;
+  const ehMar = (x, y)=>mData[((y|0)*W + (x|0))*4 + 3] > 70;
+
+  /* 3 · AS CRATERAS. Piso fundo, um anel de borda discreto e um manto de
+     ejeção só nas grandes. CUIDADO APRENDIDO EM MARTE: anel forte em milhares
+     de crateras vira espuma de sabão, e o manto de ejeção em todas lava a
+     imagem inteira de branco. O que se vê de longe é a TEXTURA delas */
+  const cratera = (x, y, r, forca, grande)=>{
+    if(grande){
+      const ej = g.createRadialGradient(x, y, r*0.9, x, y, r*2.6);
+      ej.addColorStop(0, 'rgba(222,222,220,' + (0.07*forca).toFixed(3) + ')');
+      ej.addColorStop(1, 'rgba(222,222,220,0)');
+      g.fillStyle = ej;
+      g.beginPath(); g.arc(x, y, r*2.6, 0, Math.PI*2); g.fill();
+    }
+    const gr = g.createRadialGradient(x, y, 0, x, y, r);
+    gr.addColorStop(0, 'rgba(56,54,51,' + (0.26*forca).toFixed(3) + ')');
+    gr.addColorStop(0.70, 'rgba(62,60,57,' + (0.16*forca).toFixed(3) + ')');
+    gr.addColorStop(0.88, 'rgba(226,226,224,' + (0.09*forca).toFixed(3) + ')');
+    gr.addColorStop(1, 'rgba(226,226,224,0)');
+    g.fillStyle = gr;
+    g.beginPath(); g.arc(x, y, r, 0, Math.PI*2); g.fill();
+  };
+  for(let i = 0; i < 5200; i++){
+    const x = rnd()*W, y = rnd()*H;
+    if(ehMar(x, y) && rnd() < 0.94) continue;          /* mar quase liso */
+    const grau = 0.10 + Math.pow(rnd(), 3.8)*3.0;
+    cratera(x, y, Math.max(1.0, grau/360*W), 0.45 + rnd()*0.55, grau > 1.5);
+  }
+
+  /* 3b · agora sim a cor dos mares, por cima das crateras: eles são lisos e
+     escuros, e é esse contraste que dá a cara da Lua cheia */
+  for(const b of bolhas) porMar(g, b, 'rgba(70,68,66,' + (0.30*b[4]).toFixed(3) + ')');
+
+  /* 3c · as grandes, com nome e lugar */
+  const GRANDES = [
+    [-14, -58, 3.7],  /* Clavius, a maior do lado de cá */
+    [-9, 51, 1.7],    /* Platão */
+    [-20, 10, 1.6],   /* Copérnico */
+    [-11, -43, 1.5],  /* Tycho */
+    [-38, 10, 1.1],   /* Kepler */
+    [-47, 24, 0.9],   /* Aristarco */
+    [-68, -6, 3.4],   /* Grimaldi */
+    [-2, -9, 2.4],    /* Ptolomeu */
+    [43, -26, 2.9]    /* Petavius */
+  ];
+  for(const q of GRANDES){
+    const xy = px(q[0], q[1]);
+    cratera(xy[0], xy[1], q[2]/360*W, 1.4, true);
+  }
+  /* Platão e Grimaldi têm o piso inundado de lava: bem escuros */
+  for(const q of [[-9, 51, 1.6], [-68, -6, 3.2]]){
+    const xy = px(q[0], q[1]), r = q[2]/360*W;
+    const gr3 = g.createRadialGradient(xy[0], xy[1], 0, xy[0], xy[1], r);
+    gr3.addColorStop(0, 'rgba(70,68,66,.55)'); gr3.addColorStop(0.72, 'rgba(70,68,66,.46)');
+    gr3.addColorStop(1, 'rgba(70,68,66,0)');
+    g.fillStyle = gr3; g.beginPath(); g.arc(xy[0], xy[1], r, 0, Math.PI*2); g.fill();
+  }
+  /* Aristarco é o ponto mais claro da Lua e dá para achar de binóculo */
+  {
+    const xy = px(-47, 24), r = 1.2/360*W;
+    const gr4 = g.createRadialGradient(xy[0], xy[1], 0, xy[0], xy[1], r*1.8);
+    gr4.addColorStop(0, 'rgba(250,248,242,.5)'); gr4.addColorStop(1, 'rgba(250,248,242,0)');
+    g.fillStyle = gr4; g.beginPath(); g.arc(xy[0], xy[1], r*1.8, 0, Math.PI*2); g.fill();
+  }
+
+  /* 4 · OS RAIOS. Cratera nova espalha material claro por milhares de km, e é
+     por isso que a Lua cheia parece riscada. Tycho é a rainha: os raios dela
+     cruzam metade do disco */
+  const raios = (lon, lat, n, len, w, a)=>{
+    const xy = px(lon, lat);
+    for(let i = 0; i < n; i++){
+      const ang = i/n*Math.PI*2 + (rnd() - 0.5)*0.7;
+      const L = len/360*W*(0.35 + rnd()*0.9);
+      /* o raio COMEÇA longe do centro: partindo do miolo, dezenas deles se
+         encontram num ponto e a cratera vira estrelinha de reflexo */
+      const d0 = L*(0.10 + rnd()*0.12);
+      const x0 = xy[0] + Math.cos(ang)*d0, y0 = xy[1] + Math.sin(ang)*d0;
+      const x1 = xy[0] + Math.cos(ang)*L, y1 = xy[1] + Math.sin(ang)*L;
+      const gr5 = g.createLinearGradient(x0, y0, x1, y1);
+      gr5.addColorStop(0, 'rgba(236,234,230,' + (a*0.55).toFixed(3) + ')');
+      gr5.addColorStop(0.3, 'rgba(236,234,230,' + a + ')');
+      gr5.addColorStop(1, 'rgba(236,234,230,0)');
+      g.strokeStyle = gr5;
+      g.lineWidth = Math.max(1, w/360*W*(0.5 + rnd()*1.1));
+      /* uma curvinha: raio de verdade nao e regua */
+      const mx = (x0 + x1)/2 + Math.cos(ang + 1.57)*L*(rnd() - 0.5)*0.16;
+      const my = (y0 + y1)/2 + Math.sin(ang + 1.57)*L*(rnd() - 0.5)*0.16;
+      g.beginPath(); g.moveTo(x0, y0); g.quadraticCurveTo(mx, my, x1, y1); g.stroke();
+    }
+  };
+  raios(-11, -43, 90, 82, 0.38, 0.13);   /* Tycho, a rainha dos raios */
+  raios(-20, 10, 54, 36, 0.34, 0.10);    /* Copérnico */
+  raios(-38, 10, 34, 24, 0.30, 0.09);    /* Kepler */
+  raios(-47, 24, 30, 18, 0.26, 0.09);    /* Aristarco */
+
+  /* 5 · a poeira fina por cima, para nada ficar liso demais */
+  const po = _folhaRuido(768, 384, 1212, 5, 60);
+  g.save(); g.globalCompositeOperation = 'soft-light'; g.globalAlpha = 0.55;
+  g.drawImage(po, 0, 0, W, H); g.restore();
+  po.width = po.height = 0;
+  mareMask.width = mareMask.height = 0;
+
   const t = new THREE.CanvasTexture(c);
-  t.anisotropy = 4;
+  t.anisotropy = 8;
   return (_texLua = t);
 }
-let _texLuzes = null, _texPreta = null, _texNuvens = null;
-/* nuvens com clima de verdade: a faixa de convergência no equador, as
-   frentes em espiral das latitudes médias, os cirros polares e os cinturões
-   subtropicais mais limpos. Desenhado em canvas, nada externo. */
 function texturaNuvens(){
   if(_texNuvens) return _texNuvens;
   /* r164 · AS NUVENS ERAM BOLHAS SORTEADAS (e com Math.random, ou seja,
@@ -7279,6 +7408,35 @@ function liveMaterial(id){
 /* Greenwich apontado para o Sol da cena ao meio-dia UTC. O eixo tambem ganha a
    inclinacao real de 23,4 graus, que e o que produz as estacoes. */
 const LIVE_FASE = Math.atan2(LDIR.x, LDIR.z) - Math.PI/2;
+/* r165 · O LADO ERRADO DO PLANETA (ele comparou com o NASA Eyes: hoje quem
+   pega sol é a América e o app mostrava a África). A conta antiga misturava a
+   hora do dia com o rumo decorativo da luz, ignorava onde a Terra está na
+   órbita, e ainda por cima era sobrescrita pelo spinner logo depois. Agora é
+   geometria, refeita a cada quadro.
+   Ao meio-dia UTC o Sol está sobre Greenwich, e a cada hora ele anda 15 graus
+   para oeste: essa é a longitude subsolar */
+function lonSubsolar(ms){
+  const h = ((ms/3600000) % 24 + 24) % 24;
+  return (12 - h)*15;                    /* graus, leste positivo */
+}
+/* na textura equirretangular a longitude L cai no azimute -L quando
+   rotation.y é zero (no three.js o u=0 fica em -X e cresce para +Z), e girar
+   por t leva tudo para -L-t. Igualando ao azimute do Sol sai o giro que põe a
+   longitude subsolar de frente para ele */
+/* a fórmula fechada só vale se a malha for a ÚNICA coisa girando em Y, e não
+   é: o holder da órbita gira, e o grupo ainda leva a inclinação do eixo. Então
+   em vez de deduzir, MEDIMOS: zera o giro, olha para onde a longitude do Sol
+   aponta no mundo, e corrige a diferença. Vale para qualquer cadeia de pais */
+const _lvA = new THREE.Vector3();
+function apontarSubsolar(mesh, azSol, ms){
+  const lam = lonSubsolar(ms)*Math.PI/180;
+  mesh.rotation.y = 0;
+  mesh.updateWorldMatrix(true, false);
+  /* na textura, a longitude L fica na direção local (cos L, 0, -sen L) */
+  _lvA.set(Math.cos(lam), 0, -Math.sin(lam)).transformDirection(mesh.matrixWorld);
+  /* girar em Y por t diminui o azimute em t: basta a diferença */
+  mesh.rotation.y = Math.atan2(_lvA.z, _lvA.x) - azSol;
+}
 /* r161 · o RUMO DO SOL da cena de foco, no mesmo jeito de medir ângulo que o
    mapa usa (atan2(z, x)): é daqui que se conta a fase da Lua. LIVE_FASE serve
    para alinhar Greenwich na textura e por acaso vale o NEGATIVO disso, e era
@@ -7855,6 +8013,8 @@ function buildFocus(bodyId, spin0){
   if(ESCR.on && b._sys === 'sol' && bg.mesh && bg.mesh.material && bg.mesh.material.uniforms && bg.mesh.material.uniforms.uAmb)
     bg.mesh.material.uniforms.uAmb.value = -0.18;
   if(spin0) bg.mesh.rotation.y = spin0;   /* continua de onde a cena do sistema parou */
+  /* o corpo com mapa de verdade ignora o spin herdado: quem manda é o relógio */
+  const giroLive = aoVivo && podeLive(bodyId);
   bg.group.traverse(o=>{ if(o.userData && o.userData.isClouds) clouds = o; });
   /* r152 · AS CALOTAS DE MARTE RESPIRAM: o ano marciano tem 687 dias e as
      estações são mais extremas que as nossas (a órbita é bem elíptica), então
@@ -8113,6 +8273,7 @@ void main(){
           : {mode:'orbit', yaw:0, pitch:0.06, dist:9.0, min:3.7, max:9.6, pivFoco:true}),
     update:(dt)=>{
       if(marteCalota) marteCalota(SIMT.data);   /* as calotas de Marte seguem o relógio */
+      if(giroLive && bg) apontarSubsolar(bg.mesh, SOLAZ_FOCO, SIMT.data);
       if(luzFoco.length){
         _flz.copy(LDIR).transformDirection(camera.matrixWorldInverse);
         for(const m of luzFoco) m.uniforms.uL.value.copy(_flz);
@@ -11935,7 +12096,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r164';
+const BUILD = 'r165';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
