@@ -4250,7 +4250,10 @@ function planetMaterial(v){
     uSpotPos:{value:new THREE.Vector2(sp?sp.pos[0]:0, sp?sp.pos[1]:0)},
     uSpotR:{value:sp?sp.r:0.3}, uSpotCol:{value:C(sp?sp.col:'#ffffff')},
     uMode:{value:(MODEMAP[v.mode]!==undefined)?MODEMAP[v.mode]:0},
-    uLights:{value:v.lights?1.0:0.0}, uCrater:{value:v.crater||0.0},
+    /* r157 · as luzes de cidade estão DESLIGADAS: piscavam feito bug, apareciam
+       antes do zoom fundo (o ponto era grande demais para o tamanho da Terra) e
+       ele preferiu esperar a Terra ganhar textura de verdade */
+    uLights:{value:0.0}, uCrater:{value:v.crater||0.0},
     uL:{value:LDIR.clone()}, uTime:{value:0}, uAmb:{value:0.10},
     uSombraOn:{value:0}, uSombraPos:{value:new THREE.Vector2()}, uSombraR:{value:0.05}
   };
@@ -5071,6 +5074,7 @@ function buildSystem(sysId, spin0){
      fica maior que o anel, e nunca aparece no Sol */
   const aneisMira = [];
   const solLuz = [];   /* corpos que recebem a direção real do Sol no 1:1 */
+  const detalhaveis = [];   /* corpos que ganham malha fina de perto (contínuo) */
   const _lzA = new THREE.Vector3(), _lzB = new THREE.Vector3();
   /* r156 · o anel de mira agora é DESENHADO COMO UMA ÓRBITA (pedido dele): a
      mesma linha de 1 pixel, a mesma cor da linha de planeta e o mesmo pulso
@@ -5280,8 +5284,15 @@ function buildSystem(sysId, spin0){
        do planeta mostra o lado escuro (ele reclamou que não escurecia) */
     if(escrAtivo && bg.mesh && bg.mesh.material && bg.mesh.material.uniforms && bg.mesh.material.uniforms.uL)
       solLuz.push({mesh:bg.mesh, grupo:bg.group, mats:[bg.mesh.material]});
-    const anelP = anelMira(bg.group, p.sys.size, p.satOf ? p.sys.orbit : 0);
-    if(anelP) anelP.id = p.id;
+    /* r157 · O CONTÍNUO PARA DENTRO: no 1:1 não existe mais 'entrar' numa cena
+       de foco, existe só CHEGAR PERTO. Para o corpo aguentar o zoom fundo, ele
+       troca de pele quando a câmera se aproxima: a esfera ganha malha fina e
+       entram as nuvens e a atmosfera, exatamente como na cena de foco */
+    if(escrAtivo && !p.sonda && !p.satelite && !p.foguete)
+      detalhaveis.push({id:p.id, grupo:bg.group, mesh:bg.mesh, v:p.visual, r:p.sys.size, feito:false});
+    /* r157 · OS ANÉIS DE MIRA SAÍRAM (decisão dele, depois de duas tentativas:
+       como sprite ficavam grossos demais, como linha viravam elipse conforme o
+       ângulo e nunca encostavam no risco do rótulo). NÃO REFAZER sem ele pedir */
     const pick = new THREE.Mesh(new THREE.SphereGeometry(Math.max(p.sys.size + (p.satOf?0.15:0.75), p.satOf?0.35:1.25), 8, 8),
       new THREE.MeshBasicMaterial({visible:false}));
     pick.position.set(obX, 0, obZ); pick.userData = {act:'focus', id:p.id, r:p.sys.size};
@@ -5469,7 +5480,7 @@ function buildSystem(sysId, spin0){
           escrOrb:(escrAtivo ? aW : 0),
           get:v=>{ dot.getWorldPosition(v); v.y += escrAtivo ? 0.02 : 0.5; }};
         labels.push(lblA);
-          { const anelA = anelMira(dot, rAst, 0); if(anelA) anelA.id = a.id; }
+  
         objReg.push({id:a.id, cls:clsA, holder:hNo, pick:pick, lbl:lblA});
         continue;
       }
@@ -5882,9 +5893,9 @@ function buildSystem(sysId, spin0){
           sizeAttenuation:false, transparent:true, opacity:0.75, depthWrite:false}));
         cp2.frustumCulled = false;
         sceneCeu.add(cp2);
-        labels.push({el:makeLabel('CENTRO DA GALÁXIA · 26 MIL AL', 'faint zona', ()=>ACTION('fronteira', 'centro')),
-          sempre:true,
-          get:(t2)=>{ t2.copy(dC).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()*0.88).add(camera.position); }});
+        /* r157 · o rótulo do centro da galáxia saiu: poluia o céu desde dentro
+           do Sistema Solar e ele prefere um MAPA a um guia (o alvo de clique
+           fica, então quem quiser a ficha ainda acha) */
         const cpk3 = new THREE.Mesh(new THREE.SphereGeometry(1, 8, 8), new THREE.MeshBasicMaterial({visible:false}));
         cpk3.userData = {act:'fronteira', id:'centro'};
         scene.add(cpk3); pickables.push(cpk3);
@@ -5912,7 +5923,7 @@ function buildSystem(sysId, spin0){
           let rr, th, hh;
           if(bulbo){
             /* o caroço central, gordo e amarelado */
-            rr = Math.pow(Math.random(), 0.55)*5200;
+            rr = Math.pow(Math.random(), 0.42)*5200;   /* bulbo menos concentrado, sem estourar o miolo */
             th = Math.random()*Math.PI*2;
             hh = (Math.random()-0.5)*2600*Math.exp(-rr/3000);
           } else {
@@ -5932,7 +5943,9 @@ function buildSystem(sysId, spin0){
         const gG = new THREE.BufferGeometry();
         gG.setAttribute('position', new THREE.BufferAttribute(gp, 3));
         gG.setAttribute('color', new THREE.BufferAttribute(gc, 3));
-        viaLactea = new THREE.Points(gG, new THREE.PointsMaterial({size:1.6, vertexColors:true,
+        /* r157: pontos mais finos e menos acesos (ele achou grosso e
+           brilhoso demais, principalmente o miolo) */
+        viaLactea = new THREE.Points(gG, new THREE.PointsMaterial({size:1.15, vertexColors:true,
           sizeAttenuation:false, transparent:true, opacity:0, depthWrite:false,
           blending:THREE.AdditiveBlending}));
         viaLactea.frustumCulled = false;
@@ -5973,9 +5986,7 @@ function buildSystem(sysId, spin0){
         vizinhas.push(galVizinha(0.7122, 41.269, 2537000, 110000, QLOW?900:2200, 0xd8e2ff, 0.14, 'GALÁXIA DE ANDRÔMEDA · 2,5 MILHÕES DE AL'));
         /* o braço onde a gente mora, nomeado no lugar certo */
         const dOri = ug.clone().multiplyScalar(-1200*UNAL).add(vg.clone().multiplyScalar(900*UNAL));
-        labels.push({el:makeLabel('BRAÇO DE ÓRION · VOCÊ ESTÁ AQUI', 'faint zona', null),
-          sempre:true, galLbl:true, off:true,
-          get:(t2)=>{ t2.copy(dOri).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()*0.8).add(camera.position); }});
+        /* o 'você está aqui' também saiu, pelo mesmo motivo: quem navega se acha */
       }
       const ZOD = {leao:'AGOSTO', virgem:'SETEMBRO', escorpiao:'NOVEMBRO',
         sagitario:'DEZEMBRO', touro:'MAIO', gemeos:'JUNHO'};
@@ -6105,7 +6116,7 @@ function buildSystem(sysId, spin0){
         if(viaLactea){
           const dAL = CAM.dist/(LY_UA*ESCR_UA);
           const fg = Math.min(1, Math.max(0, (dAL - 120)/900));
-          viaLactea.material.opacity = 0.85*fg;
+          viaLactea.material.opacity = 0.55*fg;
           for(const L of labels) if(L.galLbl) L.off = fg < 0.35;
           /* cada vizinha acende quando o zoom chega perto da distância dela */
           for(const vz of vizinhas){
@@ -6178,6 +6189,36 @@ function buildSystem(sysId, spin0){
             am.spr.scale.setScalar(rAnel);
             am.spr.quaternion.copy(camera.quaternion);   /* sempre de frente */
           }
+        }
+      }
+      /* o corpo ganha DETALHE quando a câmera chega perto (uma vez só) */
+      if(escrAtivo && !DIVE){
+        for(const dt2 of detalhaveis){
+          if(dt2.feito || CAM.dist > dt2.r*90) continue;
+          dt2.feito = true;
+          dt2.mesh.geometry.dispose();
+          dt2.mesh.geometry = new THREE.SphereGeometry(dt2.r, QLOW?64:96, QLOW?64:96);
+          const v2 = dt2.v;
+          if(v2.clouds){
+            const cm2 = new THREE.ShaderMaterial({vertexShader:PLANET_VERT, fragmentShader:CLOUD_FRAG,
+              transparent:true, depthWrite:false,
+              uniforms:{uL:{value:LDIR.clone()}, uTime:{value:0}, uCAmt:{value:v2.clouds.amt||0.9},
+                uCScale:{value:v2.clouds.scale||4.0}, uCCol:{value:C(v2.clouds.col||'#ffffff')}}});
+            ANIM_MATS.push(cm2);
+            const cl2 = new THREE.Mesh(new THREE.SphereGeometry(dt2.r*1.02, QLOW?48:72, QLOW?48:72), cm2);
+            dt2.grupo.add(cl2);
+            const sl2 = solLuz.find(x=>x.grupo === dt2.grupo);
+            if(sl2) sl2.mats.push(cm2);
+          }
+          if(v2.atmo){
+            const am3 = new THREE.ShaderMaterial({vertexShader:ATMO_VERT, fragmentShader:ATMO_FRAG,
+              uniforms:{uCol:{value:C(v2.atmo.col)}, uI:{value:v2.atmo.i}, uL:{value:LDIR.clone()}},
+              side:THREE.BackSide, blending:THREE.AdditiveBlending, transparent:true, depthWrite:false});
+            dt2.grupo.add(new THREE.Mesh(new THREE.SphereGeometry(dt2.r*1.045, 48, 48), am3));
+            const sl3 = solLuz.find(x=>x.grupo === dt2.grupo);
+            if(sl3) sl3.mats.push(am3);
+          }
+          RLOG.push('lod-' + dt2.id);
         }
       }
       /* a luz do Sol de verdade em cada corpo do mapa 1:1 */
@@ -8901,11 +8942,38 @@ function ACTION(act, id){
   uiSync();
   showHint('TOQUE DE NOVO PARA ENTRAR · OU USE O BOTÃO DO CARD');
 }
+/* voa até o corpo dentro do PRÓPRIO mapa: sem troca de cena, sem corte, e o
+   zoom continua livre depois (o contínuo para dentro que ele pediu) */
+function aproximarNoMapa(id){
+  const pk = acharPick(id);
+  if(!pk) return;
+  const b = ALLBODIES[id];
+  const alvo = new THREE.Vector3();
+  pk.getWorldPosition(alvo);
+  const r = pk.userData.r || 0.001;
+  ST.mapCard = {type:'body', id, act:'focus', t:performance.now()};
+  markVisited(id);
+  CAMTW = {t0:performance.now(), ms:2400,
+    f:{yaw:CAM.yaw, pitch:CAM.pitch, dist:CAM.dist},
+    t:{yaw:CAM.yaw, pitch:Math.max(-0.6, Math.min(0.6, CAM.pitch*0.5)), dist:Math.max(r*2.6, 0.0006)},
+    p0:CAM.pivot.clone(), p1:alvo.clone(), segue:id};
+  uiSync();
+  showHint('APROXIMANDO DE ' + (b ? b.name : '') + ' · O ZOOM CONTINUA LIVRE DAQUI');
+}
 function enterTarget(act, id){
   if(TRAJ) return;
   ST.mapCard = null;
   AUDIO.sfx('enter');
   if(act==='focus'){
+    /* r157 · O CONTÍNUO PARA DENTRO: na escala 1:1 do Sistema Solar, ENTRAR
+       não troca de cena nenhuma. A câmera simplesmente VOA até o corpo e o
+       zoom continua livre dali, do mesmo jeito que a roda do mouse faria.
+       A cena de foco fica só no mapa cênico (decisão dele) */
+    if(ACT && ACT.kind === 'system' && ACT.escr && !TOUR.on && acharPick(id)
+       && ALLBODIES[id] && ALLBODIES[id]._sys === 'sol'){
+      aproximarNoMapa(id);
+      return;
+    }
     /* se o alvo está desenhado na cena atual, entra mergulhando nele */
     if(ACT && (ACT.kind==='system' || ACT.kind==='focus') && acharPick(id)){
       uiSync(); diveInto(id, ()=>gotoFocus(id, true), (ACT && ACT.escr) ? {ms:2600, semDesvio:true} : undefined); return;
@@ -10914,7 +10982,10 @@ function dolly(f){
   if(alvo > CAM.max + 1e-4){
     if(TRAJ) return;   /* na linha do tempo o zoom-out para no teto SEM pular para longe (o salto para 31 mil un travava o teste dele) */
     const jaNoTeto = CAM.dist >= CAM.max - 1e-3;
-    const podeSubir = ST.level !== 'universe';
+    /* r157 · na ESCALA 1:1 o mapa NÃO sobe mais de escala: ele é contínuo do
+       chão de um planeta até Andrômeda, e trocar para a cena estilizada da
+       galáxia no fim quebrava justamente isso (pedido dele) */
+    const podeSubir = ST.level !== 'universe' && !(ACT && ACT.kind === 'system' && ACT.escr);
     /* escala real: sair do foco por zoom out é DIRETO, sem o segundo gesto
        (o plano único não tem degraus, pedido dele) */
     if(ACT && ACT.kind === 'focus' && ACT.escrFoco && podeSubir && now - upGuard > 700){
@@ -10929,7 +11000,7 @@ function dolly(f){
       if(podeSubir && now - ZLIM.hint > 2400){
         ZLIM.hint = now;
         showHint((ACT && ACT.escr)
-          ? 'VOCÊ ESTÁ NA NUVEM DE OORT: ela continua por quase um ANO-LUZ além daqui. Afaste de novo para subir à galáxia'
+          ? 'FIM DO MAPA 1:1 · VOCÊ ESTÁ A 4 MILHÕES DE ANOS-LUZ DE CASA'
           : 'LIMITE DESTA ESCALA · AFASTE DE NOVO PARA SUBIR');
       }
       return;
@@ -10951,7 +11022,9 @@ function dolly(f){
       /* ST.mapCard é um OBJETO (a trava usa .id): passar ele inteiro fazia o
          acharPick falhar sempre e o zoom parava no piso (o 1,5 MI KM dele) */
       const pkSel = ST.mapCard ? acharPick(ST.mapCard.id || ST.mapCard) : null;
-      minEf = (pkSel && pkSel.userData.r) ? Math.max(0.0012, pkSel.userData.r*3.2) : 0.075;
+      /* r157: dá para chegar bem mais perto (era 3,2 raios, agora 1,45): o
+         contínuo para dentro precisa do corpo enchendo a tela */
+      minEf = (pkSel && pkSel.userData.r) ? Math.max(0.0004, pkSel.userData.r*1.45) : 0.02;
     } else if(ST.mapCard) minEf = Math.min(CAM.min, 4.2);
   }
   CAM.dist = clamp(alvo, minEf, CAM.max);
@@ -11188,7 +11261,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r156';
+const BUILD = 'r157';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -11991,6 +12064,15 @@ function loop(){
     CAM.yaw   = CAMTW.f.yaw   + (CAMTW.t.yaw  -CAMTW.f.yaw  )*e;
     CAM.pitch = CAMTW.f.pitch + (CAMTW.t.pitch-CAMTW.f.pitch)*e;
     CAM.dist  = CAMTW.f.dist  + (CAMTW.t.dist -CAMTW.f.dist )*e;
+    /* voo até um corpo do próprio mapa: o pivô viaja junto e persegue o alvo,
+       que continua orbitando enquanto você chega (r157) */
+    if(CAMTW.p1){
+      if(CAMTW.segue && ACT && ACT.pickables){
+        const pk2 = ACT.pickables.find(x=>x.userData && x.userData.id === CAMTW.segue);
+        if(pk2) pk2.getWorldPosition(CAMTW.p1);
+      }
+      CAM.pivot.lerpVectors(CAMTW.p0, CAMTW.p1, e);
+    }
     if(k>=1){ const d = CAMTW.done; CAMTW = null; if(d) d(); }
   }
   if(SELFX){
