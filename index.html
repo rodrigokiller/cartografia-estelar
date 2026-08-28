@@ -1356,12 +1356,10 @@ void main(){
   float term = 1.0 - smoothstep(0.0, 0.18, abs(ndl));
   lit += vec3(0.30, 0.15, 0.06) * term * 0.12 * water;
   lit += vec3(0.010, 0.014, 0.026) * (1.0 - wrap);
-  /* r168 · O FIO DE LUZ NA BORDA. É a única coisa que os planetas feitos em CSS
-     puro fazem melhor que a gente: aquele inset box-shadow claro de um lado dá
-     VOLUME de graça. Aqui é um Fresnel multiplicado pela luz, então só acende
-     na beirada do lado que está pegando sol */
-  float borda = pow(1.0 - max(dot(N, normalize(vVp)), 0.0), 3.5);
-  lit += col * borda * max(ndl, 0.0) * 0.55;
+  /* r169 · O FIO DE LUZ NA BORDA SAIU. Eu tinha copiado dos planetas em CSS um
+     Fresnel somado à luz, e ele lavava o disco inteiro e comia o terminador: a
+     luz e a sombra pioraram, que é o que ele reportou. NÃO REFAZER sem ele
+     pedir, e se pedir, medir o terminador antes e depois */
 
   /* especular só na água */
   /* r158: o reflexo do Sol na água caiu de 0.55 para 0.18 (ele ainda via
@@ -12308,7 +12306,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r168';
+const BUILD = 'r169';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
