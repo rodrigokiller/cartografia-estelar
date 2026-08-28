@@ -11,3 +11,6 @@ _s*.txt
 _v*.txt
 tools/telas/
 _telas.html
+
+# imagens cruas das texturas (o que vai para o git e o texturas.js gerado)
+_tex/

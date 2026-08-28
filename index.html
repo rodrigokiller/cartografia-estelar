@@ -14,6 +14,11 @@
 <meta property="og:image" content="https://www.universatlas.com/og.jpg">
 <meta property="og:locale" content="pt_BR">
 <meta name="twitter:card" content="summary_large_image">
+<!-- r167 · AS FOTOS DOS CORPOS, num arquivo só, em base64.
+     Vem ANTES do app de propósito: assim o mapa de verdade já existe quando a
+     primeira cena é montada, e ninguém precisa trocar textura no meio do voo.
+     Se o arquivo faltar, tudo cai no desenho de sempre. Fontes em CREDITOS.md -->
+<script src="texturas.js"></script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebApplication",
 "name":"UNIVERSATLAS","alternateName":"Cartografia Estelar",
@@ -4301,10 +4306,17 @@ function makeBodyGroup(b, radius, seg){
     glow.scale.setScalar(radius*5.2);
     tiltG.add(glow);
   } else {
-    mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, seg, seg), planetMaterial(v));
+    /* r167 · se existe mapa de verdade para este corpo, ele entra no lugar do
+       shader procedural. Feito AQUI dentro do makeBodyGroup de propósito: os
+       anéis, a atmosfera e a inclinação continuam vindo do mesmo lugar, e todo
+       caminho que já usava makeBodyGroup (mapa, foco, luas em miniatura, o LOD
+       do contínuo) ganha a foto sem precisar de rota nova */
+    mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, seg, seg),
+      temMapa(b.id) ? liveMaterial(b.id) : planetMaterial(v));
   }
   tiltG.add(mesh);
-  if(v.clouds){
+  /* nuvem procedural só quando não há nuvem de verdade para este corpo */
+  if(v.clouds && !texturaFoto(b.id + 'nuvens')){
     const cm = new THREE.ShaderMaterial({vertexShader:PLANET_VERT, fragmentShader:CLOUD_FRAG, transparent:true, depthWrite:false,
       uniforms:{uL:{value:LDIR.clone()}, uTime:{value:0}, uCAmt:{value:v.clouds.amt||0.9},
         uCScale:{value:v.clouds.scale||4.0}, uCCol:{value:C(v.clouds.col||'#ffffff')}}});
@@ -4313,12 +4325,27 @@ function makeBodyGroup(b, radius, seg){
     clouds.userData.isClouds = true;
     tiltG.add(clouds);
   }
+  /* a camada de nuvem FOTOGRAFADA, girando um tico mais devagar que o chão */
+  if(texturaFoto(b.id + 'nuvens')){
+    const cn = new THREE.ShaderMaterial({vertexShader:LIVE_VERT, fragmentShader:NUVENS_FRAG,
+      transparent:true, depthWrite:false,
+      uniforms:{uMapN:{value:texturaFoto(b.id + 'nuvens')}, uLum:{value:1},
+                uL:{value:LDIR.clone()}, uTime:{value:0}}});
+    ANIM_MATS.push(cn);
+    const nuvensM = new THREE.Mesh(new THREE.SphereGeometry(radius*1.012, seg, seg), cn);
+    nuvensM.userData.isClouds = true;
+    tiltG.add(nuvensM);
+  }
   if(v.atmo){
     const am = new THREE.ShaderMaterial({vertexShader:ATMO_VERT, fragmentShader:ATMO_FRAG,
       uniforms:{uCol:{value:C(v.atmo.col)}, uI:{value:v.atmo.i}, uL:{value:LDIR.clone()}},
       side:THREE.BackSide, blending:THREE.AdditiveBlending, transparent:true, depthWrite:false});
     tiltG.add(new THREE.Mesh(new THREE.SphereGeometry(radius*1.07, seg, seg), am));
   }
+  /* r167 · corpo com mapa de verdade entorta no eixo dele: era o grupoLive que
+     fazia isso, e ele saiu do caminho. Quem tem anel já se inclina pelo anel */
+  if(temMapa(b.id) && !v.rings && typeof ESCALA_REAL_INCL !== 'undefined' && ESCALA_REAL_INCL[b.id])
+    tiltG.rotation.z = -ESCALA_REAL_INCL[b.id]*Math.PI/180;
   if(v.rings){
     const r = v.rings;
     const rg = new THREE.RingGeometry(radius*r.rin, radius*r.rout, 128, 1);
@@ -5291,13 +5318,13 @@ function buildSystem(sysId, spin0){
       rastroElip(rastro);
     }
     selReg.orbits.push({id:p.id, mat:orbit.material, obj:orbit, cls, c:est.cor, o:est.op, oculto:!!p.foguete});
-    const aoVivoP = LIVE && podeLive(p.id);
+    /* r167 · acabou o caminho separado do 'modo ao vivo': o makeBodyGroup já
+       escolhe o mapa de verdade quando existe, e com ele vêm anel, atmosfera e
+       nuvem no mesmo lugar de sempre */
+    const aoVivoP = giraPeloSol(p.id);
     const bg = (p.sonda || p.satelite || p.foguete)
       ? grupoNave(p.id, p.sys.size*2.6)
-      /* r161 · com o modo de teste ligado, a Terra do MAPA também é a de
-         verdade: no contínuo do 1:1 é aqui que ela é vista de perto */
-      : ((LIVE && podeLive(p.id)) ? grupoLive(p.id, p.sys.size, QLOW ? 48 : 96)
-      : makeBodyGroup(p, p.sys.size, 40));
+      : makeBodyGroup(p, p.sys.size, temMapa(p.id) ? (QLOW ? 48 : 72) : 40);
     bg.group.position.set(obX, 0, obZ);
     if(elip) elip.grupo = bg.group;
     holder.add(bg.group);
@@ -5336,7 +5363,7 @@ function buildSystem(sysId, spin0){
        de foco, existe só CHEGAR PERTO. Para o corpo aguentar o zoom fundo, ele
        troca de pele quando a câmera se aproxima: a esfera ganha malha fina e
        entram as nuvens e a atmosfera, exatamente como na cena de foco */
-    if(escrAtivo && !p.sonda && !p.satelite && !p.foguete && !(LIVE && podeLive(p.id)))
+    if(escrAtivo && !p.sonda && !p.satelite && !p.foguete && !temMapa(p.id))
       detalhaveis.push({id:p.id, grupo:bg.group, mesh:bg.mesh, v:p.visual, r:p.sys.size, feito:false});
     /* r157 · OS ANÉIS DE MIRA SAÍRAM (decisão dele, depois de duas tentativas:
        como sprite ficavam grossos demais, como linha viravam elipse conforme o
@@ -5384,14 +5411,15 @@ function buildSystem(sysId, spin0){
              quatro milésimos do raio do dono, que em Fobos nem chega a pesar */
           ms = escrTam(dLua ? dLua.km/2 : 1200, Math.max(1e-7, p.sys.size*0.004));
         }
-        const mg2 = makeBodyGroup(m, ms, escrAtivo ? 16 : 10);
+        /* lua com mapa de verdade nasce com malha melhor: ela é vista de perto */
+        const mg2 = makeBodyGroup(m, ms, temMapa(m.id) ? 48 : (escrAtivo ? 16 : 10));
         mg2.group.position.x = mr;
         mh.add(mg2.group);
         fadeObjs[m.id] = mg2.group;
         /* r159 · a LUA (e as outras luas) entram no contínuo: ganham malha fina
            quando você chega perto, e o voo do ENTRAR já funciona nelas porque
            elas têm alvo próprio no mapa (item dele) */
-        if(escrAtivo)
+        if(escrAtivo && !temMapa(m.id))
           detalhaveis.push({id:m.id, grupo:mg2.group, mesh:mg2.mesh, v:m.visual, r:ms, feito:false});
         /* a lua também tem dia e noite, nos dois modos (r161) */
         if(mg2.mesh.material && mg2.mesh.material.uniforms && mg2.mesh.material.uniforms.uL)
@@ -6619,6 +6647,21 @@ let _texTerra = null, _texLua = null, _mascaraTerra = null;
    o modo ao vivo estava quebrado e ninguém viu, porque ele nasce desligado.
    Agora moram aqui, junto das outras */
 let _texLuzes = null, _texPreta = null, _texNuvens = null;
+/* r167 · A FOTO DE VERDADE, quando existe, ganha do desenho. As texturas
+   desenhadas continuam no código e são o que roda quando a foto falta: nada
+   quebra sem o texturas.js */
+const _texFoto = {};
+function fotoDe(id){ return (typeof window !== 'undefined' && window.TEXFOTO) ? window.TEXFOTO[id] : null; }
+function temMapa(id){ return !!fotoDe(id) || id === 'terra' || id === 'lua' || id === 'marte'; }
+function texturaFoto(id){
+  if(!LIVE) return null;   /* o botão do card volta para o mapa desenhado */
+  if(_texFoto[id]) return _texFoto[id];
+  const src = fotoDe(id);
+  if(!src) return null;
+  const t = new THREE.TextureLoader().load(src);
+  t.anisotropy = 8;
+  return (_texFoto[id] = t);
+}
 let _altTerra = null;   /* mapa de altura da Terra, feito junto com o de cor (r166) */
 /* ====================== r163 · A TERRA REDESENHADA ======================
    Ele pediu para melhorar o modo ao vivo. Os três problemas do desenho antigo
@@ -7403,7 +7446,10 @@ function nomeDaFase(i){
    botão próprio do lado do nome, que liga e desliga na hora. É o mapa de
    verdade desenhado em canvas (nada externo, roda em file://) com Greenwich
    apontado pela hora do navegador */
-function podeLive(id){ return id === 'terra' || id === 'marte'; }
+function podeLive(id){ return temMapa(id); }
+/* só a Terra e Marte têm a longitude ancorada no relógio: nos gigantes não há
+   superfície fixa para ancorar, e a Lua é presa pela maré, outro caso */
+function giraPeloSol(id){ return id === 'terra' || id === 'marte'; }
 /* r166 · o vertex leva agora a BASE TANGENTE da esfera: a direção em que o u
    da textura cresce (leste) e a em que o v cresce (norte). É com ela que o
    fragmento inclina a normal usando o mapa de altura, sem depender da
@@ -7420,7 +7466,7 @@ void main(){ vUv = uv; vN = normalize(normalMatrix * normal);
   gl_Position = projectionMatrix * mv; }`;
 const LIVE_FRAG = `
 uniform sampler2D uMap; uniform sampler2D uLuzes; uniform sampler2D uAlt; uniform sampler2D uNuv;
-uniform vec3 uL; uniform float uAmb; uniform float uBump; uniform float uNuvOn; uniform vec2 uTexel;
+uniform vec3 uL; uniform float uAmb; uniform float uBump; uniform float uNuvOn; uniform float uNuvLum; uniform vec2 uTexel;
 varying vec2 vUv; varying vec3 vN; varying vec3 vV; varying vec3 vT; varying vec3 vB;
 void main(){
   vec3 col = texture2D(uMap, vUv).rgb;
@@ -7449,7 +7495,8 @@ void main(){
      O deslocamento sai da própria base tangente, projetando o rumo da luz */
   if(uNuvOn > 0.5){
     vec2 desl = vec2(dot(L, normalize(vT)), dot(L, normalize(vB))) * 0.010;
-    float som = texture2D(uNuv, vec2(fract(vUv.x + desl.x), clamp(vUv.y + desl.y, 0.0, 1.0))).a;
+    vec4 nv = texture2D(uNuv, vec2(fract(vUv.x + desl.x), clamp(vUv.y + desl.y, 0.0, 1.0)));
+    float som = mix(nv.a, dot(nv.rgb, vec3(0.333)), uNuvLum);
     c *= 1.0 - som*0.30*max(dia, 0.0);
   }
   /* reflexo do sol so na agua (pixel azulado), num lobo estreito */
@@ -7462,29 +7509,38 @@ void main(){
   gl_FragColor = vec4(c + luzes, 1.0);
 }`;
 const NUVENS_FRAG = `
-uniform sampler2D uMapN; uniform vec3 uL; uniform float uTime;
+uniform sampler2D uMapN; uniform vec3 uL; uniform float uTime; uniform float uLum;
 varying vec2 vUv; varying vec3 vN; varying vec3 vV;
 void main(){
-  float a = texture2D(uMapN, vec2(fract(vUv.x + uTime*0.0016), vUv.y)).a;
+  vec4 nv = texture2D(uMapN, vec2(fract(vUv.x + uTime*0.0016), vUv.y));
+  float a = mix(nv.a, dot(nv.rgb, vec3(0.333)), uLum);
   float dif = dot(normalize(vN), normalize(uL));
   float lum = 0.10 + 0.95*smoothstep(-0.06, 0.35, dif);
   gl_FragColor = vec4(vec3(lum), a*0.9);
 }`;
 function liveMaterial(id){
-  const mapa = id === 'lua' ? texturaLua() : (id === 'marte' ? texturaMarte() : texturaTerra());
+  const foto = texturaFoto(id);
+  const mapa = foto || (id === 'lua' ? texturaLua() : (id === 'marte' ? texturaMarte() : texturaTerra()));
+  const nuvFoto = texturaFoto(id + 'nuvens');
+  const luzFoto = texturaFoto(id + 'luzes');
   /* a Terra tem mapa de altura próprio (oceano fundo, terra alta, serra mais
      alta). Lua e Marte usam o próprio mapa de cor como altura: em terreno
      socado de cratera o claro é borda e o escuro é piso, então funciona */
-  const alt = (id === 'terra') ? (_altTerra || mapa) : mapa;
+  /* com foto, a própria luz dela serve de altura (mar escuro, terra clara,
+     borda de cratera clara): é o bumpMap dos tutoriais, só que de graça */
+  const alt = (id === 'terra' && !foto) ? (_altTerra || mapa) : mapa;
   const w = (mapa.image && mapa.image.width) ? mapa.image.width : 2048;
   return new THREE.ShaderMaterial({vertexShader:LIVE_VERT, fragmentShader:LIVE_FRAG,
     uniforms:{uMap:{value:mapa},
               uAlt:{value:alt},
-              uNuv:{value: id === 'terra' ? texturaNuvens() : texturaPreta()},
-              uNuvOn:{value: id === 'terra' ? 1 : 0},
+              uNuv:{value: nuvFoto || (id === 'terra' ? texturaNuvens() : texturaPreta())},
+              uNuvOn:{value: (nuvFoto || id === 'terra') ? 1 : 0},
+              /* a nuvem desenhada guarda a forma no ALFA; a fotografada, no
+                 brilho (JPEG não tem alfa) */
+              uNuvLum:{value: nuvFoto ? 1 : 0},
               uBump:{value: id === 'terra' ? 0.38 : (id === 'lua' ? 0.95 : 0.60)},
               uTexel:{value:new THREE.Vector2(1/w, 2/w)},
-              uLuzes:{value: id === 'terra' ? texturaLuzes() : texturaPreta()},
+              uLuzes:{value: luzFoto || (id === 'terra' ? texturaLuzes() : texturaPreta())},
               uL:{value:LDIR.clone()}, uAmb:{value: id === 'lua' ? 0.05 : 0.07}}});
 }
 /* Greenwich apontado para o Sol da cena ao meio-dia UTC. O eixo tambem ganha a
@@ -7549,7 +7605,9 @@ function grupoLive(id, raio, seg){
     /* nuvens com clima real, desenhadas em canvas, derivando devagar */
     const cm = new THREE.ShaderMaterial({vertexShader:LIVE_VERT, fragmentShader:NUVENS_FRAG,
       transparent:true, depthWrite:false,
-      uniforms:{uMapN:{value:texturaNuvens()}, uL:{value:LDIR.clone()}, uTime:{value:0}}});
+      uniforms:{uMapN:{value:texturaFoto('terranuvens') || texturaNuvens()},
+                uLum:{value:texturaFoto('terranuvens') ? 1 : 0},
+                uL:{value:LDIR.clone()}, uTime:{value:0}}});
     ANIM_MATS.push(cm);
     const nuvens = new THREE.Mesh(new THREE.SphereGeometry(raio*1.02, seg, seg), cm);
     nuvens.userData.isClouds = true;
@@ -8076,15 +8134,15 @@ function buildFocus(bodyId, spin0){
 
   /* ---------- CORPO: esfera + luas orbitando ---------- */
   const radius = (b.visual.mode==='star') ? 2.35 : (b.comet ? 1.2 : 2.2);
-  const aoVivo = bodyId === 'lua' || (LIVE && podeLive(bodyId));
+  const aoVivo = temMapa(bodyId);
   /* anéis de Saturno na escala real: de 1,24 a 2,35 raios do planeta, com a
      divisão de Cassini no lugar certo (2,02-2,10 R, o vão que Mimas abre) */
   let bV = b;
   if(ESCR.on && b._sys === 'sol' && bodyId === 'saturno' && b.visual && b.visual.rings)
     bV = Object.assign({}, b, {visual:Object.assign({}, b.visual,
       {rings:Object.assign({}, b.visual.rings, {rin:1.24, rout:2.35, gapT:0.739})})});
-  bg = aoVivo ? grupoLive(bodyId, radius, QLOW?96:128)
-     : ((b.sonda || b.satelite || b.foguete) ? grupoNave(bodyId, radius) : makeBodyGroup(bV, radius, QLOW?96:128));
+  bg = (b.sonda || b.satelite || b.foguete) ? grupoNave(bodyId, radius)
+     : makeBodyGroup(bV, radius, QLOW?96:128);
   wrap.add(bg.group);
   /* escala real: o eixo de rotação entortado de verdade (Terra 23,4 graus,
      Urano quase deitado; o giro do dia acontece em volta do eixo torto) */
@@ -8096,7 +8154,7 @@ function buildFocus(bodyId, spin0){
     bg.mesh.material.uniforms.uAmb.value = -0.18;
   if(spin0) bg.mesh.rotation.y = spin0;   /* continua de onde a cena do sistema parou */
   /* o corpo com mapa de verdade ignora o spin herdado: quem manda é o relógio */
-  const giroLive = aoVivo && podeLive(bodyId);
+  const giroLive = giraPeloSol(bodyId);
   bg.group.traverse(o=>{ if(o.userData && o.userData.isClouds) clouds = o; });
   /* r152 · AS CALOTAS DE MARTE RESPIRAM: o ano marciano tem 687 dias e as
      estações são mais extremas que as nossas (a órbita é bem elíptica), então
@@ -9220,7 +9278,8 @@ const store = {
   get(k, d){ try{ const v = localStorage.getItem(k); return (v===null||v===undefined) ? d : v; }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
 };
-LIVE = store.get('carto:live','0') === '1';   /* modo ao vivo da Terra e da Lua */
+/* r167 · a FOTO é o padrão agora; o botão serve para ver o mapa desenhado */
+LIVE = store.get('carto:live','1') === '1';
 /* r154 · os padrões do mapa mudaram (escolha dele): quem já tinha ajuste
    salvo recebe a limpeza UMA vez. Apaga as chaves e deixa o padrão do
    código valer; a partir daí as escolhas do navegador mandam de novo */
@@ -11411,7 +11470,7 @@ function cardRender(){
     +(ST.mapCard ? '<button id="cardx2" title="Fechar esta ficha">✕</button>' : '')+'</div>'+
     '<h1 class="bodyname">'+esc(b.name)
       + ((podeLive(lockOn ? ST.body : ((ST.mapCard && ST.mapCard.id) || '')))
-         ? '<button class="livebtn'+(LIVE?' on':'')+'" id="btnlive" title="Mostrar como está agora, de verdade"><i></i>'+(LIVE?'AO VIVO':'LIVE')+'</button>'
+         ? '<button class="livebtn'+(LIVE?' on':'')+'" id="btnlive" title="Alternar entre a foto de verdade e o mapa desenhado"><i></i>'+(LIVE?'FOTO':'DESENHO')+'</button>'
          : '')
       + ((cur.type==='map' && cur.navKind==='body' && ALLBODIES[cur.navId]
           && (ehEscape(ALLBODIES[cur.navId]) || ALLBODIES[cur.navId].comet
@@ -11593,7 +11652,7 @@ function cardRender(){
       CAMTW = null; applyCam();
     }
     uiSync();
-    showHint(LIVE ? 'MODO AO VIVO: POSIÇÃO E ILUMINAÇÃO REAIS DE AGORA' : 'MODO CARTOGRÁFICO');
+    showHint(LIVE ? 'MAPA FOTOGRAFADO (NASA)' : 'MAPA DESENHADO À MÃO');
   });
   const tg = $('#btntraj'); if(tg) tg.addEventListener('click', ()=>{
     if(TRAJ && TRAJ.fase!=='volta') trajCancelar();
@@ -12207,7 +12266,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r166';
+const BUILD = 'r167';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
