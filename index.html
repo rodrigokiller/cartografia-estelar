@@ -1358,7 +1358,9 @@ void main(){
   lit += vec3(0.010, 0.014, 0.026) * (1.0 - wrap);
 
   /* especular só na água */
-  float spec = pow(max(dot(reflect(-L,N), V), 0.0), 26.0) * water * 0.55;
+  /* r158: o reflexo do Sol na água caiu de 0.55 para 0.18 (ele ainda via
+     brilho demais na Terra de perto) */
+  float spec = pow(max(dot(reflect(-L,N), V), 0.0), 30.0) * water * 0.18;
   lit += vec3(0.7,0.85,1.0)*spec;
 
   /* luzes noturnas (Terra) */
@@ -1408,7 +1410,7 @@ void main(){
   float borda = pow(clamp(0.68 - dot(N, vec3(0.0,0.0,1.0)), 0.0, 1.0), 3.2);
   float ndl = dot(N, normalize(uL));
   float dia = smoothstep(-0.30, 0.45, ndl);
-  gl_FragColor = vec4(uCol, 1.0) * (borda * uI * (0.18 + 0.9*dia));
+  gl_FragColor = vec4(uCol, 1.0) * (borda * uI * (0.14 + 0.8*dia));
 }`;
 
 const RING_FRAG = `
@@ -1501,7 +1503,7 @@ const PLANETS = [
   exLuas:'A hipótese do Grande Impacto Duplo (2011) sugere uma segunda lua menor no passado, que colidiu de leve com a Lua e teria virado as montanhas do lado oculto.',
   quick:[['GRAVIDADE','1 g'],['TEMP. MÉDIA','15 °C'],['DIA','24 h'],['ANO','365,25 d'],['LUAS','1'],['ÁGUA','71%']],
   sys:{orbit:15, size:0.9, speed:1.0, angle:4.2},
-  visual:{mode:'earth', c1:'#3f7d43', c2:'#8a9a55', c3:'#c2a06a', seaCol:'#0d3f78', sea:0.52, scale:3.4, seed:12.3, cap:0.78, capAmt:0.9, capCol:'#eef4f8', lights:1, atmo:{col:'#6fb7ff', i:1.5}, clouds:{amt:0.95, scale:4.2, col:'#ffffff'}},
+  visual:{mode:'earth', c1:'#3f7d43', c2:'#8a9a55', c3:'#c2a06a', seaCol:'#0d3f78', sea:0.52, scale:3.4, seed:12.3, cap:0.78, capAmt:0.9, capCol:'#eef4f8', lights:1, atmo:{col:'#6fb7ff', i:0.62}, clouds:{amt:0.95, scale:4.2, col:'#ffffff'}},
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','149,6 mi km (1 UA)'],['Ano','365,25 dias'],['Dia sideral','23 h 56 min'],['Dia solar','24 h'],['Tipo de rotação','Prógrada'],['Veloc. orbital','29,8 km/s'],['Inclinação axial','23,4°'],['Estações','Sim, 4, causadas pela inclinação']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','12.742 km'],['Massa','5,97 × 10²⁴ kg'],['Densidade','5,51 g/cm³ (a maior do sistema)'],['Área','510 mi km²'],['Placas tectônicas','Sim, único confirmado']]},
@@ -5306,7 +5308,7 @@ function buildSystem(sysId, spin0){
       escrOrb:(escrAtivo ? (p.orbita ? (p.orbita.peri+p.orbita.afel)/2 : p.sys.orbit) : 0),
       /* r156: perto do corpo o desvio passa a ser o TAMANHO DELE, senão o
          nome flutua longe demais (o piso fixo de 0.0015 era 2 raios da Terra) */
-      get:v=>{ gp.getWorldPosition(v); v.y += p.sys.size + (escrAtivo ? Math.min(0.4, Math.max(p.sys.size*0.9, CAM.dist*0.012)) : 0.55); }});
+      get:v=>{ gp.getWorldPosition(v); v.y += p.sys.size + (escrAtivo ? Math.min(0.4, Math.max(p.sys.size*0.35, CAM.dist*0.012)) : 0.55); }});
     labelDe[p.id] = labels[labels.length-1];
     objReg.push({id:p.id, cls, holder, pick, lbl:labels[labels.length-1],
       corpo:bg.group, sempreOculto:!!p.foguete,
@@ -5360,7 +5362,9 @@ function buildSystem(sysId, spin0){
         selReg.orbits.push({id:m.id, mat:anelLua.material, obj:anelLua, cls:'lua', c:LINHA.lua.cor, o:LINHA.lua.op});
         const mgp = mg2.group;
         labels.push({el:makeLabel(m.name, 'faint mini', ()=>ACTION('focus', m.id)),
-          mini:true, lid:m.id, lidPai:p.id, escrMr:(escrAtivo ? mr : 0), get:v=>{ mgp.getWorldPosition(v); v.y += ms + (escrAtivo ? Math.min(0.2, Math.max(0.001, CAM.dist*0.012)) : 0.28); }});
+          /* r158: o piso fixo de 0.001 deixava o nome da Lua boiando bem
+             acima dela (print dele); agora o desvio é do tamanho do corpo */
+          mini:true, lid:m.id, lidPai:p.id, escrMr:(escrAtivo ? mr : 0), get:v=>{ mgp.getWorldPosition(v); v.y += ms + (escrAtivo ? Math.min(0.2, Math.max(ms*0.35, CAM.dist*0.012)) : 0.28); }});
         objReg.push({id:m.id, cls:'lua', holder:mh, pick:mpk, lbl:labels[labels.length-1], tails:[anelLua]});
         kidCount[p.id] = (kidCount[p.id]||0) + 1;
       });
@@ -5589,7 +5593,7 @@ function buildSystem(sysId, spin0){
   let simPrev = SIMT.data;
   /* zona habitável: o anel verde tênue onde água líquida é possível */
   let hzRing = null, hzLbl = null;
-  let ceuLinhas = null, ceuSelFn = null, sceneCeu = null, solCeu = null, eclLinha = null, viaLactea = null;
+  let ceuLinhas = null, ceuSelFn = null, sceneCeu = null, solCeu = null, eclLinha = null, viaLactea = null, viaHalo = null, fundoGal = null;
   const vizinhas = [];   /* Magalhães e Andrômeda, no contínuo */
   const eclLbls = [];
   const ceuLbls = [], ceuPicks = [], ceuDir = {};
@@ -5914,9 +5918,16 @@ function buildSystem(sysId, spin0){
         const ug = xg.clone().addScaledVector(zg, -xg.dot(zg)).normalize();
         const vg = new THREE.Vector3().crossVectors(zg, ug).normalize();
         const C = ug.clone().multiplyScalar(26000*UNAL);            /* o centro da galáxia */
-        const NG = QLOW ? 5200 : 11000;
+        const C2 = C.clone();
+        /* r158: menos pontos (ele achou branco e cheio demais): sobra espaço
+           entre as estrelas e dá para ver cor */
+        const NG = QLOW ? 3600 : 7000;
         const gp = new Float32Array(NG*3), gc = new Float32Array(NG*3);
-        const cA = new THREE.Color(0xbcd0ff), cB = new THREE.Color(0xffe6c0), cC = new THREE.Color(0xffd0a0);
+        /* r158: paleta de verdade, como no mapa cênico: azuis jovens nos
+           braços, amarelas e alaranjadas espalhadas e o bulbo mais quente */
+        const PAL = [new THREE.Color(0x9fc0ff), new THREE.Color(0xbcd4ff), new THREE.Color(0xe8f0ff),
+                     new THREE.Color(0xfff0d0), new THREE.Color(0xffd9a0), new THREE.Color(0xffb98a)];
+        const cC = new THREE.Color(0xffd8a8);
         const tanP = Math.tan(12.5*Math.PI/180);
         for(let i=0;i<NG;i++){
           const bulbo = i < NG*0.14;
@@ -5937,7 +5948,8 @@ function buildSystem(sysId, spin0){
           gp[i*3]   = C.x + (ug.x*px + vg.x*py + zg.x*hh)*UNAL;
           gp[i*3+1] = C.y + (ug.y*px + vg.y*py + zg.y*hh)*UNAL;
           gp[i*3+2] = C.z + (ug.z*px + vg.z*py + zg.z*hh)*UNAL;
-          const c2 = bulbo ? cC : (Math.random() < 0.3 ? cB : cA);
+          const rc = Math.random();
+          const c2 = bulbo ? cC : PAL[rc < 0.42 ? 0 : (rc < 0.66 ? 1 : (rc < 0.78 ? 2 : (rc < 0.9 ? 3 : (rc < 0.96 ? 4 : 5))))];
           gc[i*3] = c2.r; gc[i*3+1] = c2.g; gc[i*3+2] = c2.b;
         }
         const gG = new THREE.BufferGeometry();
@@ -5950,6 +5962,22 @@ function buildSystem(sysId, spin0){
           blending:THREE.AdditiveBlending}));
         viaLactea.frustumCulled = false;
         sceneCeu.add(viaLactea);
+        /* e um segundo campo, com pontos maiores e quase apagados, que faz o
+           BRILHO entre as estrelas (o que ele sentiu falta contra o cênico) */
+        const gB = new THREE.BufferGeometry();
+        const nb = Math.floor(NG*0.30), pb = new Float32Array(nb*3), cb = new Float32Array(nb*3);
+        for(let i=0;i<nb;i++){
+          const j = Math.floor(Math.random()*NG);
+          pb[i*3] = gp[j*3]; pb[i*3+1] = gp[j*3+1]; pb[i*3+2] = gp[j*3+2];
+          cb[i*3] = gc[j*3]; cb[i*3+1] = gc[j*3+1]; cb[i*3+2] = gc[j*3+2];
+        }
+        gB.setAttribute('position', new THREE.BufferAttribute(pb, 3));
+        gB.setAttribute('color', new THREE.BufferAttribute(cb, 3));
+        viaHalo = new THREE.Points(gB, new THREE.PointsMaterial({size:4.5, vertexColors:true,
+          sizeAttenuation:false, transparent:true, opacity:0, depthWrite:false,
+          map:TEX_DOT, blending:THREE.AdditiveBlending}));
+        viaHalo.frustumCulled = false;
+        sceneCeu.add(viaHalo);
         /* ---------- r155 · AS GALÁXIAS VIZINHAS NO CONTÍNUO ----------
            Depois da Via Láctea vem o resto do bairro: as duas Nuvens de
            Magalhães (163 e 200 mil anos-luz, satélites da nossa) e Andrômeda,
@@ -5977,16 +6005,50 @@ function buildSystem(sysId, spin0){
           pt.frustumCulled = false;
           sceneCeu.add(pt);
           const alvoLbl = dg.clone();
-          labels.push({el:makeLabel(nome, 'faint zona', null), sempre:true, galLbl2:lyD, off:true,
+          labels.push({el:makeLabel(nome, '', null), sempre:true, galLbl2:lyD, off:true,
             get:(t2)=>{ t2.copy(alvoLbl).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()*0.85).add(camera.position); }});
           return {pt, ly:lyD};
         };
+        /* r158: nome do corpo e só isso, como todo rótulo do atlas (ele
+           reclamou do 'GALÁXIA DE ANDRÔMEDA · 2,5 MILHÕES DE AL') */
         vizinhas.push(galVizinha(5.3939, -69.756, 163000, 9000, QLOW?600:1400, 0xbfd4ff, 0.5, 'GRANDE NUVEM DE MAGALHÃES'));
         vizinhas.push(galVizinha(0.8767, -72.829, 200000, 5500, QLOW?400:900, 0xc8d8ff, 0.5, 'PEQUENA NUVEM DE MAGALHÃES'));
-        vizinhas.push(galVizinha(0.7122, 41.269, 2537000, 110000, QLOW?900:2200, 0xd8e2ff, 0.14, 'GALÁXIA DE ANDRÔMEDA · 2,5 MILHÕES DE AL'));
+        vizinhas.push(galVizinha(0.7122, 41.269, 2537000, 110000, QLOW?900:2200, 0xd8e2ff, 0.14, 'ANDRÔMEDA'));
         /* o braço onde a gente mora, nomeado no lugar certo */
         const dOri = ug.clone().multiplyScalar(-1200*UNAL).add(vg.clone().multiplyScalar(900*UNAL));
-        /* o 'você está aqui' também saiu, pelo mesmo motivo: quem navega se acha */
+        /* r158 · O FUNDO DO UNIVERSO: passando de uns 300 mil anos-luz, o
+           bairro começa a ficar para trás e o que sobra são OUTRAS galáxias,
+           manchinhas em todas as direções (o mesmo espírito do fundo do modo
+           cênico, mas aqui elas estão de verdade a milhões de anos-luz) */
+        {
+          const nf = QLOW ? 260 : 520;
+          const pf = new Float32Array(nf*3), cf = new Float32Array(nf*3);
+          const cor1 = new THREE.Color(0xcfd8ff), cor2 = new THREE.Color(0xffe4c8);
+          for(let i=0;i<nf;i++){
+            const th2 = Math.random()*Math.PI*2, ph2 = Math.acos(2*Math.random()-1);
+            const rr2 = (6e6 + Math.random()*5.4e7)*UNAL;   /* 6 a 60 milhões de AL */
+            pf[i*3]   = rr2*Math.sin(ph2)*Math.cos(th2);
+            pf[i*3+1] = rr2*Math.cos(ph2);
+            pf[i*3+2] = rr2*Math.sin(ph2)*Math.sin(th2);
+            const c3 = Math.random() < 0.7 ? cor1 : cor2;
+            cf[i*3] = c3.r; cf[i*3+1] = c3.g; cf[i*3+2] = c3.b;
+          }
+          const gf = new THREE.BufferGeometry();
+          gf.setAttribute('position', new THREE.BufferAttribute(pf, 3));
+          gf.setAttribute('color', new THREE.BufferAttribute(cf, 3));
+          fundoGal = new THREE.Points(gf, new THREE.PointsMaterial({size:3.4, vertexColors:true,
+            sizeAttenuation:false, transparent:true, opacity:0, depthWrite:false,
+            map:TEX_DOT, blending:THREE.AdditiveBlending}));
+          fundoGal.frustumCulled = false;
+          sceneCeu.add(fundoGal);
+        }
+        /* a nossa galáxia também é um corpo e ganha o nome dela, aparecendo
+           só quando você já está longe o bastante para vê-la inteira */
+        {
+          const cvl = C2.clone();
+          labels.push({el:makeLabel('VIA LÁCTEA', '', null), sempre:true, galLbl2:60000, off:true,
+            get:(t2)=>{ t2.copy(cvl).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()*0.8).add(camera.position); }});
+        }
       }
       const ZOD = {leao:'AGOSTO', virgem:'SETEMBRO', escorpiao:'NOVEMBRO',
         sagitario:'DEZEMBRO', touro:'MAIO', gemeos:'JUNHO'};
@@ -6116,7 +6178,10 @@ function buildSystem(sysId, spin0){
         if(viaLactea){
           const dAL = CAM.dist/(LY_UA*ESCR_UA);
           const fg = Math.min(1, Math.max(0, (dAL - 120)/900));
-          viaLactea.material.opacity = 0.55*fg;
+          viaLactea.material.opacity = 0.62*fg;
+          if(viaHalo) viaHalo.material.opacity = 0.10*fg;
+          /* o fundo de galáxias entra quando a nossa já fica para trás */
+          if(fundoGal) fundoGal.material.opacity = 0.5*Math.min(1, Math.max(0, (dAL - 3e5)/1.2e6));
           for(const L of labels) if(L.galLbl) L.off = fg < 0.35;
           /* cada vizinha acende quando o zoom chega perto da distância dela */
           for(const vz of vizinhas){
@@ -9175,6 +9240,10 @@ function reguaBarra(){
   const valor = emUAagora ? alvoUn/ESCR_UA : alvoUn*kmPorUn;
   /* passando de 10 mil UA a conta vira ANOS-LUZ: o número em UA fica grande
      demais para ler (pedido dele) */
+  /* r158 · acima de mil anos-luz a conta fica em MIL e depois em MILHÕES de
+     anos-luz, e vem junto o PARSEC, que é a unidade que os astrônomos usam de
+     verdade nessa escala (1 pc = 3,26 anos-luz; 1 kpc = 3.260; 1 Mpc = 3,26
+     milhões). Foi ele quem perguntou se existia unidade maior */
   const emAL = emUAagora && valor > 12000;
   const valor2 = emAL ? valor/LY_UA : valor;
   const exp = Math.pow(10, Math.floor(Math.log10(valor2)));
@@ -9185,8 +9254,14 @@ function reguaBarra(){
   if(!(px > 24 && px < CRECT.width*0.7)){ el.classList.remove('on'); return; }
   el.classList.add('on');
   el.querySelector('b').style.width = px + 'px';
-  $('#rbtxt').textContent = fmtNum(redondo) + (emAL ? (redondo === 1 ? ' ANO-LUZ' : ' ANOS-LUZ')
-    : (emUAagora ? (redondo === 1 ? ' UNIDADE ASTRONÔMICA' : ' UA') : ' KM'));
+  let txt;
+  if(emAL){
+    const pc = redondo/3.26156;
+    if(redondo >= 1e6) txt = fmtNum(+(redondo/1e6).toFixed(2)) + ' MILHÕES DE ANOS-LUZ · ' + fmtNum(+(pc/1e6).toFixed(2)) + ' Mpc';
+    else if(redondo >= 1000) txt = fmtNum(redondo/1000) + ' MIL ANOS-LUZ · ' + fmtNum(+(pc/1000).toFixed(1)) + ' kpc';
+    else txt = fmtNum(redondo) + (redondo === 1 ? ' ANO-LUZ' : ' ANOS-LUZ') + ' · ' + fmtNum(+pc.toFixed(1)) + ' pc';
+  } else txt = fmtNum(redondo) + (emUAagora ? (redondo === 1 ? ' UNIDADE ASTRONÔMICA' : ' UA') : ' KM');
+  $('#rbtxt').textContent = txt;
 }
 function fmtNum(v){
   if(v >= 1) return v.toLocaleString('pt-BR');
@@ -11261,7 +11336,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r157';
+const BUILD = 'r158';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
