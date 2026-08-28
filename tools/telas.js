@@ -34,7 +34,9 @@ const TELAS = {
   lua:     {h: 610,  js: "por(texturaLua())"},
   nuvens:  {h: 610,  js: "fundo('#1a2430'); por(texturaNuvens())"},
   /* a Terra com as nuvens por cima, que é como ela aparece no app */
-  mundo:   {h: 610,  js: "por(texturaTerra()); por(texturaNuvens())"}
+  mundo:   {h: 610,  js: "por(texturaTerra()); por(texturaNuvens())"},
+  /* o mapa de ALTURA da Terra: claro é alto, escuro é fundo (r166) */
+  altura:  {h: 610,  js: "texturaTerra(); por(_altTerra)"}
 };
 
 const alvo = process.argv[2];
