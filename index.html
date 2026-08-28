@@ -1690,7 +1690,7 @@ PLANETS.push(
     facts:['A densidade de 0,98 faz dela praticamente uma bola de gelo de água quase pura, mais leve que a água líquida.','O canyon Ithaca Chasma percorre três quartos da volta da lua.'],
     fict:null},
    {id:'mimas', name:'MIMAS', desig:'SATURNO-I · LUA', kind:'A pequena com cara de Estrela da Morte', hab:24, gbar:0.006, pop:'0',
-    quick:[['DIÂMETRO','396 km'],['GRAVIDADE','0,006 g'],['ÓRBITA','0,9 d'],['DESCOBERTA','1789'],['CRATERA','Herschel, 130 km'],['TEMP.','−200 °C']],
+    quick:[['DIÂMETRO','396 km'],['GRAVIDADE','0,006 g'],['ÓRBITA','0,942 d'],['DESCOBERTA','1789'],['CRATERA','Herschel, 130 km'],['TEMP.','−200 °C']],
     visual:{mode:'rocky', c1:'#b8b2a9', c2:'#9c968d', c3:'#7d7871', scale:5.5, seed:9.4, crater:1.0, spot:{pos:[2.0,0.15], r:0.42, col:'#55504b', on:1}},
     sections:[
       {t:'A CRATERA HERSCHEL', rows:[['O tamanho','130 km de boca numa lua de 396: um terço do diâmetro'],['O impacto','Um pouco mais forte e teria partido Mimas ao meio; as fraturas do lado oposto contam a história'],['O pico central','6 km de altura, quase um Everest, no centro da cicatriz'],['A cara famosa','Quando a Voyager 1 mostrou a cratera em 1980, o mundo inteiro pensou na mesma coisa']]},
@@ -1737,6 +1737,24 @@ PLANETS.push(
     ],
     facts:['Verona Rupes tem 20 km de altura: pulando de lá, a queda duraria 12 minutos.','Parece remontada de pedaços que não combinam, e ninguém sabe ao certo por quê.'],
     fict:'Verona Rupes é sempre citado como o melhor lugar do sistema solar para um salto base, um clássico da divulgação científica.'},
+   {id:'ariel', name:'ARIEL', desig:'URANO-I · LUA', kind:'A mais jovem e a mais clara das cinco', hab:2, gbar:0.027, pop:'0',
+    quick:[['DIÂMETRO','1.158 km'],['GRAVIDADE','0,027 g'],['ÓRBITA','2,52 d'],['DESCOBERTA','1851'],['O VALE','Kachina Chasma'],['TEMP.','−213 °C']],
+    visual:{mode:'rocky', c1:'#b8b2aa', c2:'#d6d0c8', c3:'#8e8880', scale:5.4, seed:7.7, crater:0.45},
+    sections:[
+      {t:'A CARA MAIS NOVA DE URANO', rows:[['O que chama atenção','É a mais refletiva das cinco grandes: a superfície foi refeita há relativamente pouco tempo'],['As poucas crateras','Quase não há crateras grandes: alguma coisa apagou as antigas'],['Os vales','Rachaduras enormes de fundo liso, que parecem preenchidas por gelo que escorreu'],['O motor','A maré de Urano provavelmente aqueceu o interior e derreteu parte dele']]},
+      {t:'REGISTRO', rows:[['Descoberta','1851 · William Lassell, na mesma noite que Umbriel'],['O nome','O espírito do ar de A Tempestade, de Shakespeare, como quase toda lua de Urano'],['Única visita','Voyager 2, em janeiro de 1986: metade dela nunca foi fotografada'],['O clima','Um dos lugares mais frios do sistema solar, a 213 graus negativos']]}
+    ],
+    facts:['É a lua mais brilhante e de superfície mais jovem de Urano: alguma coisa apagou as crateras antigas dela.','Metade dela nunca foi vista: a Voyager 2 só fotografou o hemisfério iluminado em 1986.'],
+    fict:'Ariel é o espírito do ar que serve Próspero em A Tempestade, e dá nome também a uma sereia da Disney que nada tem a ver com a lua.'},
+   {id:'umbriel', name:'UMBRIEL', desig:'URANO-II · LUA', kind:'A mais escura, com um anel brilhante sem explicação', hab:0, gbar:0.023, pop:'0',
+    quick:[['DIÂMETRO','1.169 km'],['GRAVIDADE','0,023 g'],['ÓRBITA','4,14 d'],['DESCOBERTA','1851'],['O MISTÉRIO','a cratera Wunda'],['TEMP.','−214 °C']],
+    visual:{mode:'rocky', c1:'#6e6a66', c2:'#8a8580', c3:'#4e4a47', scale:5.0, seed:9.3, crater:0.9},
+    sections:[
+      {t:'A LUA MAIS ESCURA', rows:[['O contraste','Reflete metade da luz de Ariel, sendo praticamente do mesmo tamanho'],['A superfície','Coberta de crateras antigas: nada apagou o passado dela'],['A pergunta','Por que duas luas irmãs, vizinhas e do mesmo tamanho, ficaram tão diferentes?'],['A pista','Talvez nunca tenha sido aquecida por maré como Ariel foi']]},
+      {t:'O ANEL DE WUNDA', rows:[['O que é','Um anel branco de 130 km no fundo de uma cratera, perto do equador'],['O apelido','Ficou conhecido como o olho de Umbriel na única foto boa que existe'],['A explicação','Ninguém sabe: pode ser gelo exposto ou depósito de material claro'],['O problema','Só há UMA imagem decente dela, da Voyager 2 de 1986']]}
+    ],
+    facts:['É a lua mais escura de Urano, e ninguém sabe por que ela e Ariel, praticamente gêmeas, ficaram tão diferentes.','Tem um anel branco de 130 km no fundo de uma cratera que nunca foi explicado, visto uma única vez em 1986.'],
+    fict:'O nome vem do espírito melancólico do poema O Rapto da Madeixa: a lua sombria, batizada para combinar.'},
    {id:'titania', name:'TITÂNIA', desig:'URANO-III · LUA', kind:'A rainha dos cânions de gelo', hab:3, gbar:0.037, pop:'0',
     quick:[['DIÂMETRO','1.578 km'],['GRAVIDADE','0,037 g'],['ÓRBITA','8,7 d'],['DESCOBERTA','1787'],['CÂNION','Messina, 1.500 km'],['TEMP.','−203 °C']],
     visual:{mode:'rocky', c1:'#b39e8c', c2:'#cdbaa8', c3:'#8a7666', scale:4.8, seed:3.3, crater:0.6},
@@ -4457,7 +4475,7 @@ const ESCALA_REAL_LUAS = {
   lua:384400, fobos:9376, deimos:23463,
   io:421700, europa:671100, ganimedes:1070400, calisto:1882700,
   tita:1221870, reia:527108, encelado:237948, dione:377396, tetis:294619, mimas:185539, japeto:3560820,
-  miranda:129390, titania:435910, oberon:583520, tritao:354759, caronte:19591,
+  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, tritao:354759, caronte:19591,
   iss:6790, hubble:6910, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, pathfinder:1.52, viking1:1.52, cassini:9.54};
@@ -5323,7 +5341,9 @@ function buildSystem(sysId, spin0){
     if(p.foguete){ bg.group.visible = false; pick.userData.escondido = true; labels[labels.length-1].off = true; }
     /* as luas também aparecem no mapa do sistema, em miniatura */
     if(p.moons && p.moons.length && !p.satOf && !p.comet && !ehEscape(p) && !p.region){
-      p.moons.slice(0, QLOW ? 3 : 6).forEach((m, mi)=>{
+      /* r160: o teto subiu de 6 para 8 luas por planeta, senão Jápeto (a 7ª
+         de Saturno) e as luas novas de Urano ficavam fora do mapa */
+      p.moons.slice(0, QLOW ? 4 : 8).forEach((m, mi)=>{
         const mh = new THREE.Object3D();
         mh.position.set(obX, 0, obZ);
         if(elip) elip.extras.push(mh);
@@ -5357,10 +5377,10 @@ function buildSystem(sysId, spin0){
         /* período real da lua, lido da ficha: com 1 s = 1 dia, a Lua dá a
            volta em 27 s e Io em 1,8 s. Sem dado, fica o balé simbólico. */
         const qOrb = (m.quick || []).find(q=>/ÓRBITA/.test(q[0]));
-        const mDias = qOrb ? (parseFloat(String(qOrb[1]).replace(',', '.')) || 0) : 0;
+        const mDias = qOrb ? diasDaOrbita(qOrb[1]) : 0;
         /* lua retrógrada (Tritão): período NEGATIVO, a mini orbita ao contrário */
         orbiters.push({holder:mh, spd:1.5 + (mi%3)*0.5, orb:0,
-          tDias:(/\bd\b|dias|,\d+ d| d$/.test(qOrb ? qOrb[1] : '') ? mDias : 0) * (m.retro ? -1 : 1)});
+          tDias:mDias * (m.retro ? -1 : 1)});
         /* anel de órbita da lua, bem apagado, e registro no filtro de objetos:
            esconder o planeta esconde as luas junto (são filhas do holder dele) */
         const aseg = escrAtivo ? 96 : 40, aPos = new Float32Array(aseg*3);
@@ -6789,6 +6809,21 @@ function giroAtual(){
   return -(horasUTC/24) * Math.PI*2;   /* meia-noite de Greenwich = 0 */
 }
 /* idade da Lua em dias desde a lua nova, e a fracao iluminada */
+/* r160 · o período orbital de uma lua vem escrito na ficha, e nem sempre em
+   dias: Fobos é '7 h 39 min' e Deimos '30,3 h'. O leitor antigo só entendia
+   dias, então esses dois ficavam no balé simbólico em vez de orbitar no tempo
+   certo (achado pela auditoria das luas que ele pediu) */
+function diasDaOrbita(txt){
+  if(!txt) return 0;
+  const t = String(txt).replace(',', '.');
+  const h = t.match(/([\d.]+)\s*h/);
+  if(h){
+    const min = t.match(/([\d.]+)\s*min/);
+    return parseFloat(h[1])/24 + (min ? parseFloat(min[1])/1440 : 0);
+  }
+  if(/\bd\b|dias|\d+ d$|\d+ d\b/.test(t)) return parseFloat(t) || 0;
+  return 0;
+}
 function faseDaLua(){
   const novaRef = Date.UTC(2000,0,6,18,14);      /* lua nova de referencia */
   const SIN = 29.530588853 * 86400000;
@@ -7582,7 +7617,7 @@ void main(){
     vv.set(r, 0.42*Math.sin(i*2.13) + 0.15, 0);
     addKid(m, vv, tamK, 24, kh);
     const qOrbK = (m.quick || []).find(q=>/ÓRBITA/.test(q[0]));
-    const tDk = ((qOrbK && /\bd\b|dias|,\d+ d| d$/.test(String(qOrbK[1]))) ? (parseFloat(String(qOrbK[1]).replace(',', '.')) || 0) : 0) * (m.retro ? -1 : 1);
+    const tDk = (qOrbK ? diasDaOrbita(qOrbK[1]) : 0) * (m.retro ? -1 : 1);
     /* a órbita desenhada, invisível até o modo sistema planetário acender */
     const oseg = 64, orPos = new Float32Array(oseg*3);
     for(let i2=0;i2<oseg;i2++){ const aa = i2/(oseg-1)*Math.PI*2; orPos[i2*3]=Math.cos(aa); orPos[i2*3+1]=0; orPos[i2*3+2]=Math.sin(aa); }
@@ -11375,7 +11410,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r159';
+const BUILD = 'r160';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
