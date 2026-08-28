@@ -14,11 +14,6 @@
 <meta property="og:image" content="https://www.universatlas.com/og.jpg">
 <meta property="og:locale" content="pt_BR">
 <meta name="twitter:card" content="summary_large_image">
-<!-- r167 · AS FOTOS DOS CORPOS, num arquivo só, em base64.
-     Vem ANTES do app de propósito: assim o mapa de verdade já existe quando a
-     primeira cena é montada, e ninguém precisa trocar textura no meio do voo.
-     Se o arquivo faltar, tudo cai no desenho de sempre. Fontes em CREDITOS.md -->
-<script src="texturas.js"></script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebApplication",
 "name":"UNIVERSATLAS","alternateName":"Cartografia Estelar",
@@ -1361,6 +1356,12 @@ void main(){
   float term = 1.0 - smoothstep(0.0, 0.18, abs(ndl));
   lit += vec3(0.30, 0.15, 0.06) * term * 0.12 * water;
   lit += vec3(0.010, 0.014, 0.026) * (1.0 - wrap);
+  /* r168 · O FIO DE LUZ NA BORDA. É a única coisa que os planetas feitos em CSS
+     puro fazem melhor que a gente: aquele inset box-shadow claro de um lado dá
+     VOLUME de graça. Aqui é um Fresnel multiplicado pela luz, então só acende
+     na beirada do lado que está pegando sol */
+  float borda = pow(1.0 - max(dot(N, normalize(vVp)), 0.0), 3.5);
+  lit += col * borda * max(ndl, 0.0) * 0.55;
 
   /* especular só na água */
   /* r158: o reflexo do Sol na água caiu de 0.55 para 0.18 (ele ainda via
@@ -4306,17 +4307,13 @@ function makeBodyGroup(b, radius, seg){
     glow.scale.setScalar(radius*5.2);
     tiltG.add(glow);
   } else {
-    /* r167 · se existe mapa de verdade para este corpo, ele entra no lugar do
-       shader procedural. Feito AQUI dentro do makeBodyGroup de propósito: os
-       anéis, a atmosfera e a inclinação continuam vindo do mesmo lugar, e todo
-       caminho que já usava makeBodyGroup (mapa, foco, luas em miniatura, o LOD
-       do contínuo) ganha a foto sem precisar de rota nova */
-    mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, seg, seg),
-      temMapa(b.id) ? liveMaterial(b.id) : planetMaterial(v));
+    /* r168 · todo corpo NASCE desenhado, com o shader procedural de sempre: é o
+       visual do mapa cênico, que ele pediu para manter. A foto entra depois,
+       só quando a câmera chega perto no 1:1 (ver 'a pele de perto' no LOD) */
+    mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, seg, seg), planetMaterial(v));
   }
   tiltG.add(mesh);
-  /* nuvem procedural só quando não há nuvem de verdade para este corpo */
-  if(v.clouds && !texturaFoto(b.id + 'nuvens')){
+  if(v.clouds){
     const cm = new THREE.ShaderMaterial({vertexShader:PLANET_VERT, fragmentShader:CLOUD_FRAG, transparent:true, depthWrite:false,
       uniforms:{uL:{value:LDIR.clone()}, uTime:{value:0}, uCAmt:{value:v.clouds.amt||0.9},
         uCScale:{value:v.clouds.scale||4.0}, uCCol:{value:C(v.clouds.col||'#ffffff')}}});
@@ -4324,17 +4321,6 @@ function makeBodyGroup(b, radius, seg){
     const clouds = new THREE.Mesh(new THREE.SphereGeometry(radius*1.02, seg, seg), cm);
     clouds.userData.isClouds = true;
     tiltG.add(clouds);
-  }
-  /* a camada de nuvem FOTOGRAFADA, girando um tico mais devagar que o chão */
-  if(texturaFoto(b.id + 'nuvens')){
-    const cn = new THREE.ShaderMaterial({vertexShader:LIVE_VERT, fragmentShader:NUVENS_FRAG,
-      transparent:true, depthWrite:false,
-      uniforms:{uMapN:{value:texturaFoto(b.id + 'nuvens')}, uLum:{value:1},
-                uL:{value:LDIR.clone()}, uTime:{value:0}}});
-    ANIM_MATS.push(cn);
-    const nuvensM = new THREE.Mesh(new THREE.SphereGeometry(radius*1.012, seg, seg), cn);
-    nuvensM.userData.isClouds = true;
-    tiltG.add(nuvensM);
   }
   if(v.atmo){
     const am = new THREE.ShaderMaterial({vertexShader:ATMO_VERT, fragmentShader:ATMO_FRAG,
@@ -5324,7 +5310,7 @@ function buildSystem(sysId, spin0){
     const aoVivoP = giraPeloSol(p.id);
     const bg = (p.sonda || p.satelite || p.foguete)
       ? grupoNave(p.id, p.sys.size*2.6)
-      : makeBodyGroup(p, p.sys.size, temMapa(p.id) ? (QLOW ? 48 : 72) : 40);
+      : makeBodyGroup(p, p.sys.size, 40);
     bg.group.position.set(obX, 0, obZ);
     if(elip) elip.grupo = bg.group;
     holder.add(bg.group);
@@ -5363,7 +5349,7 @@ function buildSystem(sysId, spin0){
        de foco, existe só CHEGAR PERTO. Para o corpo aguentar o zoom fundo, ele
        troca de pele quando a câmera se aproxima: a esfera ganha malha fina e
        entram as nuvens e a atmosfera, exatamente como na cena de foco */
-    if(escrAtivo && !p.sonda && !p.satelite && !p.foguete && !temMapa(p.id))
+    if(escrAtivo && !p.sonda && !p.satelite && !p.foguete)
       detalhaveis.push({id:p.id, grupo:bg.group, mesh:bg.mesh, v:p.visual, r:p.sys.size, feito:false});
     /* r157 · OS ANÉIS DE MIRA SAÍRAM (decisão dele, depois de duas tentativas:
        como sprite ficavam grossos demais, como linha viravam elipse conforme o
@@ -5411,15 +5397,14 @@ function buildSystem(sysId, spin0){
              quatro milésimos do raio do dono, que em Fobos nem chega a pesar */
           ms = escrTam(dLua ? dLua.km/2 : 1200, Math.max(1e-7, p.sys.size*0.004));
         }
-        /* lua com mapa de verdade nasce com malha melhor: ela é vista de perto */
-        const mg2 = makeBodyGroup(m, ms, temMapa(m.id) ? 48 : (escrAtivo ? 16 : 10));
+        const mg2 = makeBodyGroup(m, ms, escrAtivo ? 16 : 10);
         mg2.group.position.x = mr;
         mh.add(mg2.group);
         fadeObjs[m.id] = mg2.group;
         /* r159 · a LUA (e as outras luas) entram no contínuo: ganham malha fina
            quando você chega perto, e o voo do ENTRAR já funciona nelas porque
            elas têm alvo próprio no mapa (item dele) */
-        if(escrAtivo && !temMapa(m.id))
+        if(escrAtivo)
           detalhaveis.push({id:m.id, grupo:mg2.group, mesh:mg2.mesh, v:m.visual, r:ms, feito:false});
         /* a lua também tem dia e noite, nos dois modos (r161) */
         if(mg2.mesh.material && mg2.mesh.material.uniforms && mg2.mesh.material.uniforms.uL)
@@ -6378,10 +6363,40 @@ function buildSystem(sysId, spin0){
       /* o corpo ganha DETALHE quando a câmera chega perto (uma vez só) */
       if(escrAtivo && !DIVE){
         for(const dt2 of detalhaveis){
-          if(dt2.feito || CAM.dist > dt2.r*90) continue;
+          if(dt2.feito) continue;
+          /* r168 · a conta era CAM.dist, que é a distância até o PIVÔ, não até
+             ESTE corpo: chegando perto de um planeta, TODOS passavam a valer e
+             o app detalhava (e agora decodificaria a foto de) o sistema
+             inteiro de uma vez. Agora cada corpo mede a própria distância */
+          dt2.grupo.getWorldPosition(_lzA);
+          if(camera.position.distanceTo(_lzA) > dt2.r*90) continue;
           dt2.feito = true;
           dt2.mesh.geometry.dispose();
           dt2.mesh.geometry = new THREE.SphereGeometry(dt2.r, QLOW?64:96, QLOW?64:96);
+          /* r168 · A PELE DE PERTO: aqui é onde a foto entra. A imagem só é
+             decodificada agora, quando alguém de fato chegou neste corpo */
+          if(usaFotoPerto(dt2.id)){
+            const antigo = dt2.mesh.material;
+            dt2.mesh.material = liveMaterial(dt2.id);
+            const slF = solLuz.find(x=>x.grupo === dt2.grupo);
+            if(slF){ slF.mats = slF.mats.filter(m=>m !== antigo); slF.mats.push(dt2.mesh.material); }
+            if(antigo && antigo.dispose) antigo.dispose();
+            /* nuvem de verdade, quando existe, numa casca própria */
+            const nf = texturaFoto(dt2.id + 'nuvens');
+            if(nf){
+              const cn = new THREE.ShaderMaterial({vertexShader:LIVE_VERT, fragmentShader:NUVENS_FRAG,
+                transparent:true, depthWrite:false,
+                uniforms:{uMapN:{value:nf}, uLum:{value:1}, uL:{value:LDIR.clone()}, uTime:{value:0}}});
+              ANIM_MATS.push(cn);
+              const nm = new THREE.Mesh(new THREE.SphereGeometry(dt2.r*1.012, QLOW?48:72, QLOW?48:72), cn);
+              nm.userData.isClouds = true;
+              dt2.grupo.add(nm);
+              /* a nuvem procedural que já estava ali sai de cena */
+              dt2.grupo.traverse(o=>{ if(o.userData && o.userData.isClouds && o !== nm) o.visible = false; });
+            }
+            RLOG.push('foto-' + dt2.id);
+            continue;   /* a pele nova já traz nuvem e relevo: nada de procedural */
+          }
           const v2 = dt2.v;
           if(v2.clouds){
             const cm2 = new THREE.ShaderMaterial({vertexShader:PLANET_VERT, fragmentShader:CLOUD_FRAG,
@@ -6652,7 +6667,14 @@ let _texLuzes = null, _texPreta = null, _texNuvens = null;
    quebra sem o texturas.js */
 const _texFoto = {};
 function fotoDe(id){ return (typeof window !== 'undefined' && window.TEXFOTO) ? window.TEXFOTO[id] : null; }
+/* existe mapa de verdade para este corpo? (foto da NASA ou o nosso desenho) */
 function temMapa(id){ return !!fotoDe(id) || id === 'terra' || id === 'lua' || id === 'marte'; }
+/* r168 · DE LONGE O DESENHO, DE PERTO A FOTO (ideia dele, e é a certa): o
+   mapa cênico fica com o visual desenhado que ele gosta, e a foto entra só
+   quando a câmera chega perto do corpo na ESCALA 1:1. Fora o gosto, isso
+   também tira peso: a imagem só é decodificada e mandada para a placa quando
+   alguém realmente chega lá, e não todas de uma vez no boot */
+function usaFotoPerto(id){ return LIVE && temMapa(id); }
 function texturaFoto(id){
   if(!LIVE) return null;   /* o botão do card volta para o mapa desenhado */
   if(_texFoto[id]) return _texFoto[id];
@@ -7520,7 +7542,10 @@ void main(){
 }`;
 function liveMaterial(id){
   const foto = texturaFoto(id);
-  const mapa = foto || (id === 'lua' ? texturaLua() : (id === 'marte' ? texturaMarte() : texturaTerra()));
+  /* r168 · sem foto, só estes três têm mapa desenhado. O 'else' antigo caía na
+     Terra, e por isso Vênus apareceu igual à Terra quando ele desligou a foto */
+  const mapa = foto || (id === 'lua' ? texturaLua() : (id === 'marte' ? texturaMarte() : (id === 'terra' ? texturaTerra() : null)));
+  if(!mapa) return planetMaterial((ALLBODIES[id] && ALLBODIES[id].visual) || {mode:'rocky'});
   const nuvFoto = texturaFoto(id + 'nuvens');
   const luzFoto = texturaFoto(id + 'luzes');
   /* a Terra tem mapa de altura próprio (oceano fundo, terra alta, serra mais
@@ -8134,7 +8159,9 @@ function buildFocus(bodyId, spin0){
 
   /* ---------- CORPO: esfera + luas orbitando ---------- */
   const radius = (b.visual.mode==='star') ? 2.35 : (b.comet ? 1.2 : 2.2);
-  const aoVivo = temMapa(bodyId);
+  /* na cena de foco a foto vale só na ESCALA 1:1: o foco cênico fica com o
+     desenho, que é o visual que ele gosta */
+  const aoVivo = ESCR.on && b._sys === 'sol' && usaFotoPerto(bodyId);
   /* anéis de Saturno na escala real: de 1,24 a 2,35 raios do planeta, com a
      divisão de Cassini no lugar certo (2,02-2,10 R, o vão que Mimas abre) */
   let bV = b;
@@ -8143,6 +8170,21 @@ function buildFocus(bodyId, spin0){
       {rings:Object.assign({}, b.visual.rings, {rin:1.24, rout:2.35, gapT:0.739})})});
   bg = (b.sonda || b.satelite || b.foguete) ? grupoNave(bodyId, radius)
      : makeBodyGroup(bV, radius, QLOW?96:128);
+  /* no 1:1 a pele de verdade entra na hora: aqui a câmera já está colada */
+  if(aoVivo && bg.mesh){
+    bg.mesh.material = liveMaterial(bodyId);
+    const nfF = texturaFoto(bodyId + 'nuvens');
+    if(nfF){
+      const cnF = new THREE.ShaderMaterial({vertexShader:LIVE_VERT, fragmentShader:NUVENS_FRAG,
+        transparent:true, depthWrite:false,
+        uniforms:{uMapN:{value:nfF}, uLum:{value:1}, uL:{value:LDIR.clone()}, uTime:{value:0}}});
+      ANIM_MATS.push(cnF);
+      const nmF = new THREE.Mesh(new THREE.SphereGeometry(radius*1.012, QLOW?72:96, QLOW?72:96), cnF);
+      nmF.userData.isClouds = true;
+      bg.group.traverse(o=>{ if(o.userData && o.userData.isClouds) o.visible = false; });
+      bg.group.add(nmF);
+    }
+  }
   wrap.add(bg.group);
   /* escala real: o eixo de rotação entortado de verdade (Terra 23,4 graus,
      Urano quase deitado; o giro do dia acontece em volta do eixo torto) */
@@ -12266,7 +12308,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r167';
+const BUILD = 'r168';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13214,5 +13256,9 @@ setTimeout(()=>{
 }, 2100);
 loop();
 </script>
+<!-- r168 · AS FOTOS entram DEPOIS do app de propósito: a primeira cena nasce
+     desenhada (o visual do mapa cênico) e a foto fica à mão para quando alguém
+     chegar perto de um corpo na escala 1:1. Fontes em CREDITOS.md -->
+<script src="texturas.js"></script>
 </body>
 </html>
