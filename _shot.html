@@ -12471,3 +12471,38 @@ loop();
 </script>
 </body>
 </html>
+
+<script>
+window.addEventListener('error', function(e){ document.title = 'ERRO: ' + e.message + ' @' + e.lineno; });
+setTimeout(function(){ setInterval(function(){
+  try{
+    if(typeof ACT === 'undefined' || !ACT || ACT.kind !== 'system') return;
+    if(window.__p1) return;
+    window.__p1 = 1;
+    var GR = 180/Math.PI;
+    ACT.update(0.016, performance.now());
+    ACT.scene.updateMatrixWorld(true); camera.updateMatrixWorld(true);
+    ACT.update(0.016, performance.now());
+    var alvos = ACT.pickables.map(function(pk){ var v = new THREE.Vector3(); pk.getWorldPosition(v); return {id:pk.userData.id, v:v}; });
+    var quem = function(w){
+      var melhor = null, dm = 1e18;
+      for(var i = 0; i < alvos.length; i++){ var d = alvos[i].v.distanceToSquared(w); if(d < dm){ dm = d; melhor = alvos[i].id; } }
+      return melhor + '(' + Math.sqrt(dm).toFixed(2) + ')';
+    };
+    var ok = 0, ruins = [];
+    ACT.scene.traverse(function(o){
+      if(!o.isMesh || !o.material || !o.material.uniforms || !o.material.uniforms.uL) return;
+      var wpos = new THREE.Vector3(); o.getWorldPosition(wpos);
+      if(wpos.length() < 1e-6) return;
+      var uw = o.material.uniforms.uL.value.clone().transformDirection(camera.matrixWorld);
+      var esperado = wpos.clone().multiplyScalar(-1).normalize();
+      var d = uw.dot(esperado);
+      if(d > 0.995) ok++;
+      else ruins.push(quem(wpos) + ' ' + (Math.acos(Math.max(-1,Math.min(1,d)))*GR).toFixed(0) + 'gr');
+    });
+    document.title = 'SOMBRA modo=' + (ACT.escr ? '1:1' : 'cenico')
+      + ' | ok ' + ok + ' | fora do rumo: ' + (ruins.length ? ruins.join(' | ') : 'nenhuma');
+
+  }catch(err){ document.title = 'ERRO-SHOT: ' + err.message; }
+}, 200); }, 4000);
+</script>
