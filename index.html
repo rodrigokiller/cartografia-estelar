@@ -6141,6 +6141,26 @@ function buildSystem(sysId, spin0){
      mapa desde a superfície de uma lua: o contínuo que ele queria */
   /* r155 · o teto foi para 4 MILHÕES de anos-luz: cabem as Nuvens de
      Magalhães e Andrômeda inteira, ainda na mesma cena */
+  /* r163 · VARREDURA DE GARANTIA DA LUZ. A auditoria da sombra (sonda que
+     confere, pele por pele, se o rumo da luz aponta para o Sol) achou 47
+     certas e TRÊS fora do rumo, por 82 a 111 graus: peles que ninguém tinha
+     registrado e que continuavam com o farol preso na câmera. Em vez de caçar
+     uma a uma, o registro passa a ser fechado no fim: toda malha da cena que
+     tenha uL e não esteja na lista entra agora, iluminada pela própria
+     posição. Assim nenhuma pele nova nasce esquecida */
+  {
+    const jaTem = new Set();
+    for(const sl of solLuz) for(const m of sl.mats) jaTem.add(m);
+    const _vg = new THREE.Vector3();
+    scene.traverse(o=>{
+      if(!o.isMesh || !o.material || !o.material.uniforms || !o.material.uniforms.uL) return;
+      if(jaTem.has(o.material)) return;
+      o.getWorldPosition(_vg);
+      if(_vg.lengthSq() < 1e-12) return;         /* a própria estrela: sem rumo */
+      jaTem.add(o.material);
+      solLuz.push({mesh:o, grupo:o, mats:[o.material]});
+    });
+  }
   const camMaxDin = escrAtivo ? 4e6*LY_UA*ESCR_UA : Math.max(S.camMax || 60, alcance * 1.7);
   return {kind:'system', scene, sceneCeu, eclLinha, aneisMira, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
     zoomMini:camMaxDin*0.33,
@@ -6355,6 +6375,7 @@ function buildSystem(sysId, spin0){
       if(solLuz.length){
         for(const sl of solLuz){
           sl.grupo.getWorldPosition(_lzA);
+          if(_lzA.lengthSq() < 1e-12) continue;                /* em cima da estrela: sem rumo */
           _lzB.copy(_lzA).multiplyScalar(-1).normalize();      /* rumo do Sol (origem) */
           _lzB.transformDirection(camera.matrixWorldInverse);  /* o shader vê em espaço de câmera */
           for(const m of sl.mats) if(m.uniforms && m.uniforms.uL) m.uniforms.uL.value.copy(_lzB);
@@ -6579,6 +6600,81 @@ const BIOMAS = [
   {tipo:'tr', l0:[-118,52], l1:[-106,35], w:7, cor:'rgba(150,138,116,.35)'} /* Rochosas */
 ];
 let _texTerra = null, _texLua = null, _mascaraTerra = null;
+/* ====================== r163 · A TERRA REDESENHADA ======================
+   Ele pediu para melhorar o modo ao vivo. Os três problemas do desenho antigo
+   eram: costa POLIGONAL (dá para contar os vértices), oceano CHAPADO (só um
+   degradê de latitude) e terra CHAPADA (uma cor só por faixa). Nada disso se
+   resolve com mais coordenadas na mão: se resolve com ruído, que é como se
+   desenha relevo. A GEOGRAFIA continua sendo a dos dados; o que entra é a
+   rugosidade que toda costa e todo fundo de mar têm. */
+function _ruidoTab(seed){
+  const N = 128, t = new Float32Array(N*N);
+  let x = (seed || 1) >>> 0;
+  for(let i = 0; i < N*N; i++){
+    x ^= x << 13; x >>>= 0; x ^= x >> 17; x ^= x << 5; x >>>= 0;
+    t[i] = x/4294967296;
+  }
+  return {N, t};
+}
+function _amostra(R, u, v){
+  const N = R.N;
+  const x0 = Math.floor(u), y0 = Math.floor(v);
+  const fx = u - x0, fy = v - y0;
+  const sx = fx*fx*(3 - 2*fx), sy = fy*fy*(3 - 2*fy);
+  const g = (a, b)=>R.t[((((b % N) + N) % N)*N) + (((a % N) + N) % N)];
+  const i0 = g(x0, y0) + (g(x0+1, y0) - g(x0, y0))*sx;
+  const i1 = g(x0, y0+1) + (g(x0+1, y0+1) - g(x0, y0+1))*sx;
+  return i0 + (i1 - i0)*sy;
+}
+function _fbm2(R, u, v, oct){
+  let s = 0, amp = 0.5, f = 1, tot = 0;
+  for(let i = 0; i < oct; i++){ s += amp*_amostra(R, u*f, v*f); tot += amp; amp *= 0.5; f *= 2; }
+  return s/tot;
+}
+/* uma folha de ruído em tons de cinza, pequena de propósito: ela é esticada
+   depois, e é esse esticar que dá as manchas grandes do fundo do mar */
+function _folhaRuido(w, h, seed, oct, esc){
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d'), img = g.createImageData(w, h), R = _ruidoTab(seed);
+  for(let y = 0; y < h; y++) for(let x = 0; x < w; x++){
+    const n = _fbm2(R, x/w*esc, y/h*esc*0.5, oct);
+    const v = Math.max(0, Math.min(255, Math.round(n*255)));
+    const i = (y*w + x)*4;
+    img.data[i] = img.data[i+1] = img.data[i+2] = v; img.data[i+3] = 255;
+  }
+  g.putImageData(img, 0, 0);
+  return c;
+}
+/* a costa ganha recortes: cada trecho é quebrado ao meio e o meio é empurrado
+   na perpendicular por um tanto sorteado, duas vezes. É o deslocamento do
+   ponto médio, o jeito clássico de fazer litoral, e é determinístico: a mesma
+   Terra sai igual toda vez */
+function costaRecortada(poly, seed, passos){
+  let P = poly.map(q=>[q[0], q[1]]);
+  let x = ((seed + 1)*2654435761) >>> 0;
+  const rnd = ()=>{ x ^= x << 13; x >>>= 0; x ^= x >> 17; x ^= x << 5; x >>>= 0; return x/4294967296 - 0.5; };
+  const N = passos || 3;
+  for(let k = 0; k < N; k++){
+    /* a amplitude cai a cada passo: recortes grandes primeiro, detalhe depois.
+       É o que dá golfo, península e enseada na mesma costa */
+    const amp = 0.50*Math.pow(0.58, k);
+    const out = [];
+    for(let i = 0; i < P.length; i++){
+      const a = P[i], b = P[(i+1) % P.length];
+      out.push(a);
+      const dx = b[0] - a[0], dy = b[1] - a[1];
+      if(Math.hypot(dx, dy) < 0.35) continue;   /* trecho já curtinho: não quebra */
+      const f = rnd()*amp;
+      /* o recorte não pode pular a beirada do mapa: em coordenada plana o
+         polo e a linha da data são costuras, e um ponto passando delas
+         atravessa a textura inteira */
+      out.push([Math.max(-179.9, Math.min(179.9, (a[0] + b[0])/2 - dy*f)),
+                Math.max(-89.9, Math.min(89.9, (a[1] + b[1])/2 + dx*f))]);
+    }
+    P = out;
+  }
+  return P;
+}
 /* v2 das costas: em vez de segmentos retos, uma curva quadrática contínua
    pelos pontos médios. As costas ficam orgânicas sem mexer nos dados. */
 function tracarSuave(g, poly, px){
@@ -6594,64 +6690,139 @@ function tracarSuave(g, poly, px){
 }
 function texturaTerra(){
   if(_texTerra) return _texTerra;
-  const W = 2048, H = 1024, c = document.createElement('canvas');
+  /* mais resolução: no contínuo do 1:1 dá para encostar na Terra, e 2048 já
+     mostrava o pixel. Em máquina fraca fica no tamanho de antes */
+  const W = QLOW ? 1536 : 3072, H = W >> 1;
+  const c = document.createElement('canvas');
   c.width = W; c.height = H;
   const g = c.getContext('2d');
-  const px = (lon,lat)=>[ (lon+180)/360*W, (90-lat)/180*H ];
-  /* oceano com profundidade e um respiro mais claro no equador */
-  const oc = g.createLinearGradient(0,0,0,H);
-  oc.addColorStop(0,'#0a2440'); oc.addColorStop(0.28,'#10416c');
-  oc.addColorStop(0.5,'#155081'); oc.addColorStop(0.72,'#10416c'); oc.addColorStop(1,'#0a2440');
-  g.fillStyle = oc; g.fillRect(0,0,W,H);
-  /* plataforma rasa: um halo verde-agua por fora de cada costa */
-  g.lineJoin = 'round';
-  for(const poly of CONTINENTES){
-    tracarSuave(g, poly, px);
-    g.strokeStyle = 'rgba(96,178,196,.34)'; g.lineWidth = 6; g.stroke();
+  const px = (lon, lat)=>[ (lon + 180)/360*W, (90 - lat)/180*H ];
+  const COSTAS = CONTINENTES.map((poly, i)=>costaRecortada(poly, i, 3));
+  const contorno = (ctx, poly)=>tracarSuave(ctx, poly, px);
+
+  /* 1 · O MAR. O degradê de latitude continua por baixo (o mar quente do
+     equador é mais claro mesmo), e por cima entra o FUNDO: planícies abissais
+     e elevacões, que é o que tira a cara de papel de parede */
+  const oc = g.createLinearGradient(0, 0, 0, H);
+  oc.addColorStop(0, '#08203a'); oc.addColorStop(0.28, '#0e3c66');
+  oc.addColorStop(0.5, '#134b79'); oc.addColorStop(0.72, '#0e3c66'); oc.addColorStop(1, '#08203a');
+  g.fillStyle = oc; g.fillRect(0, 0, W, H);
+  const fundo = _folhaRuido(384, 192, 1337, 5, 6);
+  g.save();
+  g.globalCompositeOperation = 'overlay';
+  g.globalAlpha = 0.62;
+  g.drawImage(fundo, 0, 0, W, H);
+  /* uma segunda passada bem miúda: a textura fina que tira o ar de papel */
+  const fundo2 = _folhaRuido(384, 192, 9091, 4, 26);
+  g.globalAlpha = 0.20;
+  g.drawImage(fundo2, 0, 0, W, H);
+  g.restore();
+  fundo2.width = fundo2.height = 0;
+
+  /* 2 · A PLATAFORMA CONTINENTAL: a água rasa que contorna cada costa, em
+     duas camadas, da mais larga e fraca para a mais fina e viva */
+  g.lineJoin = g.lineCap = 'round';
+  for(const poly of COSTAS){
+    contorno(g, poly);
+    g.strokeStyle = 'rgba(96,178,200,.20)'; g.lineWidth = Math.max(4, W/150); g.stroke();
+    contorno(g, poly);
+    g.strokeStyle = 'rgba(128,210,216,.26)'; g.lineWidth = Math.max(2, W/430); g.stroke();
   }
-  /* terra firme num canvas proprio, para os biomas respeitarem a mascara */
+
+  /* 3 · A TERRA num canvas próprio, para os biomas ficarem presos na máscara */
   const lc = document.createElement('canvas'); lc.width = W; lc.height = H;
-  const lg = lc.getContext('2d'); lg.lineJoin = 'round';
-  for(const poly of CONTINENTES){
-    tracarSuave(lg, poly, px);
-    const gr = lg.createLinearGradient(0,0,0,H);
-    gr.addColorStop(0,'#8a9070'); gr.addColorStop(0.2,'#5c7a48');
-    gr.addColorStop(0.5,'#67854e'); gr.addColorStop(0.8,'#5f7a4c'); gr.addColorStop(1,'#e8eef2');
+  const lg = lc.getContext('2d');
+  lg.lineJoin = lg.lineCap = 'round';
+  for(const poly of COSTAS){
+    contorno(lg, poly);
+    const gr = lg.createLinearGradient(0, 0, 0, H);
+    gr.addColorStop(0, '#8a9070'); gr.addColorStop(0.2, '#587645');
+    gr.addColorStop(0.5, '#65834c'); gr.addColorStop(0.8, '#5d7849'); gr.addColorStop(1, '#e8eef2');
     lg.fillStyle = gr; lg.fill();
   }
-  /* biomas por cima, presos na mascara da terra */
+
+  /* 4 · OS BIOMAS, presos na máscara da terra */
   lg.globalCompositeOperation = 'source-atop';
   for(const b of BIOMAS){
     if(b.tipo === 'el'){
-      const [x,y] = px(b.c[0], b.c[1]);
-      const rx = b.r[0]/360*W, ry = b.r[1]/180*H;
-      const gr = lg.createRadialGradient(x,y,0,x,y,Math.max(rx,ry));
-      gr.addColorStop(0,b.cor); gr.addColorStop(1,'rgba(0,0,0,0)');
+      /* r163 · o bioma era um degradê CIRCULAR dentro de uma elipse achatada:
+         no Saara, com 38 graus de largura contra 8 de altura, a cor ainda
+         estava forte quando a elipse acabava, e sobrava um CORTE RETO
+         atravessando o norte da África. Desenhando num espaço esticado o
+         degradê acompanha a forma e morre na borda */
+      const [x, y] = px(b.c[0], b.c[1]);
+      /* um tico maiores e sem miolo chapado: bioma é mancha, não adesivo */
+      const rx = b.r[0]/360*W*1.45, ry = b.r[1]/180*H*1.45;
+      lg.save();
+      lg.translate(x, y); lg.scale(1, ry/rx);
+      const gr = lg.createRadialGradient(0, 0, 0, 0, 0, rx);
+      gr.addColorStop(0, b.cor); gr.addColorStop(0.40, b.cor);
+      gr.addColorStop(1, 'rgba(0,0,0,0)');
       lg.fillStyle = gr;
-      lg.beginPath(); lg.ellipse(x,y,rx,ry,0,0,Math.PI*2); lg.fill();
+      lg.beginPath(); lg.arc(0, 0, rx, 0, Math.PI*2); lg.fill();
+      lg.restore();
     } else {
-      const [x0,y0] = px(b.l0[0], b.l0[1]), [x1,y1] = px(b.l1[0], b.l1[1]);
-      lg.strokeStyle = b.cor; lg.lineWidth = b.w; lg.lineCap = 'round';
-      lg.beginPath(); lg.moveTo(x0,y0); lg.lineTo(x1,y1); lg.stroke();
+      /* cordilheira: um risco reto virava arranhão na textura (dava para ver
+         nos Andes e nas Rochosas). Agora são várias passadas tortas, largas e
+         fracas, com um fio de neve mais claro no alto: lê como serra */
+      const [x0, y0] = px(b.l0[0], b.l0[1]), [x1, y1] = px(b.l1[0], b.l1[1]);
+      const larg = b.w*(W/2048);
+      for(let k = 0; k < 7; k++){
+        const t = k/6 - 0.5;
+        lg.strokeStyle = b.cor;
+        lg.lineWidth = larg*(3.2 - Math.abs(t)*2.4);
+        lg.globalAlpha = 0.22 - Math.abs(t)*0.13;
+        lg.beginPath();
+        lg.moveTo(x0 + t*larg*1.6, y0);
+        lg.quadraticCurveTo((x0 + x1)/2 + t*larg*3.4, (y0 + y1)/2, x1 + t*larg*1.6, y1);
+        lg.stroke();
+      }
+      /* nada de fio de neve: um traço claro fino vira ARRANHÃO na textura, e
+         era isso que se via nos Andes. A serra fica só nas passadas largas */
+      lg.globalAlpha = 1;
     }
   }
-  /* tundra e gelo nas altas latitudes, tambem so na terra */
-  const tun = lg.createLinearGradient(0,0,0,H*0.30);
-  tun.addColorStop(0,'rgba(226,232,236,.95)'); tun.addColorStop(0.55,'rgba(168,164,140,.4)'); tun.addColorStop(1,'rgba(0,0,0,0)');
-  lg.fillStyle = tun; lg.fillRect(0,0,W,H*0.30);
-  const ant = lg.createLinearGradient(0,H,0,H*0.80);
-  ant.addColorStop(0,'rgba(240,246,250,.98)'); ant.addColorStop(1,'rgba(0,0,0,0)');
-  lg.fillStyle = ant; lg.fillRect(0,H*0.80,W,H*0.20);
+  /* tundra e gelo nas altas latitudes, também só na terra */
+  const tun = lg.createLinearGradient(0, 0, 0, H*0.30);
+  tun.addColorStop(0, 'rgba(226,232,236,.95)'); tun.addColorStop(0.55, 'rgba(168,164,140,.4)'); tun.addColorStop(1, 'rgba(0,0,0,0)');
+  lg.fillStyle = tun; lg.fillRect(0, 0, W, H*0.30);
+  const ant = lg.createLinearGradient(0, H, 0, H*0.80);
+  ant.addColorStop(0, 'rgba(240,246,250,.98)'); ant.addColorStop(1, 'rgba(0,0,0,0)');
+  lg.fillStyle = ant; lg.fillRect(0, H*0.80, W, H*0.20);
   lg.globalCompositeOperation = 'source-over';
-  /* costa: um traco fino escuro para o olho achar o contorno */
-  for(const poly of CONTINENTES){
-    tracarSuave(lg, poly, px);
-    lg.strokeStyle = 'rgba(40,64,52,.5)'; lg.lineWidth = 1.5; lg.stroke();
+
+  /* 5 · O RELEVO. O ruído em oitavas altas entra em OVERLAY, que clareia o que
+     é claro e escurece o que é escuro sem lavar a cor. Ele é recortado na
+     máscara da terra ANTES, porque overlay com fonte transparente não toca no
+     destino: é assim que o mar fica de fora */
+  const rel = _folhaRuido(640, 320, 8802, 6, 34);
+  const rm = document.createElement('canvas'); rm.width = W; rm.height = H;
+  const rmg = rm.getContext('2d');
+  rmg.lineJoin = rmg.lineCap = 'round';
+  for(const poly of COSTAS){ contorno(rmg, poly); rmg.fillStyle = '#fff'; rmg.fill(); }
+  rmg.globalCompositeOperation = 'source-in';
+  rmg.drawImage(rel, 0, 0, W, H);
+  lg.save();
+  /* soft-light no lugar de overlay: dá textura sem manchar a cor (o overlay
+     forte deixava a terra com cara de bolor) */
+  lg.globalCompositeOperation = 'soft-light';
+  lg.globalAlpha = 0.75;
+  lg.drawImage(rm, 0, 0);
+  lg.restore();
+
+  /* 6 · a costa: um traço fino e escuro para o olho achar o contorno */
+  for(const poly of COSTAS){
+    contorno(lg, poly);
+    lg.strokeStyle = 'rgba(38,60,50,.42)'; lg.lineWidth = Math.max(1, W/2048); lg.stroke();
   }
+
   g.drawImage(lc, 0, 0);
-  _mascaraTerra = lc;   /* as luzes das cidades leem esta mascara */
+  _mascaraTerra = lc;   /* as luzes das cidades leem esta máscara */
+  fundo.width = fundo.height = 0;
+  rel.width = rel.height = 0;
+  rm.width = rm.height = 0;
   const t = new THREE.CanvasTexture(c);
-  t.anisotropy = 4;
+  t.anisotropy = 8;
   return (_texTerra = t);
 }
 function texturaLua(){
@@ -6930,7 +7101,10 @@ function grupoLive(id, raio, seg){
   if(id === 'terra'){
     g.rotation.z = THREE.MathUtils.degToRad(23.4);
     const am = new THREE.ShaderMaterial({vertexShader:ATMO_VERT, fragmentShader:ATMO_FRAG,
-      uniforms:{uCol:{value:C('#7fb0ff')}, uI:{value:1.15}, uL:{value:LDIR.clone()}},
+      /* r163 · a atmosfera do modo ao vivo estava no brilho antigo (1,15). O
+         r158 baixou a da Terra procedural para 0,62 porque ele achou brilhante
+         demais, e a de cá tinha ficado para trás */
+      uniforms:{uCol:{value:C('#7fb0ff')}, uI:{value:0.62}, uL:{value:LDIR.clone()}},
       side:THREE.BackSide, blending:THREE.AdditiveBlending, transparent:true, depthWrite:false});
     g.add(new THREE.Mesh(new THREE.SphereGeometry(raio*1.05, seg, seg), am));
     /* nuvens com clima real, desenhadas em canvas, derivando devagar */
@@ -11537,7 +11711,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r162';
+const BUILD = 'r163';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
