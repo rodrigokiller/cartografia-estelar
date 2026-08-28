@@ -5294,7 +5294,7 @@ function buildSystem(sysId, spin0){
       ? grupoNave(p.id, p.sys.size*2.6)
       /* r161 · com o modo de teste ligado, a Terra do MAPA também é a de
          verdade: no contínuo do 1:1 é aqui que ela é vista de perto */
-      : ((LIVE && p.id === 'terra') ? grupoLive('terra', p.sys.size, QLOW ? 48 : 96)
+      : ((LIVE && podeLive(p.id)) ? grupoLive(p.id, p.sys.size, QLOW ? 48 : 96)
       : makeBodyGroup(p, p.sys.size, 40));
     bg.group.position.set(obX, 0, obZ);
     if(elip) elip.grupo = bg.group;
@@ -5330,7 +5330,7 @@ function buildSystem(sysId, spin0){
        de foco, existe só CHEGAR PERTO. Para o corpo aguentar o zoom fundo, ele
        troca de pele quando a câmera se aproxima: a esfera ganha malha fina e
        entram as nuvens e a atmosfera, exatamente como na cena de foco */
-    if(escrAtivo && !p.sonda && !p.satelite && !p.foguete && !(LIVE && p.id === 'terra'))
+    if(escrAtivo && !p.sonda && !p.satelite && !p.foguete && !(LIVE && podeLive(p.id)))
       detalhaveis.push({id:p.id, grupo:bg.group, mesh:bg.mesh, v:p.visual, r:p.sys.size, feito:false});
     /* r157 · OS ANÉIS DE MIRA SAÍRAM (decisão dele, depois de duas tentativas:
        como sprite ficavam grossos demais, como linha viravam elipse conforme o
@@ -6607,8 +6607,23 @@ let _texTerra = null, _texLua = null, _mascaraTerra = null;
    resolve com mais coordenadas na mão: se resolve com ruído, que é como se
    desenha relevo. A GEOGRAFIA continua sendo a dos dados; o que entra é a
    rugosidade que toda costa e todo fundo de mar têm. */
-function _ruidoTab(seed){
-  const N = 128, t = new Float32Array(N*N);
+/* r164 · O HALO ESCURO. Degradê de canvas interpola em cor NÃO premultiplicada,
+   então ir de uma cor clara para 'rgba(0,0,0,0)' passa por cinzas escuros no
+   meio do caminho e deixa um ANEL escuro em volta de toda mancha clara (achado
+   olhando a textura de Marte: Arabia Terra e Hellas viraram rosquinhas, e a
+   Terra tinha o mesmo problema nos biomas). O jeito certo é desbotar para a
+   PRÓPRIA cor com alfa zero */
+function _semAlfa(cor){
+  const m = String(cor).match(/rgba?\(([^)]+)\)/);
+  if(m){ const v = m[1].split(','); return 'rgba(' + v[0] + ',' + v[1] + ',' + v[2] + ',0)'; }
+  const h = String(cor).replace('#', '');
+  if(h.length === 6) return 'rgba(' + parseInt(h.slice(0,2),16) + ',' + parseInt(h.slice(2,4),16) + ',' + parseInt(h.slice(4,6),16) + ',0)';
+  return 'rgba(0,0,0,0)';
+}
+function _ruidoTab(seed, per){
+  /* per é o PERÍODO da tabela: amostrando de 0 a per o desenho fecha em volta
+     do globo, sem costura na linha da data (r164) */
+  const N = Math.max(4, Math.round(per || 128)), t = new Float32Array(N*N);
   let x = (seed || 1) >>> 0;
   for(let i = 0; i < N*N; i++){
     x ^= x << 13; x >>>= 0; x ^= x >> 17; x ^= x << 5; x >>>= 0;
@@ -6635,7 +6650,7 @@ function _fbm2(R, u, v, oct){
    depois, e é esse esticar que dá as manchas grandes do fundo do mar */
 function _folhaRuido(w, h, seed, oct, esc){
   const c = document.createElement('canvas'); c.width = w; c.height = h;
-  const g = c.getContext('2d'), img = g.createImageData(w, h), R = _ruidoTab(seed);
+  const g = c.getContext('2d'), img = g.createImageData(w, h), R = _ruidoTab(seed, esc);
   for(let y = 0; y < h; y++) for(let x = 0; x < w; x++){
     const n = _fbm2(R, x/w*esc, y/h*esc*0.5, oct);
     const v = Math.max(0, Math.min(255, Math.round(n*255)));
@@ -6757,7 +6772,7 @@ function texturaTerra(){
       lg.translate(x, y); lg.scale(1, ry/rx);
       const gr = lg.createRadialGradient(0, 0, 0, 0, 0, rx);
       gr.addColorStop(0, b.cor); gr.addColorStop(0.40, b.cor);
-      gr.addColorStop(1, 'rgba(0,0,0,0)');
+      gr.addColorStop(1, _semAlfa(b.cor));
       lg.fillStyle = gr;
       lg.beginPath(); lg.arc(0, 0, rx, 0, Math.PI*2); lg.fill();
       lg.restore();
@@ -6784,10 +6799,10 @@ function texturaTerra(){
   }
   /* tundra e gelo nas altas latitudes, também só na terra */
   const tun = lg.createLinearGradient(0, 0, 0, H*0.30);
-  tun.addColorStop(0, 'rgba(226,232,236,.95)'); tun.addColorStop(0.55, 'rgba(168,164,140,.4)'); tun.addColorStop(1, 'rgba(0,0,0,0)');
+  tun.addColorStop(0, 'rgba(226,232,236,.95)'); tun.addColorStop(0.55, 'rgba(168,164,140,.4)'); tun.addColorStop(1, 'rgba(168,164,140,0)');
   lg.fillStyle = tun; lg.fillRect(0, 0, W, H*0.30);
   const ant = lg.createLinearGradient(0, H, 0, H*0.80);
-  ant.addColorStop(0, 'rgba(240,246,250,.98)'); ant.addColorStop(1, 'rgba(0,0,0,0)');
+  ant.addColorStop(0, 'rgba(240,246,250,.98)'); ant.addColorStop(1, 'rgba(240,246,250,0)');
   lg.fillStyle = ant; lg.fillRect(0, H*0.80, W, H*0.20);
   lg.globalCompositeOperation = 'source-over';
 
@@ -6902,45 +6917,220 @@ let _texLuzes = null, _texPreta = null, _texNuvens = null;
    subtropicais mais limpos. Desenhado em canvas, nada externo. */
 function texturaNuvens(){
   if(_texNuvens) return _texNuvens;
-  const W = 1024, H = 512, c = document.createElement('canvas');
+  /* r164 · AS NUVENS ERAM BOLHAS SORTEADAS (e com Math.random, ou seja,
+     diferentes a cada F5). Agora são um campo de ruído com o clima de verdade
+     por cima: a cobertura muda com a LATITUDE, e a coordenada é TORCIDA nas
+     latitudes médias, em sentidos opostos por hemisfério, que é o que faz a
+     vírgula dos ciclões. Determinístico: a mesma Terra sai igual toda vez */
+  const W = QLOW ? 1024 : 2048, H = W >> 1;
+  const c = document.createElement('canvas');
   c.width = W; c.height = H;
   const g = c.getContext('2d');
-  const blob = (x,y,r,a)=>{
-    const gr = g.createRadialGradient(x,y,0,x,y,r);
-    gr.addColorStop(0,'rgba(255,255,255,'+a+')'); gr.addColorStop(1,'rgba(255,255,255,0)');
-    g.fillStyle = gr; g.beginPath(); g.arc(x,y,r,0,Math.PI*2); g.fill();
-  };
-  /* zona de convergência intertropical: o colar de cúmulos do equador */
-  for(let i=0;i<90;i++){
-    const x = Math.random()*W, y = H*0.5 + (Math.random()-0.5)*H*0.06;
-    blob(x, y, 6+Math.random()*16, 0.32+Math.random()*0.28);
-  }
-  /* frentes em espiral (vírgulas) nas latitudes médias, giro oposto por hemisfério */
-  for(const yc of [H*0.24, H*0.76]){
-    const dir = yc < H/2 ? 1 : -1;
-    for(let sN=0;sN<6;sN++){
-      const x0 = (sN + Math.random()*0.6)*W/6;
-      for(let t2=0;t2<26;t2++){
-        const tt = t2/26, ang = tt*3.4, rr = 4+tt*30;
-        blob(x0 + Math.cos(ang)*rr*1.8, yc + Math.sin(ang)*rr*0.8*dir,
-             5+tt*13, 0.30*(1-tt*0.5)+0.10);
-      }
+  const img = g.createImageData(W, H);
+  const PER = 22;                      /* período do ruído: fecha em volta do globo */
+  const R = _ruidoTab(4242, PER), Rw = _ruidoTab(777, PER), Rd = _ruidoTab(3131, PER*3);
+  const gauss = (x, c0, larg)=>Math.exp(-Math.pow((x - c0)/larg, 2));
+  for(let y = 0; y < H; y++){
+    const lat = 90 - (y + 0.5)/H*180, al = Math.abs(lat);
+    /* quanto céu cada faixa cobre: o colar de cúmulos do equador, o cinturão
+       seco dos subtrópicos (onde ficam os desertos), o cinturão de tempestades
+       das latitudes médias e um véu fino nos polos */
+    let cob = 0.30 + 0.32*gauss(al, 3, 8) - 0.17*gauss(al, 26, 11) + 0.30*gauss(al, 55, 14);
+    if(al > 74) cob -= 0.08*(al - 74)/16;
+    cob = Math.max(0.02, Math.min(0.78, cob));
+    const lim = 1 - cob;
+    /* o giro das frentes, com o sentido trocando de hemisfério */
+    const giro = (lat >= 0 ? 1 : -1)*gauss(al, 52, 22)*2.2;
+    const v = (y + 0.5)/H*PER*0.5;
+    for(let x = 0; x < W; x++){
+      const u = (x + 0.5)/W*PER;
+      const w = _fbm2(Rw, u*0.5, v*0.5, 3) - 0.5;
+      /* duas escalas: a mancha grande e a célula miúda por cima, senão cada
+         faixa de clima vira uma parede branca de ponta a ponta */
+      const n = 0.68*_fbm2(R, u + giro*w, v + giro*0.4*w, 5)
+              + 0.32*_fbm2(Rd, (u + giro*w)*3, (v + giro*0.4*w)*3, 4);
+      let a = (n - lim)/0.22;
+      a = a <= 0 ? 0 : (a >= 1 ? 1 : a*a*(3 - 2*a));
+      const i = (y*W + x)*4;
+      img.data[i] = img.data[i+1] = img.data[i+2] = 255;
+      img.data[i+3] = Math.round(a*236);
     }
   }
-  /* cirros finos perto dos polos */
-  for(let i=0;i<40;i++){
-    const y = Math.random()<0.5 ? Math.random()*H*0.09 : H-(Math.random()*H*0.09);
-    g.fillStyle = 'rgba(255,255,255,'+(0.10+Math.random()*0.12)+')';
-    g.fillRect(Math.random()*W, y, 30+Math.random()*80, 1.6);
-  }
-  /* pontilhado esparso nos subtrópicos (os desertos ficam mais limpos) */
-  for(let i=0;i<160;i++){
-    const band = Math.random()<0.5 ? H*0.38 : H*0.62;
-    blob(Math.random()*W, band+(Math.random()-0.5)*H*0.05, 3+Math.random()*7, 0.10+Math.random()*0.14);
-  }
+  g.putImageData(img, 0, 0);
   const t = new THREE.CanvasTexture(c);
   t.wrapS = THREE.RepeatWrapping;
+  t.anisotropy = 4;
   return (_texNuvens = t);
+}
+let _texMarte = null;
+/* ======================= r164 · O MAPA DE MARTE =======================
+   Mesmo tratamento da Terra, com a geografia de verdade: a DICOTOMIA (planície
+   lisa no norte, terras altas crateradas no sul, a maior cicatriz do planeta),
+   o inchaço de Tharsis com os quatro vulcões gigantes, o Valles Marineris,
+   as bacias de impacto Hellas, Argyre e Isidis, as manchas escuras clássicas
+   dos telescópios (Syrtis Major, Acidalia, Mare Erythraeum) e as calotas.
+   Coordenadas em graus, longitude oeste negativa. */
+const MARTE_ESCURO = [
+  /* [lon, lat, raio lon, raio lat, cor] · as manchas que os telescópios veem */
+  [70, 8, 17, 14, 'rgba(80,60,48,.72)'],       /* Syrtis Major, a mais escura e a primeira feição vista noutro planeta */
+  [-25, 48, 30, 16, 'rgba(90,68,54,.52)'],     /* Acidalia Planitia */
+  [118, 47, 32, 14, 'rgba(98,74,58,.44)'],     /* Utopia Planitia */
+  [-35, -22, 34, 14, 'rgba(92,68,52,.46)'],    /* Mare Erythraeum */
+  [0, -5, 15, 9, 'rgba(88,66,52,.46)'],        /* Sinus Meridiani */
+  [-150, -35, 30, 14, 'rgba(94,70,54,.40)'],   /* Terra Sirenum */
+  [150, -25, 26, 13, 'rgba(92,68,52,.38)']     /* Mare Cimmerium */
+];
+const MARTE_CLARO = [
+  [15, 20, 34, 18, 'rgba(214,168,120,.42)'],   /* Arabia Terra */
+  [-100, 2, 34, 22, 'rgba(206,158,112,.36)'],  /* inchaço de Tharsis */
+  [-45, 25, 20, 12, 'rgba(202,156,112,.30)'],  /* Chryse Planitia */
+  [70, -42, 26, 15, 'rgba(216,176,130,.40)'],  /* fundo de Hellas */
+  [-43, -50, 14, 9, 'rgba(208,168,124,.34)'],  /* Argyre */
+  [87, 13, 14, 9, 'rgba(198,152,108,.28)']     /* Isidis */
+];
+const MARTE_VULCOES = [
+  [-133.8, 18.7, 5.6, 'OLYMPUS'],
+  [-104.5, 11.8, 3.4, 'ASCRAEUS'],
+  [-113.3, 0.8, 3.2, 'PAVONIS'],
+  [-120.5, -8.4, 3.4, 'ARSIA'],
+  [-110, 40, 6.5, 'ALBA'],
+  [147, 25, 3.6, 'ELYSIUM']
+];
+function texturaMarte(){
+  if(_texMarte) return _texMarte;
+  const W = QLOW ? 1536 : 3072, H = W >> 1;
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const g = c.getContext('2d');
+  const px = (lon, lat)=>[ (lon + 180)/360*W, (90 - lat)/180*H ];
+  const mancha = (lon, lat, rlon, rlat, cor, miolo)=>{
+    const [x, y] = px(lon, lat);
+    const rx = rlon/360*W, ry = rlat/180*H;
+    g.save();
+    g.translate(x, y); g.scale(1, ry/rx);
+    const gr = g.createRadialGradient(0, 0, 0, 0, 0, rx);
+    gr.addColorStop(0, cor); gr.addColorStop(miolo === undefined ? 0.42 : miolo, cor);
+    gr.addColorStop(1, _semAlfa(cor));
+    g.fillStyle = gr;
+    g.beginPath(); g.arc(0, 0, rx, 0, Math.PI*2); g.fill();
+    g.restore();
+  };
+  /* a linha da dicotomia, usada pelo recorte e pelas crateras */
+  const altura = lon => 24*Math.sin((lon + 60)*Math.PI/180) + 16;
+  let seed = 20250828;
+  const rnd = ()=>{ seed ^= seed << 13; seed >>>= 0; seed ^= seed >> 17; seed ^= seed << 5; seed >>>= 0; return seed/4294967296; };
+
+  /* 1 · a cor de base: ferrugem, mais clara no equador */
+  const base = g.createLinearGradient(0, 0, 0, H);
+  base.addColorStop(0, '#9a6a4c'); base.addColorStop(0.3, '#b87f56');
+  base.addColorStop(0.5, '#c08a5c'); base.addColorStop(0.7, '#b87f56'); base.addColorStop(1, '#9a6a4c');
+  g.fillStyle = base; g.fillRect(0, 0, W, H);
+
+  /* 2 · A DICOTOMIA, a maior cicatriz do planeta: o hemisfério norte é uma
+     planície baixa e lisa, o sul é terra alta cheia de cratera, uns 5 km mais
+     alto. A fronteira é um círculo máximo inclinado, e numa carta plana isso
+     vira uma senoide */
+  /* a escarpa não é um corte: são centenas de quilômetros de degrau. Quatro
+     passadas deslocadas fazem a borda macia sem precisar de filtro */
+  for(let k = 0; k < 4; k++){
+    g.save();
+    g.beginPath();
+    g.moveTo(0, 0);
+    for(let x = 0; x <= W; x += 4){
+      const lat = altura(x/W*360 - 180) + k*2.6;
+      g.lineTo(x, (90 - lat)/180*H);
+    }
+    g.lineTo(W, 0); g.closePath();
+    g.clip();
+    g.fillStyle = 'rgba(126,100,84,.085)'; g.fillRect(0, 0, W, H);
+    g.restore();
+  }
+
+  /* 3 · CRATERAS, só no sul e discretas: o que se vê de longe é a textura
+     delas, não cada uma. Anel claro por fora, fundo escuro por dentro */
+  for(let i = 0; i < 900; i++){
+    const lon = rnd()*360 - 180;
+    const lat = 14 - Math.pow(rnd(), 0.7)*100;
+    if(lat < -78 || lat > altura(lon)) continue;
+    const [x, y] = px(lon, lat);
+    /* sem anel desenhado: um anel de 1px em centenas de crateras vira espuma
+       de sabão. O que se vê de longe é a textura, um degradê por cratera */
+    const r = (0.4 + Math.pow(rnd(), 2.6)*2.4)/360*W;
+    const gr = g.createRadialGradient(x, y, 0, x, y, r);
+    gr.addColorStop(0, 'rgba(104,76,56,.11)');
+    gr.addColorStop(0.72, 'rgba(104,76,56,.07)');
+    gr.addColorStop(0.9, 'rgba(232,196,152,.09)');
+    gr.addColorStop(1, 'rgba(232,196,152,0)');
+    g.fillStyle = gr;
+    g.beginPath(); g.arc(x, y, r, 0, Math.PI*2); g.fill();
+  }
+
+  /* 4 · as manchas de albedo: são elas que o telescópio mostra desde 1600 */
+  for(const m of MARTE_ESCURO) mancha(m[0], m[1], m[2], m[3], m[4]);
+  for(const m of MARTE_CLARO) mancha(m[0], m[1], m[2], m[3], m[4]);
+
+  /* 5 · VALLES MARINERIS: 4.000 km de rasgo, dez vezes o Grand Canyon */
+  const vm = [[-102, -8], [-90, -10.5], [-76, -12.5], [-62, -13.5], [-50, -12.5], [-40, -10.5], [-33, -8]];
+  g.save();
+  g.lineCap = g.lineJoin = 'round';
+  const risco = (larg, cor, dy)=>{
+    g.beginPath();
+    vm.forEach((q, i)=>{ const [x, y] = px(q[0], q[1] + (dy || 0)); i ? g.lineTo(x, y) : g.moveTo(x, y); });
+    g.strokeStyle = cor; g.lineWidth = larg/180*H; g.stroke();
+  };
+  risco(7.0, 'rgba(150,108,76,.22)', 0);        /* o planalto rachado em volta */
+  risco(3.2, 'rgba(96,66,46,.34)', 0);
+  risco(1.5, 'rgba(74,50,34,.42)', 0);
+  risco(1.1, 'rgba(226,186,142,.14)', 2.6);     /* a borda sul pegando sol */
+  g.restore();
+  mancha(-106, -6, 9, 6, 'rgba(88,60,42,.26)');   /* Noctis Labyrinthus */
+  mancha(-30, -4, 11, 8, 'rgba(92,64,44,.18)');   /* os canais de saída */
+
+  /* 6 · OS VULCÕES DE THARSIS: escudo claro, caldeira escura no alto. Olympus
+     tem 22 km de altura, quase três Everestes */
+  for(const v of MARTE_VULCOES){
+    mancha(v[0], v[1], v[2]*3.0, v[2]*3.0, 'rgba(226,182,136,.16)', 0.20);
+    mancha(v[0], v[1], v[2]*1.5, v[2]*1.5, 'rgba(222,176,128,.20)', 0.25);
+    mancha(v[0], v[1], v[2]*0.24, v[2]*0.24, 'rgba(88,60,42,.30)', 0.5);
+  }
+
+  /* 7 · a poeira, em duas escalas, discreta para não comer as manchas */
+  const po = _folhaRuido(384, 192, 5150, 5, 9);
+  g.save(); g.globalCompositeOperation = 'soft-light'; g.globalAlpha = 0.55;
+  g.drawImage(po, 0, 0, W, H);
+  const po2 = _folhaRuido(384, 192, 6161, 4, 30);
+  g.globalAlpha = 0.30; g.drawImage(po2, 0, 0, W, H);
+  g.restore();
+  po.width = po.height = 0; po2.width = po2.height = 0;
+
+  /* 8 · AS CALOTAS, com a borda irregular que elas têm de verdade. A do sul é
+     de gelo seco e sobrevive ao verão; a do norte é de água */
+  const calota = (norte, lim, forca)=>{
+    g.save();
+    g.beginPath();
+    if(norte) g.moveTo(0, 0); else g.moveTo(0, H);
+    for(let x = 0; x <= W; x += 6){
+      const lon = x/W*360 - 180;
+      const on = Math.sin(lon*Math.PI/45)*1.6 + Math.sin(lon*Math.PI/17 + 2)*1.1;
+      const lat = norte ? (lim + on) : (-lim + on);
+      g.lineTo(x, (90 - lat)/180*H);
+    }
+    g.lineTo(W, norte ? 0 : H); g.closePath();
+    g.clip();
+    const gr = norte ? g.createLinearGradient(0, 0, 0, (90 - lim + 8)/180*H)
+                     : g.createLinearGradient(0, H, 0, (90 + lim - 8)/180*H);
+    gr.addColorStop(0, 'rgba(246,250,252,' + forca + ')');
+    gr.addColorStop(0.62, 'rgba(232,222,210,.45)');
+    gr.addColorStop(1, 'rgba(232,222,210,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, W, H);
+    g.restore();
+  };
+  calota(true, 76, 0.94);
+  calota(false, 72, 0.98);
+
+  const t = new THREE.CanvasTexture(c);
+  t.anisotropy = 8;
+  return (_texMarte = t);
 }
 function texturaPreta(){
   if(_texPreta) return _texPreta;
@@ -7040,7 +7230,7 @@ function nomeDaFase(i){
    botão próprio do lado do nome, que liga e desliga na hora. É o mapa de
    verdade desenhado em canvas (nada externo, roda em file://) com Greenwich
    apontado pela hora do navegador */
-function podeLive(id){ return id === 'terra'; }
+function podeLive(id){ return id === 'terra' || id === 'marte'; }
 const LIVE_VERT = `
 varying vec2 vUv; varying vec3 vN; varying vec3 vV;
 void main(){ vUv = uv; vN = normalize(normalMatrix * normal);
@@ -7082,8 +7272,8 @@ void main(){
 }`;
 function liveMaterial(id){
   return new THREE.ShaderMaterial({vertexShader:LIVE_VERT, fragmentShader:LIVE_FRAG,
-    uniforms:{uMap:{value: id === 'lua' ? texturaLua() : texturaTerra()},
-              uLuzes:{value: id === 'lua' ? texturaPreta() : texturaLuzes()},
+    uniforms:{uMap:{value: id === 'lua' ? texturaLua() : (id === 'marte' ? texturaMarte() : texturaTerra())},
+              uLuzes:{value: id === 'terra' ? texturaLuzes() : texturaPreta()},
               uL:{value:LDIR.clone()}, uAmb:{value: id === 'lua' ? 0.05 : 0.07}}});
 }
 /* Greenwich apontado para o Sol da cena ao meio-dia UTC. O eixo tambem ganha a
@@ -7098,6 +7288,15 @@ function grupoLive(id, raio, seg){
   const g = new THREE.Group();
   const malha = new THREE.Mesh(new THREE.SphereGeometry(raio, seg, seg), liveMaterial(id));
   g.add(malha);
+  if(id === 'marte'){
+    /* Marte também entorta 25 graus, e é por isso que ele tem estações como as
+       nossas; a atmosfera dele é fina e cor de poeira */
+    g.rotation.z = THREE.MathUtils.degToRad(25.2);
+    const am2 = new THREE.ShaderMaterial({vertexShader:ATMO_VERT, fragmentShader:ATMO_FRAG,
+      uniforms:{uCol:{value:C('#e8a978')}, uI:{value:0.34}, uL:{value:LDIR.clone()}},
+      side:THREE.BackSide, blending:THREE.AdditiveBlending, transparent:true, depthWrite:false});
+    g.add(new THREE.Mesh(new THREE.SphereGeometry(raio*1.035, seg, seg), am2));
+  }
   if(id === 'terra'){
     g.rotation.z = THREE.MathUtils.degToRad(23.4);
     const am = new THREE.ShaderMaterial({vertexShader:ATMO_VERT, fragmentShader:ATMO_FRAG,
@@ -7637,7 +7836,7 @@ function buildFocus(bodyId, spin0){
 
   /* ---------- CORPO: esfera + luas orbitando ---------- */
   const radius = (b.visual.mode==='star') ? 2.35 : (b.comet ? 1.2 : 2.2);
-  const aoVivo = bodyId === 'lua' || (LIVE && bodyId === 'terra');
+  const aoVivo = bodyId === 'lua' || (LIVE && podeLive(bodyId));
   /* anéis de Saturno na escala real: de 1,24 a 2,35 raios do planeta, com a
      divisão de Cassini no lugar certo (2,02-2,10 R, o vão que Mimas abre) */
   let bV = b;
@@ -8011,8 +8210,13 @@ let lastDragT = 0, upGuard = 0;
    sai do lugar durante o mergulho em um corpo, para a entrada não ter corte. */
 const CAM = {mode:'orbit', yaw:0.65, pitch:0.55, dist:48, min:14, max:95,
              focusOff:new THREE.Vector3(1.2,0.12,0), pivot:new THREE.Vector3()};
+/* alvo do zoom suave (r164). Declarado JUNTO do CAM de propósito: o setCam
+   é chamado no boot, antes do bloco onde vive o dolly, e um let lá embaixo
+   daria TDZ (o mesmo tombo do LIVE no r45) */
+let ZOOM = null;
 function computeFocusOff(){ if(isMobile()) CAM.focusOff.set(0,-0.95,0); else CAM.focusOff.set(1.2,0.12,0); }
 function setCam(cfg){
+  ZOOM = null;   /* cena nova: o alvo de zoom antigo não pode continuar puxando */
   CAM.mode = cfg.mode; CAM.min = cfg.min; CAM.max = cfg.max; CAM.dist = cfg.dist;
   if(cfg.mode==='orbit'){ CAM.yaw = cfg.yaw; CAM.pitch = cfg.pitch; }
   CAM.pivot.set(0,0,0);
@@ -11420,7 +11624,25 @@ const ZLIM = {over:0, t:0, hint:0};
    pequeno e o passo de sempre está certo */
 function zoomExp(){
   if(!(ACT && ACT.escr && ACT.kind === 'system')) return 1;
-  return Math.min(4, Math.max(1, 1 + Math.log10(Math.max(1e-9, CAM.dist)/40)*0.9));
+  /* mede pelo ALVO, senão o passo mudava de tamanho no meio do deslize */
+  const d = ZOOM ? ZOOM.d1 : CAM.dist;
+  return Math.min(4, Math.max(1, 1 + Math.log10(Math.max(1e-9, d)/40)*0.9));
+}
+/* r164 · O ZOOM DEIXOU DE SER UM PULO (ele: 'ele so pula, corta, nao tem
+   essa animaçao'). Com o passo por escala do r162 cada entalhe da roda ficou
+   grande, e escrever a distância na hora virava um CORTE. Agora a roda mexe
+   num ALVO e a distância caminha até lá em poucos décimos, em espaço
+   LOGARÍTMICO, que é como a escala do mapa funciona: perto de um planeta e a
+   um milhão de anos-luz o deslize tem a mesma cara. Girar de novo antes de
+   chegar soma no alvo, então rolar rápido continua andando rápido */
+function zoomPasso(dt){
+  if(!ZOOM) return;
+  if(CAMTW || DIVE){ ZOOM = null; return; }
+  const l1 = Math.log(Math.max(1e-12, ZOOM.d1));
+  const l0 = Math.log(Math.max(1e-12, CAM.dist));
+  const l = l0 + (l1 - l0)*(1 - Math.exp(-Math.min(0.1, dt)*18));
+  CAM.dist = Math.exp(l);
+  if(Math.abs(l1 - l) < 0.003){ CAM.dist = ZOOM.d1; ZOOM = null; }
 }
 function dolly(f){
   if(DIVE) return;
@@ -11428,10 +11650,12 @@ function dolly(f){
   if(zx !== 1) f = Math.pow(f, zx);
   CAMTW = null;
   const now = performance.now();
-  const alvo = CAM.dist * f;
+  /* o próximo passo sai do ALVO, não de onde a câmera está agora */
+  const base = ZOOM ? ZOOM.d1 : CAM.dist;
+  const alvo = base * f;
   if(alvo > CAM.max + 1e-4){
     if(TRAJ) return;   /* na linha do tempo o zoom-out para no teto SEM pular para longe (o salto para 31 mil un travava o teste dele) */
-    const jaNoTeto = CAM.dist >= CAM.max - 1e-3;
+    const jaNoTeto = base >= CAM.max - 1e-3;
     /* r157 · na ESCALA 1:1 o mapa NÃO sobe mais de escala: ele é contínuo do
        chão de um planeta até Andrômeda, e trocar para a cena estilizada da
        galáxia no fim quebrava justamente isso (pedido dele) */
@@ -11443,7 +11667,7 @@ function dolly(f){
       return;
     }
     if(!jaNoTeto){
-      CAM.dist = CAM.max;
+      ZOOM = {d1:CAM.max};
       /* metade 2 da EXP-04: o sistema real inteiro virou um pontinho */
       if(ACT && ACT.escr && ACT.kind==='system' && !ESCR_EXP.teto){ ESCR_EXP.teto = true; checaEscalaReal(); }
       ZLIM.over = 0; ZLIM.t = now;
@@ -11461,7 +11685,7 @@ function dolly(f){
     if(podeSubir && (gestoNovo || ZLIM.over > 0.5) && now - upGuard > 700){
       upGuard = now; ZLIM.over = 0; hideHint(); up();
     }
-    CAM.dist = CAM.max;
+    ZOOM = {d1:CAM.max};
     return;
   }
   /* com um corpo travado no centro, o zoom entra bem mais perto dele */
@@ -11477,8 +11701,8 @@ function dolly(f){
       minEf = (pkSel && pkSel.userData.r) ? Math.max(0.0004, pkSel.userData.r*1.45) : 0.02;
     } else if(ST.mapCard) minEf = Math.min(CAM.min, 4.2);
   }
-  CAM.dist = clamp(alvo, minEf, CAM.max);
-  if(CAM.dist > minEf + 1e-3) ZLIM.over = 0;
+  ZOOM = {d1:clamp(alvo, minEf, CAM.max)};
+  if(ZOOM.d1 > minEf + 1e-3) ZLIM.over = 0;
 }
 function rayHit(x, y){
   if(!ACT || !ACT.pickables.length) return null;
@@ -11711,7 +11935,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r163';
+const BUILD = 'r164';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -12593,6 +12817,7 @@ function loop(){
   if(TOUR.on && TOUR.ms && !TOUR.pausado) $('#tourprog').style.width = Math.min(100, (now-TOUR.t0)/TOUR.ms*100).toFixed(1)+'%';
   if(ACT){
     if(ACT.update) ACT.update(dt, t);
+    zoomPasso(dt);
     applyCam();
     /* escala real: perto de um grão de planeta o plano de corte encolhe
        junto, senão a câmera atravessa o corpo antes de conseguir vê-lo */
