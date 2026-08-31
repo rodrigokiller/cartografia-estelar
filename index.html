@@ -4457,6 +4457,11 @@ function updateLabels(){
     if(L.soLonge && !foraDeCasa){ L.el.style.display = 'none'; continue; }
     /* o Sol só tem nome enquanto a casa dele é o assunto */
     if(L.solLbl && dLy > 3000){ L.el.style.display = 'none'; continue; }
+    /* r175 · SISTEMA SOLAR assume quando o SOL descansa, e descansa quando a
+       galáxia vira mançha; os sistemas do atlas aparecem quando o zoom abraça
+       a distância de cada um */
+    if(L.sisCasa && (dLy < 3000 || dLy > 250000)){ L.el.style.display = 'none'; continue; }
+    if(L.sisLy && (dLy < L.sisLy*0.8 || dLy > Math.min(L.sisLy*50, 250000))){ L.el.style.display = 'none'; continue; }
     if(foraDeCasa){
       /* o nome da estrela só aparece quando o zoom já abraça a distância dela */
       /* na escala GALÁCTICA a vizinhança inteira vira um grão: os nomes das
@@ -4468,6 +4473,9 @@ function updateLabels(){
       /* fora de casa somem os nomes de dentro do sistema, inclusive as
          cascas (heliopausa e Oort) que só fazem sentido de perto */
       if(L.cinturao || L.zonaLonge || (L.escrOrb && L.escrOrb < 40000)){ L.el.style.display = 'none'; continue; }
+      /* r175 · rede de segurança: passando de 2 anos-luz, NENHUM nome de corpo
+         do sistema sobrevive (Sedna aparecia no zoom galáctico, ele reportou) */
+      if(dLy > 2 && (L.lid || L.escrMr || L.escrOrb)){ L.el.style.display = 'none'; continue; }
     }
     /* escala real: cada nome descansa quando a própria órbita fica pequena na
        tela, senão os internos se amontoam todos no centro no zoom aberto */
@@ -5752,7 +5760,9 @@ function buildSystem(sysId, spin0){
   /* zona habitável: o anel verde tênue onde água líquida é possível */
   let hzRing = null, hzLbl = null;
   let ceuLinhas = null, ceuSelFn = null, sceneCeu = null, solCeu = null, eclLinha = null, viaLactea = null, viaHalo = null, fundoGal = null;
+  let viaDisco = null, viaNucleo = null, viaNos = null;   /* r175: o brilho da galáxia */
   const vizinhas = [];   /* Magalhães e Andrômeda, no contínuo */
+  const sisMarcas = [];  /* r175: os sistemas do atlas espalhados pela galáxia */
   const eclLbls = [];
   const ceuLbls = [], ceuPicks = [], ceuDir = {};
   const CEU_DE = window.__ceuDe || (window.__ceuDe = {});
@@ -6136,6 +6146,102 @@ function buildSystem(sysId, spin0){
           map:TEX_DOT, blending:THREE.AdditiveBlending}));
         viaHalo.frustumCulled = false;
         sceneCeu.add(viaHalo);
+        /* ---------- r175 · O BRILHO DA GALÁXIA ----------
+           Só pontos deixavam a Via Láctea seca de longe (crítica dele: 'a
+           forma que tu vai fazer vai ser melhor, talvez alguns brilhos').
+           Três camadas novas, todas honestas com a geometria real:
+           um DISCO de luz difusa no plano galáctico (a névoa de estrelas que
+           não dá para resolver), o NÚCLEO quente, e NÓS azuis nos braços
+           (as regiões de formação estelar que marcam braço de espiral) */
+        {
+          const dg2 = new THREE.PlaneGeometry(1, 1);
+          const dm2 = new THREE.MeshBasicMaterial({map:TEX_GLOW_WARM, color:0xaec4e8,
+            transparent:true, opacity:0, depthWrite:false, blending:THREE.AdditiveBlending,
+            side:THREE.DoubleSide});
+          viaDisco = new THREE.Mesh(dg2, dm2);
+          viaDisco.scale.set(118000*UNAL, 118000*UNAL, 1);
+          viaDisco.position.copy(C);
+          viaDisco.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), zg);
+          viaDisco.frustumCulled = false;
+          sceneCeu.add(viaDisco);
+          const nu2 = new THREE.Sprite(new THREE.SpriteMaterial({map:TEX_GLOW_WARM, color:0xffe2b8,
+            transparent:true, opacity:0, depthWrite:false, blending:THREE.AdditiveBlending}));
+          nu2.scale.setScalar(17000*UNAL);
+          nu2.position.copy(C);
+          viaNucleo = nu2;
+          sceneCeu.add(nu2);
+          /* os nós: pontos gordos e azulados COLADOS na linha dos braços */
+          const nn2 = QLOW ? 130 : 240;
+          const np2 = new Float32Array(nn2*3);
+          for(let i = 0; i < nn2; i++){
+            const braco = Math.floor(Math.random()*4)*(Math.PI/2);
+            const t3 = Math.pow(Math.random(), 0.8);
+            const rr3 = 6000 + t3*40000;
+            const th3 = braco + Math.log(rr3/3200)/tanP + (Math.random()-0.5)*0.14;
+            const hh3 = (Math.random()-0.5)*500;
+            const px3 = Math.cos(th3)*rr3, py3 = Math.sin(th3)*rr3;
+            np2[i*3]   = C.x + (ug.x*px3 + vg.x*py3 + zg.x*hh3)*UNAL;
+            np2[i*3+1] = C.y + (ug.y*px3 + vg.y*py3 + zg.y*hh3)*UNAL;
+            np2[i*3+2] = C.z + (ug.z*px3 + vg.z*py3 + zg.z*hh3)*UNAL;
+          }
+          const ng2 = new THREE.BufferGeometry();
+          ng2.setAttribute('position', new THREE.BufferAttribute(np2, 3));
+          viaNos = new THREE.Points(ng2, new THREE.PointsMaterial({color:0xbcd8ff, size:5.5,
+            sizeAttenuation:false, transparent:true, opacity:0, depthWrite:false,
+            map:TEX_DOT, blending:THREE.AdditiveBlending}));
+          viaNos.frustumCulled = false;
+          sceneCeu.add(viaNos);
+        }
+        /* ---------- r175 · OS SISTEMAS DO ATLAS NA GALÁXIA ----------
+           Quando o zoom abraça a distância de cada sistema, o marcador dele
+           acende na DIREÇÃO REAL (RA/DEC) e na distância real: TRAPPIST a 40
+           anos-luz, Kepler-452 a 1.400, os Pilares a 7.000. Primeiro toque
+           abre a ficha, ENTRAR viaja (o mesmo two-step das estrelas). Ids que
+           não existem no atlas são pulados em silêncio */
+        {
+          const SIS_CEU = [
+            ['barnard', 17.96, 4.69, 6], ['gliese581', 15.32, -7.72, 20],
+            ['fomalhaut', 22.96, -29.62, 25], ['trappist', 23.108, -5.04, 40],
+            ['cnc55', 8.74, 28.33, 41], ['pegasi51', 22.96, 20.77, 50],
+            ['hd189', 20.00, 22.71, 64], ['toi700', 6.74, -65.58, 101],
+            ['kepler16', 19.28, 51.76, 245], ['pleiades', 3.79, 24.11, 444],
+            ['kepler452', 19.73, 44.28, 1400], ['wasp12', 6.51, 29.67, 1410],
+            ['orion', 5.59, -5.39, 1344], ['m42', 5.59, -5.39, 1344],
+            ['cavalo', 5.68, -2.46, 1375], ['cabecadecavalo', 5.68, -2.46, 1375],
+            ['chama', 5.69, -1.9, 1350], ['psr1257', 13.00, 12.68, 2300],
+            ['veu', 20.75, 30.7, 2400], ['m57', 18.89, 33.03, 2600],
+            ['anel57', 18.89, 33.03, 2600], ['norteamerica', 20.98, 44.33, 2600],
+            ['olhodegato', 17.98, 66.63, 3300], ['lagoa', 18.06, -24.38, 4100],
+            ['trifida', 18.04, -23.03, 4100], ['roseta', 6.55, 4.95, 5200],
+            ['m1', 5.575, 22.01, 6500], ['caranguejo', 5.575, 22.01, 6500],
+            ['m16', 18.31, -13.78, 7000], ['carina', 10.75, -59.87, 7500],
+            ['formiga', 16.28, -51.98, 8000]
+          ];
+          const jaTem2 = new Set();
+          for(const q4 of SIS_CEU){
+            if(!SYS[q4[0]] || jaTem2.has(q4[0])) continue;
+            if((SYS[q4[0]].gal || 'vialactea') !== 'vialactea') continue;
+            jaTem2.add(q4[0]);
+            const dir4 = dirCeu(q4[1], q4[2]).normalize();
+            const alvo4 = dir4.clone().multiplyScalar(q4[3]*UNAL);
+            const spr4 = new THREE.Sprite(new THREE.SpriteMaterial({map:TEX_GLOW_WARM,
+              color:0x9fd0ff, transparent:true, opacity:0, depthWrite:false,
+              blending:THREE.AdditiveBlending}));
+            scene.add(spr4);
+            const pk4 = new THREE.Mesh(new THREE.SphereGeometry(1, 6, 6),
+              new THREE.MeshBasicMaterial({visible:false}));
+            pk4.userData = {act:'sys', id:q4[0], r:1, escondido:true};
+            scene.add(pk4);
+            pickables.push(pk4);
+            ceuPicks.push({obj:pk4, alvo:alvo4, ang:0.028});
+            const lb4 = {el:makeLabel(SYS[q4[0]].name, '', ()=>ACTION('sys', q4[0])),
+              sempre:true, sisLy:q4[3],
+              get:(t4)=>{ t4.copy(alvo4).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()*0.9).add(camera.position); }};
+            labels.push(lb4);
+            sisMarcas.push({spr:spr4, pick:pk4, ly:q4[3], alvo:alvo4});
+          }
+          RLOG.push('sisceu-' + sisMarcas.length);
+        }
         /* ---------- r155 · AS GALÁXIAS VIZINHAS NO CONTÍNUO ----------
            Depois da Via Láctea vem o resto do bairro: as duas Nuvens de
            Magalhães (163 e 200 mil anos-luz, satélites da nossa) e Andrômeda,
@@ -6179,7 +6285,7 @@ function buildSystem(sysId, spin0){
            manchinhas em todas as direções (o mesmo espírito do fundo do modo
            cênico, mas aqui elas estão de verdade a milhões de anos-luz) */
         {
-          const nf = QLOW ? 260 : 520;
+          const nf = QLOW ? 420 : 900;
           const pf = new Float32Array(nf*3), cf = new Float32Array(nf*3);
           const cor1 = new THREE.Color(0xcfd8ff), cor2 = new THREE.Color(0xffe4c8);
           for(let i=0;i<nf;i++){
@@ -6208,6 +6314,12 @@ function buildSystem(sysId, spin0){
              tela (uns 250 mil anos-luz), como qualquer outra galáxia */
           labels.push({el:makeLabel('VIA LÁCTEA', '', null), sempre:true, galLbl2:1.6e6, off:true,
             get:(t2)=>{ t2.copy(cvl).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()*0.8).add(camera.position); }});
+          /* r175 · e o nosso endereço: quando o rótulo SOL descansa (3 mil AL)
+             entra SISTEMA SOLAR, que é o que aquele grão é nesta escala; some
+             quando a galáxia inteira vira mançha. Clicar volta para casa */
+          labels.push({el:makeLabel('SISTEMA SOLAR', '', ()=>{ if(typeof voltarParaCasa === 'function') voltarParaCasa(); }),
+            sempre:true, sisCasa:true,
+            get:(t2)=>{ t2.set(0,0,0).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()*0.75).add(camera.position); }});
         }
       }
       const ZOD = {leao:'AGOSTO', virgem:'SETEMBRO', escorpiao:'NOVEMBRO',
@@ -6365,7 +6477,26 @@ function buildSystem(sysId, spin0){
           viaLactea.material.opacity = 0.62*fg*suaveVL;
           if(viaHalo) viaHalo.material.opacity = 0.10*fg*suaveVL;
           /* o fundo de galáxias entra quando a nossa já fica para trás */
-          if(fundoGal) fundoGal.material.opacity = 0.5*Math.min(1, Math.max(0, (dAL - 3e5)/1.2e6));
+          /* r175 · o fundo começa bem antes: a 50 mil AL ele reportou um vazio
+             total atrás da galáxia, e as galáxias distantes já estariam lá */
+          if(fundoGal) fundoGal.material.opacity = 0.55*Math.min(1, Math.max(0, (dAL - 5e4)/4e5));
+          /* o brilho da galáxia acompanha os pontos, com o mesmo antibola */
+          if(viaDisco) viaDisco.material.opacity = 0.10*fg*suaveVL;
+          if(viaNucleo) viaNucleo.material.opacity = 0.15*fg*suaveVL;
+          if(viaNos) viaNos.material.opacity = 0.14*fg*suaveVL;
+          /* os sistemas do atlas acendem quando o zoom abraça a distância de
+             cada um, e descansam quando a galáxia encolhe */
+          for(const sm of sisMarcas){
+            const liga = dAL >= sm.ly*0.8 && dAL < Math.min(sm.ly*50, 2.5e5);
+            const f4 = liga ? Math.min(1, (dAL - sm.ly*0.8)/(sm.ly*0.6)) : 0;
+            sm.spr.material.opacity = 0.55*f4;
+            sm.pick.userData.escondido = !liga;
+            if(liga){
+              const rP2 = Math.max(8000, CAM.dist*0.55);
+              sm.spr.position.copy(sm.alvo).sub(camera.position).normalize().multiplyScalar(rP2*0.985).add(camera.position);
+              sm.spr.scale.setScalar(rP2*0.016);
+            }
+          }
           for(const L of labels) if(L.galLbl) L.off = fg < 0.35;
           /* cada vizinha acende quando o zoom chega perto da distância dela */
           for(const vz of vizinhas){
@@ -6376,8 +6507,8 @@ function buildSystem(sysId, spin0){
                encolhe, virando uma mançha suave em vez de uma bola acesa */
             const angPx = (vz.raio/Math.max(1e-9, dAL))*CRECT.height*1.2;
             const suave = Math.min(1, Math.max(0.10, angPx/70));
-            vz.pt.material.opacity = 0.8*f2*suave;
-            vz.pt.material.size = 1.4*Math.min(1, Math.max(0.55, angPx/70));
+            vz.pt.material.opacity = 0.95*f2*suave;
+            vz.pt.material.size = 1.9*Math.min(1, Math.max(0.55, angPx/70));
           }
           for(const L of labels) if(L.galLbl2) L.off = dAL < L.galLbl2*0.16;
           /* CONQUISTA: da superfície de um corpo até a galáxia inteira, sem corte */
@@ -12565,7 +12696,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r174';
+const BUILD = 'r175';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
