@@ -251,6 +251,22 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #datepop .dcol button:hover{color:var(--amber);border-color:var(--amber)}
 #datepop .drow{display:flex;gap:8px}
 #datepop .drow .xbtn{margin:0;flex:1}
+#habpop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:27;display:none;
+  width:min(560px,94vw);background:var(--panel);border:1px solid var(--line2);padding:14px 16px 12px;
+  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+#habpop.on{display:block;animation:tourpopnasce .24s ease-out}
+#habpop .tphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:2.5px;color:var(--amber)}
+#habpop .tphead button{width:20px;height:20px;background:none;border:1px solid var(--line2);color:var(--dim);
+  font-family:var(--mono);font-size:9px;line-height:1;cursor:pointer;padding:0}
+#habcanvas{display:block;width:100%;height:200px;background:#05080f;border:1px solid var(--line)}
+#habinfo{display:flex;gap:8px;margin:8px 0}
+#habinfo .hcol{flex:1;min-width:0}
+#habinfo .hnm{font-family:var(--mono);font-size:9px;letter-spacing:1.6px;color:var(--ion);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#habinfo .hsub{font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--dim2);margin-top:2px}
+#habinfo .hbarra{height:3px;background:rgba(126,180,255,.14);margin-top:5px}
+#habinfo .hbarra i{display:block;height:100%;background:var(--ok)}
+#habpop .tpn{font-family:var(--mono);font-size:8.5px;letter-spacing:1.2px;color:var(--dim2);line-height:1.7}
 #evtpop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:27;display:none;
   width:min(430px,94vw);background:var(--panel);border:1px solid var(--line2);padding:14px 16px 12px;
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
@@ -1034,6 +1050,13 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="tphead"><span>▸ ROTAS DO TOUR</span><button id="tourpopx">✕</button></div>
     <div id="tourpoplista"></div>
     <div class="tpn">Sente e assista: a nave navega sozinha, sem cortes. Qualquer toque na cena devolve o controle. Rota concluída rende a conquista EXP-01.</div>
+  </div>
+  <div id="habpop">
+    <div class="tphead"><span>◉ MUNDOS HABITÁVEIS · LADO A LADO</span><button id="habpopx">✕</button></div>
+    <canvas id="habcanvas"></canvas>
+    <div id="habinfo"></div>
+    <div class="evtchips" id="habchips"></div>
+    <div class="tpn">Os globos giram com o motor de verdade do mapa. Toque num mundo para pô-lo ou tirá-lo da bancada (até três).</div>
   </div>
   <div id="evtpop">
     <div class="tphead"><span>◈ EVENTOS DO CÉU</span><button id="evtpopx">✕</button></div>
@@ -10208,6 +10231,61 @@ function syncHash(){
    e só quando o lugar salvo é o mesmo */
 /* r172 · o clarilão do Sol fora de quadro: quando o Sol da cena de foco está
    atrás da câmera, um brilho quente na beirada mostra de onde a luz vem */
+/* ================= r184 · MUNDOS HABITÁVEIS LADO A LADO =================
+   A bancada: até três mundos com cara de terra girando juntos, renderizados
+   pelo MESMO motor (planetMaterial v2, com estações e tudo), com o hab score
+   de cada um embaixo. Um renderer próprio pequeno, criado uma vez só */
+const HAB = {rnd:null, scene:null, cam:null, worlds:[], sel:['terra','kepler452b','t1e'], rodando:false};
+function habMundos(){
+  return Object.values(ALLBODIES).filter(b=>b.visual && MODEMAP[b.visual.mode] === 4 && b.quick);
+}
+function habMonta(){
+  const cv = document.getElementById('habcanvas');
+  if(!HAB.rnd){
+    HAB.rnd = new THREE.WebGLRenderer({canvas:cv, antialias:true, alpha:true});
+    HAB.cam = new THREE.PerspectiveCamera(34, 1, 0.1, 50);
+    HAB.cam.position.set(0, 0, 6.4);
+  }
+  const W = cv.clientWidth || 520, H2 = 200;
+  HAB.rnd.setSize(W, H2, false);
+  HAB.cam.aspect = W/H2; HAB.cam.updateProjectionMatrix();
+  HAB.scene = new THREE.Scene();
+  HAB.worlds = [];
+  const lista = HAB.sel.map(id=>ALLBODIES[id]).filter(Boolean);
+  const passo = lista.length > 1 ? 4.6/(lista.length - 1) : 0;
+  lista.forEach((b, i)=>{
+    const m = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 48), planetMaterial(b.visual));
+    m.position.x = (lista.length > 1 ? -2.3 + i*passo : 0);
+    m.rotation.z = -0.2;
+    if(m.material.uniforms && m.material.uniforms.uL) m.material.uniforms.uL.value.set(0.5, 0.35, 0.8).normalize();
+    HAB.scene.add(m);
+    HAB.worlds.push(m);
+  });
+  const info = lista.map(b=>{
+    const dia = (b.quick.find(q=>/DIÂMETRO|RAIO/.test(q[0])) || [])[1] || '';
+    return '<div class="hcol"><div class="hnm">' + esc(b.name) + '</div>'
+      + '<div class="hsub">' + esc(dia) + '</div>'
+      + '<div class="hbarra"><i style="width:' + Math.max(2, Math.min(100, b.hab|0)) + '%"></i></div>'
+      + '<div class="hsub">HABITABILIDADE ' + (b.hab|0) + '</div></div>';
+  }).join('');
+  document.getElementById('habinfo').innerHTML = info;
+  document.getElementById('habchips').innerHTML = habMundos().map(b=>
+    '<button data-hab="' + b.id + '"' + (HAB.sel.indexOf(b.id) >= 0 ? ' class="on"' : '') + '>' + esc(b.name) + '</button>').join('');
+}
+function habPasso(){
+  if(!HAB.rodando) return;
+  for(const w of HAB.worlds) w.rotation.y += 0.004;
+  if(HAB.rnd && HAB.scene) HAB.rnd.render(HAB.scene, HAB.cam);
+  requestAnimationFrame(habPasso);
+}
+function abrirHab(idBase){
+  if(idBase && ALLBODIES[idBase] && HAB.sel.indexOf(idBase) < 0){
+    HAB.sel = [idBase].concat(HAB.sel.filter(x=>x !== idBase)).slice(0, 3);
+  }
+  habMonta();
+  document.getElementById('habpop').classList.add('on');
+  if(!HAB.rodando){ HAB.rodando = true; habPasso(); }
+}
 const _flrV = new THREE.Vector3();
 function flareSol(){
   const el = document.getElementById('solflare');
@@ -12088,6 +12166,9 @@ function cardRender(){
   let h = '';
   /* ENTRAR agora mora no TOPO do card, como o Rodrigo pediu */
   if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='body'?'▶ ENTRAR · TRAVAR LINK':'▶ ENTRAR · TRAVAR ROTA')+'</button>';
+  { const bHab = (cur.type==='body') ? cur.b : ((cur.navKind==='body' && ALLBODIES[cur.navId]) ? ALLBODIES[cur.navId] : null);
+    if(bHab && bHab.visual && MODEMAP[bHab.visual.mode] === 4)
+      h += '<button class="xbtn" id="btnhab">◉ MUNDOS HABITÁVEIS LADO A LADO</button>'; }
   { const sisTour = (cur.type==='map' && cur.navKind==='sys') ? cur.navId : (cur.sysd ? ST.sys : null);
     if(sisTour && SYS[sisTour]) h += '<button class="xbtn" id="btntoursis" data-sistour="'+sisTour+'">▶ TOUR</button>'; }
 
@@ -12236,6 +12317,7 @@ function cardRender(){
     else gotoFocus(el.dataset.go);
   }));
   const xe = $('#xexp'); if(xe) xe.addEventListener('click', ()=>{ ST.expanded=!ST.expanded; cardRender(); if(isMobile()&&ST.expanded)$('#panel').classList.add('expanded'); });
+  const hb2 = $('#btnhab'); if(hb2) hb2.addEventListener('click', ()=>abrirHab(cur.b && cur.b.id));
   const cb = $('#cmpbtn'); if(cb) cb.addEventListener('click', ()=>{
     const ce = currentEntity(); if(!ce || !ce.b) return;
     const b = ce.b;
@@ -12920,7 +13002,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r183';
+const BUILD = 'r184';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13447,6 +13529,14 @@ $('#dp_eventos').addEventListener('click', ()=>{
   if(!matchMedia('(pointer: coarse)').matches) $('#evtq').focus();
 });
 $('#evtpopx').addEventListener('click', ()=>$('#evtpop').classList.remove('on'));
+$('#habpopx').addEventListener('click', ()=>{ $('#habpop').classList.remove('on'); HAB.rodando = false; });
+$('#habchips').addEventListener('click', e=>{
+  const b = e.target.closest('button[data-hab]'); if(!b) return;
+  const id = b.dataset.hab, i = HAB.sel.indexOf(id);
+  if(i >= 0){ if(HAB.sel.length > 1) HAB.sel.splice(i, 1); }
+  else { HAB.sel.push(id); if(HAB.sel.length > 3) HAB.sel.shift(); }
+  habMonta();
+});
 $('#evtq').addEventListener('input', e=>{ EVTF.q = evtNorm(e.target.value.trim()); evtRender(); });
 $('#evttags').addEventListener('click', e=>{
   const b = e.target.closest('button[data-tag]'); if(!b) return;
