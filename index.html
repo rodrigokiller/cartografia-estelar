@@ -1315,6 +1315,9 @@ uniform float uBandF; uniform float uTurb;
 uniform float uCap; uniform float uCapAmt; uniform vec3 uCapCol;
 /* r171 · a estação do ano: +1 é verão no hemisfério norte, -1 é inverno lá */
 uniform float uEst; uniform float uEstAmt;
+/* r181 · o mapa de ALTURA desenhado da Terra (o mesmo do relevo do r166):
+   quando uTerOn liga, o campo dos continentes vem dele e não do ruído */
+uniform sampler2D uTer; uniform float uTerOn;
 uniform float uSpotOn; uniform vec2 uSpotPos; uniform float uSpotR; uniform vec3 uSpotCol;
 uniform float uSombraOn; uniform vec2 uSombraPos; uniform float uSombraR;
 uniform float uMode;   /* 0 rocky · 1 gas · 2 haze · 3 earth */
@@ -1368,8 +1371,21 @@ void main(){
     /* o RECORTE: o campo do continente é distorcido por um ruído de baixa
        frequência ANTES do corte (as bolhas viram penínsulas e golfos), e o
        corte ficou seco: costa de mapa, não de aquarela */
-    vec3 wp2 = vec3(fbm(sp*6.0 + uSeed*3.1), fbm(sp*6.0 + uSeed*5.7), fbm(sp*6.0 + uSeed*8.3)) - 0.5;
-    float n = fbm(sp*uScale + wp2*0.9 + uSeed);
+    float n;
+    if(uTerOn > 0.5){
+      /* r181 · OS CONTINENTES DE VERDADE: a altura vem do mapa desenhado
+         (fundo do mar escuro, terra clara, serras mais claras), então África é
+         África e os Andes são os Andes, no mesmo visual da v2. Um fio de
+         ruído por cima recorta a costa no miúdo */
+      float phi2 = asin(clamp(lat, -1.0, 1.0));
+      vec2 tuv2 = vec2(0.5 - lon/6.28318, phi2/3.14159 + 0.5);
+      float h2 = texture2D(uTer, tuv2).r;
+      n = mix(uSea - 0.30, uSea + 0.26, smoothstep(0.06, 0.86, h2));
+      n += (fbm(sp*uScale*2.6 + uSeed) - 0.5)*0.016;
+    } else {
+      vec3 wp2 = vec3(fbm(sp*6.0 + uSeed*3.1), fbm(sp*6.0 + uSeed*5.7), fbm(sp*6.0 + uSeed*8.3)) - 0.5;
+      n = fbm(sp*uScale + wp2*0.9 + uSeed);
+    }
     float land = smoothstep(uSea-0.012, uSea+0.012, n);
     water = 1.0 - land;
     /* o MAR tem FUNDO: plataforma rasa verde-água colada na costa, oceano
@@ -1386,7 +1402,7 @@ void main(){
     landC = mix(landC, uC3, (1.0-smoothstep(0.10,0.38,abs(lat)))*0.34);
     landC = mix(landC, uC3*1.05, smoothstep(0.62, 0.92, fbm(sp*uScale*2.4 + uSeed + 3.1))*0.28);
     landC *= 0.86 + 0.30*rel;
-    landC = mix(landC, vec3(0.90,0.93,0.95), smoothstep(0.78, 0.97, alt*(0.55+0.6*rel))*0.55);
+    landC = mix(landC, vec3(0.90,0.93,0.95), smoothstep(0.78, 0.97, alt*(0.55+0.6*rel))*0.55*clamp(uCapAmt*1.4, 0.0, 1.0));
     /* as estações do r171 valem aqui também */
     if(uEstAmt > 0.001){
       float lado = (lat > 0.0) ? -uEst : uEst;
@@ -1614,7 +1630,7 @@ const PLANETS = [
      avança no inverno dele e o verde desbota no outono, pelo relógio */
   /* r178: mode 'earth2' é a v2 (recorte + fundo do mar); voltar para 'earth'
      restaura a v1 na hora */
-  visual:{mode:'earth2', c1:'#3f7d43', c2:'#7d9052', c3:'#c2a06a', seaCol:'#0d3f78', sea:0.52, scale:3.4, seed:12.3, cap:0.78, capAmt:0.9, capCol:'#eef4f8', estacao:1, lights:1, atmo:{col:'#6fb7ff', i:0.62}, clouds:{amt:0.95, scale:4.2, col:'#ffffff'}},
+  visual:{mode:'earth2', terreal:1, c1:'#3f7d43', c2:'#7d9052', c3:'#c2a06a', seaCol:'#0d3f78', sea:0.52, scale:3.4, seed:12.3, cap:0.78, capAmt:0.9, capCol:'#eef4f8', estacao:1, lights:1, atmo:{col:'#6fb7ff', i:0.62}, clouds:{amt:0.95, scale:4.2, col:'#ffffff'}},
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','149,6 mi km (1 UA)'],['Ano','365,25 dias'],['Dia sideral','23 h 56 min'],['Dia solar','24 h'],['Tipo de rotação','Prógrada'],['Veloc. orbital','29,8 km/s'],['Inclinação axial','23,4°'],['Estações','Sim, 4, causadas pela inclinação']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','12.742 km'],['Massa','5,97 × 10²⁴ kg'],['Densidade','5,51 g/cm³ (a maior do sistema)'],['Área','510 mi km²'],['Placas tectônicas','Sim, único confirmado']]},
@@ -4401,7 +4417,11 @@ function makeGalaxyPoints(o){
 /* r178 · earth2 é a TERRA V2 (commit isolado, dele: 'mantém separado do que
    temos para caso revertemos'). Reverter = git revert deste commit, ou só
    voltar o visual da terra para mode:'earth' */
-const MODEMAP = {rocky:0, gas:1, haze:2, earth:3, earth2:4};
+/* r181 · os exo-mundos 'earth' (Kepler-452b, t1e, TOI-700 d...) subiram para
+   a v2 também, ALEATÓRIOS como ele pediu (cada um com o seed e as cores da
+   ficha; neve só onde capAmt > 0). A v1 fica guardada no valor 3: voltar
+   earth:3 restaura tudo de uma vez */
+const MODEMAP = {rocky:0, gas:1, haze:2, earth:4, earth2:4};
 function planetMaterial(v){
   const sp = v.spot||null;
   const u = {
@@ -4422,8 +4442,15 @@ function planetMaterial(v){
        ele preferiu esperar a Terra ganhar textura de verdade */
     uLights:{value:0.0}, uCrater:{value:v.crater||0.0},
     uL:{value:LDIR.clone()}, uTime:{value:0}, uAmb:{value:0.10},
-    uSombraOn:{value:0}, uSombraPos:{value:new THREE.Vector2()}, uSombraR:{value:0.05}
+    uSombraOn:{value:0}, uSombraPos:{value:new THREE.Vector2()}, uSombraR:{value:0.05},
+    uTer:{value:null}, uTerOn:{value:0}
   };
+  /* r181 · terreal:1 (só a Terra) liga os continentes de verdade; os outros
+     mundos earth2 ganham um sampler preto só para o WebGL não reclamar */
+  if(MODEMAP[v.mode] === 4){
+    if(v.terreal && typeof texturaTerra === 'function'){ texturaTerra(); u.uTer.value = _altTerra; u.uTerOn.value = 1; }
+    else if(typeof texturaPreta === 'function') u.uTer.value = texturaPreta();
+  }
   const m = new THREE.ShaderMaterial({vertexShader:PLANET_VERT, fragmentShader:PLANET_FRAG, uniforms:u});
   ANIM_MATS.push(m); return m;
 }
@@ -12865,7 +12892,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r180';
+const BUILD = 'r181';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
