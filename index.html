@@ -4439,9 +4439,10 @@ function makeBodyGroup(b, radius, seg){
       side:THREE.BackSide, blending:THREE.AdditiveBlending, transparent:true, depthWrite:false});
     tiltG.add(new THREE.Mesh(new THREE.SphereGeometry(radius*1.07, seg, seg), am));
   }
-  /* r167 · corpo com mapa de verdade entorta no eixo dele: era o grupoLive que
-     fazia isso, e ele saiu do caminho. Quem tem anel já se inclina pelo anel */
-  if(temMapa(b.id) && !v.rings && typeof ESCALA_REAL_INCL !== 'undefined' && ESCALA_REAL_INCL[b.id])
+  /* r179 · a OBLIQUIDADE REAL em todo corpo que a tem na tabela, nos dois
+     modos (antes só quem tinha foto entortava). Quem tem anel já se inclina
+     pelo tilt do anel, que é o valor real (Saturno 26,7, Urano 98) */
+  if(!v.rings && b.id && typeof ESCALA_REAL_INCL !== 'undefined' && ESCALA_REAL_INCL[b.id])
     tiltG.rotation.z = -ESCALA_REAL_INCL[b.id]*Math.PI/180;
   if(v.rings){
     const r = v.rings;
@@ -5158,8 +5159,10 @@ const ESCALA_REAL_ANC = {
 const ESCALA_REAL_DIA = {mercurio:58.65, venus:-243.0, terra:0.997, marte:1.026,
   jupiter:0.414, saturno:0.444, urano:-0.718, netuno:0.671};
 /* obliquidade em graus (o retrógrado já vive no sinal do dia: Vênus e Urano) */
+/* r179 · a obliquidade agora vale nos DOIS modos (pedido dele: 'o cênico tem
+   que ser preciso, a única coisa que ele não vai ter é a distância') */
 const ESCALA_REAL_INCL = {mercurio:0.03, venus:2.6, terra:23.4, marte:25.2,
-  jupiter:3.1, saturno:26.7, urano:82.2, netuno:28.3};
+  jupiter:3.1, saturno:26.7, urano:82.2, netuno:28.3, plutao:57.5};
 /* o piso de 0,0002 existe para nave e sonda não sumirem de vez (elas são
    simbólicas e a ficha diz isso). Para LUA e ASTEROIDE ele mentia feio: Fobos
    tem 13 km de raio e virava 0,0002, ou seja 59 por cento do raio de Marte,
@@ -8500,9 +8503,11 @@ function buildFocus(bodyId, spin0){
     }
   }
   wrap.add(bg.group);
-  /* escala real: o eixo de rotação entortado de verdade (Terra 23,4 graus,
-     Urano quase deitado; o giro do dia acontece em volta do eixo torto) */
-  if(ESCR.on && b._sys === 'sol' && ESCALA_REAL_INCL[bodyId])
+  /* r179 · o eixo entortado de verdade nos DOIS modos (Terra 23,4 graus,
+     Urano quase deitado; o giro do dia acontece em volta do eixo torto).
+     makeBodyGroup já aplica em quem não tem anel: aqui só reforçamos que o
+     foco não depende mais da escala */
+  if(b._sys === 'sol' && ESCALA_REAL_INCL[bodyId] && !(b.visual && b.visual.rings))
     bg.group.rotation.z = -ESCALA_REAL_INCL[bodyId]*Math.PI/180;
   /* item 3: orbitando o corpo, o lado oposto ao Sol é NOITE de verdade
      (uAmb já existia no shader: o luar azulado desce para quase breu) */
@@ -12825,7 +12830,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r178';
+const BUILD = 'r179';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
