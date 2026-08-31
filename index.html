@@ -4529,8 +4529,14 @@ function makeBodyGroup(b, radius, seg){
   } else {
     /* r168 · todo corpo NASCE desenhado, com o shader procedural de sempre: é o
        visual do mapa cênico, que ele pediu para manter. A foto entra depois,
-       só quando a câmera chega perto no 1:1 (ver 'a pele de perto' no LOD) */
-    mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, seg, seg), planetMaterial(v));
+       só quando a câmera chega perto no 1:1 (ver 'a pele de perto' no LOD).
+       r186 · A LUA é a exceção boa: o desenho dela tem mapa DE VERDADE em
+       canvas desde o r165 (os mares no lugar, Tycho com os raios, Copérnico),
+       então a Lua desenhada usa esse mapa em toda cena, via liveMaterial com
+       a foto desligada. Marte fica no procedural por decisão dele */
+    mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, seg, seg),
+      (b.id === 'lua' && typeof liveMaterial === 'function' && !usaFotoPerto('lua'))
+        ? liveMaterial('lua') : planetMaterial(v));
   }
   tiltG.add(mesh);
   if(v.clouds){
@@ -13063,7 +13069,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r185';
+const BUILD = 'r186';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
