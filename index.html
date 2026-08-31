@@ -245,6 +245,34 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #datepop .dcol button:hover{color:var(--amber);border-color:var(--amber)}
 #datepop .drow{display:flex;gap:8px}
 #datepop .drow .xbtn{margin:0;flex:1}
+#evtpop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:27;display:none;
+  width:min(430px,94vw);background:var(--panel);border:1px solid var(--line2);padding:14px 16px 12px;
+  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+#evtpop.on{display:block;animation:tourpopnasce .24s ease-out}
+#evtpop .tphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:2.5px;color:var(--amber)}
+#evtpop .tphead button{width:20px;height:20px;background:none;border:1px solid var(--line2);color:var(--dim);
+  font-family:var(--mono);font-size:9px;line-height:1;cursor:pointer;padding:0}
+#evtq{width:100%;background:rgba(10,18,34,.7);border:1px solid var(--line2);color:var(--ion);
+  font-family:var(--mono);font-size:10px;letter-spacing:1.5px;padding:7px 9px;margin-bottom:8px;outline:none}
+#evtq:focus{border-color:var(--amber)}
+.evtchips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px}
+.evtchips button{background:none;border:1px solid var(--line2);color:var(--dim);cursor:pointer;
+  font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;padding:4px 8px}
+.evtchips button.on{color:var(--amber);border-color:var(--amber)}
+#evtlista{max-height:44vh;overflow:auto;margin:2px 0 6px}
+#evtlista::-webkit-scrollbar{width:4px}
+#evtlista::-webkit-scrollbar-thumb{background:var(--line2)}
+#evtlista .evx{display:block;width:100%;text-align:left;background:none;border:1px solid var(--line2);
+  border-bottom:none;color:var(--dim);cursor:pointer;font-family:var(--mono);font-size:9px;
+  letter-spacing:1px;padding:7px 9px;line-height:1.5}
+#evtlista .evx:last-child{border-bottom:1px solid var(--line2)}
+#evtlista .evx:hover{color:var(--amber);border-color:var(--amber)}
+#evtlista .evx .evd{color:var(--ion);display:block;font-size:8.5px;letter-spacing:1.8px}
+#evtlista .evx.past{opacity:.55}
+#evtlista .evx.past .evd::after{content:' · JÁ PASSOU';color:var(--dim2)}
+#evtlista .evvazio{font-family:var(--mono);font-size:9px;color:var(--dim2);padding:10px 4px;letter-spacing:1.5px}
+#evtpop .tpn{font-family:var(--mono);font-size:8.5px;letter-spacing:1.2px;color:var(--dim2);line-height:1.7}
 #datepop .devt{display:block;width:100%;text-align:left;background:none;border:1px solid var(--line2);
   color:var(--ok);font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;padding:6px 8px;
   margin-top:5px;cursor:pointer}
@@ -997,6 +1025,14 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div id="tourpoplista"></div>
     <div class="tpn">Sente e assista: a nave navega sozinha, sem cortes. Qualquer toque na cena devolve o controle. Rota concluída rende a conquista EXP-01.</div>
   </div>
+  <div id="evtpop">
+    <div class="tphead"><span>◈ EVENTOS DO CÉU</span><button id="evtpopx">✕</button></div>
+    <input id="evtq" placeholder="BUSCAR EVENTO..." autocomplete="off" spellcheck="false">
+    <div class="evtchips" id="evttags"></div>
+    <div class="evtchips" id="evttempo"></div>
+    <div id="evtlista"></div>
+    <div class="tpn">Escolher um evento leva o relógio do sistema para o instante dele. Datas com ·aprox são aproximadas.</div>
+  </div>
   <div id="datepop">
     <button class="fpx">✕</button>
     <div class="fp-t">VER O SISTEMA EM OUTRA DATA</div>
@@ -1008,14 +1044,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <div class="dcol"><button data-d="n1">▲</button><b id="dp_n"></b><button data-d="n0">▼</button><span>MIN</span></div>
     </div>
     <div class="drow"><button class="xbtn primary" id="dp_ir">VER NESSA DATA</button><button class="xbtn" id="dp_hoje">HOJE</button></div>
-    <div class="fp-t fp-t2">EVENTOS</div>
-    <button class="devt" data-evt="2026-08-28T04:13:00Z">ECLIPSE PARCIAL DA LUA · 28 AGO 2026 · 04:13 UTC</button>
-    <button class="devt" data-evt="2027-08-02T10:07:00Z">ECLIPSE TOTAL DO SOL · 2 AGO 2027 · 10:07 UTC</button>
-    <button class="devt" data-evt="2028-07-22T02:56:00Z">ECLIPSE TOTAL DO SOL · 22 JUL 2028 · 02:56 UTC</button>
-    <button class="devt" data-evt="2032-11-13T08:54:00Z">TRÂNSITO DE MERCÚRIO · 13 NOV 2032 · 08:54 UTC</button>
-    <button class="devt" data-evt="2061-07-28">PERIÉLIO DO HALLEY · 2061</button>
-    <button class="devt" data-evt="2076-07-01">SEDNA NO PERIÉLIO · ~2076</button>
-    <button class="devt" data-evt="2227-01-01">PLUTÃO CRUZA NETUNO · 2227</button>
+    <button class="xbtn" id="dp_eventos">◈ ESCOLHER UM EVENTO DO CÉU</button>
   </div>
   <div id="cfgpop">
     <button class="fpx">✕</button>
@@ -12458,7 +12487,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r172';
+const BUILD = 'r173';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -12903,6 +12932,100 @@ $('#datepop').addEventListener('click', e=>{
     if(k==='n') DP.n = (DP.n + up*5 + 60) % 60;
     dpSync(); return;
   }
+});
+/* ================= r173 · EVENTOS DO CÉU =================
+   O datepop mostrava sete eventos fixos; agora existe uma tela própria com
+   busca, filtro por tipo, passado/futuro e as ESTAÇÕES geradas por ano.
+   Datas em UTC; as marcadas aprox são aproximações honestas (o dia é certo,
+   a hora não). Escolher um evento leva o relógio para o instante dele */
+const EVT_TAGS = [['todos','TODOS'],['eclipse','ECLIPSES'],['transito','TRÂNSITOS'],
+  ['estacao','ESTAÇÕES'],['planetas','PLANETAS'],['cometa','COMETAS'],['marco','MARCOS']];
+const EVENTOS = [
+  {t:'ECLIPSE TOTAL DO SOL · Islândia e Espanha', d:'2026-08-12T17:46:00Z', g:'eclipse'},
+  {t:'ECLIPSE PARCIAL DA LUA', d:'2026-08-28T04:13:00Z', g:'eclipse'},
+  {t:'ECLIPSE ANULAR DO SOL', d:'2027-02-06T16:00:00Z', g:'eclipse', ap:1},
+  {t:'ECLIPSE TOTAL DO SOL · o dos 6 minutos no Egito', d:'2027-08-02T10:07:00Z', g:'eclipse'},
+  {t:'ECLIPSE ANULAR DO SOL', d:'2028-01-26T15:08:00Z', g:'eclipse', ap:1},
+  {t:'ECLIPSE TOTAL DO SOL · Austrália e Nova Zelândia', d:'2028-07-22T02:56:00Z', g:'eclipse'},
+  {t:'ECLIPSE TOTAL DA LUA', d:'2028-12-31T16:52:00Z', g:'eclipse', ap:1},
+  {t:'ECLIPSE TOTAL DA LUA', d:'2029-06-26T03:22:00Z', g:'eclipse', ap:1},
+  {t:'TRÂNSITO DE MERCÚRIO', d:'2032-11-13T08:54:00Z', g:'transito'},
+  {t:'TRÂNSITO DE MERCÚRIO', d:'2039-11-07T08:46:00Z', g:'transito', ap:1},
+  {t:'OPOSIÇÃO DE MARTE · o melhor Marte do céu', d:'2027-02-19T12:00:00Z', g:'planetas', ap:1},
+  {t:'OPOSIÇÃO DE MARTE', d:'2029-03-25T12:00:00Z', g:'planetas', ap:1},
+  {t:'OPOSIÇÃO DE JÚPITER', d:'2027-03-30T12:00:00Z', g:'planetas', ap:1},
+  {t:'PERIÉLIO DO 67P · a cauda cresce', d:'2028-07-10T12:00:00Z', g:'cometa', ap:1},
+  {t:'PERIÉLIO DO HALLEY · a volta dele', d:'2061-07-28T12:00:00Z', g:'cometa'},
+  {t:'SEDNA NO PERIÉLIO · a visita de 11 mil anos', d:'2076-07-01T12:00:00Z', g:'marco', ap:1},
+  {t:'PLUTÃO CRUZA A ÓRBITA DE NETUNO', d:'2227-01-01T12:00:00Z', g:'marco', ap:1}
+];
+/* as estações e os extremos da órbita da Terra, ano a ano em volta de agora */
+{
+  const a0 = new Date().getFullYear();
+  for(let a = a0 - 1; a <= a0 + 3; a++){
+    EVENTOS.push({t:'EQUINÓCIO DE MARÇO · outono no sul', d:a+'-03-20T12:00:00Z', g:'estacao', ap:1});
+    EVENTOS.push({t:'SOLSTÍCIO DE JUNHO · inverno no sul', d:a+'-06-21T12:00:00Z', g:'estacao', ap:1});
+    EVENTOS.push({t:'EQUINÓCIO DE SETEMBRO · primavera no sul', d:a+'-09-22T12:00:00Z', g:'estacao', ap:1});
+    EVENTOS.push({t:'SOLSTÍCIO DE DEZEMBRO · verão no sul', d:a+'-12-21T12:00:00Z', g:'estacao', ap:1});
+    EVENTOS.push({t:'TERRA NO PERIÉLIO · o mais perto do Sol', d:a+'-01-03T12:00:00Z', g:'estacao', ap:1});
+    EVENTOS.push({t:'TERRA NO AFÉLIO · o mais longe do Sol', d:a+'-07-04T12:00:00Z', g:'estacao', ap:1});
+  }
+}
+const EVTF = {q:'', tag:'todos', tempo:'fut'};
+const evtNorm = t => (typeof norm === 'function') ? norm(t) : String(t).toLowerCase();
+function evtData(ev){ return new Date(ev.d).getTime(); }
+function evtRotuloData(ev){
+  const d = new Date(ev.d);
+  const dia = d.getUTCDate() + ' ' + MESES_N[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
+  return dia + (ev.ap ? ' · aprox' : ' · ' + String(d.getUTCHours()).padStart(2,'0') + ':' + String(d.getUTCMinutes()).padStart(2,'0') + ' UTC');
+}
+function evtRender(){
+  const agora = Date.now();
+  let lista = EVENTOS.filter(ev=>{
+    if(EVTF.tag !== 'todos' && ev.g !== EVTF.tag) return false;
+    const ms = evtData(ev);
+    if(EVTF.tempo === 'fut' && ms < agora - 86400000) return false;
+    if(EVTF.tempo === 'pas' && ms >= agora) return false;
+    if(EVTF.q && evtNorm(ev.t + ' ' + evtRotuloData(ev)).indexOf(EVTF.q) < 0) return false;
+    return true;
+  }).sort((a, b)=>evtData(a) - evtData(b));
+  const el = $('#evtlista');
+  if(!lista.length){ el.innerHTML = '<div class="evvazio">NADA ENCONTRADO COM ESSES FILTROS.</div>'; return; }
+  el.innerHTML = lista.map(ev=>'<button class="evx' + (evtData(ev) < agora ? ' past' : '') + '" data-evt="' + ev.d + '">'
+    + '<span class="evd">' + evtRotuloData(ev) + '</span>' + esc(ev.t) + '</button>').join('');
+}
+function evtChips(){
+  $('#evttags').innerHTML = EVT_TAGS.map(t=>'<button data-tag="' + t[0] + '"' + (EVTF.tag === t[0] ? ' class="on"' : '') + '>' + t[1] + '</button>').join('');
+  $('#evttempo').innerHTML = [['fut','DAQUI PARA A FRENTE'],['pas','JÁ ACONTECERAM'],['tud','TODOS']]
+    .map(t=>'<button data-tempo="' + t[0] + '"' + (EVTF.tempo === t[0] ? ' class="on"' : '') + '>' + t[1] + '</button>').join('');
+}
+function irParaEvento(iso, rotulo){
+  if(SIMT.vel === 'real'){ SIMT.vel = 'seg'; store.set('carto:vel', 'seg'); }
+  SIMT.data = new Date(iso).getTime();
+  $('#evtpop').classList.remove('on');
+  $('#datepop').classList.remove('on');
+  simClockUI();
+  showHint('SISTEMA EM · ' + rotulo);
+}
+$('#dp_eventos').addEventListener('click', ()=>{
+  $('#datepop').classList.remove('on');
+  evtChips(); evtRender();
+  $('#evtpop').classList.add('on');
+  if(!matchMedia('(pointer: coarse)').matches) $('#evtq').focus();
+});
+$('#evtpopx').addEventListener('click', ()=>$('#evtpop').classList.remove('on'));
+$('#evtq').addEventListener('input', e=>{ EVTF.q = evtNorm(e.target.value.trim()); evtRender(); });
+$('#evttags').addEventListener('click', e=>{
+  const b = e.target.closest('button[data-tag]'); if(!b) return;
+  EVTF.tag = b.dataset.tag; evtChips(); evtRender();
+});
+$('#evttempo').addEventListener('click', e=>{
+  const b = e.target.closest('button[data-tempo]'); if(!b) return;
+  EVTF.tempo = b.dataset.tempo; evtChips(); evtRender();
+});
+$('#evtlista').addEventListener('click', e=>{
+  const b = e.target.closest('button[data-evt]'); if(!b) return;
+  irParaEvento(b.dataset.evt, b.querySelector('.evd').textContent + ' · ' + b.textContent.replace(b.querySelector('.evd').textContent, '').trim());
 });
 $('#dp_ir').addEventListener('click', ()=>{
   const dias = new Date(DP.a, DP.m + 1, 0).getDate();
