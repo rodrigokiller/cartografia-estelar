@@ -125,8 +125,13 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 
 /* ---------- 3D labels ---------- */
 #labels{position:absolute;top:0;left:0;width:100%;height:100%;z-index:7;pointer-events:none;overflow:hidden}
+/* o clarilão do Sol fora de quadro (r172): um brilho quente na beirada da tela
+   apontando de onde a luz vem, só nas cenas de foco */
+#solflare{position:absolute;z-index:6;width:64vmax;height:64vmax;border-radius:50%;pointer-events:none;
+  transform:translate(-50%,-50%);opacity:0;transition:opacity .6s;
+  background:radial-gradient(circle, rgba(255,216,150,.28), rgba(255,180,90,.09) 40%, rgba(255,180,90,0) 66%)}
 .lbl{position:absolute;font-family:var(--mono);font-size:10px;letter-spacing:2.4px;color:#bcd8ff;
-  text-shadow:0 0 6px rgba(80,150,255,.8), 0 1px 2px #000;white-space:nowrap;pointer-events:auto;cursor:pointer;
+  text-shadow:0 0 6px rgba(80,150,255,.8), 0 1px 2px #000;white-space:nowrap;pointer-events:auto;cursor:pointer;touch-action:none;
   padding:4px 6px;transform:translate(-50%,-140%)}
 .lbl::after{content:'';position:absolute;left:50%;bottom:-6px;width:1px;height:8px;background:var(--line2)}
 .lbl:hover{color:#fff}
@@ -889,6 +894,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div class="scanlines"></div>
   <div class="vignette"></div>
   <div id="labels"></div>
+  <div id="solflare"></div>
 
   <div class="corner c-tl"><b class="h"></b><b class="v"></b></div>
   <div class="corner c-tr"><b class="h"></b><b class="v"></b></div>
@@ -998,13 +1004,15 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <div class="dcol"><button data-d="d1">▲</button><b id="dp_d"></b><button data-d="d0">▼</button><span>DIA</span></div>
       <div class="dcol"><button data-d="m1">▲</button><b id="dp_m"></b><button data-d="m0">▼</button><span>MÊS</span></div>
       <div class="dcol"><button data-d="a1">▲</button><b id="dp_a"></b><button data-d="a0">▼</button><span>ANO</span></div>
+      <div class="dcol"><button data-d="h1">▲</button><b id="dp_h"></b><button data-d="h0">▼</button><span>HORA</span></div>
+      <div class="dcol"><button data-d="n1">▲</button><b id="dp_n"></b><button data-d="n0">▼</button><span>MIN</span></div>
     </div>
     <div class="drow"><button class="xbtn primary" id="dp_ir">VER NESSA DATA</button><button class="xbtn" id="dp_hoje">HOJE</button></div>
     <div class="fp-t fp-t2">EVENTOS</div>
-    <button class="devt" data-evt="2026-08-28">ECLIPSE PARCIAL DA LUA · 28 AGO 2026</button>
-    <button class="devt" data-evt="2027-08-02">ECLIPSE TOTAL DO SOL · 2 AGO 2027</button>
-    <button class="devt" data-evt="2028-07-22">ECLIPSE TOTAL DO SOL · 22 JUL 2028</button>
-    <button class="devt" data-evt="2032-11-13">TRÂNSITO DE MERCÚRIO · 13 NOV 2032</button>
+    <button class="devt" data-evt="2026-08-28T04:13:00Z">ECLIPSE PARCIAL DA LUA · 28 AGO 2026 · 04:13 UTC</button>
+    <button class="devt" data-evt="2027-08-02T10:07:00Z">ECLIPSE TOTAL DO SOL · 2 AGO 2027 · 10:07 UTC</button>
+    <button class="devt" data-evt="2028-07-22T02:56:00Z">ECLIPSE TOTAL DO SOL · 22 JUL 2028 · 02:56 UTC</button>
+    <button class="devt" data-evt="2032-11-13T08:54:00Z">TRÂNSITO DE MERCÚRIO · 13 NOV 2032 · 08:54 UTC</button>
     <button class="devt" data-evt="2061-07-28">PERIÉLIO DO HALLEY · 2061</button>
     <button class="devt" data-evt="2076-07-01">SEDNA NO PERIÉLIO · ~2076</button>
     <button class="devt" data-evt="2227-01-01">PLUTÃO CRUZA NETUNO · 2227</button>
@@ -4381,7 +4389,12 @@ function makeLabel(text, cls, onClick){
   const el = document.createElement('div');
   el.className = 'lbl' + (cls?(' '+cls):'');
   el.textContent = text;
-  if(onClick) el.addEventListener('click', e=>{ e.stopPropagation(); onClick(); });
+  if(onClick) el.addEventListener('click', e=>{
+    e.stopPropagation();
+    /* depois de um arrasto que começou neste rótulo, o clique não vale */
+    if(typeof LBL_ARRASTO !== 'undefined' && performance.now() - LBL_ARRASTO < 350) return;
+    onClick();
+  });
   labelsEl.appendChild(el);
   return el;
 }
@@ -5560,7 +5573,17 @@ function buildSystem(sysId, spin0){
         const hPe = new THREE.Object3D(); hPe.rotation.y = eA.w*Math.PI/180;
         hNo.add(hIn); hIn.add(hPe); scene.add(hNo);
         const rAst = escrAtivo ? escrTam(ESCALA_REAL_AST[a.id][1], 4e-6) : 0.17;
-        const dot = new THREE.Mesh(new THREE.SphereGeometry(rAst, 10, 10), new THREE.MeshBasicMaterial({color:0xa8b2be}));
+        /* r172 · no 1:1 a pedra é um CORPO de verdade (ele viu Ceres como uma
+           bola cinza chapada ao chegar perto): shader procedural, luz do Sol e
+           o LOD de chegada, como qualquer planeta. No cênico segue o pontinho */
+        let dot;
+        if(escrAtivo && ALLBODIES[a.id] && ALLBODIES[a.id].visual){
+          const bgA = makeBodyGroup(ALLBODIES[a.id], rAst, 20);
+          dot = bgA.group;
+          detalhaveis.push({id:a.id, grupo:bgA.group, mesh:bgA.mesh, v:ALLBODIES[a.id].visual, r:rAst, feito:false});
+        } else {
+          dot = new THREE.Mesh(new THREE.SphereGeometry(rAst, 10, 10), new THREE.MeshBasicMaterial({color:0xa8b2be}));
+        }
         hPe.add(dot);
         const pick = new THREE.Mesh(new THREE.SphereGeometry(escrAtivo ? 0.35 : 1.0, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
         pick.userData = {act:'focus', id:a.id, r:rAst};
@@ -6419,6 +6442,10 @@ function buildSystem(sysId, spin0){
               const nm = new THREE.Mesh(new THREE.SphereGeometry(dt2.r*1.012, QLOW?48:72, QLOW?48:72), cn);
               nm.userData.isClouds = true;
               dt2.grupo.add(nm);
+              /* r172 · a nuvem TAMBÉM recebe o rumo do Sol por quadro: sem isto
+                 ela ficava presa à luz da câmera e o terminador dela não batia
+                 com o do chão (parte do 'bugado' da Terra que ele viu) */
+              if(slF) slF.mats.push(cn);
               /* a nuvem procedural que já estava ali sai de cena */
               dt2.grupo.traverse(o=>{ if(o.userData && o.userData.isClouds && o !== nm) o.visible = false; });
             }
@@ -7554,8 +7581,13 @@ void main(){
   vec3 H = normalize(L + normalize(vV));
   float spec = pow(max(dot(N, H), 0.0), 90.0);
   c += vec3(1.0, 0.96, 0.86) * spec * oce * 0.85 * max(dia, 0.0);
-  /* as cidades acendem so do lado da noite */
-  vec3 luzes = texture2D(uLuzes, vUv).rgb * (1.0 - smoothstep(0.0, 0.18, dif));
+  /* as cidades acendem so do lado da noite. r172: a foto do Black Marble nao
+     tem fundo PRETO (o oceano vem azulado), e somada inteira ela lavava a
+     noite da Terra e comia o terminador, o bug que ele reportou: so os pixels
+     realmente ACESOS passam */
+  vec3 lz = texture2D(uLuzes, vUv).rgb;
+  float lzl = max(max(lz.r, lz.g), lz.b);
+  vec3 luzes = lz * smoothstep(0.16, 0.42, lzl) * (1.0 - smoothstep(0.0, 0.18, dif));
   gl_FragColor = vec4(c + luzes, 1.0);
 }`;
 const NUVENS_FRAG = `
@@ -7591,7 +7623,9 @@ function liveMaterial(id){
               /* a nuvem desenhada guarda a forma no ALFA; a fotografada, no
                  brilho (JPEG não tem alfa) */
               uNuvLum:{value: nuvFoto ? 1 : 0},
-              uBump:{value: id === 'terra' ? 0.38 : (id === 'lua' ? 0.95 : 0.60)},
+              /* com FOTO o mapa de altura é a própria luz da imagem, que carrega
+                 albedo junto: bump forte vira mancha, não relevo. Mais suave */
+              uBump:{value: id === 'terra' ? 0.30 : (id === 'lua' ? 0.45 : 0.50)},
               uTexel:{value:new THREE.Vector2(1/w, 2/w)},
               uLuzes:{value: luzFoto || (id === 'terra' ? texturaLuzes() : texturaPreta())},
               uL:{value:LDIR.clone()}, uAmb:{value: id === 'lua' ? 0.05 : 0.07}}});
@@ -8084,15 +8118,23 @@ function buildFocus(bodyId, spin0){
     /* no cometa o Sol fica em cima à direita: a cauda cai para o lado livre da tela */
     if(escrSolF) sunGlow.position.set(-152, 76, -273);
     else if(b.comet) sunGlow.position.set(9, 6.5, -9);
-    /* r161 · O BRILHO DO SOL FICA ONDE SEMPRE ESTEVE. Eu tinha levado ele para
-       o rumo exato da luz e ele SUMIU da tela na hora (ele reparou no mesmo
-       minuto), e sumiu por um motivo físico: fonte de luz e objeto CHEIO de
-       luz nunca cabem no mesmo quadro. Ver o Sol exige estar contra a luz, e
-       aí o planeta seria um risquinho de lua nova. A cena de foco escolhe a
-       cara bonita: o Sol desenhado fica atrás do corpo, em cima à esquerda, e
-       a luz vem de frente. O que mudou no r161 é que a luz agora é FIXA NO
-       MUNDO, então girar em volta do corpo mostra a noite */
-    else sunGlow.position.set(-35, 17.5, -63);
+    /* r172 · O SOL FOI PARA ONDE A LUZ VEM (pedido dele: 'a luz/sombra esta
+       inversa ao sol'). Agora o brilho mora exatamente na direção da luz da
+       cena: entrando no corpo você tem o Sol nas costas e o dia na frente,
+       girando para a noite o Sol aparece do outro lado, maior e com halo (o
+       'ponto de brilho' cresceu). Quando ele está atrás da câmera, um clarilão
+       na beirada da tela (#solflare) mostra de onde a luz vem. E de bandeija:
+       a fase da Lua da cena passa a bater com o Sol visível, porque o azimute
+       dele agora É o SOLAZ_FOCO da conta da fase */
+    else {
+      sunGlow.position.copy(LDIR).multiplyScalar(70);
+      sunGlow.scale.setScalar(8.5);
+      const halo = new THREE.Sprite(new THREE.SpriteMaterial({map:TEX_GLOW_WARM,
+        blending:THREE.AdditiveBlending, depthWrite:false, transparent:true, opacity:0.30}));
+      halo.scale.setScalar(24);
+      halo.position.copy(sunGlow.position);
+      scene.add(fade(halo));
+    }
     scene.add(fade(sunGlow));
   }
 
@@ -8189,7 +8231,9 @@ function buildFocus(bodyId, spin0){
   const radius = (b.visual.mode==='star') ? 2.35 : (b.comet ? 1.2 : 2.2);
   /* na cena de foco a foto vale só na ESCALA 1:1: o foco cênico fica com o
      desenho, que é o visual que ele gosta */
-  const aoVivo = ESCR.on && b._sys === 'sol' && usaFotoPerto(bodyId);
+  /* r172 · a foto vale em QUALQUER cena de foco quando o botão FOTO está
+     ligado (ele reportou que no foco cênico o botão não fazia nada) */
+  const aoVivo = usaFotoPerto(bodyId);
   /* anéis de Saturno na escala real: de 1,24 a 2,35 raios do planeta, com a
      divisão de Cassini no lugar certo (2,02-2,10 R, o vão que Mimas abre) */
   let bV = b;
@@ -8463,7 +8507,11 @@ void main(){
   const luzFoco = [];
   if(!(ESCR.on && b._sys === 'sol'))
     scene.traverse(o=>{ if(o.material && o.material.uniforms && o.material.uniforms.uL) luzFoco.push(o.material); });
-  return {kind:'focus', scene, sceneCeu, ceuLinhas:(ceuFoco ? ceuFoco.linhas : null), labels, pickables, wrap, bodyId, sel:selReg, luzFoco, raioCorpo:radius, objs:objsFoco, subKids, sub:subEstado, escrFoco:(ESCR.on && b._sys === 'sol' && !b.comet),
+  /* r172 · de onde vem a luz desta cena (o clarilão da beirada usa isto):
+     no 1:1 é o rumo do Sol honesto; no cênico é o LDIR, onde o Sol mora agora */
+  const luzDirFoco = (ESCR.on && b._sys === 'sol' && !b.comet)
+    ? new THREE.Vector3(-152, 76, -273).normalize() : LDIR;
+  return {kind:'focus', scene, sceneCeu, ceuLinhas:(ceuFoco ? ceuFoco.linhas : null), labels, pickables, wrap, bodyId, sel:selReg, luzFoco, luzDir:luzDirFoco, flareOn:(!b.comet && b.visual.mode !== 'star'), raioCorpo:radius, objs:objsFoco, subKids, sub:subEstado, escrFoco:(ESCR.on && b._sys === 'sol' && !b.comet),
     get spin(){ return bg ? bg.mesh.rotation.y : 0; },
     dim:(v, exceto)=>{
       for(const f of fadeMats) f.m.opacity = f.o * v;
@@ -9368,7 +9416,10 @@ const store = {
   set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
 };
 /* r167 · a FOTO é o padrão agora; o botão serve para ver o mapa desenhado */
-LIVE = store.get('carto:live','1') === '1';
+/* r172 · o DESENHO é o padrão (decisão dele: 'o modelo cênico é tão lindo...
+   o modo com texturas poderia ser apenas opção'). Chave nova de propósito:
+   quem tinha a antiga ligada volta ao desenho também */
+LIVE = store.get('carto:foto','0') === '1';
 /* r154 · os padrões do mapa mudaram (escolha dele): quem já tinha ajuste
    salvo recebe a limpeza UMA vez. Apaga as chaves e deixa o padrão do
    código valer; a partir daí as escolhas do navegador mandam de novo */
@@ -9751,12 +9802,12 @@ function syncHash(){
   if(ST.level==='focus') h = '#corpo='+ST.body;
   else if(ST.level==='system') h = '#sistema='+ST.sys;
   else if(ST.level==='galaxy') h = '#galaxia=' + ST.gal;
-  /* r166 · O CORPO ESCOLHIDO ENTRA NO LINK. Ele perguntou por que clicar num
-     corpo não mudava o endereço: mudava só quando se ENTRAVA, e desde o r157
-     entrar no 1:1 nem troca de cena, então o link ficava no sistema e o F5
-     perdia onde você estava. Agora a seleção vai junto */
+  /* r172 · O LINK VOLTOU AO FORMATO SIMPLES (pedido dele: o &alvo= do r166
+     deixava o endereço comprido e o F5 não abria o corpo). Corpo escolhido no
+     mapa vira #corpo=<id>, o mesmo formato de sempre: o F5 e o link
+     compartilhado abrem direto nele */
   if(ST.level !== 'focus' && ST.mapCard && ALLBODIES[ST.mapCard.id]
-     && (!ST.mapCard.type || ST.mapCard.type === 'body')) h += '&alvo=' + ST.mapCard.id;
+     && (!ST.mapCard.type || ST.mapCard.type === 'body')) h = '#corpo=' + ST.mapCard.id;
   if(ESCR.on) h += '&escala=real';   /* o link leva junto o modo de escala */
   try{ history.replaceState(null, '', h); }catch(e){}
   store.set('carto:loc', h);
@@ -9764,24 +9815,43 @@ function syncHash(){
 /* r166 · e a CÂMERA fica guardada à parte, fora do link: o endereço continua
    legível para compartilhar, e o F5 devolve o mesmo enquadramento. Só no mapa,
    e só quando o lugar salvo é o mesmo */
+/* r172 · o clarilão do Sol fora de quadro: quando o Sol da cena de foco está
+   atrás da câmera, um brilho quente na beirada mostra de onde a luz vem */
+const _flrV = new THREE.Vector3();
+function flareSol(){
+  const el = document.getElementById('solflare');
+  if(!el) return;
+  if(!(ACT && ACT.kind === 'focus' && ACT.flareOn && ACT.luzDir)){ el.style.opacity = 0; return; }
+  _flrV.copy(ACT.luzDir).transformDirection(camera.matrixWorldInverse);
+  /* z negativo = o Sol está na frente, visível na própria cena */
+  if(_flrV.z < 0.05){ el.style.opacity = 0; return; }
+  const n = Math.hypot(_flrV.x, _flrV.y) || 1e-6;
+  el.style.left = (50 + (_flrV.x/n)*58) + '%';
+  el.style.top = (50 - (_flrV.y/n)*58) + '%';
+  el.style.opacity = (0.35 + 0.4*Math.min(1, _flrV.z*1.5)).toFixed(2);
+}
 let CAMSV = 0;
 function salvaCam(now){
   if(now - CAMSV < 1200 || !ACT || DIVE || TRAJ) return;
   CAMSV = now;
   if(ACT.kind !== 'system' && ACT.kind !== 'galaxy') return;
   store.set('carto:cam', JSON.stringify({
-    h:store.get('carto:loc', ''), d:CAM.dist, y:CAM.yaw, p:CAM.pitch, m:CAM.mode}));
+    h:store.get('carto:loc', ''), k:ACT.kind, d:CAM.dist, y:CAM.yaw, p:CAM.pitch, m:CAM.mode}));
 }
 function restauraCam(){
   try{
     const c = JSON.parse(store.get('carto:cam', 'null'));
-    if(!c || c.h !== store.get('carto:loc', '')) return;
-    if(!isFinite(c.d) || c.d <= 0) return;
+    if(!c || c.h !== store.get('carto:loc', '')) return false;
+    /* a câmera guardada só vale na MESMA cena: aplicar zoom de mapa numa cena
+       de foco jogava o navegador para um lugar sem sentido */
+    if(c.k && ACT && c.k !== ACT.kind) return false;
+    if(!isFinite(c.d) || c.d <= 0) return false;
     CAMTW = null; ZOOM = null;
     CAM.dist = Math.max(CAM.min, Math.min(CAM.max, c.d));
     if(c.m === CAM.mode){ CAM.yaw = c.y; CAM.pitch = c.p; }
     applyCam();
-  }catch(e){}
+    return true;
+  }catch(e){ return false; }
 }
 const NAVH = {stack:[], i:-1, guard:false};
 function navSync(){
@@ -11729,7 +11799,7 @@ function cardRender(){
   });
   const bl = $('#btnlive'); if(bl) bl.addEventListener('click', ()=>{
     LIVE = !LIVE;
-    store.set('carto:live', LIVE ? '1' : '0');
+    store.set('carto:foto', LIVE ? '1' : '0');
     if(ST.level === 'focus') swapScene(buildFocus(ST.body), true);
     else if(ACT && ACT.kind === 'system'){
       /* no mapa a câmera fica exatamente onde estava: trocar a pele da Terra
@@ -12183,7 +12253,7 @@ function trajScrubTo(x, y){
 canvas.addEventListener('pointerdown', e=>{
   /* girar e dar zoom durante o tour é livre; só NAVEGAR encerra */
   if(DIVE) return;          /* durante o mergulho a câmera é da animação */
-  try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
+  if(e.isTrusted) try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
   pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
   if(pts.size===1){
     /* na linha do tempo, pegar o próprio objeto arrasta ele pela rota */
@@ -12246,11 +12316,44 @@ function endPtr(e){
   if(!PD) return;
   const dt = performance.now()-PD.t;
   const wasMoved = PD.moved; PD = null;
-  /* arrastar só gira a cena: a troca de corpo é sempre pelos botões ‹ › */
-  if(!wasMoved && dt<450) pick(e.clientX, e.clientY);
+  /* arrastar só gira a cena: a troca de corpo é sempre pelos botões ‹ ›.
+     Evento sintético (vindo de um rótulo) não dá pick: o clique do rótulo
+     já responde por ele */
+  if(!wasMoved && dt<450 && e.isTrusted !== false) pick(e.clientX, e.clientY);
 }
 canvas.addEventListener('pointerup', endPtr);
 canvas.addEventListener('pointercancel', e=>{ clearTimeout(LPT); pts.delete(e.pointerId); pinchD = 0; PD = null; });
+/* r172 · ARRASTAR COMEÇANDO EM CIMA DE UM RÓTULO (o que mais incomodava no
+   celular: o dedo cai num nome e o mapa para de girar). Os rótulos reenviam
+   os eventos de ponteiro para o canvas, que já sabe arrastar e pinçar. Três
+   cuidados: o canvas NÃO captura ponteiro sintético (senão o clique do rótulo
+   morre), o pick de tap ignora eventos sintéticos (senão um toque no rótulo
+   viraria dois avisos), e o clique do rótulo é engolido quando o dedo ANDOU */
+let LBL_ARRASTO = 0;
+{
+  const reenvia = e=>{ try{ canvas.dispatchEvent(new PointerEvent(e.type, e)); }catch(_){ } };
+  let lblDown = null;
+  labelsEl.addEventListener('pointerdown', e=>{
+    lblDown = {x:e.clientX, y:e.clientY, moved:false};
+    reenvia(e);
+  });
+  labelsEl.addEventListener('pointermove', e=>{
+    if(lblDown && Math.abs(e.clientX - lblDown.x) + Math.abs(e.clientY - lblDown.y) > TAP_SLOP) lblDown.moved = true;
+    reenvia(e);
+  });
+  ['pointerup','pointercancel'].forEach(t=>labelsEl.addEventListener(t, e=>{
+    if(lblDown && lblDown.moved) LBL_ARRASTO = performance.now();
+    lblDown = null;
+    reenvia(e);
+  }));
+  /* o dedo pode terminar o gesto em cima do HUD: o canvas precisa saber */
+  const fecha = e=>{
+    if(e.isTrusted && pts.has(e.pointerId) && e.target !== canvas
+       && !(e.target.closest && e.target.closest('#labels'))) reenvia(e);
+  };
+  window.addEventListener('pointerup', fecha, true);
+  window.addEventListener('pointercancel', fecha, true);
+}
 /* a roda do mouse (r149): o ouvinte vivia SÓ no canvas, e os rótulos têm
    pointer-events próprio para poder clicar: passar o mouse por cima de um
    nome e girar a roda não dava zoom nenhum (bug que ele viu). Agora a roda é
@@ -12355,7 +12458,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r171';
+const BUILD = 'r172';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -12399,9 +12502,9 @@ resize();
   let trajLink = false;
   if(hh0.indexOf('&traj=1') >= 0){ trajLink = true; hh0 = hh0.replace('&traj=1', ''); }
   /* r166 · o corpo que estava escolhido volta junto */
-  let alvoLink = '';
+  /* link antigo com &alvo= vira o formato simples (compatibilidade) */
   const mAlvo = hh0.match(/&alvo=([a-z0-9_]+)/i);
-  if(mAlvo){ alvoLink = mAlvo[1]; hh0 = hh0.replace(mAlvo[0], ''); }
+  if(mAlvo){ hh0 = mAlvo[1] && ALLBODIES[mAlvo[1]] ? 'corpo=' + mAlvo[1] : hh0.replace(mAlvo[0], ''); }
   const [k, v] = hh0.split('=');
   if(k==='corpo' && ALLBODIES[v]){
     ST.level='focus'; ST.sys=ALLBODIES[v]._sys; ST.body=v;
@@ -12415,11 +12518,6 @@ resize();
     ST.level='universe'; swapScene(buildUniverse());
   } else {
     swapScene(buildSystem('sol'));
-  }
-  /* r166 · devolve o corpo escolhido e o enquadramento de onde você parou */
-  if(alvoLink && ALLBODIES[alvoLink] && ACT && ACT.kind !== 'focus'){
-    ST.mapCard = {type:'body', id:alvoLink, act:'focus', t:0};
-    markVisited(alvoLink);
   }
   restauraCam();
   /* link direto de missão: abre já com a linha do tempo rodando */
@@ -12442,10 +12540,9 @@ window.addEventListener('hashchange', ()=>{
     hh1 = hh1.replace('&escala=real', '');
   }
   hh1 = hh1.replace('&traj=1', '');
-  /* r166 · o alvo também sai ANTES do split, senão o corpo vira 'sol&alvo'
-     (o mesmo tombo do &escala=real no r110) */
+  /* link antigo com &alvo= vira corpo= (o formato voltou ao simples no r172) */
   const mA = hh1.match(/&alvo=([a-z0-9_]+)/i);
-  if(mA) hh1 = hh1.replace(mA[0], '');
+  if(mA) hh1 = (mA[1] && ALLBODIES[mA[1]]) ? 'corpo=' + mA[1] : hh1.replace(mA[0], '');
   const [k, v] = hh1.split('=');
   if(k==='corpo' && ALLBODIES[v] && ST.body!==v) gotoFocus(v);
   else if(k==='sistema' && SYS[v] && !(ST.level==='system' && ST.sys===v)) gotoSystem(v);
@@ -12761,11 +12858,13 @@ function velEscolhe(v){
     sl.addEventListener('pointercancel', ()=>{ arrastando = false; });
   }
 }
-const DP = {d:1, m:0, a:2026};
+const DP = {d:1, m:0, a:2026, h:12, n:0};
 function dpSync(){
   $('#dp_d').textContent = String(DP.d).padStart(2,'0');
   $('#dp_m').textContent = MESES_N[DP.m];
   $('#dp_a').textContent = DP.a;
+  $('#dp_h').textContent = String(DP.h).padStart(2,'0');
+  $('#dp_n').textContent = String(DP.n).padStart(2,'0');
 }
 $('#simpp').addEventListener('click', ()=>{
   SIMT.pausado = !SIMT.pausado;
@@ -12778,6 +12877,7 @@ $('#simgo').addEventListener('click', ()=>{
   if(!dp.classList.contains('on')){
     const d = new Date(SIMT.data);
     DP.d = d.getDate(); DP.m = d.getMonth(); DP.a = d.getFullYear();
+    DP.h = d.getHours(); DP.n = d.getMinutes();
     dpSync();
   }
   dp.classList.toggle('on');
@@ -12786,7 +12886,8 @@ $('#datepop').addEventListener('click', e=>{
   const ev = e.target.closest('button[data-evt]');
   if(ev){
     if(SIMT.vel === 'real'){ SIMT.vel = 'seg'; store.set('carto:vel', 'seg'); }
-    SIMT.data = new Date(ev.dataset.evt + 'T12:00:00').getTime();
+    /* evento com hora exata usa a hora exata (UTC); os históricos, meio-dia */
+    SIMT.data = new Date(ev.dataset.evt.indexOf('T') > 0 ? ev.dataset.evt : ev.dataset.evt + 'T12:00:00').getTime();
     $('#datepop').classList.remove('on');
     simClockUI();
     showHint('SISTEMA EM ' + ev.textContent);
@@ -12798,6 +12899,8 @@ $('#datepop').addEventListener('click', e=>{
     if(k==='d') DP.d = ((DP.d - 1 + up + 31) % 31) + 1;
     if(k==='m') DP.m = (DP.m + up + 12) % 12;
     if(k==='a') DP.a = Math.max(1600, Math.min(2500, DP.a + up));
+    if(k==='h') DP.h = (DP.h + up + 24) % 24;
+    if(k==='n') DP.n = (DP.n + up*5 + 60) % 60;
     dpSync(); return;
   }
 });
@@ -12805,7 +12908,7 @@ $('#dp_ir').addEventListener('click', ()=>{
   const dias = new Date(DP.a, DP.m + 1, 0).getDate();
   if(SIMT.vel === 'real'){ SIMT.vel = 'seg'; store.set('carto:vel', 'seg'); showHint('SAIU DO TEMPO REAL'); }
   feito('tempo');
-  SIMT.data = new Date(DP.a, DP.m, Math.min(DP.d, dias), 12).getTime();
+  SIMT.data = new Date(DP.a, DP.m, Math.min(DP.d, dias), DP.h, DP.n).getTime();
   $('#datepop').classList.remove('on');
   simClockUI();
   showHint('SISTEMA NA DATA · ' + Math.min(DP.d, dias) + ' ' + MESES_N[DP.m] + ' ' + DP.a);
@@ -13235,6 +13338,7 @@ function loop(){
   if(now - SIMCLK_T > 400){ SIMCLK_T = now; if(typeof simClockUI === 'function') simClockUI(); }
   if(typeof salvaCam === 'function') salvaCam(now);
   if(typeof reguaBarra === 'function') reguaBarra();
+  if(typeof flareSol === 'function') flareSol();
   if(typeof tutCaixaSegue === 'function' && TUT && TUT.fila) tutCaixaSegue();   /* mira recalculada a cada quadro, mesmo em vôo */
   /* trava de centro no mapa: o corpo selecionado vira o pivô da câmera,
      e soltar a seleção devolve o centro suavemente */
