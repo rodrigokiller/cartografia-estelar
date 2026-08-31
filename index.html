@@ -1413,6 +1413,20 @@ void main(){
       landC = mix(landC, landC*vec3(1.18, 0.94, 0.68), outono*0.62*uEstAmt);
     }
     col = mix(seaC, landC, land);
+    /* r183 · BRUMA V2 (Vênus e Titã), pendurada no ramo da terra v2 para não
+       abrir outra cadeia de ifs: fluxo paralelo ao equador com o domínio
+       distorcido (as faixas serpenteiam como nas fotos em ultravioleta) e um
+       VÓRTICE apertado em cada polo, que Vênus e Titã têm de verdade */
+    if(uMode > 4.5){
+      float warp = fbm(sp*2.2 + vec3(0.0, uTime*0.012, uSeed))*2.0;
+      float flow = fbm(vec3(lat*5.0 + warp, lon*1.2 - uTime*0.03 + warp*0.8, uSeed*2.0));
+      col = mix(uC1, uC2, smoothstep(0.30, 0.72, flow));
+      col = mix(col, uC3, smoothstep(0.55, 0.90, fbm(sp*7.0 + warp + uSeed))*0.5);
+      float pol = smoothstep(0.55, 0.95, abs(lat));
+      float vort = fbm(vec3(atan(sp.z, sp.x)*2.0 + abs(lat)*8.0 - uTime*0.05, abs(lat)*6.0, uSeed));
+      col = mix(col, mix(uC1*0.92, uC3, vort), pol*0.55);
+      water = 0.0;
+    }
   }
 
   /* mancha característica (GMV de Júpiter, coração de Plutão, Herschel, lava de Io...) */
@@ -1615,7 +1629,7 @@ const PLANETS = [
   id:'venus', name:'VÊNUS', desig:'SOL-2 · PLANETA', kind:'Rochoso', hab:2, gbar:0.90, pop:'0',
   quick:[['GRAVIDADE','0,90 g'],['TEMP. MÉDIA','464 °C'],['DIA SOLAR','117 d'],['ANO','225 d'],['LUAS','0'],['ÁGUA','não']],
   sys:{orbit:12, size:0.85, speed:1.62, angle:2.4},
-  visual:{mode:'haze', c1:'#d8a95c', c2:'#efd9a4', c3:'#b9834a', seed:8.2, atmo:{col:'#f2dca6', i:1.15}},
+  visual:{mode:'haze2', c1:'#d8a95c', c2:'#efd9a4', c3:'#b9834a', seed:8.2, atmo:{col:'#f2dca6', i:1.15}},
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','108,2 mi km (0,72 UA)'],['Ano','225 dias'],['Dia sideral','243 dias'],['Dia solar','117 dias'],['Tipo de rotação','RETRÓGRADA, o Sol nasce no oeste'],['Veloc. orbital','35,0 km/s'],['Inclinação axial','177° (invertido)'],['Estações','Não']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','12.104 km'],['Massa','4,87 × 10²⁴ kg'],['Densidade','5,24 g/cm³'],['Área','460,2 mi km²'],['Relevo','Vulcões e planícies de lava']]},
@@ -1777,7 +1791,7 @@ PLANETS.push(
   moons:[
    {id:'tita', name:'TITÃ', desig:'SATURNO-VI · LUA', kind:'O outro mundo com chuva, rios e mares', hab:41, gbar:0.14, pop:'0',
     quick:[['DIÂMETRO','5.150 km'],['GRAVIDADE','0,14 g'],['ÓRBITA','15,9 d'],['ATMOSFERA','N₂ · 1,5 atm'],['MARES','metano líquido'],['DRONE','Dragonfly · 2028']],
-    visual:{mode:'haze', c1:'#d8963f', c2:'#eec06e', c3:'#b3742c', seed:6.6, atmo:{col:'#f0b968', i:1.25}},
+    visual:{mode:'haze2', c1:'#d8963f', c2:'#eec06e', c3:'#b3742c', seed:6.6, atmo:{col:'#f0b968', i:1.25}},
     sections:[
       {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância de Saturno','1,22 mi km'],['Ano','15,9 dias'],['Rotação','Síncrona'],['Temperatura','−179 °C, frio que congela a própria química']]},
       {t:'ESTRUTURA', rows:[['Tamanho','Maior que Mercúrio, a 2ª maior lua do Sistema Solar'],['Atmosfera','Nitrogênio denso a 1,5 atm, a única lua com atmosfera de verdade'],['Ciclo do metano','Evapora, forma nuvem, chove e enche rios, igualzinho à água aqui'],['Mares','Kraken, Ligeia e Punga Mare, de metano e etano líquidos'],['Por baixo','Provável oceano de água com amônia sob a crosta de gelo']]},
@@ -4427,7 +4441,9 @@ function makeGalaxyPoints(o){
    a v2 também, ALEATÓRIOS como ele pediu (cada um com o seed e as cores da
    ficha; neve só onde capAmt > 0). A v1 fica guardada no valor 3: voltar
    earth:3 restaura tudo de uma vez */
-const MODEMAP = {rocky:0, gas:1, haze:2, earth:4, earth2:4};
+/* r183 · haze2 é a bruma v2 (Vênus e Titã): fluxo com domínio distorcido e
+   vórtice polar; a haze v1 continua nos outros mundos enevoados */
+const MODEMAP = {rocky:0, gas:1, haze:2, earth:4, earth2:4, haze2:5};
 function planetMaterial(v){
   const sp = v.spot||null;
   const u = {
@@ -12904,7 +12920,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r182';
+const BUILD = 'r183';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
