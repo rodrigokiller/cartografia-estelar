@@ -5889,6 +5889,16 @@ function buildSystem(sysId, spin0){
          quando você arrasta (decisão dele) */
       reguaAneis.push({obj:rl, lbl:null, r:rr3});
     }
+  }
+  /* ================= r177 · O CÉU NOS DOIS MODOS =================
+     Pedido dele: 'estrelas adicionadas no modo real devem também estar no
+     cênico'. O bloco inteiro do céu profundo (as 166 estrelas, as 23
+     constelações, os alvos de clique, a eclíptica) saiu do guarda-chuva do
+     1:1 e agora nasce no mapa do SOL em qualquer modo: a cena própria com
+     câmera de alcance gigante já fazia tudo funcionar, só estava trancada.
+     A GALÁXIA, as vizinhas e os marcadores de sistemas continuam só no 1:1
+     (lá as distâncias são honestas; no cênico o zoom nem sai de casa) */
+  if(escrAtivo || S.id === 'sol'){
     /* ---------- O CÉU REAL: estrelas em posição verdadeira ----------
        r139: o céu saiu da casca e foi para a DISTÂNCIA de verdade, cada
        estrela no seu ano-luz. Como isso estoura qualquer plano de corte
@@ -6090,7 +6100,7 @@ function buildSystem(sysId, spin0){
          O eixo vem do polo norte galáctico (RA 12h51m, DEC +27,1) e o centro
          da direção real de Sagittarius A*, a 26 mil anos-luz: o Sol fica no
          lugar certo dele, na borda de um braço, e não no meio */
-      {
+      if(escrAtivo){
         const UNAL = LY_UA*ESCR_UA;
         const zg = dirCeu(12.8573, 27.1283).normalize();           /* norte galáctico */
         const xg = dirCeu(17.7603, -28.936).normalize();           /* rumo do centro */
@@ -10300,7 +10310,7 @@ function ACTION(act, id){
    zoom estranho do r151 de novo; o que dá o efeito certo é GIRAR a câmera uma
    vez para centralizar o alvo, e pronto: o arrasto continua livre depois */
 function mirarNoCeu(id){
-  if(!(ACT && ACT.kind === 'system' && ACT.escr)) return;
+  if(!(ACT && ACT.kind === 'system')) return;   /* r177: o céu existe nos dois modos */
   let alvo = ACT.ceuAlvos && ACT.ceuAlvos[id];
   if(!alvo && ACT.ceuPicks){
     const cp = ACT.ceuPicks.find(x=>x.obj && x.obj.userData && x.obj.userData.id === id);
@@ -12780,7 +12790,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r176';
+const BUILD = 'r177';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
