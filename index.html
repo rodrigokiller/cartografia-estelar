@@ -1347,7 +1347,7 @@ void main(){
     float sw = fbm(sp*6.0 + n*1.5 + uSeed);
     col = mix(uC1, uC2, smoothstep(0.3,0.7,n));
     col = mix(col, uC3, smoothstep(0.55,0.85,sw)*0.5);
-  } else {                               /* terra */
+  } else if(uMode < 3.5){                /* terra (v1) */
     float n = fbm(sp*uScale + uSeed);
     float land = smoothstep(uSea-0.06, uSea+0.06, n);
     water = 1.0 - land;
@@ -1363,6 +1363,36 @@ void main(){
       landC = mix(landC, landC*vec3(1.18, 0.94, 0.68), outono*0.62*uEstAmt);
     }
     vec3 seaC = mix(uSeaCol*0.7, uSeaCol, smoothstep(0.1,0.5,n));
+    col = mix(seaC, landC, land);
+  } else {                               /* r178 · TERRA V2: recorte e fundo */
+    /* o RECORTE: o campo do continente é distorcido por um ruído de baixa
+       frequência ANTES do corte (as bolhas viram penínsulas e golfos), e o
+       corte ficou seco: costa de mapa, não de aquarela */
+    vec3 wp2 = vec3(fbm(sp*6.0 + uSeed*3.1), fbm(sp*6.0 + uSeed*5.7), fbm(sp*6.0 + uSeed*8.3)) - 0.5;
+    float n = fbm(sp*uScale + wp2*0.9 + uSeed);
+    float land = smoothstep(uSea-0.012, uSea+0.012, n);
+    water = 1.0 - land;
+    /* o MAR tem FUNDO: plataforma rasa verde-água colada na costa, oceano
+       aberto escuro, e a textura do relevo abissal por baixo */
+    float prof = clamp((uSea - n)/0.30, 0.0, 1.0);
+    vec3 raso = mix(vec3(0.24,0.55,0.58), uSeaCol*1.20, smoothstep(0.0, 0.22, prof));
+    vec3 seaC = mix(raso, uSeaCol*0.40, smoothstep(0.10, 0.85, prof));
+    seaC *= 0.92 + 0.16*fbm(sp*uScale*3.0 + uSeed + 11.0);
+    /* a TERRA tem ALTURA: costa baixa e clara, interior subindo, serra com
+       neve onde o relevo aperta */
+    float alt = clamp((n - uSea)/0.26, 0.0, 1.0);
+    float rel = fbm(sp*uScale*5.5 + uSeed*2.0);
+    vec3 landC = mix(uC2, uC1, smoothstep(0.02, 0.38, alt));
+    landC = mix(landC, uC3, (1.0-smoothstep(0.10,0.38,abs(lat)))*0.34);
+    landC = mix(landC, uC3*1.05, smoothstep(0.62, 0.92, fbm(sp*uScale*2.4 + uSeed + 3.1))*0.28);
+    landC *= 0.86 + 0.30*rel;
+    landC = mix(landC, vec3(0.90,0.93,0.95), smoothstep(0.78, 0.97, alt*(0.55+0.6*rel))*0.55);
+    /* as estações do r171 valem aqui também */
+    if(uEstAmt > 0.001){
+      float lado = (lat > 0.0) ? -uEst : uEst;
+      float outono = clamp(lado, 0.0, 1.0)*smoothstep(0.16, 0.62, abs(lat));
+      landC = mix(landC, landC*vec3(1.18, 0.94, 0.68), outono*0.62*uEstAmt);
+    }
     col = mix(seaC, landC, land);
   }
 
@@ -1575,7 +1605,9 @@ const PLANETS = [
   sys:{orbit:15, size:0.9, speed:1.0, angle:4.2},
   /* estacao:1 liga as ESTAÇÕES no desenho (r171): a calota de cada hemisfério
      avança no inverno dele e o verde desbota no outono, pelo relógio */
-  visual:{mode:'earth', c1:'#3f7d43', c2:'#8a9a55', c3:'#c2a06a', seaCol:'#0d3f78', sea:0.52, scale:3.4, seed:12.3, cap:0.78, capAmt:0.9, capCol:'#eef4f8', estacao:1, lights:1, atmo:{col:'#6fb7ff', i:0.62}, clouds:{amt:0.95, scale:4.2, col:'#ffffff'}},
+  /* r178: mode 'earth2' é a v2 (recorte + fundo do mar); voltar para 'earth'
+     restaura a v1 na hora */
+  visual:{mode:'earth2', c1:'#3f7d43', c2:'#7d9052', c3:'#c2a06a', seaCol:'#0d3f78', sea:0.52, scale:3.4, seed:12.3, cap:0.78, capAmt:0.9, capCol:'#eef4f8', estacao:1, lights:1, atmo:{col:'#6fb7ff', i:0.62}, clouds:{amt:0.95, scale:4.2, col:'#ffffff'}},
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','149,6 mi km (1 UA)'],['Ano','365,25 dias'],['Dia sideral','23 h 56 min'],['Dia solar','24 h'],['Tipo de rotação','Prógrada'],['Veloc. orbital','29,8 km/s'],['Inclinação axial','23,4°'],['Estações','Sim, 4, causadas pela inclinação']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','12.742 km'],['Massa','5,97 × 10²⁴ kg'],['Densidade','5,51 g/cm³ (a maior do sistema)'],['Área','510 mi km²'],['Placas tectônicas','Sim, único confirmado']]},
@@ -4338,7 +4370,10 @@ function makeGalaxyPoints(o){
   return new THREE.Points(geo, mat);
 }
 
-const MODEMAP = {rocky:0, gas:1, haze:2, earth:3};
+/* r178 · earth2 é a TERRA V2 (commit isolado, dele: 'mantém separado do que
+   temos para caso revertemos'). Reverter = git revert deste commit, ou só
+   voltar o visual da terra para mode:'earth' */
+const MODEMAP = {rocky:0, gas:1, haze:2, earth:3, earth2:4};
 function planetMaterial(v){
   const sp = v.spot||null;
   const u = {
@@ -12790,7 +12825,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r177';
+const BUILD = 'r178';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
