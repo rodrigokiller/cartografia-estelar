@@ -1516,7 +1516,7 @@ void main(){
 const RING_FRAG = `
 precision highp float;
 varying vec3 vP; varying vec3 vN; varying vec3 vVp;
-uniform float uIn; uniform float uOut; uniform vec3 uCol; uniform float uOp; uniform float uSeed; uniform float uGapT;
+uniform float uIn; uniform float uOut; uniform vec3 uCol; uniform float uOp; uniform float uSeed; uniform float uGapT; uniform float uDop;
 float h1(float n){ return fract(sin(n)*43758.5453); }
 float n1(float x){ float i=floor(x); float f=fract(x); f=f*f*(3.0-2.0*f); return mix(h1(i),h1(i+1.0),f); }
 void main(){
@@ -1527,7 +1527,14 @@ void main(){
   float gap = smoothstep(0.0, 0.045, abs(t-uGapT));   /* divisão de Cassini parametrizável */
   float edge = smoothstep(0.0,0.06,t) * smoothstep(1.0,0.93,t);
   float a = band * mix(0.12,1.0,gap) * edge * uOp;
-  gl_FragColor = vec4(uCol * (0.65 + 0.5*band), a);
+  /* r180 · disco de acreção com DOPPLER (uDop 1): o gás gira a frações da
+     velocidade da luz e o lado que VEM na sua direção brilha muito mais, o
+     assimétrico da foto do EHT. Nos anéis planetários uDop é 0 e nada muda */
+  float dop = 1.0 + uDop*(0.9*sin(atan(vP.y, vP.x)) - 0.15);
+  a *= clamp(dop, 0.10, 2.0);
+  vec3 corA = uCol * (0.65 + 0.5*band) * clamp(dop, 0.35, 1.9);
+  corA = mix(corA, vec3(1.0, 0.95, 0.85), uDop*clamp(dop - 1.0, 0.0, 0.9)*0.55);
+  gl_FragColor = vec4(corA, a);
 }`;
 
 const SUN_FRAG = `
@@ -3547,8 +3554,9 @@ const PLE_SWARM = {
 const SGR_STAR = {
   id:'sgra', name:'SAGITTARIUS A*', desig:'SGR A* · BURACO NEGRO SUPERMASSIVO', kind:'O centro da nossa galáxia', hab:null, gbar:1400000000000,
   quick:[['MASSA','4,3 mi Sóis'],['RAIO','~17 R☉ (horizonte)'],['DISTÂNCIA','26.000 al'],['DIÂMETRO','~24 mi km'],['FOTO','EHT · 2022'],['NOBEL','2020']],
-  visual:{mode:'star', c1:'#050303', c2:'#1c0d06',
-    rings:{rin:1.4, rout:3.0, col:'#ffb057', op:0.9, tilt:26, seed:4.3}},
+  /* r180 · buraco:1 apaga o brilho de estrela; dop:1 liga o doppler do disco */
+  visual:{mode:'star', buraco:1, c1:'#050303', c2:'#1c0d06',
+    rings:{rin:1.35, rout:3.4, col:'#ffb057', op:0.95, tilt:64, seed:4.3, dop:1}},
   sections:[
     {t:'ESTRUTURA', rows:[['Massa','4,3 milhões de sóis comprimidos num ponto'],['O horizonte','Cerca de 24 milhões de km de diâmetro, caberia dentro da órbita de Mercúrio'],['O brilho','Surpreendentemente fraco: ele está de dieta, engolindo pouquíssima matéria'],['Comparação','O buraco negro de M87, o outro fotografado, é mil vezes mais massivo']]},
     {t:'COMO SABEMOS', rows:[['As estrelas','Décadas seguindo estrelas que orbitam um ponto invisível no centro da galáxia'],['S2','Uma delas passa a 3% da velocidade da luz no ponto mais próximo, e completa a volta em 16 anos'],['A conta','Pela órbita delas, a massa central só pode ser um buraco negro'],['Nobel 2020','Reinhard Genzel e Andrea Ghez levaram o prêmio por essa descoberta'],['A foto','Em 2022 o Event Horizon Telescope mostrou o anel de luz ao redor da sombra']]},
@@ -3567,7 +3575,27 @@ const SGR_BODIES = [
     {t:'REGISTRO', rows:[['O papel','Foi seguindo esta estrela, volta após volta, que se provou o que há no centro'],['2018','A passagem dela confirmou o desvio para o vermelho previsto por Einstein'],['2020','A órbita mostrou a precessão de Schwarzschild, outra previsão da relatividade confirmada'],['O feito','Uma geração de astrônomos passou a carreira medindo o movimento de um ponto de luz']]}
   ],
   facts:['Astrônomos acompanharam uma volta inteira desta estrela: dezesseis anos de paciência.','No ponto mais próximo ela viaja a mais de 7 mil quilômetros por segundo.','Ela é a prova mais direta de que existe um buraco negro no centro da nossa galáxia.'],
-  fict:'É a estrela que rendeu um Nobel, e quase ninguém fora da astronomia sabe o nome dela.', moons:[]}
+  fict:'É a estrela que rendeu um Nobel, e quase ninguém fora da astronomia sabe o nome dela.', moons:[]},
+ {id:'s38estrela', name:'S38', desig:'S0-38 · ESTRELA DA RODA', kind:'A segunda testemunha do buraco negro', hab:0, gbar:8, pop:'0',
+  quick:[['TIPO','K, velha'],['ANO','19 anos'],['MAIS PERTO','~170 UA'],['DESCOBERTA','anos 2000'],['ÓRBITA','quase perpendicular à da S2'],['PAPEL','confere a massa central']],
+  sys:{orbit:13, size:0.85, speed:1.7, angle:3.6},
+  visual:{mode:'star', c1:'#ffe2b0', c2:'#e8a86a'},
+  sections:[
+    {t:'ÓRBITA & ROTAÇÃO', rows:[['Ano','19 anos terrestres por volta'],['O plano','Quase perpendicular ao da S2: juntas, as duas amarram a medida da massa central'],['Posição aqui','Simbólica: as órbitas reais são elipses fechadíssimas']]},
+    {t:'REGISTRO', rows:[['O papel','Com duas estrelas em planos diferentes, a massa de 4,3 milhões de sóis não tem para onde escapar'],['A dificuldade','Ela é fraca e o campo é lotado: precisou de óptica adaptativa para separar']]}
+  ],
+  facts:['É a segunda órbita mais bem medida em volta do buraco negro, depois da S2.'],
+  fict:null, moons:[]},
+ {id:'s62estrela', name:'S62', desig:'S0-62 · A MAIS VELOZ', kind:'A estrela mais rápida conhecida', hab:0, gbar:7, pop:'0',
+  quick:[['TIPO','~6 Sóis'],['ANO','~10 anos'],['MAIS PERTO','~16 UA'],['VELOCIDADE','~8% da luz'],['ANUNCIADA','2020'],['STATUS','em confirmação']],
+  sys:{orbit:6, size:0.8, speed:3.0, angle:5.4},
+  visual:{mode:'star', c1:'#eaf2ff', c2:'#a8c4ff'},
+  sections:[
+    {t:'ÓRBITA & ROTAÇÃO', rows:[['Ano','Uns 10 anos por volta, a mais curta que se conhece'],['No periastro','Chega a ~16 UA do horizonte, mais perto que Urano fica do Sol'],['A velocidade','No mergulho, ~8 por cento da velocidade da luz'],['Posição aqui','Simbólica, como toda a cena']]},
+    {t:'REGISTRO', rows:[['O anúncio','2020, pelo grupo que acompanha o centro galáctico há décadas'],['A ressalva','Medir num campo tão lotado é difícil: parte dos dados dela ainda é debatida'],['Se confirmar','É o melhor laboratório de relatividade que uma estrela pode oferecer']]}
+  ],
+  facts:['No ponto mais fundo do mergulho, ela cobre a distância Terra-Lua em uns 16 segundos.'],
+  fict:null, moons:[]}
 ];
 /* ---- lote 20: o primeiro buraco negro e o mundo-oceano da polemica ---- */
 const CYG_STAR = {
@@ -4413,9 +4441,12 @@ function makeBodyGroup(b, radius, seg){
   let mesh;
   if(v.mode === 'star'){
     mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, seg, seg), sunMaterial(v));
+    /* r180 · BURACO NEGRO não tem brilho de estrela: sobra a sombra escura e o
+       disco; o halo vira um aro quente e apertado, o anel de fótons de longe */
     const glow = new THREE.Sprite(new THREE.SpriteMaterial({map:(v.c1==='#c92f14'?TEX_GLOW_RED:TEX_GLOW_WARM),
-      blending:THREE.AdditiveBlending, depthWrite:false, transparent:true, opacity:0.95}));
-    glow.scale.setScalar(radius*5.2);
+      blending:THREE.AdditiveBlending, depthWrite:false, transparent:true, opacity:v.buraco ? 0.5 : 0.95}));
+    glow.scale.setScalar(radius*(v.buraco ? 2.5 : 5.2));
+    if(v.buraco) glow.material.color.setHex(0xffc890);
     tiltG.add(glow);
   } else {
     /* r168 · todo corpo NASCE desenhado, com o shader procedural de sempre: é o
@@ -4449,7 +4480,7 @@ function makeBodyGroup(b, radius, seg){
     const rg = new THREE.RingGeometry(radius*r.rin, radius*r.rout, 128, 1);
     const rm = new THREE.ShaderMaterial({vertexShader:PLANET_VERT, fragmentShader:RING_FRAG,
       uniforms:{uIn:{value:radius*r.rin}, uOut:{value:radius*r.rout}, uCol:{value:C(r.col)},
-        uOp:{value:r.op}, uSeed:{value:r.seed||1}, uGapT:{value:(r.gapT!==undefined)?r.gapT:0.64}},
+        uOp:{value:r.op}, uSeed:{value:r.seed||1}, uGapT:{value:(r.gapT!==undefined)?r.gapT:0.64}, uDop:{value:r.dop||0}},
       side:THREE.DoubleSide, transparent:true, depthWrite:false});
     const ring = new THREE.Mesh(rg, rm);
     ring.rotation.x = Math.PI/2;
@@ -6534,7 +6565,9 @@ function buildSystem(sysId, spin0){
           cp.obj.position.copy(cp.alvo).sub(camera.position).normalize().multiplyScalar(rP).add(camera.position);
           /* alvo com tamanho ANGULAR constante: a estrela tem uma mira fina,
              a constelação tem uma larga */
-          cp.obj.scale.setScalar(cp.ang ? rP*cp.ang : Math.max(1, rP/8000));
+          /* r180 · no toque o alvo angular do céu engorda 65%: no dedo os picks
+             finos eram quase inatingíveis (QLOW = pointer coarse) */
+          cp.obj.scale.setScalar((cp.ang ? rP*cp.ang : Math.max(1, rP/8000))*(QLOW ? 1.65 : 1));
         }
         if(solCeu) solCeu.material.opacity = Math.min(0.95, Math.max(0, (CAM.dist - 4000)/12000));
         /* a galáxia acende quando você passa de umas centenas de anos-luz e o
@@ -11946,7 +11979,9 @@ function currentEntity(){
     }
     if(ST.mapCard.type==='galviz'){
       const gv = GALAXIES.find(x=>x.id===ST.mapCard.id);
-      if(gv) return {type:'map', b:Object.assign({name:gv.name}, gv.card), nav:false};
+      /* r180 · a vizinha ganhou ENTRAR: do céu do 1:1 direto para a cena da
+         galáxia dela (o laço entre os dois modos fecha) */
+      if(gv) return {type:'map', b:Object.assign({name:gv.name}, gv.card), nav:!!gv.nav, navKind:'gal', navId:gv.id};
     }
     if(ST.mapCard.type==='estrela'){
       const f = fichaEstrela(ST.mapCard.id);
@@ -12830,7 +12865,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r179';
+const BUILD = 'r180';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
