@@ -12039,9 +12039,63 @@ function coordReal(){
   const S = SYS[ST.sys];
   return (S && S.radec) || null;
 }
+/* ================= r185 · O MODO REAL É UMA COISA SÓ =================
+   Pedido dele: no 1:1 não existem mais 'partes de transição'. O rastro do
+   topo passa a dizer ONDE VOCÊ ESTÁ PELO ZOOM (sistema, galáxia, universo),
+   e clicar nele VOA dentro da mesma cena, sem trocar nada */
+function nivel1x1(){
+  if(!(ACT && ACT.kind === 'system' && ACT.escr && ST.sys === 'sol')) return null;
+  const dLy = CAM.dist/(LY_UA*ESCR_UA);
+  if(dLy > 250000) return 'universo';
+  if(dLy > 6000) return 'galaxia';
+  return 'sistema';
+}
+function voarNivel(niv){
+  if(!(ACT && ACT.kind === 'system' && ACT.escr)) return;
+  const UNAL2 = LY_UA*ESCR_UA;
+  CAMTW = null; ZOOM = null;
+  if(niv === 'sistema'){
+    ST.mapCard = null;
+    CAMTW = {t0:performance.now(), ms:1700,
+      f:{yaw:CAM.yaw, pitch:CAM.pitch, dist:CAM.dist},
+      t:{yaw:0.65, pitch:0.55, dist:420},
+      p0:CAM.pivot.clone(), p1:new THREE.Vector3(0, 0, 0)};
+  } else if(niv === 'galaxia' && ACT.galCentro){
+    ST.mapCard = {type:'galviz', id:'vialactea', act:'galviz', t:performance.now()};
+    const zg2 = ACT.galPolo;
+    CAMTW = {t0:performance.now(), ms:1700,
+      f:{yaw:CAM.yaw, pitch:CAM.pitch, dist:CAM.dist},
+      t:{yaw:Math.atan2(zg2.x, zg2.z), pitch:Math.asin(Math.max(-1, Math.min(1, zg2.y))), dist:150000*UNAL2},
+      p0:CAM.pivot.clone(), p1:ACT.galCentro.clone()};
+  } else if(niv === 'universo' && ACT.galCentro){
+    ST.mapCard = null;
+    CAMTW = {t0:performance.now(), ms:2000,
+      f:{yaw:CAM.yaw, pitch:CAM.pitch, dist:CAM.dist},
+      t:{yaw:CAM.yaw, pitch:Math.max(0.1, CAM.pitch*0.6), dist:3.0e6*UNAL2},
+      p0:CAM.pivot.clone(), p1:ACT.galCentro.clone()};
+  }
+  uiSync(); syncHash();
+}
 function crumbsRender(){
   const el = $('#crumbs'); el.innerHTML = '';
   const items = [];
+  /* r185 · no 1:1 o rastro é função do zoom e os cliques voam SEM trocar de
+     cena: o modo real é uma coisa só */
+  const nv = nivel1x1();
+  if(nv){
+    const corpo = (ST.mapCard && ST.mapCard.type === 'body' && ALLBODIES[ST.mapCard.id]) ? ALLBODIES[ST.mapCard.id] : null;
+    items.push({t:'UNIVERSO', go:(nv !== 'universo') ? ()=>voarNivel('universo') : null});
+    items.push({t:'VIA LÁCTEA', go:(nv !== 'galaxia') ? ()=>voarNivel('galaxia') : null});
+    if(nv === 'sistema' || corpo)
+      items.push({t:'SISTEMA SOLAR', go:(corpo || nv !== 'sistema') ? ()=>voarNivel('sistema') : null});
+    if(corpo) items.push({t:corpo.name, go:null});
+    items.forEach((it,i)=>{
+      if(i>0){ const s2=document.createElement('span'); s2.className='sep'; s2.textContent='›'; el.appendChild(s2); }
+      if(it.go){ const a2=document.createElement('a'); a2.textContent=it.t; a2.addEventListener('click', it.go); el.appendChild(a2); }
+      else { const s2=document.createElement('span'); s2.className='here'; s2.textContent=it.t; el.appendChild(s2); }
+    });
+    return;
+  }
   items.push({t:'UNIVERSO', go:(ST.level!=='universe') ? ()=>gotoUniverse() : null});
   if(ST.level!=='universe'){
     /* a galáxia do rastro vem do sistema, que pode não ser a Via Láctea */
@@ -12133,6 +12187,13 @@ function currentEntity(){
   }
   if(ST.level==='focus') return {type:'body', b:ALLBODIES[ST.body]};
   if(ST.level==='system'){
+    /* r185 · no 1:1, sem nada na ficha, o card segue o NÍVEL DO ZOOM */
+    const nv3 = (typeof nivel1x1 === 'function') ? nivel1x1() : null;
+    if(nv3 === 'universo') return {type:'map', b:UNIVERSE_CARD, self:true};
+    if(nv3 === 'galaxia'){
+      const gvl = GALAXIES.find(x=>x.id === 'vialactea') || GALAXIES[0];
+      return {type:'map', b:Object.assign({name:gvl.name}, gvl.card), self:true};
+    }
     const S = SYS[ST.sys];
     return {type:'map', b:Object.assign({name:S.name}, S.card), self:true, sysd:true};
   }
@@ -13002,7 +13063,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r184';
+const BUILD = 'r185';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13588,10 +13649,29 @@ function aplicaCorRegua(){
   if(pk && pk.value.toLowerCase() !== c[2].toLowerCase()) pk.value = c[2];
 }
 function trocaEscala(){
+  /* r185 · o LUGAR sobrevive à troca de modo (pedido dele): quem estava na
+     galáxia ou no universo cênico cai no MESMO nível do 1:1, e vice-versa */
+  const nivAntes = (typeof nivel1x1 === 'function') ? nivel1x1() : null;
+  const vinhaDe = ST.level;
   ESCR.on = !ESCR.on;
   store.set('carto:escr', ESCR.on ? '1' : '0');
   cfgSync();
-  syncHash();   /* o link compartilhável acompanha o toggle */
+  syncHash();
+  if(ESCR.on && (vinhaDe === 'galaxy' || vinhaDe === 'universe')){
+    /* cênico galáxia/universo -> o mesmo lugar no mapa único */
+    gotoSystem('sol');
+    setTimeout(()=>{
+      if(ACT && ACT.kind === 'system' && ACT.escr) voarNivel(vinhaDe === 'universe' ? 'universo' : 'galaxia');
+    }, 250);
+    showHint('ESCALA 1:1 · O MESMO LUGAR, AGORA NUM MAPA SÓ');
+    return;
+  }
+  if(!ESCR.on && (nivAntes === 'galaxia' || nivAntes === 'universo')){
+    /* 1:1 no zoom galáctico -> a cena cênica equivalente */
+    if(nivAntes === 'universo') gotoUniverse('ESCALA CÊNICA · O UNIVERSO DESENHADO');
+    else gotoGalaxy('vialactea');
+    return;
+  }
   if(ST.sys === 'sol'){
     if(ST.level === 'system') gotoSystem('sol', ESCR.on ? 'ESCALA 1:1 · OS CORPOS VIRAM POEIRA' : 'ESCALA CÊNICA · DE VOLTA AO MAPA');
     else if(ST.level === 'focus' && ST.body) gotoFocus(ST.body);
@@ -13994,6 +14074,12 @@ function loop(){
   if(typeof reguaBarra === 'function') reguaBarra();
   if(typeof flareSol === 'function') flareSol();
   if(typeof luzViaPasso === 'function') luzViaPasso(dt);
+  /* r185 · o gatilho do nível: cruzou a fronteira de zoom no 1:1, o rastro e o
+     card trocam sozinhos para dizer onde você está */
+  if(ACT && ACT.kind === 'system' && ACT.escr && typeof nivel1x1 === 'function'){
+    const nv2 = nivel1x1();
+    if(ACT._nv !== nv2){ ACT._nv = nv2; uiSync(); }
+  }
   if(typeof tutCaixaSegue === 'function' && TUT && TUT.fila) tutCaixaSegue();   /* mira recalculada a cada quadro, mesmo em vôo */
   /* trava de centro no mapa: o corpo selecionado vira o pivô da câmera,
      e soltar a seleção devolve o centro suavemente */
