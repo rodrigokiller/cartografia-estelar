@@ -10241,7 +10241,9 @@ function syncHash(){
    A bancada: até três mundos com cara de terra girando juntos, renderizados
    pelo MESMO motor (planetMaterial v2, com estações e tudo), com o hab score
    de cada um embaixo. Um renderer próprio pequeno, criado uma vez só */
-const HAB = {rnd:null, scene:null, cam:null, worlds:[], sel:['terra','kepler452b','t1e'], rodando:false};
+/* r187: escala liga os TAMANHOS reais (raio pela ficha); luzAng é o Sol da
+   bancada girando devagar, varrendo dia e noite em cada mundo */
+const HAB = {rnd:null, scene:null, cam:null, worlds:[], sel:['terra','kepler452b','t1e'], rodando:false, escala:true, luzAng:0.9};
 function habMundos(){
   return Object.values(ALLBODIES).filter(b=>b.visual && MODEMAP[b.visual.mode] === 4 && b.quick);
 }
@@ -10260,7 +10262,14 @@ function habMonta(){
   const lista = HAB.sel.map(id=>ALLBODIES[id]).filter(Boolean);
   const passo = lista.length > 1 ? 4.6/(lista.length - 1) : 0;
   lista.forEach((b, i)=>{
-    const m = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 48), planetMaterial(b.visual));
+    /* r187 · EM ESCALA: o raio vem do diâmetro da ficha (a Terra vale 1).
+       TRAPPIST-1e fica visivelmente menor que Kepler-452b, como na vida */
+    let rW = 1;
+    if(HAB.escala && typeof parseDia === 'function'){
+      const dd = parseDia(b);
+      if(dd && dd.km) rW = Math.max(0.4, Math.min(1.45, (dd.km/2)/6371));
+    }
+    const m = new THREE.Mesh(new THREE.SphereGeometry(rW, 48, 48), planetMaterial(b.visual));
     m.position.x = (lista.length > 1 ? -2.3 + i*passo : 0);
     m.rotation.z = -0.2;
     if(m.material.uniforms && m.material.uniforms.uL) m.material.uniforms.uL.value.set(0.5, 0.35, 0.8).normalize();
@@ -10275,12 +10284,19 @@ function habMonta(){
       + '<div class="hsub">HABITABILIDADE ' + (b.hab|0) + '</div></div>';
   }).join('');
   document.getElementById('habinfo').innerHTML = info;
-  document.getElementById('habchips').innerHTML = habMundos().map(b=>
+  document.getElementById('habchips').innerHTML = '<button data-habesc="1"' + (HAB.escala ? ' class="on"' : '') + '>TAMANHO EM ESCALA</button>' + habMundos().map(b=>
     '<button data-hab="' + b.id + '"' + (HAB.sel.indexOf(b.id) >= 0 ? ' class="on"' : '') + '>' + esc(b.name) + '</button>').join('');
 }
 function habPasso(){
   if(!HAB.rodando) return;
-  for(const w of HAB.worlds) w.rotation.y += 0.004;
+  /* r187 · o Sol da bancada gira devagar: o terminador varre cada mundo e as
+     cidades da Terra acendem quando a noite passa por elas */
+  HAB.luzAng += 0.0016;
+  const lx = Math.cos(HAB.luzAng), lz = Math.sin(HAB.luzAng);
+  for(const w of HAB.worlds){
+    w.rotation.y += 0.004;
+    if(w.material.uniforms && w.material.uniforms.uL) w.material.uniforms.uL.value.set(lx, 0.25, lz).normalize();
+  }
   if(HAB.rnd && HAB.scene) HAB.rnd.render(HAB.scene, HAB.cam);
   requestAnimationFrame(habPasso);
 }
@@ -13069,7 +13085,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r186';
+const BUILD = 'r187';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13598,6 +13614,8 @@ $('#dp_eventos').addEventListener('click', ()=>{
 $('#evtpopx').addEventListener('click', ()=>$('#evtpop').classList.remove('on'));
 $('#habpopx').addEventListener('click', ()=>{ $('#habpop').classList.remove('on'); HAB.rodando = false; });
 $('#habchips').addEventListener('click', e=>{
+  const t = e.target.closest('button[data-habesc]');
+  if(t){ HAB.escala = !HAB.escala; habMonta(); return; }
   const b = e.target.closest('button[data-hab]'); if(!b) return;
   const id = b.dataset.hab, i = HAB.sel.indexOf(id);
   if(i >= 0){ if(HAB.sel.length > 1) HAB.sel.splice(i, 1); }
