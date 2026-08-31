@@ -130,6 +130,9 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #solflare{position:absolute;z-index:6;width:64vmax;height:64vmax;border-radius:50%;pointer-events:none;
   transform:translate(-50%,-50%);opacity:0;transition:opacity .6s;
   background:radial-gradient(circle, rgba(255,216,150,.28), rgba(255,180,90,.09) 40%, rgba(255,180,90,0) 66%)}
+/* o lightspeed (r174): riscos de estrela esticada correndo do centro para as
+   bordas, desenhados por quadro só quando a viagem acelera de verdade */
+#lightspeed{position:absolute;top:0;left:0;width:100%;height:100%;z-index:8;pointer-events:none;opacity:0;transition:opacity .3s}
 .lbl{position:absolute;font-family:var(--mono);font-size:10px;letter-spacing:2.4px;color:#bcd8ff;
   text-shadow:0 0 6px rgba(80,150,255,.8), 0 1px 2px #000;white-space:nowrap;pointer-events:auto;cursor:pointer;touch-action:none;
   padding:4px 6px;transform:translate(-50%,-140%)}
@@ -408,6 +411,8 @@ body.photo #filtpop,body.photo #trajclock,body.photo #simclock,body.photo #cfgpo
 #diagchip.on{display:block}
 #chevL{left:18px}#chevR{right:calc(min(400px, 38vw) + 42px)}
 body.focusmode .chev{display:flex}
+/* r174: no mapa 1:1 as setas também aparecem: lá elas voam de corpo em corpo */
+body.escr11 .chev{display:flex}
 
 /* ---------- telemetry panel (desktop) ---------- */
 #panel{position:absolute;top:72px;right:22px;bottom:22px;width:min(400px,38vw);z-index:12;
@@ -923,6 +928,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div class="vignette"></div>
   <div id="labels"></div>
   <div id="solflare"></div>
+  <canvas id="lightspeed"></canvas>
 
   <div class="corner c-tl"><b class="h"></b><b class="v"></b></div>
   <div class="corner c-tr"><b class="h"></b><b class="v"></b></div>
@@ -1060,6 +1066,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-viagemx="1"><span>VIAGEM INTERPLANETAR NO TOUR (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-escr="1"><span>SISTEMA SOLAR EM ESCALA 1:1 (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-coord="1"><span>COORDENADAS REAIS (RA/DEC)</span><b>DESLIGADO</b></div>
+    <div class="filtrow" data-luzvia="1"><span>EFEITO LIGHTSPEED NAS VIAGENS 1:1 (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
     <div class="fp-t fp-t2">SOM</div>
     <div class="filtrow" data-som="mus"><span>MÚSICA</span><b></b></div>
     <div class="filtrow" data-som="fx"><span>EFEITOS SONOROS</span><b></b></div>
@@ -9436,6 +9443,7 @@ function swapScene(built, continuo){
   canvas.classList.remove('cantap');
   document.body.classList.toggle('focusmode', ACT.kind==='focus');
   document.body.classList.toggle('emsistema', ACT.kind==='system' || ACT.kind==='focus');
+  document.body.classList.toggle('escr11', ACT.kind==='system' && !!ACT.escr && ST.sys === 'sol');
   $('#panel').classList.remove('expanded');
 }
 
@@ -9449,6 +9457,61 @@ const store = {
    o modo com texturas poderia ser apenas opção'). Chave nova de propósito:
    quem tinha a antiga ligada volta ao desenho também */
 LIVE = store.get('carto:foto','0') === '1';
+/* ================= r174 · LIGHTSPEED =================
+   O efeito de filme que ele pediu: quando a viagem no 1:1 passa de CENTENAS
+   de anos-luz por segundo (zoom fundo pela galáxia, voo até uma estrela),
+   riscos de estrela esticada correm do centro para as bordas. Mede a
+   velocidade REAL da câmera (dist + pivô) em anos-luz por segundo; o ataque
+   é lento e o decaimento rápido, então um toque de roda dá um sopro e a
+   viagem sustentada acende tudo. Experimental, desligado por padrão.
+   CUIDADO REPETIDO: o motor inteiro mora AQUI, junto da leitura do store,
+   porque ler antes da const dava TDZ no boot (o tombo do LIVE no r45) */
+const LUZVIA = {on:false, k:0, prevD:0, prevP:new THREE.Vector3(), riscos:null};
+function luzViaSync(){
+  const r = document.querySelector('.filtrow[data-luzvia] b');
+  if(r) r.textContent = LUZVIA.on ? 'LIGADO' : 'DESLIGADO';
+}
+function luzViaPasso(dt){
+  const cv = document.getElementById('lightspeed');
+  if(!cv) return;
+  const ativo = LUZVIA.on && ACT && ACT.kind === 'system' && ACT.escr && !DIVE && dt > 0;
+  let alvoK = 0;
+  if(ativo){
+    const ds = Math.abs(CAM.dist - LUZVIA.prevD) + CAM.pivot.distanceTo(LUZVIA.prevP);
+    const lps = (ds/(LY_UA*ESCR_UA))/dt;          /* anos-luz por segundo */
+    /* começa em ~200 al/s e satura em ~2 milhões (a travessia até Andrômeda) */
+    if(lps > 200) alvoK = Math.min(1, Math.log10(lps/200)/4);
+  }
+  LUZVIA.prevD = CAM.dist; LUZVIA.prevP.copy(CAM.pivot);
+  LUZVIA.k += (alvoK - LUZVIA.k)*Math.min(1, dt*(alvoK > LUZVIA.k ? 3.2 : 8));
+  if(LUZVIA.k < 0.02){ cv.style.opacity = 0; return; }
+  const W2 = CRECT.width|0, H2 = CRECT.height|0;
+  if(cv.width !== W2 || cv.height !== H2){ cv.width = W2; cv.height = H2; LUZVIA.riscos = null; }
+  if(!LUZVIA.riscos){
+    LUZVIA.riscos = [];
+    for(let i = 0; i < 90; i++)
+      LUZVIA.riscos.push({a:Math.random()*Math.PI*2, d:Math.random(), v:0.35 + Math.random()*0.9, w:0.6 + Math.random()*1.4});
+  }
+  const g = cv.getContext('2d');
+  g.clearRect(0, 0, W2, H2);
+  const cx = W2/2, cy = H2/2, R = Math.hypot(cx, cy);
+  cv.style.opacity = (0.85*LUZVIA.k).toFixed(2);
+  for(const r of LUZVIA.riscos){
+    r.d += r.v*LUZVIA.k*dt*2.2;
+    if(r.d > 1){ r.d = 0.05 + Math.random()*0.12; r.a = Math.random()*Math.PI*2; }
+    const d0 = (0.14 + r.d*0.86)*R;
+    const len = (10 + 180*LUZVIA.k)*r.v*(0.3 + r.d);
+    const ca = Math.cos(r.a), sa = Math.sin(r.a);
+    g.strokeStyle = 'rgba(195,220,255,' + (0.5*LUZVIA.k*(0.25 + r.d*0.75)).toFixed(3) + ')';
+    g.lineWidth = r.w;
+    g.beginPath();
+    g.moveTo(cx + ca*d0, cy + sa*d0);
+    g.lineTo(cx + ca*(d0 + len), cy + sa*(d0 + len));
+    g.stroke();
+  }
+}
+LUZVIA.on = store.get('carto:luzvia','0') === '1';
+luzViaSync();
 /* r154 · os padrões do mapa mudaram (escolha dele): quem já tinha ajuste
    salvo recebe a limpeza UMA vez. Apaga as chaves e deixa o padrão do
    código valer; a partir daí as escolhas do navegador mandam de novo */
@@ -10084,6 +10147,7 @@ function aproximarNoMapa(id){
     t:{yaw:CAM.yaw, pitch:Math.max(-0.6, Math.min(0.6, CAM.pitch*0.5)), dist:Math.max(r*7.5, 0.0006)},
     p0:CAM.pivot.clone(), p1:alvo.clone(), segue:id};
   uiSync();
+  syncHash();   /* o corpo escolhido entra no endereço também no voo (r174) */
   showHint('APROXIMANDO DE ' + (b ? b.name : '') + ' · O ZOOM CONTINUA LIVRE DAQUI');
 }
 function enterTarget(act, id){
@@ -10132,6 +10196,20 @@ function siblingList(){
   return SYS[b._sys].bodies;
 }
 function step(dir){
+  /* r174 · no 1:1 as setas andam pelos corpos SEM trocar de cena: o próximo é
+     selecionado e a câmera VOA até ele, a navegação única que ele pediu. Com
+     uma lua na ficha, andam pelas luas do mesmo dono; senão, pelos planetas */
+  if(ACT && ACT.kind === 'system' && ACT.escr && ST.sys === 'sol'){
+    const cur = (ST.mapCard && ALLBODIES[ST.mapCard.id]) ? ALLBODIES[ST.mapCard.id] : null;
+    const list = (cur && cur._parent && ALLBODIES[cur._parent])
+      ? ALLBODIES[cur._parent].moons
+      : SYS[ST.sys].bodies.filter(b=>!b.sonda && !b.satelite && !b.foguete && !ehEscape(b));
+    if(!list || !list.length) return;
+    let i = cur ? list.findIndex(x=>x.id === cur.id) : (dir > 0 ? -1 : 0);
+    i = (i + dir + list.length) % list.length;
+    irAoCorpo(list[i].id);
+    return;
+  }
   if(ST.level!=='focus') return;
   const list = siblingList(); if(!list || !list.length) return;
   let i = list.findIndex(x=>x.id===ST.body);
@@ -12487,7 +12565,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r173';
+const BUILD = 'r174';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13130,6 +13208,14 @@ $('#btncfg').addEventListener('click', ()=>{
   cfgSync();
 });
 const cfgRowClick = e=>{
+  const rLuz = e.target.closest('[data-luzvia]');
+  if(rLuz){
+    LUZVIA.on = !LUZVIA.on;
+    store.set('carto:luzvia', LUZVIA.on ? '1' : '0');
+    luzViaSync();
+    showHint(LUZVIA.on ? 'LIGHTSPEED LIGADO: ACELERE FUNDO NO 1:1 PARA VER' : 'LIGHTSPEED DESLIGADO');
+    return;
+  }
   const rNom = e.target.closest('[data-ceunomes]');
   if(rNom){
     CEUN.on = !CEUN.on;
@@ -13462,6 +13548,7 @@ function loop(){
   if(typeof salvaCam === 'function') salvaCam(now);
   if(typeof reguaBarra === 'function') reguaBarra();
   if(typeof flareSol === 'function') flareSol();
+  if(typeof luzViaPasso === 'function') luzViaPasso(dt);
   if(typeof tutCaixaSegue === 'function' && TUT && TUT.fila) tutCaixaSegue();   /* mira recalculada a cada quadro, mesmo em vôo */
   /* trava de centro no mapa: o corpo selecionado vira o pivô da câmera,
      e soltar a seleção devolve o centro suavemente */
