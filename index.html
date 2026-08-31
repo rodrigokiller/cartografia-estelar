@@ -98,6 +98,9 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #topright{position:absolute;top:20px;right:24px;z-index:10;display:flex;align-items:center;gap:10px}
 /* no desktop tudo fica numa linha só (display:contents), na ordem original */
 #morebtns{display:contents}
+/* r176: o relógio do canto não existe no celular; a data ganhou um botão no ⋯ */
+#btndata{display:none}
+@media (pointer: coarse){ #btndata{display:flex} }
 #btnmore{display:none}
 #scalebadge{order:0} #navback{order:1} #navfwd{order:2} #btnsnd{order:3}
 #btnphoto{order:4} #btnfilt{order:4} #btnmiss{order:5} #btnfind{order:6} #btnfs{order:7} #btnhelp{order:8}
@@ -954,6 +957,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div id="morebtns">
       <button id="navback" class="navbtn dis" title="Objeto anterior">«</button>
       <button id="navfwd" class="navbtn dis" title="Objeto seguinte">»</button>
+      <button id="btndata" class="navbtn" title="Ver o sistema em outra data">◈</button>
       <button id="btnsnd" class="navbtn" title="Trilha sonora">♪</button>
       <button id="btnphoto" class="navbtn" title="Modo foto">⌗</button>
       <button id="btnfs" class="navbtn" title="Tela cheia">⛶</button>
@@ -4460,7 +4464,9 @@ function updateLabels(){
     /* r175 · SISTEMA SOLAR assume quando o SOL descansa, e descansa quando a
        galáxia vira mançha; os sistemas do atlas aparecem quando o zoom abraça
        a distância de cada um */
-    if(L.sisCasa && (dLy < 3000 || dLy > 250000)){ L.el.style.display = 'none'; continue; }
+    /* r176 · calibrado por ele: entrava cedo demais e saía com a galáxia
+       ainda ocupando a tela inteira */
+    if(L.sisCasa && (dLy < 6000 || dLy > 600000)){ L.el.style.display = 'none'; continue; }
     if(L.sisLy && (dLy < L.sisLy*0.8 || dLy > Math.min(L.sisLy*50, 250000))){ L.el.style.display = 'none'; continue; }
     if(foraDeCasa){
       /* o nome da estrela só aparece quando o zoom já abraça a distância dela */
@@ -5761,6 +5767,8 @@ function buildSystem(sysId, spin0){
   let hzRing = null, hzLbl = null;
   let ceuLinhas = null, ceuSelFn = null, sceneCeu = null, solCeu = null, eclLinha = null, viaLactea = null, viaHalo = null, fundoGal = null;
   let viaDisco = null, viaNucleo = null, viaNos = null;   /* r175: o brilho da galáxia */
+  let galCentro = null, galPolo = null, oortPts = null;   /* r176 */
+  const ceuAlvos = {};   /* r176: onde cada coisa clicável do céu REALMENTE está */
   const vizinhas = [];   /* Magalhães e Andrômeda, no contínuo */
   const sisMarcas = [];  /* r175: os sistemas do atlas espalhados pela galáxia */
   const eclLbls = [];
@@ -5843,8 +5851,11 @@ function buildSystem(sysId, spin0){
     }
     const ooG = new THREE.BufferGeometry();
     ooG.setAttribute('position', new THREE.BufferAttribute(ooPos, 3));
-    scene.add(fade(new THREE.Points(ooG, new THREE.PointsMaterial({color:0x8fa8c8, size:1.0,
-      sizeAttenuation:false, transparent:true, opacity:0.26, depthWrite:false}))));
+    /* r176 · a casca agora RESPIRA: entra suave chegando perto dela e se
+       dissolve quando o zoom já é interestelar (ela ficava pendurada, ele viu) */
+    oortPts = fade(new THREE.Points(ooG, new THREE.PointsMaterial({color:0x8fa8c8, size:1.0,
+      sizeAttenuation:false, transparent:true, opacity:0.26, depthWrite:false})));
+    scene.add(oortPts);
     labels.push({el:makeLabel('NUVEM DE OORT', 'faint zona', ()=>ACTION('focus','oort')), escrOrb:30000, zonaLonge:true,
       get:v=>v.set(Math.cos(2.2)*30000, 1500, Math.sin(2.2)*30000)});
     /* RÉGUA DE DISTÂNCIAS: anéis discretos que acendem em fade quando o
@@ -6199,23 +6210,30 @@ function buildSystem(sysId, spin0){
            abre a ficha, ENTRAR viaja (o mesmo two-step das estrelas). Ids que
            não existem no atlas são pulados em silêncio */
         {
+          /* r176 · agora com os IDS DE VERDADE do atlas (conferidos no SYS) e a
+             turma que faltava: os aglomerados globulares do halo (47 Tucanae e
+             Ômega Centauri, sugestão aceita), Cygnus X-1, K2-18, LHS 1140 e
+             Kepler-186. O Sagittarius A* fica de fora DAQUI de propósito: o
+             marcador dele é o CENTRO DA GALÁXIA do r152, que agora dá ENTRAR */
           const SIS_CEU = [
             ['barnard', 17.96, 4.69, 6], ['gliese581', 15.32, -7.72, 20],
             ['fomalhaut', 22.96, -29.62, 25], ['trappist', 23.108, -5.04, 40],
-            ['cnc55', 8.74, 28.33, 41], ['pegasi51', 22.96, 20.77, 50],
-            ['hd189', 20.00, 22.71, 64], ['toi700', 6.74, -65.58, 101],
+            ['cnc55', 8.74, 28.33, 41], ['lhs1140', 0.75, -15.27, 48.5],
+            ['pegasi51', 22.96, 20.77, 50], ['hd189', 20.00, 22.71, 64],
+            ['toi700', 6.74, -65.58, 101], ['k218', 11.51, 7.59, 124],
             ['kepler16', 19.28, 51.76, 245], ['pleiades', 3.79, 24.11, 444],
+            ['kepler186', 19.91, 43.95, 580],
             ['kepler452', 19.73, 44.28, 1400], ['wasp12', 6.51, 29.67, 1410],
-            ['orion', 5.59, -5.39, 1344], ['m42', 5.59, -5.39, 1344],
-            ['cavalo', 5.68, -2.46, 1375], ['cabecadecavalo', 5.68, -2.46, 1375],
-            ['chama', 5.69, -1.9, 1350], ['psr1257', 13.00, 12.68, 2300],
-            ['veu', 20.75, 30.7, 2400], ['m57', 18.89, 33.03, 2600],
-            ['anel57', 18.89, 33.03, 2600], ['norteamerica', 20.98, 44.33, 2600],
+            ['orion', 5.59, -5.39, 1344],
+            ['cavalo', 5.68, -2.46, 1375], ['chama', 5.69, -1.9, 1350],
+            ['psr1257', 13.00, 12.68, 2300], ['veu', 20.75, 30.7, 2400],
+            ['m57', 18.89, 33.03, 2600], ['norteamerica', 20.98, 44.33, 2600],
             ['olhodegato', 17.98, 66.63, 3300], ['lagoa', 18.06, -24.38, 4100],
             ['trifida', 18.04, -23.03, 4100], ['roseta', 6.55, 4.95, 5200],
-            ['m1', 5.575, 22.01, 6500], ['caranguejo', 5.575, 22.01, 6500],
-            ['m16', 18.31, -13.78, 7000], ['carina', 10.75, -59.87, 7500],
-            ['formiga', 16.28, -51.98, 8000]
+            ['caranguejo', 5.575, 22.01, 6500], ['m16', 18.31, -13.78, 7000],
+            ['cygx1', 19.97, 35.2, 7200], ['carina', 10.75, -59.87, 7500],
+            ['formiga', 16.28, -51.98, 8000],
+            ['tuc47', 0.40, -72.08, 13000], ['omega', 13.446, -47.48, 15800]
           ];
           const jaTem2 = new Set();
           for(const q4 of SIS_CEU){
@@ -6238,6 +6256,7 @@ function buildSystem(sysId, spin0){
               sempre:true, sisLy:q4[3],
               get:(t4)=>{ t4.copy(alvo4).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()*0.9).add(camera.position); }};
             labels.push(lb4);
+            ceuAlvos[q4[0]] = alvo4.clone();
             sisMarcas.push({spr:spr4, pick:pk4, ly:q4[3], alvo:alvo4});
           }
           RLOG.push('sisceu-' + sisMarcas.length);
@@ -6247,7 +6266,7 @@ function buildSystem(sysId, spin0){
            Magalhães (163 e 200 mil anos-luz, satélites da nossa) e Andrômeda,
            a 2,5 MILHÕES de anos-luz, na direção real de cada uma. Todas na
            mesma cena, sem troca de escala: o contínuo continua */
-        const galVizinha = (raH, decG, lyD, raio, nPt, cor, achata, nome)=>{
+        const galVizinha = (raH, decG, lyD, raio, nPt, cor, achata, nome, gid)=>{
           const dg = dirCeu(raH, decG).multiplyScalar(lyD*UNAL);
           const eixo = dg.clone().normalize();
           const u2 = new THREE.Vector3(0,1,0).cross(eixo).normalize();
@@ -6269,15 +6288,18 @@ function buildSystem(sysId, spin0){
           pt.frustumCulled = false;
           sceneCeu.add(pt);
           const alvoLbl = dg.clone();
-          labels.push({el:makeLabel(nome, '', null), sempre:true, galLbl2:lyD, off:true,
+          if(gid) ceuAlvos[gid] = dg.clone();
+          /* r176 · a vizinha é clicável: abre a ficha da galáxia (ele reclamou de
+             coisa clicável sem informação nenhuma no zoom out) */
+          labels.push({el:makeLabel(nome, '', gid ? ()=>ACTION('galviz', gid) : null), sempre:true, galLbl2:lyD, off:true,
             get:(t2)=>{ t2.copy(alvoLbl).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()*0.85).add(camera.position); }});
           return {pt, ly:lyD, raio};
         };
         /* r158: nome do corpo e só isso, como todo rótulo do atlas (ele
            reclamou do 'GALÁXIA DE ANDRÔMEDA · 2,5 MILHÕES DE AL') */
-        vizinhas.push(galVizinha(5.3939, -69.756, 163000, 9000, QLOW?600:1400, 0xbfd4ff, 0.5, 'GRANDE NUVEM DE MAGALHÃES'));
-        vizinhas.push(galVizinha(0.8767, -72.829, 200000, 5500, QLOW?400:900, 0xc8d8ff, 0.5, 'PEQUENA NUVEM DE MAGALHÃES'));
-        vizinhas.push(galVizinha(0.7122, 41.269, 2537000, 110000, QLOW?900:2200, 0xd8e2ff, 0.14, 'ANDRÔMEDA'));
+        vizinhas.push(galVizinha(5.3939, -69.756, 163000, 9000, QLOW?600:1400, 0xbfd4ff, 0.5, 'GRANDE NUVEM DE MAGALHÃES', 'magalhaes'));
+        vizinhas.push(galVizinha(0.8767, -72.829, 200000, 5500, QLOW?400:900, 0xc8d8ff, 0.5, 'PEQUENA NUVEM DE MAGALHÃES', 'pnm'));
+        vizinhas.push(galVizinha(0.7122, 41.269, 2537000, 110000, QLOW?900:2200, 0xd8e2ff, 0.14, 'ANDRÔMEDA', 'andromeda'));
         /* o braço onde a gente mora, nomeado no lugar certo */
         const dOri = ug.clone().multiplyScalar(-1200*UNAL).add(vg.clone().multiplyScalar(900*UNAL));
         /* r158 · O FUNDO DO UNIVERSO: passando de uns 300 mil anos-luz, o
@@ -6312,7 +6334,9 @@ function buildSystem(sysId, spin0){
           const cvl = C2.clone();
           /* o nome da nossa galáxia só entra quando ela já é uma mançha na
              tela (uns 250 mil anos-luz), como qualquer outra galáxia */
-          labels.push({el:makeLabel('VIA LÁCTEA', '', null), sempre:true, galLbl2:1.6e6, off:true,
+          galCentro = C2.clone(); galPolo = zg.clone();
+          ceuAlvos.vialactea = C2.clone();
+          labels.push({el:makeLabel('VIA LÁCTEA', '', ()=>ACTION('galviz', 'vialactea')), sempre:true, galLbl2:1.6e6, off:true,
             get:(t2)=>{ t2.copy(cvl).sub(camera.position).normalize().multiplyScalar(RAIO_CEU_LBL()*0.8).add(camera.position); }});
           /* r175 · e o nosso endereço: quando o rótulo SOL descansa (3 mil AL)
              entra SISTEMA SOLAR, que é o que aquele grão é nesta escala; some
@@ -6380,7 +6404,7 @@ function buildSystem(sysId, spin0){
     });
   }
   const camMaxDin = escrAtivo ? 4e6*LY_UA*ESCR_UA : Math.max(S.camMax || 60, alcance * 1.7);
-  return {kind:'system', scene, sceneCeu, eclLinha, aneisMira, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, liveGiro, solLuz, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
+  return {kind:'system', scene, sceneCeu, eclLinha, aneisMira, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, liveGiro, solLuz, ceuPicks, ceuAlvos, galCentro, galPolo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
@@ -6525,6 +6549,12 @@ function buildSystem(sysId, spin0){
       /* a zona habitável some no zoom fechado (tudo ficava verde, crítica dele) */
       if(hzRing && HZV.on && !DIVE && !TRANSITO && !FADEIN)
         hzRing.material.opacity = 0.055*Math.min(1, Math.max(0, (CAM.dist - 5)/25));
+      if(oortPts && !DIVE && !TRANSITO && !FADEIN){
+        const dAL3 = CAM.dist/(LY_UA*ESCR_UA);
+        oortPts.material.opacity = 0.26
+          * Math.min(1, Math.max(0, (CAM.dist - 2500)/9000))
+          * Math.min(1, Math.max(0, (2.2 - dAL3)/1.0));
+      }
       /* a régua acende só no anel da vez */
       for(const ra of reguaAneis){
         /* a curva nova: o ápice acontece com a câmera a ~2,4 raios do marco
@@ -10210,11 +10240,21 @@ function ACTION(act, id){
   if(act==='focus' && ST.level==='focus' && ST.body===id) return;
   /* constelação não é lugar onde se entra: o clique abre a ficha e acende o
      desenho, e clicar de novo fecha (sem two-step de viagem) */
+  /* r176 · galáxia vizinha clicada no céu do 1:1: ficha, sem two-step de viagem */
+  if(act==='galviz'){
+    const jaEraG = ST.mapCard && ST.mapCard.type==='galviz' && ST.mapCard.id===id;
+    ST.mapCard = jaEraG ? null : {type:'galviz', id, act};
+    AUDIO.sfx('sel');
+    uiSync();
+    if(!jaEraG) mirarNoCeu(id);
+    return;
+  }
   if(act==='fronteira'){
     const jaEra3 = ST.mapCard && ST.mapCard.type==='fronteira' && ST.mapCard.id===id;
     ST.mapCard = jaEra3 ? null : {type:'fronteira', id, act};
     AUDIO.sfx('sel');
     uiSync();
+    if(!jaEra3) mirarNoCeu(id);
     return;
   }
   if(act==='estrela'){
@@ -10223,6 +10263,7 @@ function ACTION(act, id){
     ST.mapCard = jaEra2 ? null : {type:'estrela', id, act};
     AUDIO.sfx('sel');
     uiSync();
+    if(!jaEra2) mirarNoCeu(id);
     return;
   }
   if(act==='constel'){
@@ -10243,6 +10284,7 @@ function ACTION(act, id){
   }
   ST.mapCard = {type:(act==='focus') ? 'body' : act, id, act, t:performance.now()};
   AUDIO.sfx('sel');
+  if(act === 'sys') mirarNoCeu(id);   /* sistema clicado no céu: centraliza nele */
   somDeEpoca(id);
   uiSync();
   syncHash();   /* o corpo escolhido entra no endereço (r166) */
@@ -10253,6 +10295,22 @@ function ACTION(act, id){
 /* o caminho único para 'ir até um corpo': no mapa 1:1 do Sistema Solar isso
    é um voo dentro da própria cena; em qualquer outro caso, a cena de foco de
    sempre */
+/* r176 · A MIRA DO CÉU (ele: 'muita coisa clicável no zoom out não trava o
+   centro no objeto'). Travar o PIVÔ numa coisa a milhões de unidades seria o
+   zoom estranho do r151 de novo; o que dá o efeito certo é GIRAR a câmera uma
+   vez para centralizar o alvo, e pronto: o arrasto continua livre depois */
+function mirarNoCeu(id){
+  if(!(ACT && ACT.kind === 'system' && ACT.escr)) return;
+  let alvo = ACT.ceuAlvos && ACT.ceuAlvos[id];
+  if(!alvo && ACT.ceuPicks){
+    const cp = ACT.ceuPicks.find(x=>x.obj && x.obj.userData && x.obj.userData.id === id);
+    if(cp) alvo = cp.alvo;
+  }
+  if(!alvo) return;
+  const d = alvo.clone().sub(CAM.pivot).normalize();
+  /* a câmera olha do offset PARA o pivô: mirar = pôr o offset do lado oposto */
+  tweenCam({yaw:Math.atan2(-d.x, -d.z), pitch:Math.max(-1.35, Math.min(1.35, Math.asin(-d.y)))}, 650);
+}
 function irAoCorpo(id){
   const b = ALLBODIES[id];
   if(b && b._sys === 'sol' && ESCR.on && ACT && ACT.kind === 'system' && ACT.escr && !TOUR.on && acharPick(id)){
@@ -11830,7 +11888,15 @@ function currentEntity(){
     }
     if(ST.mapCard.type==='fronteira'){
       const fr = FRONTEIRAS[ST.mapCard.id];
+      /* r176 · o CENTRO DA GALÁXIA dá para ENTRAR: o sistema do Sagittarius A*
+         com as estrelas S já existe no atlas desde o r152 */
+      if(fr && ST.mapCard.id === 'centro' && SYS.sgra)
+        return {type:'map', b:fr, nav:true, navKind:'sys', navId:'sgra'};
       if(fr) return {type:'map', b:fr, nav:false};
+    }
+    if(ST.mapCard.type==='galviz'){
+      const gv = GALAXIES.find(x=>x.id===ST.mapCard.id);
+      if(gv) return {type:'map', b:Object.assign({name:gv.name}, gv.card), nav:false};
     }
     if(ST.mapCard.type==='estrela'){
       const f = fichaEstrela(ST.mapCard.id);
@@ -11864,7 +11930,9 @@ function cardRender(){
   const lockOn = ST.level==='focus';
   $('#headmini').innerHTML =
     '<div class="eyebrow"><span>'+esc(b.desig||'')+'</span><span class="lock'+(lockOn?'':' off')+'">'+(lockOn?'⬢ LINK TRAVADO':'MODO MAPA')+'</span>'
-    +(ST.mapCard ? '<button id="cardx2" title="Fechar esta ficha">✕</button>' : '')+'</div>'+
+    +(ST.mapCard ? '<button id="cardx2" title="Fechar esta ficha">✕</button>'
+      : ((ACT && ACT.kind==='system' && ACT.escr && ACT.galCentro && CAM.dist/(LY_UA*ESCR_UA) > 20000)
+         ? '<button id="cardx2" data-xgal="1" title="Fechar o Sistema Solar e olhar a galáxia">✕</button>' : ''))+'</div>'+
     '<h1 class="bodyname">'+esc(b.name)
       + ((podeLive(lockOn ? ST.body : ((ST.mapCard && ST.mapCard.id) || '')))
          ? '<button class="livebtn'+(LIVE?' on':'')+'" id="btnlive" title="Alternar entre a foto de verdade e o mapa desenhado"><i></i>'+(LIVE?'FOTO':'DESENHO')+'</button>'
@@ -12056,7 +12124,23 @@ function cardRender(){
     else trajStart(cur.navId);
   });
   const ng = $('#navgo'); if(ng) ng.addEventListener('click', ()=>{ enterTarget(cur.navKind==='gal' ? 'galaxy' : (cur.navKind==='sys' ? 'starsys' : 'focus'), cur.navId); });
-  const cx = $('#cardx2'); if(cx) cx.addEventListener('click', ()=>{ ST.mapCard = null; uiSync(); syncHash(); });
+  const cx = $('#cardx2'); if(cx) cx.addEventListener('click', ()=>{
+    /* r176 · no zoom galáctico o ✕ do card do SISTEMA SOLAR fecha a casa:
+       seleciona a VIA LÁCTEA e centraliza nela olhando de cima (pedido dele) */
+    if(cx.dataset.xgal && ACT && ACT.galCentro){
+      ST.mapCard = {type:'galviz', id:'vialactea', act:'galviz', t:performance.now()};
+      const zg2 = ACT.galPolo, UNAL2 = LY_UA*ESCR_UA;
+      CAMTW = null; ZOOM = null;
+      CAMTW = {t0:performance.now(), ms:1700,
+        f:{yaw:CAM.yaw, pitch:CAM.pitch, dist:CAM.dist},
+        t:{yaw:Math.atan2(zg2.x, zg2.z), pitch:Math.asin(Math.max(-1, Math.min(1, zg2.y))), dist:150000*UNAL2},
+        p0:CAM.pivot.clone(), p1:ACT.galCentro.clone()};
+      uiSync();
+      showHint('A VIA LÁCTEA VISTA DE CIMA · O SISTEMA SOLAR FICA NUM BRAÇO');
+      return;
+    }
+    ST.mapCard = null; uiSync(); syncHash();
+  });
   const bts = $('#btntoursis'); if(bts) bts.addEventListener('click', ()=>tourDoSistema(bts.dataset.sistour));
   const bss = $('#btnsubsis'); if(bss) bss.addEventListener('click', subSistema);
   pb.querySelectorAll('[data-vt]').forEach(el=>el.addEventListener('click', ()=>verLinhaDoTempo(el.dataset.vt)));
@@ -12696,7 +12780,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r175';
+const BUILD = 'r176';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
