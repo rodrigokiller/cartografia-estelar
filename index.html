@@ -10693,6 +10693,21 @@ function mirarNoCeu(id){
   /* a câmera olha do offset PARA o pivô: mirar = pôr o offset do lado oposto */
   tweenCam({yaw:Math.atan2(-d.x, -d.z), pitch:Math.max(-1.35, Math.min(1.35, Math.asin(-d.y)))}, 650);
 }
+/* r199 · o yaw de entrada que casa a fase de iluminação do foco com a
+   visão atual do mapa: mantém o ângulo câmera-corpo-Sol na troca de cena */
+function yawCasadoComLuz(id){
+  if(!(ACT && ACT.kind === 'system')) return null;
+  const pk = ACT.pickables.find(x=>x.userData && x.userData.id === id);
+  if(!pk) return null;
+  const bP = new THREE.Vector3(); pk.getWorldPosition(bP);
+  if(bP.lengthSq() < 1e-9) return null;
+  const azSol = Math.atan2(-bP.x, -bP.z);                  /* o Sol fica na origem */
+  const azCam = Math.atan2(camera.position.x - bP.x, camera.position.z - bP.z);
+  const azLuz = Math.atan2(LDIR.x, LDIR.z);                /* onde a luz mora no foco */
+  let y2 = azLuz + (azCam - azSol);
+  y2 = ((y2 + Math.PI) % (Math.PI*2) + Math.PI*2) % (Math.PI*2) - Math.PI;
+  return y2;
+}
 function irAoCorpo(id){
   const b = ALLBODIES[id];
   if(b && b._sys === 'sol' && ESCR.on && ACT && ACT.kind === 'system' && ACT.escr && !TOUR.on && acharPick(id)){
@@ -10737,7 +10752,16 @@ function enterTarget(act, id){
     }
     /* se o alvo está desenhado na cena atual, entra mergulhando nele */
     if(ACT && (ACT.kind==='system' || ACT.kind==='focus') && acharPick(id)){
-      uiSync(); diveInto(id, ()=>gotoFocus(id, true), (ACT && ACT.escr) ? {ms:2600, semDesvio:true} : undefined); return;
+      uiSync();
+      /* r199 · no CÊNICO o mergulho termina no yaw que preserva a fase de
+         iluminação: o planeta meio sombra continua meio sombra no foco
+         (antes o Sol pulava para trás da câmera e tudo acendia) */
+      let optDive = (ACT && ACT.escr) ? {ms:2600, semDesvio:true} : undefined;
+      if(!ESCR.on && ACT.kind === 'system' && ALLBODIES[id] && ALLBODIES[id]._sys === 'sol' && !ALLBODIES[id].comet){
+        const yL = yawCasadoComLuz(id);
+        if(yL !== null) optDive = {yaw:yL};
+      }
+      diveInto(id, ()=>gotoFocus(id, true), optDive); return;
     }
     flyThen(id, ()=>gotoFocus(id));
   }
@@ -13268,7 +13292,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r198';
+const BUILD = 'r199';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
