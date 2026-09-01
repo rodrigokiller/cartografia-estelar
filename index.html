@@ -12220,7 +12220,8 @@ function currentEntity(){
       const gv = GALAXIES.find(x=>x.id===ST.mapCard.id);
       /* r180 · a vizinha ganhou ENTRAR: do céu do 1:1 direto para a cena da
          galáxia dela (o laço entre os dois modos fecha) */
-      if(gv) return {type:'map', b:Object.assign({name:gv.name}, gv.card), nav:!!gv.nav, navKind:'gal', navId:gv.id};
+      if(gv) return {type:'map', b:Object.assign({name:gv.name}, gv.card), nav:!!gv.nav, navKind:'gal', navId:gv.id,
+        galNivel:(gv.id === 'vialactea' && ACT && ACT.kind === 'system' && ACT.escr)};
     }
     if(ST.mapCard.type==='estrela'){
       const f = fichaEstrela(ST.mapCard.id);
@@ -12244,7 +12245,7 @@ function currentEntity(){
     if(nv3 === 'universo') return {type:'map', b:UNIVERSE_CARD, self:true};
     if(nv3 === 'galaxia'){
       const gvl = GALAXIES.find(x=>x.id === 'vialactea') || GALAXIES[0];
-      return {type:'map', b:Object.assign({name:gvl.name}, gvl.card), self:true};
+      return {type:'map', b:Object.assign({name:gvl.name}, gvl.card), self:true, galNivel:true};
     }
     const S = SYS[ST.sys];
     return {type:'map', b:Object.assign({name:S.name}, S.card), self:true, sysd:true};
@@ -12282,6 +12283,16 @@ function cardRender(){
   { const bHab = (cur.type==='body') ? cur.b : ((cur.navKind==='body' && ALLBODIES[cur.navId]) ? ALLBODIES[cur.navId] : null);
     if(bHab && bHab.visual && MODEMAP[bHab.visual.mode] === 4)
       h += '<button class="xbtn" id="btnhab">◉ MUNDOS HABITÁVEIS LADO A LADO</button>'; }
+  /* r191 · o card da VIA LÁCTEA no zoom galáctico: centralizar de cima e a
+     fileira IR PARA, com o SISTEMA SOLAR primeiro (a volta rápida que ele
+     pediu) e as galáxias famosas do atlas em seguida */
+  if(cur.galNivel){
+    h += '<button class="xbtn" id="btngalcima">◎ VER A GALÁXIA DE CIMA</button>';
+    h += '<div class="mk">IR PARA</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px">'
+       + '<button class="mbadge" data-galir="sol">SISTEMA SOLAR</button>'
+       + GALAXIES.filter(g=>g.id!=='vialactea').map(g=>'<button class="mbadge" data-galir="'+g.id+'">'+esc(g.name)+'</button>').join('')
+       + '</div>';
+  }
   { const sisTour = (cur.type==='map' && cur.navKind==='sys') ? cur.navId : (cur.sysd ? ST.sys : null);
     if(sisTour && SYS[sisTour]) h += '<button class="xbtn" id="btntoursis" data-sistour="'+sisTour+'">▶ TOUR</button>'; }
 
@@ -12476,6 +12487,24 @@ function cardRender(){
     }
     ST.mapCard = null; uiSync(); syncHash();
   });
+  const bgc = $('#btngalcima'); if(bgc) bgc.addEventListener('click', ()=>{
+    if(!(ACT && ACT.galCentro)) return;
+    ST.mapCard = {type:'galviz', id:'vialactea', act:'galviz', t:performance.now()};
+    const zgc = ACT.galPolo, UNALc = LY_UA*ESCR_UA;
+    CAMTW = null; ZOOM = null;
+    CAMTW = {t0:performance.now(), ms:1700,
+      f:{yaw:CAM.yaw, pitch:CAM.pitch, dist:CAM.dist},
+      t:{yaw:Math.atan2(zgc.x, zgc.z), pitch:Math.asin(Math.max(-1, Math.min(1, zgc.y))), dist:150000*UNALc},
+      p0:CAM.pivot.clone(), p1:ACT.galCentro.clone()};
+    uiSync();
+    showHint('A VIA LÁCTEA VISTA DE CIMA · O SISTEMA SOLAR FICA NUM BRAÇO');
+  });
+  pb.querySelectorAll('[data-galir]').forEach(el=>el.addEventListener('click', ()=>{
+    const gid = el.dataset.galir;
+    if(gid === 'sol'){ if(typeof voarNivel === 'function') voarNivel('sistema'); return; }
+    ST.mapCard = {type:'galviz', id:gid, act:'galviz', t:performance.now()};
+    uiSync();
+  }));
   const bts = $('#btntoursis'); if(bts) bts.addEventListener('click', ()=>tourDoSistema(bts.dataset.sistour));
   const bss = $('#btnsubsis'); if(bss) bss.addEventListener('click', subSistema);
   pb.querySelectorAll('[data-vt]').forEach(el=>el.addEventListener('click', ()=>verLinhaDoTempo(el.dataset.vt)));
@@ -13115,7 +13144,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r190';
+const BUILD = 'r191';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
