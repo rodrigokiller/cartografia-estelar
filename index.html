@@ -390,6 +390,8 @@ body.photo.hudpeek #photoexit{opacity:1}
 #trajclock button{width:26px;height:26px;border:1px solid var(--line);background:rgba(6,12,24,.6);
   color:var(--ion);font-family:var(--mono);font-size:11px;cursor:pointer;flex:0 0 auto;line-height:1}
 #trajclock button:hover{border-color:var(--line2)}
+#trajterra{color:var(--dim)}
+#trajterra.on{color:var(--amber);border-color:rgba(255,180,84,.5)}
 #trajclock .trow1{display:flex;align-items:center;gap:10px}
 #trajclock .tcol{display:flex;flex-direction:column;gap:3px;flex:1 1 auto}
 #trajclock .tcol .tbar{width:100%}
@@ -1168,6 +1170,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
         <div class="tanos"><span id="trajano0"></span><span id="trajano1"></span></div>
       </div>
       <button id="trajvel" title="Velocidade">1×</button>
+      <button id="trajterra" class="on" title="Terra girando ou parada durante a missão">⟳</button>
       <button id="trajx2" title="Encerrar">✕</button>
     </div>
     <div class="ttx" id="trajtxt"></div>
@@ -4321,6 +4324,9 @@ let ACT_CEU_FOCO = null;
 const LDIR = new THREE.Vector3(-0.55, 0.35, 0.8).normalize();
 /* r161 · apoio para levar o rumo do Sol ao espaço da câmera a cada quadro */
 const _flz = new THREE.Vector3();
+/* r197 · a Terra da missão: girando (honesto) ou parada (didático), toggle
+   dele na barra da linha do tempo; persiste em carto:trajterra */
+const TRAJT = {gira:true};
 const ANIM_MATS = [];
 /* r171 · EM QUE PONTO DO ANO ESTAMOS. Devolve +1 no solstício de junho (verão
    no hemisfério norte), -1 no de dezembro e 0 nos equinócios. É a inclinação
@@ -9470,8 +9476,10 @@ function trajStart(id){
        sem dado, o mapeamento fica uniforme como antes */
     const pA0 = NA/NTOT, pCheg = (NA+NB)/NTOT, pPart = (NA+NB+NC)/NTOT;
     const fasesT = b.trajFases || (temD ? [pA0, pCheg, pPart] : [pA0, 0.9]);
-    /* piso de 4% no estacionamento: sem ele as 1,5 voltas viravam um borrão */
-    const pares = [[Math.max(fasesT[0], 0.04), pA0], [fasesT[1], pCheg]].concat((temD && fasesT[2] !== undefined) ? [[fasesT[2], pPart]] : []);
+    /* r197 · piso de até 22% no estacionamento (era 4): as 1,5 voltas da
+       catapultada agora duram uns 4 s de barra, legíveis (pedido dele),
+       limitado por metade da chegada para o remap seguir crescente */
+    const pares = [[Math.max(fasesT[0], Math.min(0.22, (fasesT[1] || 1)*0.5)), pA0], [fasesT[1], pCheg]].concat((temD && fasesT[2] !== undefined) ? [[fasesT[2], pPart]] : []);
     TRAJ.remapP = pares;
     TRAJ.tCheg1 = fasesT[1];
     for(let i=0;i<=NA;i++){
@@ -9619,6 +9627,7 @@ function trajStart(id){
   $('#trajfill').style.width = '0%';
   $('#trajplay').textContent = '⏸';
   $('#trajvel').textContent = '1×';
+  $('#trajterra').style.display = (TRAJ && TRAJ.dias) ? '' : 'none';
   $('#trajclock').classList.add('on');
   /* os marcos viram losangos na barra: clicar ali pula direto para o ano */
   { const bar = $('#trajbar');
@@ -9768,9 +9777,11 @@ function trajStep(now){
     const aL = ((TRAJ.tCheg1 !== undefined ? TRAJ.tCheg1 : 0.36) - TRAJ.prog)*TT*k27;
     if(TRAJ.luaViz) TRAJ.luaViz.position.set(Math.cos(aL)*TRAJ.luaD, 0, Math.sin(aL)*TRAJ.luaD);
     /* r195 · a Terra gira pelos DIAS da missão (24 h por dia da barra):
-       quem tem mapa gira pelo subsolar (spinMs); quem não tem, pelo spinner */
-    if(TRAJ.dias) TRAJ.spinMs = (TRAJ.ano1 - TRAJ.ano0)*TRAJ.prog*86400000;
-    if(TRAJ.spinMesh && TRAJ.dias)
+       quem tem mapa gira pelo subsolar (spinMs); quem não tem, pelo spinner.
+       r197 · com TERRA PARADA (toggle da barra) ela fica estática, para quem
+       só quer ler a rota em relação à Terra */
+    if(TRAJ.dias) TRAJ.spinMs = TRAJT.gira ? ((TRAJ.ano1 - TRAJ.ano0)*TRAJ.prog*86400000) : 0;
+    if(TRAJ.spinMesh && TRAJ.dias && TRAJT.gira)
       TRAJ.spinMesh.rotation.y = TRAJ.spinRot0 + (TRAJ.ano1 - TRAJ.ano0)*TRAJ.prog*Math.PI*2;
     /* no palco do foco, quem anda é a Lua REAL da cena (rotation.y = MENOS o
        ângulo de mundo, convenção de sempre) */
@@ -13228,7 +13239,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r196';
+const BUILD = 'r197';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -14089,6 +14100,14 @@ $('#trajvel').addEventListener('click', ()=>{
   $('#trajvel').textContent = String(TRAJ.vel).replace('.',',')+'×';
 });
 $('#trajx2').addEventListener('click', ()=>trajCancelar());
+TRAJT.gira = store.get('carto:trajterra', '1') !== '0';
+$('#trajterra').classList.toggle('on', TRAJT.gira);
+$('#trajterra').addEventListener('click', function(){
+  TRAJT.gira = !TRAJT.gira;
+  store.set('carto:trajterra', TRAJT.gira ? '1' : '0');
+  this.classList.toggle('on', TRAJT.gira);
+  showHint(TRAJT.gira ? 'TERRA GIRANDO: 1 volta por dia de missão' : 'TERRA PARADA: só a rota se move');
+});
 (function(){
   const bar = $('#trajbar');
   function pega(e){
