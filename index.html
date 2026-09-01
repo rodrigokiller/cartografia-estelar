@@ -432,6 +432,7 @@ body.photo #filtpop,body.photo #trajclock,body.photo #simclock,body.photo #cfgpo
 body.focusmode .chev{display:flex}
 /* r174: no mapa 1:1 as setas também aparecem: lá elas voam de corpo em corpo */
 body.escr11 .chev{display:flex}
+body.emtraj .chev{display:none !important}
 
 /* ---------- telemetry panel (desktop) ---------- */
 #panel{position:absolute;top:72px;right:22px;bottom:22px;width:min(400px,38vw);z-index:12;
@@ -1221,6 +1222,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
         </div>
         <div id="missbar"><i style="width:0%"></i></div>
         <div id="missnext"></div>
+        <button class="xbtn" id="btnhabreg" style="margin:10px 0 2px">◉ MUNDOS HABITÁVEIS LADO A LADO</button>
         <div id="cadmiss"></div>
       </div>
       <div id="missfind">
@@ -9548,7 +9550,7 @@ function trajStart(id){
       TRAJ.frameFoco.add(cf.group);
       TRAJ.corpo = cf.group;
       TRAJ.cpos0 = cf.group.position.clone();
-      CAMTW = null;
+      CAMTW = null; ZOOM = null;   /* r193: o alvo do zoom deslizante desfazia este set */
       CAM.dist = TRAJ.dAlvo;   /* Terra e Lua enquadradas de saída, em qualquer modo */
     }
     TRAJ.luaD = D;
@@ -9560,6 +9562,7 @@ function trajStart(id){
        CAMTW continua necessário, mas quem manda na distância agora é o dAlvo
        da fase 'chega', que sabe o tamanho do palco */
     if(fatorTL !== 1) CAMTW = null;
+    ZOOM = null;   /* r193: o alvo do zoom deslizante puxava a câmera de volta para longe */
   }
   $('#trajtxt').textContent = b.name;
   $('#trajano0').textContent = TRAJ.dias ? b.traj.d0 : (TRAJ.ano0 || '');
@@ -12488,7 +12491,12 @@ function cardRender(){
       showHint('A VIA LÁCTEA VISTA DE CIMA · O SISTEMA SOLAR FICA NUM BRAÇO');
       return;
     }
-    ST.mapCard = null; uiSync(); syncHash();
+    /* r193 · fechar a ficha de uma missão, sonda ou satélite volta para o
+       PAI dela (a Terra), não para o sistema inteiro (pedido dele) */
+    const bFecha = ST.mapCard && ST.mapCard.type === 'body' && ALLBODIES[ST.mapCard.id];
+    ST.mapCard = (bFecha && bFecha.satOf && ALLBODIES[bFecha.satOf] && ACT && ACT.kind === 'system')
+      ? {type:'body', id:bFecha.satOf, act:'focus', t:performance.now()} : null;
+    uiSync(); syncHash();
   });
   const bgc = $('#btngalcima'); if(bgc) bgc.addEventListener('click', ()=>{
     if(!(ACT && ACT.galCentro)) return;
@@ -12586,6 +12594,11 @@ function fadeCamada(cls){
 }
 function aplicaObjetos(){
   if(!ACT || !ACT.objs) return;
+  /* r193 · a seleção vence o filtro: sonda escondida que foi clicada, buscada
+     ou aberta por link aparece mesmo assim (regra dele) */
+  const escolhidos = new Set();
+  if(ST.mapCard && ST.mapCard.id) escolhidos.add(ST.mapCard.id);
+  if(typeof TRAJ !== 'undefined' && TRAJ && TRAJ.id) escolhidos.add(TRAJ.id);
   for(const o of ACT.objs){
     if(o.sempreOculto){
       /* foguete histórico: pick e rótulo sempre fora; o corpo é da linha do tempo */
@@ -12593,7 +12606,7 @@ function aplicaObjetos(){
       if(o.lbl) o.lbl.off = true;
       continue;
     }
-    const vis = FILTROBJ[o.cls] !== false;
+    const vis = FILTROBJ[o.cls] !== false || escolhidos.has(o.id);
     if(o.holder) o.holder.visible = vis;
     if(o.pick) o.pick.userData.escondido = !vis;
     if(o.lbl) o.lbl.off = !vis;
@@ -13147,7 +13160,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r192';
+const BUILD = 'r193';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13260,6 +13273,7 @@ $('#diagchip').addEventListener('click', function(){ this.classList.remove('on')
 })();
 $('#btnsnd').addEventListener('click', ()=>{ $('#filtpop').classList.remove('on'); $('#cfgpop').classList.remove('on'); $('#datepop').classList.remove('on'); $('#player').classList.toggle('on'); AUDIO.plSync(); });
 $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: coarse)').matches));
+{ const bh = $('#btnhabreg'); if(bh) bh.addEventListener('click', ()=>{ $('#mission').classList.remove('on'); abrirHab('terra'); }); }
 /* balãozinho no nosso estilo: qualquer elemento com data-tip ganha um */
 (function(){
   const tip = $('#tip');
