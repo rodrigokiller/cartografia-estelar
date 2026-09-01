@@ -8869,8 +8869,11 @@ void main(){
      Na escala 1:1 a cena de foco fica como estava: o eclipse das luas e a
      sombra projetada usam a convenção própria dela */
   const luzFoco = [];
-  if(!(ESCR.on && b._sys === 'sol'))
-    scene.traverse(o=>{ if(o.material && o.material.uniforms && o.material.uniforms.uL) luzFoco.push(o.material); });
+  /* r188 · o guarda que excluía o foco 1:1 saiu: sem registro o uL nunca era
+     atualizado e ficava fixo no espaço da CÂMERA, o farol de novo ('a luz do
+     brilho fica sempre onde eu to olhando', ele, na Lua por link direto).
+     O rumo usado é o luzDirFoco de cada modo (no 1:1, o Sol honesto) */
+  scene.traverse(o=>{ if(o.material && o.material.uniforms && o.material.uniforms.uL) luzFoco.push(o.material); });
   /* r172 · de onde vem a luz desta cena (o clarilão da beirada usa isto):
      no 1:1 é o rumo do Sol honesto; no cênico é o LDIR, onde o Sol mora agora */
   const luzDirFoco = (ESCR.on && b._sys === 'sol' && !b.comet)
@@ -8897,7 +8900,7 @@ void main(){
       if(marteCalota) marteCalota(SIMT.data);   /* as calotas de Marte seguem o relógio */
       if(giroLive && bg) apontarSubsolar(bg.mesh, SOLAZ_FOCO, SIMT.data);
       if(luzFoco.length){
-        _flz.copy(LDIR).transformDirection(camera.matrixWorldInverse);
+        _flz.copy(luzDirFoco).transformDirection(camera.matrixWorldInverse);
         for(const m of luzFoco) m.uniforms.uL.value.copy(_flz);
       }
       /* nos modos lentos (tempo real, 1 s = 1 s) o foco obedece o relógio:
@@ -13085,7 +13088,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r187';
+const BUILD = 'r188';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13134,9 +13137,18 @@ resize();
   if(mAlvo){ hh0 = mAlvo[1] && ALLBODIES[mAlvo[1]] ? 'corpo=' + mAlvo[1] : hh0.replace(mAlvo[0], ''); }
   const [k, v] = hh0.split('=');
   if(k==='corpo' && ALLBODIES[v]){
-    ST.level='focus'; ST.sys=ALLBODIES[v]._sys; ST.body=v;
-    markVisited(v);
-    swapScene(buildFocus(v));
+    /* r188 · na ESCALA 1:1 o corpo abre DENTRO do mapa único, voando até ele:
+       o link caindo na cena de foco era o que dava as 'partes de transição'
+       estranhas que ele reportou (entrar mudava de cena, sair voltava torto) */
+    if(ESCR.on && ALLBODIES[v]._sys === 'sol' && !ALLBODIES[v].traj){
+      ST.sys='sol'; swapScene(buildSystem('sol'));
+      markVisited(v);
+      setTimeout(()=>{ if(ACT && ACT.kind==='system' && ACT.escr) irAoCorpo(v); }, 450);
+    } else {
+      ST.level='focus'; ST.sys=ALLBODIES[v]._sys; ST.body=v;
+      markVisited(v);
+      swapScene(buildFocus(v));
+    }
   } else if(k==='sistema' && SYS[v]){
     ST.sys=v; swapScene(buildSystem(v));
   } else if(k==='galaxia'){
@@ -13171,7 +13183,8 @@ window.addEventListener('hashchange', ()=>{
   const mA = hh1.match(/&alvo=([a-z0-9_]+)/i);
   if(mA) hh1 = (mA[1] && ALLBODIES[mA[1]]) ? 'corpo=' + mA[1] : hh1.replace(mA[0], '');
   const [k, v] = hh1.split('=');
-  if(k==='corpo' && ALLBODIES[v] && ST.body!==v) gotoFocus(v);
+  if(k==='corpo' && ALLBODIES[v] && ST.body!==v
+     && !(ST.mapCard && ST.mapCard.id===v)) irAoCorpo(v);
   else if(k==='sistema' && SYS[v] && !(ST.level==='system' && ST.sys===v)) gotoSystem(v);
   else if(k==='galaxia'){ const gid=(v && GALAXIES.find(x=>x.id===v))?v:'vialactea'; if(ST.level!=='galaxy'||ST.gal!==gid) gotoGalaxy(gid); }
   else if(k==='universo' && ST.level!=='universe') gotoUniverse();
