@@ -1055,7 +1055,8 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="tpn">Sente e assista: a nave navega sozinha, sem cortes. Qualquer toque na cena devolve o controle. Rota concluída rende a conquista EXP-01.</div>
   </div>
   <div id="habpop">
-    <div class="tphead"><span>◉ MUNDOS HABITÁVEIS · LADO A LADO</span><button id="habpopx">✕</button></div>
+    <div class="tphead"><span>◉ A BANCADA · MUNDOS LADO A LADO</span><button id="habpopx">✕</button></div>
+    <div class="evtchips" id="habgrps"></div>
     <canvas id="habcanvas"></canvas>
     <div id="habinfo"></div>
     <div class="evtchips" id="habchips"></div>
@@ -1226,6 +1227,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
         <div id="missbar"><i style="width:0%"></i></div>
         <div id="missnext"></div>
         <button class="xbtn" id="btnhabreg" style="margin:10px 0 2px">◉ MUNDOS HABITÁVEIS LADO A LADO</button>
+        <button class="xbtn" id="btnhabsis" style="margin:4px 0 2px">◉ TAMANHOS DO SISTEMA SOLAR</button>
         <div id="cadmiss"></div>
       </div>
       <div id="missfind">
@@ -10358,9 +10360,30 @@ function syncHash(){
    de cada um embaixo. Um renderer próprio pequeno, criado uma vez só */
 /* r187: escala liga os TAMANHOS reais (raio pela ficha); luzAng é o Sol da
    bancada girando devagar, varrendo dia e noite em cada mundo */
-const HAB = {rnd:null, scene:null, cam:null, worlds:[], sel:['terra','kepler452b','t1e'], rodando:false, escala:true, luzAng:0.9};
+const HAB = {rnd:null, scene:null, cam:null, worlds:[], sel:['terra','kepler452b','t1e'], rodando:false, escala:true, luzAng:0.9, grupo:'hab'};
+/* r198 · as BANCADAS: habitáveis (a original), rochosos, gigantes e luas
+   grandes. Em cada grupo a escala é relativa ao maior corpo do grupo */
+const HAB_GRUPOS = [
+  ['hab', 'HABITÁVEIS', null],
+  ['rochosos', 'ROCHOSOS', ['mercurio', 'venus', 'terra', 'marte', 'lua']],
+  ['gigantes', 'GIGANTES', ['jupiter', 'saturno', 'urano', 'netuno']],
+  ['luas', 'LUAS GRANDES', ['lua', 'io', 'europa', 'ganimedes', 'tita', 'tritao']]
+];
 function habMundos(){
+  const gr = HAB_GRUPOS.find(g=>g[0] === HAB.grupo);
+  if(gr && gr[2]) return gr[2].map(id=>ALLBODIES[id]).filter(Boolean);
   return Object.values(ALLBODIES).filter(b=>b.visual && MODEMAP[b.visual.mode] === 4 && b.quick);
+}
+/* o raio-base do grupo: na bancada de habitáveis a Terra vale 1; nas outras,
+   o MAIOR corpo do grupo ocupa o teto (1.45) e o resto fica na razão real */
+function habBaseKm(){
+  if(HAB.grupo === 'hab' || typeof parseDia !== 'function') return 6371;
+  let mx = 0;
+  for(const b of habMundos()){
+    const dd = parseDia(b);
+    if(dd && dd.km && dd.km/2 > mx) mx = dd.km/2;
+  }
+  return mx ? mx/1.45 : 6371;
 }
 function habMonta(){
   const cv = document.getElementById('habcanvas');
@@ -10382,7 +10405,7 @@ function habMonta(){
     let rW = 1;
     if(HAB.escala && typeof parseDia === 'function'){
       const dd = parseDia(b);
-      if(dd && dd.km) rW = Math.max(0.4, Math.min(1.45, (dd.km/2)/6371));
+      if(dd && dd.km) rW = Math.max(0.32, Math.min(1.45, (dd.km/2)/habBaseKm()));
     }
     const m = new THREE.Mesh(new THREE.SphereGeometry(rW, 48, 48), planetMaterial(b.visual));
     m.position.x = (lista.length > 1 ? -2.3 + i*passo : 0);
@@ -10399,6 +10422,8 @@ function habMonta(){
       + '<div class="hsub">HABITABILIDADE ' + (b.hab|0) + '</div></div>';
   }).join('');
   document.getElementById('habinfo').innerHTML = info;
+  document.getElementById('habgrps').innerHTML = HAB_GRUPOS.map(g=>
+    '<button data-habgrp="' + g[0] + '"' + (HAB.grupo === g[0] ? ' class="on"' : '') + '>' + g[1] + '</button>').join('');
   document.getElementById('habchips').innerHTML = '<button data-habesc="1"' + (HAB.escala ? ' class="on"' : '') + '>TAMANHO EM ESCALA</button>' + habMundos().map(b=>
     '<button data-hab="' + b.id + '"' + (HAB.sel.indexOf(b.id) >= 0 ? ' class="on"' : '') + '>' + esc(b.name) + '</button>').join('');
 }
@@ -10415,7 +10440,11 @@ function habPasso(){
   if(HAB.rnd && HAB.scene) HAB.rnd.render(HAB.scene, HAB.cam);
   requestAnimationFrame(habPasso);
 }
-function abrirHab(idBase){
+function abrirHab(idBase, grupo){
+  if(grupo && HAB_GRUPOS.some(g=>g[0] === grupo) && grupo !== HAB.grupo){
+    HAB.grupo = grupo;
+    HAB.sel = habMundos().slice(0, 3).map(b=>b.id);
+  }
   if(idBase && ALLBODIES[idBase] && HAB.sel.indexOf(idBase) < 0){
     HAB.sel = [idBase].concat(HAB.sel.filter(x=>x !== idBase)).slice(0, 3);
   }
@@ -13239,7 +13268,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r197';
+const BUILD = 'r198';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13352,7 +13381,8 @@ $('#diagchip').addEventListener('click', function(){ this.classList.remove('on')
 })();
 $('#btnsnd').addEventListener('click', ()=>{ $('#filtpop').classList.remove('on'); $('#cfgpop').classList.remove('on'); $('#datepop').classList.remove('on'); $('#player').classList.toggle('on'); AUDIO.plSync(); });
 $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: coarse)').matches));
-{ const bh = $('#btnhabreg'); if(bh) bh.addEventListener('click', ()=>{ $('#mission').classList.remove('on'); abrirHab('terra'); }); }
+{ const bh = $('#btnhabreg'); if(bh) bh.addEventListener('click', ()=>{ $('#mission').classList.remove('on'); abrirHab('terra', 'hab'); }); }
+{ const bs = $('#btnhabsis'); if(bs) bs.addEventListener('click', ()=>{ $('#mission').classList.remove('on'); abrirHab(null, 'rochosos'); }); }
 /* balãozinho no nosso estilo: qualquer elemento com data-tip ganha um */
 (function(){
   const tip = $('#tip');
@@ -13778,6 +13808,14 @@ $('#dp_eventos').addEventListener('click', ()=>{
 });
 $('#evtpopx').addEventListener('click', ()=>$('#evtpop').classList.remove('on'));
 $('#habpopx').addEventListener('click', ()=>{ $('#habpop').classList.remove('on'); HAB.rodando = false; });
+$('#habgrps').addEventListener('click', e=>{
+  const g = e.target.closest('button[data-habgrp]');
+  if(!g) return;
+  HAB.grupo = g.dataset.habgrp;
+  const lst = habMundos();
+  HAB.sel = lst.slice(0, 3).map(b=>b.id);
+  habMonta();
+});
 $('#habchips').addEventListener('click', e=>{
   const t = e.target.closest('button[data-habesc]');
   if(t){ HAB.escala = !HAB.escala; habMonta(); return; }
