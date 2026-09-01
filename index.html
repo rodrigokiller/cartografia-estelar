@@ -13160,7 +13160,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r193';
+const BUILD = 'r194';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -14203,6 +14203,12 @@ function loop(){
     if(travavel){
       const pk = ACT.pickables.find(x=>x.userData.id===ST.mapCard.id);
       if(pk){ pk.getWorldPosition(SEGV); CAM.pivot.lerp(SEGV, Math.min(1, dt*5.2)); }
+    } else if(ST.mapCard && ST.mapCard.type === 'galviz' && ST.mapCard.id === 'vialactea'
+              && ACT.galCentro && ACT.escr){
+      /* r194 · o CENTRO DA GALÁXIA é um ponto FIXO da cena (nada do runaway
+         do r151, que perseguia picks reposicionados por quadro): com a Via
+         Láctea na ficha o pivô trava nele e o arrasto orbita a galáxia */
+      CAM.pivot.lerp(ACT.galCentro, Math.min(1, dt*5.2));
     } else {
       /* sem seleção o pivô volta ao centro, que agora é o próprio corpo */
       SEGV.set(0,0,0);
