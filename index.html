@@ -1417,8 +1417,10 @@ void main(){
     /* o MAR tem FUNDO: plataforma rasa verde-água colada na costa, oceano
        aberto escuro, e a textura do relevo abissal por baixo */
     float prof = clamp((uSea - n)/0.30, 0.0, 1.0);
-    vec3 raso = mix(vec3(0.24,0.55,0.58), uSeaCol*1.20, smoothstep(0.0, 0.22, prof));
-    vec3 seaC = mix(raso, uSeaCol*0.40, smoothstep(0.10, 0.85, prof));
+    /* r190 · degrade mais longo da margem: a plataforma desbota devagar para o
+       azul e o fundo chega mais tarde, sem o degrau que ele apontou */
+    vec3 raso = mix(vec3(0.22,0.50,0.55), uSeaCol*1.18, smoothstep(0.0, 0.34, prof));
+    vec3 seaC = mix(raso, uSeaCol*0.40, smoothstep(0.06, 0.95, prof));
     seaC *= 0.92 + 0.16*fbm(sp*uScale*3.0 + uSeed + 11.0);
     /* a TERRA tem ALTURA: costa baixa e clara, interior subindo, serra com
        neve onde o relevo aperta */
@@ -1426,6 +1428,12 @@ void main(){
     float rel = fbm(sp*uScale*5.5 + uSeed*2.0);
     vec3 landC = mix(uC2, uC1, smoothstep(0.02, 0.38, alt));
     landC = mix(landC, uC3, (1.0-smoothstep(0.10,0.38,abs(lat)))*0.34);
+    /* r190 · a faixa SECA dos subtrópicos: onde o ar desce, o verde vira
+       areia (Saara, Egito, Arábia, Austrália), recortada por ruído para nao
+       sair um cinturão chapado dando a volta no globo */
+    float dry = smoothstep(0.20, 0.32, abs(lat)) * (1.0 - smoothstep(0.44, 0.62, abs(lat)));
+    dry *= smoothstep(0.38, 0.72, fbm(sp*uScale*0.9 + uSeed + 21.0));
+    landC = mix(landC, uC3*vec3(1.10, 1.00, 0.80), dry*0.60);
     landC = mix(landC, uC3*1.05, smoothstep(0.62, 0.92, fbm(sp*uScale*2.4 + uSeed + 3.1))*0.28);
     landC *= 0.86 + 0.30*rel;
     landC = mix(landC, vec3(0.90,0.93,0.95), smoothstep(0.78, 0.97, alt*(0.55+0.6*rel))*0.55*clamp(uCapAmt*1.4, 0.0, 1.0));
@@ -7369,6 +7377,14 @@ function texturaTerra(){
     /* mais suave que no mapa de cor: como ALTURA, contraste demais deixa a
        terra com cara de papel amassado */
     ag.save(); ag.globalAlpha = 0.62; ag.drawImage(rm, 0, 0); ag.restore();
+    /* r190 · O PISO DA TERRA: o relevo escuro cavava poços abaixo do nível do
+       mar no MEIO do continente, e o shader v2 lia isso como LAGO (as 'aguas
+       dentro da Africa' do print dele). O lighten levanta só o que afundou
+       demais, sem tocar em serra nem em costa */
+    ag.save();
+    ag.globalCompositeOperation = 'lighten';
+    for(const poly of COSTAS){ contorno(ag, poly); ag.fillStyle = '#848484'; ag.fill(); }
+    ag.restore();
     /* as cordilheiras: as linhas do BIOMAS são justamente as serras */
     ag.save();
     ag.globalCompositeOperation = 'source-atop';
@@ -13099,7 +13115,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r189';
+const BUILD = 'r190';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
