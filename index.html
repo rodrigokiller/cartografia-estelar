@@ -7490,7 +7490,11 @@ function texturaLua(){
     const x = rnd()*W, y = rnd()*H;
     if(ehMar(x, y) && rnd() < 0.94) continue;          /* mar quase liso */
     const grau = 0.10 + Math.pow(rnd(), 3.8)*3.0;
-    cratera(x, y, Math.max(1.0, grau/360*W), 0.45 + rnd()*0.55, grau > 1.5);
+    const rr = Math.max(1.0, grau/360*W), ff = 0.45 + rnd()*0.55;
+    cratera(x, y, rr, ff, grau > 1.5);
+    /* r189 · sem costura: a cratera na beirada continua do outro lado */
+    if(x < rr*3) cratera(x + W, y, rr, ff, grau > 1.5);
+    else if(x > W - rr*3) cratera(x - W, y, rr, ff, grau > 1.5);
   }
 
   /* 3b · agora sim a cor dos mares, por cima das crateras: eles são lisos e
@@ -7897,7 +7901,11 @@ const LIVE_VERT = `
 varying vec2 vUv; varying vec3 vN; varying vec3 vV; varying vec3 vT; varying vec3 vB;
 void main(){ vUv = uv; vN = normalize(normalMatrix * normal);
   vec3 nL = normalize(position);
-  vec3 tL = normalize(cross(vec3(0.0, 1.0, 0.0), position));
+  /* r189 · no polo o cross com Y é (0,0,0) e normalize(0) vira NaN: era o
+     'buraco' preto no topo da Lua. Perto do polo a tangente ganha um rumo
+     qualquer finito (o bump lá é desligado no fragmento) */
+  vec3 crT = cross(vec3(0.0, 1.0, 0.0), position);
+  vec3 tL = (dot(crT, crT) > 1e-8) ? normalize(crT) : vec3(1.0, 0.0, 0.0);
   vT = normalize(normalMatrix * tL);
   vB = normalize(normalMatrix * cross(nL, tL));
   vec4 mv = modelViewMatrix * vec4(position, 1.0);
@@ -7919,7 +7927,10 @@ void main(){
     float hR = texture2D(uAlt, vUv + vec2(uTexel.x, 0.0)).r;
     float hD = texture2D(uAlt, vUv - vec2(0.0, uTexel.y)).r;
     float hU = texture2D(uAlt, vUv + vec2(0.0, uTexel.y)).r;
-    N = normalize(N - uBump*((hR - hL)*normalize(vT) + (hU - hD)*normalize(vB)));
+    /* r189 · o bump desliga suave nos polos: la a base tangente nao tem rumo
+       honesto e o mapa equirretangular vira um pontinho espremido */
+    float pfade = smoothstep(0.004, 0.03, vUv.y) * (1.0 - smoothstep(0.97, 0.996, vUv.y));
+    N = normalize(N - uBump*pfade*((hR - hL)*normalize(vT) + (hU - hD)*normalize(vB)));
   }
   float dif = dot(N, L);
   float dia = smoothstep(-0.08, 0.25, dif);
@@ -13088,7 +13099,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r188';
+const BUILD = 'r189';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
