@@ -6577,7 +6577,7 @@ function buildSystem(sysId, spin0){
     });
   }
   const camMaxDin = escrAtivo ? 4e6*LY_UA*ESCR_UA : Math.max(S.camMax || 60, alcance * 1.7);
-  return {kind:'system', scene, sceneCeu, eclLinha, aneisMira, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, liveGiro, solLuz, ceuPicks, ceuAlvos, galCentro, galPolo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
+  return {kind:'system', scene, sceneCeu, eclLinha, aneisMira, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, liveGiro, solLuz, spinners, ceuPicks, ceuAlvos, galCentro, galPolo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
@@ -6862,7 +6862,9 @@ function buildSystem(sysId, spin0){
       for(const lv of liveGiro){
         lv.grupo.getWorldPosition(_lzA);
         if(_lzA.lengthSq() < 1e-12) continue;
-        apontarSubsolar(lv.mesh, Math.atan2(-_lzA.z, -_lzA.x), SIMT.data);
+        /* r195 · na linha do tempo em DIAS a longitude sob o Sol anda com os
+           dias da missão (TRAJ.spinMs), sem perder a âncora subsolar */
+        apontarSubsolar(lv.mesh, Math.atan2(-_lzA.z, -_lzA.x), SIMT.data + ((typeof TRAJ !== 'undefined' && TRAJ && TRAJ.spinMs) ? TRAJ.spinMs : 0));
       }
       /* rastro elíptico acompanha o relógio (e a linha do tempo) */
       if(RASTRO.on) for(const rt of rastros) if(rt.userData.elip) rastroElip(rt);
@@ -6878,7 +6880,12 @@ function buildSystem(sysId, spin0){
           else s.obj.rotation.y += s.spd*dt*0.15;
         }
       } else {
-        for(const s of spinners) s.obj.rotation.y += s.spd*dt;
+        for(const s of spinners){
+          /* r195 · na linha do tempo o foguete tem a orientação da ROTA e a
+             Terra gira pelos DIAS da missão: o gira-gira decorativo espera */
+          if(TRAJ && (TRAJ.naveSpin === s.obj || TRAJ.spinMesh === s.obj)) continue;
+          s.obj.rotation.y += s.spd*dt;
+        }
       }
       if(starGlow){
         const z = Math.min(1, Math.max(0, (CAM.dist-CAM.min)/(CAM.min*1.6)));
@@ -9368,6 +9375,12 @@ function trajStart(id){
   if(oo && oo.corpo){ TRAJ.corpo = oo.corpo; TRAJ.cpos0 = oo.corpo.position.clone();
     if(oo.sempreOculto){
       oo.corpo.visible = true; TRAJ.corpoTemp = oo.corpo;
+      /* r195 · zera o giro acumulado do modelo: quem manda na atitude da nave
+         é a rota (TRAJ.orienta), não o spinner de planeta */
+      if(ACT.spinners){
+        const spN = ACT.spinners.find(x=>x.id === id);
+        if(spN){ TRAJ.naveSpin = spN.obj; TRAJ.naveSpinRot0 = spN.obj.rotation.y; spN.obj.rotation.y = 0; }
+      }
       /* escala real: o foguete não pode ser um gigante de milhares de km */
       if(ESCR.on && ST.sys === 'sol'){ TRAJ.corpoEsc0 = oo.corpo.scale.x; oo.corpo.scale.multiplyScalar(0.0084); }
       /* mapa cênico: encolhe junto com a rota (r140) */
@@ -9522,10 +9535,22 @@ function trajStart(id){
     if(!focoPalco){
       /* a Lua do palco cênico agora tem 0,27 do raio da Terra desenhada,
          que é a razão de verdade (a distância é que é comprimida) */
-      TRAJ.luaViz = new THREE.Mesh(new THREE.SphereGeometry(fatorTL === 1 ? (ALLBODIES.terra.sys.size*0.273) : 0.000174, 20, 20),
-        new THREE.MeshBasicMaterial({color:0x9a958c}));
+      /* r195 · a Lua da missão usa o MAPA dela (mares, Tycho), com a luz do
+         Sol da cena via registro solLuz; sem o motor, cai na bola de antes */
+      const luaMat = (typeof liveMaterial === 'function') ? liveMaterial('lua') : new THREE.MeshBasicMaterial({color:0x9a958c});
+      TRAJ.luaViz = new THREE.Mesh(new THREE.SphereGeometry(fatorTL === 1 ? (ALLBODIES.terra.sys.size*0.273) : 0.000174, 24, 24), luaMat);
       TRAJ.luaViz.position.set(D, 0, 0);
       o.obj.parent.add(TRAJ.luaViz);
+      if(luaMat.uniforms && luaMat.uniforms.uL && ACT.solLuz){
+        ACT.solLuz.push({mesh:TRAJ.luaViz, grupo:TRAJ.luaViz, mats:[luaMat]});
+        TRAJ.luaLuz = luaMat;
+      }
+      /* a órbita da Lua desenhada no palco da missão (pedido dele) */
+      { const ptsO = [];
+        for(let i2 = 0; i2 <= 96; i2++){ const a2 = i2/96*Math.PI*2; ptsO.push(new THREE.Vector3(Math.cos(a2)*D, 0, Math.sin(a2)*D)); }
+        TRAJ.luaOrb = new THREE.Line(new THREE.BufferGeometry().setFromPoints(ptsO),
+          new THREE.LineBasicMaterial({color:0x3a4f60, transparent:true, opacity:0.30}));
+        o.obj.parent.add(TRAJ.luaOrb); }
       TRAJ.luaLbl = {el:makeLabel('LUA', 'faint', null),
         get:(v)=>{ if(TRAJ && TRAJ.luaViz) TRAJ.luaViz.getWorldPosition(v); v.y += (TRAJ && TRAJ.fatorTL && TRAJ.fatorTL !== 1) ? 0.002 : 0.55; }};
       /* esconde a Lua da CENA enquanto a da linha do tempo existe, senão
@@ -9555,6 +9580,11 @@ function trajStart(id){
     }
     TRAJ.luaD = D;
     TRAJ.fatorTL = fatorTL;
+    /* r195 · a TERRA acompanha os dias: 1 volta por dia de missão */
+    if(TRAJ.dias && !focoPalco && ACT.spinners){
+      const spT = ACT.spinners.find(x=>x.id === (b.satOf || 'terra'));
+      if(spT){ TRAJ.spinMesh = spT.obj; TRAJ.spinRot0 = spT.obj.rotation.y; }
+    }
     /* na escala real a câmera JÁ ABRE enquadrando os 384 mil km: o tween era
        cancelado pelo resto do trajStart e a rota ficava minúscula com cara de
        zoom travado (bug que o Rodrigo viu) */
@@ -9635,7 +9665,14 @@ function trajCancelar(){
   TRAJ = {fase:'volta', t0:performance.now(), ms:850, p0:CAM.pivot.clone(), dA:CAM.dist, d1:TRAJ.d0,
           corpo:TRAJ.corpo, cpos0:TRAJ.cpos0, corpoTemp:TRAJ.corpoTemp,
           rotHold0:TRAJ.rotHold0, holderGirado:TRAJ.holderGirado,
-          rotaViz:TRAJ.rotaViz, luaViz:TRAJ.luaViz, luaLbl:TRAJ.luaLbl};
+          rotaViz:TRAJ.rotaViz, luaViz:TRAJ.luaViz, luaLbl:TRAJ.luaLbl,
+          /* r195 · os campos novos atravessam a volta, senão a limpeza não
+             devolve órbita, luz da Lua e giros (spinMs fica de fora de
+             propósito: na volta a Terra retorna ao dia de hoje) */
+          luaOrb:TRAJ.luaOrb, luaLuz:TRAJ.luaLuz, luaCena:TRAJ.luaCena,
+          spinMesh:TRAJ.spinMesh, spinRot0:TRAJ.spinRot0,
+          naveSpin:TRAJ.naveSpin, naveSpinRot0:TRAJ.naveSpinRot0,
+          corpoEsc0:TRAJ.corpoEsc0, dias:TRAJ.dias};
   cardRender();
 }
 function trajLimpar(){
@@ -9653,6 +9690,13 @@ function trajLimpar(){
   if(TRAJ){
     if(TRAJ.rotaViz && TRAJ.rotaViz.parent) TRAJ.rotaViz.parent.remove(TRAJ.rotaViz);
     if(TRAJ.luaViz && TRAJ.luaViz.parent) TRAJ.luaViz.parent.remove(TRAJ.luaViz);
+    if(TRAJ.luaOrb && TRAJ.luaOrb.parent) TRAJ.luaOrb.parent.remove(TRAJ.luaOrb);
+    if(TRAJ.luaLuz && ACT && ACT.solLuz){
+      const ixL = ACT.solLuz.findIndex(x=>x.mats && x.mats[0] === TRAJ.luaLuz);
+      if(ixL >= 0) ACT.solLuz.splice(ixL, 1);
+    }
+    if(TRAJ.spinMesh) TRAJ.spinMesh.rotation.y = TRAJ.spinRot0;
+    if(TRAJ.naveSpin) TRAJ.naveSpin.rotation.y = TRAJ.naveSpinRot0;
     if(TRAJ.luaLbl){
       if(ACT && ACT.labels){ const i = ACT.labels.indexOf(TRAJ.luaLbl); if(i >= 0) ACT.labels.splice(i, 1); }
       if(TRAJ.luaLbl.el && TRAJ.luaLbl.el.remove) TRAJ.luaLbl.el.remove();
@@ -9704,6 +9748,11 @@ function trajStep(now){
     const TT = TRAJ.ano1 || 8, k27 = (Math.PI*2)/27.3;
     const aL = ((TRAJ.tCheg1 !== undefined ? TRAJ.tCheg1 : 0.36) - TRAJ.prog)*TT*k27;
     if(TRAJ.luaViz) TRAJ.luaViz.position.set(Math.cos(aL)*TRAJ.luaD, 0, Math.sin(aL)*TRAJ.luaD);
+    /* r195 · a Terra gira pelos DIAS da missão (24 h por dia da barra):
+       quem tem mapa gira pelo subsolar (spinMs); quem não tem, pelo spinner */
+    if(TRAJ.dias) TRAJ.spinMs = (TRAJ.ano1 - TRAJ.ano0)*TRAJ.prog*86400000;
+    if(TRAJ.spinMesh && TRAJ.dias)
+      TRAJ.spinMesh.rotation.y = TRAJ.spinRot0 + (TRAJ.ano1 - TRAJ.ano0)*TRAJ.prog*Math.PI*2;
     /* no palco do foco, quem anda é a Lua REAL da cena (rotation.y = MENOS o
        ângulo de mundo, convenção de sempre) */
     if(TRAJ.luaFoco) TRAJ.luaFoco.kh.rotation.y = -aL;
@@ -13160,7 +13209,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r194';
+const BUILD = 'r195';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
