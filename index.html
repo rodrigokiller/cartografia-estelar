@@ -10406,10 +10406,13 @@ function habMundos(){
 }
 /* o raio-base do grupo: na bancada de habitáveis a Terra vale 1; nas outras,
    o MAIOR corpo do grupo ocupa o teto (1.45) e o resto fica na razão real */
-function habBaseKm(){
-  if(HAB.grupo === 'hab' || typeof parseDia !== 'function' || !habMundos().length) return 6371;
+function habBaseKm(lista){
+  /* r207 · a base vem da SELEÇÃO atual, não do grupo: tirar Júpiter faz os
+     pequenos crescerem, e corpo recém-buscado já entra na razão certa */
+  const fonte = (lista && lista.length) ? lista : habMundos();
+  if(HAB.grupo === 'hab' || typeof parseDia !== 'function' || !fonte.length) return 6371;
   let mx = 0;
-  for(const b of habMundos()){
+  for(const b of fonte){
     const dd = parseDia(b);
     if(dd && dd.km && dd.km/2 > mx) mx = dd.km/2;
   }
@@ -10463,12 +10466,16 @@ function habMonta(){
   const lista = HAB.sel.map(id=>ALLBODIES[id]).filter(Boolean);
   /* r201 · os raios primeiro, porque a POSIÇÃO agora é por raio acumulado:
      cada mundo ocupa 2r + folga e acabou a sobreposição que ele fotografou */
+  const baseKm = habBaseKm(lista);
   const raios = lista.map(b=>{
     let rW = 1;
     if(HAB.escala && typeof parseDia === 'function'){
       const dd = parseDia(b);
-      if(dd && dd.km) rW = Math.max((HAB.grupo === 'sistema' || HAB.grupo === 'perso') ? 0.05 : 0.32, Math.min(1.45, (dd.km/2)/habBaseKm()));
+      if(dd && dd.km) rW = Math.max((HAB.grupo === 'sistema' || HAB.grupo === 'perso') ? 0.05 : 0.32, Math.min(1.45, (dd.km/2)/baseKm));
     }
+    /* r207 · anel gigantesco (o disco do Sgr A* tem rout 3.4) cabe na moldura:
+       o corpo encolhe para o disco não estourar em cima e embaixo */
+    if(b.visual && b.visual.rings && b.visual.rings.rout > 2.6) rW = Math.min(rW, 1.9/b.visual.rings.rout);
     return rW;
   });
   const FOLGA = 0.75;
@@ -10514,7 +10521,8 @@ function habMonta(){
         vezesT = ' · ' + (rz >= 2 ? rz.toFixed(1).replace('.', ',') : rz.toFixed(2).replace('.', ',')) + ' × TERRA';
       }
     }
-    return '<div class="hcol' + (mini ? ' mini' : '') + '" style="left:' + (pxs[i] - Math.round(larg/2)) + 'px;width:' + larg + 'px">'
+    const lxx = Math.max(2, Math.min(Wpx - larg - 2, pxs[i] - Math.round(larg/2)));
+    return '<div class="hcol' + (mini ? ' mini' : '') + '" style="left:' + lxx + 'px;width:' + larg + 'px">'
       + '<div class="hnm">' + esc(b.name) + '</div>'
       + '<div class="hsub">' + esc(dia) + esc(vezesT) + '</div>'
       + '<div class="hbarra"><i style="width:' + Math.max(2, Math.min(100, b.hab|0)) + '%"></i></div>'
@@ -10574,8 +10582,10 @@ function abrirHab(idBase, grupo){
   if(idBase && ALLBODIES[idBase] && HAB.sel.indexOf(idBase) < 0){
     HAB.sel = [idBase].concat(HAB.sel.filter(x=>x !== idBase)).slice(0, 12);
   }
-  habMonta();
+  /* r207 · mostrar ANTES de montar: escondido, o clientWidth dá zero e a
+     primeira bancada nascia estreita e encostada à esquerda (bug dele) */
   document.getElementById('habpop').classList.add('on');
+  habMonta();
   if(!HAB.rodando){ HAB.rodando = true; habPasso(); }
 }
 /* r203 · a bancada 3D da ANÁLISE COMPARATIVA: renderer próprio pequeno,
@@ -13471,7 +13481,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r206';
+const BUILD = 'r207';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
