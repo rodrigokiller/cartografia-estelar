@@ -157,12 +157,12 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #panel::before,#panel::after,#findbox::before,#findbox::after,#cmpcard::before,#cmpcard::after,
 #helpcard::before,#helpcard::after,#player::before,#player::after,#misscard::before,#misscard::after,
 #filtpop::before,#filtpop::after,#cfgpop::before,#cfgpop::after,#tut::before,#tut::after,
-#datepop::before,#datepop::after,#tourpop::before,#tourpop::after{
+#datepop::before,#datepop::after,#tourpop::before,#tourpop::after,#habpop::before,#habpop::after{
   content:'';position:absolute;pointer-events:none;z-index:2}
-#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before,#filtpop::before,#cfgpop::before,#tut::before,#datepop::before,#tourpop::before{
+#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before,#filtpop::before,#cfgpop::before,#tut::before,#datepop::before,#tourpop::before,#habpop::before{
   left:-1px;top:-1px;
   background:linear-gradient(-45deg,transparent calc(50% - 1px),var(--line2) calc(50% - 1px),var(--line2) 50%,transparent 50%)}
-#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after,#filtpop::after,#cfgpop::after,#tut::after,#datepop::after,#tourpop::after{
+#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after,#filtpop::after,#cfgpop::after,#tut::after,#datepop::after,#tourpop::after,#habpop::after{
   right:-1px;bottom:-1px;
   background:linear-gradient(-45deg,transparent 50%,var(--line2) 50%,var(--line2) calc(50% + 1px),transparent calc(50% + 1px))}
 #panel::before,#panel::after{width:18px;height:18px}
@@ -177,6 +177,7 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #tut::before,#tut::after{width:12px;height:12px}
 #datepop::before,#datepop::after{width:10px;height:10px}
 #tourpop::before,#tourpop::after{width:10px;height:10px}
+#habpop::before,#habpop::after{width:10px;height:10px}
 #tourpoplista .filtrow b{color:var(--amber)}
 #tut::before{background:linear-gradient(-45deg,transparent calc(50% - 1px),rgba(255,180,84,.45) calc(50% - 1px),rgba(255,180,84,.45) 50%,transparent 50%)}
 #tut::after{background:linear-gradient(-45deg,transparent 50%,rgba(255,180,84,.45) 50%,rgba(255,180,84,.45) calc(50% + 1px),transparent calc(50% + 1px))}
@@ -252,16 +253,19 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #datepop .drow{display:flex;gap:8px}
 #datepop .drow .xbtn{margin:0;flex:1}
 #habpop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:27;display:none;
-  width:min(560px,94vw);background:var(--panel);border:1px solid var(--line2);padding:14px 16px 12px;
+  width:min(900px,94vw);background:var(--panel);border:1px solid var(--line2);padding:14px 16px 12px;
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
 #habpop.on{display:block;animation:tourpopnasce .24s ease-out}
 #habpop .tphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
   font-family:var(--mono);font-size:9.5px;letter-spacing:2.5px;color:var(--amber)}
 #habpop .tphead button{width:20px;height:20px;background:none;border:1px solid var(--line2);color:var(--dim);
   font-family:var(--mono);font-size:9px;line-height:1;cursor:pointer;padding:0}
-#habcanvas{display:block;width:100%;height:200px;background:#05080f;border:1px solid var(--line)}
-#habinfo{display:flex;gap:8px;margin:8px 0}
-#habinfo .hcol{flex:1;min-width:0}
+#habscroll{overflow-x:auto;overflow-y:hidden;border:1px solid var(--line);background:#05080f}
+#habscroll::-webkit-scrollbar{height:5px}
+#habscroll::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
+#habcanvas{display:block;height:250px}
+#habinfo{position:relative;height:58px;margin:2px 0 8px}
+#habinfo .hcol{position:absolute;top:6px;width:148px}
 #habinfo .hnm{font-family:var(--mono);font-size:9px;letter-spacing:1.6px;color:var(--ion);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #habinfo .hsub{font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--dim2);margin-top:2px}
 #habinfo .hbarra{height:3px;background:rgba(126,180,255,.14);margin-top:5px}
@@ -1057,10 +1061,10 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div id="habpop">
     <div class="tphead"><span>◉ A BANCADA · MUNDOS LADO A LADO</span><button id="habpopx">✕</button></div>
     <div class="evtchips" id="habgrps"></div>
-    <canvas id="habcanvas"></canvas>
-    <div id="habinfo"></div>
+    <div id="habscroll"><canvas id="habcanvas"></canvas>
+    <div id="habinfo"></div></div>
     <div class="evtchips" id="habchips"></div>
-    <div class="tpn">Os globos giram com o motor de verdade do mapa. Toque num mundo para pô-lo ou tirá-lo da bancada (até três).</div>
+    <div class="tpn">Os globos giram com o motor de verdade do mapa, na inclinação real de cada eixo. Toque num nome para pô-lo ou tirá-lo da bancada (até doze; a fileira rola de lado).</div>
   </div>
   <div id="evtpop">
     <div class="tphead"><span>◈ EVENTOS DO CÉU</span><button id="evtpopx">✕</button></div>
@@ -10369,6 +10373,7 @@ const HAB = {rnd:null, scene:null, cam:null, worlds:[], sel:['terra','kepler452b
    grandes. Em cada grupo a escala é relativa ao maior corpo do grupo */
 const HAB_GRUPOS = [
   ['hab', 'HABITÁVEIS', null],
+  ['sistema', 'SISTEMA SOLAR', ['mercurio', 'venus', 'terra', 'marte', 'jupiter', 'saturno', 'urano', 'netuno', 'plutao', 'lua']],
   ['rochosos', 'ROCHOSOS', ['mercurio', 'venus', 'terra', 'marte', 'lua']],
   ['gigantes', 'GIGANTES', ['jupiter', 'saturno', 'urano', 'netuno']],
   ['luas', 'LUAS GRANDES', ['lua', 'io', 'europa', 'ganimedes', 'tita', 'tritao']]
@@ -10393,39 +10398,62 @@ function habMonta(){
   const cv = document.getElementById('habcanvas');
   if(!HAB.rnd){
     HAB.rnd = new THREE.WebGLRenderer({canvas:cv, antialias:true, alpha:true});
-    HAB.cam = new THREE.PerspectiveCamera(34, 1, 0.1, 50);
-    HAB.cam.position.set(0, 0, 6.4);
+    HAB.cam = new THREE.PerspectiveCamera(34, 1, 0.1, 80);
   }
-  const W = cv.clientWidth || 520, H2 = 200;
-  HAB.rnd.setSize(W, H2, false);
-  HAB.cam.aspect = W/H2; HAB.cam.updateProjectionMatrix();
   HAB.scene = new THREE.Scene();
   HAB.worlds = [];
   const lista = HAB.sel.map(id=>ALLBODIES[id]).filter(Boolean);
-  const passo = lista.length > 1 ? 4.6/(lista.length - 1) : 0;
-  lista.forEach((b, i)=>{
-    /* r187 · EM ESCALA: o raio vem do diâmetro da ficha (a Terra vale 1).
-       TRAPPIST-1e fica visivelmente menor que Kepler-452b, como na vida */
+  /* r201 · os raios primeiro, porque a POSIÇÃO agora é por raio acumulado:
+     cada mundo ocupa 2r + folga e acabou a sobreposição que ele fotografou */
+  const raios = lista.map(b=>{
     let rW = 1;
     if(HAB.escala && typeof parseDia === 'function'){
       const dd = parseDia(b);
-      if(dd && dd.km) rW = Math.max(0.32, Math.min(1.45, (dd.km/2)/habBaseKm()));
+      if(dd && dd.km) rW = Math.max((HAB.grupo === 'sistema') ? 0.05 : 0.32, Math.min(1.45, (dd.km/2)/habBaseKm()));
     }
-    const m = new THREE.Mesh(new THREE.SphereGeometry(rW, 48, 48), planetMaterial(b.visual));
-    m.position.x = (lista.length > 1 ? -2.3 + i*passo : 0);
-    m.rotation.z = -0.2;
+    return rW;
+  });
+  const FOLGA = 0.75;
+  const xs = []; let cur = 0.3;
+  lista.forEach((b, i)=>{ cur += raios[i]; xs.push(cur); cur += raios[i] + FOLGA; });
+  const T = Math.max(3.4, cur - FOLGA + 0.3);
+  /* o canvas cresce com a fileira e o TRILHO rola de lado (o scroll fino da
+     casa); PXU é o pixel por unidade da bancada */
+  const PXU = 61, H2 = 250;
+  const Wmin = (cv.parentElement && cv.parentElement.parentElement && cv.parentElement.parentElement.clientWidth) || 520;
+  const Wpx = Math.max(Math.round(T*PXU), Wmin - 4);
+  cv.style.width = Wpx + 'px';
+  HAB.rnd.setSize(Wpx, H2, false);
+  HAB.cam.aspect = Wpx/H2; HAB.cam.updateProjectionMatrix();
+  /* com o FOV vertical fixo, o z que mostra T unidades é constante */
+  HAB.cam.position.set(0, 0, H2/(2*PXU*Math.tan(17*Math.PI/180)));
+  const off = (Wpx - T*PXU)/2/PXU;   /* centraliza quando o trilho nem rola */
+  lista.forEach((b, i)=>{
+    const gW = new THREE.Group();
+    gW.position.x = xs[i] - T/2 + ((Wpx > T*PXU) ? 0 : 0);
+    /* r201 · a INCLINAÇÃO REAL do eixo (como no exemplo CSS que ele mandou):
+       Urano entra quase deitado, Saturno a 26,7 graus */
+    const inc = (ESCALA_REAL_INCL[b.id] !== undefined) ? ESCALA_REAL_INCL[b.id] : 11.5;
+    gW.rotation.z = -inc*Math.PI/180;
+    const m = new THREE.Mesh(new THREE.SphereGeometry(raios[i], 48, 48), planetMaterial(b.visual));
     if(m.material.uniforms && m.material.uniforms.uL) m.material.uniforms.uL.value.set(0.5, 0.35, 0.8).normalize();
-    HAB.scene.add(m);
+    gW.add(m);
+    HAB.scene.add(gW);
     HAB.worlds.push(m);
   });
-  const info = lista.map(b=>{
+  /* as colunas de informação ancoradas EMBAIXO de cada mundo (rolam junto) */
+  const meio = (Wpx - T*PXU)/2;
+  const info = lista.map((b, i)=>{
     const dia = (b.quick.find(q=>/DIÂMETRO|RAIO/.test(q[0])) || [])[1] || '';
-    return '<div class="hcol"><div class="hnm">' + esc(b.name) + '</div>'
+    const lx = Math.round(xs[i]*PXU + Math.max(0, meio) - 74);
+    return '<div class="hcol" style="left:' + lx + 'px"><div class="hnm">' + esc(b.name) + '</div>'
       + '<div class="hsub">' + esc(dia) + '</div>'
       + '<div class="hbarra"><i style="width:' + Math.max(2, Math.min(100, b.hab|0)) + '%"></i></div>'
       + '<div class="hsub">HABITABILIDADE ' + (b.hab|0) + '</div></div>';
   }).join('');
-  document.getElementById('habinfo').innerHTML = info;
+  const hi = document.getElementById('habinfo');
+  hi.innerHTML = info;
+  hi.style.width = Wpx + 'px';
   document.getElementById('habgrps').innerHTML = HAB_GRUPOS.map(g=>
     '<button data-habgrp="' + g[0] + '"' + (HAB.grupo === g[0] ? ' class="on"' : '') + '>' + g[1] + '</button>').join('');
   document.getElementById('habchips').innerHTML = '<button data-habesc="1"' + (HAB.escala ? ' class="on"' : '') + '>TAMANHO EM ESCALA</button>' + habMundos().map(b=>
@@ -10447,10 +10475,10 @@ function habPasso(){
 function abrirHab(idBase, grupo){
   if(grupo && HAB_GRUPOS.some(g=>g[0] === grupo) && grupo !== HAB.grupo){
     HAB.grupo = grupo;
-    HAB.sel = habMundos().slice(0, 3).map(b=>b.id);
+    HAB.sel = habMundos().map(b=>b.id).slice(0, 12);
   }
   if(idBase && ALLBODIES[idBase] && HAB.sel.indexOf(idBase) < 0){
-    HAB.sel = [idBase].concat(HAB.sel.filter(x=>x !== idBase)).slice(0, 3);
+    HAB.sel = [idBase].concat(HAB.sel.filter(x=>x !== idBase)).slice(0, 12);
   }
   habMonta();
   document.getElementById('habpop').classList.add('on');
@@ -13296,7 +13324,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r200';
+const BUILD = 'r201';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13431,7 +13459,7 @@ $('#diagchip').addEventListener('click', function(){ this.classList.remove('on')
 $('#btnsnd').addEventListener('click', ()=>{ $('#filtpop').classList.remove('on'); $('#cfgpop').classList.remove('on'); $('#datepop').classList.remove('on'); $('#player').classList.toggle('on'); AUDIO.plSync(); });
 $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: coarse)').matches));
 { const bh = $('#btnhabreg'); if(bh) bh.addEventListener('click', ()=>{ $('#mission').classList.remove('on'); abrirHab('terra', 'hab'); }); }
-{ const bs = $('#btnhabsis'); if(bs) bs.addEventListener('click', ()=>{ $('#mission').classList.remove('on'); abrirHab(null, 'rochosos'); }); }
+{ const bs = $('#btnhabsis'); if(bs) bs.addEventListener('click', ()=>{ $('#mission').classList.remove('on'); abrirHab(null, 'sistema'); }); }
 /* balãozinho no nosso estilo: qualquer elemento com data-tip ganha um */
 (function(){
   const tip = $('#tip');
@@ -13861,8 +13889,7 @@ $('#habgrps').addEventListener('click', e=>{
   const g = e.target.closest('button[data-habgrp]');
   if(!g) return;
   HAB.grupo = g.dataset.habgrp;
-  const lst = habMundos();
-  HAB.sel = lst.slice(0, 3).map(b=>b.id);
+  HAB.sel = habMundos().map(b=>b.id).slice(0, 12);
   habMonta();
 });
 $('#habchips').addEventListener('click', e=>{
@@ -13871,7 +13898,7 @@ $('#habchips').addEventListener('click', e=>{
   const b = e.target.closest('button[data-hab]'); if(!b) return;
   const id = b.dataset.hab, i = HAB.sel.indexOf(id);
   if(i >= 0){ if(HAB.sel.length > 1) HAB.sel.splice(i, 1); }
-  else { HAB.sel.push(id); if(HAB.sel.length > 3) HAB.sel.shift(); }
+  else { HAB.sel.push(id); if(HAB.sel.length > 12) HAB.sel.shift(); }
   habMonta();
 });
 $('#evtq').addEventListener('input', e=>{ EVTF.q = evtNorm(e.target.value.trim()); evtRender(); });
