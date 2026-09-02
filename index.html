@@ -536,6 +536,10 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 .cmpviz .smallnote{font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;color:var(--amber);
   align-self:center;max-width:16ch;line-height:1.7}
 .cmpviz .smallnote b{color:var(--amber);font-weight:400}
+#cmp3dwrap{margin:12px 0 4px;background:#05080f;border:1px solid var(--line)}
+#cmp3d{display:block;width:100%}
+.cmp3dnm{display:flex;justify-content:space-around;padding:6px 0 7px;font-family:var(--mono);
+  font-size:8.5px;letter-spacing:1.6px;color:var(--dim)}
 .cmpscale{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1.6px;text-align:center;margin:6px 0 0}
 .cmpscale.big{font-size:10.5px;color:var(--txt);margin:5px 0 10px;line-height:1.7}
 .cmpscale.big b{color:var(--ion);font-weight:400}
@@ -10505,6 +10509,58 @@ function abrirHab(idBase, grupo){
   document.getElementById('habpop').classList.add('on');
   if(!HAB.rodando){ HAB.rodando = true; habPasso(); }
 }
+/* r203 · a bancada 3D da ANÁLISE COMPARATIVA: renderer próprio pequeno,
+   recriado quando o card troca de canvas (o velho é descartado para não
+   estourar o teto de contextos WebGL do navegador) */
+const CMP3 = {rnd:null, cam:null, scene:null, worlds:[], ang:0.9, rodando:false, cv:null};
+function cmp3dMonta(A, B, kmA, kmB){
+  const cv = document.getElementById('cmp3d');
+  if(!cv) return;
+  if(CMP3.rnd && CMP3.cv !== cv){
+    try{ CMP3.rnd.dispose(); }catch(e){}
+    CMP3.rnd = null;
+  }
+  if(!CMP3.rnd){
+    CMP3.rnd = new THREE.WebGLRenderer({canvas:cv, antialias:true, alpha:true});
+    CMP3.cam = new THREE.PerspectiveCamera(34, 1, 0.1, 60);
+    CMP3.cv = cv;
+  }
+  const W = (cv.parentElement && cv.parentElement.clientWidth) || 560, H2 = 220;
+  CMP3.rnd.setSize(W, H2, false);
+  cv.style.height = H2 + 'px';
+  CMP3.cam.aspect = W/H2; CMP3.cam.updateProjectionMatrix();
+  CMP3.scene = new THREE.Scene();
+  CMP3.worlds = [];
+  const kmG = Math.max(kmA, kmB) || 1;
+  /* em escala real, com um piso pequeno para o anão não virar um pixel */
+  const rs = [Math.max(0.07, 1.42*kmA/kmG), Math.max(0.07, 1.42*kmB/kmG)];
+  const FO = 0.85;
+  const T = rs[0]*2 + rs[1]*2 + FO;
+  [A, B].forEach((b, i)=>{
+    const gW = new THREE.Group();
+    gW.position.x = (i === 0 ? rs[0] : rs[0]*2 + FO + rs[1]) - T/2;
+    const inc = (ESCALA_REAL_INCL[b.id] !== undefined) ? ESCALA_REAL_INCL[b.id] : 11.5;
+    gW.rotation.z = -inc*Math.PI/180;
+    const m = new THREE.Mesh(new THREE.SphereGeometry(rs[i], 48, 48), planetMaterial((b.visual && b.visual.mode) ? b.visual : {mode:'rocky', c1:'#9a958c', c2:'#b8b4aa'}));
+    if(m.material.uniforms && m.material.uniforms.uL) m.material.uniforms.uL.value.set(0.5, 0.35, 0.8).normalize();
+    gW.add(m); CMP3.scene.add(gW); CMP3.worlds.push(m);
+  });
+  const hFov = Math.tan(17*Math.PI/180)*CMP3.cam.aspect;
+  CMP3.cam.position.set(0, 0, Math.max(3.4, (T*0.56 + 0.3)/hFov));
+  if(!CMP3.rodando){ CMP3.rodando = true; cmp3dPasso(); }
+}
+function cmp3dPasso(){
+  const aberto = document.getElementById('cmp') && document.getElementById('cmp').classList.contains('on') && document.getElementById('cmp3d');
+  if(!aberto){ CMP3.rodando = false; return; }
+  CMP3.ang += 0.0016;
+  const lx = Math.cos(CMP3.ang), lz = Math.sin(CMP3.ang);
+  for(const w of CMP3.worlds){
+    w.rotation.y += 0.004;
+    if(w.material.uniforms && w.material.uniforms.uL) w.material.uniforms.uL.value.set(lx, 0.25, lz).normalize();
+  }
+  if(CMP3.rnd && CMP3.scene) CMP3.rnd.render(CMP3.scene, CMP3.cam);
+  requestAnimationFrame(cmp3dPasso);
+}
 const _flrV = new THREE.Vector3();
 function flareSol(){
   const el = document.getElementById('solflare');
@@ -11116,19 +11172,12 @@ function openCompare(A, B){
     const [g1,g2] = c(grande.visual), [p1,p2] = c(pequeno.visual);
     const MAXPX = 132, MINPX = 5;
     const pxP = Math.max(MINPX, MAXPX/ratio);
-    /* diferença pequena: lado a lado. diferença grande: o menor entra dentro do maior */
-    const dentro = ratio >= 3.2;
-    const bola = (px,x1,x2,cls)=>'<div class="ball'+(cls?' '+cls:'')+'" style="width:'+px.toFixed(1)+'px;height:'+px.toFixed(1)+'px;--bc1:'+x1+';--bc2:'+x2+'"></div>';
-    viz = dentro
-      ? '<div class="cmpviz dentro">'
-        + '<div class="hostwrap">' + bola(MAXPX,g1,g2)
-        + '<span class="inball" style="width:'+pxP.toFixed(1)+'px;height:'+pxP.toFixed(1)+'px;--bc1:'+p1+';--bc2:'+p2+'"></span>'
-        + '<span class="hostnm">'+esc(grande.name)+'</span></div>'
-        + '<div class="smallnote"><b>'+esc(pequeno.name)+'</b> nesta escala</div></div>'
-      : '<div class="cmpviz">'
-        + '<div class="bwrap">' + bola(MAXPX*(dA.km/kmG),(aMaior?g1:p1),(aMaior?g2:p2)) + '<span class="bnm">'+esc(A.name)+'</span></div>'
-        + '<div class="bwrap">' + bola(MAXPX*(dB.km/kmG),(aMaior?p1:g1),(aMaior?p2:g2)) + '<span class="bnm">'+esc(B.name)+'</span></div>'
-        + '</div>';
+    /* r203 · o visual virou a BANCADA 3D (pedido dele: 'eu gostei tanto'):
+       os dois corpos girando em escala real, com a inclinação do eixo e o
+       terminador varrendo; a razão em texto continua logo abaixo */
+    viz = '<div id="cmp3dwrap"><canvas id="cmp3d"></canvas>'
+        + '<div class="cmp3dnm"><span>' + esc(A.name) + '</span><span>' + esc(B.name) + '</span></div></div>';
+    setTimeout(()=>{ if(typeof cmp3dMonta === 'function') cmp3dMonta(A, B, dA.km, dB.km); }, 40);
     const vezes = Math.pow(ratio, 3);
     const cotA = cotidianoDe(dA.km), cotB = cotidianoDe(dB.km);
     if(cotA || cotB){
@@ -13345,7 +13394,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r202';
+const BUILD = 'r203';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
