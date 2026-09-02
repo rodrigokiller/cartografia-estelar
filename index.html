@@ -1074,7 +1074,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="tpn">Sente e assista: a nave navega sozinha, sem cortes. Qualquer toque na cena devolve o controle. Rota concluída rende a conquista EXP-01.</div>
   </div>
   <div id="habpop">
-    <div class="tphead"><span>◉ A BANCADA · MUNDOS LADO A LADO</span><button id="habpopx">✕</button></div>
+    <div class="tphead"><span>◉ A BANCADA · MUNDOS LADO A LADO</span><span style="display:flex;gap:6px"><button id="habshare" title="Copiar o link desta bancada">⧉</button><button id="habpopx">✕</button></span></div>
     <div class="evtchips" id="habgrps"></div>
     <input id="habq" placeholder="ADICIONAR UM CORPO À BANCADA..." autocomplete="off" spellcheck="false">
     <div class="evtchips" id="habachados"></div>
@@ -13520,7 +13520,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r209';
+const BUILD = 'r210';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13582,6 +13582,16 @@ resize();
       markVisited(v);
       swapScene(buildFocus(v));
     }
+  } else if(k==='bancada'){
+    /* r210 · link de bancada: o mapa de casa embaixo, a bancada por cima */
+    ST.sys='sol'; swapScene(buildSystem('sol'));
+    const idsB = String(v || '').split(',').filter(x=>ALLBODIES[x]).slice(0, 12);
+    if(idsB.length) setTimeout(()=>{
+      HAB.grupo = 'perso';
+      HAB.sel = idsB.slice();
+      TUT.v.add('boasvindas');
+      abrirHab();
+    }, 1600);
   } else if(k==='sistema' && SYS[v]){
     ST.sys=v; swapScene(buildSystem(v));
   } else if(k==='galaxia'){
@@ -14089,6 +14099,14 @@ $('#habq').addEventListener('input', e=>{
   const achou = Object.values(ALLBODIES).filter(b=>b.visual && b.quick && !b.region
     && HAB.sel.indexOf(b.id) < 0 && nrm(b.name).indexOf(q) >= 0).slice(0, 8);
   alvo.innerHTML = achou.map(b=>'<button data-habadd="' + b.id + '">+ ' + esc(b.name) + '</button>').join('');
+});
+$('#habshare').addEventListener('click', ()=>{
+  /* r210 · a bancada vira LINK: #bancada=ids abre direto com estes mundos */
+  const url = location.href.split('#')[0] + '#bancada=' + HAB.sel.join(',');
+  const avisa = ()=>showHint('LINK DA BANCADA COPIADO · cole e envie');
+  if(navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(url).then(avisa, ()=>showHint(url));
+  else showHint(url);
 });
 $('#habachados').addEventListener('click', e=>{
   const b = e.target.closest('button[data-habadd]'); if(!b) return;
