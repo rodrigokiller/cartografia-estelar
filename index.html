@@ -272,6 +272,8 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #habchips button.arrastando{opacity:.55;border-color:var(--amber);color:var(--amber)}
 #habinfo{position:relative;height:58px;margin:2px 0 8px}
 #habinfo .hcol{position:absolute;top:6px;width:148px}
+#habinfo .hcol.mini .hsub{display:none}
+#habinfo .hcol.mini .hnm{font-size:8px;letter-spacing:1px}
 #habinfo .hnm{font-family:var(--mono);font-size:9px;letter-spacing:1.6px;color:var(--ion);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #habinfo .hsub{font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--dim2);margin-top:2px}
 #habinfo .hbarra{height:3px;background:rgba(126,180,255,.14);margin-top:5px}
@@ -536,7 +538,10 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 .cmpviz .smallnote{font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;color:var(--amber);
   align-self:center;max-width:16ch;line-height:1.7}
 .cmpviz .smallnote b{color:var(--amber);font-weight:400}
-#cmp3dwrap{margin:12px 0 4px;background:#05080f;border:1px solid var(--line)}
+#cmp3dwrap{margin:12px 0 4px;background:#05080f;border:1px solid var(--line);position:relative}
+#cmp3dmax{position:absolute;right:6px;top:6px;z-index:2;width:24px;height:24px;background:rgba(6,12,24,.7);
+  border:1px solid var(--line2);color:var(--dim);font-family:var(--mono);font-size:11px;cursor:pointer;padding:0}
+#cmp3dmax:hover,#cmp3dmax.on{color:var(--amber);border-color:rgba(255,180,84,.5)}
 #cmp3d{display:block;width:100%}
 .cmp3dnm{display:flex;justify-content:space-around;padding:6px 0 7px;font-family:var(--mono);
   font-size:8.5px;letter-spacing:1.6px;color:var(--dim)}
@@ -10410,7 +10415,10 @@ function habMonta(){
   const cv = document.getElementById('habcanvas');
   if(!HAB.rnd){
     HAB.rnd = new THREE.WebGLRenderer({canvas:cv, antialias:true, alpha:true});
-    HAB.cam = new THREE.PerspectiveCamera(34, 1, 0.1, 80);
+    /* r204 · ORTOGRÁFICA: com a perspectiva larga os globos das pontas viravam
+       OVO (print dele); em ortho a esfera é círculo em qualquer x da fileira */
+    HAB.cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 80);
+    HAB.cam.position.set(0, 0, 12);
   }
   HAB.scene = new THREE.Scene();
   HAB.worlds = [];
@@ -10436,9 +10444,9 @@ function habMonta(){
   const Wpx = Math.max(Math.round(T*PXU), Wmin - 4);
   cv.style.width = Wpx + 'px';
   HAB.rnd.setSize(Wpx, H2, false);
-  HAB.cam.aspect = Wpx/H2; HAB.cam.updateProjectionMatrix();
-  /* com o FOV vertical fixo, o z que mostra T unidades é constante */
-  HAB.cam.position.set(0, 0, H2/(2*PXU*Math.tan(17*Math.PI/180)));
+  HAB.cam.left = -Wpx/(2*PXU); HAB.cam.right = Wpx/(2*PXU);
+  HAB.cam.top = H2/(2*PXU); HAB.cam.bottom = -H2/(2*PXU);
+  HAB.cam.updateProjectionMatrix();
   const off = (Wpx - T*PXU)/2/PXU;   /* centraliza quando o trilho nem rola */
   lista.forEach((b, i)=>{
     const gW = new THREE.Group();
@@ -10455,10 +10463,17 @@ function habMonta(){
   });
   /* as colunas de informação ancoradas EMBAIXO de cada mundo (rolam junto) */
   const meio = (Wpx - T*PXU)/2;
+  const pxs = xs.map(x=>Math.round(x*PXU + Math.max(0, meio)));
   const info = lista.map((b, i)=>{
     const dia = (b.quick.find(q=>/DIÂMETRO|RAIO/.test(q[0])) || [])[1] || '';
-    const lx = Math.round(xs[i]*PXU + Math.max(0, meio) - 74);
-    return '<div class="hcol" style="left:' + lx + 'px"><div class="hnm">' + esc(b.name) + '</div>'
+    /* r204 · a coluna respeita o vizinho: mundos colados ganham coluna
+       estreita (só nome + barra), sem a pilha de textos do print dele */
+    const dEsq = (i > 0) ? (pxs[i] - pxs[i-1]) : 999;
+    const dDir = (i < lista.length - 1) ? (pxs[i+1] - pxs[i]) : 999;
+    const larg = Math.max(54, Math.min(148, Math.min(dEsq, dDir) - 8));
+    const mini = larg < 96;
+    return '<div class="hcol' + (mini ? ' mini' : '') + '" style="left:' + (pxs[i] - Math.round(larg/2)) + 'px;width:' + larg + 'px">'
+      + '<div class="hnm">' + esc(b.name) + '</div>'
       + '<div class="hsub">' + esc(dia) + '</div>'
       + '<div class="hbarra"><i style="width:' + Math.max(2, Math.min(100, b.hab|0)) + '%"></i></div>'
       + '<div class="hsub">HABITABILIDADE ' + (b.hab|0) + '</div></div>';
@@ -10466,6 +10481,8 @@ function habMonta(){
   const hi = document.getElementById('habinfo');
   hi.innerHTML = info;
   hi.style.width = Wpx + 'px';
+  const tr2 = document.getElementById('habscroll');
+  if(tr2) tr2.scrollLeft = 0;   /* r204: o trilho guardava a rolagem velha */
   habChips();
 }
 /* r202 · os chips numa função própria: o arrasto de ordenação redesenha só
@@ -10522,13 +10539,14 @@ function cmp3dMonta(A, B, kmA, kmB){
   }
   if(!CMP3.rnd){
     CMP3.rnd = new THREE.WebGLRenderer({canvas:cv, antialias:true, alpha:true});
-    CMP3.cam = new THREE.PerspectiveCamera(34, 1, 0.1, 60);
+    CMP3.cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 60);
+    CMP3.cam.position.set(0, 0, 10);
     CMP3.cv = cv;
   }
-  const W = (cv.parentElement && cv.parentElement.clientWidth) || 560, H2 = 220;
+  CMP3.A = A; CMP3.B = B; CMP3.kmA = kmA; CMP3.kmB = kmB;
+  const W = (cv.parentElement && cv.parentElement.clientWidth) || 560, H2 = CMP3.max ? 430 : 220;
   CMP3.rnd.setSize(W, H2, false);
   cv.style.height = H2 + 'px';
-  CMP3.cam.aspect = W/H2; CMP3.cam.updateProjectionMatrix();
   CMP3.scene = new THREE.Scene();
   CMP3.worlds = [];
   const kmG = Math.max(kmA, kmB) || 1;
@@ -10545,8 +10563,17 @@ function cmp3dMonta(A, B, kmA, kmB){
     if(m.material.uniforms && m.material.uniforms.uL) m.material.uniforms.uL.value.set(0.5, 0.35, 0.8).normalize();
     gW.add(m); CMP3.scene.add(gW); CMP3.worlds.push(m);
   });
-  const hFov = Math.tan(17*Math.PI/180)*CMP3.cam.aspect;
-  CMP3.cam.position.set(0, 0, Math.max(3.4, (T*0.56 + 0.3)/hFov));
+  /* r204 · o enquadramento CABE: a Terra saia cortada em cima e embaixo */
+  const halfH = Math.max(Math.max(rs[0], rs[1])*1.14, (T/2 + 0.25)*H2/W);
+  CMP3.cam.left = -halfH*W/H2; CMP3.cam.right = halfH*W/H2;
+  CMP3.cam.top = halfH; CMP3.cam.bottom = -halfH;
+  CMP3.cam.updateProjectionMatrix();
+  const bm = document.getElementById('cmp3dmax');
+  if(bm && !bm._lig){ bm._lig = 1; bm.addEventListener('click', ()=>{
+    CMP3.max = !CMP3.max;
+    bm.classList.toggle('on', !!CMP3.max);
+    cmp3dMonta(CMP3.A, CMP3.B, CMP3.kmA, CMP3.kmB);
+  }); }
   if(!CMP3.rodando){ CMP3.rodando = true; cmp3dPasso(); }
 }
 function cmp3dPasso(){
@@ -11175,7 +11202,7 @@ function openCompare(A, B){
     /* r203 · o visual virou a BANCADA 3D (pedido dele: 'eu gostei tanto'):
        os dois corpos girando em escala real, com a inclinação do eixo e o
        terminador varrendo; a razão em texto continua logo abaixo */
-    viz = '<div id="cmp3dwrap"><canvas id="cmp3d"></canvas>'
+    viz = '<div id="cmp3dwrap"><button id="cmp3dmax" title="Ampliar a visualização">⛶</button><canvas id="cmp3d"></canvas>'
         + '<div class="cmp3dnm"><span>' + esc(A.name) + '</span><span>' + esc(B.name) + '</span></div></div>';
     setTimeout(()=>{ if(typeof cmp3dMonta === 'function') cmp3dMonta(A, B, dA.km, dB.km); }, 40);
     const vezes = Math.pow(ratio, 3);
@@ -13394,7 +13421,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r203';
+const BUILD = 'r204';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13977,16 +14004,18 @@ $('#habachados').addEventListener('click', e=>{
    desligando o mundo */
 (function(){
   const box = document.getElementById('habchips');
-  let alvoD = null, x0 = 0, moveu = false;
+  let alvoD = null, x0 = 0, moveu = false, pid = null;
   box.addEventListener('pointerdown', e=>{
     const b = e.target.closest('button[data-hab]');
     if(!b || HAB.sel.indexOf(b.dataset.hab) < 0) return;
-    alvoD = b; x0 = e.clientX; moveu = false;
-    try{ box.setPointerCapture(e.pointerId); }catch(err){}
+    alvoD = b; x0 = e.clientX; moveu = false; pid = e.pointerId;
+    /* r204 · capturar AQUI roubava o clique de desmarcar (o click renasce no
+       ancestral comum): a captura espera o arrasto começar de verdade */
   });
   box.addEventListener('pointermove', e=>{
     if(!alvoD) return;
     if(!moveu && Math.abs(e.clientX - x0) < 8) return;
+    if(!moveu){ try{ box.setPointerCapture(pid); }catch(err){} }
     moveu = true;
     const id = alvoD.dataset.hab;
     const outros = [...box.querySelectorAll('button[data-hab]')].filter(x=>x !== alvoD && HAB.sel.indexOf(x.dataset.hab) >= 0);
