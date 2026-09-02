@@ -10393,9 +10393,13 @@ const HAB_GRUPOS = [
   ['sistema', 'SISTEMA SOLAR', ['mercurio', 'venus', 'terra', 'marte', 'jupiter', 'saturno', 'urano', 'netuno', 'plutao', 'lua']],
   ['rochosos', 'ROCHOSOS', ['mercurio', 'venus', 'terra', 'marte', 'lua']],
   ['gigantes', 'GIGANTES', ['jupiter', 'saturno', 'urano', 'netuno']],
-  ['luas', 'LUAS GRANDES', ['lua', 'io', 'europa', 'ganimedes', 'tita', 'tritao']]
+  ['luas', 'LUAS GRANDES', ['lua', 'io', 'europa', 'ganimedes', 'tita', 'tritao']],
+  ['perso', 'PERSONALIZADO', null]
 ];
+/* a bancada personalizada persiste entre sessões */
+HAB.perso = String(store.get('carto:habperso', '') || '').split(',').filter(x=>ALLBODIES[x]);
 function habMundos(){
+  if(HAB.grupo === 'perso') return HAB.perso.map(id=>ALLBODIES[id]).filter(Boolean);
   const gr = HAB_GRUPOS.find(g=>g[0] === HAB.grupo);
   if(gr && gr[2]) return gr[2].map(id=>ALLBODIES[id]).filter(Boolean);
   return Object.values(ALLBODIES).filter(b=>b.visual && MODEMAP[b.visual.mode] === 4 && b.quick);
@@ -10403,13 +10407,43 @@ function habMundos(){
 /* o raio-base do grupo: na bancada de habitáveis a Terra vale 1; nas outras,
    o MAIOR corpo do grupo ocupa o teto (1.45) e o resto fica na razão real */
 function habBaseKm(){
-  if(HAB.grupo === 'hab' || typeof parseDia !== 'function') return 6371;
+  if(HAB.grupo === 'hab' || typeof parseDia !== 'function' || !habMundos().length) return 6371;
   let mx = 0;
   for(const b of habMundos()){
     const dd = parseDia(b);
     if(dd && dd.km && dd.km/2 > mx) mx = dd.km/2;
   }
   return mx ? mx/1.45 : 6371;
+}
+/* r205 · um mundo de bancada: esfera (ou estrela com o shader do Sol),
+   ANÉIS com o RING_FRAG do mapa quando a ficha tem, inclinação pelo anel
+   (Saturno 26,7, o valor real) ou pela tabela. ext é o raio OCUPADO na
+   fileira (o anel alarga o lugar do corpo) */
+function bancadaMundo(b, rW){
+  const gW = new THREE.Group();
+  const v = b.visual || {mode:'rocky', c1:'#9a958c', c2:'#b8b4aa'};
+  const m = new THREE.Mesh(new THREE.SphereGeometry(rW, 48, 48),
+    (v.mode === 'star' && typeof sunMaterial === 'function') ? sunMaterial(v) : planetMaterial(v));
+  if(m.material.uniforms && m.material.uniforms.uL) m.material.uniforms.uL.value.set(0.5, 0.35, 0.8).normalize();
+  gW.add(m);
+  let ext = rW;
+  if(v.rings){
+    const r = v.rings;
+    const rg = new THREE.RingGeometry(rW*r.rin, rW*r.rout, 96, 1);
+    const rm = new THREE.ShaderMaterial({vertexShader:PLANET_VERT, fragmentShader:RING_FRAG,
+      uniforms:{uIn:{value:rW*r.rin}, uOut:{value:rW*r.rout}, uCol:{value:C(r.col)},
+        uOp:{value:r.op}, uSeed:{value:r.seed||1}, uGapT:{value:(r.gapT!==undefined)?r.gapT:0.64}, uDop:{value:0}},
+      side:THREE.DoubleSide, transparent:true, depthWrite:false});
+    const anel = new THREE.Mesh(rg, rm);
+    anel.rotation.x = Math.PI/2;
+    gW.add(anel);
+    gW.rotation.z = THREE.MathUtils.degToRad(r.tilt || 0);
+    ext = rW*r.rout;
+  } else {
+    const inc = (ESCALA_REAL_INCL[b.id] !== undefined) ? ESCALA_REAL_INCL[b.id] : 11.5;
+    gW.rotation.z = -inc*Math.PI/180;
+  }
+  return {gW, m, ext};
 }
 function habMonta(){
   const cv = document.getElementById('habcanvas');
@@ -10429,13 +10463,15 @@ function habMonta(){
     let rW = 1;
     if(HAB.escala && typeof parseDia === 'function'){
       const dd = parseDia(b);
-      if(dd && dd.km) rW = Math.max((HAB.grupo === 'sistema') ? 0.05 : 0.32, Math.min(1.45, (dd.km/2)/habBaseKm()));
+      if(dd && dd.km) rW = Math.max((HAB.grupo === 'sistema' || HAB.grupo === 'perso') ? 0.05 : 0.32, Math.min(1.45, (dd.km/2)/habBaseKm()));
     }
     return rW;
   });
   const FOLGA = 0.75;
+  /* r205 · o anel ocupa lugar: Saturno reserva o raio EXTERNO do anel */
+  const exts = lista.map((b, i)=>(b.visual && b.visual.rings) ? raios[i]*b.visual.rings.rout : raios[i]);
   const xs = []; let cur = 0.3;
-  lista.forEach((b, i)=>{ cur += raios[i]; xs.push(cur); cur += raios[i] + FOLGA; });
+  lista.forEach((b, i)=>{ cur += exts[i]; xs.push(cur); cur += exts[i] + FOLGA; });
   const T = Math.max(3.4, cur - FOLGA + 0.3);
   /* o canvas cresce com a fileira e o TRILHO rola de lado (o scroll fino da
      casa); PXU é o pixel por unidade da bancada */
@@ -10449,17 +10485,10 @@ function habMonta(){
   HAB.cam.updateProjectionMatrix();
   const off = (Wpx - T*PXU)/2/PXU;   /* centraliza quando o trilho nem rola */
   lista.forEach((b, i)=>{
-    const gW = new THREE.Group();
-    gW.position.x = xs[i] - T/2 + ((Wpx > T*PXU) ? 0 : 0);
-    /* r201 · a INCLINAÇÃO REAL do eixo (como no exemplo CSS que ele mandou):
-       Urano entra quase deitado, Saturno a 26,7 graus */
-    const inc = (ESCALA_REAL_INCL[b.id] !== undefined) ? ESCALA_REAL_INCL[b.id] : 11.5;
-    gW.rotation.z = -inc*Math.PI/180;
-    const m = new THREE.Mesh(new THREE.SphereGeometry(raios[i], 48, 48), planetMaterial(b.visual));
-    if(m.material.uniforms && m.material.uniforms.uL) m.material.uniforms.uL.value.set(0.5, 0.35, 0.8).normalize();
-    gW.add(m);
-    HAB.scene.add(gW);
-    HAB.worlds.push(m);
+    const mundo = bancadaMundo(b, raios[i]);
+    mundo.gW.position.x = xs[i] - T/2;
+    HAB.scene.add(mundo.gW);
+    HAB.worlds.push(mundo.m);
   });
   /* as colunas de informação ancoradas EMBAIXO de cada mundo (rolam junto) */
   const meio = (Wpx - T*PXU)/2;
@@ -10472,9 +10501,18 @@ function habMonta(){
     const dDir = (i < lista.length - 1) ? (pxs[i+1] - pxs[i]) : 999;
     const larg = Math.max(54, Math.min(148, Math.min(dEsq, dDir) - 8));
     const mini = larg < 96;
+    /* r205 · a razão com a Terra na legenda (11,2 × TERRA) */
+    let vezesT = '';
+    if(typeof parseDia === 'function'){
+      const ddV = parseDia(b);
+      if(ddV && ddV.km && b.id !== 'terra'){
+        const rz = ddV.km/12742;
+        vezesT = ' · ' + (rz >= 2 ? rz.toFixed(1).replace('.', ',') : rz.toFixed(2).replace('.', ',')) + ' × TERRA';
+      }
+    }
     return '<div class="hcol' + (mini ? ' mini' : '') + '" style="left:' + (pxs[i] - Math.round(larg/2)) + 'px;width:' + larg + 'px">'
       + '<div class="hnm">' + esc(b.name) + '</div>'
-      + '<div class="hsub">' + esc(dia) + '</div>'
+      + '<div class="hsub">' + esc(dia) + esc(vezesT) + '</div>'
       + '<div class="hbarra"><i style="width:' + Math.max(2, Math.min(100, b.hab|0)) + '%"></i></div>'
       + '<div class="hsub">HABITABILIDADE ' + (b.hab|0) + '</div></div>';
   }).join('');
@@ -10484,6 +10522,16 @@ function habMonta(){
   const tr2 = document.getElementById('habscroll');
   if(tr2) tr2.scrollLeft = 0;   /* r204: o trilho guardava a rolagem velha */
   habChips();
+  /* r205 · a BUSCA mora só no PERSONALIZADO, e a bancada montada persiste */
+  const hq = document.getElementById('habq');
+  if(hq) hq.style.display = (HAB.grupo === 'perso') ? '' : 'none';
+  const ha = document.getElementById('habachados');
+  if(ha && HAB.grupo !== 'perso') ha.innerHTML = '';
+  if(HAB.grupo === 'perso'){
+    HAB.perso = HAB.sel.slice();
+    store.set('carto:habperso', HAB.perso.join(','));
+    if(!HAB.sel.length && hq) hq.placeholder = 'BUSQUE UM CORPO PARA COMEÇAR A SUA BANCADA...';
+  }
 }
 /* r202 · os chips numa função própria: o arrasto de ordenação redesenha só
    eles, sem reconstruir a cena a cada movimento. Os SELECIONADOS vêm
@@ -10553,15 +10601,13 @@ function cmp3dMonta(A, B, kmA, kmB){
   /* em escala real, com um piso pequeno para o anão não virar um pixel */
   const rs = [Math.max(0.07, 1.42*kmA/kmG), Math.max(0.07, 1.42*kmB/kmG)];
   const FO = 0.85;
-  const T = rs[0]*2 + rs[1]*2 + FO;
+  const extT = [(A.visual && A.visual.rings) ? rs[0]*A.visual.rings.rout : rs[0], (B.visual && B.visual.rings) ? rs[1]*B.visual.rings.rout : rs[1]];
+  const T = extT[0]*2 + extT[1]*2 + FO;
+  const extsC = [A, B].map((b, i)=>(b.visual && b.visual.rings) ? rs[i]*b.visual.rings.rout : rs[i]);
   [A, B].forEach((b, i)=>{
-    const gW = new THREE.Group();
-    gW.position.x = (i === 0 ? rs[0] : rs[0]*2 + FO + rs[1]) - T/2;
-    const inc = (ESCALA_REAL_INCL[b.id] !== undefined) ? ESCALA_REAL_INCL[b.id] : 11.5;
-    gW.rotation.z = -inc*Math.PI/180;
-    const m = new THREE.Mesh(new THREE.SphereGeometry(rs[i], 48, 48), planetMaterial((b.visual && b.visual.mode) ? b.visual : {mode:'rocky', c1:'#9a958c', c2:'#b8b4aa'}));
-    if(m.material.uniforms && m.material.uniforms.uL) m.material.uniforms.uL.value.set(0.5, 0.35, 0.8).normalize();
-    gW.add(m); CMP3.scene.add(gW); CMP3.worlds.push(m);
+    const mundo = bancadaMundo(b, rs[i]);
+    mundo.gW.position.x = (i === 0 ? extsC[0] : extsC[0]*2 + FO + extsC[1]) - (extsC[0]*2 + extsC[1]*2 + FO)/2;
+    CMP3.scene.add(mundo.gW); CMP3.worlds.push(mundo.m);
   });
   /* r204 · o enquadramento CABE: a Terra saia cortada em cima e embaixo */
   const halfH = Math.max(Math.max(rs[0], rs[1])*1.14, (T/2 + 0.25)*H2/W);
@@ -13421,7 +13467,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r204';
+const BUILD = 'r205';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13988,6 +14034,7 @@ $('#habq').addEventListener('input', e=>{
   const alvo = document.getElementById('habachados');
   if(!q || q.length < 2){ alvo.innerHTML = ''; return; }
   const achou = Object.values(ALLBODIES).filter(b=>b.visual && b.quick && !b.region
+    && !b.sonda && !b.satelite && !b.foguete
     && HAB.sel.indexOf(b.id) < 0 && nrm(b.name).indexOf(q) >= 0).slice(0, 8);
   alvo.innerHTML = achou.map(b=>'<button data-habadd="' + b.id + '">+ ' + esc(b.name) + '</button>').join('');
 });
