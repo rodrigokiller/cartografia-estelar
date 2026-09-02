@@ -4553,9 +4553,13 @@ function makeBodyGroup(b, radius, seg){
        canvas desde o r165 (os mares no lugar, Tycho com os raios, Copérnico),
        então a Lua desenhada usa esse mapa em toda cena, via liveMaterial com
        a foto desligada. Marte fica no procedural por decisão dele */
+    /* r200 · a Lua desenhada usa o mapa dela, mas a GERAÇÃO do canvas de
+       3072px não pode segurar o boot: antes do warm-up ela nasce procedural
+       e troca de pele no lugar quando o mapa fica pronto */
+    const luaJa = (b.id === 'lua' && typeof liveMaterial === 'function' && !usaFotoPerto('lua'));
     mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, seg, seg),
-      (b.id === 'lua' && typeof liveMaterial === 'function' && !usaFotoPerto('lua'))
-        ? liveMaterial('lua') : planetMaterial(v));
+      (luaJa && (window.__luaPronta || _texLua)) ? liveMaterial('lua') : planetMaterial(v));
+    if(luaJa && !(window.__luaPronta || _texLua)) (window.__luaTarde = window.__luaTarde || []).push(mesh);
   }
   tiltG.add(mesh);
   if(v.clouds){
@@ -13292,7 +13296,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r199';
+const BUILD = 'r200';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13333,6 +13337,7 @@ resize();
     document.body.classList.add('aula');
     TUT.v.add('boasvindas');
   }
+  const _tB0 = performance.now();
   let trajLink = false;
   if(hh0.indexOf('&traj=1') >= 0){ trajLink = true; hh0 = hh0.replace('&traj=1', ''); }
   /* r166 · o corpo que estava escolhido volta junto */
@@ -13363,6 +13368,7 @@ resize();
     swapScene(buildSystem('sol'));
   }
   restauraCam();
+  try{ RLOG.push('crono boot-js ' + Math.round(performance.now() - _tB0) + 'ms'); }catch(e){}
   /* link direto de missão: abre já com a linha do tempo rodando */
   if(trajLink && k === 'corpo' && ALLBODIES[v] && ALLBODIES[v].traj)
     setTimeout(()=>verLinhaDoTempo(v), 1600);
@@ -13373,6 +13379,25 @@ resize();
     tourStart();
   }, 1800);
 })();
+/* r200 · WARM-UP: os canvases pesados (Lua e Marte) são desenhados DEPOIS do
+   primeiro quadro, em folga, e a Lua troca de pele no lugar; a luz real é
+   registrada no solLuz da cena para o terminador não virar farol */
+setTimeout(function(){
+  const _tw = performance.now();
+  try{ texturaLua(); texturaMarte(); }catch(e){}
+  window.__luaPronta = 1;
+  if(window.__luaTarde && typeof liveMaterial === 'function'){
+    for(const m of window.__luaTarde){
+      try{
+        m.material = liveMaterial('lua');
+        if(ACT && ACT.solLuz && m.material.uniforms && m.material.uniforms.uL)
+          ACT.solLuz.push({mesh:m, grupo:m, mats:[m.material]});
+      }catch(e){}
+    }
+    window.__luaTarde = null;
+  }
+  try{ RLOG.push('crono warm ' + Math.round(performance.now() - _tw) + 'ms'); }catch(e){}
+}, 1400);
 uiSync();
 pushNav();
 syncHash();
@@ -14369,6 +14394,9 @@ function loop(){
     if(ACT.update) ACT.update(dt, t);
     zoomPasso(dt);
     applyCam();
+    /* r200 · o PRIMEIRO QUADRO carrega a compilação dos shaders pelo driver
+       (suspeito número 1 do F5 travado): fica marcado no RLOG */
+    if(!window.__crono1q){ window.__crono1q = 1; try{ RLOG.push('crono 1oquadro ' + Math.round(performance.now()) + 'ms'); }catch(e){} }
     /* escala real: perto de um grão de planeta o plano de corte encolhe
        junto, senão a câmera atravessa o corpo antes de conseguir vê-lo */
     const nearAlvo = (ACT && ACT.escr && CAM.dist < 2) ? Math.max(0.00004, CAM.dist*0.018)
