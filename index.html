@@ -10438,6 +10438,10 @@ function bancadaMundo(b, rW){
     anel.rotation.x = Math.PI/2;
     gW.add(anel);
     gW.rotation.z = THREE.MathUtils.degToRad(r.tilt || 0);
+    /* r206 · a câmera da bancada olha do plano do equador e o anel virava um
+       fio de perfil (print): um giro de 17 graus para o observador abre o
+       anel como nos pôsteres, sem mentir a inclinação do eixo */
+    gW.rotation.x = 0.30;
     ext = rW*r.rout;
   } else {
     const inc = (ESCALA_REAL_INCL[b.id] !== undefined) ? ESCALA_REAL_INCL[b.id] : 11.5;
@@ -13467,7 +13471,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r205';
+const BUILD = 'r206';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
