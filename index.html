@@ -10425,6 +10425,18 @@ function habBaseKm(lista){
 function bancadaMundo(b, rW){
   const gW = new THREE.Group();
   const v = b.visual || {mode:'rocky', c1:'#9a958c', c2:'#b8b4aa'};
+  /* r209 · nave é MODELO, não esfera: entra com o grupoNave (ISS, Hubble,
+     Saturn V...), fora de escala ASSUMIDA (a legenda avisa). O raycast do
+     clique precisa de um alvo: uma esfera invisível do tamanho do modelo */
+  if((b.sonda || b.satelite || b.foguete) && typeof grupoNave === 'function'){
+    const nv = grupoNave(b.id, 0.62);
+    gW.add(nv.group);
+    const alvoN = new THREE.Mesh(new THREE.SphereGeometry(0.66, 10, 10),
+      new THREE.MeshBasicMaterial({visible:false}));
+    gW.add(alvoN);
+    gW.rotation.z = -0.35;
+    return {gW, m:alvoN, ext:0.75, nave:true};
+  }
   const m = new THREE.Mesh(new THREE.SphereGeometry(rW, 48, 48),
     (v.mode === 'star' && typeof sunMaterial === 'function') ? sunMaterial(v) : planetMaterial(v));
   if(m.material.uniforms && m.material.uniforms.uL) m.material.uniforms.uL.value.set(0.5, 0.35, 0.8).normalize();
@@ -10480,7 +10492,8 @@ function habMonta(){
   });
   const FOLGA = 0.75;
   /* r205 · o anel ocupa lugar: Saturno reserva o raio EXTERNO do anel */
-  const exts = lista.map((b, i)=>(b.visual && b.visual.rings) ? raios[i]*b.visual.rings.rout : raios[i]);
+  const exts = lista.map((b, i)=>(b.sonda || b.satelite || b.foguete) ? 0.75
+    : (b.visual && b.visual.rings) ? raios[i]*b.visual.rings.rout : raios[i]);
   const xs = []; let cur = 0.3;
   lista.forEach((b, i)=>{ cur += exts[i]; xs.push(cur); cur += exts[i] + FOLGA; });
   const T = Math.max(3.4, cur - FOLGA + 0.3);
@@ -10514,7 +10527,9 @@ function habMonta(){
     const mini = larg < 96;
     /* r205 · a razão com a Terra na legenda (11,2 × TERRA) */
     let vezesT = '';
-    if(typeof parseDia === 'function'){
+    const ehNave = b.sonda || b.satelite || b.foguete;
+    if(ehNave) vezesT = ' · FORA DE ESCALA';
+    else if(typeof parseDia === 'function'){
       const ddV = parseDia(b);
       if(ddV && ddV.km && b.id !== 'terra'){
         const rz = ddV.km/12742;
@@ -13505,7 +13520,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r208';
+const BUILD = 'r209';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -14072,7 +14087,6 @@ $('#habq').addEventListener('input', e=>{
   const alvo = document.getElementById('habachados');
   if(!q || q.length < 2){ alvo.innerHTML = ''; return; }
   const achou = Object.values(ALLBODIES).filter(b=>b.visual && b.quick && !b.region
-    && !b.sonda && !b.satelite && !b.foguete
     && HAB.sel.indexOf(b.id) < 0 && nrm(b.name).indexOf(q) >= 0).slice(0, 8);
   alvo.innerHTML = achou.map(b=>'<button data-habadd="' + b.id + '">+ ' + esc(b.name) + '</button>').join('');
 });
