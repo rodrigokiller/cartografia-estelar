@@ -264,6 +264,12 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 #habscroll::-webkit-scrollbar{height:5px}
 #habscroll::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
 #habcanvas{display:block;height:250px}
+#habq{width:100%;background:rgba(6,12,24,.6);border:1px solid var(--line);color:var(--txt);
+  font-family:var(--mono);font-size:9px;letter-spacing:1.5px;padding:7px 9px;margin:0 0 8px}
+#habq:focus{outline:none;border-color:var(--line2)}
+#habachados:empty{display:none}
+#habchips button[data-hab]{touch-action:none}
+#habchips button.arrastando{opacity:.55;border-color:var(--amber);color:var(--amber)}
 #habinfo{position:relative;height:58px;margin:2px 0 8px}
 #habinfo .hcol{position:absolute;top:6px;width:148px}
 #habinfo .hnm{font-family:var(--mono);font-size:9px;letter-spacing:1.6px;color:var(--ion);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1061,6 +1067,8 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div id="habpop">
     <div class="tphead"><span>◉ A BANCADA · MUNDOS LADO A LADO</span><button id="habpopx">✕</button></div>
     <div class="evtchips" id="habgrps"></div>
+    <input id="habq" placeholder="ADICIONAR UM CORPO À BANCADA..." autocomplete="off" spellcheck="false">
+    <div class="evtchips" id="habachados"></div>
     <div id="habscroll"><canvas id="habcanvas"></canvas>
     <div id="habinfo"></div></div>
     <div class="evtchips" id="habchips"></div>
@@ -10454,10 +10462,23 @@ function habMonta(){
   const hi = document.getElementById('habinfo');
   hi.innerHTML = info;
   hi.style.width = Wpx + 'px';
+  habChips();
+}
+/* r202 · os chips numa função própria: o arrasto de ordenação redesenha só
+   eles, sem reconstruir a cena a cada movimento. Os SELECIONADOS vêm
+   primeiro, NA ORDEM da bancada (é essa ordem que o arrasto mexe) */
+function habChips(){
   document.getElementById('habgrps').innerHTML = HAB_GRUPOS.map(g=>
     '<button data-habgrp="' + g[0] + '"' + (HAB.grupo === g[0] ? ' class="on"' : '') + '>' + g[1] + '</button>').join('');
-  document.getElementById('habchips').innerHTML = '<button data-habesc="1"' + (HAB.escala ? ' class="on"' : '') + '>TAMANHO EM ESCALA</button>' + habMundos().map(b=>
-    '<button data-hab="' + b.id + '"' + (HAB.sel.indexOf(b.id) >= 0 ? ' class="on"' : '') + '>' + esc(b.name) + '</button>').join('');
+  const doGrupo = habMundos().map(b=>b.id);
+  const resto = doGrupo.filter(id=>HAB.sel.indexOf(id) < 0);
+  const chip = id=>{
+    const b = ALLBODIES[id];
+    return b ? '<button data-hab="' + id + '"' + (HAB.sel.indexOf(id) >= 0 ? ' class="on"' : '') + '>' + esc(b.name) + '</button>' : '';
+  };
+  document.getElementById('habchips').innerHTML =
+    '<button data-habesc="1"' + (HAB.escala ? ' class="on"' : '') + '>TAMANHO EM ESCALA</button>'
+    + HAB.sel.map(chip).join('') + resto.map(chip).join('');
 }
 function habPasso(){
   if(!HAB.rodando) return;
@@ -13324,7 +13345,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r201';
+const BUILD = 'r202';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13885,6 +13906,68 @@ $('#dp_eventos').addEventListener('click', ()=>{
 });
 $('#evtpopx').addEventListener('click', ()=>$('#evtpop').classList.remove('on'));
 $('#habpopx').addEventListener('click', ()=>{ $('#habpop').classList.remove('on'); HAB.rodando = false; });
+$('#habq').addEventListener('input', e=>{
+  const nrm = (typeof norm === 'function') ? norm : (x=>String(x).toLowerCase());
+  const q = nrm(e.target.value.trim());
+  const alvo = document.getElementById('habachados');
+  if(!q || q.length < 2){ alvo.innerHTML = ''; return; }
+  const achou = Object.values(ALLBODIES).filter(b=>b.visual && b.quick && !b.region
+    && HAB.sel.indexOf(b.id) < 0 && nrm(b.name).indexOf(q) >= 0).slice(0, 8);
+  alvo.innerHTML = achou.map(b=>'<button data-habadd="' + b.id + '">+ ' + esc(b.name) + '</button>').join('');
+});
+$('#habachados').addEventListener('click', e=>{
+  const b = e.target.closest('button[data-habadd]'); if(!b) return;
+  HAB.sel.push(b.dataset.habadd);
+  if(HAB.sel.length > 12) HAB.sel.shift();
+  document.getElementById('habq').value = '';
+  document.getElementById('habachados').innerHTML = '';
+  habMonta();
+});
+/* r202 · ARRASTAR UM CHIP REORDENA a bancada (mouse e toque, pointer puro):
+   mais de 8px de movimento vira arrasto; o clique parado segue ligando e
+   desligando o mundo */
+(function(){
+  const box = document.getElementById('habchips');
+  let alvoD = null, x0 = 0, moveu = false;
+  box.addEventListener('pointerdown', e=>{
+    const b = e.target.closest('button[data-hab]');
+    if(!b || HAB.sel.indexOf(b.dataset.hab) < 0) return;
+    alvoD = b; x0 = e.clientX; moveu = false;
+    try{ box.setPointerCapture(e.pointerId); }catch(err){}
+  });
+  box.addEventListener('pointermove', e=>{
+    if(!alvoD) return;
+    if(!moveu && Math.abs(e.clientX - x0) < 8) return;
+    moveu = true;
+    const id = alvoD.dataset.hab;
+    const outros = [...box.querySelectorAll('button[data-hab]')].filter(x=>x !== alvoD && HAB.sel.indexOf(x.dataset.hab) >= 0);
+    let idx = 0;
+    for(const o of outros){
+      const r = o.getBoundingClientRect();
+      if(r.bottom < e.clientY - 4){ idx++; continue; }
+      if(r.top > e.clientY + 4) continue;
+      if(r.left + r.width/2 < e.clientX) idx++;
+    }
+    const sel = HAB.sel.filter(x=>x !== id);
+    sel.splice(Math.min(idx, sel.length), 0, id);
+    if(sel.join(',') !== HAB.sel.join(',')){
+      HAB.sel = sel;
+      habChips();
+      const novo = box.querySelector('button[data-hab="' + id + '"]');
+      if(novo){ alvoD = novo; novo.classList.add('arrastando'); }
+    } else if(alvoD) alvoD.classList.add('arrastando');
+  });
+  const solta = e=>{
+    if(!alvoD) return;
+    if(alvoD.classList) alvoD.classList.remove('arrastando');
+    /* o clique fantasma do fim do arrasto e engolido, mas o flag expira
+       sozinho: pointercancel nao dispara click e travaria o proximo toque */
+    if(moveu){ window.__habDrag = 1; setTimeout(()=>{ window.__habDrag = 0; }, 160); habMonta(); }
+    alvoD = null; moveu = false;
+  };
+  box.addEventListener('pointerup', solta);
+  box.addEventListener('pointercancel', solta);
+})();
 $('#habgrps').addEventListener('click', e=>{
   const g = e.target.closest('button[data-habgrp]');
   if(!g) return;
@@ -13893,6 +13976,7 @@ $('#habgrps').addEventListener('click', e=>{
   habMonta();
 });
 $('#habchips').addEventListener('click', e=>{
+  if(window.__habDrag){ window.__habDrag = 0; return; }   /* arrasto não é clique */
   const t = e.target.closest('button[data-habesc]');
   if(t){ HAB.escala = !HAB.escala; habMonta(); return; }
   const b = e.target.closest('button[data-hab]'); if(!b) return;
