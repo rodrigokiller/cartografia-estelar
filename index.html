@@ -9458,6 +9458,26 @@ function trajStart(id){
         const aTer = Math.atan2(TRAJ._b.z, TRAJ._b.x);
         oo.holder.rotation.y += (aArc - aTer);
         oo.holder.updateMatrixWorld(true);
+        /* r213 · A SOLDA DO LANÇAMENTO: o arco é um círculo de 1,00 UA e a
+           Terra elíptica da época pode estar a 0,98: dois por cento são DUAS
+           TELAS no zoom da chegada, e a câmera aparecia no vazio (o retrato
+           da sonda provou). O começo do CAMINHO é puxado até a Terra exata,
+           com o desvio morrendo ao longo de 14 por cento da rota */
+        if(TRAJ.local && TRAJ.local.length > 8){
+          o.obj.updateMatrixWorld(true);
+          const tLoc = o.obj.worldToLocal(TRAJ._b.clone());
+          /* nos TRÊS eixos: o holder da sonda é INCLINADO, e soldar só x/z num
+             referencial torto errava de novo (lição do Halley no r136: em
+             órbita inclinada, conta em 2D é projeção) */
+          const dxW = tLoc.x - TRAJ.local[0].x, dyW = tLoc.y - TRAJ.local[0].y, dzW = tLoc.z - TRAJ.local[0].z;
+          const NW = Math.max(3, Math.floor(TRAJ.local.length*0.14));
+          for(let iw = 0; iw < NW; iw++){
+            const kw = 1 - iw/NW;
+            TRAJ.local[iw].x += dxW*kw;
+            TRAJ.local[iw].y += dyW*kw;
+            TRAJ.local[iw].z += dzW*kw;
+          }
+        }
       }
     }
   }
@@ -13534,7 +13554,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r212';
+const BUILD = 'r213';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
