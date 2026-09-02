@@ -10561,6 +10561,29 @@ function habChips(){
     '<button data-habesc="1"' + (HAB.escala ? ' class="on"' : '') + '>TAMANHO EM ESCALA</button>'
     + HAB.sel.map(chip).join('') + resto.map(chip).join('');
 }
+/* r208 · o clique no globo: raycast no canvas da bancada abre a ficha do
+   corpo (e o ENTRAR do card viaja, mesmo para outro sistema) */
+(function(){
+  const cvH = document.getElementById('habcanvas');
+  if(!cvH) return;
+  const rayH = new THREE.Raycaster(), nvH = new THREE.Vector2();
+  cvH.addEventListener('click', e=>{
+    if(!HAB.scene || !HAB.cam || !HAB.worlds.length) return;
+    const r = cvH.getBoundingClientRect();
+    nvH.x = ((e.clientX - r.left)/r.width)*2 - 1;
+    nvH.y = -((e.clientY - r.top)/r.height)*2 + 1;
+    rayH.setFromCamera(nvH, HAB.cam);
+    const hit = rayH.intersectObjects(HAB.worlds, false)[0];
+    if(!hit) return;
+    const i = HAB.worlds.indexOf(hit.object);
+    const b = ALLBODIES[HAB.sel[i]];
+    if(!b) return;
+    ST.mapCard = {type:'body', id:b.id, act:'focus', t:performance.now()};
+    document.getElementById('habpop').classList.remove('on');
+    uiSync();
+    showHint('FICHA DE ' + b.name + ' · o botão ENTRAR viaja até lá');
+  });
+})();
 function habPasso(){
   if(!HAB.rodando) return;
   /* r187 · o Sol da bancada gira devagar: o terminador varre cada mundo e as
@@ -12462,7 +12485,8 @@ function crumbsRender(){
      cena: o modo real é uma coisa só */
   const nv = nivel1x1();
   if(nv){
-    const corpo = (ST.mapCard && ST.mapCard.type === 'body' && ALLBODIES[ST.mapCard.id]) ? ALLBODIES[ST.mapCard.id] : null;
+    const corpo = (ST.mapCard && ST.mapCard.type === 'body' && ALLBODIES[ST.mapCard.id]
+      && ALLBODIES[ST.mapCard.id]._sys === 'sol') ? ALLBODIES[ST.mapCard.id] : null;
     items.push({t:'UNIVERSO', go:(nv !== 'universo') ? ()=>voarNivel('universo') : null});
     items.push({t:'VIA LÁCTEA', go:(nv !== 'galaxia') ? ()=>voarNivel('galaxia') : null});
     if(nv === 'sistema' || corpo)
@@ -13481,7 +13505,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r207';
+const BUILD = 'r208';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
