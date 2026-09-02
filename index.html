@@ -9360,6 +9360,8 @@ function trajStart(id){
   if(!b || (!focoPalco && (!o || !o.obj)) || !(ehEscape(b) || b.comet || (b.foguete && b.traj)) || DIVE) return;
   /* emendar uma linha do tempo na outra vazava a Lua escondida: limpa antes */
   if(TRAJ) trajLimpar();
+  ZOOM = null;   /* r212 · o alvo do zoom deslizante desfazia a chegada da câmera
+                    (o r193 só cobria foguete e foco: sonda e cometa ficaram de fora) */
   /* primeira viagem: o navegador LÊ o manual antes de decolar */
   if(!TUT.v.has('linhadotempo')){
     TUT.aoFechar = ()=>trajStart(id);
@@ -9432,7 +9434,9 @@ function trajStart(id){
         if(spN){ TRAJ.naveSpin = spN.obj; TRAJ.naveSpinRot0 = spN.obj.rotation.y; spN.obj.rotation.y = 0; }
       }
       /* escala real: o foguete não pode ser um gigante de milhares de km */
-      if(ESCR.on && ST.sys === 'sol'){ TRAJ.corpoEsc0 = oo.corpo.scale.x; oo.corpo.scale.multiplyScalar(0.0084); }
+      /* r212 · a auditoria mediu a nave com 1,6x o raio da TERRA no 1:1 (ele
+         viu no print): 0.0035 deixa ~0,66x, visível sem enganar */
+      if(ESCR.on && ST.sys === 'sol'){ TRAJ.corpoEsc0 = oo.corpo.scale.x; oo.corpo.scale.multiplyScalar(0.0035); }
       /* mapa cênico: encolhe junto com a rota (r140) */
       else if(!ESCR.on && ST.level === 'system'){ TRAJ.corpoEsc0 = oo.corpo.scale.x; oo.corpo.scale.multiplyScalar(0.62); }
     } }
@@ -13530,7 +13534,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r211';
+const BUILD = 'r212';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
