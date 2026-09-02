@@ -260,9 +260,8 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
   font-family:var(--mono);font-size:9.5px;letter-spacing:2.5px;color:var(--amber)}
 #habpop .tphead button{width:20px;height:20px;background:none;border:1px solid var(--line2);color:var(--dim);
   font-family:var(--mono);font-size:9px;line-height:1;cursor:pointer;padding:0}
-#habscroll{overflow-x:auto;overflow-y:hidden;border:1px solid var(--line);background:#05080f}
-#habscroll::-webkit-scrollbar{height:5px}
-#habscroll::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
+#habscroll{overflow-x:auto;overflow-y:hidden;border:1px solid var(--line);background:#05080f;
+  scrollbar-width:thin;scrollbar-color:var(--line2) rgba(63,140,255,.08)}
 #habcanvas{display:block;height:250px}
 #habq{width:100%;background:rgba(6,12,24,.6);border:1px solid var(--line);color:var(--txt);
   font-family:var(--mono);font-size:9px;letter-spacing:1.5px;padding:7px 9px;margin:0 0 8px}
@@ -460,9 +459,9 @@ body.emtraj .chev{display:none !important}
 /* barra de rolagem do HUD: fina e azul, igual em todas as áreas roláveis */
 #panelbody,#misslist,#findlist,#player .pl-list{scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
 #panelbody::-webkit-scrollbar,#misslist::-webkit-scrollbar,#filtpop::-webkit-scrollbar,#cfgpop::-webkit-scrollbar,
-#findlist::-webkit-scrollbar,#player .pl-list::-webkit-scrollbar{width:4px;height:4px}
+#findlist::-webkit-scrollbar,#habscroll::-webkit-scrollbar,#player .pl-list::-webkit-scrollbar{width:4px;height:8px}
 #panelbody::-webkit-scrollbar-thumb,#misslist::-webkit-scrollbar-thumb,#filtpop::-webkit-scrollbar-thumb,#cfgpop::-webkit-scrollbar-thumb,
-#findlist::-webkit-scrollbar-thumb,#player .pl-list::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
+#findlist::-webkit-scrollbar-thumb,#habscroll::-webkit-scrollbar-thumb,#player .pl-list::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
 #panelbody::-webkit-scrollbar-track,#misslist::-webkit-scrollbar-track,#filtpop::-webkit-scrollbar-track,#cfgpop::-webkit-scrollbar-track,
 #findlist::-webkit-scrollbar-track,#player .pl-list::-webkit-scrollbar-track{background:transparent}
 #panelbody::-webkit-scrollbar-corner,#misslist::-webkit-scrollbar-corner{background:transparent}
@@ -1247,9 +1246,8 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
         </div>
         <div id="missbar"><i style="width:0%"></i></div>
         <div id="missnext"></div>
-        <button class="xbtn" id="btnhabreg" style="margin:10px 0 2px">◉ MUNDOS HABITÁVEIS LADO A LADO</button>
-        <button class="xbtn" id="btnhabsis" style="margin:4px 0 2px">◉ TAMANHOS DO SISTEMA SOLAR</button>
         <div id="cadmiss"></div>
+        <button class="xbtn" id="btnhabreg" style="margin:10px 0 2px">◉ A BANCADA · MUNDOS LADO A LADO</button>
       </div>
       <div id="missfind">
         <input id="missq" type="text" placeholder="BUSCAR NO CATÁLOGO…" autocomplete="off" spellcheck="false">
@@ -10394,6 +10392,8 @@ const HAB_GRUPOS = [
   ['rochosos', 'ROCHOSOS', ['mercurio', 'venus', 'terra', 'marte', 'lua']],
   ['gigantes', 'GIGANTES', ['jupiter', 'saturno', 'urano', 'netuno']],
   ['luas', 'LUAS GRANDES', ['lua', 'io', 'europa', 'ganimedes', 'tita', 'tritao']],
+  ['jupluas', 'LUAS DE JÚPITER', ['jupiter', 'io', 'europa', 'ganimedes', 'calisto']],
+  ['trappist', 'TRAPPIST-1', ['t1b', 't1c', 't1d', 't1e', 't1f', 't1g', 't1h']],
   ['perso', 'PERSONALIZADO', null]
 ];
 /* a bancada personalizada persiste entre sessões */
@@ -10494,14 +10494,16 @@ function habMonta(){
   /* r205 · o anel ocupa lugar: Saturno reserva o raio EXTERNO do anel */
   const exts = lista.map((b, i)=>(b.sonda || b.satelite || b.foguete) ? 0.75
     : (b.visual && b.visual.rings) ? raios[i]*b.visual.rings.rout : raios[i]);
-  const xs = []; let cur = 0.3;
+  const xs = []; let cur = 0.85;
   lista.forEach((b, i)=>{ cur += exts[i]; xs.push(cur); cur += exts[i] + FOLGA; });
-  const T = Math.max(3.4, cur - FOLGA + 0.3);
+  const T = Math.max(3.4, cur - FOLGA + 0.85);
   /* o canvas cresce com a fileira e o TRILHO rola de lado (o scroll fino da
      casa); PXU é o pixel por unidade da bancada */
   const PXU = 61, H2 = 250;
-  const Wmin = (cv.parentElement && cv.parentElement.parentElement && cv.parentElement.parentElement.clientWidth) || 520;
-  const Wpx = Math.max(Math.round(T*PXU), Wmin - 4);
+  /* r211 · a medida vem do PRÓPRIO trilho (o pai do pai era o popover com
+     padding: 28px a mais e a barrinha aparecia mesmo sobrando espaço) */
+  const Wmin = (cv.parentElement && cv.parentElement.clientWidth) || 520;
+  const Wpx = Math.max(Math.round(T*PXU), Wmin - 2);
   cv.style.width = Wpx + 'px';
   HAB.rnd.setSize(Wpx, H2, false);
   HAB.cam.left = -Wpx/(2*PXU); HAB.cam.right = Wpx/(2*PXU);
@@ -10536,7 +10538,7 @@ function habMonta(){
         vezesT = ' · ' + (rz >= 2 ? rz.toFixed(1).replace('.', ',') : rz.toFixed(2).replace('.', ',')) + ' × TERRA';
       }
     }
-    const lxx = Math.max(2, Math.min(Wpx - larg - 2, pxs[i] - Math.round(larg/2)));
+    const lxx = Math.max(8, Math.min(Wpx - larg - 8, pxs[i] - Math.round(larg/2)));
     return '<div class="hcol' + (mini ? ' mini' : '') + '" style="left:' + lxx + 'px;width:' + larg + 'px">'
       + '<div class="hnm">' + esc(b.name) + '</div>'
       + '<div class="hsub">' + esc(dia) + esc(vezesT) + '</div>'
@@ -12648,7 +12650,10 @@ function cardRender(){
   if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='body'?'▶ ENTRAR · TRAVAR LINK':'▶ ENTRAR · TRAVAR ROTA')+'</button>';
   { const bHab = (cur.type==='body') ? cur.b : ((cur.navKind==='body' && ALLBODIES[cur.navId]) ? ALLBODIES[cur.navId] : null);
     if(bHab && bHab.visual && MODEMAP[bHab.visual.mode] === 4)
-      h += '<button class="xbtn" id="btnhab">◉ MUNDOS HABITÁVEIS LADO A LADO</button>'; }
+      h += '<button class="xbtn" id="btnhab">◉ MUNDOS HABITÁVEIS LADO A LADO</button>';
+    /* r211 · qualquer corpo com ficha vai para a bancada personalizada */
+    else if(bHab && bHab.id && bHab.visual && bHab.quick && !bHab.region)
+      h += '<button class="xbtn" id="btnhabadd" data-habid="' + bHab.id + '">◉ PÔR NA BANCADA</button>'; }
   /* r191 · o card da VIA LÁCTEA no zoom galáctico: centralizar de cima e a
      fileira IR PARA, com o SISTEMA SOLAR primeiro (a volta rápida que ele
      pediu) e as galáxias famosas do atlas em seguida */
@@ -12876,6 +12881,11 @@ function cardRender(){
     ST.mapCard = {type:'galviz', id:gid, act:'galviz', t:performance.now()};
     uiSync();
   }));
+  { const ba = $('#btnhabadd'); if(ba) ba.addEventListener('click', ()=>{
+    HAB.grupo = 'perso';
+    if(HAB.sel.indexOf(ba.dataset.habid) < 0) HAB.sel = HAB.perso.filter(x=>x !== ba.dataset.habid).concat([ba.dataset.habid]).slice(-12);
+    abrirHab();
+  }); }
   const bts = $('#btntoursis'); if(bts) bts.addEventListener('click', ()=>tourDoSistema(bts.dataset.sistour));
   const bss = $('#btnsubsis'); if(bss) bss.addEventListener('click', subSistema);
   pb.querySelectorAll('[data-vt]').forEach(el=>el.addEventListener('click', ()=>verLinhaDoTempo(el.dataset.vt)));
@@ -13520,7 +13530,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r210';
+const BUILD = 'r211';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13664,8 +13674,7 @@ $('#diagchip').addEventListener('click', function(){ this.classList.remove('on')
 })();
 $('#btnsnd').addEventListener('click', ()=>{ $('#filtpop').classList.remove('on'); $('#cfgpop').classList.remove('on'); $('#datepop').classList.remove('on'); $('#player').classList.toggle('on'); AUDIO.plSync(); });
 $('#btnphoto').addEventListener('click', ()=>togglePhoto(matchMedia('(pointer: coarse)').matches));
-{ const bh = $('#btnhabreg'); if(bh) bh.addEventListener('click', ()=>{ $('#mission').classList.remove('on'); abrirHab('terra', 'hab'); }); }
-{ const bs = $('#btnhabsis'); if(bs) bs.addEventListener('click', ()=>{ $('#mission').classList.remove('on'); abrirHab(null, 'sistema'); }); }
+{ const bh = $('#btnhabreg'); if(bh) bh.addEventListener('click', ()=>{ $('#mission').classList.remove('on'); abrirHab(); }); }
 /* balãozinho no nosso estilo: qualquer elemento com data-tip ganha um */
 (function(){
   const tip = $('#tip');
