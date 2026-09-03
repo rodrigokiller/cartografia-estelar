@@ -51,7 +51,7 @@ const PROBE = `
         nav = (rMax*TRAJ.corpoTemp.scale.x)/0.00064;
       }
       const alvoUA = (typeof ESCALA_REAL_SONDA !== 'undefined' && ESCALA_REAL_SONDA[id]) ? ESCALA_REAL_SONDA[id] : -1;
-      window.__med = {id, dif3d, r1, alvoUA, nav};
+      window.__med = {id, dif3d, r1, alvoUA, nav, luaD:(TRAJ.dias ? (TRAJ.luaD || -1) : -1), dias:(TRAJ.dias ? 1 : 0)};
       window.__fr = 0;
       window.__fase = 2;
       return;
@@ -60,7 +60,7 @@ const PROBE = `
       if(window.__rafCb && window.__fr < 12){ window.__fr++; try{ window.__rafCb(performance.now()); }catch(err){} return; }
       const t = window.__med;
       window.__res = 'AUD ' + t.id + ' DIF3D=' + t.dif3d.toFixed(3) + ' FIM=' + t.r1.toFixed(2)
-        + ' ALVO=' + t.alvoUA + ' NAV=' + t.nav.toFixed(2) + ' CAM=' + CAM.dist.toFixed(3);
+        + ' ALVO=' + t.alvoUA + ' NAV=' + t.nav.toFixed(2) + ' LUAD=' + t.luaD.toFixed(4) + ' DIAS=' + t.dias + ' CAM=' + CAM.dist.toFixed(4);
     }
     if(window.__res) document.title = window.__res;
 `;
@@ -123,7 +123,11 @@ for(const id of fila){
   if(!DEFORA[id] && !(dif <= 0.02)) probs.push('lancamento a ' + dif + ' UA da Terra');
   if(alvoUA > 0 && Math.abs(fim - alvoUA)/alvoUA > 0.02) probs.push('fim em ' + fim + ' (alvo ' + alvoUA + ')');
   if(nav > 1.2) probs.push('nave com ' + nav + 'x o raio da Terra');
-  if(!(cam <= 0.5)) probs.push('camera longe (' + cam + ')');
+  const luaD = parseFloat(g('LUAD')), dias = g('DIAS') === '1';
+  /* missao de dias no 1:1: a rota tem que ser a REAL (Lua a 0.0385 un) e a
+     camera chega ACOMPANHANDO a nave, colada na Terra (r218) */
+  if(dias && !(Math.abs(luaD - 0.0385) < 0.004)) probs.push('rota fora da escala real (luaD=' + luaD + ')');
+  if(dias ? !(cam <= 0.03) : !(cam <= 0.5)) probs.push('camera longe (' + cam + ')');
   const ok = probs.length === 0;
   if(!ok) falhas++;
   console.log('  ' + (ok ? 'ok    ' : 'FALHA ') + id.padEnd(12)

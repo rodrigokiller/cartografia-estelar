@@ -9479,8 +9479,13 @@ function trajStart(id){
              CAM.dist=0.12 que o r121 tinha posto. Agora cada palco pede a
              distância dele: o palco de foco enquadra a Lua da cena, o mapa 1:1
              enquadra a rota de 0,0385 un e o mapa cênico a rota encolhida */
+          /* r218 · O ZOOM DO 1:1 É DE ACOMPANHAMENTO, NÃO DE ENQUADRAMENTO
+             (ele repetiu isto desde o r121 e eu calibrava o alvo errado):
+             a câmera chega COLADA na Terra (~200 mil km de largura de tela),
+             o pivô já segue a nave, e o usuário dá zoom out se quiser ver a
+             rota inteira. 0.125 enquadrava tudo e a nave virava um grão */
           dAlvo:(focoPalco ? Math.max(9, dLuaFoco*2.3)
-                 : ((ESCR.on && ST.sys === 'sol') ? 0.125 : Math.min(CAM.dist, 9))),
+                 : ((ESCR.on && ST.sys === 'sol') ? 0.015 : Math.min(CAM.dist, 9))),
           p0:CAM.pivot.clone(),
           marcos:b.marcos || null, mAtual:null,
           orienta:!!b.foguete,   /* só os foguetes deitam na rota: sonda e cometa têm orientação própria */
@@ -13688,7 +13693,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r217';
+const BUILD = 'r218';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
