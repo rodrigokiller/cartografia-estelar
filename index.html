@@ -9540,7 +9540,7 @@ function trajStart(id){
       /* escala real: o foguete não pode ser um gigante de milhares de km */
       /* r212 · a auditoria mediu a nave com 1,6x o raio da TERRA no 1:1 (ele
          viu no print): 0.0035 deixa ~0,66x, visível sem enganar */
-      if(ESCR.on && ST.sys === 'sol'){ TRAJ.corpoEsc0 = oo.corpo.scale.x; oo.corpo.scale.multiplyScalar(0.0035); }
+      if(ESCR.on && ST.sys === 'sol'){ TRAJ.corpoEsc0 = oo.corpo.scale.x; oo.corpo.scale.multiplyScalar(0.0008); }
       /* mapa cênico: encolhe junto com a rota (r140) */
       else if(!ESCR.on && ST.level === 'system'){ TRAJ.corpoEsc0 = oo.corpo.scale.x; oo.corpo.scale.multiplyScalar(0.62); }
     } }
@@ -9785,6 +9785,24 @@ function trajStart(id){
     if(fatorTL !== 1) CAMTW = null;
     ZOOM = null;   /* r193: o alvo do zoom deslizante puxava a câmera de volta para longe */
   }
+  /* r226 · a TRILHA: uma linha com cor POR VÉRTICE em cima do caminho; o
+     passo da missão pinta o percorrido com cauda e apaga o que vem à frente */
+  if(TRAJ.local && TRAJ.local.length > 4){
+    const nT = TRAJ.local.length;
+    const gT = new THREE.BufferGeometry().setFromPoints(TRAJ.local);
+    const colT = new Float32Array(nT*3);
+    gT.setAttribute('color', new THREE.BufferAttribute(colT, 3));
+    TRAJ.trilha = new THREE.Line(gT, new THREE.LineBasicMaterial({vertexColors:true, transparent:true, opacity:0.95}));
+    TRAJ.trilhaCol = colT;
+    const paiT = focoPalco ? TRAJ.frameFoco : (b.foguete ? o.obj.parent : o.obj);
+    if(paiT) paiT.add(TRAJ.trilha);
+    /* a rota fixa some enquanto a trilha conta a história */
+    if(TRAJ.rotaViz) TRAJ.rotaViz.visible = false;
+    if(!b.foguete && o && o.obj && o.obj.material){
+      TRAJ.arcoOp0 = o.obj.material.opacity;
+      o.obj.material.opacity = 0.05;
+    }
+  }
   $('#trajtxt').textContent = b.name;
   $('#trajano0').textContent = TRAJ.dias ? b.traj.d0 : (TRAJ.ano0 || '');
   $('#trajano1').textContent = TRAJ.dias ? b.traj.d1 : (TRAJ.ano0 ? TRAJ.ano1 : '');
@@ -9865,7 +9883,8 @@ function trajCancelar(){
           spinMesh:TRAJ.spinMesh, spinRot0:TRAJ.spinRot0,
           naveSpin:TRAJ.naveSpin, naveSpinRot0:TRAJ.naveSpinRot0,
           corpoEsc0:TRAJ.corpoEsc0, dias:TRAJ.dias,
-          marcaLanc:TRAJ.marcaLanc, lancFio:TRAJ.lancFio};
+          marcaLanc:TRAJ.marcaLanc, lancFio:TRAJ.lancFio,
+          trilha:TRAJ.trilha, trilhaCol:TRAJ.trilhaCol, arcoOp0:TRAJ.arcoOp0, obj:TRAJ.obj};
   cardRender();
 }
 function trajLimpar(){
@@ -9886,6 +9905,9 @@ function trajLimpar(){
     if(TRAJ.luaOrb && TRAJ.luaOrb.parent) TRAJ.luaOrb.parent.remove(TRAJ.luaOrb);
     if(TRAJ.marcaLanc && TRAJ.marcaLanc.parent) TRAJ.marcaLanc.parent.remove(TRAJ.marcaLanc);
     if(TRAJ.lancFio && TRAJ.lancFio.parent) TRAJ.lancFio.parent.remove(TRAJ.lancFio);
+    if(TRAJ.trilha && TRAJ.trilha.parent) TRAJ.trilha.parent.remove(TRAJ.trilha);
+    if(TRAJ.rotaViz) TRAJ.rotaViz.visible = true;
+    if(TRAJ.arcoOp0 !== undefined && TRAJ.obj && TRAJ.obj.material) TRAJ.obj.material.opacity = TRAJ.arcoOp0;
     if(TRAJ.luaLuz && ACT && ACT.solLuz){
       const ixL = ACT.solLuz.findIndex(x=>x.mats && x.mats[0] === TRAJ.luaLuz);
       if(ixL >= 0) ACT.solLuz.splice(ixL, 1);
@@ -9984,6 +10006,37 @@ function trajStep(now){
   /* o zoom fica livre: quem quiser afasta e vê o sistema inteiro andando
      (em dias, o sistema não acelera: oito dias não movem planeta nenhum) */
   if(span && !TRAJ.dias && ACT && ACT.tempoViagem) ACT.tempoViagem(TRAJ.dAno + span*TRAJ.prog);
+  /* r226 · pinta a trilha: percorrido aceso com CAUDA, frente apagada */
+  if(TRAJ.trilha && TRAJ.trilhaCol){
+    const nT2 = TRAJ.trilhaCol.length/3;
+    /* o remap tempo->ponto inline (tempoParaPonto pede os pares por argumento
+       e chamar errado quebrava o laço: interpolação própria, autossuficiente) */
+    let pA = TRAJ.prog;
+    if(TRAJ.remapP && TRAJ.remapP.length){
+      let t0 = 0, p0 = 0, achou = false;
+      for(const par of TRAJ.remapP){
+        if(TRAJ.prog <= par[0]){
+          pA = p0 + (par[1] - p0)*((TRAJ.prog - t0)/Math.max(1e-6, par[0] - t0));
+          achou = true; break;
+        }
+        t0 = par[0]; p0 = par[1];
+      }
+      if(!achou) pA = p0 + (1 - p0)*((TRAJ.prog - t0)/Math.max(1e-6, 1 - t0));
+    }
+    for(let iT = 0; iT < nT2; iT++){
+      const u2 = iT/(nT2 - 1);
+      let I;
+      if(u2 > pA) I = 0.10;
+      else {
+        const atras = (pA - u2)/0.16;
+        I = Math.max(0.16, 0.10 + 0.90*Math.exp(-atras*2.0));
+      }
+      TRAJ.trilhaCol[iT*3] = I;
+      TRAJ.trilhaCol[iT*3+1] = I*0.706;
+      TRAJ.trilhaCol[iT*3+2] = I*0.329;
+    }
+    TRAJ.trilha.geometry.getAttribute('color').needsUpdate = true;
+  }
   $('#trajfill').style.width = (TRAJ.prog*100).toFixed(1)+'%';
   if(span){
     const ano = TRAJ.ano0 + span*TRAJ.prog;
@@ -13405,6 +13458,12 @@ function zoomPasso(dt){
 }
 function dolly(f){
   if(DIVE) return;
+  /* r225 · girar a roda DURANTE a chegada da missão ajusta o alvo do voo,
+     em vez de disputar a distância com o tween quadro a quadro */
+  if(TRAJ && TRAJ.fase === 'chega'){
+    TRAJ.dAlvo = Math.max((ACT && ACT.escr) ? 0.002 : 1.1, Math.min(CAM.max, TRAJ.dAlvo*f));
+    return;
+  }
   const zx = zoomExp();
   if(zx !== 1) f = Math.pow(f, zx);
   CAMTW = null;
@@ -13449,6 +13508,13 @@ function dolly(f){
   }
   /* com um corpo travado no centro, o zoom entra bem mais perto dele */
   let minEf = CAM.min;
+  /* r225 · NA LINHA DO TEMPO o piso é mínimo: o pick do foguete tem raio
+     cênico (0.11) e virava piso de 0.16 un: o primeiro scroll-in jogava a
+     câmera 10x para longe e travava (bug 2 do teste dele) */
+  if(TRAJ && ACT && ACT.kind==='system'){
+    ZOOM = {d1:clamp((ZOOM ? ZOOM.d1 : CAM.dist)*f, ACT.escr ? 0.002 : 1.1, CAM.max)};
+    return;
+  }
   if(ACT && ACT.kind==='system'){
     if(ACT.escr){
       /* corpo travado na escala real: o zoom desce até o grão encher a tela */
@@ -13727,7 +13793,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r223';
+const BUILD = 'r225';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
