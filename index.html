@@ -160,12 +160,12 @@ body.touch #topright{z-index:76}
 #panel::before,#panel::after,#findbox::before,#findbox::after,#cmpcard::before,#cmpcard::after,
 #helpcard::before,#helpcard::after,#player::before,#player::after,#misscard::before,#misscard::after,
 #filtpop::before,#filtpop::after,#cfgpop::before,#cfgpop::after,#tut::before,#tut::after,
-#datepop::before,#datepop::after,#tourpop::before,#tourpop::after,#habpop::before,#habpop::after{
+#datepop::before,#datepop::after,#tourpop::before,#tourpop::after,#habpop::before,#habpop::after,#evtpop::before,#evtpop::after{
   content:'';position:absolute;pointer-events:none;z-index:2}
-#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before,#filtpop::before,#cfgpop::before,#tut::before,#datepop::before,#tourpop::before,#habpop::before{
+#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before,#filtpop::before,#cfgpop::before,#tut::before,#datepop::before,#tourpop::before,#habpop::before,#evtpop::before{
   left:-1px;top:-1px;
   background:linear-gradient(-45deg,transparent calc(50% - 1px),var(--line2) calc(50% - 1px),var(--line2) 50%,transparent 50%)}
-#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after,#filtpop::after,#cfgpop::after,#tut::after,#datepop::after,#tourpop::after,#habpop::after{
+#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after,#filtpop::after,#cfgpop::after,#tut::after,#datepop::after,#tourpop::after,#habpop::after,#evtpop::after{
   right:-1px;bottom:-1px;
   background:linear-gradient(-45deg,transparent 50%,var(--line2) 50%,var(--line2) calc(50% + 1px),transparent calc(50% + 1px))}
 #panel::before,#panel::after{width:18px;height:18px}
@@ -181,6 +181,8 @@ body.touch #topright{z-index:76}
 #datepop::before,#datepop::after{width:10px;height:10px}
 #tourpop::before,#tourpop::after{width:10px;height:10px}
 #habpop::before,#habpop::after{width:10px;height:10px}
+#evtpop::before,#evtpop::after{width:10px;height:10px}
+#evtpop{position:relative}
 #tourpoplista .filtrow b{color:var(--amber)}
 #tut::before{background:linear-gradient(-45deg,transparent calc(50% - 1px),rgba(255,180,84,.45) calc(50% - 1px),rgba(255,180,84,.45) 50%,transparent 50%)}
 #tut::after{background:linear-gradient(-45deg,transparent 50%,rgba(255,180,84,.45) 50%,rgba(255,180,84,.45) calc(50% + 1px),transparent calc(50% + 1px))}
@@ -13725,7 +13727,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r221';
+const BUILD = 'r223';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -13807,6 +13809,15 @@ resize();
     swapScene(buildSystem('sol'));
   }
   restauraCam();
+  /* r224 · a COMPILAÇÃO dos shaders acontece AQUI, com a tela de loading
+     ainda na frente: se o driver levar segundos (primeiro acesso, sem cache),
+     quem espera é a barrinha do boot, não o mapa congelado */
+  try{
+    const _tC0 = performance.now();
+    if(ACT && ACT.scene && typeof renderer !== 'undefined') renderer.compile(ACT.scene, camera);
+    if(ACT && ACT.sceneCeu && typeof camCeu !== 'undefined') renderer.compile(ACT.sceneCeu, camCeu);
+    RLOG.push('crono compile ' + Math.round(performance.now() - _tC0) + 'ms');
+  }catch(e){}
   try{ RLOG.push('crono boot-js ' + Math.round(performance.now() - _tB0) + 'ms'); }catch(e){}
   /* link direto de missão: abre já com a linha do tempo rodando */
   if(trajLink && k === 'corpo' && ALLBODIES[v] && ALLBODIES[v].traj)
