@@ -96,6 +96,9 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 
 /* ---------- top-right: scale + help ---------- */
 #topright{position:absolute;top:20px;right:24px;z-index:10;display:flex;align-items:center;gap:10px}
+/* r221 · no toque o menu ⋯ precisa vencer o balão do tutorial (z 70), senão
+   o passo do voltar fica inclicável (bug do teste dele no celular) */
+body.touch #topright{z-index:76}
 /* no desktop tudo fica numa linha só (display:contents), na ordem original */
 #morebtns{display:contents}
 /* r176: o relógio do canto não existe no celular; a data ganhou um botão no ⋯ */
@@ -2413,7 +2416,7 @@ TRAPPIST_PLANETS.forEach((p,i)=>{ p.sys = {orbit:TSYS[i].orbit, size:TSYS[i].siz
 
 /* ============================ SISTEMAS (nível galáxia) ============================ */
 const STARSYS = [
- {id:'sol', name:'SOL', nav:true, pos:[9.5,0,7.5], hot:false,
+ {id:'sol', name:'SISTEMA SOLAR', nav:true, pos:[9.5,0,7.5], hot:false,
   card:{desig:'SISTEMA ESTELAR', kind:'Anã amarela · 8 planetas', hab:null,
    quick:[['DISTÂNCIA','0 al'],['TIPO','G2V'],['PLANETAS','8 + anões'],['VIDA','confirmada ✓']],
    sections:[{t:'REGISTRO', rows:[['Posição','Braço de Órion, a 26 mil al do centro'],['Idade','4,6 bi anos'],['Status','Você está aqui']]}],
@@ -13722,7 +13725,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r220';
+const BUILD = 'r221';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -14063,9 +14066,18 @@ function tutBoasVindas(){
      auto:true, checks:[{tx:'Volte para a cena do sistema', ok:()=>ST.level !== 'focus'}]},
     {tx:'Também dá para navegar pelo <b>rastro</b> aqui de cima: clique em <b>VIA LÁCTEA</b> para subir até a galáxia.',
      alvo:'#crumbs', auto:true, checks:[{tx:'Suba para a galáxia', ok:()=>ST.level === 'galaxy'}]},
-    {tx:'O mapa da galáxia. Agora volte para casa: clique no <b>SISTEMA SOLAR</b> (piscando) e depois em ENTRAR, ou use o botão « voltar.',
+    /* r221 · no CELULAR os botões extras moram no ⋯: o tutorial DEMONSTRA o
+       caminho (a caixa pisca no ⋯, abriu, pisca no botão de dentro),
+       exatamente como ele desenhou testando no celular */
+    ...(t ? [{tx:'No celular, os botões extras moram no <b>⋯</b> aqui de cima. Toque nele para abrir o menu.',
+     alvo:'#btnmore', auto:true, checks:[{tx:'Abra o menu ⋯', ok:()=>document.getElementById('morebtns').classList.contains('on')}]}] : []),
+    {tx:(t ? 'O mapa da galáxia. Volte para casa pelo botão <b>« voltar</b> do menu, ou toque no <b>SISTEMA SOLAR</b> piscando no mapa e depois em ENTRAR.'
+           : 'O mapa da galáxia. Agora volte para casa: clique no <b>SISTEMA SOLAR</b> (piscando) e depois em ENTRAR, ou use o botão « voltar.'),
      alvoLabel:'SISTEMA SOLAR', alvo:'#navback', auto:true, checks:[{tx:'Volte ao Sistema Solar', ok:()=>ST.level === 'system' && ST.sys === 'sol'}]},
-    {tx:'Filtros: abra o <b>≋</b> e LIGUE a linha das <b>SONDAS</b>. As rotas surgem no mapa. Cada filtro liga ou desliga uma camada.',
+    ...(t ? [{tx:'De novo o <b>⋯</b>: abra o menu para acharmos o filtro de camadas.',
+     alvo:'#btnmore', auto:true, checks:[{tx:'Abra o menu ⋯', ok:()=>document.getElementById('morebtns').classList.contains('on')}]}] : []),
+    {tx:(t ? 'Toque no <b>≋</b> do menu e LIGUE a linha das <b>SONDAS</b>. As rotas surgem no mapa.'
+           : 'Filtros: abra o <b>≋</b> e LIGUE a linha das <b>SONDAS</b>. As rotas surgem no mapa. Cada filtro liga ou desliga uma camada.'),
      alvo:'#btnfilt',
      init:()=>{ if(ACT && ACT.kind === 'system' && CAM.dist < 44) tweenCam({dist:48}, 900); },
      checks:[{tx:'Ligue a linha das SONDAS', ok:()=>FILTROS.sonda === true}]},
