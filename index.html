@@ -1841,7 +1841,7 @@ PLANETS.push(
   quick:[['GRAVIDADE','1,06 g'],['TEMP. TOPO','−139 °C'],['DIA','10 h 33'],['ANO','29,4 anos'],['LUAS','274'],['ANÉIS','SIM']],
   sys:{orbit:34, size:2.15, speed:0.034, angle:5.6},
   visual:{mode:'gas', c1:'#e2d3ac', c2:'#c6b184', c3:'#f0e8d2', c4:'#a98f60', bandF:8.0, turb:0.9, seed:4.7, atmo:{col:'#f0e2b8', i:0.5}, rings:{rin:1.35, rout:2.35, col:'#d8caa6', op:0.9, tilt:26.7, seed:2.0}},
-  moonsMeta:'274 CONFIRMADAS · 7 PRINCIPAIS',
+  moonsMeta:'274 CONFIRMADAS · 9 PRINCIPAIS',
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','1,43 bi km (9,5 UA)'],['Ano','29,4 anos'],['Dia','10 h 33 min'],['Tipo de rotação','Prógrada'],['Veloc. orbital','9,7 km/s'],['Inclinação axial','26,7°'],['Estações','Sim, ~7 anos cada']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','116.460 km'],['Massa','5,68 × 10²⁶ kg (95 Terras)'],['Densidade','0,69 g/cm³, flutuaria na água'],['Área','42,7 bi km²'],['Anéis','282.000 km de largura · ~10 m a 1 km de espessura']]},
@@ -1909,6 +1909,16 @@ PLANETS.push(
     ],
     facts:['O bamboleio medido pela Cassini revelou em 2024 um oceano interno jovem, escondido sob uma superfície que não mostra nenhum sinal dele.','A divisão de Cassini, o vão escuro dos anéis de Saturno, é aberta pela gravidade de Mimas.'],
     fict:'Quando a Voyager 1 fotografou a cratera Herschel em 1980, três anos depois de Star Wars, a comparação com a Estrela da Morte foi inevitável e Mimas nunca mais se livrou do apelido.'},
+   {id:'hiperion', name:'HIPÉRION', desig:'SATURNO-VII · LUA', kind:'A esponja que gira ao acaso', hab:1, gbar:0.002, pop:'0',
+    quick:[['DIMENSÕES','360 × 266 × 205 km'],['GRAVIDADE','0,002 g'],['ÓRBITA','21,3 d'],['DESCOBERTA','1848'],['ROTAÇÃO','caótica'],['DENSIDADE','0,54 g/cm³']],
+    visual:{mode:'rocky', c1:'#b8a488', c2:'#8a7458', c3:'#d8c8a8', scale:3.4, seed:7.7, crater:0.85},
+    sections:[
+      {t:'A ESPONJA', rows:[['A cara','Crateras fundas de paredes finas, coladas umas nas outras: parece uma esponja do mar'],['Por quê','Metade do volume é VAZIO: um entulho de gelo mal compactado'],['O impacto','Coisa que bate afunda em vez de espirrar: as crateras engolem os próprios detritos']]},
+      {t:'O GIRO CAÓTICO', rows:[['O caos','É o único corpo grande conhecido que gira SEM eixo nem período fixos: cada dia é diferente do anterior'],['A causa','O formato de batata + o puxão de Titã na ressonância 4:3'],['Na prática','É impossível prever que lado dela estará virado para Saturno daqui a um mês']]},
+      {t:'REGISTRO', rows:[['Descoberta','1848 · Bond, Bond e Lassell'],['A visita','A Cassini passou a 500 km em 2005 e fez as fotos da esponja'],['Carga elétrica','Em 2005 a Cassini levou um choque de elétrons vindo dela: a primeira lua eletrostática detectada']]}
+    ],
+    facts:['Metade de Hipérion é espaço vazio: se coubesse num oceano gigante, flutuaria.','É o único corpo grande do sistema com rotação CAÓTICA: não dá para prever o dia de amanhã lá.'],
+    fict:null},
    {id:'japeto', name:'JÁPETO', desig:'SATURNO-VIII · LUA', kind:'A lua de duas caras', hab:3, gbar:0.023, pop:'0',
     quick:[['DIÂMETRO','1.469 km'],['GRAVIDADE','0,023 g'],['ÓRBITA','79,3 d'],['DESCOBERTA','1671'],['ALBEDO','0,04 no escuro, 0,6 no claro'],['TEMP.','−143 a −173 °C']],
     visual:{mode:'rocky', c1:'#d8d2c8', c2:'#4a3a2c', c3:'#8a7c68', scale:2.2, seed:5.9, crater:0.4},
@@ -1918,7 +1928,17 @@ PLANETS.push(
       {t:'REGISTRO', rows:[['Descoberta','1671 · Giovanni Cassini'],['O sumiço','Cassini notou que a lua sumia de um lado da órbita: só o hemisfério escuro apontava para nós'],['O nome','Jápeto, o titã pai de Prometeu e de Atlas'],['A órbita','79 dias, longe e inclinada: é a única lua grande de onde se veriam os anéis abertos']]}
     ],
     facts:['A poeira que cai de um lado e o gelo que migra para o outro fazem de Jápeto o mundo mais bicolor que se conhece.','Uma cordilheira de 13 km de altura corre exatamente sobre o equador, e uma das hipóteses é que seja um anel antigo que desabou.'],
-    fict:'No livro 2001: Uma Odisseia no Espaço, de Arthur C. Clarke, o monólito TMA-2 espera a Discovery em Jápeto; o filme mudou o destino para Júpiter.'}
+    fict:'No livro 2001: Uma Odisseia no Espaço, de Arthur C. Clarke, o monólito TMA-2 espera a Discovery em Jápeto; o filme mudou o destino para Júpiter.'},
+   {id:'febe', name:'FEBE', desig:'SATURNO-IX · LUA', kind:'A forasteira que orbita ao contrário', hab:1, gbar:0.004, pop:'0', retro:true,
+    quick:[['DIÂMETRO','213 km'],['GRAVIDADE','0,004 g'],['ÓRBITA','550,3 d · RETRÓGRADA'],['DESCOBERTA','1899'],['DISTÂNCIA','12,9 mi km'],['ALBEDO','0,06']],
+    visual:{mode:'rocky', c1:'#5a544c', c2:'#3a352f', c3:'#7a746a', scale:3.0, seed:9.9, crater:0.7},
+    sections:[
+      {t:'A FORASTEIRA', rows:[['De onde veio','Quase certamente do cinturão de Kuiper: um centauro capturado por Saturno no início do sistema'],['A prova','Orbita AO CONTRÁRIO de tudo, inclinada, a 12,9 milhões de km: lua nascida ali não faria isso'],['A composição','Escura como carvão, com gelo de água e dióxido de carbono de mundo distante']]},
+      {t:'O ANEL DE FEBE', rows:[['A descoberta','Em 2009 o telescópio Spitzer achou um anel GIGANTE e invisível na órbita dela'],['O tamanho','O maior anel de Saturno: engoliria centenas de Saturnos lado a lado'],['O elo','É a poeira DELA que cai em Jápeto e pinta o hemisfério escuro: o mistério das duas caras começa aqui']]},
+      {t:'REGISTRO', rows:[['Descoberta','1899 · William Pickering, a primeira lua achada por fotografia'],['A visita','A Cassini passou por ela na CHEGADA, em 2004: 2.000 km, antes de todas as outras'],['Rotação','9,3 h, solta da órbita: ela nem é travada como as luas de verdade']]}
+    ],
+    facts:['Febe orbita ao contrário de tudo em Saturno: é um mundo do cinturão de Kuiper capturado.','A poeira dela pinta o lado escuro de Jápeto: as duas fichas se explicam.'],
+    fict:null}
   ]
 },
 {
@@ -4870,6 +4890,7 @@ const ESCALA_REAL_LUAS = {
   lua:384400, fobos:9376, deimos:23463,
   io:421700, europa:671100, ganimedes:1070400, calisto:1882700,
   tita:1221870, reia:527108, encelado:237948, dione:377396, tetis:294619, mimas:185539, japeto:3560820,
+  hiperion:1481010, febe:12947780,
   miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, tritao:354759, caronte:19591,
   iss:6790, hubble:6910, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
@@ -5759,9 +5780,8 @@ function buildSystem(sysId, spin0){
     if(p.foguete){ bg.group.visible = false; pick.userData.escondido = true; labels[labels.length-1].off = true; }
     /* as luas também aparecem no mapa do sistema, em miniatura */
     if(p.moons && p.moons.length && !p.satOf && !p.comet && !ehEscape(p) && !p.region){
-      /* r160: o teto subiu de 6 para 8 luas por planeta, senão Jápeto (a 7ª
-         de Saturno) e as luas novas de Urano ficavam fora do mapa */
-      p.moons.slice(0, QLOW ? 4 : 8).forEach((m, mi)=>{
+      /* r160: teto 6→8; r229: 8→9 (Hipérion e Febe entraram em Saturno) */
+      p.moons.slice(0, QLOW ? 5 : 9).forEach((m, mi)=>{
         const mh = new THREE.Object3D();
         mh.position.set(obX, 0, obZ);
         if(elip) elip.extras.push(mh);
@@ -13848,7 +13868,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r228';
+const BUILD = 'r229';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
