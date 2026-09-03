@@ -10934,7 +10934,23 @@ function up(){
     /* sai de dentro do corpo recuando, o inverso exato do mergulho */
     if(b._parent) gotoFocus(b._parent, false, b.id);
     else gotoSystem(b._sys, 'RETORNANDO À VISÃO DO SISTEMA', (b.sys ? b.id : null));
-  } else if(ST.level==='system') gotoGalaxy((SYS[ST.sys] && SYS[ST.sys].gal) || 'vialactea', null, false, ST.sys);
+  } else if(ST.level==='system'){
+    if(DE11 && DE11.sis === ST.sys && ESCR.on && ST.sys !== 'sol'){
+      const volta = DE11; DE11 = null;
+      gotoSystem('sol', 'DE VOLTA AO MAPA 1:1');
+      setTimeout(()=>{
+        if(!(ACT && ACT.kind === 'system' && ACT.escr)) return;
+        CAMTW = null; ZOOM = null;
+        CAM.pivot.copy(volta.alvo);
+        CAM.dist = volta.dist*2.4;
+        /* estacionado longe: o ESC continua trazendo para casa */
+        VOOLONGE = {nome:(SYS[volta.sis] ? SYS[volta.sis].name : ''), ly:Math.round(volta.alvo.length()/(LY_UA*ESCR_UA))};
+        applyCam();
+      }, 420);
+      return;
+    }
+    gotoGalaxy((SYS[ST.sys] && SYS[ST.sys].gal) || 'vialactea', null, false, ST.sys);
+  }
   else if(ST.level==='galaxy') gotoUniverse(null, ST.gal);
 }
 /* o ESC, longe de casa, traz de volta (o voo não é um beco sem saída) */
@@ -11112,6 +11128,15 @@ function enterTarget(act, id){
     flyThen(id, ()=>gotoFocus(id));
   }
   else if(act==='starsys'){
+    /* r216 · no mapa 1:1 o ENTRAR de uma estrela ou sistema do céu NÃO pula
+       para a cena cênica: VOA até lá no mesmo mapa (o voo da busca do r143)
+       e entra emendado; o zoom out depois DEVOLVE ao mapa (bug dele) */
+    if(ACT && ACT.kind==='system' && ACT.escr && ACT.sceneCeu){
+      const ceuId = {sirius:'sirius', vega:'vegaceu', alphacen:'rigilkent', betelgeuse:'betelg', antares:'antares', rigel:'rigel', aldebaran:'aldebaran'}[id];
+      if(ceuId){ voarAteEstrela(ceuId); return; }
+      const alvoS = ACT.ceuAlvos && ACT.ceuAlvos[id];
+      if(alvoS){ voarAteAncora(id, alvoS); return; }
+    }
     /* do mapa da galáxia, mergulha no marcador da estrela */
     if(ACT && ACT.kind==='galaxy' && acharPick(id)){
       uiSync();
@@ -12425,7 +12450,27 @@ function buildFindIdx(){
    frente). Chegando, se aquele sol tem sistema no atlas, a cena troca sem
    animação de entrada; se não tem, a viagem para lá mesmo e o ESC traz de
    volta para casa. */
-let VOOCEU = null;
+let VOOCEU = null, DE11 = null;   /* r216: sistema visitado a partir do mapa 1:1 */
+/* r216 · voa até a ÂNCORA de um sistema do céu do 1:1 (TRAPPIST, Kepler-452:
+   marcadores sem estrela no catálogo popular) e entra emendado na chegada */
+function voarAteAncora(sisId, alvoPos){
+  if(TRAJ || DIVE || TRANSITO) return;
+  const d = alvoPos.length();
+  if(!(d > 1)) return;
+  const dir = alvoPos.clone().normalize();
+  const alvo = dir.clone().multiplyScalar(d*0.997);
+  const yawAlvo = Math.atan2(-dir.x, -dir.z);
+  const pitAlvo = Math.max(-1.3, Math.min(1.3, Math.asin(-dir.y) + 0.06));
+  const nomeS = (SYS[sisId] && SYS[sisId].name) || sisId.toUpperCase();
+  CAMTW = null;
+  ST.mapCard = null; uiSync();
+  VOOCEU = {t0:performance.now(), ms:5200, p0:CAM.pivot.clone(), p1:alvo,
+    d0:CAM.dist, d1:Math.max(CAM.min*4, Math.min(CAM.max*0.6, d*0.06)),
+    y0:CAM.yaw, y1:yawAlvo, i0:CAM.pitch, i1:pitAlvo, sis:sisId, nome:nomeS,
+    ly:Math.round(d/(LY_UA*ESCR_UA)), idCeu:null, longe:true};
+  showHint('RUMO A ' + nomeS);
+  AUDIO.sfx('enter');
+}
 function voarAteEstrela(idCeu){
   const e = ESTRELAS_CEU.find(x=>x[0] === idCeu);
   if(!e) return;
@@ -12477,7 +12522,10 @@ function vooCeuStep(now){
   const v = VOOCEU;
   VOOCEU = null;
   if(v.sis && SYS[v.sis]){
-    /* chegou: o sistema entra SEM animação de entrada, emendando na viagem */
+    /* chegou: o sistema entra SEM animação de entrada, emendando na viagem.
+       r216 · e fica lembrado DE ONDE veio: o zoom out devolve ao mapa 1:1,
+       no mesmo lugar do céu (era o 'parece que voltamos pro cênico' dele) */
+    if(ESCR.on) DE11 = {sis:v.sis, alvo:v.p1.clone(), dist:v.d1};
     gotoSystem(v.sis, 'VOCÊ CHEGOU A ' + v.nome, null, true);
   } else {
     /* só marca 'longe de casa' se a viagem realmente saiu do sistema */
@@ -13640,7 +13688,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r215';
+const BUILD = 'r216';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -14808,8 +14856,10 @@ function loop(){
          do r151, que perseguia picks reposicionados por quadro): com a Via
          Láctea na ficha o pivô trava nele e o arrasto orbita a galáxia */
       CAM.pivot.lerp(ACT.galCentro, Math.min(1, dt*5.2));
-    } else {
-      /* sem seleção o pivô volta ao centro, que agora é o próprio corpo */
+    } else if(!VOOLONGE){
+      /* sem seleção o pivô volta ao centro, que agora é o próprio corpo.
+         r216 · exceto LONGE DE CASA (estacionado numa estrela): o puxão
+         desfazia o estacionamento do r143 e a volta do zoom out num piscar */
       SEGV.set(0,0,0);
       if(CAM.pivot.distanceToSquared(SEGV) > 1e-6) CAM.pivot.lerp(SEGV, Math.min(1, dt*5.2));
     }
