@@ -10645,12 +10645,18 @@ function habMonta(){
     /* r205 · a razão com a Terra na legenda (11,2 × TERRA) */
     let vezesT = '';
     const ehNave = b.sonda || b.satelite || b.foguete;
+    const ehEstrela = b.visual && b.visual.mode === 'star';
     if(ehNave) vezesT = ' · FORA DE ESCALA';
     else if(typeof parseDia === 'function'){
       const ddV = parseDia(b);
-      if(ddV && ddV.km && b.id !== 'terra'){
-        const rz = ddV.km/12742;
-        vezesT = ' · ' + (rz >= 2 ? rz.toFixed(1).replace('.', ',') : rz.toFixed(2).replace('.', ',')) + ' × TERRA';
+      if(ddV && ddV.km){
+        /* r219 · estrela compara com o SOL (680 × SOL conta a história;
+           74 mil × Terra é verdade mas não é a comparação que se faz) */
+        const base = ehEstrela ? 1392680 : 12742;
+        const rz = ddV.km/base;
+        const nomeB = ehEstrela ? 'SOL' : 'TERRA';
+        if(!(b.id === 'terra' && !ehEstrela) && b.id !== 'sol')
+          vezesT = ' · ' + (rz >= 2 ? rz.toFixed(1).replace('.', ',') : rz.toFixed(2).replace('.', ',')) + ' × ' + nomeB;
       }
     }
     const lxx = Math.max(8, Math.min(Wpx - larg - 8, pxs[i] - Math.round(larg/2)));
@@ -13693,7 +13699,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r218';
+const BUILD = 'r219';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
