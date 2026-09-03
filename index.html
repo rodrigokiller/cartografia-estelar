@@ -2434,6 +2434,21 @@ const STARSYS = [
    quick:[['DISTÂNCIA','40,7 al'],['PLANETAS','7 rochosos'],['ZONA HABIT.','3'],['DESCOBERTA','2016–17']],
    sections:[{t:'REGISTRO', rows:[['Estrela','Anã vermelha ultrafria, pouco maior que Júpiter'],['Sistema','7 planetas em órbitas menores que a de Mercúrio'],['James Webb','Já mediu b e c, provavelmente sem atmosfera; a zona habitável é a próxima']]}],
    facts:['O sistema com mais planetas do tamanho da Terra já encontrado até hoje.']}},
+ {id:'aldebaran', name:'ALDEBARAN', nav:true, pos:[5,0,19],
+  card:{desig:'ESTRELA · 65 AL', kind:'Gigante laranja, o olho do Touro', hab:null,
+   quick:[['DISTÂNCIA','65 al'],['RAIO','~44 Sóis'],['TIPO','K5 III'],['RUMO','a Pioneer 10 viaja para cá']],
+   sections:[{t:'REGISTRO', rows:[['O que é','Um Sol que já envelheceu e inchou 44 vezes'],['No céu','O olho vermelho do Touro, ocultado pela Lua várias vezes por ano']]}],
+   facts:['É o retrato do futuro do Sol.']}},
+ {id:'rigel', name:'RIGEL', nav:true, pos:[-14,0,9],
+  card:{desig:'ESTRELA · ~860 AL', kind:'Supergigante azul de Órion', hab:null,
+   quick:[['DISTÂNCIA','~860 al'],['RAIO','~75 Sóis'],['BRILHO','~120.000 Sóis'],['DESTINO','supernova']],
+   sections:[{t:'REGISTRO', rows:[['No desenho','O pé esquerdo do caçador, o oposto de Betelgeuse'],['Família','Sistema de pelo menos quatro estrelas']]}],
+   facts:['A 7ª mais brilhante do céu.']}},
+ {id:'antares', name:'ANTARES', nav:true, pos:[13,0,7], hot:true,
+  card:{desig:'ESTRELA · ~550 AL', kind:'A rival vermelha de Marte', hab:null,
+   quick:[['DISTÂNCIA','~550 al'],['RAIO','~680 Sóis'],['TIPO','M1.5 Iab'],['DESTINO','supernova']],
+   sections:[{t:'REGISTRO', rows:[['Escala','No lugar do Sol, engoliria o cinturão de asteroides'],['O nome','Anti-Ares: rival de Marte']]}],
+   facts:['O coração do Escorpião.']}},
  {id:'betelgeuse', name:'BETELGEUSE', nav:true, pos:[-6,0,-16], hot:true,
   card:{desig:'ESTRELA · ~550 AL', kind:'Supergigante vermelha', hab:null,
    quick:[['DISTÂNCIA','~550 al'],['RAIO','~760 Sóis'],['IDADE','~10 mi anos'],['DESTINO','supernova']],
@@ -2839,6 +2854,41 @@ const KEP_BODIES = [
   facts:['Um ano lá dura 385 dias, você quase nem precisaria trocar de calendário.','Se a Terra tem um “futuro”, talvez se pareça com ele: 1,5 bi de anos mais velho.'],
   fict:'Na imprensa mundial de 2015: “a prima mais velha da Terra”.', moons:[]}
 ];
+/* r215 · AS ESTRELAS FAMOSAS (pedido dele: 'aquelas comparações de estrelas'):
+   Aldebaran, Rigel e Antares viram sistemas navegáveis como a Betelgeuse */
+const ALD_STAR = {
+  id:'aldebarans', name:'ALDEBARAN', desig:'ESTRELA · K5 III', kind:'O olho laranja do Touro', hab:null, gbar:0.02,
+  quick:[['TIPO','K5 III, gigante'],['RAIO','~44 R☉'],['MASSA','~1,2 Sol'],['TEMP. SUP.','3.600 °C'],['DISTÂNCIA','65 al'],['BRILHO','~440 Sóis']],
+  visual:{mode:'star', c1:'#d96a20', c2:'#ffb060'},
+  sections:[
+    {t:'A GIGANTE', rows:[['O que ela é','Uma estrela parecida com o Sol que JÁ envelheceu: esgotou o hidrogênio do núcleo e inchou 44 vezes'],['O aviso','É o retrato do futuro do Sol daqui a uns 5 bilhões de anos'],['A cor','Laranja porque a superfície esfriou ao inchar: 3.600 °C']]},
+    {t:'O OLHO DO TOURO', rows:[['No céu','É a estrela mais brilhante do Touro, o olho vermelho do desenho'],['As Híades','Parece fazer parte do aglomerado em V, mas é ilusão: ela está na METADE do caminho'],['Ocultações','A Lua passa na frente dela várias vezes por ano: dá para ver a estrela apagar e acender na borda lunar']]},
+    {t:'A VISITA', rows:[['Pioneer 10','A primeira sonda a deixar o sistema interno viaja NA DIREÇÃO de Aldebaran'],['A chegada','Daqui a uns 2 milhões de anos, se nada a desviar'],['O planeta','Um candidato a planeta gigante (Aldebaran b) foi proposto e continua em debate']]}
+  ],
+  facts:['A Lua oculta Aldebaran várias vezes por ano: é a estrela brilhante mais fácil de ver sumir atrás dela.'],
+  fict:'A Pioneer 10, com a placa dourada da humanidade a bordo, chega à vizinhança dela em ~2 milhões de anos.'};
+const RIG_STAR = {
+  id:'rigels', name:'RIGEL', desig:'ESTRELA · B8 Ia', kind:'A supergigante azul do pé de Órion', hab:null, gbar:0.05,
+  quick:[['TIPO','B8 Ia, supergigante'],['RAIO','~75 R☉'],['MASSA','~21 Sóis'],['TEMP. SUP.','12.000 °C'],['DISTÂNCIA','~860 al'],['BRILHO','~120.000 Sóis']],
+  visual:{mode:'star', c1:'#9fc4ff', c2:'#e8f2ff'},
+  sections:[
+    {t:'A POTÊNCIA', rows:[['Brilho','~120 mil vezes o Sol: mesmo a 860 anos-luz é a 7ª estrela mais brilhante do céu'],['A cor','Azul porque a superfície ferve a 12.000 °C'],['A vida curta','Estrela assim gasta o combustível em poucos milhões de anos e morre em supernova']]},
+    {t:'O PÉ DE ÓRION', rows:[['No desenho','É o pé esquerdo do caçador, o oposto do ombro vermelho de Betelgeuse'],['O contraste','Órion carrega as duas: a azul jovem e furiosa embaixo, a vermelha velha e inchada em cima'],['A Bruxa','A luz de Rigel ilumina a Nebulosa Cabeça de Bruxa, que brilha refletindo ela']]},
+    {t:'A FAMÍLIA', rows:[['Sistema','Rigel não é sozinha: pelo menos QUATRO estrelas dançam juntas'],['Rigel B','Um par azul apertado orbitando a gigante a uns 2.200 UA'],['O futuro','Quando explodir, vai brilhar mais que a Lua cheia no céu da Terra']]}
+  ],
+  facts:['Rigel é ~120 mil vezes mais luminosa que o Sol: se estivesse no lugar de Sirius, faria sombra de noite.'],
+  fict:'Em Star Trek, os planetas de Rigel aparecem desde o primeiro piloto da série original.'};
+const ANT_STAR = {
+  id:'antaress', name:'ANTARES', desig:'ESTRELA · M1.5 Iab', kind:'O coração vermelho do Escorpião', hab:null, gbar:0.02,
+  quick:[['TIPO','M1.5 Iab, supergigante'],['RAIO','~680 R☉'],['MASSA','~12 Sóis'],['TEMP. SUP.','3.200 °C'],['DISTÂNCIA','~550 al'],['BRILHO','~75.000 Sóis']],
+  visual:{mode:'star', c1:'#c9351f', c2:'#ff8a4a'},
+  sections:[
+    {t:'A RIVAL DE MARTE', rows:[['O nome','Anti-Ares, a rival de Marte: tão vermelha que os gregos a puseram para competir com o planeta'],['O duelo','Marte passa perto dela no céu a cada dois anos, e dá para comparar as duas a olho nu'],['O coração','É o coração do Escorpião, cravada no meio do desenho']]},
+    {t:'A MONSTRA', rows:[['Raio','~680 raios solares: no lugar do Sol, engoliria Marte e chegaria perto de Júpiter'],['A superfície','Tão rarefeita e convulsa que os telescópios veem células gigantes de gás subindo e descendo'],['O fim','Vai explodir em supernova nas próximas centenas de milhares de anos']]},
+    {t:'A COMPANHEIRA', rows:[['Antares B','Uma estrela azul e quente orbitando a gigante a ~550 UA'],['A cor impossível','Perto do clarão alaranjado, ela parece VERDE no telescópio: um dos raros "verdes" do céu, por contraste'],['O eclipse','Só aparece bem quando a Lua oculta a gigante por alguns segundos']]}
+  ],
+  facts:['Antares é tão grande que, no lugar do Sol, a superfície dela passaria do cinturão de asteroides.'],
+  fict:'O nome significa RIVAL DE MARTE: os antigos achavam que a estrela e o planeta disputavam quem era mais vermelho.'};
 const BET_STAR = {
   id:'betelgeuses', name:'BETELGEUSE', desig:'ESTRELA · M1-2 Ia', kind:'Supergigante vermelha em fim de vida', hab:null, gbar:0.03,
   quick:[['TIPO','M1-2 Ia'],['RAIO','~760 R☉'],['MASSA','16–19 Sol'],['TEMP. SUP.','3.300 °C'],['IDADE','~8–10 mi anos'],['DISTÂNCIA','~550 al']],
@@ -4252,6 +4302,24 @@ const SYS = {
           quick:[['GALÁXIA','Redemoinho · M51'],['DISTÂNCIA','28 mi al'],['PLANETAS','1 candidato'],['MÉTODO','trânsito em raios X'],['DETECTADO','2021'],['ANO LOCAL','~70 anos']],
           sections:[{t:'REGISTRO', rows:[['2021','Um trânsito de 3 horas apagou os raios X da binária'],['O candidato','Do tamanho de Saturno, orbitando os restos de uma estrela morta'],['Por que importa','Provou que dá para procurar planetas em outras galáxias']]}],
           facts:['Mil vezes mais longe que qualquer exoplaneta confirmado.']} },
+  aldebaran:{ id:'aldebaran', radec:'04h36m +16°31′', name:'ALDEBARAN', star:ALD_STAR, bodies:[], belt:[], beltR:null,
+        starSize:4.2, camMax:60, hint:'GIGANTE LARANJA · O FUTURO DO SOL',
+        card:{desig:'SISTEMA ESTELAR · TOURO', kind:'O olho do Touro, um Sol envelhecido', hab:null,
+          quick:[['ESTRELA','1 gigante laranja'],['RAIO','~44 R☉'],['PLANETAS','1 candidato em debate'],['DISTÂNCIA','65 al'],['RUMO','a Pioneer 10 viaja para cá']],
+          sections:[{t:'REGISTRO', rows:[['Escala','44 vezes o raio do Sol: engoliria Mercúrio com folga'],['As Híades','O V do Touro fica ao fundo, ao DOBRO da distância'],['Ocultações','A Lua passa na frente dela várias vezes por ano']]}],
+          facts:['É o retrato do futuro do Sol: uma estrela parecida que já inchou.']} },
+  rigel:{ id:'rigel', radec:'05h15m −08°12′', name:'RIGEL', star:RIG_STAR, bodies:[], belt:[], beltR:null,
+        starSize:5.5, camMax:60, hint:'SUPERGIGANTE AZUL · 120 MIL SÓIS',
+        card:{desig:'SISTEMA ESTELAR · ÓRION', kind:'O pé azul do caçador', hab:null,
+          quick:[['ESTRELA','supergigante azul (sistema de 4)'],['RAIO','~75 R☉'],['BRILHO','~120.000 Sóis'],['DISTÂNCIA','~860 al'],['DESTINO','supernova']],
+          sections:[{t:'REGISTRO', rows:[['O contraste','Órion tem as duas: Rigel azul no pé, Betelgeuse vermelha no ombro'],['A Bruxa','A luz dela acende a Nebulosa Cabeça de Bruxa'],['Família','Pelo menos quatro estrelas no sistema']]}],
+          facts:['A 7ª estrela mais brilhante do céu, mesmo a 860 anos-luz.']} },
+  antares:{ id:'antares', radec:'16h29m −26°26′', name:'ANTARES', star:ANT_STAR, bodies:[], belt:[], beltR:null,
+        starSize:8.5, camMax:70, hint:'A RIVAL DE MARTE · CORAÇÃO DO ESCORPIÃO',
+        card:{desig:'SISTEMA ESTELAR · ESCORPIÃO', kind:'A rival vermelha de Marte', hab:null,
+          quick:[['ESTRELA','supergigante + companheira azul'],['RAIO','~680 R☉'],['MASSA','~12 Sóis'],['DISTÂNCIA','~550 al'],['DESTINO','supernova']],
+          sections:[{t:'REGISTRO', rows:[['Escala','No lugar do Sol, a superfície passaria do cinturão de asteroides'],['O nome','Anti-Ares: a rival de Marte no céu'],['Antares B','A companheira que parece verde por contraste']]}],
+          facts:['A cada dois anos Marte passa perto dela no céu e o duelo de vermelhos acontece de novo.']} },
   betelgeuse:{ id:'betelgeuse', radec:'05h55m +07°24′', name:'BETELGEUSE', star:BET_STAR, bodies:[], belt:[], beltR:null,
         starSize:9, camMax:70, hint:'NENHUM PLANETA CATALOGADO · SUPERGIGANTE EM FIM DE VIDA',
         card:{desig:'SISTEMA ESTELAR · ÓRION', kind:'Uma bomba-relógio magnífica', hab:null,
@@ -4268,6 +4336,7 @@ reg(ACEN_A,'alphacen'); ACEN_BODIES.forEach(p=>reg(p,'alphacen'));
 reg(SIR_A,'sirius'); SIR_BODIES.forEach(p=>reg(p,'sirius'));
 reg(KEP_STAR,'kepler452'); KEP_BODIES.forEach(p=>reg(p,'kepler452'));
 reg(BET_STAR,'betelgeuse');
+reg(ALD_STAR,'aldebaran'); reg(RIG_STAR,'rigel'); reg(ANT_STAR,'antares');
 reg(CNC_STAR,'cnc55'); CNC_BODIES.forEach(p=>reg(p,'cnc55'));
 reg(HD_STAR,'hd189'); HD_BODIES.forEach(p=>reg(p,'hd189'));
 reg(K16_STAR,'kepler16'); K16_BODIES.forEach(p=>reg(p,'kepler16'));
@@ -6421,6 +6490,8 @@ function buildSystem(sysId, spin0){
              Kepler-186. O Sagittarius A* fica de fora DAQUI de propósito: o
              marcador dele é o CENTRO DA GALÁXIA do r152, que agora dá ENTRAR */
           const SIS_CEU = [
+            ['aldebaran', 4.60, 16.51, 65], ['antares', 16.49, -26.43, 550],
+            ['rigel', 5.24, -8.20, 860],
             ['barnard', 17.96, 4.69, 6], ['gliese581', 15.32, -7.72, 20],
             ['fomalhaut', 22.96, -29.62, 25], ['trappist', 23.108, -5.04, 40],
             ['cnc55', 8.74, 28.33, 41], ['lhs1140', 0.75, -15.27, 48.5],
@@ -10430,6 +10501,7 @@ const HAB_GRUPOS = [
   ['rochosos', 'ROCHOSOS', ['mercurio', 'venus', 'terra', 'marte', 'lua']],
   ['gigantes', 'GIGANTES', ['jupiter', 'saturno', 'urano', 'netuno']],
   ['luas', 'LUAS GRANDES', ['lua', 'io', 'europa', 'ganimedes', 'tita', 'tritao']],
+  ['estrelas', 'AS ESTRELAS', ['sol', 'aldebarans', 'rigels', 'antaress', 'betelgeuses']],
   ['jupluas', 'LUAS DE JÚPITER', ['jupiter', 'io', 'europa', 'ganimedes', 'calisto']],
   ['trappist', 'TRAPPIST-1', ['t1b', 't1c', 't1d', 't1e', 't1f', 't1g', 't1h']],
   ['perso', 'PERSONALIZADO', null]
@@ -10521,7 +10593,7 @@ function habMonta(){
     let rW = 1;
     if(HAB.escala && typeof parseDia === 'function'){
       const dd = parseDia(b);
-      if(dd && dd.km) rW = Math.max((HAB.grupo === 'sistema' || HAB.grupo === 'perso') ? 0.05 : 0.32, Math.min(1.45, (dd.km/2)/baseKm));
+      if(dd && dd.km) rW = Math.max((HAB.grupo === 'sistema' || HAB.grupo === 'perso' || HAB.grupo === 'estrelas') ? 0.028 : 0.32, Math.min(1.45, (dd.km/2)/baseKm));
     }
     /* r207 · anel gigantesco (o disco do Sgr A* tem rout 3.4) cabe na moldura:
        o corpo encolhe para o disco não estourar em cima e embaixo */
@@ -12359,7 +12431,7 @@ function voarAteEstrela(idCeu){
   if(!e) return;
   const nome = CEU_NOME[idCeu] || idCeu.toUpperCase();
   const ly = CEU_LY[idCeu] || 900;
-  const sis = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse'}[idCeu];
+  const sis = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse', antares:'antares', rigel:'rigel', aldebaran:'aldebaran'}[idCeu];
   /* fora da escala 1:1 o céu é cenográfico: aí a busca só abre a ficha
      (ou entra no sistema, quando ele existe no atlas) */
   if(!(ACT && ACT.kind === 'system' && ACT.escr && ACT.sceneCeu)){
@@ -12588,7 +12660,7 @@ function fichaEstrela(id){
   const nome = CEU_NOME[id] || id.toUpperCase();
   const ly = CEU_LY[id] || 900;
   const cl = CLASSE_CEU[e[5]] || ['', ''];
-  const sis = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse'}[id];
+  const sis = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse', antares:'antares', rigel:'rigel', aldebaran:'aldebaran'}[id];
   const constel = (window.__ceuDe && window.__ceuDe[id]) || null;
   const anoLuz = Math.round(2026 - ly);
   const quando = anoLuz > 1900 ? ('em ' + anoLuz) : (anoLuz > 0 ? ('no ano ' + anoLuz) : (Math.round(-anoLuz) + ' anos antes de Cristo'));
@@ -13568,7 +13640,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r214';
+const BUILD = 'r215';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
