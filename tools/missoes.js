@@ -41,7 +41,9 @@ const PROBE = `
       const pkT = ACT.pickables.find(x=>x.userData && x.userData.id === 'terra');
       const vT = new THREE.Vector3(); if(pkT) pkT.getWorldPosition(vT);
       const dif3d = v0.distanceTo(vT)/15;
-      const r1 = Math.hypot(v1.x, v1.z)/15;
+      /* distância 3D, nunca hypot(x,z): em órbita inclinada (a oumuamua tem
+         122 graus) a projeção mentia 20 por cento (lição do Halley, r136) */
+      const r1 = v1.length()/15;
       let nav = -1;
       if(TRAJ.corpoTemp){
         let rMax = 0;
