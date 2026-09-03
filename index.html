@@ -9477,6 +9477,17 @@ function trajStart(id){
             TRAJ.local[iw].y += dyW*kw;
             TRAJ.local[iw].z += dzW*kw;
           }
+          /* r214 · o LANÇAMENTO VESTIDO: um marcador âmbar na Terra da partida
+             e o começo da rota aceso (a chegada era honesta mas pelada) */
+          TRAJ.marcaLanc = new THREE.Sprite(new THREE.SpriteMaterial({map:TEX_GLOW_WARM, color:0xffb454,
+            transparent:true, opacity:0.85, depthWrite:false}));
+          TRAJ.marcaLanc.position.copy(TRAJ._b);
+          TRAJ.marcaLanc.scale.setScalar((ESCR.on && ST.sys === 'sol') ? 0.35 : 1.4);
+          (ACT.scene || o.obj.parent).add(TRAJ.marcaLanc);
+          const fioPts = TRAJ.local.slice(0, Math.max(4, Math.floor(TRAJ.local.length*0.08))).map(v3=>v3.clone());
+          TRAJ.lancFio = new THREE.Line(new THREE.BufferGeometry().setFromPoints(fioPts),
+            new THREE.LineBasicMaterial({color:0xffb454, transparent:true, opacity:0.8}));
+          o.obj.add(TRAJ.lancFio);
         }
       }
     }
@@ -9749,7 +9760,8 @@ function trajCancelar(){
           luaOrb:TRAJ.luaOrb, luaLuz:TRAJ.luaLuz, luaCena:TRAJ.luaCena,
           spinMesh:TRAJ.spinMesh, spinRot0:TRAJ.spinRot0,
           naveSpin:TRAJ.naveSpin, naveSpinRot0:TRAJ.naveSpinRot0,
-          corpoEsc0:TRAJ.corpoEsc0, dias:TRAJ.dias};
+          corpoEsc0:TRAJ.corpoEsc0, dias:TRAJ.dias,
+          marcaLanc:TRAJ.marcaLanc, lancFio:TRAJ.lancFio};
   cardRender();
 }
 function trajLimpar(){
@@ -9768,6 +9780,8 @@ function trajLimpar(){
     if(TRAJ.rotaViz && TRAJ.rotaViz.parent) TRAJ.rotaViz.parent.remove(TRAJ.rotaViz);
     if(TRAJ.luaViz && TRAJ.luaViz.parent) TRAJ.luaViz.parent.remove(TRAJ.luaViz);
     if(TRAJ.luaOrb && TRAJ.luaOrb.parent) TRAJ.luaOrb.parent.remove(TRAJ.luaOrb);
+    if(TRAJ.marcaLanc && TRAJ.marcaLanc.parent) TRAJ.marcaLanc.parent.remove(TRAJ.marcaLanc);
+    if(TRAJ.lancFio && TRAJ.lancFio.parent) TRAJ.lancFio.parent.remove(TRAJ.lancFio);
     if(TRAJ.luaLuz && ACT && ACT.solLuz){
       const ixL = ACT.solLuz.findIndex(x=>x.mats && x.mats[0] === TRAJ.luaLuz);
       if(ixL >= 0) ACT.solLuz.splice(ixL, 1);
@@ -13554,7 +13568,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r213';
+const BUILD = 'r214';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
