@@ -2434,6 +2434,11 @@ const STARSYS = [
    quick:[['DISTÂNCIA','40,7 al'],['PLANETAS','7 rochosos'],['ZONA HABIT.','3'],['DESCOBERTA','2016–17']],
    sections:[{t:'REGISTRO', rows:[['Estrela','Anã vermelha ultrafria, pouco maior que Júpiter'],['Sistema','7 planetas em órbitas menores que a de Mercúrio'],['James Webb','Já mediu b e c, provavelmente sem atmosfera; a zona habitável é a próxima']]}],
    facts:['O sistema com mais planetas do tamanho da Terra já encontrado até hoje.']}},
+ {id:'polaris', name:'POLARIS', nav:true, pos:[-2,0,22],
+  card:{desig:'ESTRELA · ~433 AL', kind:'A estrela do norte', hab:null,
+   quick:[['DISTÂNCIA','~433 al'],['RAIO','~37 Sóis'],['TIPO','F7 Ib, cefeida'],['NORTE ATÉ','~12 mil anos']],
+   sections:[{t:'REGISTRO', rows:[['O posto','O eixo da Terra aponta para ela'],['A régua','O pulso de 4 dias mede distâncias no cosmos']]}],
+   facts:['O ponto parado do céu.']}},
  {id:'aldebaran', name:'ALDEBARAN', nav:true, pos:[5,0,19],
   card:{desig:'ESTRELA · 65 AL', kind:'Gigante laranja, o olho do Touro', hab:null,
    quick:[['DISTÂNCIA','65 al'],['RAIO','~44 Sóis'],['TIPO','K5 III'],['RUMO','a Pioneer 10 viaja para cá']],
@@ -2856,6 +2861,17 @@ const KEP_BODIES = [
 ];
 /* r215 · AS ESTRELAS FAMOSAS (pedido dele: 'aquelas comparações de estrelas'):
    Aldebaran, Rigel e Antares viram sistemas navegáveis como a Betelgeuse */
+const POL_STAR = {
+  id:'polariss', name:'POLARIS', desig:'ESTRELA · F7 Ib', kind:'A estrela do norte (por enquanto)', hab:null, gbar:0.04,
+  quick:[['TIPO','F7 Ib, supergigante'],['RAIO','~37 R☉'],['MASSA','~5 Sóis'],['TEMP. SUP.','5.700 °C'],['DISTÂNCIA','~433 al'],['BRILHO','~1.260 Sóis']],
+  visual:{mode:'star', c1:'#f0e4b8', c2:'#fff8e0'},
+  sections:[
+    {t:'A ESTRELA DO NORTE', rows:[['Por que ela','O eixo da Terra aponta quase exatamente para ela: o céu inteiro gira em volta de Polaris'],['Navegação','Séculos de marinheiros acharam o norte (e a própria latitude) só olhando a altura dela'],['Como achar','As duas estrelas da frente da Ursa Maior apontam direto para ela']]},
+    {t:'POR ENQUANTO', rows:[['A precessão','O eixo da Terra bamboleia como um pião, uma volta a cada 26 mil anos'],['O passado','Para os egípcios das pirâmides, a estrela do norte era THUBAN, do Dragão'],['O futuro','Daqui a ~12 mil anos o posto passa para VEGA'],['Hoje','Estamos na melhor época: Polaris nunca esteve tão alinhada']]},
+    {t:'A CEFEIDA', rows:[['O que é','A cefeida clássica mais próxima: ela PULSA, e o brilho sobe e desce em 4 dias'],['Por que importa','Cefeidas são as réguas do universo: o pulso revela o brilho real, e o brilho revela a distância'],['A família','É tripla: uma anã colada (Ab) e uma companheira mais solta (B)']]}
+  ],
+  facts:['O céu inteiro gira em volta dela: numa foto de longa exposição, Polaris é o ponto parado no centro dos rastros.'],
+  fict:'De Shakespeare a Interestelar, apontar para a estrela do norte virou sinônimo de ter um rumo.'};
 const ALD_STAR = {
   id:'aldebarans', name:'ALDEBARAN', desig:'ESTRELA · K5 III', kind:'O olho laranja do Touro', hab:null, gbar:0.02,
   quick:[['TIPO','K5 III, gigante'],['RAIO','~44 R☉'],['MASSA','~1,2 Sol'],['TEMP. SUP.','3.600 °C'],['DISTÂNCIA','65 al'],['BRILHO','~440 Sóis']],
@@ -4302,6 +4318,12 @@ const SYS = {
           quick:[['GALÁXIA','Redemoinho · M51'],['DISTÂNCIA','28 mi al'],['PLANETAS','1 candidato'],['MÉTODO','trânsito em raios X'],['DETECTADO','2021'],['ANO LOCAL','~70 anos']],
           sections:[{t:'REGISTRO', rows:[['2021','Um trânsito de 3 horas apagou os raios X da binária'],['O candidato','Do tamanho de Saturno, orbitando os restos de uma estrela morta'],['Por que importa','Provou que dá para procurar planetas em outras galáxias']]}],
           facts:['Mil vezes mais longe que qualquer exoplaneta confirmado.']} },
+  polaris:{ id:'polaris', radec:'02h32m +89°16′', name:'POLARIS', star:POL_STAR, bodies:[], belt:[], beltR:null,
+        starSize:4.0, camMax:60, hint:'A ESTRELA DO NORTE · O EIXO DA TERRA APONTA PARA CÁ',
+        card:{desig:'SISTEMA ESTELAR · URSA MENOR', kind:'O ponto parado do céu', hab:null,
+          quick:[['ESTRELA','cefeida tripla'],['RAIO','~37 R☉'],['DISTÂNCIA','~433 al'],['PULSO','4 dias'],['NORTE ATÉ','~12 mil anos (depois, Vega)']],
+          sections:[{t:'REGISTRO', rows:[['O posto','O eixo da Terra aponta quase exatamente para ela'],['A precessão','Thuban já foi o norte; Vega será'],['A régua','Cefeida: o pulso dela mede distâncias no universo']]}],
+          facts:['Numa foto longa do céu, ela é o centro dos rastros de estrelas.']} },
   aldebaran:{ id:'aldebaran', radec:'04h36m +16°31′', name:'ALDEBARAN', star:ALD_STAR, bodies:[], belt:[], beltR:null,
         starSize:4.2, camMax:60, hint:'GIGANTE LARANJA · O FUTURO DO SOL',
         card:{desig:'SISTEMA ESTELAR · TOURO', kind:'O olho do Touro, um Sol envelhecido', hab:null,
@@ -4336,7 +4358,7 @@ reg(ACEN_A,'alphacen'); ACEN_BODIES.forEach(p=>reg(p,'alphacen'));
 reg(SIR_A,'sirius'); SIR_BODIES.forEach(p=>reg(p,'sirius'));
 reg(KEP_STAR,'kepler452'); KEP_BODIES.forEach(p=>reg(p,'kepler452'));
 reg(BET_STAR,'betelgeuse');
-reg(ALD_STAR,'aldebaran'); reg(RIG_STAR,'rigel'); reg(ANT_STAR,'antares');
+reg(ALD_STAR,'aldebaran'); reg(RIG_STAR,'rigel'); reg(ANT_STAR,'antares'); reg(POL_STAR,'polaris');
 reg(CNC_STAR,'cnc55'); CNC_BODIES.forEach(p=>reg(p,'cnc55'));
 reg(HD_STAR,'hd189'); HD_BODIES.forEach(p=>reg(p,'hd189'));
 reg(K16_STAR,'kepler16'); K16_BODIES.forEach(p=>reg(p,'kepler16'));
@@ -6490,6 +6512,7 @@ function buildSystem(sysId, spin0){
              Kepler-186. O Sagittarius A* fica de fora DAQUI de propósito: o
              marcador dele é o CENTRO DA GALÁXIA do r152, que agora dá ENTRAR */
           const SIS_CEU = [
+            ['polaris', 2.53, 89.26, 433],
             ['aldebaran', 4.60, 16.51, 65], ['antares', 16.49, -26.43, 550],
             ['rigel', 5.24, -8.20, 860],
             ['barnard', 17.96, 4.69, 6], ['gliese581', 15.32, -7.72, 20],
@@ -10506,7 +10529,7 @@ const HAB_GRUPOS = [
   ['rochosos', 'ROCHOSOS', ['mercurio', 'venus', 'terra', 'marte', 'lua']],
   ['gigantes', 'GIGANTES', ['jupiter', 'saturno', 'urano', 'netuno']],
   ['luas', 'LUAS GRANDES', ['lua', 'io', 'europa', 'ganimedes', 'tita', 'tritao']],
-  ['estrelas', 'AS ESTRELAS', ['sol', 'aldebarans', 'rigels', 'antaress', 'betelgeuses']],
+  ['estrelas', 'AS ESTRELAS', ['siriusb', 'sol', 'polariss', 'aldebarans', 'rigels', 'antaress', 'betelgeuses']],
   ['jupluas', 'LUAS DE JÚPITER', ['jupiter', 'io', 'europa', 'ganimedes', 'calisto']],
   ['trappist', 'TRAPPIST-1', ['t1b', 't1c', 't1d', 't1e', 't1f', 't1g', 't1h']],
   ['perso', 'PERSONALIZADO', null]
@@ -11143,7 +11166,7 @@ function enterTarget(act, id){
        para a cena cênica: VOA até lá no mesmo mapa (o voo da busca do r143)
        e entra emendado; o zoom out depois DEVOLVE ao mapa (bug dele) */
     if(ACT && ACT.kind==='system' && ACT.escr && ACT.sceneCeu){
-      const ceuId = {sirius:'sirius', vega:'vegaceu', alphacen:'rigilkent', betelgeuse:'betelg', antares:'antares', rigel:'rigel', aldebaran:'aldebaran'}[id];
+      const ceuId = {sirius:'sirius', vega:'vegaceu', alphacen:'rigilkent', betelgeuse:'betelg', antares:'antares', rigel:'rigel', aldebaran:'aldebaran', polaris:'polaris'}[id];
       if(ceuId){ voarAteEstrela(ceuId); return; }
       const alvoS = ACT.ceuAlvos && ACT.ceuAlvos[id];
       if(alvoS){ voarAteAncora(id, alvoS); return; }
@@ -12487,7 +12510,7 @@ function voarAteEstrela(idCeu){
   if(!e) return;
   const nome = CEU_NOME[idCeu] || idCeu.toUpperCase();
   const ly = CEU_LY[idCeu] || 900;
-  const sis = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse', antares:'antares', rigel:'rigel', aldebaran:'aldebaran'}[idCeu];
+  const sis = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse', antares:'antares', rigel:'rigel', aldebaran:'aldebaran', polaris:'polaris'}[idCeu];
   /* fora da escala 1:1 o céu é cenográfico: aí a busca só abre a ficha
      (ou entra no sistema, quando ele existe no atlas) */
   if(!(ACT && ACT.kind === 'system' && ACT.escr && ACT.sceneCeu)){
@@ -12719,7 +12742,7 @@ function fichaEstrela(id){
   const nome = CEU_NOME[id] || id.toUpperCase();
   const ly = CEU_LY[id] || 900;
   const cl = CLASSE_CEU[e[5]] || ['', ''];
-  const sis = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse', antares:'antares', rigel:'rigel', aldebaran:'aldebaran'}[id];
+  const sis = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse', antares:'antares', rigel:'rigel', aldebaran:'aldebaran', polaris:'polaris'}[id];
   const constel = (window.__ceuDe && window.__ceuDe[id]) || null;
   const anoLuz = Math.round(2026 - ly);
   const quando = anoLuz > 1900 ? ('em ' + anoLuz) : (anoLuz > 0 ? ('no ano ' + anoLuz) : (Math.round(-anoLuz) + ' anos antes de Cristo'));
@@ -13699,7 +13722,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r219';
+const BUILD = 'r220';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
