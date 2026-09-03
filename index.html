@@ -4788,7 +4788,7 @@ function updateLabels(){
     if(L.mini && longe){ L.el.style.display = 'none'; continue; }
     /* escala real: a lua só tem nome quando a órbita dela ABRE na tela,
        senão os rótulos empilham em cima do nome do planeta */
-    if(L.escrMr && CAM.dist > L.escrMr*260){ L.el.style.display = 'none'; continue; }
+    if(L.escrMr && CAM.dist > L.escrMr*110){ L.el.style.display = 'none'; continue; }   /* r227: 260 deixava as luas de Júpiter amontoadas a 1 UA */
     if(L.cinturao && FILTROBJ.cinturao === false){ L.el.style.display = 'none'; continue; }
     L.get(tmpV);
     tmpV.project(camera);
@@ -6994,7 +6994,11 @@ function buildSystem(sysId, spin0){
         lv.grupo.getWorldPosition(_lzA);
         if(_lzA.lengthSq() < 1e-12) continue;
         /* r195 · na linha do tempo em DIAS a longitude sob o Sol anda com os
-           dias da missão (TRAJ.spinMs), sem perder a âncora subsolar */
+           dias da missão; r228 · e em missão TRIPULADA a Terra gira ANCORADA
+           NO LANÇAMENTO: a Flórida fica sob o começo da rota no prog 0 */
+        if(typeof TRAJ !== 'undefined' && TRAJ && TRAJ.dias && TRAJ.lancAz !== undefined && TRAJ.terraGiro === lv && TRAJT.gira){
+          apontarLon(lv.mesh, -80.6 - 360*(TRAJ.ano1 - TRAJ.ano0)*TRAJ.prog, TRAJ.lancAz);
+        } else
         apontarSubsolar(lv.mesh, Math.atan2(-_lzA.z, -_lzA.x), SIMT.data + ((typeof TRAJ !== 'undefined' && TRAJ && TRAJ.spinMs) ? TRAJ.spinMs : 0));
       }
       /* rastro elíptico acompanha o relógio (e a linha do tempo) */
@@ -8216,6 +8220,16 @@ function apontarSubsolar(mesh, azSol, ms){
    mapa usa (atan2(z, x)): é daqui que se conta a fase da Lua. LIVE_FASE serve
    para alinhar Greenwich na textura e por acaso vale o NEGATIVO disso, e era
    por isso que a Lua entrava torta na cena de foco */
+/* r228 · aponta uma LONGITUDE específica da textura para um azimute do
+   mundo (mesma medição do apontarSubsolar: zera, mede, corrige; vale para
+   qualquer cadeia de pais) */
+function apontarLon(mesh, lonDeg, az){
+  const lam = lonDeg*Math.PI/180;
+  mesh.rotation.y = 0;
+  mesh.updateWorldMatrix(true, false);
+  _lvA.set(Math.cos(lam), 0, -Math.sin(lam)).transformDirection(mesh.matrixWorld);
+  mesh.rotation.y = Math.atan2(_lvA.z, _lvA.x) - az;
+}
 const SOLAZ_FOCO = Math.atan2(LDIR.z, LDIR.x);
 function grupoLive(id, raio, seg){
   const g = new THREE.Group();
@@ -9513,7 +9527,7 @@ function trajStart(id){
              o pivô já segue a nave, e o usuário dá zoom out se quiser ver a
              rota inteira. 0.125 enquadrava tudo e a nave virava um grão */
           dAlvo:(focoPalco ? Math.max(9, dLuaFoco*2.3)
-                 : ((ESCR.on && ST.sys === 'sol') ? 0.015 : Math.min(CAM.dist, 9))),
+                 : ((ESCR.on && ST.sys === 'sol') ? 0.006 : Math.min(CAM.dist, 9))),
           p0:CAM.pivot.clone(),
           marcos:b.marcos || null, mAtual:null,
           orienta:!!b.foguete,   /* só os foguetes deitam na rota: sonda e cometa têm orientação própria */
@@ -9524,7 +9538,9 @@ function trajStart(id){
   /* missão tripulada: o relógio conta DIAS, não anos, e o sistema não acelera */
   if(b.foguete && b.traj && b.traj.dias){
     TRAJ.dias = true; TRAJ.ano0 = 0; TRAJ.ano1 = b.traj.dias;
-    TRAJ.base = 20000;
+    /* r227 · as tripuladas passavam voando (ele): a viagem toda agora leva
+       ~42 s no 1x; as sondas seguem no ritmo antigo */
+    TRAJ.base = 42000;
   }
   /* o corpo (sonda, cometa, foguete) navega junto com o ponto do percurso */
   const oo = ACT.objs && ACT.objs.find(x=>x.id===id);
@@ -9540,7 +9556,7 @@ function trajStart(id){
       /* escala real: o foguete não pode ser um gigante de milhares de km */
       /* r212 · a auditoria mediu a nave com 1,6x o raio da TERRA no 1:1 (ele
          viu no print): 0.0035 deixa ~0,66x, visível sem enganar */
-      if(ESCR.on && ST.sys === 'sol'){ TRAJ.corpoEsc0 = oo.corpo.scale.x; oo.corpo.scale.multiplyScalar(0.0008); }
+      if(ESCR.on && ST.sys === 'sol'){ TRAJ.corpoEsc0 = oo.corpo.scale.x; oo.corpo.scale.multiplyScalar(0.00025); }
       /* mapa cênico: encolhe junto com a rota (r140) */
       else if(!ESCR.on && ST.level === 'system'){ TRAJ.corpoEsc0 = oo.corpo.scale.x; oo.corpo.scale.multiplyScalar(0.62); }
     } }
@@ -9711,7 +9727,11 @@ function trajStart(id){
     if(temD){
       const ultC = pts[pts.length-1];
       const aVolta0 = Math.atan2(ultC.z, ultC.x), rVolta0 = Math.hypot(ultC.x, ultC.z);
-      const rFimD = rEst*0.6;
+      /* r227 · o fim é a SUPERFÍCIE do planeta-mãe, não um raio arbitrário:
+         a nave entrava DENTRO da Terra antes do fim (print dele) */
+      const rPaiT = (ALLBODIES[b.satOf] && ALLBODIES[b.satOf].sys && ALLBODIES[b.satOf].sys.size)
+        ? ALLBODIES[b.satOf].sys.size*(escrT ? 0 : 1) : 0;
+      const rFimD = Math.max(rEst*0.6, escrT ? 0.00068 : rPaiT*1.04);
       for(let i=1;i<=ND;i++){
         const t = i/ND;
         const aa = aVolta0 + 3.6*t;
@@ -9775,6 +9795,25 @@ function trajStart(id){
     if(TRAJ.dias && !focoPalco && ACT.spinners){
       const spT = ACT.spinners.find(x=>x.id === (b.satOf || 'terra'));
       if(spT){ TRAJ.spinMesh = spT.obj; TRAJ.spinRot0 = spT.obj.rotation.y; }
+    }
+    /* r228 · a ÂNCORA DO LANÇAMENTO: o azimute do ponto de partida da rota em
+       relação ao centro da Terra; o giro da missão põe o Cabo Canaveral ali
+       no prog 0 (a Apollo não sobe do meio do Pacífico) */
+    if(TRAJ.dias && !focoPalco && (b.satOf || 'terra') === 'terra' && ACT.liveGiro && ACT.pickables){
+      const pkT2 = ACT.pickables.find(x=>x.userData && x.userData.id === 'terra');
+      if(pkT2){
+        trajPonto(0, TRAJ._a);
+        pkT2.getWorldPosition(TRAJ._b);
+        TRAJ.lancAz = Math.atan2(TRAJ._a.z - TRAJ._b.z, TRAJ._a.x - TRAJ._b.x);
+        let melhorLG = null, mdLG = 1e9;
+        const vLG = new THREE.Vector3();
+        for(const lv of ACT.liveGiro){
+          lv.grupo.getWorldPosition(vLG);
+          const dLG = vLG.distanceTo(TRAJ._b);
+          if(dLG < mdLG){ mdLG = dLG; melhorLG = lv; }
+        }
+        if(melhorLG && mdLG < 1) TRAJ.terraGiro = melhorLG;
+      }
     }
     /* na escala real a câmera JÁ ABRE enquadrando os 384 mil km: o tween era
        cancelado pelo resto do trajStart e a rota ficava minúscula com cara de
@@ -9883,7 +9922,7 @@ function trajCancelar(){
           spinMesh:TRAJ.spinMesh, spinRot0:TRAJ.spinRot0,
           naveSpin:TRAJ.naveSpin, naveSpinRot0:TRAJ.naveSpinRot0,
           corpoEsc0:TRAJ.corpoEsc0, dias:TRAJ.dias,
-          marcaLanc:TRAJ.marcaLanc, lancFio:TRAJ.lancFio,
+          marcaLanc:TRAJ.marcaLanc, lancFio:TRAJ.lancFio, lancAz:undefined, terraGiro:null,
           trilha:TRAJ.trilha, trilhaCol:TRAJ.trilhaCol, arcoOp0:TRAJ.arcoOp0, obj:TRAJ.obj};
   cardRender();
 }
@@ -9998,8 +10037,11 @@ function trajStep(now){
         TRAJ._up = TRAJ._up || new THREE.Vector3(0, 1, 0);
         TRAJ._q.setFromUnitVectors(TRAJ._up, TRAJ._dir);
         /* resposta rápida o bastante para acompanhar a curva fechada do
-           estacionamento sem ficar robótico nas retas */
-        TRAJ.corpo.quaternion.slerp(TRAJ._q, 0.42);
+           estacionamento sem ficar robótico nas retas.
+           r227 · o primeiro quadro CRAVA a orientação (nascia torto e vinha
+           girando até alinhar, o 'toda torta' do teste dele) */
+        if(!TRAJ._oriInit){ TRAJ._oriInit = 1; TRAJ.corpo.quaternion.copy(TRAJ._q); }
+        else TRAJ.corpo.quaternion.slerp(TRAJ._q, 0.6);
       }
     }
   }
@@ -12227,6 +12269,19 @@ function tourIr(p){
     /* mesmo sistema: recua contínuo de QUALQUER corpo, lua inclusive
        (as luas têm miniatura no mapa desde o r74, então a subida existe) */
     if(ST.sys === p.sis && ST.level !== 'universe' && ST.level !== 'galaxy'){
+      /* r228 · no MAPA 1:1 a parada de sistema NÃO reconstrói nada (as
+         transições que ele viu voltando de luas e asteroides): a câmera só
+         RECUA voando até o enquadramento de casa, na mesma cena */
+      if(ACT && ACT.kind === 'system' && ACT.escr && p.sis === 'sol'){
+        ST.mapCard = null; uiSync();
+        CAMTW = null; ZOOM = null;
+        CAMTW = {t0:performance.now(), ms:2300,
+          f:{yaw:CAM.yaw, pitch:CAM.pitch, dist:CAM.dist},
+          t:{yaw:0.65, pitch:0.55, dist:420},
+          p0:CAM.pivot.clone(), p1:new THREE.Vector3()};
+        showHint('TOUR · ' + tourNome(p));
+        return;
+      }
       const deCorpo = (ST.level==='focus' && ALLBODIES[ST.body] && ALLBODIES[ST.body]._sys===p.sis)
                       ? ST.body : null;
       gotoSystem(p.sis, deCorpo ? null : ('TOUR · '+tourNome(p)), deCorpo);
@@ -13793,7 +13848,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r225';
+const BUILD = 'r228';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
