@@ -8,6 +8,9 @@
    - NAV: o raio do modelo da nave em raios da Terra (deve ser < 1,2)
    - CAM: a distancia da camera depois da chegada (deve fechar em ~0.125)
 
+   CUIDADO (3 SET 2026): o Chrome atualizado PENDURA com virtual-time-budget
+   longo (26000+ = dump de 0 bytes); 14000 funciona. Em tempo real o dump sai
+   no load, antes da sonda: ficar no tempo virtual CURTO.
    O rAF do headless morre de fome no tempo virtual, entao a pagina ganha um
    shim que guarda o callback do laco e a sonda dirige os quadros na mao
    (a mesma tecnica do mkshot v3; licao do r194).                            */
@@ -78,7 +81,7 @@ setTimeout(function(){ setInterval(function(){
   try{
 ` + PROBE + `
   }catch(err){ document.title = 'AUD ERRO=' + err.message.slice(0, 80); }
-}, 200); }, 4000);
+}, 200); }, 900);
 <\/script>`;
 
 let corpo = html;
@@ -103,13 +106,14 @@ let falhas = 0;
 console.log('AUDITORIA DAS MISSOES (1:1) · ' + fila.length + ' missoes\n');
 for(const id of fila){
   let titulo = '';
-  for(let tent = 0; tent < 2 && !titulo.includes('AUD'); tent++){
+  const ORCS = [14000, 16000, 15000, 17000];
+  for(let tent = 0; tent < 4 && !titulo.includes('AUD'); tent++){
     let saida = '';
     try{
       saida = cp.execSync('"' + chrome + '" --headless=new --disable-gpu --enable-unsafe-swiftshader --no-sandbox'
-        + ' --user-data-dir="' + perfil + id + tent + '" --window-size=900,700 --virtual-time-budget=30000'
+        + ' --user-data-dir="' + perfil + id + tent + '" --window-size=900,700 --virtual-time-budget=' + ORCS[tent]
         + ' --dump-dom "file:///' + pagina.replace(/\\/g, '/') + '?aud=' + id + '#sistema=sol&escala=real"',
-        {timeout: 150000, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore']});
+        {timeout: 160000, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore']});
     }catch(e){ saida = e.stdout || ''; }
     const m = String(saida).match(/<title>(AUD[^<]*)<\/title>/);
     if(m) titulo = m[1];

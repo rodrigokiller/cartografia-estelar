@@ -267,6 +267,9 @@ O sistema tem uma DATA que corre: `SIMT {data, vel:'dia'|'semana'|'mes', pausado
 ## LIÇÃO DO BUG DA CENA PRETA (r75-r78)
 O r75 inseriu o bloco da trava de centro ENTRE `if(TRAJ) trajStep(now);` e `else if(FADEIN) fadeInStep(now);` no loop: o `else` passou a se ligar ao if da trava, que em cena de sistema roda sempre, e o FADEIN morria de fome: toda entrada em sistema ficava com a cena apagada (só labels e os pontinhos que não passam pelo fade). REGRA: nunca inserir código entre um if e seu else por âncora de texto; conferir sempre o vizinho de baixo da âncora. Corrigido no r78: fadeInStep roda independente, e um VIGIA no loop cura qualquer cena apagada em <1,4s (RLOG registra heal-f/heal-d, visível no DIAG com Shift+D).
 
+## O HEADLESS DEPOIS DO CHROME DE 3 SET 2026 (lição cara)
+O Chrome atualizou no meio do dia e o comportamento do headless MUDOU: --virtual-time-budget LONGO (26000+) pendura a página do app (dump de 0 bytes); a banda 14000-17000 funciona MAS é instável (2/3 de acerto): sondas e ferramentas usam ESCADINHA de orçamentos com retry (14000, 16000, 15000, 17000). TEMPO REAL não serve para sonda: o --timeout despeja o DOM no evento de LOAD (~2 s), antes da sonda rodar. E NÃO pôr iframe/navegação pendente na página: com virtual-time o orçamento nunca fecha (0 bytes sempre). Sintoma clássico de tudo isso: dump de 0 bytes com o app perfeito.
+
 ## Teste de integridade (r42)
 `node tools/verifica.js` antes de cada entrega. Ele executa os dados de verdade e falha se: um corpo citado em SYS não passou por `reg()` (esse erro eu já cometi duas vezes), um `beltId` aponta para o nada, uma nebulosa está em SYS.bodies E como beltId (o objeto duplicado do r28), um sistema ficou sem marcador em STARSYS, um `_sys`/`_parent` aponta para algo inexistente, uma região não tem `field`, ou um texto novo tem travessão, emoji ou instrução de app dentro de `facts`/`fict`. Avisos (não quebram): ficha sem curiosidade, estrela sem RAIO.
 
