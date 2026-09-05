@@ -1832,7 +1832,7 @@ PLANETS.push(
   quick:[['GRAVIDADE','2,53 g'],['TEMP. TOPO','−110 °C'],['DIA','9 h 56'],['ANO','11,9 anos'],['LUAS','95'],['ANÉIS','tênues']],
   sys:{orbit:27, size:2.5, speed:0.084, angle:3.4},
   visual:{mode:'gas', c1:'#d9c5a3', c2:'#a4713e', c3:'#efe6d4', c4:'#8a5330', bandF:9.0, turb:1.4, seed:2.2, spot:{pos:[1.1,-0.35], r:0.34, col:'#c25438', on:1}, atmo:{col:'#e8d4b0', i:0.55}},
-  moonsMeta:'95 CONFIRMADAS · 4 PRINCIPAIS',
+  moonsMeta:'95 CONFIRMADAS · 6 PRINCIPAIS',
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','778,5 mi km (5,2 UA)'],['Ano','11,86 anos'],['Dia','9 h 56 min, o mais rápido'],['Tipo de rotação','Prógrada'],['Veloc. orbital','13,1 km/s'],['Inclinação axial','3,1°'],['Estações','Mínimas']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','139.820 km (11 Terras)'],['Massa','1,90 × 10²⁷ kg (318 Terras)'],['Densidade','1,33 g/cm³'],['Área','61,4 bi km² (121× a Terra)'],['Superfície','Não tem, gás até virar H metálico']]},
@@ -1882,7 +1882,27 @@ PLANETS.push(
       {t:'REGISTRO', rows:[['1610','Descoberta por Galileu, a quarta das luas galileanas'],['O nome','Calisto, a ninfa que Zeus transformou em ursa'],['A vantagem','Fica longe o bastante para escapar do cinturão de radiação letal de Júpiter'],['O estudo da NASA','Um projeto de 2003 a apontou como o melhor lugar para uma base humana no sistema de Júpiter'],['JUICE','A sonda europeia vai sobrevoá-la 21 vezes a partir de 2031']]}
     ],
     facts:['É o corpo mais craterizado que conhecemos: a superfície está saturada, cada impacto novo apaga um antigo.','Ao contrário das irmãs, ela escapou do cabo de guerra gravitacional e por isso ficou geologicamente parada.','A NASA já a estudou como o melhor endereço para uma base tripulada em Júpiter, porque a radiação ali é suportável.','Olhar para ela é olhar para uma superfície praticamente intocada desde a formação do Sistema Solar.'],
-    fict:'É o destino da missão em 2010: O Ano em Que Faremos Contato, e base recorrente em ficção que leva humanos a Júpiter.'}
+    fict:'É o destino da missão em 2010: O Ano em Que Faremos Contato, e base recorrente em ficção que leva humanos a Júpiter.'},
+   {id:'amalteia', name:'AMALTEIA', desig:'JÚPITER-V · LUA', kind:'A batata vermelha por dentro da órbita de Io', hab:0, gbar:0.002, pop:'0',
+    quick:[['DIMENSÕES','250 × 146 × 128 km'],['GRAVIDADE','0,002 g'],['ÓRBITA','11 h 57 min'],['DESCOBERTA','1892'],['DISTÂNCIA','181 mil km'],['COR','a mais vermelha do sistema']],
+    visual:{mode:'rocky', c1:'#8a4a3a', c2:'#b0654e', c3:'#5e3128', scale:3.6, seed:18.92, crater:0.8},
+    sections:[
+      {t:'A ÚLTIMA A OLHO', rows:[['1892','Descoberta por Edward Barnard no telescópio Lick: a última lua achada olhando pelo ocular, sem fotografia'],['Depois dela','Toda lua nova do sistema veio de placas fotográficas ou de câmeras digitais'],['O nome','A cabra (ou ninfa) que amamentou Zeus na mitologia grega']]},
+      {t:'A BATATA VERMELHA', rows:[['A cor','O objeto mais vermelho do Sistema Solar: enxofre cuspido pelos vulcões de Io se deposita nela'],['A densidade','0,86 g/cm³, menos que a água: um monte de entulho poroso, não uma rocha inteira'],['A forma','Alongada e cheia de crateras, com a ponta comprida sempre virada para Júpiter']]},
+      {t:'REGISTRO', rows:[['A visita','A Galileo passou a 160 km em 2002, na última manobra antes do mergulho final'],['O anel','A poeira que sai dela forma o tênue anel Gossamer de Amalteia'],['Onde fica','Por dentro da órbita de Io, num lugar de radiação brutal']]}
+    ],
+    facts:['Foi a última lua do Sistema Solar descoberta a olho, pelo ocular do telescópio: depois de 1892, só fotografia.','É o objeto mais vermelho conhecido do Sistema Solar, pintado pelo enxofre dos vulcões de Io.'],
+    fict:'Arthur C. Clarke pôs uma expedição nela em Júpiter Cinco (1953), e os irmãos Strugatsky escreveram O Caminho para Amalteia (1960).'},
+   {id:'himalia', name:'HIMALIA', desig:'JÚPITER-VI · LUA', kind:'A maior das luas irregulares de Júpiter', hab:0, gbar:0.006, pop:'0',
+    quick:[['DIÂMETRO','~170 km'],['GRAVIDADE','0,006 g'],['ÓRBITA','250,6 d'],['DESCOBERTA','1904'],['DISTÂNCIA','11,5 mi km'],['INCLINAÇÃO','27,5°']],
+    visual:{mode:'rocky', c1:'#6e6a64', c2:'#8c8781', c3:'#4c4844', scale:3.2, seed:19.04, crater:0.75},
+    sections:[
+      {t:'A CAPTURADA', rows:[['De onde veio','Provavelmente um asteroide do tipo C, escuro e cinzento, capturado por Júpiter no início do sistema'],['A família','Lidera o grupo de Himalia: cinco luas com órbitas parecidas, restos de um mesmo corpo partido'],['A órbita','Inclinada 27,5 graus e longe: 60 vezes mais distante que Io']]},
+      {t:'A MAIOR IRREGULAR', rows:[['O tamanho','Cerca de 170 km: a sexta lua de Júpiter em tamanho e a maior fora das quatro galileanas'],['A superfície','Escura, refletindo só 6 por cento da luz, como carvão'],['O dia','Gira em 7,8 horas, solta da órbita, como as pedras do cinturão']]},
+      {t:'REGISTRO', rows:[['1904','Descoberta por Charles Perrine no observatório Lick, por fotografia'],['As visitas','A Cassini fotografou de longe em 2000, a New Horizons em 2007: só um ponto alongado'],['O nome','Uma ninfa de Rodes que teve três filhos com Zeus']]}
+    ],
+    facts:['É a maior lua de Júpiter fora das quatro galileanas, e provavelmente um asteroide capturado.','Dá nome a uma família inteira de luas com órbitas parecidas: os pedaços de um mesmo corpo despedaçado.'],
+    fict:null}
   ]
 },
 {
@@ -2059,7 +2079,7 @@ PLANETS.push(
   quick:[['GRAVIDADE','1,14 g'],['TEMP. MÉDIA','−201 °C'],['DIA','16 h 06'],['ANO','165 anos'],['LUAS','16'],['VENTOS','2.100 km/h']],
   sys:{orbit:45, size:1.4, speed:0.006, angle:2.8},
   visual:{mode:'gas', c1:'#2f5ecf', c2:'#1f3f9e', c3:'#4d7de6', c4:'#16307e', bandF:6.5, turb:1.0, seed:5.3, spot:{pos:[-1.8,-0.3], r:0.25, col:'#12296b', on:1}, atmo:{col:'#5f8cff', i:0.95}},
-  moonsMeta:'16 CONFIRMADAS · 1 PRINCIPAL',
+  moonsMeta:'16 CONFIRMADAS · 3 PRINCIPAIS',
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','4,50 bi km (30 UA)'],['Ano','165 anos'],['Dia','16 h 06 min'],['Tipo de rotação','Prógrada'],['Veloc. orbital','5,4 km/s'],['Inclinação axial','28,3°'],['Estações','Sim, ~40 anos cada']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','49.244 km'],['Massa','1,02 × 10²⁶ kg (17 Terras)'],['Densidade','1,64 g/cm³'],['Área','7,6 bi km²'],['Interior','Possível "chuva de diamantes"']]},
@@ -2079,7 +2099,27 @@ PLANETS.push(
       {t:'O DESTINO', rows:[['A espiral','A órbita retrógrada encolhe por maré: ele cai lentamente para dentro'],['O fim','Em ~3,6 bilhões de anos cruza o limite de Roche e é despedaçado'],['O legado','Netuno vai ganhar um anel gigante, talvez mais vistoso que o de Saturno']]}
     ],
     facts:['Um mundo do Cinturão de Kuiper "sequestrado" por Netuno, primo de Plutão.','É mais frio que Plutão, e mesmo assim tem gêiseres ativos de nitrogênio.','Um dia será despedaçado pela maré e virará um anel gigante em volta de Netuno.'],
-    fict:'A única lua grande que orbita ao contrário fascina os escritores: aparece de Arthur C. Clarke a jogos como Destiny.'}
+    fict:'A única lua grande que orbita ao contrário fascina os escritores: aparece de Arthur C. Clarke a jogos como Destiny.'},
+   {id:'proteu', name:'PROTEU', desig:'NETUNO-VIII · LUA', kind:'A caixa escura que quase virou bola', hab:0, gbar:0.007, pop:'0',
+    quick:[['DIMENSÕES','424 × 390 × 396 km'],['GRAVIDADE','0,007 g'],['ÓRBITA','1,12 d'],['DESCOBERTA','1989'],['DISTÂNCIA','118 mil km'],['ALBEDO','0,10']],
+    visual:{mode:'rocky', c1:'#4a4a4c', c2:'#626266', c3:'#33333a', scale:3.8, seed:19.89, crater:0.9},
+    sections:[
+      {t:'A SEGUNDA DE NETUNO', rows:[['O tamanho','Cerca de 420 km: a segunda maior lua de Netuno, e ninguém sabia dela até a Voyager 2 chegar'],['A forma','Uma caixa de cantos arredondados: é quase do tamanho máximo que um corpo aguenta sem a gravidade o arredondar'],['A escuridão','Reflete só 10 por cento da luz: um dos objetos mais escuros do sistema']]},
+      {t:'A ÓRBITA', rows:[['Onde fica','A 118 mil km, dentro da órbita de Tritão, dando a volta em 27 horas'],['A rotação','Síncrona: mostra sempre a mesma cara para Netuno'],['A origem','Provavelmente se refez dos destroços que a captura de Tritão espalhou']]},
+      {t:'REGISTRO', rows:[['1989','Descoberta nas imagens da Voyager 2, a única sonda que passou por Netuno'],['Pharos','A cratera de 230 km, mais da metade do diâmetro da lua'],['O nome','O deus do mar que mudava de forma, pastor das focas de Poseidon']]}
+    ],
+    facts:['É a segunda maior lua de Netuno e ficou escondida até 1989, porque é escura como carvão e colada no brilho do planeta.','Tem quase o tamanho máximo que um corpo pode ter sem que a própria gravidade o arredonde.'],
+    fict:null},
+   {id:'nereida', name:'NEREIDA', desig:'NETUNO-II · LUA', kind:'A lua da órbita mais excêntrica que se conhece', hab:0, gbar:0.007, pop:'0',
+    quick:[['DIÂMETRO','~340 km'],['GRAVIDADE','0,007 g'],['ÓRBITA','360,1 d'],['DESCOBERTA','1949'],['DISTÂNCIA','1,4 a 9,7 mi km'],['EXCENTRICIDADE','0,75']],
+    visual:{mode:'rocky', c1:'#8a8c90', c2:'#a9abb0', c3:'#5f6166', scale:3.4, seed:19.49, crater:0.7},
+    sections:[
+      {t:'A ÓRBITA LOUCA', rows:[['A excentricidade','0,75: a mais excêntrica de todas as luas conhecidas, quase um cometa'],['O vai e vem','Chega a 1,4 milhões de km de Netuno e se afasta até 9,7 milhões, a cada volta de 360 dias'],['A causa','A captura de Tritão provavelmente sacudiu a órbita dela para esse formato']]},
+      {t:'A TERCEIRA DE NETUNO', rows:[['O tamanho','Cerca de 340 km, a terceira lua de Netuno em tamanho'],['A superfície','Cinza neutra, com gelo de água; o brilho varia e ninguém sabe ao certo o período de rotação'],['A visita','A Voyager 2 passou a 4,7 milhões de km em 1989: só um borrão de poucos pixels']]},
+      {t:'REGISTRO', rows:[['1949','Descoberta por Gerard Kuiper por fotografia, 103 anos depois de Tritão'],['Até 1989','Foi a segunda e última lua conhecida de Netuno por quatro décadas'],['O nome','As Nereidas, as cinquenta ninfas do mar da mitologia grega']]}
+    ],
+    facts:['Tem a órbita mais excêntrica de todas as luas conhecidas: a distância a Netuno varia sete vezes numa volta só.','Por quarenta anos, de 1949 a 1989, Netuno tinha só duas luas conhecidas: Tritão e ela.'],
+    fict:null}
   ]
 },
 {
@@ -4965,7 +5005,7 @@ const ESCALA_REAL_LUAS = {
   lua:384400, fobos:9376, deimos:23463,
   io:421700, europa:671100, ganimedes:1070400, calisto:1882700,
   tita:1221870, reia:527108, encelado:237948, dione:377396, tetis:294619, mimas:185539, japeto:3560820,
-  hiperion:1481010, febe:12947780,
+  hiperion:1481010, febe:12947780, amalteia:181366, himalia:11461000, proteu:117647, nereida:5513818,
   miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, tritao:354759, caronte:19591,
   iss:6790, hubble:6910, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
@@ -13951,7 +13991,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r233';
+const BUILD = 'r234';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

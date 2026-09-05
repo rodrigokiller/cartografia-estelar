@@ -213,7 +213,7 @@ nomes: {
   sol:'SUN', mercurio:'MERCURY', venus:'VENUS', terra:'EARTH', lua:'MOON', marte:'MARS', fobos:'PHOBOS', jupiter:'JUPITER', ganimedes:'GANYMEDE', calisto:'CALLISTO',
   saturno:'SATURN', tita:'TITAN', reia:'RHEA', encelado:'ENCELADUS', tetis:'TETHYS', hiperion:'HYPERION', japeto:'IAPETUS', febe:'PHOEBE', urano:'URANUS', titania:'TITANIA',
   netuno:'NEPTUNE', tritao:'TRITON', plutao:'PLUTO', caronte:'CHARON', eris:'ERIS', p67:'COMET 67P', halley:"HALLEY'S COMET", cinturao:'ASTEROID BELT', kuiper:'KUIPER BELT',
-  oort:'OORT CLOUD', palas:'PALLAS',
+  oort:'OORT CLOUD', palas:'PALLAS', amalteia:'AMALTHEA', proteu:'PROTEUS', nereida:'NEREID',
   k16b_star:'KEPLER-16 B (STAR)', vegadisk:'VEGA DEBRIS DISK', fomdisk:'FOMALHAUT RING', barnardstar:"BARNARD'S STAR", pilares:'PILLARS OF CREATION', trapezio:'TRAPEZIUM',
   nebulosaorion:'ORION NEBULA', pulsarcaranguejo:'CRAB PULSAR', caranguejo:'CRAB NEBULA', m57centro:'WHITE DWARF OF THE RING', anel:'RING NEBULA', alcyone:'ALCYONE', pleiades:'PLEIADES',
   gatocentro:"CAT'S EYE CORE", olhodegato:"CAT'S EYE", formigacentro:'ANT NEBULA CORE', formiganeb:'ANT NEBULA', chama:'FLAME NEBULA', tuc47core:'47 TUC CORE',
