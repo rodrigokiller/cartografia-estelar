@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIVERSATLAS // interactive 3D map of the universe</title>
+<meta name="description" content="Explore the Solar System and beyond in 3D: planets, moons, probes, comets and the Apollo missions in their real positions. Travel through time, compare worlds and navigate from a planet to the galaxy. Interface in English.">
+<link rel="canonical" href="https://www.universatlas.com/en">
+<link rel="alternate" hreflang="pt-BR" href="https://www.universatlas.com/">
+<link rel="alternate" hreflang="en" href="https://www.universatlas.com/en">
+<link rel="alternate" hreflang="x-default" href="https://www.universatlas.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="UNIVERSATLAS">
+<meta property="og:title" content="UNIVERSATLAS // interactive 3D map of the universe">
+<meta property="og:description" content="The Solar System at real scale and real time: travel through time, follow probes and comets, relive the Apollo missions.">
+<meta property="og:url" content="https://www.universatlas.com/en">
+<meta property="og:image" content="https://www.universatlas.com/og_en.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="UNIVERSATLAS // interactive 3D map of the universe">
+<meta name="twitter:description" content="The Solar System at real scale and real time: travel through time, follow probes and comets, relive the Apollo missions.">
+<meta name="twitter:image" content="https://www.universatlas.com/og_en.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='14' fill='%233f8cff'/%3E%3Cellipse cx='32' cy='32' rx='27' ry='8' fill='none' stroke='%237dc4ff' stroke-width='3' transform='rotate(-18 32 32)'/%3E%3C/svg%3E">
+<meta name="robots" content="index,follow">
+<style>
+html,body{margin:0;background:#050912;color:#9fc0e8;font-family:Consolas,"Courier New",monospace}
+#w{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;letter-spacing:4px}
+#m{font-size:34px;color:#6fb7ff;font-weight:300}
+#m b{color:#fff;font-weight:700;text-shadow:0 0 18px rgba(111,183,255,.9)}
+#t{margin-top:10px;font-size:12px}
+a{color:#6fb7ff}
+</style>
+<script>
+/* the English entrance: the same app, in English, keeping any #hash the link carried */
+try{ localStorage.setItem('carto:lang', 'en'); }catch(e){}
+location.replace('/?lang=en' + (location.hash || ''));
+</script>
+</head>
+<body>
+<div id="w">
+  <div id="m">UNIVERS<b>ATLAS</b></div>
+  <div id="t">INTERACTIVE 3D MAP OF THE UNIVERSE</div>
+  <p><a href="/?lang=en">Open the map in English</a></p>
+</div>
+</body>
+</html>

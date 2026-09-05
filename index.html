@@ -6,6 +6,9 @@
 <title>UNIVERSATLAS // mapa 3D interativo do universo</title>
 <meta name="description" content="Explore o Sistema Solar e além em 3D: planetas, luas, sondas, cometas e as missões Apollo com posições reais. Viaje no tempo, compare mundos e navegue do corpo à galáxia. Em português.">
 <link rel="canonical" href="https://www.universatlas.com/">
+<link rel="alternate" hreflang="pt-BR" href="https://www.universatlas.com/">
+<link rel="alternate" hreflang="en" href="https://www.universatlas.com/en">
+<link rel="alternate" hreflang="x-default" href="https://www.universatlas.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="UNIVERSATLAS">
 <meta property="og:title" content="UNIVERSATLAS // mapa 3D interativo do universo">
@@ -1119,6 +1122,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-vel="semana"><span>1 SEGUNDO = 1 SEMANA</span><b></b></div>
     <div class="filtrow" data-vel="mes"><span>1 SEGUNDO = 1 MÊS</span><b></b></div>
     <div class="fp-t fp-t2">EXTRAS</div>
+    <div class="filtrow" data-lang="1"><span>IDIOMA · LANGUAGE</span><b>PORTUGUÊS</b></div>
     <div class="filtrow" data-viagemx="1"><span>VIAGEM INTERPLANETAR NO TOUR (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-escr="1"><span>SISTEMA SOLAR EM ESCALA 1:1 (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-coord="1"><span>COORDENADAS REAIS (RA/DEC)</span><b>DESLIGADO</b></div>
@@ -1317,8 +1321,49 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   </div></div>
 </div>
 
+<script src="en.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
+/* ================= r232 · IDIOMA (PT-BR e ENGLISH) =================
+   O português do código é a CHAVE; o inglês mora em en.js (I18N_EN). LANG
+   vem de ?lang=, depois do carto:lang; sem escolha fica PT (opt-in por ora:
+   as fichas ainda são só em português, e meia tradução é pior que nenhuma).
+   t(s) traduz um texto exato; tpal(s) troca palavra a palavra (o nome tp já era da fábrica da TRAPPIST) (designações
+   compostas); traduzDOM varre o HUD estático uma vez no boot. */
+const LANG = (function(){
+  try{
+    const q = new URLSearchParams(location.search).get('lang');
+    if(q === 'en' || q === 'pt'){ localStorage.setItem('carto:lang', q); return q; }
+    return localStorage.getItem('carto:lang') === 'en' ? 'en' : 'pt';
+  }catch(e){ return 'pt'; }
+})();
+const I18N = (LANG === 'en' && window.I18N_EN) ? window.I18N_EN : null;
+function t(s){ if(!I18N || typeof s !== 'string') return s; const v = I18N.ui[s]; return (v === undefined) ? s : v; }
+function tpal(s){
+  if(!I18N || typeof s !== 'string') return s;
+  const v = I18N.ui[s]; if(v !== undefined) return v;
+  let r = s; for(const par of I18N.palavras) r = r.split(par[0]).join(par[1]); return r;
+}
+function traduzDOM(raiz){
+  if(!I18N || !raiz) return;
+  const ATTRS = ['title', 'data-tip', 'placeholder', 'aria-label', 'data-lb'];
+  const anda = el=>{
+    if(el.nodeType === 3){
+      const s0 = el.nodeValue, k = s0.trim();
+      if(k && I18N.ui[k] !== undefined) el.nodeValue = s0.replace(k, I18N.ui[k]);
+      return;
+    }
+    if(el.nodeType !== 1) return;
+    const tag = el.tagName.toUpperCase();
+    if(el.id === 'labels' || tag === 'SCRIPT' || tag === 'STYLE' || tag === 'SVG' || tag === 'CANVAS') return;
+    for(const a of ATTRS){ const v = el.getAttribute(a); if(v && I18N.ui[v] !== undefined) el.setAttribute(a, I18N.ui[v]); }
+    /* parágrafo inteiro com marcação (o manual): a chave é o innerHTML */
+    if(el.children.length){ const h = el.innerHTML.trim(); if(h && I18N.ui[h] !== undefined){ el.innerHTML = I18N.ui[h]; return; } }
+    for(const f of Array.from(el.childNodes)) anda(f);
+  };
+  anda(raiz);
+}
+if(I18N){ document.documentElement.lang = 'en'; traduzDOM(document.getElementById('app')); }
 'use strict';
 /* =====================================================================
    CARTOGRAFIA ESTELAR, nav-con orbital
@@ -4428,6 +4473,22 @@ reg(M31N_STAR,'nucleoM31'); reg(M31N_DISK,'nucleoM31');
 reg(M51_STAR,'m51uls'); M51_BODIES.forEach(p=>reg(p,'m51uls'));
 GALAXIES.forEach(g=>{ g.coord = (g.id==='vialactea') ? 'SGR A*' : coordOf(g.name); });
 Object.values(ALLBODIES).forEach(b=>{ b.coord = coordOf(b.name); });
+/* r232 · em inglês os nomes vêm do dicionário (o guarda typeof deixa o
+   tools/verifica.js executar este bloco sem o LANG) */
+if(typeof I18N !== 'undefined' && I18N){
+  for(const m of STARSYS){
+    if(I18N.marcadores[m.id]) m.name = I18N.marcadores[m.id];
+    else if(SYS[m.id] && SYS[m.id].name === m.name && I18N.sis[m.id]) m.name = I18N.sis[m.id];
+  }
+  for(const id in SYS){ if(I18N.sis[id]) SYS[id].name = I18N.sis[id]; }
+  for(const g of GALAXIES){ if(I18N.gal[g.id]) g.name = I18N.gal[g.id]; }
+  for(const id in ALLBODIES){
+    const b = ALLBODIES[id];
+    if(I18N.nomes[id]) b.name = I18N.nomes[id];
+    if(b.desig) b.desig = tpal(b.desig);
+    if(b.moonsMeta) b.moonsMeta = tpal(b.moonsMeta);
+  }
+}
 const UNIVERSE_CARD = {
   name:'UNIVERSO OBSERVÁVEL', desig:'ESCALA MÁXIMA', kind:'Tudo o que a luz já nos trouxe', hab:null,
   quick:[['DIÂMETRO','93 bi al'],['GALÁXIAS','~2 tri'],['IDADE','13,8 bi anos'],['TEMP. MÉDIA','−270,4 °C']],
@@ -4735,6 +4796,7 @@ function makeBodyGroup(b, radius, seg){
 /* ---------- labels HTML projetados ---------- */
 const labelsEl = $('#labels');
 function makeLabel(text, cls, onClick){
+  text = t(text);   /* r232 */
   const el = document.createElement('div');
   el.className = 'lbl' + (cls?(' '+cls):'');
   el.textContent = text;
@@ -5286,6 +5348,7 @@ const LY_UA = 63241.077;   /* 1 ano-luz em unidades astronômicas */
    distância, classe, brilho, constelação e o ano em que a luz saiu de lá */
 /* as fronteiras invisíveis do sistema: agora clicáveis, com ficha própria
    (pedido antigo dele, junto com a Nuvem de Oort que já era clicável) */
+if(I18N) for(const k in CEU_LINHAS) if(I18N.ceu[k]) CEU_LINHAS[k].nome = I18N.ceu[k];   /* r232 */
 const FRONTEIRAS = {
   heliopausa:{name:'HELIOPAUSA', desig:'FRONTEIRA · ~120 UA', kind:'Onde o vento do Sol para de soprar', hab:null,
     quick:[['DISTÂNCIA','~120 UA do Sol'],['O QUE É','o fim da bolha do vento solar'],['QUEM CRUZOU','Voyager 1 em 2012'],['A SEGUNDA','Voyager 2 em 2018'],['ESPESSURA','~1 UA de transição'],['FORMA','achatada, como a proa de um barco']],
@@ -5322,6 +5385,7 @@ const FRONTEIRAS = {
       {t:'OS CONTRAEXEMPLOS', rows:[['Vênus','Está quase na borda de dentro e virou um forno de 460 graus por efeito estufa'],['Marte','Está dentro da faixa e mesmo assim perdeu a atmosfera e a água'],['Encélado e Europa','Estão MUITO fora e têm oceanos líquidos, aquecidos por maré'],['A lição','Estar na faixa não basta, e estar fora dela não elimina ninguém']]}],
     facts:['Vênus está quase na borda da zona habitável e mesmo assim tem 460 graus na superfície.','Europa e Encélado estão muito fora da faixa e têm oceanos de água líquida por aquecimento de maré.','A faixa se afasta com o tempo: o Sol esquenta, e daqui a 1 bilhão de anos a Terra fica do lado de dentro dela.'],
     fict:null}};
+if(I18N) for(const k in FRONTEIRAS){ const f = FRONTEIRAS[k]; if(f.name) f.name = t(f.name); if(f.desig) f.desig = tpal(f.desig); }   /* r232 */
 const CEU_NOME = {
   sirius:'SÍRIUS', canopus:'CANOPUS', rigilkent:'RIGIL KENTAURUS', arcturus:'ARCTURUS',
   vegaceu:'VEGA', capella:'CAPELA', rigel:'RIGEL', procyon:'PRÓCION', achernar:'ACHERNAR',
@@ -10194,7 +10258,7 @@ LIVE = store.get('carto:foto','0') === '1';
 const LUZVIA = {on:false, k:0, prevD:0, prevP:new THREE.Vector3(), riscos:null};
 function luzViaSync(){
   const r = document.querySelector('.filtrow[data-luzvia] b');
-  if(r) r.textContent = LUZVIA.on ? 'LIGADO' : 'DESLIGADO';
+  if(r) r.textContent = LUZVIA.on ? t('LIGADO') : t('DESLIGADO');
 }
 function luzViaPasso(dt){
   const cv = document.getElementById('lightspeed');
@@ -10312,7 +10376,7 @@ const AUDIO = (function(){
     const ls = $('#pl_list');
     if(ls) ls.querySelectorAll('li').forEach((li,i)=>li.classList.toggle('cur', i===trk));
     const pb = $('#pl_play'); if(pb) pb.textContent = (audioEl && !audioEl.paused && !muted) ? '⏸' : '▶';
-    const mb = $('#pl_mute'); if(mb) mb.textContent = muted ? 'SOM: DESLIGADO' : 'SOM: LIGADO';
+    const mb = $('#pl_mute'); if(mb) mb.textContent = muted ? t('SOM: DESLIGADO') : t('SOM: LIGADO');
     const vs = $('#pl_vol'); if(vs) vs.value = Math.round(vol*100);
     syncBtn();
   }
@@ -10654,6 +10718,7 @@ const HAB_GRUPOS = [
   ['trappist', 'TRAPPIST-1', ['t1b', 't1c', 't1d', 't1e', 't1f', 't1g', 't1h']],
   ['perso', 'PERSONALIZADO', null]
 ];
+if(I18N) HAB_GRUPOS.forEach(g=>{ g[1] = t(g[1]); });   /* r232 */
 /* a bancada personalizada persiste entre sessões */
 HAB.perso = String(store.get('carto:habperso', '') || '').split(',').filter(x=>ALLBODIES[x]);
 function habMundos(){
@@ -11529,7 +11594,7 @@ function fmtNum(v){
 function fovSync(){
   const el = $('#fovline'); if(!el) return;
   const s = larguraDaTela();
-  el.textContent = s ? ('CAMPO DE VISÃO · ' + s) : 'SAT LINK 08 · DESTINO';
+  el.textContent = s ? (t('CAMPO DE VISÃO') + ' · ' + s) : t('SAT LINK 08 · DESTINO');
 }
 function fmtRatio(r){
   if(r < 1000) return (r<10 ? dec1(r) : Math.round(r).toLocaleString('pt-BR')) + '×';
@@ -11731,6 +11796,7 @@ let FRQ = {};
 try{ FRQ = JSON.parse(store.get('carto:frq','{}')) || {}; }catch(e){ FRQ = {}; }
 /* easter egg sonoro: uma vez por sessao, ao abrir a ficha certa */
 /* desligados: o Rodrigo testou duas vezes e não curtiu; a síntese fica guardada */
+if(I18N){ for(const k in MISS_ROT) MISS_ROT[k] = t(MISS_ROT[k]); for(const k in CONQ_DESC) CONQ_DESC[k] = t(CONQ_DESC[k]); }   /* r232 */
 const SOM_EPOCA = {};
 const _somTocado = new Set();
 function somDeEpoca(id){
@@ -11766,6 +11832,7 @@ const PATENTES = [
   {n:72,  t:'ALMIRANTE DO VAZIO',    d:'Falta pouco para o catálogo inteiro.'}
 ];
 const PATENTE_MAX = {t:'CARTÓGRAFO-MOR', d:'Tudo visitado. O universo ficou pequeno.'};
+if(I18N){ PATENTES.forEach(pt=>{ pt.t = t(pt.t); pt.d = t(pt.d); }); PATENTE_MAX.t = t(PATENTE_MAX.t); PATENTE_MAX.d = t(PATENTE_MAX.d); }   /* r232 */
 function patenteDe(n, total){
   if(n >= total) return {cur:PATENTE_MAX, nxt:null};
   let cur = PATENTES[0], nxt = PATENTES[1] || null;
@@ -11796,6 +11863,7 @@ const MISSFILTROS = [
   {k:'missoes',  t:'MISSÕES',    f:b=>catDe(b)==='nave' && !!b.foguete},
   {k:'regiao',   t:'REGIÕES',    f:b=>catDe(b)==='regiao' || catDe(b)==='menor'}
 ];
+if(I18N) MISSFILTROS.forEach(f=>{ f.t = t(f.t); });   /* r232 */
 /* distância de casa: vem do sistema do corpo, não do corpo em si. O Sistema
    Solar fica em 0, e o resto se ordena pelo quão longe você foi. */
 /* diâmetro do corpo, reaproveitando o parser da comparação */
@@ -11869,6 +11937,7 @@ function progressoGalaxias(sis){
     (a.id==='vialactea' ? -1 : b.id==='vialactea' ? 1 : a.nome.localeCompare(b.nome)));
 }
 const CATNOME = {planeta:'PLANETA', lua:'LUA', estrela:'ESTRELA', regiao:'REGIÃO', menor:'CORPO MENOR', nave:'NAVE'};
+if(I18N) for(const k in CATNOME) CATNOME[k] = t(CATNOME[k]);   /* r232 */
 function missRender(){
   const todos = Object.values(ALLBODIES);
   const total = todos.length;
@@ -12000,7 +12069,7 @@ function missRender(){
       + '<span class="minfo"><span class="mnm">'+esc(b.name)+'</span><span class="msub">'+esc(sub)+'</span></span>'
       + (b.hab==null ? '<span class="mhab">·</span>'
                      : '<span class="mhab'+(b.hab>=50?' hi':'')+'">'+b.hab+'<i><b style="width:'+b.hab+'%"></b></i></span>')
-      + (temLinhaDoTempo(b) ? '<button class="mcmp" data-vt="'+b.id+'" title="Ver a linha do tempo">≋</button>' : '')
+      + (temLinhaDoTempo(b) ? '<button class="mcmp" data-vt="'+b.id+'" title="'+t('Ver a linha do tempo')+'">≋</button>' : '')
       + '<button class="mcmp'+(CMP.a && CMP.a.name===b.name ? ' arm' : '')+'" data-cmp="'+b.id+'" title="Comparar">◫</button>'
       + '</li>';
   }).join('') : '<li id="missempty">'+(q ? 'NADA ENCONTRADO PARA ESSA BUSCA' : 'NENHUM CORPO NESTE FILTRO')+'</li>';
@@ -12829,10 +12898,10 @@ function crumbsRender(){
   if(nv){
     const corpo = (ST.mapCard && ST.mapCard.type === 'body' && ALLBODIES[ST.mapCard.id]
       && ALLBODIES[ST.mapCard.id]._sys === 'sol') ? ALLBODIES[ST.mapCard.id] : null;
-    items.push({t:'UNIVERSO', go:(nv !== 'universo') ? ()=>voarNivel('universo') : null});
-    items.push({t:'VIA LÁCTEA', go:(nv !== 'galaxia') ? ()=>voarNivel('galaxia') : null});
+    items.push({t:t('UNIVERSO'), go:(nv !== 'universo') ? ()=>voarNivel('universo') : null});
+    items.push({t:t('VIA LÁCTEA'), go:(nv !== 'galaxia') ? ()=>voarNivel('galaxia') : null});
     if(nv === 'sistema' || corpo)
-      items.push({t:'SISTEMA SOLAR', go:(corpo || nv !== 'sistema') ? ()=>voarNivel('sistema') : null});
+      items.push({t:t('SISTEMA SOLAR'), go:(corpo || nv !== 'sistema') ? ()=>voarNivel('sistema') : null});
     if(corpo) items.push({t:corpo.name, go:null});
     items.forEach((it,i)=>{
       if(i>0){ const s2=document.createElement('span'); s2.className='sep'; s2.textContent='›'; el.appendChild(s2); }
@@ -12841,7 +12910,7 @@ function crumbsRender(){
     });
     return;
   }
-  items.push({t:'UNIVERSO', go:(ST.level!=='universe') ? ()=>gotoUniverse() : null});
+  items.push({t:t('UNIVERSO'), go:(ST.level!=='universe') ? ()=>gotoUniverse() : null});
   if(ST.level!=='universe'){
     /* a galáxia do rastro vem do sistema, que pode não ser a Via Láctea */
     const gid = (ST.level==='galaxy') ? ST.gal
@@ -12850,7 +12919,7 @@ function crumbsRender(){
     items.push({t:gname, go:(ST.level!=='galaxy') ? ()=>gotoGalaxy(gid) : null});
   }
   if(ST.level==='system' || ST.level==='focus')
-    items.push({t:SYS[ST.sys].name, go:(ST.level!=='system') ? ()=>gotoSystem(ST.sys,'RETORNANDO À VISÃO DO SISTEMA') : null});
+    items.push({t:SYS[ST.sys].name, go:(ST.level!=='system') ? ()=>gotoSystem(ST.sys,t('RETORNANDO À VISÃO DO SISTEMA')) : null});
   if(ST.level==='focus'){
     const b = ALLBODIES[ST.body];
     if(b._parent){
@@ -12954,38 +13023,38 @@ function cardRender(){
   const cur = currentEntity(), b = cur.b;
   const lockOn = ST.level==='focus';
   $('#headmini').innerHTML =
-    '<div class="eyebrow"><span>'+esc(b.desig||'')+'</span><span class="lock'+(lockOn?'':' off')+'">'+(lockOn?'⬢ LINK TRAVADO':'MODO MAPA')+'</span>'
-    +(ST.mapCard ? '<button id="cardx2" title="Fechar esta ficha">✕</button>'
+    '<div class="eyebrow"><span>'+esc(b.desig||'')+'</span><span class="lock'+(lockOn?'':' off')+'">'+(lockOn?t('⬢ LINK TRAVADO'):t('MODO MAPA'))+'</span>'
+    +(ST.mapCard ? '<button id="cardx2" title="'+t('Fechar esta ficha')+'">✕</button>'
       : ((ACT && ACT.kind==='system' && ACT.escr && ACT.galCentro && CAM.dist/(LY_UA*ESCR_UA) > 20000)
          ? '<button id="cardx2" data-xgal="1" title="Fechar o Sistema Solar e olhar a galáxia">✕</button>' : ''))+'</div>'+
     '<h1 class="bodyname">'+esc(b.name)
       + ((podeLive(lockOn ? ST.body : ((ST.mapCard && ST.mapCard.id) || '')))
-         ? '<button class="livebtn'+(LIVE?' on':'')+'" id="btnlive" title="Alternar entre a foto de verdade e o mapa desenhado"><i></i>'+(LIVE?'FOTO':'DESENHO')+'</button>'
+         ? '<button class="livebtn'+(LIVE?' on':'')+'" id="btnlive" title="'+t('Alternar entre a foto de verdade e o mapa desenhado')+'"><i></i>'+(LIVE?t('FOTO'):t('DESENHO'))+'</button>'
          : '')
       + ((cur.type==='map' && cur.navKind==='body' && ALLBODIES[cur.navId]
           && (ehEscape(ALLBODIES[cur.navId]) || ALLBODIES[cur.navId].comet
               || (ALLBODIES[cur.navId].foguete && ALLBODIES[cur.navId].traj))
           && ACT && ACT.kind==='system' && ALLBODIES[cur.navId]._sys===ST.sys)
-         ? '<button class="livebtn'+((TRAJ && TRAJ.fase!=='volta' && TRAJ.id===cur.navId)?' on':'')+'" id="btntraj" title="Percorrer a rota no tempo"><i></i>LINHA DO TEMPO</button>'
+         ? '<button class="livebtn'+((TRAJ && TRAJ.fase!=='volta' && TRAJ.id===cur.navId)?' on':'')+'" id="btntraj" title="'+t('Percorrer a rota no tempo')+'"><i></i>'+t('LINHA DO TEMPO')+'</button>'
          : '') + '</h1>'+
     '<div class="subkind">'+esc(b.kind||'')+'</div>';
 
   let h = '';
   /* ENTRAR agora mora no TOPO do card, como o Rodrigo pediu */
-  if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='body'?'▶ ENTRAR · TRAVAR LINK':'▶ ENTRAR · TRAVAR ROTA')+'</button>';
+  if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='body'?t('▶ ENTRAR · TRAVAR LINK'):t('▶ ENTRAR · TRAVAR ROTA'))+'</button>';
   { const bHab = (cur.type==='body') ? cur.b : ((cur.navKind==='body' && ALLBODIES[cur.navId]) ? ALLBODIES[cur.navId] : null);
     if(bHab && bHab.visual && MODEMAP[bHab.visual.mode] === 4)
-      h += '<button class="xbtn" id="btnhab">◉ MUNDOS HABITÁVEIS LADO A LADO</button>';
+      h += '<button class="xbtn" id="btnhab">'+t('◉ MUNDOS HABITÁVEIS LADO A LADO')+'</button>';
     /* r211 · qualquer corpo com ficha vai para a bancada personalizada */
     else if(bHab && bHab.id && bHab.visual && bHab.quick && !bHab.region)
-      h += '<button class="xbtn" id="btnhabadd" data-habid="' + bHab.id + '">◉ PÔR NA BANCADA</button>'; }
+      h += '<button class="xbtn" id="btnhabadd" data-habid="' + bHab.id + '">'+t('◉ PÔR NA BANCADA')+'</button>'; }
   /* r191 · o card da VIA LÁCTEA no zoom galáctico: centralizar de cima e a
      fileira IR PARA, com o SISTEMA SOLAR primeiro (a volta rápida que ele
      pediu) e as galáxias famosas do atlas em seguida */
   if(cur.galNivel){
-    h += '<button class="xbtn" id="btngalcima">◎ VER A GALÁXIA DE CIMA</button>';
-    h += '<div class="mk">IR PARA</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px">'
-       + '<button class="mbadge" data-galir="sol">SISTEMA SOLAR</button>'
+    h += '<button class="xbtn" id="btngalcima">'+t('◎ VER A GALÁXIA DE CIMA')+'</button>';
+    h += '<div class="mk">'+t('IR PARA')+'</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px">'
+       + '<button class="mbadge" data-galir="sol">'+t('SISTEMA SOLAR')+'</button>'
        + GALAXIES.filter(g=>g.id!=='vialactea').map(g=>'<button class="mbadge" data-galir="'+g.id+'">'+esc(g.name)+'</button>').join('')
        + '</div>';
   }
@@ -12994,11 +13063,11 @@ function cardRender(){
 
   { const alvoVT = (cur.type==='body') ? b : ((cur.type==='map' && cur.navKind==='body') ? ALLBODIES[cur.navId] : null);
     if(alvoVT && temLinhaDoTempo(alvoVT) && !(ACT && ACT.kind==='system' && alvoVT._sys===ST.sys))
-      h += '<button class="xbtn primary" id="vertraj" data-vt="'+alvoVT.id+'">≋ VER A LINHA DO TEMPO</button>'; }
+      h += '<button class="xbtn primary" id="vertraj" data-vt="'+alvoVT.id+'">'+t('≋ VER A LINHA DO TEMPO')+'</button>'; }
   /* SISTEMA PLANETÁRIO: só no card do corpo focado que tem luas na cena */
   if(cur.type==='body' && ST.level==='focus' && ST.body===b.id && ACT && ACT.kind==='focus'
      && ACT.subKids && ACT.subKids.length)
-    h += '<button class="xbtn" id="btnsubsis">'+((ACT.sub && ACT.sub.alvo) ? '◈ FECHAR O SISTEMA PLANETÁRIO' : '◈ VER O SISTEMA PLANETÁRIO')+'</button>';
+    h += '<button class="xbtn" id="btnsubsis">'+((ACT.sub && ACT.sub.alvo) ? t('◈ FECHAR O SISTEMA PLANETÁRIO') : t('◈ VER O SISTEMA PLANETÁRIO'))+'</button>';
   const bodyish = (cur.type==='body') ? b : (cur.navKind==='body' ? b : null);
   if(bodyish){
     const parent = bodyish._parent ? ALLBODIES[bodyish._parent] : (bodyish.satOf ? ALLBODIES[bodyish.satOf] : null);
@@ -13007,12 +13076,12 @@ function cardRender(){
     const sats = Object.values(ALLBODIES).filter(x=>x.satOf===dono.id && !x.foguete);
     const missoes = Object.values(ALLBODIES).filter(x=>x.satOf===dono.id && x.foguete);
     const sondas = (dono.id==='terra') ? Object.values(ALLBODIES).filter(x=>x.sonda) : [];
-    if(cur.type==='body' && parent) h += '<button class="xbtn" data-go="'+parent.id+'">← VOLTAR A '+esc(parent.name)+'</button>';
+    if(cur.type==='body' && parent) h += '<button class="xbtn" data-go="'+parent.id+'">'+t('← VOLTAR A ')+esc(parent.name)+'</button>';
     if(list && list.length){
-      const meta = (cur.type==='body' && parent) ? ('LUAS DE '+esc(parent.name)) : (esc(bodyish.moonsMeta ? bodyish.moonsMeta : ('LUAS · '+list.length+(list.length>1?' CONFIRMADAS':' CONFIRMADA'))));
+      const meta = (cur.type==='body' && parent) ? (t('LUAS DE ')+esc(parent.name)) : (esc(bodyish.moonsMeta ? bodyish.moonsMeta : (t('LUAS · ')+list.length+(list.length>1?t(' CONFIRMADAS'):t(' CONFIRMADA')))));
       /* quantos daquela lista você já visitou, sem poluir: só o número */
       const jaVi = list.filter(m=>VIS.has(m.id)).length;
-      const dir = jaVi ? ('<span class="vcount">'+jaVi+'/'+list.length+' VISITADOS</span>') : '<span>TOQUE P/ VISITAR</span>';
+      const dir = jaVi ? ('<span class="vcount">'+jaVi+'/'+list.length+t(' VISITADOS')+'</span>') : '<span>'+t('TOQUE P/ VISITAR')+'</span>';
       h += '<div class="moonsrow"><div class="mk"><span>'+meta+'</span>'+dir+'</div><div class="chips">';
       for(const m of list){
         const v = m.visual, on = (m.id===bodyish.id) ? ' on' : '';
@@ -13021,12 +13090,12 @@ function cardRender(){
       }
       h += '</div></div>';
     }
-    if(dono.exLuas) h += '<div class="exluas">LUAS DO PASSADO · '+esc(dono.exLuas)+'</div>';
+    if(dono.exLuas) h += '<div class="exluas">'+t('LUAS DO PASSADO · ')+esc(dono.exLuas)+'</div>';
     /* satélites em badge de texto (a lista pode crescer), vermelho se desativado */
-    const badge = x => '<button class="mbadge'+(x.morto?' morto':'')+(x.id===bodyish.id?' on':'')+'" data-go="'+x.id+'"'+(x.morto?' data-tip="DESATIVADO · SÓ REGISTRO" data-tipamber="1"':'')+'>'+esc(x.name)+'</button>';
+    const badge = x => '<button class="mbadge'+(x.morto?' morto':'')+(x.id===bodyish.id?' on':'')+'" data-go="'+x.id+'"'+(x.morto?' data-tip="'+t('DESATIVADO · SÓ REGISTRO')+'" data-tipamber="1"':'')+'>'+esc(x.name)+'</button>';
     /* r137: o ≋ GRUDOU no badge (pedido dele): os dois viram uma peça só,
        com um fio no meio, em vez de dois botões soltos lado a lado */
-    const vtb = x => '<button class="mbadge vt" data-vt="'+x.id+'" title="Ver a linha do tempo">≋</button>';
+    const vtb = x => '<button class="mbadge vt" data-vt="'+x.id+'" title="'+t('Ver a linha do tempo')+'">≋</button>';
     const par = x => temLinhaDoTempo(x) ? ('<span class="bpar">'+badge(x)+vtb(x)+'</span>') : badge(x);
     /* lista longa nasce ENXUTA: mostra os primeiros e o +N abre o resto */
     let nGrupo = 0;
@@ -13047,15 +13116,15 @@ function cardRender(){
         + '<button class="mbadge mais" data-mais="'+gid+'">+'+(arr.length-corte)+'</button></div>';
     };
     if(sats.length){
-      h += fileira('SATÉLITES', '<span>'+sats.filter(x=>!x.morto).length+' ATIVOS · '+sats.length+' NO REGISTRO</span>',
+      h += fileira(t('SATÉLITES'), '<span>'+sats.filter(x=>!x.morto).length+t(' ATIVOS · ')+sats.length+t(' NO REGISTRO')+'</span>',
         listaBadges(sats, 6), sats.length);
     }
     if(missoes.length){
       /* as missões agrupadas por ERA, cronológicas dentro de cada uma */
       const eras = [
-        ['PROGRAMA LUNA · URSS', ['luna9','luna16']],
-        ['ERA APOLLO · EUA', ['apollo8','apollo11','apollo13','apollo17']],
-        ['A NOVA CORRIDA · CHINA, JAPÃO E ARTEMIS', ['change4','slim','artemis1','artemis2']]];
+        [t('PROGRAMA LUNA · URSS'), ['luna9','luna16']],
+        [t('ERA APOLLO · EUA'), ['apollo8','apollo11','apollo13','apollo17']],
+        [t('A NOVA CORRIDA · CHINA, JAPÃO E ARTEMIS'), ['change4','slim','artemis1','artemis2']]];
       let hM = '';
       const usados = new Set();
       for(const era of eras){
@@ -13065,23 +13134,23 @@ function cardRender(){
       }
       const resto = missoes.filter(m=>!usados.has(m.id));
       if(resto.length) hM += listaBadges(resto, 6);
-      h += fileira('MISSÕES LUNARES', '<span>'+missoes.length+' · ≋ VÊ A VIAGEM</span>', hM, missoes.length);
+      h += fileira(t('MISSÕES LUNARES'), '<span>'+missoes.length+t(' · ≋ VÊ A VIAGEM')+'</span>', hM, missoes.length);
     }
     if(sondas.length){
-      h += fileira('SONDAS LANÇADAS DAQUI', '<span>'+sondas.length+' · ≋ VÊ A ROTA</span>',
+      h += fileira(t('SONDAS LANÇADAS DAQUI'), '<span>'+sondas.length+t(' · ≋ VÊ A ROTA')+'</span>',
         listaBadges(sondas, 5), sondas.length);
     }
     /* a Lua é o ÍNDICE do museu: quem já veio, em ordem cronológica */
     if(bodyish.id === 'lua'){
       const ordemV = ['luna9','apollo8','apollo11','apollo13','luna16','apollo17','change4','slim','artemis1','artemis2'];
       const visitas = ordemV.map(i2=>ALLBODIES[i2]).filter(Boolean);
-      if(visitas.length) h += fileira('AS VISITAS · 1966 A HOJE', '<span>'+visitas.length+' · ≋ CADA VIAGEM</span>',
+      if(visitas.length) h += fileira(t('AS VISITAS · 1966 A HOJE'), '<span>'+visitas.length+t(' · ≋ CADA VIAGEM')+'</span>',
         listaBadges(visitas, 6), visitas.length);
     }
   }
   if(b.quick){
     h += '<div class="qgrid">';
-    for(const q of b.quick) h += '<div class="qcell"><div class="k">'+esc(q[0])+'</div><div class="v">'+esc(q[1])+'</div></div>';
+    for(const q of b.quick) h += '<div class="qcell"><div class="k">'+esc(t(q[0]))+'</div><div class="v">'+esc(q[1])+'</div></div>';
     h += '</div>';
   }
   /* medidores também no primeiro clique (card de mapa), não só depois de entrar */
@@ -13090,45 +13159,45 @@ function cardRender(){
     if(b.hab!==null && b.hab!==undefined){
       const col = b.hab>=60 ? 'var(--ok)' : (b.hab>=25 ? '#ffd257' : 'var(--danger)');
       if(catDe(b) !== 'nave')
-        h += '<div class="bar"><div class="bk"><span>ÍNDICE DE HABITABILIDADE</span><span>'+b.hab+'/100</span></div><div class="track"><div class="fill" style="width:'+b.hab+'%;background:'+col+';color:'+col+'"></div></div></div>';
+        h += '<div class="bar"><div class="bk"><span>'+t('ÍNDICE DE HABITABILIDADE')+'</span><span>'+b.hab+'/100</span></div><div class="track"><div class="fill" style="width:'+b.hab+'%;background:'+col+';color:'+col+'"></div></div></div>';
     }
     if(b.gbar){
       const w = Math.min(100, b.gbar/2.6*100);
       const tick = (1/2.6*100).toFixed(1);
-      h += '<div class="bar"><div class="bk"><span>GRAVIDADE (REF. TERRA)</span><span>'+String(b.gbar).replace('.',',')+' g</span></div><div class="track"><div class="fill" style="width:'+w+'%;background:var(--ion);color:var(--ion)"></div><div class="tick" style="left:'+tick+'%"></div></div></div>';
+      h += '<div class="bar"><div class="bk"><span>'+t('GRAVIDADE (REF. TERRA)')+'</span><span>'+String(b.gbar).replace('.',',')+' g</span></div><div class="track"><div class="fill" style="width:'+w+'%;background:var(--ion);color:var(--ion)"></div><div class="tick" style="left:'+tick+'%"></div></div></div>';
     }
     h += '</div>';
   }
   const hasX = (b.sections&&b.sections.length) || (b.facts&&b.facts.length) || b.fict;
   if(hasX){
-    if(cur.type==='body') h += '<button class="xbtn" id="xexp">'+(ST.expanded?'RECOLHER DADOS ▴':'EXPANDIR DADOS ▾')+'</button>';
+    if(cur.type==='body') h += '<button class="xbtn" id="xexp">'+(ST.expanded?t('RECOLHER DADOS ▴'):t('EXPANDIR DADOS ▾'))+'</button>';
     if(cur.b && cur.b.quick) h += '<button class="xbtn" id="cmpbtn">'+cmpLabel(cur.b)+'</button>';
     if(cur.type!=='body' || ST.expanded){
       for(const s of (b.sections||[])){
-        h += '<div class="sect"><h3>'+esc(s.t)+'</h3><div class="rows">';
-        for(const r of s.rows) h += '<div class="row"><div class="rk">'+esc(r[0])+'</div><div class="rv">'+esc(r[1])+'</div></div>';
+        h += '<div class="sect"><h3>'+esc(t(s.t))+'</h3><div class="rows">';
+        for(const r of s.rows) h += '<div class="row"><div class="rk">'+esc(t(r[0]))+'</div><div class="rv">'+esc(r[1])+'</div></div>';
         h += '</div></div>';
       }
       if(b.facts && b.facts.length){
-        h += '<div class="sect"><h3>CURIOSIDADES</h3><ul class="facts">';
+        h += '<div class="sect"><h3>'+t('CURIOSIDADES')+'</h3><ul class="facts">';
         for(const f of b.facts) h += '<li>'+esc(f)+'</li>';
         h += '</ul></div>';
       }
-      if(b.fict) h += '<div class="sect"><h3>NA FICÇÃO</h3><div class="fict">'+esc(b.fict)+'</div></div>';
+      if(b.fict) h += '<div class="sect"><h3>'+t('NA FICÇÃO')+'</h3><div class="fict">'+esc(b.fict)+'</div></div>';
     }
   }
   if(cur.type==='map' && !cur.self && !cur.nav){
-    h += '<div class="notice">ROTA INDISPONÍVEL: dados de navegação insuficientes. Sonda em trânsito.</div>';
-    h += '<button class="xbtn" id="backpan">← VOLTAR AO PANORAMA</button>';
+    h += '<div class="notice">'+t('ROTA INDISPONÍVEL: dados de navegação insuficientes. Sonda em trânsito.')+'</div>';
+    h += '<button class="xbtn" id="backpan">'+t('← VOLTAR AO PANORAMA')+'</button>';
   }
-  if(cur.sysd) h += '<div class="notice">'+esc(SYS[ST.sys].hint)+'. Afaste o zoom para subir de escala.</div>';
+  if(cur.sysd) h += '<div class="notice">'+esc(SYS[ST.sys].hint)+t('. Afaste o zoom para subir de escala.')+'</div>';
 
   if(lockOn && ST.body === 'lua'){
     const d = new Date(), f = faseDaLua();
     const hh = String(d.getUTCHours()).padStart(2,'0') + ':' + String(d.getUTCMinutes()).padStart(2,'0');
     h = h.replace('<div class="qgrid">',
-      '<div id="liveinfo">AGORA · ' + hh + ' UTC · ' + nomeDaFase(f.idade)
-      + ' · ' + Math.round(f.ilum*100) + '% ILUMINADA</div><div class="qgrid">');
+      '<div id="liveinfo">'+t('AGORA · ') + hh + ' UTC · ' + nomeDaFase(f.idade)
+      + ' · ' + Math.round(f.ilum*100) + '%'+t(' ILUMINADA')+'</div><div class="qgrid">');
   }
   const pb = $('#panelbody');
   pb.innerHTML = h; pb.scrollTop = 0;
@@ -13230,15 +13299,15 @@ function cardRender(){
 function uiSync(){
   /* a aba do navegador diz ONDE você está, e a marca vem depois: com várias
      guias abertas é o local que diferencia (pedido do Rodrigo) */
-  { let local = 'UNIVERSO';
+  { let local = t('UNIVERSO');
     if(ST.level === 'focus' && ST.body && ALLBODIES[ST.body]) local = ALLBODIES[ST.body].name;
     else if(ST.level === 'system' && SYS[ST.sys]) local = SYS[ST.sys].name;
     else if(ST.level === 'galaxy'){ const g = GALAXIES.find(x=>x.id===ST.gal); if(g) local = g.name; }
     document.title = local + ' // UNIVERSATLAS';
   }
-  $('#scaleval').textContent = {universe:'UNIVERSO', galaxy:'GALÁXIA', system:'SISTEMA', focus:'CORPO'}[ST.level];
-  let stat = {universe:'ESCALA MÁXIMA', galaxy:'NAVEGANDO', system:'EM ÓRBITA', focus:'LINK TRAVADO'}[ST.level];
-  if(ST.mapCard) stat = 'ALVO CATALOGADO';
+  $('#scaleval').textContent = t({universe:'UNIVERSO', galaxy:'GALÁXIA', system:'SISTEMA', focus:'CORPO'}[ST.level]);
+  let stat = t({universe:'ESCALA MÁXIMA', galaxy:'NAVEGANDO', system:'EM ÓRBITA', focus:'LINK TRAVADO'}[ST.level]);
+  if(ST.mapCard) stat = t('ALVO CATALOGADO');
   var mcCoord = (ST.mapCard && ST.mapCard.type==='body' && ALLBODIES[ST.mapCard.id]) ? ALLBODIES[ST.mapCard.id].coord : null;
   $('#statval').textContent = stat;
   let coord = '93 BI AL';
@@ -13372,6 +13441,7 @@ function applySel(){
 /* ============================ HINT / HELP / RELÓGIO ============================ */
 let hintT = null;
 function showHint(txt){
+  txt = t(txt);   /* r232 */
   const el = $('#hint'); el.textContent = txt; el.classList.add('on');
   clearTimeout(hintT); hintT = setTimeout(()=>el.classList.remove('on'), 5600);
 }
@@ -13486,10 +13556,10 @@ setInterval(()=>{
 let fovUlt = '';
 setInterval(()=>{
   const s = larguraDaTela();
-  const t = s ? ('CAMPO DE VISÃO · ' + s) : 'SAT LINK 08 · DESTINO';
-  if(t !== fovUlt){
-    fovUlt = t;
-    const el = $('#fovline'); if(el) el.textContent = t;
+  const tx = s ? (t('CAMPO DE VISÃO') + ' · ' + s) : t('SAT LINK 08 · DESTINO');   /* r232: era 'const t', que sombreava o t() e dava TDZ */
+  if(tx !== fovUlt){
+    fovUlt = tx;
+    const el = $('#fovline'); if(el) el.textContent = tx;
     /* no celular o canto de baixo está escondido: a escala entra na linha de status */
     const em = $('#fovmob'); if(em) em.textContent = s ? ('· ' + s) : '';
   }
@@ -13868,7 +13938,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r231';
+const BUILD = 'r232';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -14098,7 +14168,7 @@ function tutMostra(){
   if(!p){ tutFecha(); return; }
   for(const el of TUT.alvoEls) el.classList.remove('tutfoco');
   TUT.alvoEls = [];
-  $('#tuttx').innerHTML = p.tx;
+  $('#tuttx').innerHTML = t(p.tx);
   $('#tutn').textContent = TUT.fila.length > 1 ? ((TUT.i+1)+'/'+TUT.fila.length) : '';
   TUT.max = Math.max(TUT.max, TUT.i);
   if(TUT.chave === 'boasvindas') store.set('carto:tutp', String(TUT.i));
@@ -14143,7 +14213,7 @@ function tutMostra(){
   TUT._oks = cks.map(()=>false);
   const lst = $('#tutcheck');
   lst.innerHTML = cks.some(c=>c.tx)
-    ? cks.map((c,ix)=>'<span class="tchk" data-ix="'+ix+'">○ '+c.tx+'</span>').join('')
+    ? cks.map((c,ix)=>'<span class="tchk" data-ix="'+ix+'">○ '+t(c.tx)+'</span>').join('')
     : '';
   if(TUT.timer){ clearTimeout(TUT.timer); TUT.timer = null; }
   if(p.tempo && !TUT.pausaTour)
@@ -14161,7 +14231,7 @@ function tutMostra(){
           if(!TUT._oks[ix]) todos = false;
           else if(c.tx){
             const elc = lst.querySelector('[data-ix="'+ix+'"]');
-            if(elc && !elc.classList.contains('ok')){ elc.textContent = '✓ ' + c.tx; elc.classList.add('ok'); }
+            if(elc && !elc.classList.contains('ok')){ elc.textContent = '✓ ' + t(c.tx); elc.classList.add('ok'); }
           }
         });
         if(todos){
@@ -14181,6 +14251,7 @@ function tutInicia(chave, passos){
   /* as boas-vindas só contam como vistas ao FECHAR: fechar o navegador no
      meio faz retomar do mesmo passo na próxima visita */
   if(chave !== 'boasvindas') tutFeito(chave);
+  if(I18N) passos.forEach(p=>{ if(p.botao) p.botao = t(p.botao); if(p.alvoLabel) p.alvoLabel = t(p.alvoLabel); });   /* r232 */
   TUT.fila = passos; TUT.i = 0; TUT.max = 0;
   if(chave === 'boasvindas'){
     const sv = Math.min(passos.length - 1, (+store.get('carto:tutp', '0')) || 0);
@@ -14264,7 +14335,7 @@ function tutComparar(){
     {tx:'Experimente: busque <b>MARTE</b> e compare. Quando a diferença é grande, o menor aparece DENTRO do maior.'}
   ]);
 }
-const MESES_N = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+const MESES_N = (LANG === 'en') ? ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'] : ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
 function simClockUI(){
   const el = $('#simdata'); if(!el) return;
   const d = new Date(SIMT.data);
@@ -14294,6 +14365,7 @@ $('#simvel').addEventListener('click', ()=>{
 const VEL_ORDEM = ['seg','hora','dia','semana','mes'];
 const VEL_TXT = {real:'AO VIVO · 1 SEGUNDO = 1 SEGUNDO', seg:'1 SEGUNDO = 1 SEGUNDO', hora:'1 SEGUNDO = 1 HORA',
   dia:'1 SEGUNDO = 1 DIA', semana:'1 SEGUNDO = 1 SEMANA', mes:'1 SEGUNDO = 1 MÊS'};
+if(I18N) for(const k in VEL_TXT) VEL_TXT[k] = t(VEL_TXT[k]);   /* r232 */
 function velSliderSync(){
   const sl = $('#velslider'); if(!sl) return;
   const atual = SIMT.vel === 'real' ? 'seg' : SIMT.vel;
@@ -14436,9 +14508,9 @@ function evtRender(){
     + '<span class="evd">' + evtRotuloData(ev) + '</span>' + esc(ev.t) + '</button>').join('');
 }
 function evtChips(){
-  $('#evttags').innerHTML = EVT_TAGS.map(t=>'<button data-tag="' + t[0] + '"' + (EVTF.tag === t[0] ? ' class="on"' : '') + '>' + t[1] + '</button>').join('');
+  $('#evttags').innerHTML = EVT_TAGS.map(tg=>'<button data-tag="' + tg[0] + '"' + (EVTF.tag === tg[0] ? ' class="on"' : '') + '>' + t(tg[1]) + '</button>').join('');
   $('#evttempo').innerHTML = [['fut','DAQUI PARA A FRENTE'],['pas','JÁ ACONTECERAM'],['tud','TODOS']]
-    .map(t=>'<button data-tempo="' + t[0] + '"' + (EVTF.tempo === t[0] ? ' class="on"' : '') + '>' + t[1] + '</button>').join('');
+    .map(tg=>'<button data-tempo="' + tg[0] + '"' + (EVTF.tempo === tg[0] ? ' class="on"' : '') + '>' + t(tg[1]) + '</button>').join('');
 }
 function irParaEvento(iso, rotulo){
   if(SIMT.vel === 'real'){ SIMT.vel = 'seg'; store.set('carto:vel', 'seg'); }
@@ -14620,49 +14692,50 @@ function trocaEscala(){
     return;
   }
   if(ST.sys === 'sol'){
-    if(ST.level === 'system') gotoSystem('sol', ESCR.on ? 'ESCALA 1:1 · OS CORPOS VIRAM POEIRA' : 'ESCALA CÊNICA · DE VOLTA AO MAPA');
+    if(ST.level === 'system') gotoSystem('sol', ESCR.on ? t('ESCALA 1:1 · OS CORPOS VIRAM POEIRA') : t('ESCALA CÊNICA · DE VOLTA AO MAPA'));
     else if(ST.level === 'focus' && ST.body) gotoFocus(ST.body);
   }
   showHint(ESCR.on ? 'ESCALA 1:1: distâncias, tamanhos e órbitas verdadeiros. Procure os planetas pelos RÓTULOS e acelere o RELÓGIO para ver Mercúrio correr.' : 'ESCALA CÊNICA RESTAURADA');
 }
 function modeSync(){
   const b = $('#modebtn'); if(!b) return;
-  b.textContent = ESCR.on ? 'ESCALA 1:1' : 'MAPA CÊNICO';
+  b.textContent = ESCR.on ? t('ESCALA 1:1') : t('MAPA CÊNICO');
   b.classList.toggle('real', ESCR.on);
 }
 $('#modebtn').addEventListener('click', trocaEscala);
 modeSync();
 function cfgSync(){
+  { const rl = document.querySelector('[data-lang]'); if(rl) rl.querySelector('b').textContent = (LANG === 'en') ? 'ENGLISH' : 'PORTUGUÊS'; }   /* r232 */
   const rcn = document.querySelector('[data-ceunomes]');
-  if(rcn){ rcn.classList.toggle('off', !CEUN.on); rcn.querySelector('b').textContent = CEUN.on ? 'LIGADO' : 'DESLIGADO'; }
+  if(rcn){ rcn.classList.toggle('off', !CEUN.on); rcn.querySelector('b').textContent = CEUN.on ? t('LIGADO') : t('DESLIGADO'); }
   const rec = document.querySelector('[data-ecl]');
-  if(rec){ rec.classList.toggle('off', !ECLV.on); rec.querySelector('b').textContent = ECLV.on ? 'LIGADO' : 'DESLIGADO'; }
+  if(rec){ rec.classList.toggle('off', !ECLV.on); rec.querySelector('b').textContent = ECLV.on ? t('LIGADO') : t('DESLIGADO'); }
   const rrd = document.querySelector('[data-reguadisco]');
-  if(rrd){ rrd.classList.toggle('off', !REGUA.disco); rrd.querySelector('b').textContent = REGUA.disco ? 'LIGADO' : 'DESLIGADO'; }
+  if(rrd){ rrd.classList.toggle('off', !REGUA.disco); rrd.querySelector('b').textContent = REGUA.disco ? t('LIGADO') : t('DESLIGADO'); }
   const rrg = document.querySelector('[data-regua]');
-  if(rrg){ rrg.classList.toggle('off', !REGUA.on); rrg.querySelector('b').textContent = REGUA.on ? 'LIGADO' : 'DESLIGADO'; }
+  if(rrg){ rrg.classList.toggle('off', !REGUA.on); rrg.querySelector('b').textContent = REGUA.on ? t('LIGADO') : t('DESLIGADO'); }
   const rceu = document.querySelector('[data-ceu]');
-  if(rceu){ rceu.classList.toggle('off', !CEUV.on); rceu.querySelector('b').textContent = CEUV.on ? 'LIGADO' : 'DESLIGADO'; }
+  if(rceu){ rceu.classList.toggle('off', !CEUV.on); rceu.querySelector('b').textContent = CEUV.on ? t('LIGADO') : t('DESLIGADO'); }
   const rh = document.querySelector('[data-hz]');
-  if(rh){ rh.classList.toggle('off', !HZV.on); rh.querySelector('b').textContent = HZV.on ? 'LIGADO' : 'DESLIGADO'; }
+  if(rh){ rh.classList.toggle('off', !HZV.on); rh.querySelector('b').textContent = HZV.on ? t('LIGADO') : t('DESLIGADO'); }
   const re = $('#cfgpop').querySelector('[data-escr]');
-  if(re){ re.classList.toggle('off', !ESCR.on); re.querySelector('b').textContent = ESCR.on ? 'LIGADO' : 'DESLIGADO'; }
+  if(re){ re.classList.toggle('off', !ESCR.on); re.querySelector('b').textContent = ESCR.on ? t('LIGADO') : t('DESLIGADO'); }
   const rv = $('#cfgpop').querySelector('[data-viagemx]');
-  if(rv){ rv.classList.toggle('off', !VIAGEMX.on); rv.querySelector('b').textContent = VIAGEMX.on ? 'LIGADO' : 'DESLIGADO'; }
+  if(rv){ rv.classList.toggle('off', !VIAGEMX.on); rv.querySelector('b').textContent = VIAGEMX.on ? t('LIGADO') : t('DESLIGADO'); }
   const rr = document.querySelector('[data-rastro]');
-  if(rr){ rr.classList.toggle('off', !RASTRO.on); rr.querySelector('b').textContent = RASTRO.on ? 'LIGADO' : 'DESLIGADO'; }
+  if(rr){ rr.classList.toggle('off', !RASTRO.on); rr.querySelector('b').textContent = RASTRO.on ? t('LIGADO') : t('DESLIGADO'); }
   const rc = $('#cfgpop').querySelector('[data-coord]');
-  if(rc){ rc.classList.toggle('off', !COORD.real); rc.querySelector('b').textContent = COORD.real ? 'LIGADO' : 'DESLIGADO'; }
+  if(rc){ rc.classList.toggle('off', !COORD.real); rc.querySelector('b').textContent = COORD.real ? t('LIGADO') : t('DESLIGADO'); }
   const rm2 = $('#cfgpop').querySelector('[data-som="mus"]');
-  if(rm2){ rm2.classList.toggle('off', AUDIO.muted); rm2.querySelector('b').textContent = AUDIO.muted ? 'DESLIGADA' : 'LIGADA'; }
+  if(rm2){ rm2.classList.toggle('off', AUDIO.muted); rm2.querySelector('b').textContent = AUDIO.muted ? t('DESLIGADA') : t('LIGADA'); }
   const rf2 = $('#cfgpop').querySelector('[data-som="fx"]');
-  if(rf2){ rf2.classList.toggle('off', AUDIO.sfxMudo); rf2.querySelector('b').textContent = AUDIO.sfxMudo ? 'DESLIGADOS' : 'LIGADOS'; }
+  if(rf2){ rf2.classList.toggle('off', AUDIO.sfxMudo); rf2.querySelector('b').textContent = AUDIO.sfxMudo ? t('DESLIGADOS') : t('LIGADOS'); }
   /* só as LINHAS de velocidade (os pontos do slider não têm <b> e quebravam o cfgSync) */
   document.querySelectorAll('.filtrow[data-vel]').forEach(r=>{
     const on = SIMT.vel === r.dataset.vel;
     r.classList.toggle('off', !on);
     const b = r.querySelector('b');
-    if(b) b.textContent = on ? 'ATIVA' : '';
+    if(b) b.textContent = on ? t('ATIVA') : '';
   });
   if(typeof modeSync === 'function') modeSync();
   if(typeof liveSync === 'function') liveSync();
@@ -14680,6 +14753,15 @@ $('#btncfg').addEventListener('click', ()=>{
   cfgSync();
 });
 const cfgRowClick = e=>{
+  /* r232 · trocar o idioma recarrega o mapa no MESMO lugar (o hash fica);
+     o ?lang= da URL sai antes, senão ele ganharia da escolha */
+  const rLang = e.target.closest('[data-lang]');
+  if(rLang){
+    store.set('carto:lang', LANG === 'en' ? 'pt' : 'en');
+    try{ const u = new URL(location.href); u.searchParams.delete('lang'); history.replaceState(null, '', u.pathname + u.search + u.hash); }catch(err){}
+    location.reload();
+    return;
+  }
   const rLuz = e.target.closest('[data-luzvia]');
   if(rLuz){
     LUZVIA.on = !LUZVIA.on;
@@ -14801,7 +14883,7 @@ function filtSync(){
     if(r.dataset.obj){
       const on = FILTROBJ[r.dataset.obj] !== false;
       r.classList.toggle('off', !on);
-      r.querySelector('b').textContent = on ? 'VISÍVEL' : 'OCULTO';
+      r.querySelector('b').textContent = on ? t('VISÍVEL') : t('OCULTO');
     } else if(r.dataset.cls){
       const on = FILTROS[r.dataset.cls] !== false;
       r.classList.toggle('off', !on);
@@ -14922,7 +15004,7 @@ let bootI = 0;
 function bootNext(){
   if(bootI < BOOTLINES.length){
     const d = document.createElement('div');
-    d.innerHTML = BOOTLINES[bootI++];
+    d.innerHTML = t(BOOTLINES[bootI++]);
     $('#bootlines').appendChild(d);
     setTimeout(bootNext, 340);
   } else setTimeout(endBoot, 480);
