@@ -3192,6 +3192,19 @@ PLANETS.push(
   ],
   facts:['Foi o cometa mais brilhante em décadas para quem estava no hemisfério norte, e o mais fotografado por celular da história.','A órbita é retrógrada e quase em pé, e a passagem pelo Sol a deixou hiperbólica: ele provavelmente nunca mais volta.','Um estudo previu que ele se despedaçaria antes de chegar ao Sol. Ele passou inteiro e deu o show.'],
   fict:null, moons:[]},
+ {id:'atlas3i', escape:true, comet:true, periUA:1.36, name:'3I/ATLAS', desig:'3I/2025 N1 · VISITANTE INTERESTELAR', kind:'O terceiro mensageiro de outra estrela', hab:0, gbar:0.0001, pop:'0',
+  quick:[['NÚCLEO','menos de 5,6 km'],['VELOCIDADE','58 km/s, a de fora'],['EXCENTRICIDADE','6,1 · recorde'],['PERIÉLIO','29 OUT 2025 · 1,36 UA'],['DESCOBERTA','1 JUL 2025 · ATLAS'],['VEIO DE','Sagitário, o centro da galáxia']],
+  sys:{orbit:56, size:0.28, speed:3.2, angle:2.9, incl:3.05},
+  traj:{de:2025.4, ate:2027}, marcos:[[2025.5,'DESCOBERTA','1 JUL 2025, telescópio ATLAS no Chile: já vinha a 4,5 UA, por dentro da órbita de Júpiter'],[2025.75,'PASSAGEM POR MARTE','3 OUT 2025, a 0,19 UA de Marte: as sondas em órbita marciana o fotografaram'],[2025.83,'PERIÉLIO','29 OUT 2025, a 1,36 UA, por dentro da órbita de Marte, escondido atrás do Sol para a Terra'],[2025.97,'MAIS PERTO DA TERRA','19 DEZ 2025, a 1,8 UA: nunca chegou perto de nós'],[2027,'DE VOLTA AO ESCURO','Rumo à saída do sistema, a 58 km/s, para nunca mais voltar']],
+  visual:{mode:'rocky', c1:'#6a5a4a', c2:'#8c7a66', c3:'#463a30', scale:7.0, seed:20.25, crater:0.7, atmo:{col:'#d8e8f0', i:0.5}},
+  sections:[
+    {t:'O TERCEIRO VISITANTE', rows:[['A linhagem','Depois da ʻOumuamua (2017) e do cometa Borisov (2019), o terceiro objeto confirmado vindo de outra estrela'],['A prova','Excentricidade de 6,1, a hipérbole mais aberta já medida: a da ʻOumuamua era 1,2. Nada preso ao Sol se move assim'],['A velocidade','Chegou a 58 km/s em relação ao Sol, o visitante mais rápido dos três'],['De onde veio','Da direção de Sagitário, o centro da galáxia, cruzando o plano dos planetas quase de raspão e no sentido contrário (175 graus)']]},
+    {t:'UM COMETA DE VERDADE', rows:[['A coma','Ao contrário da ʻOumuamua, mostrou coma e cauda desde a descoberta: gelo evaporando como num cometa da casa'],['O James Webb','Mediu uma coma dominada por gás carbônico, com bem mais CO₂ do que água: uma química diferente da dos nossos cometas'],['O níquel','Telescópios no Havaí viram vapor de níquel sem ferro, um padrão estranho que o Borisov também mostrou'],['O núcleo','O Hubble limitou o tamanho a menos de 5,6 km; provavelmente bem menor que isso']]},
+    {t:'A IDADE', rows:[['A hipótese','A trajetória sugere origem no disco ESPESSO da galáxia, uma população de estrelas velhas'],['O número','Pode ter uns 7 bilhões de anos: mais velho que o próprio Sistema Solar'],['O que isso vale','Seria o pedaço mais antigo de outro sistema planetário que já vimos de perto']]},
+    {t:'REGISTRO', rows:[['1 JUL 2025','Descoberto pelo telescópio ATLAS de Río Hurtado, no Chile; fotos anteriores de junho foram achadas depois nos arquivos'],['3 OUT 2025','Passou a 0,19 UA de Marte, e as sondas em órbita marciana fizeram as fotos mais próximas'],['29 OUT 2025','Periélio a 1,36 UA, do outro lado do Sol em relação à Terra'],['19 DEZ 2025','Aproximação máxima da Terra, a 1,8 UA: sem risco algum'],['A saída','Já rumo ao gelo, perto da órbita de Saturno, para nunca voltar']]}
+  ],
+  facts:['É o terceiro objeto interestelar confirmado, e o mais rápido e mais hiperbólico dos três: excentricidade 6,1.','Pode ser mais velho que o Sistema Solar: a trajetória aponta para o disco espesso da galáxia, de estrelas com 7 bilhões de anos.','As sondas em órbita de Marte fizeram as fotos mais próximas dele, em outubro de 2025.'],
+  fict:'Como na ʻOumuamua, Avi Loeb levantou a hipótese de nave alienígena; a resposta veio em espectros: gelo de CO₂, poeira e níquel, um cometa de outra estrela.', moons:[]},
  {id:'oumuamua', escape:true, periUA:0.256, name:'ʻOUMUAMUA', desig:'1I/2017 U1 · VISITANTE INTERESTELAR', kind:'O primeiro mensageiro de outra estrela', hab:0, gbar:0.00001, pop:'0 (até onde sabemos…)',
   quick:[['TAMANHO','~100–400 m'],['FORMA','charuto/panqueca 10:1'],['ORIGEM','outro sistema estelar'],['VELOCIDADE','87 km/s'],['DETECÇÃO','2017 · Pan-STARRS'],['STATUS','já foi embora']],
   sys:{orbit:57, size:0.26, speed:3.4, angle:1.2, incl:0.7},
@@ -5061,7 +5074,7 @@ const ESCALA_REAL_LUAS = {
   miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
   iss:6790, hubble:6910, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
-const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, pathfinder:1.52, viking1:1.52, cassini:9.54};
+const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, pathfinder:1.52, viking1:1.52, cassini:9.54};
 /* pedras do cinturão: [UA, raio km] (no cênico elas moram no anel desenhado) */
 const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4]};
 /* O CÉU REAL (só na escala real): as estrelas mais brilhantes do céu em
@@ -12298,6 +12311,7 @@ const ROTA_VIAJANTES = [
   {corpo:'voyager2', ms:11000},
   {corpo:'newhorizons', ms:11000},
   {corpo:'oumuamua', ms:12000},
+  {corpo:'atlas3i', ms:11000, texto:'O terceiro visitante de outra estrela, e talvez mais velho que o Sistema Solar: um cometa de gás carbônico a 58 km/s.'},
   {corpo:'tsuchinshan', ms:11000, texto:'O grande cometa de 2024 veio da Nuvem de Oort e vai embora: a passagem pelo Sol o empurrou para fora, provavelmente para sempre.'},
   {sis:'sol', ms:8000, texto:'Cinco máquinas já cruzaram ou cruzarão a heliopausa. Nenhuma volta: são as garrafas ao mar da humanidade.'}
 ];
@@ -14046,7 +14060,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r236';
+const BUILD = 'r237';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
