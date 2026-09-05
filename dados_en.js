@@ -1,4 +1,4 @@
-/* UNIVERSATLAS · fichas em INGLÊS (r233, fase 2 do idioma).
+/* UNIVERSATLAS · fichas em INGLÊS (r233 e r238, fase 2 do idioma).
    Carregado só quando LANG === 'en' (document.write no bloco 1). Cada chave é
    o id do corpo; os campos presentes SUBSTITUEM os da ficha em português
    (kind, quick, sections, facts, fict, exLuas, moonsMeta). Números no formato
@@ -151,6 +151,431 @@ plutao: {
   facts: ['Pluto and Charon spin locked facing each other: a "double planet".', 'From 1930 to 2006 it was the 9th planet. The reclassification still hurts on the internet.', 'The ashes of Clyde Tombaugh, its discoverer, travel aboard New Horizons.'],
   fict: null,
   moonsMeta: '5 CONFIRMED · 1 MAIN'
+},
+/* ---- fase 2, parte 2 (r238): as luas do Sistema Solar e as missoes lunares ---- */
+fobos: {
+  kind: 'The doomed moon',
+  quick: [['DIMENSIONS','27 × 22 × 18 km'],['ORBIT','7 h 39 min'],['DISCOVERED','1877'],['ALTITUDE','6,000 km, the lowest'],['FATE','a ring in ~50 million years'],['MISSION','MMX (JAXA) on its way']],
+  sections: [
+    {t:'THE DOOMED ONE', rows:[['The fall','It drops ~1.8 m per century: the tides of Mars pull it inward'],['The end','In ~50 million years it crosses the Roche limit and becomes a RING around Mars'],['The grooves','The long furrows on the surface may be the beginning of the breakup'],['Stickney','The 9 km crater: the impact nearly split the moon in half']]},
+    {t:'RECORD', rows:[['Discovered','1877 · Asaph Hall, six days after Deimos'],['The name','Phobos, Fear, son of Ares'],['The Martian sky','It rises in the WEST and crosses the sky twice per Martian day'],['The mission','JAXA\'s MMX will land on it and bring a sample back']]}
+  ],
+  facts: ['It orbits faster than Mars spins: it rises in the west and crosses the sky twice per Martian day.', 'It drops 1.8 meters per century: in some 50 million years it becomes a ring around Mars.'],
+  fict: 'Phobos is the setting of the first Doom (1993): the UAC base where everything starts sits right on it.'
+},
+deimos: {
+  kind: 'The little moon that is saying goodbye',
+  quick: [['DIMENSIONS','15 × 12 × 11 km'],['ORBIT','30.3 h'],['DISCOVERED','1877'],['SURFACE','smooth, dust-covered'],['HEADING','slowly drifting away'],['TEMP.','−40 to −112 °C']],
+  sections: [
+    {t:'THE ONE SAYING GOODBYE', rows:[['The heading','Unlike Phobos, it orbits beyond the balance point: it slowly DRIFTS AWAY'],['The surface','A blanket of fine dust filled almost every crater: the smoothest moon known'],['Seen from Mars','A bright dot that takes 2.7 days to cross the sky'],['The origin','Maybe a captured asteroid, maybe leftovers of a giant impact on Mars']]},
+    {t:'RECORD', rows:[['Discovered','1877 · Asaph Hall, in the same week as Phobos'],['The name','Deimos, Dread, twin brother of Fear'],['The size','15 km: jumping hard, you would almost reach orbit'],['The gravity','0.0003 g: a person would weigh less than an orange']]}
+  ],
+  facts: ['While Phobos falls, Deimos flees: it orbits beyond the balance point and slowly drifts away from Mars.', 'Fine dust filled almost every crater: it is the smoothest moon known.'],
+  fict: 'Deimos is the second episode of Doom (1993): in the game the whole moon vanishes and reappears floating over hell.'
+},
+io: {
+  kind: 'The most volcanic place in the Solar System',
+  quick: [['DIAMETER','3,643 km'],['GRAVITY','0.18 g'],['ORBIT','1.77 d'],['VOLCANOES','400+'],['CRATERS','none'],['JUNO','flew by at 1,500 km']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Distance from Jupiter','421,000 km'],['Year','1.77 days'],['Rotation','Synchronous'],['The engine','Caught in a tug of war between Jupiter, Europa and Ganymede, it is kneaded nonstop']]},
+    {t:'STRUCTURE', rows:[['Surface','Sulfur and frozen sulfur dioxide, hence the yellow, orange and white'],['No craters','Lava covers everything so fast that no impact scar survives'],['Loki Patera','A 200 km lava lake that brightens and dims in cycles'],['Mountains','Peaks up to 17 km, taller than Everest, pushed up by compression'],['The trail','It leaves a ring of plasma around Jupiter, fed by the volcanoes']]},
+    {t:'RECORD', rows:[['Discovered','1610 · Galileo, one of the four that proved not everything orbits the Earth'],['1979','Voyager 1 catches a plume on the horizon: the first eruption seen beyond Earth'],['Juno (2023 and 2024)','Two passes at 1,500 km, the closest in twenty years, with true-color photos'],['What Juno saw','Lava lakes with shores of rock as smooth as glass and a peak named Steeple Mountain'],['The conclusion','Each volcano seems to have its own pocket of magma, with no global ocean of lava']]}
+  ],
+  facts: ['Some volcanoes throw plumes 500 km high, twice the altitude of the Space Station.', 'Not one impact crater: the whole surface is remade every million years.', 'Every second a tonne of material leaves Io and becomes a ring of plasma around Jupiter.'],
+  fict: 'It is the classic mining colony of science fiction, from Outland (1981), the "western in space", to The Expanse.'
+},
+europa: {
+  kind: 'Ice moon',
+  quick: [['DIAMETER','3,122 km'],['ORBIT','3.6 d'],['DISCOVERED','1610'],['OCEAN','yes']],
+  sections: [
+    {t:'THE OCEAN', rows:[['The size','A global ocean ~100 km deep: twice all the water on Earth'],['The shell','15 to 25 km of ice on top, cracked by Jupiter\'s tides'],['The heating','The tide kneads the whole moon and warms the interior: liquid water for billions of years'],['The plumes','Hubble caught possible jets of water escaping through the ice']]},
+    {t:'EUROPA CLIPPER', rows:[['The mission','Launched in 2024, arriving in 2030: the largest planetary probe NASA has ever built'],['The plan','49 low flybys measuring the ice with radar, without landing'],['The question','It does not look for life directly: it asks whether the ocean is HABITABLE'],['The plate','It carries the word water engraved in 103 languages, and a poem by Ada Limón']]},
+    {t:'RECORD', rows:[['Discovered','1610 · Galileo'],['Surface','The smoothest in the system: almost no craters, young and renewed ice'],['Habitability','With water, energy and chemistry, one of the best candidates for life beyond Earth']]}
+  ],
+  facts: ['Its ocean holds twice the water of all the seas on Earth, under a shell of ice.', 'The cracks are faults in the ice over the ocean, opened by Jupiter\'s tides.', 'Europa Clipper carries the word water engraved in 103 languages.'],
+  fict: '2010 (Arthur C. Clarke): "ALL THESE WORLDS ARE YOURS EXCEPT EUROPA. ATTEMPT NO LANDING THERE."'
+},
+ganimedes: {
+  kind: 'The largest moon in the Solar System',
+  quick: [['DIAMETER','5,268 km'],['GRAVITY','0.15 g'],['ORBIT','7.15 d'],['OCEAN','under 150 km of ice'],['MAGNETIC FIELD','its own, unique'],['JUICE','arrives in 2031']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Distance from Jupiter','1.07 million km'],['Year','7.15 days'],['Rotation','Synchronous'],['The dance','In a 1:2:4 resonance with Europa and Io: for each of its laps, Europa does two and Io does four']]},
+    {t:'STRUCTURE', rows:[['Size','Larger than Mercury, and larger than Pluto by far'],['The ocean','Salt water under 150 km of ice, possibly holding more water than all the oceans on Earth'],['The core','Liquid iron in motion, and that is what makes the magnetic field'],['The surface','Half dark and cratered, half bright and grooved by ancient faults']]},
+    {t:'RECORD', rows:[['1610','Galileo discovers it with the other three, and the sky stops revolving only around the Earth'],['The name','Ganymede, the youth Zeus abducted to serve as cupbearer of the gods'],['1996','Hubble detects a thin oxygen atmosphere'],['2015','The wobble of its auroras confirms the underground ocean: only salt water would explain the pattern'],['2023','Juno passed at 1,000 km and photographed the surface in high resolution'],['JUICE','The European probe launched in 2023 will enter orbit around it in 2034, the first spacecraft to orbit the moon of another planet']]}
+  ],
+  facts: ['It is the only moon in the Solar System with a magnetic field of its own, and so it has auroras.', 'If it orbited the Sun instead of Jupiter, it would be classified as a planet without argument.', 'The hidden ocean may hold more liquid water than the entire surface of the Earth.', 'It is larger than Mercury, and still almost nobody knows its name.'],
+  fict: 'The Expanse: it is the farming breadbasket of the outer planets, and the fight over it drives much of the story.'
+},
+calisto: {
+  kind: 'The most cratered moon, and the most habitable one around Jupiter',
+  quick: [['DIAMETER','4,821 km'],['GRAVITY','0.13 g'],['ORBIT','16.7 d'],['CRATERS','record of the system'],['RADIATION','low, outside the belt'],['OCEAN','likely']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Distance from Jupiter','1.88 million km, the farthest of the four big ones'],['Year','16.7 days'],['Rotation','Synchronous'],['Out of the dance','It is the only one of the four outside the resonance, so it is not kneaded by tides']]},
+    {t:'STRUCTURE', rows:[['The surface','The most cratered in the whole Solar System: there is no room left for new craters'],['The age','About 4 billion years with practically no change'],['Valhalla','An impact scar with concentric rings spreading over 3,800 km'],['Inside','Rock and ice barely separated, and probably a salty ocean some 150 km down']]},
+    {t:'RECORD', rows:[['1610','Discovered by Galileo, the fourth of the Galilean moons'],['The name','Callisto, the nymph Zeus turned into a bear'],['The advantage','It is far enough to escape Jupiter\'s lethal radiation belt'],['The NASA study','A 2003 project pointed to it as the best place for a human base in the Jupiter system'],['JUICE','The European probe will fly by it 21 times from 2031']]}
+  ],
+  facts: ['It is the most cratered body we know: the surface is saturated, every new impact erases an old one.', 'Unlike its sisters, it escaped the gravitational tug of war and so it stayed geologically still.', 'NASA has studied it as the best address for a crewed base at Jupiter, because the radiation there is bearable.', 'To look at it is to look at a surface practically untouched since the formation of the Solar System.'],
+  fict: 'It is the destination of the mission in 2010: The Year We Make Contact, and a recurring base in fiction that takes humans to Jupiter.'
+},
+amalteia: {
+  kind: 'The red potato inside the orbit of Io',
+  quick: [['DIMENSIONS','250 × 146 × 128 km'],['GRAVITY','0.002 g'],['ORBIT','11 h 57 min'],['DISCOVERED','1892'],['DISTANCE','181,000 km'],['COLOR','the reddest in the system']],
+  sections: [
+    {t:'THE LAST BY EYE', rows:[['1892','Discovered by Edward Barnard at the Lick telescope: the last moon found by looking through the eyepiece, without photography'],['After it','Every new moon in the system came from photographic plates or digital cameras'],['The name','The goat (or nymph) who nursed Zeus in Greek mythology']]},
+    {t:'THE RED POTATO', rows:[['The color','The reddest object in the Solar System: sulfur spat out by the volcanoes of Io settles on it'],['The density','0.86 g/cm³, less than water: a porous pile of rubble, not a single rock'],['The shape','Elongated and covered in craters, with the long end always pointing at Jupiter']]},
+    {t:'RECORD', rows:[['The visit','Galileo passed at 160 km in 2002, in the last maneuver before its final plunge'],['The ring','The dust leaving it forms the faint Amalthea Gossamer ring'],['Where it is','Inside the orbit of Io, in a place of brutal radiation']]}
+  ],
+  facts: ['It was the last moon in the Solar System discovered by eye, through the telescope eyepiece: after 1892, only photography.', 'It is the reddest known object in the Solar System, painted by the sulfur of Io\'s volcanoes.'],
+  fict: 'Arthur C. Clarke set an expedition on it in Jupiter Five (1953), and the Strugatsky brothers wrote The Way to Amalthea (1960).'
+},
+himalia: {
+  kind: 'The largest of Jupiter\'s irregular moons',
+  quick: [['DIAMETER','~170 km'],['GRAVITY','0.006 g'],['ORBIT','250.6 d'],['DISCOVERED','1904'],['DISTANCE','11.5 million km'],['TILT','27.5°']],
+  sections: [
+    {t:'THE CAPTURED ONE', rows:[['Where it came from','Probably a C-type asteroid, dark and gray, captured by Jupiter early in the system'],['The family','It leads the Himalia group: five moons with similar orbits, remains of one shattered body'],['The orbit','Tilted 27.5 degrees and far: 60 times farther than Io']]},
+    {t:'THE LARGEST IRREGULAR', rows:[['The size','About 170 km: Jupiter\'s sixth moon by size and the largest outside the four Galileans'],['The surface','Dark, reflecting only 6 percent of the light, like coal'],['The day','It spins in 7.8 hours, unlocked from its orbit, like the rocks of the belt']]},
+    {t:'RECORD', rows:[['1904','Discovered by Charles Perrine at Lick Observatory, by photography'],['The visits','Cassini photographed it from afar in 2000, New Horizons in 2007: just an elongated dot'],['The name','A nymph of Rhodes who had three sons with Zeus']]}
+  ],
+  facts: ['It is the largest moon of Jupiter outside the four Galileans, and probably a captured asteroid.', 'It names a whole family of moons with similar orbits: the pieces of one shattered body.'],
+  fict: null
+},
+tita: {
+  kind: 'The other world with rain, rivers and seas',
+  quick: [['DIAMETER','5,150 km'],['GRAVITY','0.14 g'],['ORBIT','15.9 d'],['ATMOSPHERE','N₂ · 1.5 atm'],['SEAS','liquid methane'],['DRONE','Dragonfly · 2028']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Distance from Saturn','1.22 million km'],['Year','15.9 days'],['Rotation','Synchronous'],['Temperature','−179 °C, cold enough to freeze chemistry itself']]},
+    {t:'STRUCTURE', rows:[['Size','Larger than Mercury, the 2nd largest moon in the Solar System'],['Atmosphere','Dense nitrogen at 1.5 atm, the only moon with a real atmosphere'],['Methane cycle','It evaporates, forms clouds, rains and fills rivers, just like water here'],['Seas','Kraken, Ligeia and Punga Mare, of liquid methane and ethane'],['Underneath','A likely ocean of water and ammonia under the ice crust']]},
+    {t:'RECORD', rows:[['Discovered','1655 · Christiaan Huygens'],['The landing','2005: the Huygens probe parachuted down and photographed pebbles rounded by liquid'],['Dragonfly','A nuclear-powered drone with eight rotors that will FLY from dune to dune, hop by hop'],['Launch','July 2028, arrival in 2034, landing in the dunes of Shangri-La'],['Why fly','The atmosphere is dense and the gravity is low: flying there is easier than on Earth']]}
+  ],
+  facts: ['With the right pressure and low gravity, a human with wings strapped to the arms could fly on Titan.', 'It is the only other known place with stable liquid on the surface, except it is methane, not water.', 'Dragonfly will be the first aircraft to explore another world by hopping from place to place.'],
+  fict: 'Gattaca: Vincent\'s dream destination is a mission to Titan. It is also the moon colonized in Titan (2018) and a recurring refuge in science fiction.'
+},
+reia: {
+  kind: 'Saturn\'s second, the one with the thin air',
+  quick: [['DIAMETER','1,528 km'],['GRAVITY','0.027 g'],['ORBIT','4.5 d'],['DISCOVERED','1672'],['ATMOSPHERE','O₂ and CO₂, extremely thin'],['TEMP.','−174 °C']],
+  sections: [
+    {t:'THE THIN AIR', rows:[['The discovery','In 2010 Cassini detected an exosphere of oxygen and carbon dioxide'],['The origin','Saturn\'s radiation breaks the surface ice and frees the O₂'],['The measure','Trillions of times thinner than our air, but it IS an atmosphere'],['The milestone','It was the first time O₂ was detected on an icy world like this']]},
+    {t:'RECORD', rows:[['Discovered','1672 · Giovanni Cassini himself'],['The name','Rhea, the titaness mother of Zeus'],['The surface','Dirty, cratered ice, with the bright streaks of ice cliffs'],['The ring mystery','In 2008 Rhea was suspected of having RINGS of its own; Cassini later did not confirm it']]}
+  ],
+  facts: ['It has an extremely thin oxygen atmosphere, torn from its own ice by Saturn\'s radiation.', 'It was once suspected of having rings of its own, which would make it the only known ringed moon.'],
+  fict: 'The suspicion of Rhea\'s rings made headlines about "the moon with rings" before Cassini denied it.'
+},
+encelado: {
+  kind: 'The moon that spits its ocean into space',
+  quick: [['DIAMETER','504 km'],['GRAVITY','0.011 g'],['ORBIT','1.37 d'],['GEYSERS','101 jets'],['OCEAN','global, 10 km'],['ALBEDO','0.81 · record']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Distance from Saturn','238,000 km'],['Year','1.37 days'],['Rotation','Synchronous'],['The engine','Saturn\'s tide kneads and stretches the moon, and that friction melts the ice inside']]},
+    {t:'STRUCTURE', rows:[['Diameter','504 km, it would fit between London and Paris'],['Ocean','Global, ~10 km deep under 20 km of ice'],['Tiger stripes','Four fissures at the south pole, where the jets come out'],['Temperature','−201 °C on the surface, liquid water below']]},
+    {t:'RECORD', rows:[['Discovered','1789 · William Herschel'],['The revelation','2005: Cassini caught plumes of vapor leaving the south pole'],['The plunge','2015: the probe flew THROUGH a jet, 49 km above the surface, and proved the water'],['What it found','Salt, silica from hydrothermal vents, methane and complex organic molecules'],['2023','James Webb saw a plume 10,000 km long, larger than the moon itself'],['Phosphate','2023: phosphorus detected, the last of the six ingredients of life that was missing']]}
+  ],
+  facts: ['Cassini proved there is an ocean of warm salt water down there, with hydrothermal activity like the vents where life may have started on Earth.', 'The geysers feed Saturn\'s E ring: this moon is literally painting one of the planet\'s rings.', 'It is the most reflective body in the Solar System, returning 81% of the light it receives.', 'A future mission would not even need to land: just fly through the plume and collect the ocean for free.'],
+  fict: 'Star Trek: Enterprise makes Enceladus a water refueling stop. In 2017 NASA announced the hydrogen finding with the line that became a meme: "it is food for microbes".'
+},
+dione: {
+  kind: 'The one with the ice cliffs',
+  quick: [['DIAMETER','1,123 km'],['GRAVITY','0.024 g'],['ORBIT','2.7 d'],['DISCOVERED','1684'],['ATMOSPHERE','O₂, extremely thin'],['TEMP.','−186 °C']],
+  sections: [
+    {t:'THE CLIFFS', rows:[['The bright streaks','The bright stripes seen from afar are ice cliffs hundreds of meters tall'],['The origin','Tectonic fractures: Dione\'s crust cracked and exposed clean ice'],['The surprise','Cassini showed that the "dead" moon had active geology'],['The ocean','The gravity field suggests an inner ocean under tens of km of ice']]},
+    {t:'RECORD', rows:[['Discovered','1684 · Giovanni Cassini, his fourth at Saturn'],['The name','Dione, titaness mother of Aphrodite'],['The thin air','In 2010 Cassini detected an oxygen exosphere, like Rhea\'s'],['The companions','It shares its orbit with two tiny trojan moons, Helene and Polydeuces']]}
+  ],
+  facts: ['The bright streaks that puzzled astronomers are ice cliffs exposed by fractures in the crust.', 'It shares its own orbit with two trojan moons, Helene and Polydeuces, one ahead and one behind.'],
+  fict: null
+},
+tetis: {
+  kind: 'The almost pure ball of ice',
+  quick: [['DIAMETER','1,062 km'],['GRAVITY','0.015 g'],['ORBIT','1.9 d'],['DISCOVERED','1684'],['DENSITY','0.98, almost pure ice'],['TEMP.','−187 °C']],
+  sections: [
+    {t:'ITHACA CHASMA', rows:[['The canyon','2,000 km long, 100 wide, up to 4 deep'],['The lap','It runs three quarters of the way around the moon'],['The origin','Perhaps the crust cracked when the ancient inner ocean froze and expanded']]},
+    {t:'RECORD', rows:[['Discovered','1684 · Giovanni Cassini, in the same year as Dione'],['The Odysseus crater','450 km across, two fifths of the moon\'s diameter'],['The composition','Density 0.98: practically a ball of nearly pure water ice'],['The companions','It shares its orbit with the trojans Telesto and Calypso']]}
+  ],
+  facts: ['A density of 0.98 makes it practically a ball of nearly pure water ice, lighter than liquid water.', 'The Ithaca Chasma canyon runs three quarters of the way around the moon.'],
+  fict: null
+},
+mimas: {
+  kind: 'The small one that looks like the Death Star',
+  quick: [['DIAMETER','396 km'],['GRAVITY','0.006 g'],['ORBIT','0.942 d'],['DISCOVERED','1789'],['CRATER','Herschel, 130 km'],['TEMP.','−200 °C']],
+  sections: [
+    {t:'THE HERSCHEL CRATER', rows:[['The size','130 km across on a 396 km moon: a third of the diameter'],['The impact','A little harder and it would have split Mimas in half; the fractures on the opposite side tell the story'],['The central peak','6 km tall, almost an Everest, in the middle of the scar'],['The famous face','When Voyager 1 showed the crater in 1980, the whole world thought of the same thing']]},
+    {t:'THE HIDDEN OCEAN', rows:[['The 2024 surprise','The wobble of its orbit, measured in Cassini data, revealed an inner ocean'],['The depth','The water starts some 20 to 30 km below the ice'],['The youth','The ocean is less than 25 million years old, a newborn on cosmic scales'],['The disguise','The heavily cratered surface shows NO sign of it, which is why nobody suspected']]},
+    {t:'RECORD', rows:[['Discovered','1789 · William Herschel'],['The name','Mimas, one of the giants of Greek mythology'],['The composition','Almost pure water ice, density 1.15'],['The neighbor of the rings','It is the large moon closest to the rings, and the Cassini Division is the work of its gravity']]}
+  ],
+  facts: ['The wobble measured by Cassini revealed in 2024 a young inner ocean, hidden under a surface that shows no sign of it.', 'The Cassini Division, the dark gap in Saturn\'s rings, is opened by the gravity of Mimas.'],
+  fict: 'When Voyager 1 photographed the Herschel crater in 1980, three years after Star Wars, the comparison with the Death Star was inevitable and Mimas never shook off the nickname.'
+},
+hiperion: {
+  kind: 'The sponge that spins at random',
+  quick: [['DIMENSIONS','360 × 266 × 205 km'],['GRAVITY','0.002 g'],['ORBIT','21.3 d'],['DISCOVERED','1848'],['ROTATION','chaotic'],['DENSITY','0.54 g/cm³']],
+  sections: [
+    {t:'THE SPONGE', rows:[['The look','Deep craters with thin walls, packed against each other: it looks like a sea sponge'],['Why','Half of the volume is EMPTY: a pile of poorly compacted ice rubble'],['The impact','What hits it sinks in instead of splashing: the craters swallow their own debris']]},
+    {t:'THE CHAOTIC SPIN', rows:[['The chaos','It is the only large body known to spin with NO fixed axis or period: every day is different from the last'],['The cause','The potato shape plus the pull of Titan in the 4:3 resonance'],['In practice','It is impossible to predict which side will face Saturn a month from now']]},
+    {t:'RECORD', rows:[['Discovered','1848 · Bond, Bond and Lassell'],['The visit','Cassini passed at 500 km in 2005 and took the photos of the sponge'],['Electric charge','In 2005 Cassini took a jolt of electrons coming from it: the first electrostatic moon detected']]}
+  ],
+  facts: ['Half of Hyperion is empty space: if it fit in a giant ocean, it would float.', 'It is the only large body in the system with CHAOTIC rotation: there is no predicting tomorrow\'s day there.'],
+  fict: null
+},
+japeto: {
+  kind: 'The two-faced moon',
+  quick: [['DIAMETER','1,469 km'],['GRAVITY','0.023 g'],['ORBIT','79.3 d'],['DISCOVERED','1671'],['ALBEDO','0.04 on the dark side, 0.6 on the bright'],['TEMP.','−143 to −173 °C']],
+  sections: [
+    {t:'THE TWO FACES', rows:[['The contrast','One hemisphere as dark as coal, the other as bright as snow: the largest brightness contrast in the Solar System'],['The cause','Dark dust from the moon Phoebe falls on the leading side of the orbit'],['The snowball','The darker, the warmer: the ice evaporates and migrates to the bright side, darkening the other even more'],['The solution','The 300-year mystery was closed by Cassini in the 2007 flyby']]},
+    {t:'THE EQUATORIAL RIDGE', rows:[['The wall','A mountain range up to 13 km tall running EXACTLY along the equator'],['The extent','1,300 km, a third of the way around the moon'],['The shape','Seen from afar, the ridge gives Iapetus the shape of a walnut'],['The enigma','Nobody knows its origin: maybe an ancient ring that collapsed onto the surface']]},
+    {t:'RECORD', rows:[['Discovered','1671 · Giovanni Cassini'],['The vanishing','Cassini noticed the moon disappeared on one side of its orbit: only the dark hemisphere faced us'],['The name','Iapetus, the titan father of Prometheus and Atlas'],['The orbit','79 days, far and tilted: it is the only large moon from which the rings would be seen wide open']]}
+  ],
+  facts: ['Dust falling on one side and ice migrating to the other make Iapetus the most two-toned world known.', 'A 13 km tall mountain range runs exactly along the equator, and one hypothesis is that it is an ancient ring that collapsed.'],
+  fict: 'In the book 2001: A Space Odyssey, by Arthur C. Clarke, the monolith TMA-2 awaits the Discovery on Iapetus; the film moved the destination to Jupiter.'
+},
+febe: {
+  kind: 'The outsider that orbits backwards',
+  quick: [['DIAMETER','213 km'],['GRAVITY','0.004 g'],['ORBIT','550.3 d · RETROGRADE'],['DISCOVERED','1899'],['DISTANCE','12.9 million km'],['ALBEDO','0.06']],
+  sections: [
+    {t:'THE OUTSIDER', rows:[['Where it came from','Almost certainly from the Kuiper belt: a centaur captured by Saturn early in the system'],['The proof','It orbits BACKWARDS relative to everything, tilted, at 12.9 million km: a moon born there would not do that'],['The composition','As dark as coal, with water ice and carbon dioxide of a distant world']]},
+    {t:'THE PHOEBE RING', rows:[['The discovery','In 2009 the Spitzer telescope found a GIANT, invisible ring along its orbit'],['The size','Saturn\'s largest ring: it would swallow hundreds of Saturns side by side'],['The link','It is ITS dust that falls on Iapetus and paints the dark hemisphere: the two-face mystery starts here']]},
+    {t:'RECORD', rows:[['Discovered','1899 · William Pickering, the first moon found by photography'],['The visit','Cassini passed it on ARRIVAL, in 2004: 2,000 km, before all the others'],['Rotation','9.3 h, unlocked from its orbit: it is not even tidally locked like the real moons']]}
+  ],
+  facts: ['Phoebe orbits backwards relative to everything at Saturn: it is a captured world from the Kuiper belt.', 'Its dust paints the dark side of Iapetus: the two cards explain each other.'],
+  fict: null
+},
+miranda: {
+  kind: '"Frankenstein" moon',
+  quick: [['DIAMETER','472 km'],['ORBIT','1.4 d'],['DISCOVERED','1948'],['CLIFF','20 km'],['TEMP.','−187 °C'],['VISIT','Voyager 2, 1986']],
+  sections: [
+    {t:'THE JIGSAW', rows:[['The look','Terrains that do not match, stitched together like a patchwork quilt'],['The old theory','It would have been shattered by an impact and reassembled wrong'],['The current theory','Partial tidal melting reshaped only some regions'],['Coronae','Three giant oval scars, unique in the solar system']]},
+    {t:'VERONA RUPES', rows:[['What it is','A cliff ~20 km tall, the highest in the solar system'],['Comparison','Ten times the Grand Canyon, two Everests stacked'],['The jump','In the weak gravity, the free fall would last some 12 minutes'],['The landing','With a simple airbag you could survive: the fall only builds up to ~200 km/h']]},
+    {t:'RECORD', rows:[['Discovered','1948 · Gerard Kuiper'],['Name','Prospero\'s daughter in Shakespeare\'s The Tempest'],['Only visit','Voyager 2, January 1986, at 29,000 km']]}
+  ],
+  facts: ['Verona Rupes is 20 km tall: jumping from it, the fall would last 12 minutes.', 'It looks reassembled from pieces that do not match, and nobody knows for sure why.'],
+  fict: 'Verona Rupes is always cited as the best place in the solar system for a base jump, a classic of science outreach.'
+},
+ariel: {
+  kind: 'The youngest and brightest of the five',
+  quick: [['DIAMETER','1,158 km'],['GRAVITY','0.027 g'],['ORBIT','2.52 d'],['DISCOVERED','1851'],['THE VALLEY','Kachina Chasma'],['TEMP.','−213 °C']],
+  sections: [
+    {t:'THE YOUNGEST FACE OF URANUS', rows:[['What stands out','It is the most reflective of the five large moons: the surface was remade relatively recently'],['The few craters','Almost no large craters: something erased the old ones'],['The valleys','Huge cracks with smooth floors, which look filled by ice that flowed'],['The engine','The tides of Uranus probably heated the interior and melted part of it']]},
+    {t:'RECORD', rows:[['Discovered','1851 · William Lassell, on the same night as Umbriel'],['The name','The spirit of the air in Shakespeare\'s The Tempest, like almost every moon of Uranus'],['Only visit','Voyager 2, in January 1986: half of it has never been photographed'],['The climate','One of the coldest places in the solar system, at 213 degrees below zero']]}
+  ],
+  facts: ['It is the brightest moon of Uranus, with the youngest surface: something erased its old craters.', 'Half of it has never been seen: Voyager 2 only photographed the sunlit hemisphere in 1986.'],
+  fict: 'Ariel is the spirit of the air who serves Prospero in The Tempest, and also names a Disney mermaid who has nothing to do with the moon.'
+},
+umbriel: {
+  kind: 'The darkest one, with an unexplained bright ring',
+  quick: [['DIAMETER','1,169 km'],['GRAVITY','0.023 g'],['ORBIT','4.14 d'],['DISCOVERED','1851'],['THE MYSTERY','the Wunda crater'],['TEMP.','−214 °C']],
+  sections: [
+    {t:'THE DARKEST MOON', rows:[['The contrast','It reflects half the light of Ariel while being practically the same size'],['The surface','Covered in ancient craters: nothing erased its past'],['The question','Why did two sister moons, neighbors of the same size, turn out so different?'],['The clue','Maybe it was never tidally heated like Ariel was']]},
+    {t:'THE WUNDA RING', rows:[['What it is','A white ring 130 km across on the floor of a crater, near the equator'],['The nickname','It became known as the eye of Umbriel in the only good photo that exists'],['The explanation','Nobody knows: it may be exposed ice or a deposit of bright material'],['The problem','There is only ONE decent image of it, from Voyager 2 in 1986']]}
+  ],
+  facts: ['It is the darkest moon of Uranus, and nobody knows why it and Ariel, practically twins, turned out so different.', 'It has a white ring 130 km across on the floor of a crater that has never been explained, seen only once in 1986.'],
+  fict: 'The name comes from the melancholy spirit in the poem The Rape of the Lock: the somber moon, named to match.'
+},
+titania: {
+  kind: 'The queen of the ice canyons',
+  quick: [['DIAMETER','1,578 km'],['GRAVITY','0.037 g'],['ORBIT','8.7 d'],['DISCOVERED','1787'],['CANYON','Messina, 1,500 km'],['TEMP.','−203 °C']],
+  sections: [
+    {t:'THE CANYONS', rows:[['Messina Chasma','A 1,500 km rift, three times the length of the Grand Canyon'],['The origin','The moon froze from the outside in: the water expanded and cracked the whole shell'],['The CO₂','Dry ice detected on the surface, maybe an extremely thin seasonal atmosphere']]},
+    {t:'RECORD', rows:[['Discovered','1787 · William Herschel, in the same year as Oberon'],['The name','The queen of the fairies in A Midsummer Night\'s Dream'],['The tradition','The moons of Uranus are named after Shakespeare and Pope, the only ones outside mythology'],['Only visit','Voyager 2, January 1986']]}
+  ],
+  facts: ['The largest moon of Uranus froze from the outside in, and the expanding water cracked its shell into 1,500 km canyons.', 'The moons of Uranus are the only ones named outside mythology: the names come from Shakespeare and Alexander Pope.'],
+  fict: 'Titania is the queen of the fairies in Shakespeare\'s A Midsummer Night\'s Dream, married to Oberon: the couple names the two largest moons of Uranus.'
+},
+oberon: {
+  kind: 'The old, cratered king',
+  quick: [['DIAMETER','1,523 km'],['GRAVITY','0.035 g'],['ORBIT','13.5 d'],['DISCOVERED','1787'],['COLOR','reddish'],['TEMP.','−203 °C']],
+  sections: [
+    {t:'THE ANCIENT SURFACE', rows:[['The craters','The most battered face among the large moons of Uranus, almost untouched since formation'],['The dark material','The floors of several craters hold a dark material of unknown origin'],['The mountain','A peak of some 6 km stuck out at the edge of the disk in the only close-up photo'],['The color','Reddened by radiation, which has been cooking the ice for billions of years']]},
+    {t:'RECORD', rows:[['Discovered','1787 · William Herschel'],['The name','The king of the fairies in A Midsummer Night\'s Dream'],['The farthest','The outermost of the five large ones: 13.5 days per lap'],['Only visit','Voyager 2, January 1986, and never again']]}
+  ],
+  facts: ['It has the oldest, most cratered face among the large moons of Uranus, almost untouched since the formation of the system.', 'In the only close-up photo, from Voyager 2, a 6 km peak stuck out at the edge of the disk.'],
+  fict: 'Oberon is the king of the fairies in Shakespeare\'s A Midsummer Night\'s Dream, husband of Titania: the couple reigns over the two largest moons of Uranus.'
+},
+tritao: {
+  kind: 'Captured moon',
+  quick: [['DIAMETER','2,707 km'],['ORBIT','5.9 d'],['DISCOVERED','1846'],['DIRECTION','retrograde'],['TEMP.','−235 °C'],['GEYSERS','active']],
+  sections: [
+    {t:'THE CAPTURE', rows:[['The clue','RETROGRADE orbit: it goes against Neptune\'s rotation, the only large moon like that'],['The origin','It was born in the Kuiper Belt, a direct cousin of Pluto, and was captured'],['The price','The capture probably destroyed Neptune\'s original moons'],['Discovered','1846 · William Lassell, 17 days after Neptune itself']]},
+    {t:'AN ACTIVE WORLD', rows:[['Geysers','Nitrogen jets 8 km tall, seen by Voyager 2 in 1989'],['The surface','Nitrogen ice with a cantaloupe-skin texture, young and renewed'],['Temperature','−235 °C: colder than Pluto, one of the coldest places in the system'],['Atmosphere','Thin, of nitrogen, with clouds and winds']]},
+    {t:'THE FATE', rows:[['The spiral','The retrograde orbit shrinks by tides: it slowly falls inward'],['The end','In ~3.6 billion years it crosses the Roche limit and is torn apart'],['The legacy','Neptune will get a giant ring, maybe more spectacular than Saturn\'s']]}
+  ],
+  facts: ['A Kuiper Belt world "kidnapped" by Neptune, a cousin of Pluto.', 'It is colder than Pluto, and still has active nitrogen geysers.', 'One day it will be torn apart by tides and become a giant ring around Neptune.'],
+  fict: 'The only large moon that orbits backwards fascinates writers: it appears from Arthur C. Clarke to games like Destiny.'
+},
+proteu: {
+  kind: 'The dark box that almost became a ball',
+  quick: [['DIMENSIONS','424 × 390 × 396 km'],['GRAVITY','0.007 g'],['ORBIT','1.12 d'],['DISCOVERED','1989'],['DISTANCE','118,000 km'],['ALBEDO','0.10']],
+  sections: [
+    {t:'NEPTUNE\'S SECOND', rows:[['The size','About 420 km: the second largest moon of Neptune, and nobody knew about it until Voyager 2 arrived'],['The shape','A box with rounded corners: it is close to the largest size a body can have without gravity rounding it'],['The darkness','It reflects only 10 percent of the light: one of the darkest objects in the system']]},
+    {t:'THE ORBIT', rows:[['Where it is','At 118,000 km, inside the orbit of Triton, going around in 27 hours'],['The rotation','Synchronous: it always shows the same face to Neptune'],['The origin','It probably re-formed from the debris that Triton\'s capture scattered']]},
+    {t:'RECORD', rows:[['1989','Discovered in the images of Voyager 2, the only probe that ever passed Neptune'],['Pharos','The 230 km crater, more than half the moon\'s diameter'],['The name','The shape-shifting sea god, shepherd of Poseidon\'s seals']]}
+  ],
+  facts: ['It is the second largest moon of Neptune and stayed hidden until 1989, because it is as dark as coal and glued to the planet\'s glare.', 'It has nearly the largest size a body can have without its own gravity rounding it.'],
+  fict: null
+},
+nereida: {
+  kind: 'The moon with the most eccentric orbit known',
+  quick: [['DIAMETER','~340 km'],['GRAVITY','0.007 g'],['ORBIT','360.1 d'],['DISCOVERED','1949'],['DISTANCE','1.4 to 9.7 million km'],['ECCENTRICITY','0.75']],
+  sections: [
+    {t:'THE WILD ORBIT', rows:[['The eccentricity','0.75: the most eccentric of all known moons, almost a comet'],['The back and forth','It comes within 1.4 million km of Neptune and swings out to 9.7 million, every 360-day lap'],['The cause','Triton\'s capture probably shook its orbit into this shape']]},
+    {t:'NEPTUNE\'S THIRD', rows:[['The size','About 340 km, Neptune\'s third moon by size'],['The surface','Neutral gray, with water ice; the brightness varies and nobody knows the rotation period for sure'],['The visit','Voyager 2 passed 4.7 million km away in 1989: only a blur of a few pixels']]},
+    {t:'RECORD', rows:[['1949','Discovered by Gerard Kuiper by photography, 103 years after Triton'],['Until 1989','It was Neptune\'s second and last known moon for four decades'],['The name','The Nereids, the fifty sea nymphs of Greek mythology']]}
+  ],
+  facts: ['It has the most eccentric orbit of all known moons: its distance to Neptune varies sevenfold in a single lap.', 'For forty years, from 1949 to 1989, Neptune had only two known moons: Triton and this one.'],
+  fict: null
+},
+caronte: {
+  kind: 'Binary moon',
+  quick: [['DIAMETER','1,212 km'],['ORBIT','6.4 d'],['DISCOVERED','1978'],['SYSTEM','binary']],
+  sections: [
+    {t:'RECORD', rows:[['Discovered','1978 · James Christy'],['Proportion','Half the diameter of Pluto'],['Rotation','Mutually synchronous, each always faces the other'],['Mordor Macula','The dark reddish patch at the north pole']]}
+  ],
+  facts: ['The center of mass lies OUTSIDE Pluto: technically the two orbit a point in space.'],
+  fict: null
+},
+estige: {
+  kind: 'The smallest and innermost of the little ones',
+  quick: [['DIMENSIONS','16 × 9 × 8 km'],['ORBIT','20.2 d'],['DISCOVERED','2012'],['DISTANCE','42,656 km'],['ROTATION','chaotic'],['PHOTO','New Horizons, 2015']],
+  sections: [
+    {t:'THE LAST ONE FOUND', rows:[['2012','Discovered by Hubble in the survey preparing for New Horizons\' arrival: the team was looking for moons that could be a collision hazard'],['The size','Some 16 km on its longest side, the smallest known moon of Pluto'],['The orbit','The innermost of the little ones, at 42,000 km, going around in 20 days']]},
+    {t:'THE FOUR LITTLE ONES', rows:[['The dance','Styx, Nix, Kerberos and Hydra spin CHAOTICALLY: the double pull of Pluto and Charon prevents a regular day'],['The resonance','The orbits of the four fall into near-integer ratios with Charon\'s (3, 4, 5 and 6 laps)'],['The origin','Probably the debris of the giant impact that formed Charon']]},
+    {t:'RECORD', rows:[['The name','The river that separated the world of the living from Hades, keeping Pluto\'s underworld theme'],['The visit','New Horizons photographed it in July 2015: an elongated grain a few pixels wide']]}
+  ],
+  facts: ['It is the smallest known moon of Pluto, some 16 km, found only in 2012 while Hubble looked for hazards to New Horizons.', 'It spins chaotically: with two large bodies pulling, none of the four little moons has a regular day.'],
+  fict: null
+},
+nix: {
+  kind: 'The little one with the red spot',
+  quick: [['DIMENSIONS','50 × 33 × 31 km'],['ORBIT','24.9 d'],['DISCOVERED','2005'],['DISTANCE','48,694 km'],['ROTATION','chaotic'],['SPOT','red, a crater']],
+  sections: [
+    {t:'THE DISCOVERY', rows:[['2005','Found by Hubble together with Hydra, by the team preparing New Horizons'],['The name','Nyx, the Greek goddess of the night and mother of Charon; spelled with an i to avoid confusion with asteroid 3908 Nyx'],['The pair','It and Hydra were the first new moons of Pluto since Charon, in 1978']]},
+    {t:'THE SPOT', rows:[['The color','Light gray, with a large REDDISH spot that is an impact crater'],['The size','Some 50 km on its longest side, the second of the little ones'],['The rotation','Chaotic: in 2015 it measured a 43-hour day, but that changes all the time']]},
+    {t:'RECORD', rows:[['The visit','New Horizons passed 23,000 km away in 2015 and showed the elongated shape and the spot'],['The surface','Relatively clean water ice, reflecting light well']]}
+  ],
+  facts: ['It has a large reddish spot, a crater, on a world of light gray ice.', 'Like all of Pluto\'s little moons, it spins chaotically: there is no predicting which side will face the planet.'],
+  fict: null
+},
+cerbero: {
+  kind: 'The two-lobed watchdog',
+  quick: [['DIMENSIONS','19 × 10 × 9 km'],['ORBIT','32.2 d'],['DISCOVERED','2011'],['DISTANCE','57,783 km'],['ROTATION','chaotic'],['SHAPE','two lobes']],
+  sections: [
+    {t:'THE SURPRISE', rows:[['The prediction','Before New Horizons, it was thought to be a large, very dark moon, given how little light it reflected'],['The reality','It is small and BRIGHT: 19 km, with two lobes stuck together, like two snowballs glued'],['The lesson','Reflecting little light in total could mean big and dark or small and bright; small won']]},
+    {t:'THE ORBIT', rows:[['Where it is','Between Nix and Hydra, at 58,000 km, in 32 days'],['The dance','Chaotic rotation, like its little sisters, because of the Pluto-Charon pair']]},
+    {t:'RECORD', rows:[['2011','Discovered by Hubble, in the safety survey for the probe\'s arrival'],['The name','The three-headed dog that guards the entrance to the underworld']]}
+  ],
+  facts: ['Everyone expected a large, dark moon; New Horizons showed a small, bright, two-lobed one.', 'It was found in 2011 by Hubble while the team searched for hazards on New Horizons\' path.'],
+  fict: null
+},
+hidra: {
+  kind: 'The outermost and brightest of the little ones',
+  quick: [['DIMENSIONS','51 × 36 × 31 km'],['ORBIT','38.2 d'],['DISCOVERED','2005'],['DISTANCE','64,738 km'],['ROTATION','chaotic · 10 h'],['SURFACE','clean water ice']],
+  sections: [
+    {t:'THE BRIGHTEST', rows:[['The surface','Almost pure water ice, reflecting more light than any other of the little ones'],['The size','Some 51 km on its longest side, tied with Nix as the largest of the four'],['The rotation','The fastest in the Pluto system: a day of about 10 hours, and chaotic']]},
+    {t:'THE ORBIT', rows:[['Where it is','The outermost of the five moons, at 65,000 km, in 38 days'],['The resonance','Nearly 6 laps of Charon for each of its own']]},
+    {t:'RECORD', rows:[['2005','Discovered by Hubble together with Nix'],['The name','The many-headed serpent, guardian of Hades, keeping the underworld theme'],['The visit','New Horizons photographed it in 2015 from 230,000 km, showing the bean shape']]}
+  ],
+  facts: ['It is Pluto\'s brightest moon: almost pure water ice, like fresh snow.', 'It spins in about 10 hours, the fastest day in the whole Pluto system, and chaotic on top of that.'],
+  fict: null
+},
+apollo8: {
+  kind: 'The first humans to leave the Earth',
+  quick: [['LAUNCH','12/21/1968'],['CREW','Borman · Lovell · Anders'],['LUNAR ORBITS','10, on Christmas Eve'],['FIRST TIME','humans beyond Earth orbit'],['THE PHOTO','Earthrise, 12/24/1968'],['RETURN','12/27/1968']],
+  sections: [
+    {t:'THE MISSION', rows:[['The boldness','The lunar module was not ready, and NASA decided to go anyway: straight to lunar orbit'],['The first','Borman, Lovell and Anders: the first humans to leave Earth\'s gravity'],['The far side','The first human EYES to see the side the Earth never sees'],['Christmas','Ten laps around the Moon on Christmas Eve 1968']]},
+    {t:'EARTHRISE', rows:[['The moment','On the 4th lap, Anders saw the Earth rising over the lunar horizon and scrambled for the color film'],['The photo','The blue Earth, small and whole, floating over a dead gray ground'],['The effect','It is cited as the portrait that helped found the environmental movement'],['The irony','They went to the Moon and the discovery was the Earth']]},
+    {t:'RECORD', rows:[['The reading','On Christmas Eve the crew read from Genesis live to the largest audience in history until then'],['The telegram','After a year of wars and assassinations, an anonymous person wrote to NASA: you saved 1968'],['The path','The route and the lunar insertion of Apollo 8 opened the door to the Apollo 11 landing']]}
+  ],
+  facts: ['They were the first humans to leave Earth\'s gravity and to see the far side of the Moon with their own eyes.', 'The Earthrise photo, taken on the fourth orbit, is cited as the portrait that helped found the environmental movement.', 'The Genesis reading on Christmas Eve was the most watched broadcast in history up to that moment.'],
+  fict: '1968 had been so hard that an anonymous person sent NASA a telegram: thank you, Apollo 8, you saved 1968.'
+},
+apollo11: {
+  kind: 'The Saturn V that took humanity to the Moon',
+  quick: [['LAUNCH','7/16/1969'],['SIZE','110 m, the Saturn V'],['CREW','Armstrong · Aldrin · Collins'],['LANDING','7/20/1969, Sea of Tranquility'],['ON THE SURFACE','21 h 36 min'],['RETURN','7/24/1969']],
+  sections: [
+    {t:'THE MISSION, DAY BY DAY', rows:[['7/16','Launch from Kennedy at 9:32; three hours later, translunar injection'],['7/17 to 7/18','Outbound cruise with a single course correction'],['7/19','Entry into lunar orbit, 30 laps begin'],['7/20','The Eagle descends: "Houston, the Eagle has landed". The step comes at night'],['7/21','Liftoff from the Moon and rendezvous with Collins in the Columbia'],['7/22 to 7/23','The way back, with TV broadcasts to the world'],['7/24','Reentry and splashdown in the Pacific, 8 days later']]},
+    {t:'THE SATURN V', rows:[['The size','110 meters, a 36-story building rising whole'],['The power','The most powerful rocket ever launched until Starship, half a century later'],['The engines','Five F-1s burning 13 tonnes of fuel PER SECOND'],['Position here','Symbolic: the real route was Earth, lunar orbit, Sea of Tranquility']]},
+    {t:'THE LANDING', rows:[['The Eagle','Armstrong took manual control with alarms sounding and boulders on the target'],['The fuel','It landed with about 25 seconds of margin in the tank'],['The line','"One small step for a man, one giant leap for mankind"'],['The audience','600 million people watching live, the absolute record of the time']]},
+    {t:'RECORD', rows:[['The computer','Less memory than a pocket calculator, and it was enough'],['The flag','It fell with the blast of the Eagle\'s liftoff; Aldrin saw it through the window'],['The return','Splashdown in the Pacific and a 21-day quarantine against "lunar germs"']]}
+  ],
+  facts: ['The onboard computer had 72 kB: your microwave has more.', 'Armstrong landed manually with 25 seconds of fuel to spare.', '600 million people stopped to watch, almost a quarter of humanity in 1969.'],
+  fict: 'From 2001 to First Man, it is the most filmed event of the space age, and the conspiracy theories about it became a cultural joke.'
+},
+apollo13: {
+  kind: 'The most successful failure in history',
+  quick: [['LAUNCH','4/11/1970'],['THE EXPLOSION','4/13, O₂ tank'],['CREW','Lovell · Swigert · Haise'],['THE ROUTE','free return around the Moon'],['SPLASHDOWN','4/17/1970'],['OUTCOME','everyone alive']],
+  sections: [
+    {t:'THE MISSION, DAY BY DAY', rows:[['4/11','Launch at 13:13; an engine shuts down early, but the route holds'],['4/13','The O₂ tank explodes 330,000 km out: "Houston, we\'ve had a problem"'],['4/14','The crew moves into the lunar module and swings around the Moon'],['4/15 to 4/16','Cold of 4 °C, rationed water and the CO₂ filter improvisation'],['4/17','A 6-minute silent reentry and splashdown: everyone alive']]},
+    {t:'HOUSTON, WE\'VE HAD A PROBLEM', rows:[['4/13/1970','An oxygen tank explodes 330,000 km from Earth'],['The real line','"Houston, we\'ve had a problem", in the past tense; Lovell corrected everyone'],['The decision','No fuel to turn around: the route was to swing AROUND the Moon'],['The lifeboat','The crew moved into the lunar module, designed for 2 people for 2 days']]},
+    {t:'THE IMPROVISATION', rows:[['The CO₂','Square filters in round sockets: duct tape, a sock and the cover of a manual'],['The cold','4 °C, sweating walls, almost no water or power'],['The return','Course corrections by eye, aiming at the Earth through the window'],['4/17','Perfect splashdown in the Pacific: the whole world breathed']]}
+  ],
+  facts: ['The explosion happened 330,000 km from home, and still everyone came back alive.', 'The CO₂ filter fix used duct tape, a sock and the cover of a manual.', 'They hold the record for distance from Earth: 400,171 km, swinging around the Moon.'],
+  fict: 'The 1995 film with Tom Hanks immortalized the line in the present tense, "Houston, we have a problem", and Lovell kept correcting: it was in the past tense.'
+},
+apollo17: {
+  kind: 'The farewell to the Moon',
+  quick: [['LAUNCH','12/7/1972, the only night launch'],['CREW','Cernan · Evans · Schmitt'],['ON THE SURFACE','3 days and 3 moonwalks'],['THE SCIENTIST','Schmitt, the first geologist on the Moon'],['THE ROVER','35.7 km driven'],['RETURN','12/19/1972']],
+  sections: [
+    {t:'THE FAREWELL', rows:[['The mission','The longest and most scientific: 3 days in the Taurus-Littrow valley'],['The geologist','Harrison Schmitt, the first and only scientist to walk on the Moon'],['The rover','35.7 km on the rover, the lunar driving record to this day'],['The last step','Gene Cernan climbed the ladder last on 12/14/1972: nobody has gone back since']]},
+    {t:'BLUE MARBLE', rows:[['The photo','On the way to the Moon, the crew photographed the WHOLE Earth fully lit'],['The portrait','The Blue Marble became one of the most reproduced images in history'],['The pair','Earthrise (1968) opened the era; Blue Marble (1972) closed it']]},
+    {t:'RECORD', rows:[['The line','Cernan: we leave as we came and, God willing, as we shall return, with peace and hope for all mankind'],['The samples','110 kg of rocks, including the orange soil that puzzled the geologists'],['The legacy','The end of the program: Artemis is the attempt to reopen the door']]}
+  ],
+  facts: ['Gene Cernan was the last human being to walk on the Moon, in December 1972: nobody has gone back since.', 'The Blue Marble photo, the whole Earth fully lit, was taken on the way to the Moon on this mission.', 'Harrison Schmitt was the first and only scientist, a geologist, to walk on the Moon.'],
+  fict: 'Cernan\'s farewell line still closes documentaries today, and the orange soil of Taurus-Littrow became legend among geologists.'
+},
+artemis1: {
+  kind: 'The return of the road to the Moon, with nobody aboard',
+  quick: [['LAUNCH','11/16/2022'],['ROCKET','SLS Block 1, 98 m'],['CAPSULE','Orion'],['CREW','mannequins Campos, Helga and Zohar'],['DURATION','25.5 days'],['RECORD','432,000 km from Earth']],
+  sections: [
+    {t:'THE MISSION', rows:[['The test','The first flight of the SLS with Orion: everything new, nobody aboard'],['The route','A distant RETROGRADE orbit around the Moon: wide, stable and economical'],['The record','432,000 km from Earth: no spacecraft built for people has gone so far'],['The return','Reentry at 40,000 km/h testing the heat shield, splashdown in the Pacific']]},
+    {t:'RECORD', rows:[['The commander','The mannequin Moonikin Campos, a tribute to Arturo Campos, the engineer who helped save Apollo 13'],['The passengers','Helga and Zohar, torsos that measured radiation for future crews'],['The legacy','It opened the way: Artemis II takes people down the same corridor']]}
+  ],
+  facts: ['The capsule went farther than any spacecraft built for humans: 432,000 km from Earth.', 'The commander was a mannequin named after the engineer who helped save Apollo 13.'],
+  fict: 'The plush Snoopy floating in the cabin served as the official zero-gravity indicator.'
+},
+artemis2: {
+  kind: 'The first humans bound for the Moon since 1972',
+  quick: [['STATUS','awaiting launch'],['CREW','Wiseman · Glover · Koch · Hansen'],['PROFILE','free-return flyby'],['DURATION','~10 days'],['ROCKET','SLS Block 1'],['CAPSULE','Orion']],
+  sections: [
+    {t:'THE MISSION', rows:[['The plan','A FREE-RETURN flyby of the Moon: the same safety route that saved Apollo 13'],['The crew','Reid Wiseman, Victor Glover, Christina Koch and Jeremy Hansen'],['The firsts','Koch: the first woman on a lunar mission; Hansen: the first non-American'],['What it tests','Orion with people aboard, life support and the path for Artemis III']]},
+    {t:'RECORD', rows:[['No landing','This mission swings around the Moon and comes back: the landing is left to Artemis III'],['The far side','The crew will see the side the Earth never sees, like Apollo 8 in 1968'],['The timeline here','PLANNED mission profile; the final dates depend on the launch']]}
+  ],
+  facts: ['It will be the first crewed mission bound for the Moon since Apollo 17, in 1972.', 'Christina Koch will be the first woman and Jeremy Hansen the first non-American to travel to the Moon.'],
+  fict: 'The four became celebrities at the 2023 announcement: the first lunar cast presented to the world in half a century.'
+},
+luna9: {
+  kind: 'The first soft landing on another world',
+  quick: [['LAUNCH','1/31/1966'],['COUNTRY','Soviet Union'],['LANDING','2/3/1966, the FIRST soft one'],['MASS','99 kg on the ground'],['THE PHOTOS','the first FROM the surface'],['TRANSMISSIONS','3 days of panoramas']],
+  sections: [
+    {t:'THE PROOF', rows:[['The fear','Until then, it was feared the lunar soil was a treacherous dust that would swallow any craft'],['The answer','Luna 9 landed, did NOT sink, and proved you can stand on the Moon'],['The technique','An ejected capsule that bounced like a ball and opened up in petals'],['The feat','Humanity\'s first soft landing on ANOTHER WORLD']]},
+    {t:'RECORD', rows:[['The photos','The first images taken FROM the surface of another celestial body'],['The leak','England\'s Jodrell Bank observatory intercepted the signal and the newspapers published the photos BEFORE the Soviets'],['The context','Three years before Apollo 11: the race was fierce'],['The route here','Direct descent, no orbit: the mission ENDS on the lunar ground']]}
+  ],
+  facts: ['It was humanity\'s first soft landing on another world, and it proved the lunar soil holds weight.', 'Jodrell Bank observatory intercepted the signal and the British newspapers published the photos before the Soviet Union itself.'],
+  fict: 'The Daily Express splashed the stolen photos of the Moon on its front page, and the USSR learned from the press that the world had already seen them.'
+},
+luna16: {
+  kind: 'The Moon delivered by a robot',
+  quick: [['LAUNCH','9/12/1970'],['COUNTRY','Soviet Union'],['SAMPLE','101 g of lunar soil'],['THE FIRST','automatic sample return in history'],['DRILLING','35 cm in the Sea of Fertility'],['RETURN','9/24/1970']],
+  sections: [
+    {t:'THE ROBOT THAT BROUGHT THE MOON', rows:[['The feat','It landed, drilled, stored 101 grams and BROUGHT them back, all without people'],['The context','One year after Apollo 11: the Soviet answer was to prove the robotic path'],['The drill','35 cm of drilling in the Sea of Fertility'],['The return','The capsule parachuted down onto the Kazakh steppe']]},
+    {t:'RECORD', rows:[['The legacy','The robotic path of Luna 16 is the same one China retraced with the Chang\'e missions'],['The exchange','Years later, the USSR and NASA swapped samples: grams from Luna for grams from Apollo'],['The route here','Orbit, landing, liftoff of the ascent stage only, and the trip back']]}
+  ],
+  facts: ['The first mission in history to land on another world and BRING a sample back with no crew at all.', 'The USSR and NASA ended up swapping samples: grams from Luna 16 for grams from the Apollo missions.'],
+  fict: 'The 101 grams became stamps, museum pieces and even auctions: in 2018 three tiny grains from Luna 16 sold for 855,000 dollars.'
+},
+change4: {
+  kind: 'The first landing on the far side',
+  quick: [['LAUNCH','12/8/2018'],['COUNTRY','China'],['LANDING','1/3/2019, the first on the FAR SIDE'],['ROVER','Yutu-2, the longest-lived on the Moon'],['THE BRIDGE','the Queqiao satellite, behind the Moon'],['THE SPROUT','the first plant to sprout on the Moon']],
+  sections: [
+    {t:'THE FAR SIDE', rows:[['The problem','The far side does NOT see the Earth: no radio signal reaches it directly'],['The bridge','The Queqiao satellite, hovering BEHIND the Moon, relays every message'],['The place','Von Kármán crater, inside the South Pole-Aitken basin: the largest impact basin in the system'],['The wait','Weeks in orbit waiting for the SUN to rise on the far side to land in daylight']]},
+    {t:'RECORD', rows:[['The rover','Yutu-2, the Jade Rabbit: it became the longest-lived rover in lunar history'],['The sprout','A cotton seed SPROUTED aboard: the first living thing to be born on another world (the lunar night took it)'],['The names','Chang\'e is the goddess of the Moon; Yutu, the rabbit who lives with her'],['The trio of eras','Luna opened the way, Apollo took people, Chang\'e landed where nobody could see']]}
+  ],
+  facts: ['It was the first landing in history on the far side of the Moon, possible only with a relay satellite hovering behind it.', 'A cotton seed sprouted aboard: the first living thing to be born on another world.', 'The Yutu-2 rover became the longest-lived in lunar history.'],
+  fict: 'Chang\'e is the goddess who lives on the Moon with the rabbit Yutu in Chinese mythology: the mission took both back home.'
+},
+slim: {
+  kind: 'The sharpshooter that landed on its feet... almost',
+  quick: [['LAUNCH','9/7/2023'],['COUNTRY','Japan (JAXA)'],['PRECISION','landed 55 m from the target'],['THE TUMBLE','nose down, and it worked'],['SURVIVED','3 lunar nights'],['ROVERS','LEV-1 and the spherical SORA-Q']],
+  sections: [
+    {t:'THE SHARPSHOOTER', rows:[['The goal','To land within 100 m of the target, when missing by kilometers was normal'],['The result','55 meters: the era of surgical landings began'],['The tumble','An engine failed at the end and it stopped NOSE down on the ground, and still worked'],['The route','4 months on a fuel-saving trajectory to lunar orbit']]},
+    {t:'RECORD', rows:[['The survival','Designed for ONE lunar night, it endured three, at −170 °C'],['The robots','The hopping LEV-1 and SORA-Q, a sphere that opens into a rover'],['The toy','SORA-Q was made with Takara Tomy, the maker of Transformers'],['The club','Japan became the 5th country to soft-land on the Moon']]}
+  ],
+  facts: ['It landed 55 meters from the target, when missing by kilometers was normal: the first precision landing on the Moon.', 'An engine failed, it stopped upside down, and still it completed its mission and survived three lunar nights.'],
+  fict: 'The spherical rover SORA-Q was created with Takara Tomy, the maker of Transformers: a real toy exploring the Moon.'
 },
 /* o card do próprio sistema */
 __sys: {
