@@ -1338,6 +1338,10 @@ const LANG = (function(){
   }catch(e){ return 'pt'; }
 })();
 const I18N = (LANG === 'en' && window.I18N_EN) ? window.I18N_EN : null;
+/* r233 · as fichas em inglês só descem quando o idioma é inglês (o PT não paga
+   o arquivo): document.write durante o parse insere um script que bloqueia,
+   então os dados já existem quando o bloco 3 registra os corpos */
+if(I18N) document.write('<script src="dados_en.js"><\/script>');
 function t(s){ if(!I18N || typeof s !== 'string') return s; const v = I18N.ui[s]; return (v === undefined) ? s : v; }
 function tpal(s){
   if(!I18N || typeof s !== 'string') return s;
@@ -4482,11 +4486,20 @@ if(typeof I18N !== 'undefined' && I18N){
   }
   for(const id in SYS){ if(I18N.sis[id]) SYS[id].name = I18N.sis[id]; }
   for(const g of GALAXIES){ if(I18N.gal[g.id]) g.name = I18N.gal[g.id]; }
+  const DEN = window.DADOS_EN || {};
   for(const id in ALLBODIES){
     const b = ALLBODIES[id];
     if(I18N.nomes[id]) b.name = I18N.nomes[id];
     if(b.desig) b.desig = tpal(b.desig);
-    if(b.moonsMeta) b.moonsMeta = tpal(b.moonsMeta);
+    /* r233 · ficha traduzida por inteiro quando existe em dados_en.js */
+    const d = DEN[id];
+    if(d){ for(const k of ['kind', 'quick', 'sections', 'facts', 'fict', 'exLuas', 'moonsMeta']) if(d[k] !== undefined) b[k] = d[k]; }
+    else if(b.moonsMeta) b.moonsMeta = tpal(b.moonsMeta);
+  }
+  if(DEN.__sys) for(const sid in DEN.__sys){
+    if(!SYS[sid]) continue;
+    if(DEN.__sys[sid].hint) SYS[sid].hint = DEN.__sys[sid].hint;
+    if(DEN.__sys[sid].card && SYS[sid].card) Object.assign(SYS[sid].card, DEN.__sys[sid].card);
   }
 }
 const UNIVERSE_CARD = {
@@ -13938,7 +13951,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r232';
+const BUILD = 'r233';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
