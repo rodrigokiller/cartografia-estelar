@@ -2128,7 +2128,7 @@ PLANETS.push(
   sys:{orbit:50, size:0.42, speed:0.004, angle:4.9, incl:0.3},
   anao:true, orbita:{peri:44, afel:58, pos:0.22},
   visual:{mode:'rocky', c1:'#c7a582', c2:'#9a7a5c', c3:'#6e523f', scale:3.6, seed:14.2, crater:0.35, cap:0.8, capAmt:0.35, capCol:'#e8ddd0', spot:{pos:[0.4,-0.1], r:0.5, col:'#e6d7c4', on:1}},
-  moonsMeta:'5 CONFIRMADAS · 1 PRINCIPAL',
+  moonsMeta:'5 CONFIRMADAS · TODAS NO MAPA',
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','5,9 bi km (39,5 UA, média)'],['Órbita','Excêntrica, às vezes fica mais perto que Netuno'],['Ano','248 anos'],['Dia','6,4 dias'],['Tipo de rotação','Retrógrada · síncrona com Caronte'],['Inclinação axial','120°'],['Estações','Sim, extremas']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','2.377 km (menor que a Lua)'],['Massa','1,31 × 10²² kg'],['Densidade','1,85 g/cm³'],['Área','17,7 mi km² (≈ Rússia)'],['Tombaugh Regio','A planície em forma de coração, de gelo de N₂']]},
@@ -2143,7 +2143,47 @@ PLANETS.push(
     quick:[['DIÂMETRO','1.212 km'],['ÓRBITA','6,4 d'],['DESCOBERTA','1978'],['SISTEMA','binário']],
     visual:{mode:'rocky', c1:'#a8a09a', c2:'#c2bab2', c3:'#7c746e', scale:4.6, seed:6.8, crater:0.6, spot:{pos:[0.0,0.95], r:0.5, col:'#5a4438', on:1}},
     sections:[{t:'REGISTRO', rows:[['Descoberta','1978 · James Christy'],['Proporção','Metade do diâmetro de Plutão'],['Rotação','Mutuamente síncrona, um sempre encara o outro'],['Mordor Macula','A mancha escura avermelhada do polo norte']]}],
-    facts:['O centro de massa fica FORA de Plutão, tecnicamente os dois orbitam um ponto no espaço.'], fict:null}
+    facts:['O centro de massa fica FORA de Plutão, tecnicamente os dois orbitam um ponto no espaço.'], fict:null},
+   {id:'estige', name:'ESTIGE', desig:'PLUTÃO-V · LUA', kind:'A menor e mais próxima das pequenas', hab:0, gbar:0.0004, pop:'0',
+    quick:[['DIMENSÕES','16 × 9 × 8 km'],['ÓRBITA','20,2 d'],['DESCOBERTA','2012'],['DISTÂNCIA','42.656 km'],['ROTAÇÃO','caótica'],['FOTO','New Horizons, 2015']],
+    visual:{mode:'rocky', c1:'#a8a49c', c2:'#c4c0b8', c3:'#7a766e', scale:3.0, seed:20.12, crater:0.6},
+    sections:[
+      {t:'A ÚLTIMA ACHADA', rows:[['2012','Descoberta pelo Hubble na varredura que preparava a chegada da New Horizons: a equipe procurava luas que pudessem ser perigo de colisão'],['O tamanho','Uns 16 km na maior dimensão, a menor lua conhecida de Plutão'],['A órbita','A mais interna das pequenas, a 42 mil km, dando a volta em 20 dias']]},
+      {t:'AS QUATRO PEQUENAS', rows:[['A dança','Estige, Nix, Cérbero e Hidra giram de forma CAÓTICA: o puxão duplo de Plutão e Caronte impede um dia regular'],['A ressonância','As órbitas das quatro se encaixam em razões quase inteiras com a de Caronte (3, 4, 5 e 6 voltas)'],['A origem','Provavelmente os destroços do impacto gigante que formou Caronte']]},
+      {t:'REGISTRO', rows:[['O nome','O rio que separava o mundo dos vivos do Hades, mantendo o tema do submundo de Plutão'],['A visita','A New Horizons a fotografou em julho de 2015: um grão alongado de poucos pixels']]}
+    ],
+    facts:['É a menor lua conhecida de Plutão, com uns 16 km, achada só em 2012 quando o Hubble procurava perigos para a New Horizons.','Gira de forma caótica: com dois corpos grandes puxando, nenhuma das quatro pequenas tem um dia regular.'],
+    fict:null},
+   {id:'nix', name:'NIX', desig:'PLUTÃO-II · LUA', kind:'A pequena com a mancha vermelha', hab:0, gbar:0.001, pop:'0',
+    quick:[['DIMENSÕES','50 × 33 × 31 km'],['ÓRBITA','24,9 d'],['DESCOBERTA','2005'],['DISTÂNCIA','48.694 km'],['ROTAÇÃO','caótica'],['MANCHA','vermelha, uma cratera']],
+    visual:{mode:'rocky', c1:'#bdb8b0', c2:'#d6d2ca', c3:'#8c877f', scale:3.2, seed:20.05, crater:0.7},
+    sections:[
+      {t:'A DESCOBERTA', rows:[['2005','Achada pelo Hubble junto com Hidra, pela equipe que preparava a New Horizons'],['O nome','Nyx, a deusa grega da noite e mãe de Caronte; escrita com i para não confundir com o asteroide 3908 Nyx'],['O par','Ela e Hidra foram as primeiras luas novas de Plutão desde Caronte, em 1978']]},
+      {t:'A MANCHA', rows:[['A cor','Cinza clara, com uma grande mancha AVERMELHADA que é uma cratera de impacto'],['O tamanho','Uns 50 km na maior dimensão, a segunda das pequenas'],['A rotação','Caótica: em 2015 media um dia de 43 horas, mas isso muda o tempo todo']]},
+      {t:'REGISTRO', rows:[['A visita','A New Horizons passou a 23 mil km em 2015 e mostrou a forma alongada e a mancha'],['A superfície','Gelo de água relativamente limpo, refletindo bem a luz']]}
+    ],
+    facts:['Tem uma grande mancha avermelhada, uma cratera, num mundo de gelo cinza claro.','Como todas as pequenas de Plutão, gira de forma caótica: não dá para prever que lado vai estar virado para o planeta.'],
+    fict:null},
+   {id:'cerbero', name:'CÉRBERO', desig:'PLUTÃO-IV · LUA', kind:'O cão de guarda de dois lobos', hab:0, gbar:0.0005, pop:'0',
+    quick:[['DIMENSÕES','19 × 10 × 9 km'],['ÓRBITA','32,2 d'],['DESCOBERTA','2011'],['DISTÂNCIA','57.783 km'],['ROTAÇÃO','caótica'],['FORMA','dois lobos']],
+    visual:{mode:'rocky', c1:'#8e8a84', c2:'#aca8a2', c3:'#615d58', scale:3.0, seed:20.11, crater:0.7},
+    sections:[
+      {t:'A SURPRESA', rows:[['A previsão','Antes da New Horizons, achavam que era uma lua grande e muito escura, pela pouca luz refletida'],['A realidade','É pequena e CLARA: 19 km, com dois lobos colados, como duas bolas de neve grudadas'],['A lição','Refletir pouca luz no total podia ser tamanho grande e escuro ou pequeno e claro; venceu o pequeno']]},
+      {t:'A ÓRBITA', rows:[['Onde fica','Entre Nix e Hidra, a 58 mil km, em 32 dias'],['A dança','Rotação caótica, como as irmãs pequenas, por causa do par Plutão e Caronte']]},
+      {t:'REGISTRO', rows:[['2011','Descoberta pelo Hubble, na varredura de segurança para a chegada da sonda'],['O nome','O cão de três cabeças que guarda a entrada do submundo']]}
+    ],
+    facts:['Todos esperavam uma lua grande e escura; a New Horizons mostrou uma pequena, clara e de dois lobos.','Foi achada em 2011 pelo Hubble enquanto a equipe procurava perigos no caminho da New Horizons.'],
+    fict:null},
+   {id:'hidra', name:'HIDRA', desig:'PLUTÃO-III · LUA', kind:'A mais externa e a mais brilhante das pequenas', hab:0, gbar:0.001, pop:'0',
+    quick:[['DIMENSÕES','51 × 36 × 31 km'],['ÓRBITA','38,2 d'],['DESCOBERTA','2005'],['DISTÂNCIA','64.738 km'],['ROTAÇÃO','caótica · 10 h'],['SUPERFÍCIE','gelo de água limpo']],
+    visual:{mode:'rocky', c1:'#cfd3d6', c2:'#e6e9ec', c3:'#9a9ea2', scale:3.2, seed:20.06, crater:0.6},
+    sections:[
+      {t:'A MAIS BRILHANTE', rows:[['A superfície','Gelo de água quase puro, refletindo mais luz que qualquer outra das pequenas'],['O tamanho','Uns 51 km na maior dimensão, empatada com Nix como a maior das quatro'],['A rotação','A mais rápida do sistema de Plutão: um dia de cerca de 10 horas, e caótico']]},
+      {t:'A ÓRBITA', rows:[['Onde fica','A mais externa das cinco luas, a 65 mil km, em 38 dias'],['A ressonância','Quase 6 voltas de Caronte para cada volta dela']]},
+      {t:'REGISTRO', rows:[['2005','Descoberta pelo Hubble junto com Nix'],['O nome','A serpente de muitas cabeças, guardiã do Hades, mantendo o submundo no tema'],['A visita','A New Horizons a fotografou em 2015 a 230 mil km, mostrando a forma de feijão']]}
+    ],
+    facts:['É a lua mais brilhante de Plutão: gelo de água quase puro, como neve fresca.','Gira em cerca de 10 horas, o dia mais rápido de todo o sistema de Plutão, e ainda por cima caótico.'],
+    fict:null}
   ]
 });
 
@@ -5018,7 +5058,7 @@ const ESCALA_REAL_LUAS = {
   io:421700, europa:671100, ganimedes:1070400, calisto:1882700,
   tita:1221870, reia:527108, encelado:237948, dione:377396, tetis:294619, mimas:185539, japeto:3560820,
   hiperion:1481010, febe:12947780, amalteia:181366, himalia:11461000, proteu:117647, nereida:5513818,
-  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, tritao:354759, caronte:19591,
+  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
   iss:6790, hubble:6910, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, pathfinder:1.52, viking1:1.52, cassini:9.54};
@@ -14006,7 +14046,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r235';
+const BUILD = 'r236';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

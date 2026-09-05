@@ -213,7 +213,7 @@ nomes: {
   sol:'SUN', mercurio:'MERCURY', venus:'VENUS', terra:'EARTH', lua:'MOON', marte:'MARS', fobos:'PHOBOS', jupiter:'JUPITER', ganimedes:'GANYMEDE', calisto:'CALLISTO',
   saturno:'SATURN', tita:'TITAN', reia:'RHEA', encelado:'ENCELADUS', tetis:'TETHYS', hiperion:'HYPERION', japeto:'IAPETUS', febe:'PHOEBE', urano:'URANUS', titania:'TITANIA',
   netuno:'NEPTUNE', tritao:'TRITON', plutao:'PLUTO', caronte:'CHARON', eris:'ERIS', p67:'COMET 67P', halley:"HALLEY'S COMET", cinturao:'ASTEROID BELT', kuiper:'KUIPER BELT',
-  oort:'OORT CLOUD', palas:'PALLAS', amalteia:'AMALTHEA', proteu:'PROTEUS', nereida:'NEREID',
+  oort:'OORT CLOUD', palas:'PALLAS', amalteia:'AMALTHEA', proteu:'PROTEUS', nereida:'NEREID', hidra:'HYDRA', cerbero:'KERBEROS', estige:'STYX',
   k16b_star:'KEPLER-16 B (STAR)', vegadisk:'VEGA DEBRIS DISK', fomdisk:'FOMALHAUT RING', barnardstar:"BARNARD'S STAR", pilares:'PILLARS OF CREATION', trapezio:'TRAPEZIUM',
   nebulosaorion:'ORION NEBULA', pulsarcaranguejo:'CRAB PULSAR', caranguejo:'CRAB NEBULA', m57centro:'WHITE DWARF OF THE RING', anel:'RING NEBULA', alcyone:'ALCYONE', pleiades:'PLEIADES',
   gatocentro:"CAT'S EYE CORE", olhodegato:"CAT'S EYE", formigacentro:'ANT NEBULA CORE', formiganeb:'ANT NEBULA', chama:'FLAME NEBULA', tuc47core:'47 TUC CORE',
@@ -248,7 +248,7 @@ palavras: [
   ['ESTAÇÃO','STATION'], ['SONDA','PROBE'], ['MISSÃO','MISSION'], ['PREVISTA','PLANNED'], ['COMETA','COMET'], ['REGIÃO','REGION'], ['FRONTEIRA','FRONTIER'], ['ASTEROIDE','ASTEROID'],
   ['PROTOPLANETA','PROTOPLANET'], ['CINTURÃO','BELT'], ['CONFINS','OUTER REACHES'], ['FAIXA','BAND'], ['CANDIDATO','CANDIDATE'], ['COMPANHEIRA','COMPANION'], ['BINÁRIA','BINARY'],
   ['MÚLTIPLO','MULTIPLE'], ['QUENTE','HOT'], ['PEQUENA','SMALL'], ['NÚCLEO','CORE'], ['NUVEM','CLOUD'], ['DISCO','DISK'], ['DETRITOS','DEBRIS'], ['MORIBUNDA','DYING'], ['VELOZ','FAST'],
-  ['TRÍPLICE','TRIPLE'], ['SUPER-TERRA','SUPER-EARTH'], ['EXTRAGALÁCTICO','EXTRAGALACTIC'], ['CENTRO','CENTER'], ['SISTEMA','SYSTEM'], ['CONFIRMADAS','CONFIRMED'], ['PRINCIPAIS','MAIN'],
+  ['TRÍPLICE','TRIPLE'], ['SUPER-TERRA','SUPER-EARTH'], ['EXTRAGALÁCTICO','EXTRAGALACTIC'], ['CENTRO','CENTER'], ['SISTEMA','SYSTEM'], ['CONFIRMADAS','CONFIRMED'], ['TODAS NO MAPA','ALL ON THE MAP'], ['PRINCIPAIS','MAIN'],
   ['GALILEANAS','GALILEAN'], ['TERRA-','EARTH-'], ['MARTE-','MARS-'], ['JÚPITER-','JUPITER-'], ['SATURNO-','SATURN-'], ['URANO-','URANUS-'], ['NETUNO-','NEPTUNE-'], ['PLUTÃO-','PLUTO-'],
   ['SOL-','SUN-'], ['SOL ·','SUN ·'], ['LUA','MOON'], ['ANÃO','DWARF'], ['ANÃ','DWARF'], ['AZUL','BLUE'], ['BRANCA','WHITE'], ['NEGRO','BLACK'], [' DE ',' OF '], [' DA ',' OF '], [' DO ',' OF '],
   [' E ',' AND '], [' UA',' AU']
