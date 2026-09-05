@@ -3140,7 +3140,19 @@ PLANETS.push(
   ],
   facts:['Mark Twain nasceu e morreu com o Halley no céu (1835 e 1910), como ele mesmo previu.','Em 1910 venderam “pílulas anticometa” contra o gás da cauda. Funcionaram: ninguém morreu.'],
   fict:'Praticamente todo almanaque, romance e desenho do século XX tem o Halley, de Tintim a Os Simpsons.', moons:[]},
- {id:'oumuamua', escape:true, name:'ʻOUMUAMUA', desig:'1I/2017 U1 · VISITANTE INTERESTELAR', kind:'O primeiro mensageiro de outra estrela', hab:0, gbar:0.00001, pop:'0 (até onde sabemos…)',
+ {id:'tsuchinshan', escape:true, comet:true, periUA:0.391, name:'TSUCHINSHAN-ATLAS', desig:'C/2023 A3 · COMETA DE LONGO PERÍODO', kind:'O grande cometa de 2024', hab:0, gbar:0.0001, pop:'0',
+  quick:[['NÚCLEO','poucos km'],['PERIÉLIO','27 SET 2024 · 0,39 UA'],['MAIS PERTO DA TERRA','12 OUT 2024 · 70 mi km'],['DESCOBERTA','9 JAN 2023'],['BRILHO','até magnitude −4'],['INCLINAÇÃO','139° · retrógrado']],
+  sys:{orbit:58, size:0.3, speed:2.4, angle:4.4, incl:2.43},
+  traj:{de:2023, ate:2026}, marcos:[[2023.03,'DESCOBERTA','Purple Mountain, China: um borrão de magnitude 18 a 7 UA do Sol'],[2024.74,'PERIÉLIO','A 0,39 UA do Sol, a 60 milhões de km: o gelo ferve e a cauda se abre'],[2024.78,'MAIS PERTO DA TERRA','70 milhões de km, no crepúsculo do oeste: o show para o mundo inteiro'],[2026,'RUMO AO GELO','Passando da órbita de Saturno, numa rota que provavelmente não volta']],
+  visual:{mode:'rocky', c1:'#5a5650', c2:'#7d786f', c3:'#3d3a35', scale:6.5, seed:20.23, crater:0.8, atmo:{col:'#c8e8f4', i:0.6}},
+  sections:[
+    {t:'O GRANDE COMETA DE 2024', rows:[['O show','Visível a olho nu por semanas: primeiro na madrugada do fim de setembro, depois no crepúsculo de outubro, com uma cauda de mais de 20 graus'],['O pico','Por volta de 9 e 10 de outubro chegou perto da magnitude −4, brilhando como Vênus, ajudado pelo espalhamento da luz do Sol atravessando a poeira da cauda'],['A anticauda','Em meados de outubro apareceu um espigão apontando PARA o Sol: poeira no plano da órbita vista de lado, a assinatura dos grandes cometas'],['Do Brasil','A melhor janela do hemisfério sul foi o fim de setembro, no nascer do Sol; em outubro ele passou para o céu da noite de todo mundo']]},
+    {t:'A VIAGEM', rows:[['De onde vem','Da Nuvem de Oort, numa volta de cerca de 80 mil anos'],['A órbita em pé, ao contrário','Inclinada 139 graus: ele cruza o plano dos planetas de cima para baixo e no sentido contrário ao deles'],['O periélio','27 de setembro de 2024, a 0,39 UA, por dentro da órbita de Mercúrio'],['A saída','A passagem pelo Sol deixou a trajetória levemente hiperbólica: o mais provável é que ele não volte nunca mais'],['Onde está agora','A caminho da órbita de Saturno, apagado, rumo ao gelo profundo']]},
+    {t:'REGISTRO', rows:[['9 JAN 2023','Descoberto no Observatório da Montanha Púrpura (Tsuchinshan), na China, e independentemente pelo levantamento ATLAS, na África do Sul, em fevereiro: daí o nome duplo'],['O susto','Em julho de 2024 um estudo previu que ele se desintegraria antes do periélio; ele sobreviveu inteiro'],['A herança','Provavelmente o cometa mais fotografado da história: milhões de fotos de celular no crepúsculo de outubro de 2024']]}
+  ],
+  facts:['Foi o cometa mais brilhante em décadas para quem estava no hemisfério norte, e o mais fotografado por celular da história.','A órbita é retrógrada e quase em pé, e a passagem pelo Sol a deixou hiperbólica: ele provavelmente nunca mais volta.','Um estudo previu que ele se despedaçaria antes de chegar ao Sol. Ele passou inteiro e deu o show.'],
+  fict:null, moons:[]},
+ {id:'oumuamua', escape:true, periUA:0.256, name:'ʻOUMUAMUA', desig:'1I/2017 U1 · VISITANTE INTERESTELAR', kind:'O primeiro mensageiro de outra estrela', hab:0, gbar:0.00001, pop:'0 (até onde sabemos…)',
   quick:[['TAMANHO','~100–400 m'],['FORMA','charuto/panqueca 10:1'],['ORIGEM','outro sistema estelar'],['VELOCIDADE','87 km/s'],['DETECÇÃO','2017 · Pan-STARRS'],['STATUS','já foi embora']],
   sys:{orbit:57, size:0.26, speed:3.4, angle:1.2, incl:0.7},
   visual:{mode:'rocky', c1:'#8a4f3a', c2:'#b0714f', c3:'#5c3223', scale:7.5, seed:20.17, crater:0.6},
@@ -5009,7 +5021,7 @@ const ESCALA_REAL_LUAS = {
   miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, tritao:354759, caronte:19591,
   iss:6790, hubble:6910, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
-const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, pathfinder:1.52, viking1:1.52, cassini:9.54};
+const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, pathfinder:1.52, viking1:1.52, cassini:9.54};
 /* pedras do cinturão: [UA, raio km] (no cênico elas moram no anel desenhado) */
 const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4]};
 /* O CÉU REAL (só na escala real): as estrelas mais brilhantes do céu em
@@ -5760,7 +5772,9 @@ function buildSystem(sysId, spin0){
            A dobra no periélio é o Sol curvando a rota, como aconteceu de fato
            (a ʻOumuamua passou a 0,26 UA, dentro da órbita de Mercúrio). */
         /* o Sol da cena é maior que o real: o periélio raspa por FORA dele */
-        const rp = Math.max(S.starSize + 1.3, 0.28*ORB_TERRA, r1*0.06), exc = 1.25;
+        /* r235 · no 1:1 o periélio é o REAL (periUA); no cênico a dobra raspa por
+           fora do Sol desenhado, que é maior que o de verdade */
+        const rp = (escrAtivo && p.periUA) ? p.periUA*ORB_TERRA : Math.max(S.starSize + 1.3, 0.28*ORB_TERRA, r1*0.06), exc = 1.25;
         const pC = rp*(1+exc);
         const thMax = Math.acos((pC/r1 - 1)/exc);
         for(let i=0;i<seg;i++){
@@ -12244,6 +12258,7 @@ const ROTA_VIAJANTES = [
   {corpo:'voyager2', ms:11000},
   {corpo:'newhorizons', ms:11000},
   {corpo:'oumuamua', ms:12000},
+  {corpo:'tsuchinshan', ms:11000, texto:'O grande cometa de 2024 veio da Nuvem de Oort e vai embora: a passagem pelo Sol o empurrou para fora, provavelmente para sempre.'},
   {sis:'sol', ms:8000, texto:'Cinco máquinas já cruzaram ou cruzarão a heliopausa. Nenhuma volta: são as garrafas ao mar da humanidade.'}
 ];
 const ROTA_MORADAS = [
@@ -13991,7 +14006,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r234';
+const BUILD = 'r235';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
