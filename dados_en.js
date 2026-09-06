@@ -1555,8 +1555,591 @@ kepler186f: {
   facts: ['It was the first Earth-sized planet found where water could be liquid.', 'The sky there would have a redder, larger sun, and the whole day would look like dusk.', 'If there were vegetation, it would probably be dark, almost black, to absorb the red light.'],
   fict: 'NASA made a space-travel poster of it with the slogan "Where the grass is always redder on the other side".'
 },
+/* ---- fase 3, parte 3 (r248): nebulosas, aglomerados, Andromeda e o Redemoinho: o atlas inteiro ---- */
+pulsarcaranguejo: {
+  kind: 'The heart left over from the explosion',
+  quick: [['TYPE','young pulsar'],['RADIUS','~10 km'],['MASS','1.4 Sun'],['ROTATION','30 × per second'],['BIRTH','the year 1054'],['DISTANCE','6,500 ly']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it is','The collapsed core of the star that exploded, a city\'s worth of space holding a solar mass'],['Rotation','30 spins per second, and slowing down ever so slightly'],['The engine','It pumps energy into the whole nebula: without it, the Crab would have faded already'],['Magnetic field','A trillion times the Earth\'s']]},
+    {t:'RECORD', rows:[['1054','The original star explodes and the world sees it'],['1968','The pulsar is discovered, confirming that supernovae leave neutron stars'],['The beam','It sweeps the Earth 30 times per second, from radio to gamma rays'],['Age','One of the youngest pulsars known, less than a thousand years old']]}
+  ],
+  facts: ['It is such a precise clock that it has been used as an astronomical time standard.'],
+  fict: null
+},
+caranguejo: {
+  kind: 'The explosion humanity watched happen',
+  quick: [['DISTANCE','6,500 ly'],['WIDTH','11 light-years'],['EXPLOSION','the year 1054'],['EXPANSION','1,500 km/s'],['CATALOG','M1'],['HEART','30 Hz pulsar']],
+  sections: [
+    {t:'SCALE', rows:[['Width','11 light-years and growing 1,500 km every second'],['Distance','6,500 light-years, in Taurus'],['Position here','Symbolic: the filaments surround the pulsar in every direction']]},
+    {t:'RECORD', rows:[['July 4, 1054','Chinese astronomers note a "guest star" so bright it was visible by day for 23 days'],['Other records','Japanese, Arab and possibly rock paintings in New Mexico marked the same night'],['1731','John Bevis rediscovers it with a telescope'],['1758','Messier catalogs it as number 1, and it is what makes him start the list'],['The name','It came from an 1844 drawing by Lord Rosse that looked like a crab'],['The link','Only in 1928 did Hubble suggest the nebula was the remains of the star of 1054']]}
+  ],
+  facts: ['It is the only supernova in our galaxy whose explosion was recorded by human witnesses, with a date.', 'The light of the explosion left there around 4400 BC and arrived here in 1054.', 'The object that started the Messier catalog: he was hunting comets and wanted a list of what was NOT a comet.'],
+  fict: 'It is the most drawn nebula in science fiction and became the symbol of "cosmic explosion" on covers, in games and cartoons.'
+},
+m57centro: {
+  kind: 'The core left over from a Sun-like star',
+  quick: [['TYPE','white dwarf'],['RADIUS','~0.01 R☉'],['SURF. TEMP.','120,000 °C'],['MASS','0.6 Sun'],['DISTANCE','2,600 ly'],['FUTURE','cooling for ages']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it is','The exposed core of a Sun-like star, squeezed to the size of the Earth'],['Temperature','120,000 °C, one of the hottest surfaces known'],['The light','It is that ultraviolet radiation that makes the whole ring glow'],['Fate','It will cool slowly for billions of years until it becomes a dark remnant']]},
+    {t:'RECORD', rows:[['The event','Some 20,000 years ago, the star shed its outer layers and became this point'],['Wrong name','It is called a "planetary nebula", but it has nothing to do with planets: the name stuck in the 18th century'],['Our case','The Sun will go through this some 5 billion years from now']]}
+  ],
+  facts: ['A teaspoon of this matter would weigh tonnes on Earth.'],
+  fict: null
+},
+anel: {
+  kind: 'A portrait of the Sun\'s future',
+  quick: [['DISTANCE','2,600 ly'],['WIDTH','~1 light-year'],['AGE','~20,000 years'],['EXPANSION','20 km/s'],['CATALOG','M57'],['IN LYRA','near Vega']],
+  sections: [
+    {t:'SCALE', rows:[['Width','About one light-year, almost 2,000 times the orbit of Neptune'],['Shape','It looks like a ring, but it is a barrel of gas seen almost end-on'],['Expansion','It grows 20 km every second, and will dissolve into space in some 10,000 years']]},
+    {t:'RECORD', rows:[['1779','Discovered by Darquier, cataloged by Messier the same year'],['What it is','The outer layers of a dying star, lit by the hot core'],['The colors','Hydrogen in red, oxygen in blue-green, all excited by the white dwarf'],['JWST (2023)','Revealed spikes and arcs in the outer ring, a sign of an invisible companion'],['Where to look','In the constellation Lyra, between two stars, reachable with a small telescope']]}
+  ],
+  facts: ['It is literally a preview of what will remain of the Solar System: a ring of gas and a white core in the middle.', 'A favorite of amateur telescope owners: it appears as a little ring of smoke.', 'The gas that forms the ring was once the body of the star, and will now become raw material for other stars.'],
+  fict: 'It is the "generic nebula" most drawn in comics and games whenever someone needs a cosmic ring in the background.'
+},
+sigmaori: {
+  kind: 'The light that reveals the horse',
+  quick: [['TYPE','O9.5V + companions'],['RADIUS','~5.6 R☉'],['MASS','18 Suns'],['SURF. TEMP.','33,000 °C'],['DISTANCE','1,150 ly'],['STARS','5']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it is','A system of five hot stars in Orion\'s belt'],['The role','Its ultraviolet radiation lights the gas behind the Horsehead'],['Without it','Without that lit background there would be no silhouette: the horse is a shadow']]},
+    {t:'RECORD', rows:[['Where','Just below Alnitak, the leftmost star of Orion\'s belt'],['Neighborhood','The whole Orion molecular cloud, the same one that forms M42'],['Scale note','Symbolic scene: the nebula is light-years across and orbits nothing']]}
+  ],
+  facts: ['The Horsehead only exists as an image because there is light behind it.'],
+  fict: null
+},
+cabecacavalo: {
+  kind: 'The most famous silhouette in the sky',
+  quick: [['DISTANCE','1,375 ly'],['HEIGHT','~3.5 light-years'],['TYPE','dark nebula'],['DISCOVERED','1888'],['CATALOG','Barnard 33'],['LIFESPAN','~5 million years']],
+  sections: [
+    {t:'SCALE', rows:[['Height','About 3.5 light-years from the "muzzle" to the base'],['What it is','Dust too cold and dense for light to cross: you see the hole, not the cloud'],['Position here','Symbolic: it is a cutout inside a much larger cloud']]},
+    {t:'RECORD', rows:[['1888','Williamina Fleming finds it on a photographic plate at Harvard'],['The credit','For decades the find was attributed to male colleagues before being corrected'],['Why it is dark','The dust blocks the light of the nebula IC 434, which glows behind it'],['Inside','In infrared it almost disappears and stars forming inside show up'],['The deadline','The neighboring radiation will dissolve the shape in some 5 million years']]}
+  ],
+  facts: ['You are not seeing the nebula: you are seeing its shadow against a lit background.', 'It was discovered by Williamina Fleming, a former housemaid who became an astronomer at Harvard.', 'It is probably the second most reproduced astronomical image in the world, behind the Pillars.'],
+  fict: 'Bedroom poster, notebook cover and eternal logo: when someone draws "space", half the time they draw this silhouette.'
+},
+pa99lente: {
+  kind: 'A star of Andromeda that blinked once',
+  quick: [['TYPE','star in M31'],['RADIUS','~1 R☉ (est.)'],['MASS','0.02 to 3.6 Sun'],['DISTANCE','2.5 million ly'],['EVENT','microlensing, 1999'],['REPEATS','never']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What we know','Almost nothing: it has never been seen directly, only the effect of its gravity'],['How it appeared','It passed in front of a more distant star and worked as a magnifying lens'],['The clue','The light curve had an extra bump, and that gives away a small companion']]},
+    {t:'RECORD', rows:[['1999','The POINT-AGAPE project records the event PA-99-N2 toward Andromeda'],['2009','The reanalysis concludes: the best fit requires a star WITH a planet'],['The problem','Microlensing events do not repeat, so confirmation is impossible with the current technique'],['Distance','2.5 million light-years: the light left there before Homo habilis existed']]}
+  ],
+  facts: ['It is the only cataloged star on this map that lies in another galaxy.'],
+  fict: null
+},
+pa99n2b: {
+  kind: 'The first planet candidate outside our galaxy',
+  quick: [['MASS','~6.3 M♃'],['RADIUS','~1.1 R♃ (est.)'],['DISTANCE','2.5 million ly'],['METHOD','microlensing'],['DETECTED','1999'],['STATUS','eternal candidate']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['About the orbit','Unknown: the event lasted days and does not repeat'],['Position here','Fully symbolic, just so you can visit it'],['Mass','About six Jupiters, if the interpretation is right']]},
+    {t:'RECORD', rows:[['The feat','If it is real, it is the first planet detected in another galaxy'],['How','Gravitational microlensing: the gravity of the star and the planet magnified the light of a star behind'],['The limit','It will never be confirmed by this method, and no other reaches that far'],['Company','In 2021 another extragalactic candidate appeared, this one in the Whirlpool galaxy']]}
+  ],
+  facts: ['The light carrying this information left Andromeda 2.5 million years ago.', 'It is the most distant object you can "visit" on this map short of whole galaxies.', 'No existing or planned telescope can confirm this planet.'],
+  fict: 'Andromeda is a recurring destination in fiction, from Mass Effect to Star Trek. This is the only real address we have out there.'
+},
+gatocentro: {
+  kind: 'The star that blew eleven shells',
+  quick: [['TYPE','hot white dwarf'],['RADIUS','~0.01 R☉'],['SURF. TEMP.','80,000 °C'],['MASS','~1 Sun'],['DISTANCE','3,300 ly'],['SHELLS','11 rings']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it is','The exposed core of a Sun-like star, at the end of its life'],['The pulse','It shed shell after shell at intervals of about 1,500 years'],['The rings','Hubble counted eleven concentric shells, like the layers of an onion'],['The suspicion','Such a regular pattern suggests a companion star governing the process']]},
+    {t:'RECORD', rows:[['1786','Discovered by William Herschel'],['1864','It was the first object of its kind to have its spectrum analyzed, proving that nebulae are gas, not stars'],['The nickname','The crossed loops at the center recall a cat\'s pupil']]}
+  ],
+  facts: ['It was by analyzing this nebula that humanity discovered that nebulae are made of gas.'],
+  fict: null
+},
+olhodegato: {
+  kind: 'The most complex nebula we know',
+  quick: [['DISTANCE','3,300 ly'],['WIDTH','~0.5 light-year'],['AGE','~1,000 years'],['SHELLS','11 rings'],['CATALOG','NGC 6543'],['HALO','3 light-years']],
+  sections: [
+    {t:'SCALE', rows:[['The center','About half a light-year across'],['The halo','The oldest gas spreads over 3 light-years, shed long before'],['The age','The bright core is only a thousand years old: on cosmic scales, it happened yesterday']]},
+    {t:'RECORD', rows:[['The shape','Jets, bubbles, loops and eleven concentric shells, all in the same object'],['Why so complex','There are probably two stars at the center, and the dance of the two sculpts the gas'],['1864','William Huggins analyzed its light and proved that nebulae are clouds of gas'],['Hubble','Its image is one of the most reproduced of the telescope'],['Our future','The Sun will end like this, though probably in a much simpler way']]}
+  ],
+  facts: ['It is considered the most complex planetary nebula ever observed, and nobody has fully explained its shape.', 'It was the one that proved, in 1864, that nebulae are gas and not clusters of distant stars.', 'The eleven shells were blown at regular intervals of fifteen hundred years, like a clock.'],
+  fict: 'The Hubble image became a poster, a book cover and an icon: when someone draws a cosmic eye, they are copying it.'
+},
+bajamar: {
+  kind: 'The hidden star that lights a continent',
+  quick: [['TYPE','O3.5, extremely rare'],['RADIUS','~10 R☉'],['MASS','~60 Suns'],['DISTANCE','~2,600 ly'],['FOUND IN','2004'],['NAME','Bajamar, 2020']],
+  sections: [
+    {t:'THE HIDDEN ONE', rows:[['The enigma','For decades nobody knew WHO lit the nebula: the star was behind the dust'],['2004','They found the culprit hidden in the dark lane of the "Gulf of Mexico"'],['The monster','An O3.5 class: among the hottest and rarest stars in the galaxy'],['The name','Bajamar, "low tide": the old name of the Bahamas, a tribute to the map it lights up']]}
+  ],
+  facts: ['The star that lights the nebula stayed hidden behind the dust until 2004.', 'It is an O3.5 class, among the hottest stars there are: 60 solar masses.'],
+  fict: 'It got the official name Bajamar in 2020, a reference to the old name of the Bahamas, inside the map it lights up itself.'
+},
+namneb: {
+  kind: 'The continent of gas in Cygnus',
+  quick: [['DISTANCE','~2,590 ly'],['CATALOG','NGC 7000'],['SIZE','4 × the full Moon'],['CONSTELLATION','Cygnus'],['SHAPE','North America'],['NEIGHBOR','Pelican Nebula']],
+  sections: [
+    {t:'THE CONTINENT', rows:[['The shape','The dust cutout draws North America, complete with the Gulf of Mexico'],['The size','In the sky it covers four full Moons, but it only shows up in long-exposure photos'],['The neighbor','Across the dark lane lies the Pelican Nebula: the same gas, two names'],['Position here','Symbolic: the cloud surrounds the ionizing star']]},
+    {t:'RECORD', rows:[['Discovered','1786 · William Herschel, him again'],['The distance','Only Gaia nailed it: 2,590 light-years, much closer than once thought'],['Address','In the wing of Cygnus, right next to Deneb in the sky']]}
+  ],
+  facts: ['The dust draws the map of North America so well that even the Gulf of Mexico is there.', 'It covers four full Moons in the sky and almost nobody has seen it: it takes a long-exposure photo.', 'The star that lights it was only found in 2004, hidden in its own dust.'],
+  fict: 'It is the favorite nebula of backyard astrophotographers: every astrophotography gallery has a North America.'
+},
+formigacentro: {
+  kind: 'The star that fires twin jets',
+  quick: [['TYPE','white dwarf + companion'],['RADIUS','~0.02 R☉'],['SURF. TEMP.','~35,000 °C'],['DISTANCE','8,000 ly'],['JETS','1,000 km/s'],['LASER','detected in 2018']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it is','A star at the end of its life which, instead of blowing gas in every direction, fires two opposite jets'],['The cause','Almost certainly a close companion, or an intense magnetic field, channeling the flow'],['The speed','The gas leaves at a thousand kilometers per second, with machine-gun precision']]},
+    {t:'RECORD', rows:[['2018','Laser emission was detected coming from the center, a sign of dense gas hidden there'],['What that means','There must be a disk of compressed material around it, probably because of the companion'],['The symmetry','The two lobes are near-perfect mirrors of each other, which demands a very organized mechanism']]}
+  ],
+  facts: ['Its center emits a natural laser, something extremely rare, and that gives away a hidden disk of gas.'],
+  fict: null
+},
+formiganeb: {
+  kind: 'The ant-shaped cocoon of a dying star',
+  quick: [['DISTANCE','~4,500 ly'],['CATALOG','Menzel 3'],['SHAPE','two lobes, an ant\'s body'],['EXPANSION','>1,000 km/s'],['CONSTELLATION','Norma, the Square'],['TYPE','planetary nebula']],
+  sections: [
+    {t:'THE ANT', rows:[['Head and thorax','The two lobes of bright gas that give the nickname'],['The sculptor','Something squeezes the waist: maybe a second star, maybe magnetic fields'],['Planetary','The name is historical and has nothing to do with planets: in old telescopes they looked like disks'],['Position here','Symbolic: the cloud surrounds the central star']]},
+    {t:'RECORD', rows:[['Short life','Nebulae like this last only a few tens of thousands of years and dissipate'],['The Sun\'s future','This is how our system ends: a colorful puff and a white dwarf'],['Study','Hubble photographed it in detail in 1997 and 2001']]}
+  ],
+  facts: ['It is a Sun-like star dying NOW: the portrait of the end of our own system.', 'The gas escapes at 1,000 km/s, but something squeezes its waist and draws the ant.', 'A planetary nebula has no planet at all: the name is a historical mistake that stuck.'],
+  fict: 'One of the most reproduced Hubble photos: the cosmic ant four thousand light-years away.'
+},
+mz3star: {
+  kind: 'A sun at the end of its life, blowing its own cocoon',
+  quick: [['TYPE','giant in agony'],['RADIUS','~1 R☉ (core being exposed)'],['DISTANCE','~4,500 ly'],['DISCOVERED','1922 · Donald Menzel'],['JETS','>1,000 km/s'],['FATE','white dwarf']],
+  sections: [
+    {t:'THE AGONY', rows:[['What is happening','A Sun-like star has run out of fuel and is shedding its outer layers'],['The jets','Gas escaping at more than 1,000 km/s, sculpted into two symmetric lobes'],['The suspicion','A hidden companion, or magnetic fields, shaping the ant\'s body'],['What remains','The bare core becomes a white dwarf the size of the Earth']]},
+    {t:'RECORD', rows:[['Discovered','1922, by Donald Menzel, hence the name Mz 3'],['Family notice','It is a portrait of our Sun\'s future, some 5 billion years from now']]}
+  ],
+  facts: ['It is dying the way the Sun will die: shedding its own layers until only the core is left.', 'Its jets run at more than 1,000 km/s, and still they draw a perfect ant.'],
+  fict: 'The 2001 Hubble photo became an instant classic: a giant ant glowing in the middle of nowhere.'
+},
+alcyone: {
+  kind: 'The brightest of the Seven Sisters',
+  quick: [['TYPE','B7 IIIe'],['RADIUS','~10 R☉'],['MASS','6 Suns'],['SURF. TEMP.','12,300 °C'],['DISTANCE','440 ly'],['BRIGHTNESS','2,400 Suns']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it is','A blue giant spinning so fast that it throws gas out at the equator'],['The disk','That gas forms a ring around it, hence the "e" in the classification'],['The brightness','About 2,400 times the luminosity of the Sun']]},
+    {t:'RECORD', rows:[['The name','One of the seven daughters of Atlas in Greek mythology'],['The position','The brightest star of the Pleiades cluster'],['Scale note','Symbolic scene: the cluster is some 15 light-years across']]}
+  ],
+  facts: ['It spins so fast that it is literally unraveling at the equator.'],
+  fict: null
+},
+pleiades: {
+  kind: 'The Seven Sisters, everybody\'s cluster',
+  quick: [['DISTANCE','444 light-years'],['STARS','~1,000'],['DIAMETER','~15 light-years'],['AGE','~100 million years'],['NAKED EYE','6 to 7 stars'],['CATALOG','M45']],
+  sections: [
+    {t:'SCALE', rows:[['Size','About 15 light-years for some thousand stars'],['In the sky','It covers four times the full Moon, and most people see six points'],['Age','100 million years: they were born when dinosaurs ruled the Earth'],['Position here','Symbolic: you are in the middle of the cluster']]},
+    {t:'RECORD', rows:[['The blue veil','The dust around the stars is not theirs: the cluster is crossing a cloud on its way'],['Greece','The seven daughters of Atlas, chased by Orion, who still follows them across the sky'],['Japan','They call it Subaru, and yes, that is the design on the carmaker\'s badge'],['Brazil','For several indigenous peoples, their rising marks the start of the rains and the new year'],['New Zealand','Matariki, the Maori new year, is marked by their reappearance in the sky'],['The fate','In some 250 million years the gravity of the galaxy will scatter the group']]}
+  ],
+  facts: ['Almost every ancient culture that looked at the sky named this cluster, and many counted seven sisters.', 'The Subaru badge is the Pleiades: subaru is their Japanese name.', 'In Brazil, the rising of the Pleiades marked the start of the year and the rains for several indigenous peoples.', 'The blue haze around them is not the cradle where they were born: it is a cloud they are merely passing through.'],
+  fict: 'From the Odyssey to the Bible, from Sailor Moon to Star Trek, it is the most cited cluster in human culture.'
+},
+alnitak: {
+  kind: 'The tip of Orion\'s belt',
+  quick: [['TYPE','O9.5 Ib'],['RADIUS','~20 R☉'],['MASS','33 Suns'],['SURF. TEMP.','29,500 °C'],['DISTANCE','1,260 ly'],['BRIGHTNESS','250,000 Suns']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it is','The easternmost star of Orion\'s belt, and a triple system'],['The job','Its radiation strips electrons from the hydrogen of the neighboring cloud, and that is what lights the Flame'],['The brightness','About 250,000 times the luminosity of the Sun']]},
+    {t:'RECORD', rows:[['Where','The left tip of Orion\'s belt, one of the most recognizable stars in the sky'],['Neighborhood','The Horsehead sits right next door, in the same molecular cloud']]}
+  ],
+  facts: ['You have already looked at it: it is one of the three stars in a row that everyone learns to recognize.'],
+  fict: null
+},
+chama: {
+  kind: 'The bonfire next to Orion\'s belt',
+  quick: [['DISTANCE','1,400 ly'],['WIDTH','~12 light-years'],['CATALOG','NGC 2024'],['STARS','~800 young'],['AGE','~1 million years'],['NEIGHBOR','Horsehead']],
+  sections: [
+    {t:'SCALE', rows:[['Size','About 12 light-years'],['The black band','A trail of cold dust in front, which splits the flame in half'],['Position here','Symbolic: the cloud sits next to Alnitak, not in orbit']]},
+    {t:'RECORD', rows:[['What lights it','The radiation of Alnitak ionizes the hydrogen, and the gas glows as it recombines'],['Inside','A cluster of some 800 young stars, hidden by the dust'],['Infrared','Only at that wavelength can you see the nursery in there'],['The neighbor','It sits in the same field as the Horsehead: the two usually come out in the same photo']]}
+  ],
+  facts: ['It looks like a bonfire because a band of dark dust cuts the lit gas right down the middle.', 'It is a few arcminutes from the Horsehead: a single photo catches both.', 'The star cluster it hides was only seen when we pointed infrared telescopes at it.'],
+  fict: 'It is the poster companion of the Horsehead: whoever has one on the wall almost always has the other.'
+},
+tuc47core: {
+  kind: 'One of the most crowded places in the galaxy',
+  quick: [['TYPE','globular cluster'],['RADIUS','~8 R☉ (the largest)'],['STARS','~1 million'],['AGE','13 billion years'],['DISTANCE','13,000 ly'],['PULSARS','25 known']],
+  sections: [
+    {t:'STRUCTURE', rows:[['Density','At the center, stars pass so close that they swap partners and collide'],['Blue stragglers','Stars that look far too young: they were born from mergers between old stars'],['Pulsars','Twenty-five millisecond pulsars, the second largest set known'],['Age','13 billion years: almost the age of the universe']]},
+    {t:'RECORD', rows:[['The rank','The second brightest globular cluster in the sky, behind only Omega Centauri'],['Where','In the constellation Tucana, right next to the Small Magellanic Cloud in the sky'],['The illusion','It seems to sit in the Small Cloud, but it is fifteen times closer: it belongs to our galaxy']]}
+  ],
+  facts: ['Stars there collide and merge, creating bodies that look younger than they could be.'],
+  fict: null
+},
+tuc47: {
+  kind: 'A million stars 13 billion years old',
+  quick: [['STARS','~1 million'],['DIAMETER','~120 light-years'],['DISTANCE','13,000 ly'],['AGE','13 billion years'],['NAKED EYE','yes ✓'],['CATALOG','NGC 104']],
+  sections: [
+    {t:'SCALE', rows:[['Diameter','About 120 light-years for a million stars'],['In the sky','The size of the full Moon, visible to the naked eye as a fuzzy star'],['Position here','Symbolic: you are inside the swarm']]},
+    {t:'RECORD', rows:[['1751','Nicolas Lacaille catalogs it from the Cape of Good Hope'],['The name','The 47 came from an old catalog that listed it as if it were a star of Tucana'],['The false neighborhood','In the sky it touches the Small Magellanic Cloud, but it is much closer'],['Life','Planet searches there found nothing: the density probably hampers formation']]}
+  ],
+  facts: ['It touches the Small Magellanic Cloud in the sky, but it is fifteen times closer to us.', 'It is as old as the universe itself, with an error margin of less than a billion years.', 'They searched for planets there and found none: maybe the crowding does not let systems form.'],
+  fict: null
+},
+ngc346: {
+  kind: 'A nursery in a neighboring galaxy',
+  quick: [['TYPE','young cluster'],['RADIUS','~15 R☉ (the largest)'],['STARS','~2,500'],['AGE','~3 million years'],['DISTANCE','200,000 ly'],['GALAXY','Small Cloud']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it is','The largest star-forming region of the Small Magellanic Cloud'],['Why it matters','The Small Cloud is poor in heavy elements, like the galaxies of the young universe'],['The lesson','Studying here is the closest we get to seeing how the first stars formed']]},
+    {t:'RECORD', rows:[['JWST (2023 and 2024)','Found dust and protoplanetary disks where theory said there should be none'],['The surprise','Even with few metals, planets seem able to form there'],['Scale note','Symbolic scene: the region is hundreds of light-years across']]}
+  ],
+  facts: ['It is our nearest window into understanding how stars were born in the young universe.'],
+  fict: null
+},
+nuvem346: {
+  kind: 'Metal-poor gas making stars',
+  quick: [['DISTANCE','200,000 ly'],['WIDTH','~200 light-years'],['GALAXY','Small Cloud'],['METALS','1/5 of the Sun'],['DISKS','found by JWST'],['AGE','~3 million years']],
+  sections: [
+    {t:'SCALE', rows:[['Size','About 200 light-years of gas and dust'],['The chemistry','A fifth of the heavy elements the Sun has'],['Position here','Symbolic: the cloud surrounds the cluster']]},
+    {t:'RECORD', rows:[['The laboratory','The first galaxies were like this: almost only hydrogen and helium'],['JWST (2023)','Found dust and disks around young stars, against expectations'],['2024','Confirmed that even small stars there have disks, so planets can be born there'],['What it changes','If planets form with so few metals, they may be far older than once thought']]}
+  ],
+  facts: ['If planets can be born here, then they already existed when the universe was very young.', 'It is the most studied star-forming region outside our galaxy and the Large Cloud.'],
+  fict: null
+},
+r136: {
+  kind: 'The most massive stars known',
+  quick: [['TYPE','young cluster'],['RADIUS','~30 R☉ (R136a1)'],['MASS','up to 200 Suns'],['AGE','~1.5 million years'],['DISTANCE','160,000 ly'],['GALAXY','Magellanic Cloud']],
+  sections: [
+    {t:'STRUCTURE', rows:[['R136a1','The most massive star ever weighed: about 200 times the mass of the Sun'],['The brightness','It alone emits more light than 4 million suns'],['The life','Stars like this live only some two million years and explode'],['The density','Dozens of giant stars in a handful of light-years']]},
+    {t:'RECORD', rows:[['Where','In the heart of the Tarantula Nebula, in the Large Magellanic Cloud'],['The limit','R136a1 forced astronomers to revise the ceiling of mass a star can have'],['Scale note','Symbolic scene: the cluster is a few light-years across, the nebula a thousand']]}
+  ],
+  facts: ['If R136a1 replaced the Sun, it would outshine the full Moon as much as the Sun outshines the stars.'],
+  fict: null
+},
+tarantula: {
+  kind: 'The largest star factory in the neighborhood',
+  quick: [['DISTANCE','160,000 ly'],['WIDTH','~1,000 light-years'],['STARS','~800,000'],['GALAXY','Magellanic'],['NAKED EYE','yes ✓'],['CATALOG','30 Doradus']],
+  sections: [
+    {t:'SCALE', rows:[['Size','About a thousand light-years: forty times the Orion Nebula'],['If it were close','At Orion\'s distance, it would cover a quarter of the sky and cast shadows at night'],['Stars','Nearly 800,000 stars and protostars forming inside'],['Position here','Symbolic: you are inside the cloud']]},
+    {t:'RECORD', rows:[['The name','The filaments of gas around it look like the legs of a spider'],['SN 1987A','The nearest supernova in four centuries exploded at the edge of this nebula'],['R136','At the center lives the cluster with the most massive stars known'],['JWST (2022)','Revealed thousands of young stars the dust was hiding'],['Where to look','In the Large Magellanic Cloud, visible to the naked eye from the southern hemisphere']]}
+  ],
+  facts: ['It is the largest star-forming region in the whole Local Group of galaxies.', 'If it were where Orion is, it would cast shadows here on Earth at night.', 'It sits in a whole galaxy that anyone in the southern hemisphere can see without a telescope.'],
+  fict: 'It appears as a backdrop whenever fiction needs a sky absurdly crowded with giant stars.'
+},
+sn1987a: {
+  kind: 'The explosion a generation watched live',
+  quick: [['TYPE','type II supernova'],['RADIUS','~50 R☉ (the star)'],['EXPLODED','02/23/1987'],['DISTANCE','168,000 ly'],['NEUTRINOS','24 detected'],['REMNANT','neutron star']],
+  sections: [
+    {t:'STRUCTURE', rows:[['The star','Sanduleak -69 202, a blue supergiant of some 20 solar masses'],['The surprise','Nobody expected a BLUE supergiant to explode: the models predicted red ones'],['The rings','Three rings of gas shed thousands of years before the explosion, now lit by the shock'],['The core','In 2024 James Webb confirmed the neutron star hidden in the central dust']]},
+    {t:'RECORD', rows:[['February 23, 1987','The light reaches the Earth and the supernova is visible to the naked eye for months'],['The neutrinos','Three detectors around the world caught 24 neutrinos hours BEFORE the light: neutrino astronomy was born'],['Why before','Neutrinos escape the core directly; the light takes hours to cross the star'],['The proximity','The nearest supernova since Kepler\'s, in 1604'],['Today','It is still studied every year: the living laboratory of how stars die']]}
+  ],
+  facts: ['It is the only supernova whose neutrinos humanity has managed to detect.', 'Its light left before there were cities on Earth and arrived just in time for us to have telescopes to see it.', 'People alive today saw, with the naked eye, a star explode in another galaxy.'],
+  fict: 'It made magazine covers around the world in 1987 and is the supernova that appears in every textbook.'
+},
+ngc2244: {
+  kind: 'The stars that opened the hole in the flower',
+  quick: [['TYPE','open cluster'],['RADIUS','~12 R☉ (the largest)'],['AGE','~2 million years'],['STARS','~2,000'],['DISTANCE','5,200 ly'],['CONSTELLATION','Monoceros']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it is','A young cluster born inside the nebula itself'],['The blow','Their stellar wind swept the central gas and opened the hole that gives the flower its shape'],['The giants','Some stars there have more than 50,000 times the luminosity of the Sun']]},
+    {t:'RECORD', rows:[['The hole','About 30 light-years across and still growing'],['Scale note','Symbolic scene: the nebula is 130 light-years across']]}
+  ],
+  facts: ['The stars that light the Rosette were born from it: it is the flower that lit its own light.'],
+  fict: null
+},
+roseta: {
+  kind: 'The flower of gas of the winter sky',
+  quick: [['DISTANCE','5,200 ly'],['WIDTH','~130 light-years'],['MASS','10,000 Suns'],['HOLE','~30 ly'],['IN THE SKY','5 full Moons'],['CATALOG','NGC 2237']],
+  sections: [
+    {t:'SCALE', rows:[['Size','About 130 light-years, and it covers five full Moons in the sky'],['Mass','Enough gas to form ten thousand suns'],['The shape','The central hole is not empty: it is gas pushed away by the stars in the middle'],['Position here','Symbolic: the cluster sits inside the nebula']]},
+    {t:'RECORD', rows:[['The name','It came from the shape: a rose seen face-on, with petals of gas'],['The stars','The cluster NGC 2244 formed here some two million years ago'],['Globules','Dark cocoons of dust where new stars are still being born'],['Where to look','In Monoceros, next to Orion, but too faint for the eye: it is a photo target'],['True color','The intense red of the photos comes from hydrogen, and the human eye does not see it well']]}
+  ],
+  facts: ['The hole in the middle of the flower was carved by the wind of the stars born inside it.', 'It is one of the favorite targets of astrophotography, and almost invisible at the eyepiece.', 'It sits in the same region of the sky as Orion, but almost nobody knows it is there.'],
+  fict: 'It became wallpaper, album cover and science fiction illustration whenever someone wants a flower-shaped nebula.'
+},
+olhostar: {
+  kind: 'The star that blows rings every 1,500 years',
+  quick: [['TYPE','O7, nearly a white dwarf'],['RADIUS','~0.65 R☉'],['TEMPERATURE','~80,000 °C'],['DISTANCE','~3,300 ly'],['BRIGHTNESS','10,000 Suns'],['PULSES','every ~1,500 years']],
+  sections: [
+    {t:'THE PULSES', rows:[['The rhythm','Every ~1,500 years it sheds a shell of gas, like smoke rings'],['The record','At least eleven concentric shells counted in deep photos'],['Today','Tiny and fiercely hot, on its way to becoming a white dwarf']]},
+    {t:'RECORD', rows:[['Discovered','1786 · William Herschel'],['1864','William Huggins pointed a spectroscope here and proved that nebulae are GAS'],['The milestone','It was the first planetary nebula studied by spectrum: astrophysics was born there']]}
+  ],
+  facts: ['In 1864 this nebula proved that the deep sky is made of gas: Huggins\'s spectroscope saw the lines.', 'It lets out a cosmic smoke ring every 1,500 years, punctual as a clock.'],
+  fict: 'The Cat\'s Eye is one of Hubble\'s most famous images, and the internet swears it is the Eye of Sauron.'
+},
+olhoneb: {
+  kind: 'Circles within circles, the eye that stares back',
+  quick: [['DISTANCE','~3,300 ly'],['CATALOG','NGC 6543'],['CONSTELLATION','Draco'],['SHELLS','11 concentric'],['AGE','~1,000 years (core)'],['TYPE','planetary nebula']],
+  sections: [
+    {t:'THE EYE', rows:[['The core','Shells, jets and knots of gas in a complexity nobody fully explains'],['The irises','Eleven concentric rings: a puff from the star every 1,500 years'],['The nickname','In the photos, the whole thing stares back like a cat\'s eye'],['Position here','Symbolic: the shell surrounds the central star']]},
+    {t:'RECORD', rows:[['Discovered','1786 · William Herschel'],['The milestone of 1864','Huggins proved here that nebulae are glowing gas, not swarms of stars'],['Address','In the constellation Draco, near the north celestial pole']]}
+  ],
+  facts: ['Each ring of the eye is a puff from the central star, one every 1,500 years: you can count eleven.', 'It was here, in 1864, that humanity discovered that nebulae are gas: the spectrum does not lie.', 'The core is so complex that what sculpts the jets and knots is still debated today.'],
+  fict: 'It competes with the Pillars of Creation for the title of Hubble\'s most famous photo, and has drawn Eye of Sauron comparisons since 2004.'
+},
+etacarinae: {
+  kind: 'The star that almost exploded and may finish the job',
+  quick: [['TYPE','LBV + O, binary'],['RADIUS','~240 R☉'],['MASS','~90 + 30 Suns'],['BRIGHTNESS','5 million Suns'],['DISTANCE','7,500 ly'],['FATE','supernova, maybe soon']],
+  sections: [
+    {t:'THE GREAT ERUPTION', rows:[['1843','It shed 10 solar masses at once and became the second brightest star in the sky'],['What remained','The Homunculus: two lobes of expanding gas that surround it to this day'],['The mystery','Surviving an explosion like that is extremely rare, and nobody quite knows how it held up'],['Today','It remains unstable, shedding material, watched as a supernova candidate']]},
+    {t:'RECORD', rows:[['The pair','Two giant stars that graze each other every 5.5 years in an eccentric orbit'],['When it explodes','It will shine brighter than Venus, visible by day, and it is far enough not to hurt us']]}
+  ],
+  facts: ['In 1843 it almost died, shed ten suns of mass, and still it lives on.', 'It may explode tomorrow or in a hundred thousand years, and astronomers monitor it every year.'],
+  fict: 'It is the favorite candidate for the next naked-eye supernova, a constant presence in documentaries.'
+},
+carinaneb: {
+  kind: 'The largest bright nebula in the sky',
+  quick: [['DISTANCE','7,500 ly'],['WIDTH','~300 light-years'],['CATALOG','NGC 3372'],['NAKED EYE','yes, from the south'],['SIZE','4 × Orion'],['JWST','first image, 2022']],
+  sections: [
+    {t:'SCALE', rows:[['Size','Some 300 light-years: four times the Orion Nebula, and brighter'],['Where to look','In the southern sky, visible to the naked eye from the southern hemisphere, in the constellation Carina'],['Position here','Symbolic: the cloud surrounds the star, it orbits nothing']]},
+    {t:'RECORD', rows:[['Mystic Mountain','The pillar of dust Hubble photographed for its 20th anniversary, in 2010'],['Cosmic Cliffs','The first batch of James Webb images, in July 2022, came from the edge of this region'],['Inside','Dozens of stars with more than 50 solar masses, the largest known concentration'],['Eta Carinae','The most famous resident, wrapped in the Homunculus it shed itself']]}
+  ],
+  facts: ['It is the largest and brightest nebula in the sky, and the southern hemisphere sees it with the naked eye: Orion gets the fame.', 'Mystic Mountain is a three-light-year column of dust being eaten by radiation from every side.'],
+  fict: 'JWST\'s Cosmic Cliffs became the most used space wallpaper in the world in 2022.'
+},
+omegacore: {
+  kind: 'The heart of the largest cluster in the sky',
+  quick: [['TYPE','globular cluster'],['RADIUS','~10 R☉ (the largest)'],['STARS','~10 million'],['AGE','12 billion years'],['DISTANCE','17,000 ly'],['SUSPECT','mid-sized black hole']],
+  sections: [
+    {t:'STRUCTURE', rows:[['Density','In the core, stars sit 0.1 light-year from each other'],['The sky there','Hundreds of stars brighter than Sirius, all at once'],['The anomaly','Unlike a normal globular, here there are stars of different ages and compositions'],['2024 and 2025','Stars moving too fast at the center point to a black hole of ~8,000 solar masses']]},
+    {t:'RECORD', rows:[['The clue','That mix of generations does not fit a cluster: it fits a galaxy'],['The theory','It is probably the surviving core of a dwarf galaxy the Milky Way devoured'],['Scale note','Symbolic scene: the cluster is 150 light-years across']]}
+  ],
+  facts: ['If it really is the core of a swallowed galaxy, we are looking at the corpse of a neighbor.'],
+  fict: null
+},
+omegacentauri: {
+  kind: 'Ten million suns to the naked eye',
+  quick: [['STARS','~10 million'],['DIAMETER','~150 light-years'],['DISTANCE','17,000 ly'],['AGE','12 billion years'],['NAKED EYE','yes ✓'],['CATALOG','NGC 5139']],
+  sections: [
+    {t:'SCALE', rows:[['Diameter','About 150 light-years, the largest cluster in the Milky Way'],['Mass','Four million times the mass of the Sun'],['In the sky','The size of the full Moon, and from the southern hemisphere it rides high in the autumn sky'],['Position here','Symbolic: you are inside the swarm']]},
+    {t:'RECORD', rows:[['Ptolemy','Cataloged as a star around the year 150, hence the star name, Omega of Centaurus'],['1677','Halley realizes it is not a star, it is a cloud'],['1830','John Herschel, from the Cape of Good Hope, resolves the individual stars'],['The suspicion','Different stellar generations indicate it was once the core of a dwarf galaxy'],['Where to look','In Centaurus, visible to the naked eye as a fuzzy star, and spectacular in binoculars']]}
+  ],
+  facts: ['It is the only globular cluster that anyone in the southern hemisphere can see with the naked eye on a dark night.', 'It spent almost two thousand years cataloged as if it were an ordinary star.', 'At its center, the night sky would be a thousand times brighter than ours, never truly dark.'],
+  fict: 'It appears as a destination in science fiction whenever someone needs an impossible sky, full of suns.'
+},
+progenitorveu: {
+  kind: 'The ghost of a supergiant',
+  quick: [['WAS','supergiant'],['RADIUS','~40 R☉ (was)'],['MASS','~15 Suns'],['EXPLODED','~15,000 years ago'],['DISTANCE','2,400 ly'],['REMAINS','nothing visible']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it was','A star of some fifteen solar masses, which burned its fuel in a few million years'],['The end','The core collapsed and the outer layers were flung out at thousands of km/s'],['What remained','No compact object has been confirmed: only the shock wave, still traveling']]},
+    {t:'RECORD', rows:[['When','Between 10,000 and 20,000 years ago, with humans already hunting on Earth'],['What it would have looked like','Brighter than Venus in the sky, visible by day for weeks'],['Today','The explosion became a ring of gas that covers six full Moons in the sky']]}
+  ],
+  facts: ['Somebody saw this star explode. No record survived, but there were people here looking up.'],
+  fict: null
+},
+veu: {
+  kind: 'The shock wave that has not stopped yet',
+  quick: [['DISTANCE','2,400 ly'],['WIDTH','~110 light-years'],['EXPLOSION','~15,000 years ago'],['EXPANSION','1,500 km/s'],['IN THE SKY','6 full Moons'],['CONSTELLATION','Cygnus']],
+  sections: [
+    {t:'SCALE', rows:[['Size','About 110 light-years across, and growing'],['In the sky','It covers three degrees, six times the diameter of the full Moon'],['The irony','It is huge and bright, but so diffuse that you cannot see it with the naked eye'],['Position here','Symbolic: it is a bubble of gas, and we would be inside it']]},
+    {t:'RECORD', rows:[['1784','William Herschel discovers the first filaments'],['The nicknames','The parts got names of their own: Witch\'s Broom, Pickering\'s Triangle, Network Nebula'],['The colors','Hydrogen red and oxygen blue-green, separated by the temperature of the shock'],['The filaments','They look like thin threads because we see the shell of the bubble edge-on'],['Hubble and JWST','The images show a lace of gas with details a few light-years wide']]}
+  ],
+  facts: ['The filaments look like silk threads, but each one is light-years thick: it is the edge of a bubble seen in profile.', 'The shock wave still runs at 1,500 kilometers per second, fifteen thousand years later.', 'It is one of the most photographed objects by astrophotographers, and one of the hardest to see by eye at the telescope.'],
+  fict: 'The Witch\'s Broom, one of the pieces of the Veil, is a guaranteed presence on astronomical Halloween posters.'
+},
+herschel36: {
+  kind: 'The spotlight that lights the Lagoon',
+  quick: [['TYPE','O7V multiple'],['RADIUS','~9 R☉'],['MASS','~30 Suns'],['SURF. TEMP.','40,000 °C'],['DISTANCE','4,100 ly'],['AGE','~1 million years']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it is','A system of young giant stars, the light source of the nebula'],['The force','Its stellar wind carves the channel that gives the Lagoon its name'],['Company','At least three stars, and the largest has 30 times the mass of the Sun']]},
+    {t:'RECORD', rows:[['Where','In the heart of M8, in the constellation Sagittarius'],['Hourglass','Right next to it lies the Hourglass Nebula, a knot of swirling gas'],['Scale note','Symbolic scene: the nebula is more than 100 light-years across']]}
+  ],
+  facts: ['A single star like this lights a cloud that would take you more than a century to cross at the speed of light.'],
+  fict: null
+},
+lagoa: {
+  kind: 'The nebula you can see from the backyard',
+  quick: [['DISTANCE','4,100 ly'],['WIDTH','~110 light-years'],['CATALOG','M8'],['CONSTELLATION','Sagittarius'],['BINOCULARS','yes ✓'],['DISCOVERED','1654']],
+  sections: [
+    {t:'SCALE', rows:[['Size','About 110 by 50 light-years, three times the full Moon in the sky'],['Distance','4,100 light-years, in the Sagittarius arm'],['The channel','The dark band that cuts the nebula is what earned it the lagoon nickname'],['Position here','Symbolic: the cloud surrounds the stars, it orbits nothing']]},
+    {t:'RECORD', rows:[['1654','Giovanni Hodierna records it for the first time'],['What it is','Hydrogen lit by newborn stars, with a young cluster in the middle'],['Hourglass','A central region where the gas spirals, sculpted by Herschel 36'],['Bok globules','Dark cocoons of dust where new stars are forming now'],['Where to look','From the southern hemisphere it rides high in the winter sky: in binoculars, an elongated patch']]}
+  ],
+  facts: ['It is one of the very few emission nebulae visible to the naked eye, and from the southern hemisphere it rides high.', 'The nickname came from the dark band of dust that crosses it and looks like a lagoon seen from above.', 'It lies toward the center of our galaxy: to look at it is to look at the core of the Milky Way.'],
+  fict: 'A mandatory target for anyone who buys a first telescope, and one of the most attempted photos in amateur astrophotography.'
+},
+hd164492: {
+  kind: 'The stars that tear the Trifid apart',
+  quick: [['TYPE','O7.5 multiple'],['RADIUS','~8 R☉'],['MASS','~20 Suns'],['SURF. TEMP.','35,000 °C'],['DISTANCE','4,100 ly'],['AGE','~300,000 years']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it is','A system with at least seven stars, at the center of the nebula'],['The role','Their radiation lights the red gas and pushes the dust']]},
+    {t:'RECORD', rows:[['Age','Three hundred thousand years: on cosmic scales, they were born yesterday'],['Neighborhood','The Trifid sits less than two degrees from the Lagoon in the sky']]}
+  ],
+  facts: ['They are so young that they are still clearing the cradle they were born in.'],
+  fict: null
+},
+trifida: {
+  kind: 'Three nebulae in one',
+  quick: [['DISTANCE','4,100 ly'],['WIDTH','~42 light-years'],['CATALOG','M20'],['PARTS','3 types in one'],['AGE','~300,000 years'],['DISCOVERED','1764']],
+  sections: [
+    {t:'SCALE', rows:[['Size','About 42 light-years across'],['Distance','4,100 light-years, almost touching the Lagoon'],['The name','Trifid means split in three, for the lanes of dust that cut it']]},
+    {t:'RECORD', rows:[['1764','Charles Messier catalogs it as M20'],['Three in one','It is rare for joining the three types: emission in red, reflection in blue and dark dust'],['The red','Hydrogen lit by the central stars'],['The blue','Dust reflecting the light of a neighboring star, like fog in a headlight'],['The black','Lanes of dense dust that divide the nebula and give it its name'],['Hubble','Photographed a 0.75-light-year jet coming out of a forming star inside']]}
+  ],
+  facts: ['It is the only famous nebula that shows all three types at once: emission, reflection and dark nebula.', 'It sits so close to the Lagoon in the sky that binoculars show both in the same field of view.', 'The dark lanes that divide it are not holes: they are dense dust in front of the light.'],
+  fict: 'It was the nebula chosen as one of Hubble\'s first test targets, and became a postcard for posters and covers.'
+},
+g1nucleo: {
+  kind: 'Half a million stars in a handful of light-years',
+  quick: [['TYPE','globular cluster'],['RADIUS','~9 R☉ (the largest)'],['STARS','~10 million'],['AGE','12 billion years'],['DISTANCE','2.5 million ly'],['SUSPECT','20,000-sun black hole']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it is','The center of the brightest cluster in the whole Local Group'],['Density','In the core, stars sit light-weeks apart, not light-years'],['Age','About 12 billion years: stars almost as old as the universe'],['The mystery','The speed of the central stars suggests a mid-sized black hole, extremely rare']]},
+    {t:'RECORD', rows:[['Where','Orbiting Andromeda, 130,000 light-years from its center'],['The doubt','Is it a giant globular or the core of a dwarf galaxy devoured by M31?'],['The sky there','A planet there would have thousands of stars brighter than Venus, and almost never night']]}
+  ],
+  facts: ['It is the brightest globular cluster in the entire Local Group, outshining any in the Milky Way.'],
+  fict: null
+},
+g1enxame: {
+  kind: 'Ten million suns packed into a ball',
+  quick: [['STARS','~10 million'],['DIAMETER','~90 light-years'],['MASS','7 million Suns'],['AGE','12 billion years'],['DISTANCE','2.5 million ly'],['DISCOVERED','1953']],
+  sections: [
+    {t:'SCALE', rows:[['Diameter','About 90 light-years for ten million stars'],['Comparison','In that same space, the Sun\'s neighborhood has a few dozen stars'],['Position here','Symbolic: you are inside the swarm, looking around']]},
+    {t:'RECORD', rows:[['1953','Nicholas Mayall and Olin Eggen catalog it as the second object on their list'],['The nickname','G1, for globular number 1, the brightest on the Andromeda list'],['Hubble (1994)','Resolved individual stars in it, 2.5 million light-years away'],['The finding','Motion measurements suggest an intermediate-mass black hole at the center']]}
+  ],
+  facts: ['If the Earth were here, the night sky would have thousands of stars brighter than Venus.', 'It is almost as old as the universe itself: these stars formed before most galaxies got organized.', 'It may not be a cluster: maybe it is the surviving heart of a dwarf galaxy Andromeda swallowed.'],
+  fict: null
+},
+p2buraco: {
+  kind: 'Fifty times the black hole of our galaxy',
+  quick: [['TYPE','supermassive black hole'],['MASS','~140 million Suns'],['RADIUS','~1.2 R☉ (horizon)'],['DISTANCE','2.5 million ly'],['NUCLEUS','double (P1 and P2)'],['COMPARISON','50 × Sgr A*']],
+  sections: [
+    {t:'STRUCTURE', rows:[['Mass','About 140 million suns, against 4.1 million for the Milky Way\'s black hole'],['The disk','A ring of young blue stars dives very close to the horizon'],['The enigma','Nobody knows how stars manage to form under such a gravitational tide']]},
+    {t:'RECORD', rows:[['The double nucleus','Hubble saw two cores of light, P1 and P2, where there should be one'],['The explanation','They are not two nuclei: it is a disk of stars in elongated orbits, piling up on one side'],['P2','The spot where the real black hole lives'],['4.5 billion years from now','When the galaxies collide, it and Sagittarius A* will spiral until they become one']]}
+  ],
+  facts: ['When Andromeda and the Milky Way merge, the two central black holes will meet and become one.', 'The ring of young stars around it should not exist: gravity should tear any cloud apart before it becomes a star.'],
+  fict: 'It is the galactic center that science fiction most often adopts as a destination, from Mass Effect to countless space operas.'
+},
+p1disco: {
+  kind: 'The false second nucleus of Andromeda',
+  quick: [['WHAT IT IS','a disk of stars'],['RADIUS','~5 light-years'],['STARS','millions'],['ORBIT','elongated'],['SPEED','1,000 km/s'],['REVEALED','Hubble, 1993']],
+  sections: [
+    {t:'SCALE', rows:[['Size','A few light-years across, with millions of stars inside'],['Speed','Near the black hole, stars pass at more than a thousand kilometers per second'],['Position here','Symbolic: the disk surrounds the black hole, it does not orbit at a distance']]},
+    {t:'RECORD', rows:[['The enigma of 1993','Hubble showed two cores of light in the nucleus, named P1 and P2'],['The solution','Tremaine proposed in 1995: it is a single disk, with elongated orbits'],['Why it looks double','The stars move slower at the farthest point, so they pile up there and form the false second nucleus'],['P2','The smaller core is where the real black hole lives']]}
+  ],
+  facts: ['Andromeda\'s "second nucleus" is an illusion of perspective: stars piling up in the slow part of the orbit.', 'It is the same effect that makes a comet race past the Sun and linger for centuries at the far point.'],
+  fict: null
+},
+m51uls1: {
+  kind: 'A stellar corpse devouring a giant',
+  quick: [['TYPE','neutron star or black hole'],['RADIUS','~10 km'],['COMPANION','20-Sun supergiant'],['DISTANCE','28 million ly'],['GALAXY','Whirlpool · M51'],['BRIGHTNESS','ultraluminous in X-rays']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it is','A compact object sucking matter from a neighboring giant star'],['The light','The falling gas heats so much that it emits X-rays, and that is what we see from here'],['The trick','The X-ray source is small, so a planet can block it completely']]},
+    {t:'RECORD', rows:[['2021','Di Stefano and team detect a 3-hour transit in Chandra\'s X-rays'],['Why it matters','It was the first time anyone searched for planets in X-rays, and it worked'],['The galaxy','It sits in the Whirlpool, the same M51 you can visit at the universe scale']]}
+  ],
+  facts: ['The idea of hunting planets in X-rays lets us see farther than any other method.'],
+  fict: null
+},
+m51ulsb: {
+  kind: 'The planet that survived a supernova',
+  quick: [['SIZE','~Saturn'],['RADIUS','~0.84 R♃'],['DISTANCE','28 million ly'],['METHOD','X-ray transit'],['DETECTED','2021'],['LOCAL YEAR','~70 years']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','About 70 years, if the estimated orbit is right'],['The transit','It lasted 3 hours and blacked out the X-rays completely'],['Next chance','Only decades from now, which blocks confirmation']]},
+    {t:'RECORD', rows:[['2021','The first planet candidate detected by an X-ray transit'],['The story','If it exists, it was already there when the companion star went supernova, and it survived'],['The distance','28 million light-years, a thousand times farther than any known exoplanet'],['The verdict','Candidate. Science has to wait for the next transit.']]}
+  ],
+  facts: ['It is the most distant individual object on this map: 28 million light-years.', 'It survived the supernova that created the stellar corpse it orbits today.', 'The light we see left there when the first primates appeared on Earth.'],
+  fict: 'A planet orbiting the remains of a dead star in another galaxy: science fiction has not reached that address yet.'
+},
+/* as galáxias (o card da ficha galviz e da cena de galáxia) */
+__gal: {
+  vialactea: { desig: 'GALAXY · HOME', kind: 'Barred spiral (SBbc)',
+    quick: [['DIAMETER','~100,000 ly'],['STARS','100 to 400 billion'],['AGE','13.6 billion years'],['BLACK HOLE','Sgr A*']],
+    sections: [{t:'RECORD', rows:[['Center','Sagittarius A*: a black hole of 4.1 million solar masses'],['Our position','Orion Arm, 26,000 ly from the center'],['Galactic year','The Sun takes ~230 million years to go around once'],['Neighborhood','Local Group, ~80 galaxies']]}],
+    facts: ['Since the Sun\'s last lap around the galaxy, the dinosaurs came and went.'] },
+  sombrero: { desig: 'GALAXY · 31 MILLION LY', kind: 'The most photogenic hat in the sky',
+    quick: [['DISTANCE','31 million ly'],['DIAMETER','~50,000 ly'],['BLACK HOLE','1 billion Suns'],['CLUSTERS','~2,000 globulars']],
+    sections: [{t:'RECORD', rows:[['The shape','Seen almost edge-on: a giant bulge cut by the dust lane, the hat'],['The monster','One of the largest black holes in the neighborhood: 1 billion solar masses'],['The swarms','About 2,000 globular clusters, ten times more than the Milky Way'],['Address','Toward Virgo, at the edge of the cluster']]}],
+    facts: ['Its bulge is so large that astronomers debate whether it is a spiral or an elliptical: maybe both.', 'The 2003 Hubble photo is one of the most reproduced astronomical images of all time.'] },
+  andromeda: { desig: 'GALAXY · 2.5 MILLION LY', kind: 'Giant spiral',
+    quick: [['DISTANCE','2.5 million ly'],['DIAMETER','~220,000 ly'],['STARS','~1 trillion'],['HEADING','collision']],
+    sections: [{t:'RECORD', rows:[['Approach','It comes toward us at 110 km/s'],['Collision','In ~4.5 billion years: "Milkomeda" is born'],['Naked eye','The most distant object visible without a telescope'],['Real address','It has a navigable system here: PA-99-N2, the 1st planet candidate outside the Milky Way']]}],
+    facts: ['When it collides with the Milky Way, almost no stars will hit each other: space is too empty.'] },
+  triangulo: { desig: 'GALAXY · 2.7 MILLION LY', kind: 'Spiral',
+    quick: [['DISTANCE','2.73 million ly'],['DIAMETER','~60,000 ly'],['STARS','~40 billion'],['RANK','3rd in the Local Group']],
+    sections: [{t:'RECORD', rows:[['Local Group','The 3rd largest, behind Andromeda and the Milky Way'],['Highlight','NGC 604: a stellar nursery 40 × larger than the Orion Nebula']]}],
+    facts: ['It may be a giant "moon" of Andromeda: the two seem gravitationally bound.'] },
+  magalhaes: { desig: 'SATELLITE GALAXY · 160,000 LY', kind: 'Irregular dwarf spiral',
+    quick: [['DISTANCE','160,000 ly'],['DIAMETER','~32,000 ly'],['STARS','~20 billion'],['VISIBLE','from the south ✓']],
+    sections: [{t:'RECORD', rows:[['Satellite','It orbits the Milky Way'],['Southern hemisphere','Visible to the naked eye under a dark sky'],['SN 1987A','Stage of the most studied supernova in history'],['Real addresses','Two navigable systems here: the Tarantula Nebula and SN 1987A itself']]}],
+    facts: ['It was named after the navigators of Ferdinand Magellan, who used it as a reference.'] },
+  pnm: { desig: 'SATELLITE GALAXY · 200,000 LY', kind: 'The smaller sister, also to the naked eye',
+    quick: [['DISTANCE','200,000 ly'],['DIAMETER','~7,000 ly'],['STARS','~3 billion'],['VISIBLE','from the south ✓']],
+    sections: [{t:'RECORD', rows:[['The pair','Together with the Large Cloud, it forms the pair of satellites the southern hemisphere sees without a telescope'],['The bridge','A river of gas links the two, torn out by the tide of the Milky Way'],['Henrietta Leavitt','Studying variable stars here, she discovered how to measure distances in the universe'],['The future','It will be torn apart and absorbed by the Milky Way']]}],
+    facts: ['It was by looking at this galaxy that humanity learned to measure the size of the universe.'] },
+  redemoinho: { desig: 'GALAXY · ~28 MILLION LY', kind: 'Interacting spiral',
+    quick: [['DISTANCE','~28 million ly'],['DIAMETER','~76,000 ly'],['COMPANION','NGC 5195'],['ARMS','textbook']],
+    sections: [{t:'RECORD', rows:[['Pair','It is "pulling" the dwarf NGC 5195; the interaction lights up the arms'],['History','The 1st galaxy where spiral structure was seen (1845)'],['Real address','It has a navigable system here: M51-ULS-1, the most distant planet candidate ever detected']]}],
+    facts: ['The gravity of the companion works as an accelerator of stellar nurseries.'] }
+},
 /* o card do próprio sistema */
 __sys: {
+  caranguejo: { hint: 'THE EXPLOSION OF 1054, RECORDED BY HUMAN WITNESSES', card: { desig: 'SUPERNOVA REMNANT · TAURUS', kind: 'The explosion with a date',
+    quick: [['DISTANCE','6,500 ly'],['CATALOG','M1'],['EXPLOSION','1054'],['HEART','30 Hz pulsar'],['EXPANSION','1,500 km/s'],['WIDTH','11 ly']],
+    sections: [{t:'RECORD', rows:[['1054','The Chinese record a new star visible by day for 23 days'],['What remained','Expanding filaments and, at the center, a pulsar spinning 30 times per second'],['Messier 1','The object that started the Messier catalog']]}],
+    facts: ['The only supernova in our galaxy with a date recorded by witnesses.'] } },
+  m57: { hint: 'THE FUTURE OF THE SUN: A RING OF GAS WITH A WHITE CORE IN THE MIDDLE', card: { desig: 'PLANETARY NEBULA · LYRA', kind: 'A preview of the end of the Solar System',
+    quick: [['DISTANCE','2,600 ly'],['CATALOG','M57'],['WIDTH','~1 ly'],['AGE','20,000 years'],['CORE','white dwarf'],['NEAR','Vega']],
+    sections: [{t:'RECORD', rows:[['What it is','The layers shed by a Sun-like star, lit by the remaining core'],['5 billion years from now','The Sun will do exactly this'],['Where to look','In Lyra, next to Vega, visible in a small telescope']]}],
+    facts: ['One of the favorite objects of anyone with a telescope at home.'] } },
+  cavalo: { hint: 'YOU DO NOT SEE THE NEBULA: YOU SEE ITS SHADOW AGAINST THE LIGHT', card: { desig: 'DARK NEBULA · ORION', kind: 'The most famous silhouette in the sky',
+    quick: [['DISTANCE','1,375 ly'],['CATALOG','Barnard 33'],['HEIGHT','3.5 ly'],['DISCOVERED','1888'],['TYPE','dark nebula'],['DEADLINE','~5 million years']],
+    sections: [{t:'RECORD', rows:[['How it works','Dense dust blocking the light of a lit nebula behind it'],['Who found it','Williamina Fleming, on a photographic plate at Harvard'],['Where','In Orion\'s belt, below Alnitak']]}],
+    facts: ['The most reproduced poster image after the Pillars of Creation.'] } },
+  pa99: { hint: 'THE FIRST PLANET CANDIDATE OUTSIDE OUR GALAXY', card: { desig: 'SYSTEM · ANDROMEDA', kind: 'An address in another galaxy',
+    quick: [['GALAXY','Andromeda · M31'],['DISTANCE','2.5 million ly'],['PLANETS','1 candidate'],['METHOD','microlensing'],['DETECTED','1999'],['CONFIRM','impossible']],
+    sections: [{t:'RECORD', rows:[['The event','In 1999 a star of Andromeda magnified the light of another and gave away a companion'],['The planet','About 6 Jupiters, the first extragalactic candidate in history'],['The limit','Microlensing happens only once: nobody will be able to check']]}],
+    facts: ['The only cataloged address on this map outside the Milky Way, together with the one in the Whirlpool.'] } },
+  gato: { hint: 'ELEVEN SHELLS OF GAS, BLOWN EVERY FIFTEEN HUNDRED YEARS', card: { desig: 'PLANETARY NEBULA · DRACO', kind: 'The most complex we know',
+    quick: [['DISTANCE','3,300 ly'],['CATALOG','NGC 6543'],['WIDTH','~0.5 ly'],['SHELLS','11 rings'],['AGE','~1,000 years'],['HALO','3 ly']],
+    sections: [{t:'RECORD', rows:[['The shape','Jets, bubbles and eleven concentric shells in the same object'],['1864','It was the one that proved nebulae are made of gas'],['The Sun\'s future','It will end like this, only much simpler']]}],
+    facts: ['Nobody has fully explained how a star produces such a complex shape.'] } },
+  norteamerica: { hint: 'THE CONTINENT OF GAS IN THE WING OF CYGNUS', card: { desig: 'NGC 7000 · NEBULA', kind: 'North America drawn in gas',
+    quick: [['DISTANCE','~2,590 ly'],['CATALOG','NGC 7000'],['SIZE','4 × the full Moon'],['CONSTELLATION','Cygnus']],
+    sections: [{t:'RECORD', rows:[['What it is','A cloud of gas with the outline of a continent'],['The ionizer','The star Bajamar, hidden until 2004'],['The neighbor','The Pelican Nebula, across the dust']]}],
+    facts: ['The Gulf of Mexico exists in the nebula too: it is the dark lane of dust.'] } },
+  formiga: { hint: 'A SUN-LIKE STAR, DYING IN THE SHAPE OF AN ANT', card: { desig: 'MZ 3 · PLANETARY', kind: 'The Sun\'s future, live',
+    quick: [['DISTANCE','~4,500 ly'],['CATALOG','Menzel 3'],['JETS','>1,000 km/s'],['CONSTELLATION','Norma']],
+    sections: [{t:'RECORD', rows:[['What it is','A Sun-like star shedding its final layers'],['The shape','Two lobes with a pinched waist: an ant'],['The notice','This is how our system ends']]}],
+    facts: ['The portrait of the end of the Sun, 5 billion years from now.'] } },
+  pleiades: { hint: 'THE CLUSTER EVERY CULTURE ON EARTH HAS NAMED', card: { desig: 'OPEN CLUSTER · TAURUS', kind: 'The Seven Sisters',
+    quick: [['DISTANCE','444 ly'],['STARS','~1,000'],['DIAMETER','~15 ly'],['AGE','~100 million years'],['NAKED EYE','6 to 7'],['CATALOG','M45']],
+    sections: [{t:'RECORD', rows:[['In the sky','It covers four full Moons, and almost everyone sees six dots'],['The names','Seven Sisters in Greece, Subaru in Japan, Matariki in New Zealand'],['In Brazil','For several indigenous peoples, their rising marks the new year and the rains']]}],
+    facts: ['The Subaru badge is them: it is the Japanese name of the cluster.'] } },
+  chama: { hint: 'THE BONFIRE STUCK TO THE TIP OF ORION\'S BELT', card: { desig: 'EMISSION NEBULA · ORION', kind: 'The poster neighbor of the Horsehead',
+    quick: [['DISTANCE','1,400 ly'],['CATALOG','NGC 2024'],['WIDTH','~12 ly'],['LIT BY','Alnitak'],['STARS','~800 young'],['NEIGHBOR','Horsehead']],
+    sections: [{t:'RECORD', rows:[['What lights it','The radiation of Alnitak, the tip of Orion\'s belt'],['The shape','A lane of dark dust cuts the gas in half and creates the bonfire effect'],['Inside','A cluster of 800 young stars, visible only in infrared']]}],
+    facts: ['It sits so close to the Horsehead that both fit in the same photo.'] } },
+  tuc47: { hint: 'A MILLION STARS ALMOST AS OLD AS THE UNIVERSE', card: { desig: 'GLOBULAR CLUSTER · TUCANA', kind: 'The second brightest in the sky',
+    quick: [['DISTANCE','13,000 ly'],['STARS','~1 million'],['DIAMETER','~120 ly'],['AGE','13 billion years'],['NAKED EYE','yes'],['PULSARS','25']],
+    sections: [{t:'RECORD', rows:[['The rank','Behind only Omega Centauri in brightness'],['The illusion','It seems to sit inside the Small Magellanic Cloud, but it is much closer'],['The crowding','Stars collide and merge at the center']]}],
+    facts: ['Almost as old as the universe, and visible to the naked eye from the southern hemisphere.'] } },
+  ngc346: { hint: 'HOW STARS WERE BORN IN THE YOUNG UNIVERSE', card: { desig: 'NURSERY · SMALL CLOUD', kind: 'The window onto the young universe',
+    quick: [['GALAXY','Small Cloud'],['DISTANCE','200,000 ly'],['STARS','~2,500'],['AGE','~3 million years'],['METALS','few'],['JWST','2023 and 2024']],
+    sections: [{t:'RECORD', rows:[['Why it matters','The galaxy is poor in heavy elements, like those of the young universe'],['The surprise','James Webb found protoplanetary disks where theory did not predict them'],['The conclusion','Planets may form in far harsher conditions than once thought']]}],
+    facts: ['It is the closest we get to seeing how the first stars of the universe formed.'] } },
+  tarantula: { hint: 'THE LARGEST STAR FACTORY IN THE LOCAL GROUP, IN A NEIGHBORING GALAXY', card: { desig: 'GIANT NURSERY · MAGELLANIC', kind: 'Forty times the Orion Nebula',
+    quick: [['GALAXY','Magellanic'],['DISTANCE','160,000 ly'],['WIDTH','~1,000 ly'],['STARS','~800,000'],['CENTER','R136'],['NAKED EYE','the galaxy, yes']],
+    sections: [{t:'RECORD', rows:[['What it is','The largest star-forming region in the whole Local Group'],['R136','At the center, the cluster with the most massive stars known'],['If it were close','At Orion\'s distance, it would cast shadows here on Earth at night']]}],
+    facts: ['It sits in a galaxy that anyone in the southern hemisphere sees with the naked eye on a dark night.'] } },
+  sn1987a: { hint: 'THE ONLY SUPERNOVA WHOSE NEUTRINOS HUMANITY DETECTED', card: { desig: 'SUPERNOVA · MAGELLANIC', kind: 'The explosion a generation watched live',
+    quick: [['GALAXY','Magellanic'],['EXPLODED','02/23/1987'],['DISTANCE','168,000 ly'],['NEUTRINOS','24 detected'],['NAKED EYE','it was, for months'],['REMNANT','neutron star']],
+    sections: [{t:'RECORD', rows:[['1987','The nearest supernova since 1604, visible to the naked eye from the southern hemisphere'],['The neutrinos','They arrived hours before the light and founded neutrino astronomy'],['2024','James Webb confirmed the neutron star hidden in the dust']]}],
+    facts: ['Many people alive today saw, with the naked eye, a star exploding in another galaxy.'] } },
+  roseta: { hint: 'A 130-LIGHT-YEAR FLOWER OF GAS, NEXT TO ORION', card: { desig: 'EMISSION NEBULA · MONOCEROS', kind: 'The flower of the winter sky',
+    quick: [['DISTANCE','5,200 ly'],['WIDTH','~130 ly'],['CATALOG','NGC 2237'],['IN THE SKY','5 full Moons'],['HOLE','~30 ly'],['AGE','~2 million years']],
+    sections: [{t:'RECORD', rows:[['The shape','The central hole was carved by the wind of the stars born there'],['The cluster','NGC 2244, some two million years old, lives inside it'],['Where to look','Next to Orion, but too faint for the eye: it is a photography target']]}],
+    facts: ['It sits in the most famous region of the sky and almost nobody knows it is there.'] } },
+  olhodegato: { hint: 'ELEVEN RINGS, A PUFF EVERY 1,500 YEARS', card: { desig: 'NGC 6543 · PLANETARY', kind: 'The eye that stares back',
+    quick: [['DISTANCE','~3,300 ly'],['CATALOG','NGC 6543'],['SHELLS','11'],['CONSTELLATION','Draco']],
+    sections: [{t:'RECORD', rows:[['What it is','A planetary nebula of concentric shells'],['The milestone','Here Huggins proved in 1864 that a nebula is gas'],['The nickname','The cat\'s eye the internet calls Sauron']]}],
+    facts: ['Astrophysics was born here, in an 1864 spectroscope.'] } },
+  carina: { hint: 'THE LARGEST NEBULA IN THE SKY, VISIBLE TO THE NAKED EYE FROM THE SOUTH', card: { desig: 'GIANT NURSERY · CARINA', kind: 'Four times Orion, with the bomb star',
+    quick: [['DISTANCE','7,500 ly'],['CATALOG','NGC 3372'],['WIDTH','~300 ly'],['NAKED EYE','yes'],['RESIDENT','Eta Carinae'],['JWST','1st image, 2022']],
+    sections: [{t:'RECORD', rows:[['What it is','The largest stellar nursery visible from Earth'],['Eta Carinae','The binary that almost exploded in 1843 and may finish the job'],['JWST','The Cosmic Cliffs of 2022 came from the edge of here']]}],
+    facts: ['The southern hemisphere sees the largest nebula in the sky with the naked eye, and almost nobody knows.'] } },
+  omega: { hint: 'TEN MILLION STARS, VISIBLE TO THE NAKED EYE FROM THE SOUTH', card: { desig: 'GLOBULAR CLUSTER · CENTAURUS', kind: 'The largest in the sky, and visible without a telescope',
+    quick: [['DISTANCE','17,000 ly'],['STARS','~10 million'],['DIAMETER','~150 ly'],['AGE','12 billion years'],['NAKED EYE','yes'],['IN THE SKY','1 full Moon']],
+    sections: [{t:'RECORD', rows:[['The mistake','Ptolemy cataloged it as a star, and the star name stuck'],['The suspicion','Stars of different generations suggest it was once a dwarf galaxy'],['Where to look','In Centaurus, high in the southern autumn sky']]}],
+    facts: ['The only globular that anyone in the southern hemisphere can see with the naked eye on a dark night.'] } },
+  veu: { hint: 'AN EXPLOSION FROM 15,000 YEARS AGO, STILL SPREADING', card: { desig: 'SUPERNOVA REMNANT · CYGNUS', kind: 'The shock wave that did not stop',
+    quick: [['DISTANCE','2,400 ly'],['WIDTH','~110 ly'],['EXPLOSION','~15,000 years ago'],['IN THE SKY','6 full Moons'],['EXPANSION','1,500 km/s'],['CATALOG','Cygnus Loop']],
+    sections: [{t:'RECORD', rows:[['What it is','The gas flung out by a supergiant that exploded with humans already on Earth'],['The nicknames','Witch\'s Broom, Pickering\'s Triangle, Network Nebula'],['The paradox','It covers six full Moons in the sky and still is invisible to the naked eye']]}],
+    facts: ['Somebody here on Earth saw that star explode, shining brighter than Venus.'] } },
+  lagoa: { hint: 'VISIBLE FROM THE BACKYARD, WITH BINOCULARS, IN THE WINTER SKY', card: { desig: 'EMISSION NEBULA · SAGITTARIUS', kind: 'The backyard nebula',
+    quick: [['DISTANCE','4,100 ly'],['CATALOG','M8'],['WIDTH','~110 ly'],['BINOCULARS','yes'],['DISCOVERED','1654'],['IN THE SKY','3 full Moons']],
+    sections: [{t:'RECORD', rows:[['What it is','A huge cloud of hydrogen lit by young stars'],['The nickname','It comes from the dark lane of dust that cuts it in half'],['Where to look','High in the southern winter sky, toward the center of the galaxy']]}],
+    facts: ['One of the rare emission nebulae you can see without a telescope.'] } },
+  trifida: { hint: 'THREE KINDS OF NEBULA IN A SINGLE OBJECT', card: { desig: 'TRIPLE NEBULA · SAGITTARIUS', kind: 'Red, blue and black at the same time',
+    quick: [['DISTANCE','4,100 ly'],['CATALOG','M20'],['WIDTH','~42 ly'],['AGE','~300,000 years'],['PARTS','3 types'],['NEIGHBOR','the Lagoon']],
+    sections: [{t:'RECORD', rows:[['Three in one','Emission in red, reflection in blue and lanes of dark dust'],['The name','Trifid: split in three by the trails of dust'],['Neighborhood','It sits in the same binocular field as the Lagoon']]}],
+    facts: ['It is the only famous nebula that shows all three types at once.'] } },
+  mayall2: { hint: 'TEN MILLION STARS IN A 90-LIGHT-YEAR BALL', card: { desig: 'GLOBULAR CLUSTER · ANDROMEDA', kind: 'The brightest in the Local Group',
+    quick: [['GALAXY','Andromeda · M31'],['STARS','~10 million'],['AGE','12 billion years'],['DIAMETER','~90 ly'],['DISTANCE','2.5 million ly'],['SUSPECT','mid-sized black hole']],
+    sections: [{t:'RECORD', rows:[['What it is','An ancient ball of stars orbiting Andromeda'],['The record','Brighter than any globular in the Milky Way'],['The doubt','It may be the core of a dwarf galaxy M31 devoured']]}],
+    facts: ['The sky seen from inside it would have thousands of stars brighter than Venus.'] } },
+  nucleoM31: { hint: 'A BLACK HOLE 50 TIMES LARGER THAN OUR GALAXY\'S', card: { desig: 'GALACTIC NUCLEUS · M31', kind: 'The heart of Andromeda',
+    quick: [['GALAXY','Andromeda · M31'],['MASS','~140 million Suns'],['NUCLEUS','double, P1 and P2'],['DISTANCE','2.5 million ly'],['COMPARISON','50 × Sgr A*'],['FATE','merger with ours']],
+    sections: [{t:'RECORD', rows:[['The double nucleus','Hubble saw two cores where there should be one: it is a misaligned disk of stars'],['The black hole','It sits at P2, with about 140 million solar masses'],['The meeting','4.5 billion years from now it and the Milky Way\'s black hole will merge']]}],
+    facts: ['It has a ring of young stars that, by theory, should not be able to form there.'] } },
+  m51uls: { hint: '28 MILLION LIGHT-YEARS: THE MOST DISTANT PLANET EVER SUSPECTED', card: { desig: 'X-RAY BINARY · M51', kind: 'Hunting planets in another galaxy',
+    quick: [['GALAXY','Whirlpool · M51'],['DISTANCE','28 million ly'],['PLANETS','1 candidate'],['METHOD','X-ray transit'],['DETECTED','2021'],['LOCAL YEAR','~70 years']],
+    sections: [{t:'RECORD', rows:[['2021','A 3-hour transit blacked out the binary\'s X-rays'],['The candidate','The size of Saturn, orbiting the remains of a dead star'],['Why it matters','It proved you can search for planets in other galaxies']]}],
+    facts: ['A thousand times farther than any confirmed exoplanet.'] } },
   vega: { hint: 'THE STAR OF "CONTACT", OWNER OF THE 1ST DUST DISK EVER SEEN', card: { desig: 'STAR SYSTEM · LYRA', kind: 'The standard star',
     quick: [['STAR','A0V blue-white'],['DISTANCE','25 ly'],['DISK','yes, the 1st discovered'],['PLANETS','1 candidate'],['ROTATION','12.5 h'],['FUTURE','North Star in 13,700 AD']],
     sections: [{t:'RECORD', rows:[['The ruler of the sky','It defined magnitude 0: every stellar brightness has been measured against it'],['The disk','IRAS (1983) found here the 1st debris belt beyond the Sun'],['JWST (2024)','Photographed the disk too smooth: maybe there are no giant planets']]}],

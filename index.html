@@ -4655,6 +4655,8 @@ if(typeof I18N !== 'undefined' && I18N){
     if(DEN.__sys[sid].hint) SYS[sid].hint = DEN.__sys[sid].hint;
     if(DEN.__sys[sid].card && SYS[sid].card) Object.assign(SYS[sid].card, DEN.__sys[sid].card);
   }
+  /* r248 · os cards das galáxias (ficha galviz e cena de galáxia) */
+  if(DEN.__gal) for(const g of GALAXIES){ if(DEN.__gal[g.id] && g.card) Object.assign(g.card, DEN.__gal[g.id]); }
 }
 const UNIVERSE_CARD = {
   name:'UNIVERSO OBSERVÁVEL', desig:'ESCALA MÁXIMA', kind:'Tudo o que a luz já nos trouxe', hab:null,
@@ -14206,7 +14208,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r247';
+const BUILD = 'r248';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
