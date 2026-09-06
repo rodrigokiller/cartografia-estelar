@@ -10962,6 +10962,88 @@ function bancadaMundo(b, rW){
   }
   return {gW, m, ext};
 }
+/* ================= r247 · CARTÃO DE COMPARTILHAR =================
+   Um PNG de 1080x1350 (o 4:5 do Instagram) com o globo do corpo renderizado
+   pelo motor da bancada (bancadaMundo, luz de canto), o nome, o subtítulo,
+   três dados rápidos e a assinatura universatlas.com. No celular abre a
+   folha de compartilhar do sistema (navigator.share com arquivo); no
+   desktop baixa o arquivo. opts.retorna devolve o dataURL (sondas). */
+function cartaoCompartilhar(id, opts){
+  opts = opts || {};
+  const b = ALLBODIES[id]; if(!b || !b.visual) return null;
+  const W2 = 1080, H2 = 1350, G = 760;
+  /* 1) o globo, num renderizador próprio com o buffer preservado */
+  const cvg = document.createElement('canvas'); cvg.width = G; cvg.height = G;
+  const rnd = new THREE.WebGLRenderer({canvas:cvg, antialias:true, alpha:true, preserveDrawingBuffer:true});
+  rnd.setPixelRatio(1); rnd.setSize(G, G, false); rnd.setClearColor(0x000000, 0);
+  const sc = new THREE.Scene();
+  const cam = new THREE.OrthographicCamera(-1.55, 1.55, 1.55, -1.55, 0.1, 80); cam.position.set(0, 0, 12);
+  const rW = (b.visual.rings && b.visual.rings.rout > 1.6) ? 1.45/b.visual.rings.rout : 1.0;
+  const bw = bancadaMundo(b, rW), gW = bw.gW;   /* o helper devolve {gW, m, ext} */
+  gW.rotation.y = 0.6;
+  gW.traverse(o=>{ if(o.material && o.material.uniforms && o.material.uniforms.uL) o.material.uniforms.uL.value.set(-0.55, 0.35, 0.75).normalize(); });
+  sc.add(gW);
+  rnd.render(sc, cam);
+  /* 2) a composição em 2D */
+  const cv = document.createElement('canvas'); cv.width = W2; cv.height = H2;
+  const c = cv.getContext('2d');
+  const grad = c.createLinearGradient(0, 0, 0, H2); grad.addColorStop(0, '#060b16'); grad.addColorStop(1, '#0b1630');
+  c.fillStyle = grad; c.fillRect(0, 0, W2, H2);
+  /* estrelinhas determinísticas pelo id */
+  let sem = 0; for(const ch of id) sem = (sem*31 + ch.charCodeAt(0)) % 100000;
+  const rnd2 = ()=>{ sem = (sem*9301 + 49297) % 233280; return sem/233280; };
+  for(let i = 0; i < 140; i++){ const x = rnd2()*W2, y = rnd2()*H2, r = 0.6 + rnd2()*1.4; c.fillStyle = 'rgba(200,220,255,' + (0.25 + rnd2()*0.6).toFixed(2) + ')'; c.beginPath(); c.arc(x, y, r, 0, Math.PI*2); c.fill(); }
+  /* moldura fina dos cantos, como o HUD */
+  c.strokeStyle = 'rgba(111,183,255,0.55)'; c.lineWidth = 2;
+  [[40, 40, 1, 1], [W2 - 40, 40, -1, 1], [40, H2 - 40, 1, -1], [W2 - 40, H2 - 40, -1, -1]].forEach(([x, y, sx, sy])=>{ c.beginPath(); c.moveTo(x, y + 44*sy); c.lineTo(x, y); c.lineTo(x + 44*sx, y); c.stroke(); });
+  const mono = (getComputedStyle(document.body).getPropertyValue('--mono') || 'Consolas, monospace').trim() || 'Consolas, monospace';
+  c.textAlign = 'center';
+  /* eyebrow */
+  c.fillStyle = '#6fb7ff'; c.font = '500 26px ' + mono;
+  const eyebrow = String(tpal(b.desig || '') || '').toUpperCase();
+  c.fillText(eyebrow.length > 40 ? eyebrow.slice(0, 40) : eyebrow, W2/2, 118);
+  /* o globo */
+  c.drawImage(cvg, (W2 - G)/2, 150, G, G);
+  /* nome e subtítulo */
+  c.fillStyle = '#ffffff'; c.font = '700 74px ' + mono;
+  const nome = String(b.name || '').toUpperCase();
+  c.font = (nome.length > 14 ? '700 56px ' : '700 74px ') + mono;
+  c.fillText(nome, W2/2, 980);
+  c.fillStyle = '#9fc0e8'; c.font = '400 30px ' + mono;
+  const kind = String(b.kind || '');
+  c.fillText(kind.length > 52 ? kind.slice(0, 50) + '…' : kind, W2/2, 1030);
+  /* três dados rápidos */
+  const qs = (b.quick || []).slice(0, 3);
+  const colW = W2/3;
+  qs.forEach((q, i)=>{
+    const cx = colW*i + colW/2;
+    c.fillStyle = '#6fb7ff'; c.font = '500 22px ' + mono; c.fillText(String(t(q[0])).toUpperCase(), cx, 1120);
+    c.fillStyle = '#e8f1ff'; c.font = '600 32px ' + mono;
+    const vv = String(q[1]); c.fillText(vv.length > 18 ? vv.slice(0, 17) + '…' : vv, cx, 1162);
+  });
+  /* assinatura */
+  c.fillStyle = 'rgba(111,183,255,0.5)'; c.fillRect(W2/2 - 140, 1228, 280, 2);
+  c.textAlign = 'right'; c.fillStyle = '#6fb7ff'; c.font = '300 40px ' + mono; c.fillText('UNIVERS', W2/2 - 2, 1290);
+  c.textAlign = 'left'; c.fillStyle = '#ffffff'; c.font = '700 40px ' + mono; c.fillText('ATLAS', W2/2 + 2, 1290);
+  c.textAlign = 'center';
+  c.fillStyle = '#7f9cc8'; c.font = '400 22px ' + mono; c.fillText('universatlas.com' + (LANG === 'en' ? '/en' : '') + '  ·  #corpo=' + id, W2/2, 1326);
+  rnd.dispose();
+  if(opts.retorna) return cv.toDataURL('image/png');
+  /* 3) compartilhar ou baixar */
+  cv.toBlob(blob=>{
+    if(!blob) return;
+    const arq = new File([blob], 'universatlas-' + id + '.png', {type:'image/png'});
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[arq]})){
+      navigator.share({files:[arq], title:'UNIVERSATLAS · ' + b.name, text:b.kind || ''}).then(()=>showHint('CARTÃO COMPARTILHADO')).catch(()=>{});
+      return;
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = arq.name; document.body.appendChild(a); a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 2000);
+    showHint('CARTÃO SALVO · a imagem está nos downloads');
+  }, 'image/png');
+  return null;
+}
 function habMonta(){
   const cv = document.getElementById('habcanvas');
   if(!HAB.rnd){
@@ -13229,7 +13311,10 @@ function cardRender(){
       h += '<button class="xbtn" id="btnhab">'+t('◉ MUNDOS HABITÁVEIS LADO A LADO')+'</button>';
     /* r211 · qualquer corpo com ficha vai para a bancada personalizada */
     else if(bHab && bHab.id && bHab.visual && bHab.quick && !bHab.region)
-      h += '<button class="xbtn" id="btnhabadd" data-habid="' + bHab.id + '">'+t('◉ PÔR NA BANCADA')+'</button>'; }
+      h += '<button class="xbtn" id="btnhabadd" data-habid="' + bHab.id + '">'+t('◉ PÔR NA BANCADA')+'</button>';
+    /* r247 · o cartão de imagem para stories e posts */
+    if(bHab && bHab.id && bHab.visual && bHab.quick && !bHab.region)
+      h += '<button class="xbtn" id="btnshare" data-shareid="' + bHab.id + '">'+t('⇪ COMPARTILHAR')+'</button>'; }
   /* r191 · o card da VIA LÁCTEA no zoom galáctico: centralizar de cima e a
      fileira IR PARA, com o SISTEMA SOLAR primeiro (a volta rápida que ele
      pediu) e as galáxias famosas do atlas em seguida */
@@ -13462,6 +13547,7 @@ function cardRender(){
     if(HAB.sel.indexOf(ba.dataset.habid) < 0) HAB.sel = HAB.perso.filter(x=>x !== ba.dataset.habid).concat([ba.dataset.habid]).slice(-12);
     abrirHab();
   }); }
+  { const bsh = $('#btnshare'); if(bsh) bsh.addEventListener('click', ()=>cartaoCompartilhar(bsh.dataset.shareid)); }
   const bts = $('#btntoursis'); if(bts) bts.addEventListener('click', ()=>tourDoSistema(bts.dataset.sistour));
   const bss = $('#btnsubsis'); if(bss) bss.addEventListener('click', subSistema);
   pb.querySelectorAll('[data-vt]').forEach(el=>el.addEventListener('click', ()=>verLinhaDoTempo(el.dataset.vt)));
@@ -14120,7 +14206,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r245';
+const BUILD = 'r246';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
