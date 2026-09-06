@@ -2506,7 +2506,29 @@ const BELT_BODIES = [
   visual:{mode:'rocky', c1:'#a08a70', c2:'#bda58a', c3:'#7c6a55', scale:7.2, seed:3.4, crater:1.0},
   sections:[{t:'REGISTRO', rows:[['Descoberta','1898 · Carl Gustav Witt'],['Classe','NEA, órbita real cruza a vizinhança da Terra (marcado aqui por conveniência)'],['Marco','1º asteroide a receber POUSO: NEAR Shoemaker, 2001'],['Forma','Um "amendoim" de 34 km']]}],
   facts:['A NEAR Shoemaker não foi projetada para pousar, e pousou assim mesmo, funcionando.'],
-  fict:'The Expanse, é em Eros que tudo começa. Sem spoilers, kopeng.', moons:[]}
+  fict:'The Expanse, é em Eros que tudo começa. Sem spoilers, kopeng.', moons:[]},
+ {id:'bennu', name:'BENNU', desig:'NEA-101955 · ASTEROIDE', kind:'A pedra que veio para a Terra numa cápsula', hab:0, gbar:0.000006, pop:'0',
+  belt:{angle:2.3, r:15.5},
+  quick:[['DIÂMETRO','490 m'],['DIA','4,3 h'],['ANO','437 d'],['DESCOBERTA','1999'],['AMOSTRA','121,6 g · 24 SET 2023'],['RISCO','1 em 2.700 · ano 2182']],
+  visual:{mode:'rocky', c1:'#3a3835', c2:'#55524d', c3:'#232220', scale:8.0, seed:19.99, crater:0.9},
+  sections:[
+    {t:'OSIRIS-REX, IDA E VOLTA', rows:[['2016','Lançada em 8 de setembro de 2016; dois anos depois já circulava a pedra a poucos km'],['A surpresa','Bennu cuspia pedrinhas para o espaço: um asteroide ATIVO, ninguém esperava'],['20 OUT 2020','O toque: o braço afundou meio metro num chão que parecia sólido e era areia solta; a tampa travou com pedras e a amostra vazava'],['24 SET 2023','A cápsula desceu de paraquedas no deserto de Utah com 121,6 gramas, o recorde de amostra de asteroide'],['O que segue','A sonda virou OSIRIS-APEX e vai encontrar o Apophis na passagem rasante de 2029']]},
+    {t:'O QUE VEIO DENTRO', rows:[['Água','Argilas que só se formam com água: Bennu já foi parte de um corpo com água líquida'],['Carbono','Quase 5 por cento de carbono, com moléculas orgânicas de todo tipo'],['As letras da vida','Aminoácidos e as cinco bases do DNA e do RNA, todas, achadas em 2025'],['O sal','Fosfatos e sais de um antigo oceano salgado: a química de uma sopa primordial, congelada']]},
+    {t:'REGISTRO', rows:[['1999','Descoberto pelo levantamento LINEAR, no Novo México'],['O nome','Escolhido num concurso por um menino de 9 anos: a garça sagrada do Egito, ligada ao renascimento'],['A forma','Um pião de 490 metros, um monte de entulho tão frouxo que a superfície se comporta como piscina de bolinhas'],['O risco','1 chance em 2.700 de atingir a Terra em 24 de setembro de 2182: o asteroide mais bem vigiado do céu']]}
+  ],
+  facts:['A OSIRIS-REx trouxe 121,6 gramas dele para a Terra em 2023: a maior amostra de asteroide já coletada.','A amostra tinha aminoácidos e as cinco letras do DNA e do RNA: os ingredientes da vida já vinham prontos do espaço.','O braço da sonda afundou meio metro ao tocar: a superfície que parecia rocha era areia solta segurada por quase nenhuma gravidade.'],
+  fict:'O nome saiu de um concurso escolar em 2013: Michael Puzio, de 9 anos, achou que o braço da sonda parecia o pescoço de uma garça, a ave sagrada egípcia do renascimento.', moons:[]},
+ {id:'ryugu', name:'RYUGU', desig:'NEA-162173 · ASTEROIDE', kind:'O palácio do dragão que a Hayabusa2 trouxe no bolso', hab:0, gbar:0.00001, pop:'0',
+  belt:{angle:4.1, r:16.2},
+  quick:[['DIÂMETRO','900 m'],['DIA','7,6 h'],['ANO','475 d'],['DESCOBERTA','1999'],['AMOSTRA','5,4 g · 6 DEZ 2020'],['ALBEDO','0,04 · carvão']],
+  visual:{mode:'rocky', c1:'#2e2c2a', c2:'#474441', c3:'#1c1b1a', scale:7.6, seed:20.14, crater:0.85},
+  sections:[
+    {t:'HAYABUSA2, IDA E VOLTA', rows:[['2014','Lançada em 3 de dezembro de 2014 pela JAXA, chegou em junho de 2018'],['Os robôs','Soltou os saltadores MINERVA-II e o MASCOT europeu, que pulou pela superfície por 17 horas'],['21 FEV 2019','O primeiro toque: um tiro de projétil no chão e a coleta da poeira levantada, em segundos'],['5 ABR 2019','Disparou uma bala de cobre de 2 kg e abriu uma cratera artificial de 15 metros: para pegar material de baixo, nunca tocado pelo Sol'],['11 JUL 2019','O segundo toque, dentro da cratera nova: o subsolo de um asteroide, pela primeira vez'],['6 DEZ 2020','A cápsula pousou em Woomera, na Austrália, com 5,4 gramas; a sonda seguiu para outro asteroide, o 1998 KY26, em 2031']]},
+    {t:'O QUE VEIO DENTRO', rows:[['A idade','Material mais primitivo que qualquer meteorito dos museus: a Terra nunca o alterou'],['A química','23 tipos de aminoácidos, uracila (uma letra do RNA) e niacina, a vitamina B3'],['A água','Minerais hidratados: o corpo-mãe teve água líquida no início do Sistema Solar'],['A cor','Um dos objetos mais escuros conhecidos: reflete só 4 por cento da luz']]},
+    {t:'REGISTRO', rows:[['1999','Descoberto pelo levantamento LINEAR'],['O nome','Ryugu-jo, o palácio do Rei Dragão no fundo do mar, do conto de Urashima Taro'],['A forma','Um pião de 900 metros, entulho solto girando em 7,6 horas'],['O par','Bennu e Ryugu são quase gêmeos: mesma forma de pião, mesma escuridão, mesma química de água e carbono']]}
+  ],
+  facts:['A Hayabusa2 abriu uma cratera artificial com uma bala de cobre e coletou material do subsolo, nunca tocado pelo Sol.','Os 5,4 gramas que voltaram tinham uracila, uma das letras do RNA, e vitamina B3.','Reflete só 4 por cento da luz: mais escuro que carvão.'],
+  fict:'No conto de Urashima Taro, o pescador visita o palácio do dragão no fundo do mar e volta com uma caixa que não devia abrir: a Hayabusa2 voltou do Ryugu com a caixa, e abriu.', moons:[]}
 ];
 </script>
 <script>
@@ -5079,7 +5101,7 @@ const ESCALA_REAL_LUAS = {
 /* distância real das sondas ao Sol em UA (meados de 2026) */
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, pathfinder:1.52, viking1:1.52, cassini:9.54};
 /* pedras do cinturão: [UA, raio km] (no cênico elas moram no anel desenhado) */
-const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4]};
+const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4], bennu:[1.13, 0.245], ryugu:[1.19, 0.45]};
 /* O CÉU REAL (só na escala real): as estrelas mais brilhantes do céu em
    posição VERDADEIRA (RA/DEC J2000 convertidos ao plano da eclíptica da cena)
    e cor pela classe espectral. É o começo do sonho das constelações. */
@@ -6103,7 +6125,11 @@ function buildSystem(sysId, spin0){
     const ELA = {ceres:{a:2.77, e:0.0797, i:10.6, no:80.2, w:73.3, ma:274},
                  vesta:{a:2.36, e:0.0902, i:7.14, no:104, w:151, ma:81.2},
                  palas:{a:2.77, e:0.231, i:34.9, no:173, w:311, ma:254},
-                 eros:{a:1.458, e:0.223, i:10.8, no:304, w:179, ma:62.5}};
+                 eros:{a:1.458, e:0.223, i:10.8, no:304, w:179, ma:62.5},
+                 /* r240 · elementos do SBDB (epoca 9 JUN 2026 = JD 2461200.5; o Bennu vem
+                    da epoca 2011 propagado pelo movimento medio 0,82446 graus/dia) */
+                 bennu:{a:1.1264, e:0.2037, i:6.035, no:2.061, w:66.22, ma:70.0},
+                 ryugu:{a:1.1909, e:0.1911, i:5.866, no:251.29, w:211.61, ma:62.34}};
     const ELA_EP = Date.UTC(2026,5,9);
     for(const a of S.belt){
       const eA = ELA[a.id];
@@ -14063,7 +14089,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r239';
+const BUILD = 'r240';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

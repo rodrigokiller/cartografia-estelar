@@ -868,6 +868,40 @@ oort: {
   facts: ['If the Solar System were a coin, the Oort Cloud would be a stadium around it.', 'Technically this is where the Sun "ends" and true interstellar space begins.'],
   fict: 'In The Three-Body Problem the Trisolaran probes cross the Oort Cloud, and every science fiction author uses it as the exit gate from home.'
 },
+/* ---- r240 e r241: Bennu, Ryugu e Swift-Tuttle ---- */
+bennu: {
+  kind: 'The rock that came to Earth in a capsule',
+  quick: [['DIAMETER','490 m'],['DAY','4.3 h'],['YEAR','437 d'],['DISCOVERED','1999'],['SAMPLE','121.6 g · SEP 24, 2023'],['RISK','1 in 2,700 · year 2182']],
+  sections: [
+    {t:'OSIRIS-REX, THERE AND BACK', rows:[['2016','Launched on September 8, 2016; two years later it was circling the rock a few km away'],['The surprise','Bennu was spitting pebbles into space: an ACTIVE asteroid, nobody expected that'],['OCT 20, 2020','The touch: the arm sank half a meter into ground that looked solid and was loose sand; the lid jammed on rocks and the sample was leaking'],['SEP 24, 2023','The capsule parachuted into the Utah desert with 121.6 grams, the record asteroid sample'],['What comes next','The probe became OSIRIS-APEX and will meet Apophis on its close pass of 2029']]},
+    {t:'WHAT CAME INSIDE', rows:[['Water','Clays that only form with water: Bennu was once part of a body with liquid water'],['Carbon','Almost 5 percent carbon, with organic molecules of every kind'],['The letters of life','Amino acids and all five bases of DNA and RNA, found in 2025'],['The salt','Phosphates and salts from an ancient salty ocean: the chemistry of a primordial soup, frozen']]},
+    {t:'RECORD', rows:[['1999','Discovered by the LINEAR survey, in New Mexico'],['The name','Chosen in a contest by a 9-year-old boy: the sacred heron of Egypt, linked to rebirth'],['The shape','A 490-meter spinning top, a rubble pile so loose that the surface behaves like a ball pit'],['The risk','A 1 in 2,700 chance of hitting the Earth on September 24, 2182: the most closely watched asteroid in the sky']]}
+  ],
+  facts: ['OSIRIS-REx brought 121.6 grams of it to Earth in 2023: the largest asteroid sample ever collected.', 'The sample had amino acids and all five letters of DNA and RNA: the ingredients of life came ready-made from space.', 'The probe\'s arm sank half a meter on touchdown: the surface that looked like rock was loose sand held by almost no gravity.'],
+  fict: 'The name came from a school contest in 2013: Michael Puzio, age 9, thought the probe\'s arm looked like the neck of a heron, the Egyptian sacred bird of rebirth.'
+},
+ryugu: {
+  kind: 'The dragon palace that Hayabusa2 brought home in its pocket',
+  quick: [['DIAMETER','900 m'],['DAY','7.6 h'],['YEAR','475 d'],['DISCOVERED','1999'],['SAMPLE','5.4 g · DEC 6, 2020'],['ALBEDO','0.04 · coal']],
+  sections: [
+    {t:'HAYABUSA2, THERE AND BACK', rows:[['2014','Launched on December 3, 2014 by JAXA, it arrived in June 2018'],['The robots','It dropped the MINERVA-II hoppers and the European MASCOT, which hopped across the surface for 17 hours'],['FEB 21, 2019','The first touch: a projectile fired into the ground and the raised dust collected, in seconds'],['APR 5, 2019','It fired a 2 kg copper bullet and opened a 15-meter artificial crater: to get material from below, never touched by the Sun'],['JUL 11, 2019','The second touch, inside the new crater: the subsurface of an asteroid, for the first time'],['DEC 6, 2020','The capsule landed at Woomera, Australia, with 5.4 grams; the probe went on to another asteroid, 1998 KY26, in 2031']]},
+    {t:'WHAT CAME INSIDE', rows:[['The age','Material more primitive than any meteorite in the museums: the Earth never altered it'],['The chemistry','23 kinds of amino acids, uracil (a letter of RNA) and niacin, vitamin B3'],['The water','Hydrated minerals: the parent body had liquid water early in the Solar System'],['The color','One of the darkest objects known: it reflects only 4 percent of the light']]},
+    {t:'RECORD', rows:[['1999','Discovered by the LINEAR survey'],['The name','Ryugu-jo, the palace of the Dragon King at the bottom of the sea, from the tale of Urashima Taro'],['The shape','A 900-meter spinning top, loose rubble spinning in 7.6 hours'],['The pair','Bennu and Ryugu are near twins: same top shape, same darkness, same chemistry of water and carbon']]}
+  ],
+  facts: ['Hayabusa2 opened an artificial crater with a copper bullet and collected subsurface material never touched by the Sun.', 'The 5.4 grams that came back held uracil, one of the letters of RNA, and vitamin B3.', 'It reflects only 4 percent of the light: darker than coal.'],
+  fict: 'In the tale of Urashima Taro, the fisherman visits the dragon palace at the bottom of the sea and returns with a box he must not open: Hayabusa2 came back from Ryugu with the box, and opened it.'
+},
+swift: {
+  kind: 'The father of the Perseids',
+  quick: [['NUCLEUS','26 km'],['PERIOD','133 years'],['LAST VISIT','DEC 1992'],['NEXT','2126'],['THE SHOWER','Perseids, August 12'],['RECORDS','since 69 BC']],
+  sections: [
+    {t:'THE PERSEIDS', rows:[['The shower','Every lap it leaves dust along its path; the Earth crosses that trail in August and the sky rains stars: the Perseids'],['The peak','Around August 12, up to 100 meteors an hour under a dark sky, the most famous shower of the year'],['The trail','The grains burning tonight left the comet centuries ago, on earlier laps'],['The speed','Each grain comes in at 59 km/s: that is why the Perseids are fast and leave trails']]},
+    {t:'THE WATCHED GIANT', rows:[['The nucleus','26 km: the largest known object that repeatedly approaches the Earth, twice the one that killed the dinosaurs'],['The scare','In 1973 a calculation suggested it could HIT the Earth in 2126; the 1992 return redid the orbit and the risk dropped to zero'],['2126','It passes 23 million km away, 60 times the distance of the Moon: a spectacle, not a threat'],['The long run','In 4479 it comes within 4 million km: its orbit and ours truly cross']]},
+    {t:'RECORD', rows:[['1862','Discovered by Lewis Swift and Horace Tuttle, three days apart, in the United States'],['1866','Schiaparelli realizes its orbit is that of the Perseids: the first comet linked to a meteor shower'],['Ancient history','Chinese records from 69 BC and 188 AD match its returns'],['1992','Recovered by Tsuruhiko Kiuchi, a Japanese amateur astronomer, on the return that confirmed the 133-year period']]}
+  ],
+  facts: ['It is the father of the Perseids: the dust it leaves behind becomes the August meteor shower.', 'The nucleus is 26 km, twice the asteroid that killed the dinosaurs, and its orbit crosses ours: the largest watched object in the sky.', 'It was the first comet linked to a meteor shower, by Schiaparelli in 1866.'],
+  fict: 'In Catholic tradition the Perseids are the Tears of Saint Lawrence, martyred on August 10, 258: the shower arrives every year on the saint\'s day.'
+},
 /* o card do próprio sistema */
 __sys: {
   sol: {
