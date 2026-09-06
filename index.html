@@ -1326,15 +1326,18 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
 <script>
 /* ================= r232 · IDIOMA (PT-BR e ENGLISH) =================
    O português do código é a CHAVE; o inglês mora em en.js (I18N_EN). LANG
-   vem de ?lang=, depois do carto:lang; sem escolha fica PT (opt-in por ora:
-   as fichas ainda são só em português, e meia tradução é pior que nenhuma).
+   vem de ?lang=, depois do carto:lang, depois do navigator.language (r239).
    t(s) traduz um texto exato; tpal(s) troca palavra a palavra (o nome tp já era da fábrica da TRAPPIST) (designações
    compostas); traduzDOM varre o HUD estático uma vez no boot. */
 const LANG = (function(){
   try{
     const q = new URLSearchParams(location.search).get('lang');
     if(q === 'en' || q === 'pt'){ localStorage.setItem('carto:lang', q); return q; }
-    return localStorage.getItem('carto:lang') === 'en' ? 'en' : 'pt';
+    const s = localStorage.getItem('carto:lang');
+    if(s === 'en' || s === 'pt') return s;
+    /* r239 · sem escolha, o idioma do NAVEGADOR decide (o Sistema Solar inteiro
+       já está em inglês): pt-* fica em português, o resto abre em inglês */
+    return String(navigator.language || 'pt').toLowerCase().indexOf('pt') === 0 ? 'pt' : 'en';
   }catch(e){ return 'pt'; }
 })();
 const I18N = (LANG === 'en' && window.I18N_EN) ? window.I18N_EN : null;
@@ -14060,7 +14063,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r238';
+const BUILD = 'r239';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

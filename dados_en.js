@@ -1,4 +1,4 @@
-/* UNIVERSATLAS · fichas em INGLÊS (r233 e r238, fase 2 do idioma).
+/* UNIVERSATLAS · fichas em INGLÊS (r233, r238 e r239: o Sistema Solar inteiro).
    Carregado só quando LANG === 'en' (document.write no bloco 1). Cada chave é
    o id do corpo; os campos presentes SUBSTITUEM os da ficha em português
    (kind, quick, sections, facts, fict, exLuas, moonsMeta). Números no formato
@@ -576,6 +576,297 @@ slim: {
   ],
   facts: ['It landed 55 meters from the target, when missing by kilometers was normal: the first precision landing on the Moon.', 'An engine failed, it stopped upside down, and still it completed its mission and survived three lunar nights.'],
   fict: 'The spherical rover SORA-Q was created with Takara Tomy, the maker of Transformers: a real toy exploring the Moon.'
+},
+/* ---- fase 2, parte 3 (r239): sondas, satelites, cometas, visitantes e regioes ---- */
+viking1: {
+  kind: 'The first photo of the ground of Mars',
+  quick: [['LAUNCH','8/20/1975'],['LANDING','7/20/1976, 7 years after Apollo 11'],['THE FIRST','photo of the Martian surface'],['THE SEARCH','4 life experiments aboard'],['LASTED','6 years on the ground (plan: 90 days)'],['THE PAIR','Viking 2 landed 6 weeks later']],
+  sections: [
+    {t:'THE PIONEER', rows:[['The feat','The first American landing on Mars, and the first PHOTO of the Martian ground'],['The date','July 20, 1976: exactly seven years after the Apollo 11 landing'],['The duo','An orbiter mapping from above and the lander working on the ground'],['The lifetime','Planned for 90 days, it transmitted for SIX YEARS']]},
+    {t:'THE SEARCH FOR LIFE', rows:[['The experiments','Four biological tests, the first ever run on another planet'],['The result','One of them came back POSITIVE, the others did not: the debate lasts to this day'],['The lesson','Mars does not give easy answers: that is why the rovers keep going'],['The legacy','Every modern Mars mission descends from Viking']]}
+  ],
+  facts: ['It took the first photo of the surface of Mars, exactly seven years after the Apollo 11 landing.', 'One of the four life experiments came back positive, and the scientific debate lasts to this day.', 'Planned for 90 days, it worked for six years on the ground.'],
+  fict: 'The ambiguous result of the life experiment has fed books for half a century: what if it found it, and nobody believed?'
+},
+cassini: {
+  kind: 'The queen of Saturn and the final plunge',
+  quick: [['LAUNCH','10/15/1997'],['ARRIVAL','7/1/2004, 7 years of travel'],['AT SATURN','13 years and 294 orbits'],['THE PASSENGER','ESA\'s Huygens probe'],['DISCOVERIES','Enceladus geysers, Titan seas'],['THE END','9/15/2017, deliberate plunge']],
+  sections: [
+    {t:'THE QUEEN OF SATURN', rows:[['The trip','7 years and two swings past Venus to gain speed'],['The reign','13 years orbiting Saturn: rings, storms and 6 new moons'],['The passenger','It carried Huygens, which parachuted down onto TITAN in 2005'],['The jewels','The geysers of Enceladus and the methane seas of Titan are hers']]},
+    {t:'THE GRAND FINALE', rows:[['The decision','Out of fuel, it could not risk falling onto Enceladus or Titan and contaminating them'],['The plunge','22 orbits INSIDE the rings and the final dive into the atmosphere'],['The end','9/15/2017: Cassini became part of the planet it studied'],['The photo','In 2013 it photographed the Earth through the rings: the Day the Earth Smiled']]}
+  ],
+  facts: ['It spent 13 years at Saturn and discovered the geysers of Enceladus and the methane seas of Titan.', 'The final plunge was an act of planetary protection: it could not contaminate the ocean moons.', 'In 2013 it photographed the Earth through the rings while the world waved: the Day the Earth Smiled.'],
+  fict: 'The Grand Finale gave the world a collective mourning for a robot: the farewell went around the planet in 2017.'
+},
+pathfinder: {
+  kind: 'The first rover on Mars',
+  quick: [['LAUNCH','12/4/1996'],['LANDING','7/4/1997, Ares Vallis'],['THE TRICK','airbags: it bounced 15 times'],['THE ROVER','Sojourner, 10.6 kg'],['DURATION','83 days (plan: 7)'],['SPEED','40,000 km/h in cruise']],
+  sections: [
+    {t:'THE CHEAP MISSION', rows:[['The bet','To prove you could land on Mars SPENDING LITTLE: it cost 1/15 of the Vikings'],['The airbags','No retrorockets to the end: the craft bounced 15 times wrapped in air bags'],['The rover','Sojourner, the size of a microwave oven, the FIRST to roll on another planet'],['The place','Ares Vallis, an ancient flood plain full of varied rocks']]},
+    {t:'RECORD', rows:[['The internet','The photos crashed NASA\'s servers: it was the first big space event of the web'],['The names','The base became the Carl Sagan Memorial Station; the rocks got cartoon names'],['The duration','Planned for 7 days, it lasted 83'],['The legacy','It opened the road for the rovers: Spirit, Opportunity, Curiosity and Perseverance']]}
+  ],
+  facts: ['It landed bouncing 15 times inside airbags, with no retrorocket at all in the final contact.', 'The 10.6 kg Sojourner was the first rover to roll on another planet.', 'The photos crashed NASA\'s servers in 1997: the first space event of the internet age.'],
+  fict: 'In The Martian, Watney digs up Pathfinder to talk to Earth: the probe became a movie character.'
+},
+voyager1: {
+  kind: 'The most distant human-made object',
+  quick: [['LAUNCH','9/5/1977'],['DISTANCE','~168 AU'],['SPEED','61,000 km/h'],['WHERE','interstellar space'],['POWER','until ~2030'],['SIZE','3.7 m antenna']],
+  sections: [
+    {t:'WHERE IT IS', rows:[['Distance','About 168 AU from the Sun, growing 3.6 AU per year'],['The signal','It takes more than 23 hours to reach us, and another 23 to go back'],['The power','Its radio reaches here with less energy than a digital watch'],['Position here','Symbolic: at real scale it would be far beyond the edge of this scene']]},
+    {t:'THE JOURNEY', rows:[['1979','Flies by Jupiter and discovers the volcanoes of Io'],['1980','Passes Saturn and Titan, which threw it out of the plane of the planets'],['1990','Turns its camera and photographs the Pale Blue Dot, at Carl Sagan\'s request'],['2012','Crosses the heliopause and becomes the first human object in interstellar space'],['~2030','The nuclear batteries fade and it sails on, silent forever']]},
+    {t:'THE GOLDEN RECORD', rows:[['What it is','A gold-plated copper disc with sounds and images of Earth'],['The content','Greetings in 55 languages, rain, a heartbeat, Bach, Chuck Berry and a Navajo chant'],['Brazil','It has a greeting in Portuguese, "Tchau, pessoal" (bye, everyone)'],['The shelf life','The record was made to last a billion years'],['The odds','It will not get close to any star for 40,000 years']]}
+  ],
+  facts: ['It is the most distant object humanity has ever built, and it keeps moving away at 61,000 km/h.', 'Its signal takes more than 23 hours to get here, traveling at the speed of light.', 'It carries a golden record with sounds of Earth, made to last a billion years.', 'It took the Pale Blue Dot photo, with the Earth taking up less than a pixel.'],
+  fict: 'The Golden Record became a cultural symbol, and the probe appears from Star Trek to countless stories about what to say to an alien.'
+},
+voyager2: {
+  kind: 'The only one to visit all four giants',
+  quick: [['LAUNCH','8/20/1977'],['DISTANCE','~140 AU'],['SPEED','55,000 km/h'],['WHERE','interstellar space'],['RECORD','4 giants'],['POWER','until ~2030']],
+  sections: [
+    {t:'WHERE IT IS', rows:[['Distance','About 140 AU, in a different direction from its sister'],['2018','It crossed the heliopause, six years after Voyager 1'],['Position here','Symbolic, like its sister\'s']]},
+    {t:'THE GRAND TOUR', rows:[['The alignment','An arrangement of the planets that happens every 175 years allowed visiting four in a single flight'],['1979 and 1981','Jupiter and Saturn'],['1986','Uranus, and to this day it is the only spacecraft that has been there'],['1989','Neptune, and it discovered the geysers of Triton'],['The legacy','Almost everything we know about Uranus and Neptune up close came from these few hours of flyby']]}
+  ],
+  facts: ['It is the only spacecraft that has visited Uranus and Neptune, and it will probably remain so for decades.', 'The planetary alignment that made its trip possible only repeats every 175 years.', 'It also carries a Golden Record, identical to its sister\'s.'],
+  fict: 'Its mission is the classic example of seizing an astronomical window: whoever missed it waited two centuries.'
+},
+newhorizons: {
+  kind: 'The one that finally showed Pluto',
+  quick: [['LAUNCH','1/19/2006'],['DISTANCE','~62 AU'],['SPEED','52,000 km/h'],['PLUTO','7/14/2015'],['ARROKOTH','1/1/2019'],['POWER','until ~2040']],
+  sections: [
+    {t:'THE JOURNEY', rows:[['The start','It left Earth at 58,000 km/h, the fastest launch in history'],['2015','It passed 12,500 km from Pluto after nine and a half years of travel'],['What it found','Mountains of water ice, a heart-shaped nitrogen plain and a blue atmosphere'],['2019','It flew by Arrokoth, the most distant object ever visited up close'],['Today','It keeps sending data from the Kuiper belt']]},
+    {t:'THE HUMAN DETAIL', rows:[['Aboard','It carries part of the ashes of Clyde Tombaugh, who discovered Pluto in 1930'],['The irony','He died in 1997, before Pluto was demoted, and before anyone finally saw it up close'],['The time','The full flyby imagery took 15 months to transmit to Earth']]}
+  ],
+  facts: ['It carries the ashes of the man who discovered Pluto, who died without ever seeing the planet up close.', 'Before it, Pluto was just a blur of a few pixels, even in Hubble.', 'It took fifteen months to send back all the photos of that single flyby day.'],
+  fict: 'The nitrogen heart of Pluto that it photographed became one of the most recognizable planetary images of the century.'
+},
+pioneer10: {
+  kind: 'The first to cross the belt',
+  quick: [['LAUNCH','3/2/1972'],['DISTANCE','~140 AU'],['LAST SIGNAL','1/23/2003'],['MILESTONE','1st at Jupiter'],['PLAQUE','yes'],['HEADING','Aldebaran']],
+  sections: [
+    {t:'THE JOURNEY', rows:[['1972','The first spacecraft to cross the asteroid belt, which many feared was impassable'],['1973','The first to reach Jupiter, and to measure the lethal radiation around it'],['2003','The last faint signal was received, 12 billion km away'],['Today','It sails on silently toward Aldebaran, arriving in 2 million years']]},
+    {t:'THE PLAQUE', rows:[['What it is','A gold-anodized aluminum plaque with a man, a woman and a map to Earth'],['Who made it','Carl Sagan, Frank Drake and Linda Salzman Sagan, in three weeks'],['The map','The position of the Sun relative to 14 pulsars, an address that works for millions of years'],['The controversy','The nudity of the drawings drew complaints in American newspapers at the time']]}
+  ],
+  facts: ['It proved the asteroid belt can be crossed, opening the way for everything that came after.', 'The plaque aboard gives the position of Earth using pulsars, an address valid for millions of years.', 'Its last signal arrived in 2003, so faint it could barely be told from the noise.'],
+  fict: 'The Pioneer plaque is probably the most reproduced image of space exploration after the photo of the Earth.'
+},
+iss: {
+  kind: 'Humanity\'s home in orbit',
+  quick: [['LAUNCH','11/20/1998'],['ALTITUDE','~420 km'],['SPEED','28,000 km/h'],['ONE LAP','92 min'],['SIZE','109 m, a football field'],['INHABITED SINCE','11/2/2000']],
+  sections: [
+    {t:'THE HOME', rows:[['Construction','More than 40 launches over 13 years, assembled piece by piece in orbit'],['Who built it','15 countries, with the United States and Russia sharing the backbone'],['The routine','16 laps around the Earth per day: a sunrise every 45 minutes'],['Position here','Symbolic: at real scale it would almost touch the surface']]},
+    {t:'RECORD', rows:[['Continuous habitation','Since November 2, 2000 there has always been someone living there'],['Visible to the naked eye','Yes: it looks like a fast star crossing the sky at dusk'],['Science','Thousands of microgravity experiments, from crystals to artificial hearts'],['Future','Retirement planned for around 2030, with a guided reentry over the Pacific']]}
+  ],
+  facts: ['It is the most expensive structure ever built: more than 150 billion dollars.', 'Since November 2000 humanity has never again been entirely on the planet: there is always someone up there.', 'It goes all the way around the Earth in 92 minutes, at 28,000 km/h.'],
+  fict: 'The setting of Gravity and countless films, and its NASA live stream is one of the most watched broadcasts on the internet.'
+},
+hubble: {
+  kind: 'The eye that redefined the cosmos',
+  quick: [['LAUNCH','4/24/1990'],['ALTITUDE','~520 km'],['MIRROR','2.4 m'],['ONE LAP','95 min'],['REPAIRS IN ORBIT','5 missions'],['STATUS','active']],
+  sections: [
+    {t:'THE DRAMA', rows:[['1990','It reaches space and the mirror turns out to have a manufacturing flaw'],['1993','Astronauts install the correction in orbit: the telescope got glasses'],['Afterwards','Five shuttle missions kept it new for decades'],['Position here','Symbolic: it flies a few kilometers above the ISS']]},
+    {t:'RECORD', rows:[['Deep Field','It stared for 10 days at an "empty" patch of sky and found 3,000 galaxies'],['Output','More than 1.5 million observations and tens of thousands of papers'],['Pillars of Creation','The most famous photo in astronomy is his, from 1995'],['Today','Still active, working in tandem with James Webb']]}
+  ],
+  facts: ['It was born nearsighted by a polishing error of 2 thousandths of a millimeter, and was fixed in space.', 'The Deep Field showed that even the "nothing" of the sky holds thousands of galaxies.', 'Its photos defined the look of the cosmos for a whole generation.'],
+  fict: 'The Pillars of Creation and the Deep Field became bedroom posters, album covers and wallpapers around the world.'
+},
+sputnik: {
+  kind: 'The first human-made object in orbit',
+  quick: [['LAUNCH','10/4/1957'],['SIZE','58 cm'],['MASS','83.6 kg'],['ONE LAP','96 min'],['SIGNAL','21 days of beeps'],['REENTRY','1/4/1958']],
+  sections: [
+    {t:'THE DAY THAT CHANGED EVERYTHING', rows:[['10/4/1957','The Soviet Union puts a polished aluminum sphere with four antennas into orbit'],['The beep','It transmitted on a frequency any ham radio could pick up: the whole world HEARD it'],['The shock','In the United States, the scare led to the creation of NASA the following year'],['Position here','Symbolic and posthumous: the original reentered and burned up in January 1958']]},
+    {t:'RECORD', rows:[['The race','It was the starting gun of the space race that would reach the Moon in 12 years'],['Its life','21 days of signal, 1,400 orbits, 3 months in space'],['The name','Sputnik means "fellow traveler" in Russian']]}
+  ],
+  facts: ['It was just a 58 cm sphere with a radio, and it changed the history of the 20th century in 21 days of beeps.', 'Any ham radio operator on the planet could tune in to its signal: perfect propaganda.', 'Three months after launch it reentered and became a meteor over the Atlantic.'],
+  fict: '"Sputnik moment" became an expression for any technological scare, and its beep opens countless Cold War films.'
+},
+jwst: {
+  kind: 'The golden mirror at the L2 point',
+  quick: [['LAUNCH','12/25/2021'],['WHERE','L2 point, 1.5 million km'],['MIRROR','6.5 m, 18 hexagons'],['SUNSHIELD','a tennis court'],['SEES','infrared'],['1ST IMAGE','7/12/2022']],
+  sections: [
+    {t:'THE MACHINE', rows:[['The mirror','6.5 meters across in 18 GOLD-coated hexagons, folded to fit in the rocket'],['The sunshield','Five layers the size of a tennis court, keeping the cold side at −230 °C'],['No repairs','At 1.5 million km, too far for any servicing mission: it had to work the first time'],['Position here','Symbolic: it does NOT orbit the Earth, it sits at the L2 point, four times farther than the Moon']]},
+    {t:'RECORD', rows:[['The deployment','344 single points of failure in the first weeks, all of them worked'],['7/12/2022','The first batch of images, with the Cosmic Cliffs of Carina'],['What it sees','In infrared: the first galaxies of the universe and the atmospheres of exoplanets'],['Duo','It works together with Hubble, each in its own band of light']]}
+  ],
+  facts: ['The mirror is coated in real gold: 48 grams, less than a golf ball.', 'It is sensitive enough to detect the heat of a bumblebee at the distance of the Moon.', 'It was launched folded like origami and unfolded itself on the way to L2.'],
+  fict: 'Its first image was revealed live by the President of the United States, a planet-wide TV event.'
+},
+sedna: {
+  kind: 'The loneliest world known',
+  quick: [['DIAMETER','~1,000 km'],['YEAR','~11,400 years'],['DISTANCE','76 to 900 AU'],['COLOR','the reddest in the system'],['DISCOVERED','2003'],['PERIHELION','~2076']],
+  sections: [
+    {t:'THE IMPOSSIBLE ORBIT', rows:[['Eccentricity','From 76 to 900 AU: one lap takes 11,400 years, longer than all of written civilization'],['The mystery','Nothing known explains how it got there: not the planets, not the Kuiper belt'],['The hypotheses','A star that passed close in the Sun\'s cradle, or Planet Nine, still unseen'],['Position here','Approaching the perihelion of ~2076: its only visit in our era. Distances follow the compressed scale of the scene']]},
+    {t:'INNER OORT CLOUD, OR WHAT?', rows:[['The new crowd','Sedna started a class of its own: the SEDNOIDS, today with 2012 VP113 and Leleakuhonua'],['The modern reading','Many astronomers call it an INNER OORT CLOUD object: its perihelion does not even touch the Kuiper belt'],['What it is, then','Officially a dwarf planet candidate; in practice, the ambassador of the outer reaches'],['Why it matters','Each new sednoid tightens the net: either a star stirred the Sun\'s cradle, or there is a planet hiding out there']]},
+    {t:'RECORD', rows:[['Discovered','2003 · Mike Brown, him again'],['Name','The Inuit goddess of the frozen sea, who lives at the bottom of the Arctic'],['Color','Reddish like almost nothing in the system, maybe tholins billions of years old'],['Temperature','Never above −240 °C']]}
+  ],
+  facts: ['The last time Sedna came near the Sun, humanity had not yet invented writing.', 'Its orbit is so stretched that no known explanation accounts for it: something threw it there.', 'It is one of the reddest objects ever observed, and nobody knows exactly why.', 'It is the first of the sednoid family, the likely residents of the inner edge of the Oort Cloud.'],
+  fict: 'Sedna is the muse of the Planet Nine theories: every simulation of the ninth planet starts by trying to explain its orbit.'
+},
+eris: {
+  kind: 'The one that dethroned Pluto',
+  quick: [['DIAMETER','2,326 km'],['YEAR','558 years'],['DISTANCE','38 to 98 AU'],['TEMP','−243 °C'],['MOON','Dysnomia'],['DISCOVERED','2005']],
+  sections: [
+    {t:'THE WILD ORBIT', rows:[['Eccentricity','From 38 to 98 AU: at perihelion it gets closer than Pluto at aphelion'],['Tilt','44 degrees out of the plane of the planets, the largest among the big dwarfs'],['Today','Near aphelion: the Sun seen from there is just a very bright star'],['Position here','The ellipse is real in shape; distances follow the compressed scale of the scene']]},
+    {t:'RECORD', rows:[['Discovered','2005 · Mike Brown, nicknamed "Xena"'],['The chaos','It is 27% more massive than Pluto, and forced the definition of "planet" in 2006'],['Name','The Greek goddess of discord. Perfect.'],['Surface','Almost pure methane ice, one of the most reflective objects in the system']]}
+  ],
+  facts: ['Mike Brown, the discoverer, proudly uses the title "the man who killed Pluto".', 'At aphelion, the Sun seen from there is just a very bright star.', 'Its orbit is so tilted and stretched that it took decades for anyone to notice the point of light.'],
+  fict: 'The name of the goddess of discord was chosen for the astronomical fight it caused: the trivia is the story itself.'
+},
+p67: {
+  kind: 'Rosetta\'s rubber duck',
+  quick: [['NUCLEUS','4.3 × 4.1 km, two lobes'],['PERIOD','6.45 years'],['DISTANCE','1.24 to 5.68 AU'],['VISIT','Rosetta, 2014-2016'],['LANDING','Philae, 11/12/2014'],['NEXT PERIHELION','2028']],
+  sections: [
+    {t:'THE ROSETTA MISSION', rows:[['10 years of travel','The European probe chased the comet for a decade before catching it in 2014'],['The landing','The Philae lander bounced TWICE and stopped on its side in a crevice, but it worked'],['Two years together','Rosetta orbited the comet through the whole perihelion, watching the jets wake up'],['The end','In 2016 it descended for good and stayed: it is resting on the comet to this day']]},
+    {t:'THE RUBBER DUCK', rows:[['The shape','Two lobes stuck together: either two comets that met, or one that was carved'],['The song','The magnetometer picked up oscillations that became the famous "song" of 67P'],['Different water','Its water does not match the oceans: our water may not come from comets like this']]}
+  ],
+  facts: ['Philae bounced twice on landing and still sent back science from inside a crevice.', 'Rosetta is resting on it to this day, going around the Sun every 6.45 years.', 'The comet\'s "song", magnetic oscillations turned into sound, became a YouTube hit.'],
+  fict: 'The rubber-duck shape and the mysterious song made 67P the internet\'s favorite comet.'
+},
+halebopp: {
+  kind: 'The Great Comet of 1997',
+  quick: [['NUCLEUS','~60 km, a giant'],['PERIOD','~2,530 years'],['PERIHELION','APR 1, 1997'],['DISCOVERED','JUL 23, 1995'],['NAKED EYE','18 months, a record'],['APHELION','~370 AU']],
+  sections: [
+    {t:'THE GREAT COMET', rows:[['The show','It stayed visible to the naked eye for 18 MONTHS, the record of all recorded history'],['The two tails','The white dust tail and the blue ion tail, split across the sky: the classic 1997 photo'],['The nucleus','About 60 km, four times Halley\'s: one of the largest ever measured'],['The discovery','Alan Hale and Thomas Bopp, on the SAME night in 1995, neither knowing about the other']]},
+    {t:'THE JOURNEY', rows:[['Where it comes from','From the edge of the Oort Cloud: its aphelion lies at ~370 AU'],['The upright orbit','Tilted almost 90 degrees: it pierces the plane of the planets from top to bottom'],['Where it is now','Already past the orbit of Neptune, heading for the deep ice'],['The return','It only comes back around the year 4500']]}
+  ],
+  facts: ['It stayed visible to the naked eye for eighteen months, the record of any comet in recorded history.', 'Its orbit is almost perpendicular to the plane of the planets: it pierces the Solar System from top to bottom.'],
+  fict: 'The Great Comet of 1997 hung over a generation: it got into family photos, record covers and the memory of everyone who looked up that year.'
+},
+halley: {
+  kind: 'The comet of every generation',
+  quick: [['NUCLEUS','15 × 8 km'],['PERIOD','75 to 76 years'],['LAST VISIT','1986'],['NEXT','2061'],['SPEED','up to 254,000 km/h'],['RECORDS','since 240 BC']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Period','75 to 76 years, a VERY eccentric real orbit (symbolic here)'],['Reach','From inside the orbit of Venus to beyond Neptune'],['Direction','Retrograde, against the flow of the planets']]},
+    {t:'RECORD', rows:[['Edmond Halley','Predicted in 1705 the return of 1758; he did not live to see it, but got the name'],['1066','Embroidered on the Bayeux Tapestry as an omen'],['1986','The Giotto probe photographed the nucleus up close'],['Heritage','The Orionid and Eta Aquariid meteor showers are its dust']]}
+  ],
+  facts: ['Mark Twain was born and died with Halley in the sky (1835 and 1910), as he himself predicted.', 'In 1910 people sold "anti-comet pills" against the gas of the tail. They worked: nobody died.'],
+  fict: 'Practically every almanac, novel and cartoon of the 20th century has Halley, from Tintin to The Simpsons.'
+},
+tsuchinshan: {
+  kind: 'The great comet of 2024',
+  quick: [['NUCLEUS','a few km'],['PERIHELION','SEP 27, 2024 · 0.39 AU'],['CLOSEST TO EARTH','OCT 12, 2024 · 70 million km'],['DISCOVERED','JAN 9, 2023'],['BRIGHTNESS','up to magnitude −4'],['TILT','139° · retrograde']],
+  sections: [
+    {t:'THE GREAT COMET OF 2024', rows:[['The show','Visible to the naked eye for weeks: first at dawn in late September, then at dusk in October, with a tail over 20 degrees long'],['The peak','Around October 9 and 10 it reached close to magnitude −4, shining like Venus, helped by sunlight scattering forward through the dust of the tail'],['The anti-tail','In mid-October a spike appeared pointing TOWARD the Sun: dust in the orbital plane seen edge-on, the signature of the great comets'],['From the south','The best southern-hemisphere window was late September, at sunrise; in October it moved into everyone\'s evening sky']]},
+    {t:'THE JOURNEY', rows:[['Where it comes from','From the Oort Cloud, on a lap of about 80,000 years'],['The upright, backwards orbit','Tilted 139 degrees: it crosses the plane of the planets from top to bottom and in the opposite direction'],['The perihelion','September 27, 2024, at 0.39 AU, inside the orbit of Mercury'],['The exit','The pass by the Sun left the trajectory slightly hyperbolic: most likely it will never come back'],['Where it is now','On its way to the orbit of Saturn, faded, heading for the deep ice']]},
+    {t:'RECORD', rows:[['JAN 9, 2023','Discovered at the Purple Mountain Observatory (Tsuchinshan), in China, and independently by the ATLAS survey, in South Africa, in February: hence the double name'],['The scare','In July 2024 a study predicted it would disintegrate before perihelion; it survived whole'],['The legacy','Probably the most photographed comet in history: millions of phone photos at dusk in October 2024']]}
+  ],
+  facts: ['It was the brightest comet in decades for the northern hemisphere, and the most photographed by phone in history.', 'The orbit is retrograde and almost upright, and the pass by the Sun left it hyperbolic: it will probably never return.', 'A study predicted it would break apart before reaching the Sun. It passed whole and put on the show.'],
+  fict: null
+},
+atlas3i: {
+  kind: 'The third messenger from another star',
+  quick: [['NUCLEUS','less than 5.6 km'],['SPEED','58 km/s, from outside'],['ECCENTRICITY','6.1 · record'],['PERIHELION','OCT 29, 2025 · 1.36 AU'],['DISCOVERED','JUL 1, 2025 · ATLAS'],['CAME FROM','Sagittarius, the galactic center']],
+  sections: [
+    {t:'THE THIRD VISITOR', rows:[['The lineage','After ʻOumuamua (2017) and comet Borisov (2019), the third confirmed object from another star'],['The proof','Eccentricity of 6.1, the most open hyperbola ever measured: ʻOumuamua\'s was 1.2. Nothing bound to the Sun moves like that'],['The speed','It arrived at 58 km/s relative to the Sun, the fastest of the three visitors'],['Where it came from','From the direction of Sagittarius, the galactic center, skimming the plane of the planets in the opposite direction (175 degrees)']]},
+    {t:'A REAL COMET', rows:[['The coma','Unlike ʻOumuamua, it showed a coma and tail from discovery: ice boiling off like a homegrown comet'],['James Webb','Measured a coma dominated by carbon dioxide, with far more CO₂ than water: a chemistry unlike our own comets'],['The nickel','Telescopes in Hawaii saw nickel vapor without iron, a strange pattern that Borisov also showed'],['The nucleus','Hubble limited its size to less than 5.6 km; probably much smaller than that']]},
+    {t:'THE AGE', rows:[['The hypothesis','The trajectory suggests an origin in the THICK disk of the galaxy, a population of old stars'],['The number','It may be some 7 billion years old: older than the Solar System itself'],['What that is worth','It would be the oldest piece of another planetary system we have ever seen up close']]},
+    {t:'RECORD', rows:[['JUL 1, 2025','Discovered by the ATLAS telescope in Río Hurtado, Chile; earlier photos from June were later found in the archives'],['OCT 3, 2025','It passed 0.19 AU from Mars, and the probes in Martian orbit took the closest photos'],['OCT 29, 2025','Perihelion at 1.36 AU, on the far side of the Sun from Earth'],['DEC 19, 2025','Closest approach to Earth, at 1.8 AU: no risk at all'],['The exit','Already heading for the ice, near the orbit of Saturn, never to return']]}
+  ],
+  facts: ['It is the third confirmed interstellar object, and the fastest and most hyperbolic of the three: eccentricity 6.1.', 'It may be older than the Solar System: the trajectory points to the thick disk of the galaxy, of stars 7 billion years old.', 'The probes in orbit around Mars took the closest photos of it, in October 2025.'],
+  fict: 'As with ʻOumuamua, Avi Loeb raised the alien-ship hypothesis; the answer came in spectra: CO₂ ice, dust and nickel, a comet from another star.'
+},
+oumuamua: {
+  kind: 'The first messenger from another star',
+  quick: [['SIZE','~100 to 400 m'],['SHAPE','cigar or pancake, 10:1'],['ORIGIN','another star system'],['SPEED','87 km/s'],['DETECTION','2017 · Pan-STARRS'],['STATUS','already gone']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Trajectory','Hyperbolic: it came in, curved around the Sun and left forever (position here symbolic)'],['Rotation','Tumbling, every ~7.3 h'],['Came from','Roughly the direction of Vega, in Lyra']]},
+    {t:'RECORD', rows:[['Name','"Scout" or "messenger from afar" in Hawaiian'],['The mystery','It accelerated on the way out with no visible comet tail'],['Hypotheses','A hydrogen iceberg? A pancake-shaped fragment? An alien light sail (Avi Loeb)?'],['Legacy','It opened the category "interstellar object"; Borisov came in 2019']]}
+  ],
+  facts: ['A cigar shape with a ~10:1 ratio, nothing like it in our system.', 'Project Lyra studies a probe to reach it. There is still time.'],
+  fict: 'Rendezvous with Rama, by Arthur C. Clarke (1973), foresaw the scene: an interstellar cylinder crossing the system. Loeb wrote Extraterrestrial defending the artificial hypothesis.'
+},
+cinturao: {
+  kind: 'A ring of rubble between Mars and Jupiter',
+  quick: [['EXTENT','2.1 to 3.3 AU'],['BODIES','>1 million'],['TOTAL MASS','4% of the Moon'],['LARGEST','Ceres'],['MEAN DISTANCE','~1 million km between rocks'],['ORIGIN','a planet that never formed']],
+  sections: [
+    {t:'RECORD', rows:[['What it is','Leftovers of planet formation that Jupiter never let become a planet'],['Real density','Probes cross it without even aiming; the movies exaggerate'],['Composition','Rock, metal and ice · Ceres even has water'],['Visitors','Dawn (Ceres/Vesta) · NEAR (Eros) · Lucy en route']]}
+  ],
+  facts: ['Adding it all up, the whole belt amounts to only 4% of the mass of the Moon.', 'The movies lie: the rocks are so far apart that a probe crosses the belt without dodging anything.'],
+  fict: 'The Expanse: this is where the Belter culture is born. "Beltalowda!"',
+  moonsMeta: 'MAIN BODIES'
+},
+ceres: {
+  kind: 'Dwarf planet',
+  quick: [['DIAMETER','940 km'],['GRAVITY','0.029 g'],['DAY','9 h'],['YEAR','4.6 years'],['WATER','~25% of the mass'],['DAWN','2015 to 2018']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Region','Main belt, between Mars and Jupiter'],['Distance from the Sun','414 million km (2.8 AU)'],['Year','4.6 years'],['Day','9 hours']]},
+    {t:'STRUCTURE', rows:[['Diameter','940 km, a third of the mass of the whole belt'],['Water','Up to 25% of the mass, more fresh water than all of Earth'],['Occator','The crater of the bright spots, 92 km across'],['Ahuna Mons','A 4 km cryovolcano that erupted salty mud, not lava'],['Underneath','A reservoir of brine still liquid, fed by salt and pressure']]},
+    {t:'RECORD', rows:[['January 1, 1801','Giuseppe Piazzi finds the first asteroid in history'],['The confusion','It was called a planet for 50 years, became an asteroid, and in 2006 a dwarf planet'],['Dawn (2015 to 2018)','The first spacecraft to orbit a dwarf planet, and the first to orbit two different worlds'],['The bright spots','Sodium carbonate: salt that rose from underground and dried on the surface, still today'],['Organics','Dawn found carbon compounds near Ernutet, raw material of life'],['The probe today','It ran out of fuel in 2018 and remains in orbit, silent, so as not to contaminate the surface']]}
+  ],
+  facts: ['In its first years it was classified as the 8th planet.', 'The "headlights" of the Occator crater puzzled the world until Dawn revealed them: salt deposits from an ancient ocean.'],
+  fict: 'The Expanse: Ceres station is the heart of the Belt, home of detective Miller. "Beltalowda!"'
+},
+vesta: {
+  kind: 'The planet that stopped halfway',
+  quick: [['DIAMETER','525 km'],['GRAVITY','0.026 g'],['DAY','5.3 h'],['YEAR','3.6 years'],['DAWN','2011 to 2012'],['NAKED EYE','yes, almost']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it is','Not quite an asteroid: it has an iron core, a mantle and a crust, like an unfinished planet'],['Rheasilvia','A 500 km crater at the south pole, almost the size of the body itself'],['The central peak','22 km tall, rivaling Olympus Mons on Mars for the title of tallest in the system'],['The blow','The impact tore off 1% of Vesta\'s volume and changed its rotation']]},
+    {t:'RECORD', rows:[['1807','Discovered by Heinrich Olbers, the fourth asteroid found'],['Dawn (2011 to 2012)','It spent 14 months in orbit mapping everything before moving on to Ceres'],['The meteorites','About 6% of all the meteorites that fall on Earth came from here'],['How we know','Dawn compared the mineral signature and it matched the rocks in our museums'],['What it taught','It is a time capsule of the first few million years of the Solar System']]}
+  ],
+  facts: ['It is the brightest asteroid in the sky: in ideal conditions you can see it with the naked eye.', 'You have probably already seen a piece of Vesta: they are in meteorite collections around the world.', 'The Rheasilvia impact scattered a whole family of fragments that still orbit nearby.'],
+  fict: null
+},
+palas: {
+  kind: 'Giant asteroid',
+  quick: [['DIAMETER','512 km'],['ORBIT','tilted 34°'],['YEAR','4.6 years'],['DISCOVERED','1802']],
+  sections: [
+    {t:'RECORD', rows:[['Discovered','1802 · Heinrich Olbers'],['Orbit','Tilted 34°, it crosses the belt "from above"'],['Surface','It looks like a golf ball, it is so cratered']]}
+  ],
+  facts: ['Its crooked orbit makes any mission to it extremely expensive in fuel.'],
+  fict: null
+},
+eros: {
+  kind: 'Near-Earth asteroid',
+  quick: [['SIZE','34 × 11 km'],['DAY','5.3 h'],['CLASS','NEA'],['DISCOVERED','1898']],
+  sections: [
+    {t:'RECORD', rows:[['Discovered','1898 · Carl Gustav Witt'],['Class','NEA, its real orbit crosses the neighborhood of Earth (marked here for convenience)'],['Milestone','1st asteroid to receive a LANDING: NEAR Shoemaker, 2001'],['Shape','A 34 km "peanut"']]}
+  ],
+  facts: ['NEAR Shoemaker was not designed to land, and it landed anyway, still working.'],
+  fict: 'The Expanse: Eros is where it all begins. No spoilers, kopeng.'
+},
+kuiper: {
+  kind: 'The third realm of the Solar System',
+  quick: [['EXTENT','30 to 55 AU'],['OBJECTS','>100,000 (>100 km)'],['KING','Pluto'],['MASS','~2% of Earth'],['VISITED','New Horizons'],['AGE','original material, 4.6 billion years']],
+  sections: [
+    {t:'RECORD', rows:[['What it is','A ring of frozen worlds beyond Neptune, intact leftovers of the system\'s formation'],['Predicted','By Gerard Kuiper (1951), confirmed only in 1992'],['Notable residents','Pluto, Eris, Makemake, Haumea, Arrokoth'],['Comets','It is the cradle of short-period comets, like Halley'],['Beyond it','The Oort Cloud, up to 1 light-year away']]}
+  ],
+  facts: ['It was the discovery of Eris, here, that demoted Pluto to dwarf planet in 2006.', 'It is untouched material from the formation of the Solar System, frozen in place for 4.6 billion years.'],
+  fict: 'The Expanse: beyond the Belt, the territory where Earth and Mars do not rule. In the Star Trek universe, the region becomes a smuggling route.',
+  moonsMeta: 'DWARF WORLDS & RELICS'
+},
+makemake: {
+  kind: 'The Easter world',
+  quick: [['DIAMETER','1,430 km'],['YEAR','306 years'],['DAY','22.8 h'],['TEMP','−239 °C'],['MOON','MK2'],['DISCOVERED','2005']],
+  sections: [
+    {t:'RECORD', rows:[['Name','Creator god of the Rapa Nui people; it was discovered days after Easter 2005'],['Color','Reddened by tholins, organic molecules cooked by radiation'],['Atmosphere','None detectable, the surprise of 2011'],['Moon','MK2, as dark as coal, found in 2016']]}
+  ],
+  facts: ['It is the second brightest object in the Kuiper belt after Pluto.'],
+  fict: null
+},
+haumea: {
+  kind: 'The spinning egg with a ring',
+  quick: [['DIMENSIONS','2,100 × 1,680 × 1,100 km'],['DAY','3.9 h (!)'],['YEAR','284 years'],['MOONS','2'],['RING','yes'],['DISCOVERED','2004']],
+  sections: [
+    {t:'RECORD', rows:[['Shape','It spins so fast (3.9 h) that it became an ellipsoid, like an American football'],['Ring','Discovered in 2017, the first ring around a dwarf planet'],['Moons','Hiʻiaka and Namaka, Hawaiian goddesses, daughters of Haumea'],['Origin','An ancient collision scattered the family of fragments that orbits along with it']]}
+  ],
+  facts: ['A day lasts less than a work shift: 3.9 hours.', 'The sphere here is symbolic; the real thing is a flattened egg.'],
+  fict: null
+},
+arrokoth: {
+  kind: 'The primordial snowman',
+  quick: [['SIZE','36 × 20 km'],['SHAPE','two lobes stuck together'],['YEAR','298 years'],['VISIT','New Horizons · 2019'],['NAME','"sky" in Powhatan'],['AGE','untouched for 4.6 billion years']],
+  sections: [
+    {t:'RECORD', rows:[['Record','The most distant object ever visited by a spacecraft (6.4 billion km)'],['Flyby','January 1, 2019, New Horizons, after Pluto'],['Shape','Two bodies that touched gently and stayed together forever'],['Why it matters','It is an intact sample of the material that formed the planets']]}
+  ],
+  facts: ['Before its official name, it was "Ultima Thule".', 'The collision that formed it was so gentle that you could walk faster than it.'],
+  fict: null
+},
+oort: {
+  kind: 'The shell of ice that wraps the system',
+  quick: [['EXTENT','2,000 to 100,000 AU'],['REACH','almost 1 light-year'],['NUCLEI','trillions'],['ORIGIN','long-period comets'],['SEEN','never, only inferred'],['VOYAGER 1','arrives in ~300 years']],
+  sections: [
+    {t:'RECORD', rows:[['What it is','A spherical shell of trillions of icy nuclei, predicted by Jan Oort in 1950'],['Scale','The outer edge lies almost 1 light-year away, a quarter of the way to Alpha Centauri'],['Function','The pantry of long-period comets, like Hale-Bopp'],['Voyager 1','It enters the cloud in ~300 years... and takes 30,000 years to cross it'],['Proof','Nobody has ever seen it; we know of it from the orbits of the comets it sends us']]}
+  ],
+  facts: ['If the Solar System were a coin, the Oort Cloud would be a stadium around it.', 'Technically this is where the Sun "ends" and true interstellar space begins.'],
+  fict: 'In The Three-Body Problem the Trisolaran probes cross the Oort Cloud, and every science fiction author uses it as the exit gate from home.'
 },
 /* o card do próprio sistema */
 __sys: {
