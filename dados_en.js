@@ -1205,6 +1205,17 @@ nebulosaorion: {
   facts: ['It is the nearest place where you can watch stars and planets being born right now.', 'It is in everyone\'s sky: point at Orion\'s belt and go down a little.', 'Hubble showed that most of the young stars there have a disk of dust, that is, planets under construction.'],
   fict: 'A must-see in every documentary and on astronomy book covers. In Blade Runner, Roy Batty says he saw attack ships on fire "off the shoulder of Orion".'
 },
+apophis: {
+  kind: 'The close flyby of 2029',
+  quick: [['DIAMETER','~340 m'],['DAY','30.6 h'],['YEAR','324 d'],['DISCOVERED','2004'],['THE FLYBY','APR 13, 2029 · 32,000 km'],['RISK','zero for 100 years']],
+  sections: [
+    {t:'APRIL 13, 2029', rows:[['The flyby','At 21:46 UTC it passes 32,000 km above the surface of the Earth: closer than the TV satellites, a tenth of the distance to the Moon'],['Naked eye','A point of magnitude 3 crossing the sky of Europe and Africa in a few hours, visible without a telescope: never has an asteroid this size passed so close with advance notice'],['What the Earth does to it','The Earth\'s tide will shake it, change its spin and maybe rearrange the rocks on its surface: a natural experiment, live'],['Afterwards','The flyby changes its orbit: it leaves the Aten class and becomes an Apollo, and the risk stays at zero for at least a century']]},
+    {t:'THE VISITS', rows:[['OSIRIS-APEX','The same probe that brought the Bennu sample arrives weeks after the flyby and will orbit it for 18 months, watching what the Earth did'],['Ramses','The European mission planned to arrive BEFORE, in February 2029, and follow the flyby up close'],['The laboratory','An asteroid passing at that distance is a once-in-thousands-of-years event: science will not waste it']]},
+    {t:'RECORD', rows:[['2004','Discovered in June at Kitt Peak; in December the chance of impact in 2029 reached 2.7 percent, the highest ever calculated for an asteroid'],['The alarm','It was the only object ever to reach level 4 on the Torino scale; old photos knocked the 2029 risk down within days'],['2021','The Goldstone radar refined the orbit and ruled out impacts for at least a hundred years'],['The name','Apophis, the serpent of chaos in Egyptian mythology, who tries to swallow the Sun every night']]}
+  ],
+  facts: ['On April 13, 2029 it passes 32,000 km from the Earth, closer than the geostationary satellites, and it can be seen with the naked eye.', 'In 2004 it reached a 2.7 percent chance of impact, the biggest alarm in the history of asteroids; today the risk is zero for a century.', 'OSIRIS-APEX, the probe that brought the Bennu sample, will orbit it right after the flyby to see what the Earth\'s tide did to it.'],
+  fict: 'The discoverers were fans of Stargate SG-1, and named the rock after the show\'s villain, who in turn comes from the Egyptian serpent of chaos.'
+},
 /* o card do próprio sistema */
 __sys: {
   trappist: { hint: '7 WORLDS IN LESS SPACE THAN THE ORBIT OF MERCURY', card: { desig: 'STAR SYSTEM · AQUARIUS', kind: 'Seven compact worlds',

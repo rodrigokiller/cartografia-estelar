@@ -78,6 +78,7 @@ ui: {
   'Até no cinturão de asteroides: os faróis de Ceres são sal de uma salmoura que ainda está líquida lá embaixo.':'Even in the asteroid belt: the headlights of Ceres are salt from a brine that is still liquid down there.',
   'Nove oceanos escondidos num só sistema, e a lista continua crescendo. No universo, a água é a regra, não a exceção.':'Nine hidden oceans in a single system, and the list keeps growing. In the universe, water is the rule, not the exception.',
   'Quatro oceanos escondidos num só sistema. No universo, a água é a regra, não a exceção.':'Four hidden oceans in a single system. In the universe, water is the rule, not the exception.',
+  'APOPHIS PASSA A 32 MIL KM DA TERRA · a olho nu na Europa e na África':'APOPHIS PASSES 32,000 KM FROM EARTH · naked eye over Europe and Africa',
   'TAMANHO EM ESCALA':'SIZE TO SCALE', 'FORA DE ESCALA':'NOT TO SCALE', 'LINK DA BANCADA COPIADO · cole e envie':'BENCH LINK COPIED · paste and send',
   /* eventos */
   '◈ EVENTOS DO CÉU':'◈ SKY EVENTS', 'BUSCAR EVENTO...':'SEARCH EVENTS...',

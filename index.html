@@ -2528,7 +2528,18 @@ const BELT_BODIES = [
     {t:'REGISTRO', rows:[['1999','Descoberto pelo levantamento LINEAR'],['O nome','Ryugu-jo, o palácio do Rei Dragão no fundo do mar, do conto de Urashima Taro'],['A forma','Um pião de 900 metros, entulho solto girando em 7,6 horas'],['O par','Bennu e Ryugu são quase gêmeos: mesma forma de pião, mesma escuridão, mesma química de água e carbono']]}
   ],
   facts:['A Hayabusa2 abriu uma cratera artificial com uma bala de cobre e coletou material do subsolo, nunca tocado pelo Sol.','Os 5,4 gramas que voltaram tinham uracila, uma das letras do RNA, e vitamina B3.','Reflete só 4 por cento da luz: mais escuro que carvão.'],
-  fict:'No conto de Urashima Taro, o pescador visita o palácio do dragão no fundo do mar e volta com uma caixa que não devia abrir: a Hayabusa2 voltou do Ryugu com a caixa, e abriu.', moons:[]}
+  fict:'No conto de Urashima Taro, o pescador visita o palácio do dragão no fundo do mar e volta com uma caixa que não devia abrir: a Hayabusa2 voltou do Ryugu com a caixa, e abriu.', moons:[]},
+ {id:'apophis', name:'APOPHIS', desig:'NEA-99942 · ASTEROIDE', kind:'A passagem rasante de 2029', hab:0, gbar:0.000004, pop:'0',
+  belt:{angle:0.8, r:15.2},
+  quick:[['DIÂMETRO','~340 m'],['DIA','30,6 h'],['ANO','324 d'],['DESCOBERTA','2004'],['A PASSAGEM','13 ABR 2029 · 32 mil km'],['RISCO','zero por 100 anos']],
+  visual:{mode:'rocky', c1:'#6e6558', c2:'#8d8373', c3:'#4a4238', scale:8.0, seed:20.04, crater:0.85},
+  sections:[
+    {t:'13 DE ABRIL DE 2029', rows:[['A passagem','Às 21h46 UTC ele passa a 32 mil km da superfície da Terra: mais perto que os satélites de TV, a um décimo da distância da Lua'],['A olho nu','Um ponto de magnitude 3 cruzando o céu da Europa e da África em poucas horas, visível sem telescópio: nunca um asteroide desse tamanho passou tão perto com aviso prévio'],['O que a Terra faz com ele','A maré terrestre vai sacudi-lo, mudar a rotação e talvez rearranjar as pedras da superfície: uma experiência natural, ao vivo'],['Depois','A passagem muda a órbita dele: sai da classe Aten e vira Apollo, e o risco fica zerado por pelo menos um século']]},
+    {t:'AS VISITAS', rows:[['OSIRIS-APEX','A mesma sonda que trouxe a amostra de Bennu chega semanas depois da passagem e vai orbitá-lo por 18 meses, observando o que a Terra fez'],['Ramses','A missão europeia planejada para chegar ANTES, em fevereiro de 2029, e acompanhar a passagem de perto'],['O laboratório','Um asteroide passando a essa distância é um evento de uma vez a cada milhares de anos: a ciência não vai desperdiçar']]},
+    {t:'REGISTRO', rows:[['2004','Descoberto em junho no Kitt Peak; em dezembro a chance de impacto em 2029 chegou a 2,7 por cento, a maior já calculada para um asteroide'],['O alarme','Foi o único objeto a atingir o nível 4 na escala de Torino; fotos antigas derrubaram o risco de 2029 em dias'],['2021','O radar de Goldstone refinou a órbita e descartou impacto por pelo menos cem anos'],['O nome','Apófis, a serpente do caos da mitologia egípcia, que tenta engolir o Sol toda noite']]}
+  ],
+  facts:['Em 13 de abril de 2029 ele passa a 32 mil km da Terra, mais perto que os satélites geoestacionários, e dá para ver a olho nu.','Em 2004 chegou a ter 2,7 por cento de chance de impacto, o maior alarme da história dos asteroides; hoje o risco é zero por um século.','A OSIRIS-APEX, a sonda que trouxe a amostra de Bennu, vai orbitá-lo logo depois da passagem para ver o que a maré da Terra fez nele.'],
+  fict:'Os descobridores eram fãs de Stargate SG-1, e batizaram a pedra com o nome do vilão da série, que por sua vez vem da serpente egípcia do caos.', moons:[]}
 ];
 </script>
 <script>
@@ -5114,7 +5125,7 @@ const ESCALA_REAL_LUAS = {
 /* distância real das sondas ao Sol em UA (meados de 2026) */
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, pathfinder:1.52, viking1:1.52, cassini:9.54};
 /* pedras do cinturão: [UA, raio km] (no cênico elas moram no anel desenhado) */
-const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4], bennu:[1.13, 0.245], ryugu:[1.19, 0.45]};
+const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4], bennu:[1.13, 0.245], ryugu:[1.19, 0.45], apophis:[0.92, 0.17]};
 /* O CÉU REAL (só na escala real): as estrelas mais brilhantes do céu em
    posição VERDADEIRA (RA/DEC J2000 convertidos ao plano da eclíptica da cena)
    e cor pela classe espectral. É o começo do sonho das constelações. */
@@ -6142,7 +6153,8 @@ function buildSystem(sysId, spin0){
                  /* r240 · elementos do SBDB (epoca 9 JUN 2026 = JD 2461200.5; o Bennu vem
                     da epoca 2011 propagado pelo movimento medio 0,82446 graus/dia) */
                  bennu:{a:1.1264, e:0.2037, i:6.035, no:2.061, w:66.22, ma:70.0},
-                 ryugu:{a:1.1909, e:0.1911, i:5.866, no:251.29, w:211.61, ma:62.34}};
+                 ryugu:{a:1.1909, e:0.1911, i:5.866, no:251.29, w:211.61, ma:62.34},
+                 apophis:{a:0.92236, e:0.19115, i:3.341, no:203.89, w:126.68, ma:175.33}};
     const ELA_EP = Date.UTC(2026,5,9);
     for(const a of S.belt){
       const eA = ELA[a.id];
@@ -14108,7 +14120,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r243';
+const BUILD = 'r244';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -14630,6 +14642,7 @@ const EVENTOS = [
   {t:'ECLIPSE TOTAL DO SOL · o dos 6 minutos no Egito', d:'2027-08-02T10:07:00Z', g:'eclipse'},
   {t:'ECLIPSE ANULAR DO SOL', d:'2028-01-26T15:08:00Z', g:'eclipse', ap:1},
   {t:'ECLIPSE TOTAL DO SOL · Austrália e Nova Zelândia', d:'2028-07-22T02:56:00Z', g:'eclipse'},
+  {t:'APOPHIS PASSA A 32 MIL KM DA TERRA · a olho nu na Europa e na África', d:'2029-04-13T21:46:00Z', g:'marco'},
   {t:'ECLIPSE TOTAL DA LUA', d:'2028-12-31T16:52:00Z', g:'eclipse', ap:1},
   {t:'ECLIPSE TOTAL DA LUA', d:'2029-06-26T03:22:00Z', g:'eclipse', ap:1},
   {t:'TRÂNSITO DE MERCÚRIO', d:'2032-11-13T08:54:00Z', g:'transito'},
