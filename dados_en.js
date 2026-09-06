@@ -902,8 +902,359 @@ swift: {
   facts: ['It is the father of the Perseids: the dust it leaves behind becomes the August meteor shower.', 'The nucleus is 26 km, twice the asteroid that killed the dinosaurs, and its orbit crosses ours: the largest watched object in the sky.', 'It was the first comet linked to a meteor shower, by Schiaparelli in 1866.'],
   fict: 'In Catholic tradition the Perseids are the Tears of Saint Lawrence, martyred on August 10, 258: the shower arrives every year on the saint\'s day.'
 },
+/* ---- fase 3, parte 1 (r242): TRAPPIST-1, Alpha Centauri, Sirius, Kepler-452, as estrelas famosas, Sgr A*, M16 e Orion ---- */
+trappist1: {
+  kind: 'Ultracool red dwarf',
+  quick: [['TYPE','M8V'],['SURF. TEMP.','2,290 °C'],['MASS','0.09 Sun'],['RADIUS','~Jupiter'],['PLANETS','7'],['DISTANCE','40.7 ly']],
+  sections: [
+    {t:'STRUCTURE', rows:[['Type','Ultracool red dwarf (M8V)'],['Radius','Slightly larger than Jupiter'],['Mass','9% of the mass of the Sun'],['Temperature','2,290 °C'],['Lifetime','Trillions of years, it will outlive the Sun']]},
+    {t:'RECORD', rows:[['Distance','40.7 light-years'],['Constellation','Aquarius'],['Planets','7, all rocky, discovered in 2016 and 2017'],['James Webb','Has already taken the temperature of b and c: they look like worlds without atmosphere'],['Next in line','e, f and g: the habitable zone is still on trial']]}
+  ],
+  facts: ['All 7 planets would fit INSIDE the orbit of Mercury.', 'Seen from one of them, the neighbors would look larger in the sky than our Moon.'],
+  fict: null
+},
+t1b: {
+  kind: 'Rocky · tidally locked',
+  quick: [['RADIUS','1.12 R⊕'],['GRAVITY','~1.1 g'],['YEAR','1.5 d'],['EQ. TEMP.','~120 °C'],['MOONS','0'],['WATER','unlikely']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Distance from the star','0.012 AU'],['Year','1.51 days'],['Zone','Too hot'],['Rotation type','Synchronous, one side in eternal day, the other in eternal night'],['Seasons','No (no relevant tilt)']]},
+    {t:'RECORD', rows:[['Discovered','2016 to 2017 · TRAPPIST telescope + Spitzer'],['Method','Transit (shadow on the star)'],['Water','Possible on the ones in the habitable zone'],['Population','?']]}
+  ],
+  facts: ['A year here lasts 36 hours. New Year\'s Eve every week... more than once.', 'JWST (2023): dayside at ~230 °C. Bare rock, no detectable atmosphere; a thin veil of CO₂ is still debated.']
+},
+t1c: {
+  kind: 'Rocky · tidally locked',
+  quick: [['RADIUS','1.10 R⊕'],['GRAVITY','~1.1 g'],['YEAR','2.4 d'],['EQ. TEMP.','~70 °C'],['MOONS','0'],['WATER','unlikely']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Distance from the star','0.016 AU'],['Year','2.42 days'],['Zone','Hot'],['Rotation type','Synchronous, one side in eternal day, the other in eternal night'],['Seasons','No (no relevant tilt)']]},
+    {t:'RECORD', rows:[['Discovered','2016 to 2017 · TRAPPIST telescope + Spitzer'],['Method','Transit (shadow on the star)'],['Water','Possible on the ones in the habitable zone'],['Population','?']]}
+  ],
+  facts: ['JWST (2023) measured the dayside: ~110 °C. A dense Venus was ruled out; if there is an atmosphere, it is thin.']
+},
+t1d: {
+  kind: 'Rocky · tidally locked',
+  quick: [['RADIUS','0.79 R⊕'],['GRAVITY','~0.6 g'],['YEAR','4.0 d'],['EQ. TEMP.','~15 °C'],['MOONS','0'],['WATER','possible']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Distance from the star','0.022 AU'],['Year','4.05 days'],['Zone','Hot edge of the habitable zone'],['Rotation type','Synchronous, one side in eternal day, the other in eternal night'],['Seasons','No (no relevant tilt)']]},
+    {t:'RECORD', rows:[['Discovered','2016 to 2017 · TRAPPIST telescope + Spitzer'],['Method','Transit (shadow on the star)'],['Water','Possible on the ones in the habitable zone'],['Population','?']]}
+  ],
+  facts: ['An equilibrium temperature similar to Earth\'s, but everything depends on the atmosphere.']
+},
+t1e: {
+  kind: 'Rocky · tidally locked',
+  quick: [['RADIUS','0.92 R⊕'],['GRAVITY','~0.8 g'],['YEAR','6.1 d'],['EQ. TEMP.','~−22 °C'],['MOONS','0'],['WATER','likely ★']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Distance from the star','0.029 AU'],['Year','6.10 days'],['Zone','HABITABLE ZONE, the favorite'],['Rotation type','Synchronous, one side in eternal day, the other in eternal night'],['Seasons','No (no relevant tilt)']]},
+    {t:'RECORD', rows:[['Discovered','2016 to 2017 · TRAPPIST telescope + Spitzer'],['Method','Transit (shadow on the star)'],['Water','Possible on the ones in the habitable zone'],['Population','?']]}
+  ],
+  facts: ['The best candidate in the system: a density similar to Earth\'s, a possible ocean.', 'If it has an atmosphere, the side of "eternal dusk" would have a perpetually mild climate.', 'Next in James Webb\'s line: after the dry verdict on b and c, it is the one carrying the hope.']
+},
+t1f: {
+  kind: 'Rocky · tidally locked',
+  quick: [['RADIUS','1.04 R⊕'],['GRAVITY','~1.0 g'],['YEAR','9.2 d'],['EQ. TEMP.','~−54 °C'],['MOONS','0'],['WATER','possible (ice)']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Distance from the star','0.038 AU'],['Year','9.21 days'],['Zone','Habitable zone (cold)'],['Rotation type','Synchronous, one side in eternal day, the other in eternal night'],['Seasons','No (no relevant tilt)']]},
+    {t:'RECORD', rows:[['Discovered','2016 to 2017 · TRAPPIST telescope + Spitzer'],['Method','Transit (shadow on the star)'],['Water','Possible on the ones in the habitable zone'],['Population','?']]}
+  ],
+  facts: ['A low density suggests A LOT of water, maybe a frozen ocean world.']
+},
+t1g: {
+  kind: 'Rocky · tidally locked',
+  quick: [['RADIUS','1.13 R⊕'],['GRAVITY','~1.0 g'],['YEAR','12.4 d'],['EQ. TEMP.','~−74 °C'],['MOONS','0'],['WATER','possible (ice)']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Distance from the star','0.047 AU'],['Year','12.35 days'],['Zone','Cold edge of the habitable zone'],['Rotation type','Synchronous, one side in eternal day, the other in eternal night'],['Seasons','No (no relevant tilt)']]},
+    {t:'RECORD', rows:[['Discovered','2016 to 2017 · TRAPPIST telescope + Spitzer'],['Method','Transit (shadow on the star)'],['Water','Possible on the ones in the habitable zone'],['Population','?']]}
+  ],
+  facts: ['The largest of the seven. A plausible "Hoth": ice outside, maybe an ocean underneath.']
+},
+t1h: {
+  kind: 'Rocky · tidally locked',
+  quick: [['RADIUS','0.76 R⊕'],['GRAVITY','~0.6 g'],['YEAR','18.8 d'],['EQ. TEMP.','~−103 °C'],['MOONS','0'],['WATER','ice']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Distance from the star','0.062 AU'],['Year','18.77 days'],['Zone','Cold, beyond the habitable zone'],['Rotation type','Synchronous, one side in eternal day, the other in eternal night'],['Seasons','No (no relevant tilt)']]},
+    {t:'RECORD', rows:[['Discovered','2016 to 2017 · TRAPPIST telescope + Spitzer'],['Method','Transit (shadow on the star)'],['Water','Possible on the ones in the habitable zone'],['Population','?']]}
+  ],
+  facts: ['The farthest one, and still 10 times closer to its star than Mercury is to the Sun.']
+},
+acena: {
+  kind: 'Twin of the Sun',
+  quick: [['TYPE','G2V'],['RADIUS','1.22 R☉'],['SURF. TEMP.','5,500 °C'],['MASS','1.1 Sun'],['AGE','~5.3 billion years'],['DISTANCE','4.37 ly']],
+  sections: [
+    {t:'STRUCTURE', rows:[['Type','G2V, the same class as the Sun'],['Mass','1.1 solar masses'],['Radius','1.22 R☉'],['Temperature','5,500 °C'],['Luminosity','1.5 × the Sun']]},
+    {t:'RECORD', rows:[['Distance','4.37 light-years, the nearest system'],['Constellation','Centaurus'],['System','Triple: A + B + Proxima'],['Orbit A-B','79.9 years · 11 to 36 AU'],['Trivia','The brightest "star" in the sky of Mars']]}
+  ],
+  facts: ['From here, the Sun would be just a star in the constellation Cassiopeia.', 'With today\'s probe technology, the trip would take ~70,000 years.'],
+  fict: 'Avatar: Pandora is a fictional moon of this system. Starfleet places one of its first shipyards here.'
+},
+acenb: {
+  kind: 'Orange dwarf (K1V)',
+  quick: [['TYPE','K1V'],['SURF. TEMP.','5,000 °C'],['MASS','0.9 Sun'],['RADIUS','0.86 R☉'],['ORBIT','79.9 years'],['SEPARATION','11 to 36 AU']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Orbit around A','79.9 years'],['Distance from A','11 to 36 AU (elliptical)'],['Seen from a planet of A','It would shine like hundreds of full moons']]},
+    {t:'RECORD', rows:[['Type','K1V, an orange dwarf, a bit smaller than the Sun'],['Temperature','~5,000 °C'],['Planets','None confirmed to date'],['Note','A planet was once announced here (αCen Bb), later refuted']]}
+  ],
+  facts: ['A and B get as close as Sun-Saturn, and as far as Sun-Pluto.'],
+  fict: null
+},
+proxima: {
+  kind: 'Red dwarf (M5.5Ve) · flare star',
+  quick: [['TYPE','M5.5Ve'],['SURF. TEMP.','2,700 °C'],['MASS','0.12 Sun'],['RADIUS','0.15 R☉'],['DISTANCE','4.24 ly'],['PLANETS','2 confirmed']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Orbit around the A and B pair','~550,000 years'],['Real distance from the pair','~13,000 AU (0.2 ly). Out of scale here.'],['Rotation','~83 days, slow for a red dwarf']]},
+    {t:'THE TEMPER', rows:[['Flare star','It doubles in brightness within minutes, and goes back to normal as if nothing happened'],['The 2019 superflare','It became 14,000 times brighter in ultraviolet, for seven seconds'],['What that does','A burst like that strips the atmosphere of a nearby planet, layer by layer'],['The frequency','Not a rare event: it happens all the time, and has for billions of years'],['The verdict','It has probably sterilized its own planets long before we existed']]},
+    {t:'RECORD', rows:[['Distance','4.24 light-years, the nearest star to the Sun, and it will stay so for millennia'],['Discovered','1915, by Robert Innes, of the Johannesburg Observatory'],['Lifetime','About 4 trillion years: it will shine long after all the others go out'],['The family','Proxima b (2016), d (2022) and c still a candidate']]}
+  ],
+  facts: ['It is the nearest star to the Sun and still invisible to the naked eye: you need a telescope to see our next-door neighbor.', 'In 2019 it let out a flash 14,000 times brighter than normal, and it has probably done that millions of times.', 'It will keep shining for 4 trillion years, long enough for the universe to become unrecognizable.', 'The light leaving it today reaches us four years and three months from now.'],
+  fict: 'Project Breakthrough Starshot: light sails at 20% of the speed of light would get here in ~20 years.'
+},
+proximab: {
+  kind: 'Rocky · habitable zone',
+  quick: [['RADIUS','~1.03 R⊕'],['MASS','≥1.07 M⊕'],['YEAR','11.2 d'],['EQ. TEMP.','−39 °C'],['ZONE','habitable'],['WATER','possible']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','11.19 days'],['Distance from the star','0.0485 AU, or 5% of the distance between the Sun and the Earth'],['Rotation','Probably synchronous, with one side in eternal day'],['The terminator','The band of eternal dusk between the hot side and the frozen one is where life would stand a chance'],['Seasons','There are none']]},
+    {t:'RECORD', rows:[['2016','Discovered by ESO in the Pale Red Dot campaign, which watched the star night after night'],['The light','It receives 65% of the energy the Earth gets, but almost all of it in red and infrared'],['The problem','The star\'s bursts have probably stripped any atmosphere it ever had'],['The hope','If it has a strong magnetic field, or if the atmosphere rebuilds itself, there is still a chance'],['The check','It does not transit in front of the star as seen from here, which makes studying its atmosphere very hard']]}
+  ],
+  facts: ['It is the nearest potentially habitable exoplanet there is, and probably always will be.', 'The sky there would be reddish orange, with the star looking three times larger than our Sun.', 'Since it does not pass in front of its star as seen from Earth, not even James Webb can properly analyze its atmosphere.', 'It is the target of Breakthrough Starshot: light sails that would arrive in twenty years, against the seventy thousand years of an ordinary probe.'],
+  fict: 'It is the favorite interstellar address of fiction: it appears in Aurora, by Kim Stanley Robinson, and in practically every story of a first crewed trip to another star.'
+},
+proximad: {
+  kind: 'Hot sub-Earth',
+  quick: [['RADIUS','~0.81 R⊕'],['MASS','~0.26 M⊕'],['YEAR','5.1 d'],['EQ. TEMP.','~90 °C'],['ZONE','too hot'],['WATER','no']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','5.12 days'],['Distance from the star','0.029 AU'],['Rotation','Probably synchronous']]},
+    {t:'RECORD', rows:[['Discovered','2022 · ESPRESSO spectrograph (VLT)'],['Mass','A quarter of Earth\'s, one of the smallest ever detected by radial velocity'],['Surface','Hot rock, with no relevant atmosphere']]}
+  ],
+  facts: ['Detecting it required measuring the star "wobbling" at just 40 cm/s, walking speed.'],
+  fict: null
+},
+siriusa: {
+  kind: 'The brightest star of the night sky',
+  quick: [['TYPE','A1V'],['SURF. TEMP.','9,940 °C'],['MASS','2.06 Sun'],['RADIUS','1.71 R☉'],['DISTANCE','8.6 ly'],['LUMINOSITY','25 Suns']],
+  sections: [
+    {t:'STRUCTURE', rows:[['Type','A1V, white, hot and young'],['Mass','2.06 solar masses'],['Temperature','9,940 °C'],['Age','~240 million years'],['Luminosity','25 × the Sun']]},
+    {t:'RECORD', rows:[['Distance','8.6 light-years'],['Constellation','Canis Major'],['Name','From the Greek seirios, "scorching"'],['Companion','Sirius B, the white dwarf (tap the orbit)'],['In ancient Egypt','Its heliacal rising announced the flooding of the Nile']]}
+  ],
+  facts: ['It shines twice as bright as the second brightest (Canopus).', 'It is approaching: in 60,000 years it will shine even brighter.'],
+  fict: 'Harry Potter: Sirius Black, the animagus in dog form, honors the star of Canis Major.'
+},
+siriusb: {
+  kind: 'A stellar corpse the size of the Earth',
+  quick: [['TYPE','DA2 (white dwarf)'],['MASS','1.02 Sun'],['RADIUS','0.0084 R☉ (≈ Earth)'],['SURF. TEMP.','25,000 °C'],['ORBIT','50.1 years'],['DENSITY','~1 t/cm³']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Orbit around A','50.1 years'],['Separation','8 to 31 AU'],['Surface gravity','~350,000 times Earth\'s']]},
+    {t:'RECORD', rows:[['Discovered','1862 · Alvan Clark, testing a new telescope'],['Origin','It was a 5 M☉ star, became a giant and collapsed ~120 million years ago'],['Density','A teaspoon would weigh ~5 tonnes'],['The Sun\'s future','Billions of years from now, the Sun becomes something like this']]}
+  ],
+  facts: ['The mass of the Sun squeezed into the size of the Earth.', 'It was predicted by mathematics (the "wobble" of Sirius A) 18 years before it was seen.'],
+  fict: null
+},
+kepler452s: {
+  kind: 'An older Sun',
+  quick: [['TYPE','G2'],['RADIUS','1.11 R☉'],['SURF. TEMP.','5,500 °C'],['MASS','1.04 Sun'],['AGE','6 billion years'],['DISTANCE','~1,800 ly']],
+  sections: [
+    {t:'STRUCTURE', rows:[['Type','G2, like the Sun, 1.5 billion years older'],['Mass','1.04 solar masses'],['Luminosity','20% brighter than the Sun']]},
+    {t:'RECORD', rows:[['Distance','~1,800 light-years'],['Constellation','Cygnus'],['System discovered','2015 · Kepler space telescope'],['Why it matters','It shows what our system may look like in the future']]}
+  ],
+  facts: ['The light we see from it left when the Earth was living through the Iron Age.'],
+  fict: null
+},
+kepler452b: {
+  kind: 'Super-Earth · "Earth 2.0"',
+  quick: [['RADIUS','1.63 R⊕'],['YEAR','385 d'],['EQ. TEMP.','−8 °C'],['ZONE','habitable'],['INSOLATION','110% of Earth'],['WATER','possible']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','384.8 days, almost the same as ours'],['Distance from the star','1.05 AU'],['Zone','Habitable for 6 billion years']]},
+    {t:'RECORD', rows:[['Discovered','2015 · NASA/Kepler, nicknamed "Earth 2.0"'],['Size','60% larger than Earth'],['Gravity','~2 × ours (if rocky)'],['The risk','With the star warming up, it may be entering a runaway greenhouse'],['Water','If it exists, oceans are possible']]}
+  ],
+  facts: ['A year there lasts 385 days: you would hardly need to change your calendar.', 'If the Earth has a "future", it may look like this one: 1.5 billion years older.'],
+  fict: 'In the world press of 2015: "Earth\'s older cousin".'
+},
+betelgeuses: {
+  kind: 'Red supergiant at the end of its life',
+  quick: [['TYPE','M1-2 Ia'],['RADIUS','~760 R☉'],['MASS','16 to 19 Suns'],['SURF. TEMP.','3,300 °C'],['AGE','~8 to 10 million years'],['DISTANCE','~550 ly']],
+  sections: [
+    {t:'STRUCTURE', rows:[['Radius','~760 solar radii. In the Sun\'s place, its surface would reach past the orbit of Jupiter'],['Mass','16 to 19 solar masses, but spread over a gigantic volume'],['Density','The "gas" of the surface is thinner than the best vacuum made in a laboratory'],['Temperature','3,300 °C, cool for a star, and that is why it is red'],['Mass loss','It blows off the equivalent of one Earth per year, and wraps itself in its own dust']]},
+    {t:'ROTATION & PULSE', rows:[['Rotation','It spins too fast for its size, and nobody has properly explained why'],['The heartbeat','It swells and shrinks in a ~400-day cycle, changing brightness to the naked eye'],['The long cycle','There is a second cycle of ~2,100 days, and it is the key to the recent mystery']]},
+    {t:'THE GREAT DIMMING', rows:[['December 2019','The brightness dropped by half and the world thought it was about to explode'],['The investigation','Telescopes around the planet turned to the shoulder of Orion'],['The answer','It ejected a bubble of gas that cooled into dust, blocking part of its own light'],['The anticlimax','In 2020 the brightness went back to normal. It was not the end, it was a sneeze.']]},
+    {t:'THE COMPANION', rows:[['The guess','In 2024 it was proposed that the long cycle was caused by a companion star'],['The nickname','Astronomers started calling the hypothesis Betelbuddy'],['2025','It was detected: a small star orbiting inside the atmosphere of the giant'],['Its fate','Betelgeuse will end up swallowing the companion']]},
+    {t:'THE END', rows:[['When','Astronomically soon: within the next tens of thousands of years'],['What it will be like','It will shine like the full Moon, visible by day, and last months in the sky'],['Danger','None. At 550 light-years, it is too far to harm us'],['What remains','A neutron star and a new nebula in place of Orion\'s shoulder']]}
+  ],
+  facts: ['If it were in the Sun\'s place, the Earth would be inside it.', 'The surface is so thin that it is emptier than the best vacuum we can make here.', 'The Great Dimming of 2019 was not the omen of the explosion: it was a cloud of dust it blew out itself.', 'It may have already exploded. The light of the event would take some 550 years to get here.', 'When it explodes, it will be the brightest object in the night sky and you could read by its light.'],
+  fict: 'Beetlejuice (1988): the film\'s title is a pun on the star. In The Hitchhiker\'s Guide, Ford Prefect comes "from the vicinity of Betelgeuse".'
+},
+polariss: {
+  kind: 'The North Star (for now)',
+  quick: [['TYPE','F7 Ib, supergiant'],['RADIUS','~37 R☉'],['MASS','~5 Suns'],['SURF. TEMP.','5,700 °C'],['DISTANCE','~433 ly'],['BRIGHTNESS','~1,260 Suns']],
+  sections: [
+    {t:'THE NORTH STAR', rows:[['Why it','The Earth\'s axis points almost exactly at it: the whole sky turns around Polaris'],['Navigation','Centuries of sailors found north (and their own latitude) just by looking at its height'],['How to find it','The two front stars of the Big Dipper point straight at it']]},
+    {t:'FOR NOW', rows:[['Precession','The Earth\'s axis wobbles like a spinning top, one turn every 26,000 years'],['The past','For the Egyptians of the pyramids, the north star was THUBAN, in Draco'],['The future','In ~12,000 years the post passes to VEGA'],['Today','We live in the best era: Polaris has never been so well aligned']]},
+    {t:'THE CEPHEID', rows:[['What it is','The nearest classical Cepheid: it PULSES, and its brightness rises and falls in 4 days'],['Why it matters','Cepheids are the rulers of the universe: the pulse reveals the true brightness, and the brightness reveals the distance'],['The family','It is triple: a dwarf close by (Ab) and a looser companion (B)']]}
+  ],
+  facts: ['The whole sky turns around it: in a long-exposure photo, Polaris is the still point at the center of the trails.'],
+  fict: 'From Shakespeare to Interstellar, pointing at the North Star became synonymous with having a heading.'
+},
+aldebarans: {
+  kind: 'The orange eye of the Bull',
+  quick: [['TYPE','K5 III, giant'],['RADIUS','~44 R☉'],['MASS','~1.2 Sun'],['SURF. TEMP.','3,600 °C'],['DISTANCE','65 ly'],['BRIGHTNESS','~440 Suns']],
+  sections: [
+    {t:'THE GIANT', rows:[['What it is','A Sun-like star that has ALREADY aged: it exhausted the hydrogen in its core and swelled 44 times'],['The warning','It is a portrait of the Sun\'s future some 5 billion years from now'],['The color','Orange because the surface cooled as it swelled: 3,600 °C']]},
+    {t:'THE EYE OF THE BULL', rows:[['In the sky','It is the brightest star of Taurus, the red eye of the drawing'],['The Hyades','It seems to belong to the V-shaped cluster, but that is an illusion: it lies HALFWAY there'],['Occultations','The Moon passes in front of it several times a year: you can watch the star blink out and back at the lunar edge']]},
+    {t:'THE VISIT', rows:[['Pioneer 10','The first probe to leave the inner system is traveling TOWARD Aldebaran'],['The arrival','Some 2 million years from now, if nothing deflects it'],['The planet','A giant planet candidate (Aldebaran b) was proposed and remains under debate']]}
+  ],
+  facts: ['The Moon occults Aldebaran several times a year: it is the easiest bright star to watch vanish behind it.'],
+  fict: 'Pioneer 10, with humanity\'s golden plaque aboard, reaches its neighborhood in ~2 million years.'
+},
+rigels: {
+  kind: 'The blue supergiant at the foot of Orion',
+  quick: [['TYPE','B8 Ia, supergiant'],['RADIUS','~75 R☉'],['MASS','~21 Suns'],['SURF. TEMP.','12,000 °C'],['DISTANCE','~860 ly'],['BRIGHTNESS','~120,000 Suns']],
+  sections: [
+    {t:'THE POWER', rows:[['Brightness','~120,000 times the Sun: even at 860 light-years it is the 7th brightest star in the sky'],['The color','Blue because the surface boils at 12,000 °C'],['The short life','A star like this burns its fuel in a few million years and dies as a supernova']]},
+    {t:'THE FOOT OF ORION', rows:[['In the drawing','It is the hunter\'s left foot, opposite the red shoulder of Betelgeuse'],['The contrast','Orion carries both: the young, furious blue one below, the old, swollen red one above'],['The Witch','Rigel\'s light illuminates the Witch Head Nebula, which shines by reflecting it']]},
+    {t:'THE FAMILY', rows:[['System','Rigel is not alone: at least FOUR stars dance together'],['Rigel B','A tight blue pair orbiting the giant at some 2,200 AU'],['The future','When it explodes, it will shine brighter than the full Moon in the sky of Earth']]}
+  ],
+  facts: ['Rigel is ~120,000 times more luminous than the Sun: if it were where Sirius is, it would cast shadows at night.'],
+  fict: 'In Star Trek, the planets of Rigel appear from the very first pilot of the original series.'
+},
+antaress: {
+  kind: 'The red heart of the Scorpion',
+  quick: [['TYPE','M1.5 Iab, supergiant'],['RADIUS','~680 R☉'],['MASS','~12 Suns'],['SURF. TEMP.','3,200 °C'],['DISTANCE','~550 ly'],['BRIGHTNESS','~75,000 Suns']],
+  sections: [
+    {t:'THE RIVAL OF MARS', rows:[['The name','Anti-Ares, the rival of Mars: so red that the Greeks set it to compete with the planet'],['The duel','Mars passes near it in the sky every two years, and you can compare the two with the naked eye'],['The heart','It is the heart of the Scorpion, set in the middle of the drawing']]},
+    {t:'THE MONSTER', rows:[['Radius','~680 solar radii: in the Sun\'s place it would swallow Mars and come close to Jupiter'],['The surface','So thin and turbulent that telescopes see giant cells of gas rising and sinking'],['The end','It will explode as a supernova within the next few hundred thousand years']]},
+    {t:'THE COMPANION', rows:[['Antares B','A hot blue star orbiting the giant at ~550 AU'],['The impossible color','Next to the orange glare, it looks GREEN in the telescope: one of the rare "green" stars of the sky, by contrast'],['The eclipse','It only shows well when the Moon hides the giant for a few seconds']]}
+  ],
+  facts: ['Antares is so large that, in the Sun\'s place, its surface would reach past the asteroid belt.'],
+  fict: 'The name means RIVAL OF MARS: the ancients thought the star and the planet competed over which was redder.'
+},
+sgra: {
+  kind: 'The center of our galaxy',
+  quick: [['MASS','4.3 million Suns'],['RADIUS','~17 R☉ (horizon)'],['DISTANCE','26,000 ly'],['DIAMETER','~24 million km'],['PHOTO','EHT · 2022'],['NOBEL','2020']],
+  sections: [
+    {t:'STRUCTURE', rows:[['Mass','4.3 million suns squeezed into a point'],['The horizon','About 24 million km across, it would fit inside the orbit of Mercury'],['The glow','Surprisingly faint: it is on a diet, swallowing very little matter'],['Comparison','The black hole of M87, the other one photographed, is a thousand times more massive']]},
+    {t:'HOW WE KNOW', rows:[['The stars','Decades following stars that orbit an invisible point at the center of the galaxy'],['S2','One of them passes at 3% of the speed of light at its closest point, and completes a lap in 16 years'],['The math','From their orbits, the central mass can only be a black hole'],['Nobel 2020','Reinhard Genzel and Andrea Ghez took the prize for that discovery'],['The photo','In 2022 the Event Horizon Telescope showed the ring of light around the shadow']]},
+    {t:'RECORD', rows:[['Where','In the direction of Sagittarius, 26,000 light-years away, behind clouds of dust'],['Why we cannot see it','The dust of the galactic disk blocks visible light: only radio and infrared get through'],['The 2019 flare','It swallowed something and shone 75 times brighter for a few hours'],['Scale note','Symbolic scene: the S stars orbit at distances of light-hours']]}
+  ],
+  facts: ['Everything on this map that lies in the Milky Way, including you, is orbiting this point.', 'The Sun takes 230 million years to go once around it.', 'The 2022 photo does not show the black hole: it shows its shadow against the hot gas behind.', 'It is so "clean" that if it were feeding with appetite, the night sky of Earth would look different.'],
+  fict: 'It is the final destination of half of the science fiction involving black holes, from Interstellar to Cowboy Bebop.'
+},
+s2estrela: {
+  kind: 'The star that proved the black hole',
+  quick: [['TYPE','B, ~14 Suns'],['RADIUS','~6 R☉'],['YEAR','16 years'],['SPEED','3% of light'],['CLOSEST','120 AU'],['DISCOVERED','1990s']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','16 Earth years to complete a lap'],['At periastron','It comes within 120 AU of the black hole, racing at 3% of the speed of light'],['The curve','Its orbit is so elliptical that it serves as a relativity laboratory'],['Position here','Symbolic: the real orbit is much more elongated']]},
+    {t:'RECORD', rows:[['The role','It was by following this star, lap after lap, that what lies at the center was proven'],['2018','Its pass confirmed the redshift predicted by Einstein'],['2020','The orbit showed the Schwarzschild precession, another prediction of relativity confirmed'],['The feat','A generation of astronomers spent their careers measuring the motion of a point of light']]}
+  ],
+  facts: ['Astronomers followed a full lap of this star: sixteen years of patience.', 'At its closest point it travels at more than 7,000 kilometers per second.', 'It is the most direct proof that there is a black hole at the center of our galaxy.'],
+  fict: 'It is the star that earned a Nobel, and almost nobody outside astronomy knows its name.'
+},
+s38estrela: {
+  kind: 'The second witness of the black hole',
+  quick: [['TYPE','K, old'],['YEAR','19 years'],['CLOSEST','~170 AU'],['DISCOVERED','2000s'],['ORBIT','nearly perpendicular to S2\'s'],['ROLE','checks the central mass']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','19 Earth years per lap'],['The plane','Nearly perpendicular to S2\'s: together, the two pin down the central mass'],['Position here','Symbolic: the real orbits are extremely tight ellipses']]},
+    {t:'RECORD', rows:[['The role','With two stars in different planes, the 4.3 million solar masses have nowhere to hide'],['The difficulty','It is faint and the field is crowded: adaptive optics were needed to separate it']]}
+  ],
+  facts: ['It is the second best measured orbit around the black hole, after S2.'],
+  fict: null
+},
+s62estrela: {
+  kind: 'The fastest star known',
+  quick: [['TYPE','~6 Suns'],['YEAR','~10 years'],['CLOSEST','~16 AU'],['SPEED','~8% of light'],['ANNOUNCED','2020'],['STATUS','awaiting confirmation']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','Some 10 years per lap, the shortest known'],['At periastron','It comes within ~16 AU of the horizon, closer than Uranus is to the Sun'],['The speed','On the plunge, ~8 percent of the speed of light'],['Position here','Symbolic, like the whole scene']]},
+    {t:'RECORD', rows:[['The announcement','2020, by the group that has followed the galactic center for decades'],['The caveat','Measuring in such a crowded field is hard: some of its data is still debated'],['If confirmed','It is the best relativity laboratory a star can offer']]}
+  ],
+  facts: ['At the deepest point of its plunge, it covers the Earth-Moon distance in about 16 seconds.'],
+  fict: null
+},
+ngc6611: {
+  kind: 'The stars that carve the Pillars',
+  quick: [['TYPE','open cluster'],['RADIUS','~9 R☉ (the largest)'],['AGE','1 to 2 million years'],['STARS','~460'],['DISTANCE','6,500 ly'],['HIGHLIGHT','O5V giants']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it is','A nursery with hundreds of young stars, some 80 times more massive than the Sun'],['The age','One to two million years, newborns on cosmic scales'],['The tool','Their ultraviolet radiation evaporates the surrounding gas and carves the columns'],['The fate','The largest ones will explode as supernovae before they turn 10 million years old']]},
+    {t:'RECORD', rows:[['Nebula','Messier 16, the Eagle Nebula, in the constellation Serpens'],['Distance','About 6,500 light-years'],['Scale note','This system is shown symbolically: the Pillars are light-years tall and do not orbit anything']]}
+  ],
+  facts: ['The light of these stars left when the last ice age was still underway on Earth.'],
+  fict: null
+},
+pilares: {
+  kind: 'The most famous photograph of the universe',
+  quick: [['HEIGHT','4 to 5 light-years'],['DISTANCE','6,500 ly'],['MATERIAL','hydrogen and dust'],['PHOTO','Hubble · 1995'],['REDONE','JWST · 2022'],['INSIDE','stars being born']],
+  sections: [
+    {t:'SCALE', rows:[['Height','About 4 to 5 light-years, the tallest pillar'],['In perspective','The distance from the Sun to Alpha Centauri would fit inside one of them'],['Comparison','The whole Solar System out to the Oort Cloud is a grain next to this'],['Position here','Symbolic: they do not orbit the star, they are immersed in the nebula']]},
+    {t:'RECORD', rows:[['1995','Hubble photographs the columns and the image becomes the face of modern astronomy'],['What they are','Columns of cold gas and dust resisting the radiation of the neighboring young stars'],['Inside them','Dense globules where new stars are forming right now'],['2014','Hubble redid the photo in high definition, 20 years later'],['2022','James Webb pierced the dust in infrared and revealed the hidden stars'],['Already gone?','One hypothesis suggests a supernova has already destroyed them, and the news only arrives in a thousand years']]}
+  ],
+  facts: ['The 1995 image is probably the most reproduced astronomical photograph in history.', 'The name came from a sermon: the columns where creation happens.', 'If the supernova really erased them, we are still seeing ghosts of light for another thousand years.'],
+  fict: 'It became a record cover, a bedroom poster and a recurring science fiction backdrop. Star Trek Voyager used the image, and it even appears on postage stamps.'
+},
+trapezio: {
+  kind: 'The four stars that light up Orion',
+  quick: [['TYPE','young cluster'],['RADIUS','~10 R☉ (θ¹C)'],['AGE','~300,000 years'],['STARS','4 main'],['DISTANCE','1,344 ly'],['BRIGHTNESS','200,000 Suns']],
+  sections: [
+    {t:'STRUCTURE', rows:[['What it is','Four giant stars so young that they are still wrapped in the gas that made them'],['θ¹ Orionis C','The brightest, 40 times the mass of the Sun, with an extremely violent stellar wind'],['The light','It is their radiation that makes the whole nebula glow'],['Age','Three hundred thousand years, a blink: the first humans already walked the Earth']]},
+    {t:'RECORD', rows:[['Where','In the middle of Orion\'s sword, visible to the naked eye as a fuzzy patch'],['Neighborhood','About 3,000 stars being born in the same cloud'],['Scale note','The scene here is symbolic: the nebula is 24 light-years across']]}
+  ],
+  facts: ['If θ¹ Orionis C were where the Sun is, the Earth would be sterilized in minutes.'],
+  fict: null
+},
+nebulosaorion: {
+  kind: 'The nebula you can see with the naked eye',
+  quick: [['DISTANCE','1,344 ly'],['WIDTH','24 light-years'],['MASS','2,000 Suns'],['STARS','~3,000 being born'],['NAKED EYE','yes ✓'],['CATALOG','M42']],
+  sections: [
+    {t:'SCALE', rows:[['Width','24 light-years, five times the distance to Alpha Centauri'],['Distance','1,344 light-years, the nearest star-forming region'],['Mass','Enough gas to make 2,000 suns'],['Position here','Symbolic: the nebula surrounds the cluster, it does not orbit anything']]},
+    {t:'RECORD', rows:[['Naked eye','The fuzzy patch in the middle of Orion\'s sword. You have seen it without knowing.'],['1610','Peiresc makes the first telescopic record'],['Proplyds','Hubble caught hundreds of protoplanetary disks: solar systems under construction'],['JWST (2023)','Found complex carbon molecules and pairs of free-floating planets, the JuMBOs'],['The future','In a few million years the radiation will scatter it all, leaving a bare cluster']]}
+  ],
+  facts: ['It is the nearest place where you can watch stars and planets being born right now.', 'It is in everyone\'s sky: point at Orion\'s belt and go down a little.', 'Hubble showed that most of the young stars there have a disk of dust, that is, planets under construction.'],
+  fict: 'A must-see in every documentary and on astronomy book covers. In Blade Runner, Roy Batty says he saw attack ships on fire "off the shoulder of Orion".'
+},
 /* o card do próprio sistema */
 __sys: {
+  trappist: { hint: '7 WORLDS IN LESS SPACE THAN THE ORBIT OF MERCURY', card: { desig: 'STAR SYSTEM · AQUARIUS', kind: 'Seven compact worlds',
+    quick: [['STAR','1 (M8V)'],['PLANETS','7 rocky'],['HABITABLE ZONE','3 of them'],['DISTANCE','40.7 ly'],['DISCOVERED','2016 to 2017'],['SCALE','fits inside the orbit of Mercury']],
+    sections: [{t:'RECORD', rows:[['The star','An ultracool red dwarf, slightly larger than Jupiter'],['The prize','e, f and g in the habitable zone, and e is the favorite'],['James Webb','Partial verdict: b (~230 °C) and c (~110 °C) look like bare rock'],['The bet','If one of the habitable-zone planets has an atmosphere, it will be the headline of the decade']]}],
+    facts: ['Seen from one planet, the neighbors would look larger than our Moon in the sky.'] } },
+  alphacen: { hint: 'TRIPLE SYSTEM · PROXIMA KEEPS TWO PLANETS', card: { desig: 'STAR SYSTEM · CENTAURUS', kind: 'The next-door neighbors',
+    quick: [['STARS','3 (A, B and Proxima)'],['PLANETS','2 confirmed'],['DISTANCE','4.24 to 4.37 ly'],['ORBIT A-B','79.9 years'],['HABITABLE ZONE','Proxima b'],['TRIP (today)','~70,000 years']],
+    sections: [{t:'RECORD', rows:[['A and B','A Sun-like pair dancing at 11 to 36 AU'],['Proxima','A red dwarf 0.2 ly from the pair, out of scale HERE'],['Why it matters','The nearest system, target number 1 for interstellar probes']]}],
+    facts: ['Breakthrough Starshot: light sails would arrive in ~20 years.'] } },
+  sirius: { hint: 'THE WHITE DWARF SIRIUS B ORBITS EVERY 50 YEARS', card: { desig: 'STAR SYSTEM · CANIS MAJOR', kind: 'The brightest one + a stellar corpse',
+    quick: [['STARS','2 (A1V + white dwarf)'],['DISTANCE','8.6 ly'],['ORBIT','50.1 years'],['BRIGHTNESS','the brightest in the sky'],['PLANETS','none known'],['AGE','~240 million years']],
+    sections: [{t:'RECORD', rows:[['Sirius A','White, 25 × the light of the Sun'],['Sirius B','The mass of the Sun in the size of the Earth'],['History','B was predicted by mathematics 18 years before it was seen']]}],
+    facts: ['In ancient Egypt, its rising announced the flooding of the Nile.'] } },
+  kepler452: { hint: 'HOME OF "EARTH 2.0" · TAP TO VISIT', card: { desig: 'STAR SYSTEM · CYGNUS', kind: 'A glimpse of our future',
+    quick: [['STAR','1 (G2, 6 billion years)'],['PLANETS','1 confirmed'],['DISTANCE','~1,800 ly'],['DISCOVERED','2015 · Kepler'],['NICKNAME','Earth 2.0'],['LOCAL YEAR','385 days']],
+    sections: [{t:'RECORD', rows:[['The star','Like the Sun, 1.5 billion years older'],['The planet','A super-Earth in the habitable zone for 6 billion years'],['The lesson','It shows how our system may age']]}],
+    facts: ['The light we see left there in the Iron Age.'] } },
+  betelgeuse: { hint: 'NO PLANET CATALOGED · SUPERGIANT AT THE END OF ITS LIFE', card: { desig: 'STAR SYSTEM · ORION', kind: 'A magnificent time bomb',
+    quick: [['STAR','1 supergiant'],['RADIUS','~760 R☉'],['PLANETS','none cataloged'],['DISTANCE','~550 ly'],['AGE','~10 million years'],['FATE','supernova']],
+    sections: [{t:'RECORD', rows:[['Scale','In the Sun\'s place, it would swallow even Jupiter'],['2019 to 2020','The Great Dimming: dust knocked the brightness down'],['When it explodes','It will shine like the full Moon, visible by day']]}],
+    facts: ['It may have already exploded; the light would take ~550 years to tell us.'] } },
+  polaris: { hint: 'THE NORTH STAR · THE EARTH\'S AXIS POINTS HERE', card: { desig: 'STAR SYSTEM · URSA MINOR', kind: 'The still point of the sky',
+    quick: [['STAR','triple Cepheid'],['RADIUS','~37 R☉'],['DISTANCE','~433 ly'],['PULSE','4 days'],['NORTH UNTIL','~12,000 years (then Vega)']],
+    sections: [{t:'RECORD', rows:[['The post','The Earth\'s axis points almost exactly at it'],['Precession','Thuban was once the north; Vega will be'],['The ruler','A Cepheid: its pulse measures distances across the universe']]}],
+    facts: ['In a long-exposure photo of the sky, it is the center of the star trails.'] } },
+  aldebaran: { hint: 'ORANGE GIANT · THE FUTURE OF THE SUN', card: { desig: 'STAR SYSTEM · TAURUS', kind: 'The eye of the Bull, an aged Sun',
+    quick: [['STAR','1 orange giant'],['RADIUS','~44 R☉'],['PLANETS','1 candidate under debate'],['DISTANCE','65 ly'],['HEADING','Pioneer 10 is traveling here']],
+    sections: [{t:'RECORD', rows:[['Scale','44 times the radius of the Sun: it would swallow Mercury with room to spare'],['The Hyades','The V of Taurus lies in the background, at TWICE the distance'],['Occultations','The Moon passes in front of it several times a year']]}],
+    facts: ['It is a portrait of the Sun\'s future: a similar star that has already swelled.'] } },
+  rigel: { hint: 'BLUE SUPERGIANT · 120,000 SUNS', card: { desig: 'STAR SYSTEM · ORION', kind: 'The blue foot of the hunter',
+    quick: [['STAR','blue supergiant (system of 4)'],['RADIUS','~75 R☉'],['BRIGHTNESS','~120,000 Suns'],['DISTANCE','~860 ly'],['FATE','supernova']],
+    sections: [{t:'RECORD', rows:[['The contrast','Orion has both: blue Rigel at the foot, red Betelgeuse at the shoulder'],['The Witch','Its light lights up the Witch Head Nebula'],['Family','At least four stars in the system']]}],
+    facts: ['The 7th brightest star in the sky, even at 860 light-years.'] } },
+  antares: { hint: 'THE RIVAL OF MARS · HEART OF THE SCORPION', card: { desig: 'STAR SYSTEM · SCORPIUS', kind: 'The red rival of Mars',
+    quick: [['STAR','supergiant + blue companion'],['RADIUS','~680 R☉'],['MASS','~12 Suns'],['DISTANCE','~550 ly'],['FATE','supernova']],
+    sections: [{t:'RECORD', rows:[['Scale','In the Sun\'s place, the surface would reach past the asteroid belt'],['The name','Anti-Ares: the rival of Mars in the sky'],['Antares B','The companion that looks green by contrast']]}],
+    facts: ['Every two years Mars passes near it in the sky and the duel of reds happens again.'] } },
+  sgra: { hint: 'THE CENTER OF THE MILKY WAY: EVERYTHING HERE ORBITS THIS POINT', card: { desig: 'BLACK HOLE · GALACTIC CENTER', kind: 'Our central address',
+    quick: [['MASS','4.3 million Suns'],['DISTANCE','26,000 ly'],['PHOTO','EHT · 2022'],['NOBEL','2020'],['WITNESS','the star S2'],['SUN\'S LAP','230 million years']],
+    sections: [{t:'RECORD', rows:[['How we know','Decades measuring stars that orbit an invisible point'],['S2','It passes at 3% of the speed of light and completes a lap in 16 years'],['2022','The Event Horizon Telescope photographed its shadow']]}],
+    facts: ['Everything that exists in the Milky Way, including you, is orbiting this point.'] } },
+  m16: { hint: 'THE PILLARS OF CREATION: EACH COLUMN IS LIGHT-YEARS TALL', card: { desig: 'STELLAR NURSERY · SERPENS', kind: 'Where stars are born',
+    quick: [['DISTANCE','6,500 ly'],['CATALOG','Messier 16'],['AGE','1 to 2 million years'],['PILLARS','4 to 5 ly tall'],['PHOTO','Hubble 1995'],['REVISITED','JWST 2022']],
+    sections: [{t:'RECORD', rows:[['The nebula','A giant cloud of hydrogen where hundreds of stars have formed'],['The Pillars','Columns of gas resisting the radiation, with stars being born inside'],['Scale','Each column is taller than the distance from the Sun to Alpha Centauri'],['Warning','The scene here is symbolic: nebulae have no orbits']]}],
+    facts: ['The first object on this map that is neither a star nor a planet: it is the cradle of both.'] } },
+  orion: { hint: 'YOU HAVE ALREADY SEEN THIS NEBULA WITH THE NAKED EYE, IN THE SWORD OF ORION', card: { desig: 'STELLAR NURSERY · ORION', kind: 'The nearest star factory',
+    quick: [['DISTANCE','1,344 ly'],['CATALOG','M42'],['WIDTH','24 ly'],['BEING BORN','~3,000 stars'],['NAKED EYE','yes'],['DISKS','hundreds']],
+    sections: [{t:'RECORD', rows:[['What it is','A giant cloud lit by four young stars, the Trapezium'],['Why it matters','It is where we see solar systems forming in real time'],['JWST','Found organic molecules and free-floating planets in pairs, the JuMBOs']]}],
+    facts: ['The fuzzy patch in the sword of Orion, which everyone has seen without knowing what it was.'] } },
   sol: {
     hint: 'TAP A PLANET TO LOCK THE LINK',
     card: {

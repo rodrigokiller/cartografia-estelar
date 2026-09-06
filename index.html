@@ -12623,7 +12623,7 @@ function tourIr(p){
 }
 /* a legenda de cada parada: a curiosidade do próprio objeto, nada inventado */
 function tourNarra(p){
-  if(p.texto) return p.texto;
+  if(p.texto) return t(p.texto);   /* r242: as falas do tour passam pelo dicionário */
   let o = null;
   if(p.corpo) o = ALLBODIES[p.corpo];
   else if(p.sis) o = SYS[p.sis] && SYS[p.sis].card;
@@ -14102,7 +14102,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r241';
+const BUILD = 'r242';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
