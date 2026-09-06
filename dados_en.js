@@ -1216,8 +1216,407 @@ apophis: {
   facts: ['On April 13, 2029 it passes 32,000 km from the Earth, closer than the geostationary satellites, and it can be seen with the naked eye.', 'In 2004 it reached a 2.7 percent chance of impact, the biggest alarm in the history of asteroids; today the risk is zero for a century.', 'OSIRIS-APEX, the probe that brought the Bennu sample, will orbit it right after the flyby to see what the Earth\'s tide did to it.'],
   fict: 'The discoverers were fans of Stargate SG-1, and named the rock after the show\'s villain, who in turn comes from the Egyptian serpent of chaos.'
 },
+/* ---- fase 3, parte 2 (r245): os exoticos (Vega, Fomalhaut, Barnard, Cygnus X-1, Kepler-16, o pulsar e os exoplanetas famosos) ---- */
+vegastar: {
+  kind: 'The standard star of the sky',
+  quick: [['TYPE','A0V'],['MASS','2.1 Sun'],['RADIUS','~2.5 R☉'],['SURF. TEMP.','9,300 °C'],['DISTANCE','25 ly'],['DAY','12.5 h (!)']],
+  sections: [
+    {t:'STRUCTURE', rows:[['Rotation','It spins in 12.5 hours, at ~90% of the speed that would tear it apart'],['Shape','Flattened: the equator is ~20% wider than the poles'],['Seen from here','We look almost straight down at its pole'],['Brightness','40 × the luminosity of the Sun']]},
+    {t:'RECORD', rows:[['The ruler','For decades it was the definition of magnitude 0, the brightness standard of the sky'],['1850','The first star ever photographed (daguerreotype, Harvard)'],['North Star','It was the north in 12,000 BC and will be again around 13,700 AD'],['Vega b?','A planet candidate (2021) remains unconfirmed: it is there in the orbit']]}
+  ],
+  facts: ['In 1983, IRAS discovered here the first dust disk outside the Solar System.', 'The first star to be photographed and the first to have its spectrum recorded.'],
+  fict: 'Contact (Carl Sagan): the alien signal comes from Vega, and Ellie travels there. · In the Japanese Tanabata, Vega is the weaver Orihime, separated from the herder Altair by the river of the Milky Way.'
+},
+vegab: {
+  kind: 'The planet that may exist',
+  quick: [['STATUS','candidate (2021)'],['MASS','~20 M⊕ (if real)'],['RADIUS','~4 R⊕ (est.)'],['YEAR','2.43 d'],['TEMP','~2,700 °C'],['METHOD','radial velocity']],
+  sections: [
+    {t:'RECORD', rows:[['The signal','A 2.43-day wobble in the light of Vega (Lick Observatory, 2021)'],['If it is real','A grazing "hot Neptune", with rock evaporating at ~2,700 °C'],['The difficulty','Vega spins so fast that the star itself mimics planet signals'],['Verdict','Candidate. The jury (and James Webb) is still out']]}
+  ],
+  facts: ['If confirmed, it will be one of the hottest planets ever seen, around the star of Contact.'],
+  fict: 'The "maybe-planet" of the most famous star in science fiction.'
+},
+vegadisk: {
+  kind: 'The first ring of dust seen beyond the Sun',
+  quick: [['EXTENT','~70 to 100 AU'],['DISCOVERED','1983 · IRAS'],['MATERIAL','dust and planetesimals'],['TEMP','−190 °C'],['NICKNAME','the "Vega phenomenon"'],['PORTRAIT','JWST · 2024']],
+  sections: [
+    {t:'RECORD', rows:[['1983','The IRAS satellite noticed too much heat coming from Vega: warm dust, the 1st debris disk of another star'],['What it is','A belt of rubble like our Kuiper belt, seen face-on'],['JWST (2024)','Photographed the disk: smooth, without gaps. A sign that there may be NO giant planets there'],['Legacy','The "Vega phenomenon" became the classic method for catching systems in formation']]}
+  ],
+  facts: ['It was the first evidence that other stars also build planetary systems.'],
+  fict: null
+},
+fomalhautA: {
+  kind: 'The Eye of Sauron',
+  quick: [['TYPE','A3V'],['RADIUS','1.84 R☉'],['MASS','1.9 Sun'],['BRIGHTNESS','16 × the Sun'],['SURF. TEMP.','8,300 °C'],['DISTANCE','25 ly']],
+  sections: [
+    {t:'STRUCTURE', rows:[['Type','A young white star, almost twice the mass of the Sun'],['Age','440 million years, a baby next to the Sun\'s 4.6 billion'],['Companions','It has two, 0.9 and 2.5 light-years away, the most spread-out triple system known']]},
+    {t:'RECORD', rows:[['The photo','2008: the image of the ring with a bright dot went around the world as "the Eye of Sauron"'],['The ring','A sharp, eccentric belt of dust, with its inner edge swept by something'],['JWST (2023)','Revealed not one but THREE nested rings, plus a cloud nicknamed "the great dust cloud"'],['Constellation','Piscis Austrinus, the brightest star of the southern spring sky']]}
+  ],
+  facts: ['The image of the dust ring with the blinded star at the center is one of the most famous photos of modern astronomy.', 'The inner edge of the ring is too sharp to be natural: something with gravity is sweeping that space.'],
+  fict: 'The nickname stuck so well that NASA used "Eye of Sauron" in its own press release. Lord of the Rings, literally.'
+},
+fomalhautb: {
+  kind: 'The planet that became a cloud of dust',
+  quick: [['STATUS','probably does not exist'],['ANNOUNCED','2008 · Hubble'],['VANISHED','2020'],['ORBIT','~1,700 years'],['HYPOTHESIS','asteroid collision'],['NAME','Dagon']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Orbit','Very eccentric, crossing the dust ring'],['Year','~1,700 Earth years'],['Position here','Symbolic, in the middle of the ring where it was photographed']]},
+    {t:'RECORD', rows:[['2008','Hubble announced the FIRST photo of an exoplanet in visible light. World headlines.'],['The nuisance','It shone too much for a planet and did not show up in infrared, where planets shine'],['2020','Reanalysis: the dot kept growing and fading until it disappeared'],['The verdict','It was not a planet, it was the debris cloud of two ~200 km rocks that collided around 2004'],['The name','It was even named Dagon by the IAU before it evaporated']]}
+  ],
+  facts: ['We photographed the moment right after a collision between asteroids 25 light-years away. Odds of catching that: nearly zero.', 'It was the first exoplanet photographed in visible light, and also the first to be un-photographed.'],
+  fict: 'Dagon is Lovecraft\'s sea deity. A cosmic-horror name for a planet that dissolved into dust.'
+},
+fomdisk: {
+  kind: 'The Eye of Sauron up close',
+  quick: [['RADIUS','~140 AU'],['WIDTH','~14 AU'],['RINGS','3 nested'],['EDGE','too sharp'],['DISCOVERED','1998 · sub-mm'],['PORTRAIT','JWST · 2023']],
+  sections: [
+    {t:'RECORD', rows:[['The shape','An eccentric ring, offset from the center, as if something were pulling it'],['The edge','So sharp that it demands a gravitational "shepherd" sweeping the inside'],['JWST (2023)','Found two more inner rings and a cloud of freshly collided debris'],['What it means','A planetary system under construction, with collisions happening now']]}
+  ],
+  facts: ['The 2008 photo of this ring, with the star masked at the center, is one of the most reproduced images in astronomy.'],
+  fict: null
+},
+barnardstar: {
+  kind: 'The runaway star',
+  quick: [['TYPE','M4V red dwarf'],['RADIUS','0.19 R☉'],['MASS','0.16 Sun'],['DISTANCE','5.96 ly'],['AGE','~10 billion years'],['PLANETS','4 confirmed']],
+  sections: [
+    {t:'STRUCTURE', rows:[['Type','A small, cool red dwarf, 0.4% of the light of the Sun'],['Age','About 10 billion years, more than twice the Sun'],['Lifetime','It will shine for more than a trillion years'],['Temper','Old and quiet, but it still lets out occasional flares']]},
+    {t:'RECORD', rows:[['The race','It crosses the sky at 10.4 arcseconds per year, the largest proper motion known'],['In perspective','It covers the diameter of the full Moon every 180 years'],['Neighborhood','The 4th nearest star, behind only the Alpha Centauri trio'],['Approaching','It is coming our way: in 11,800 AD it will be 3.75 light-years away, closer than Proxima'],['The soap opera','Van de Kamp spent decades swearing he had found planets here; it was a telescope defect'],['The redemption','2024: the VLT confirmed Barnard b. In 2025, three more siblings']]}
+  ],
+  facts: ['It is the nearest single star to the Sun and still invisible to the naked eye.', 'After a century of false alarms, the star finally delivered real planets.'],
+  fict: 'Project Daedalus (1978): the British Interplanetary Society designed a nuclear probe to get here in 50 years. It is also a recurring destination in fiction, from Alan Dean Foster to Anderson\'s Barnard\'s Star.'
+},
+barnardb: {
+  kind: 'A world of molten rock',
+  quick: [['MASS','0.37 M⊕'],['RADIUS','~0.75 R⊕ (est.)'],['YEAR','3.15 d'],['TEMP','~125 °C'],['DISCOVERED','2024 · VLT'],['ZONE','too hot']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Distance from the star','0.023 AU'],['Year','3.15 days'],['Rotation','Probably synchronous'],['Zone','Twenty times closer than the habitable zone']]},
+    {t:'RECORD', rows:[['2024','Confirmed by the ESPRESSO instrument, at the VLT in Chile'],['The feat','Detecting a wobble of 0.9 meters per second, the pace of a tortoise 6 light-years away'],['The company','In 2025 came c, d and e, all smaller than the Earth'],['Why it matters','It closes a century of ghosts: Barnard\'s Star HAS planets']]}
+  ],
+  facts: ['The most famous star of the false alarms now has four confirmed planets.', 'All of them fit inside an orbit smaller than Mercury\'s.'],
+  fict: 'After 60 years of imaginary planets here, the real one showed up.'
+},
+cygx1: {
+  kind: 'The first black hole humanity accepted',
+  quick: [['MASS','21 Suns'],['RADIUS','~0.09 R☉ (horizon)'],['DISTANCE','7,200 ly'],['DISCOVERED','1964'],['COMPANION','blue supergiant'],['SPIN','~95% of the limit']],
+  sections: [
+    {t:'STRUCTURE', rows:[['Mass','21 times the Sun\'s, in an object some 60 km across'],['The pair','It orbits a 40-solar-mass blue supergiant every 5.6 days'],['The disk','It tears matter from the companion, and the falling gas heats to millions of degrees'],['The spin','It rotates at almost the theoretical limit: more than 800 turns per second']]},
+    {t:'THE BET', rows:[['1964','Detected as one of the strongest X-ray sources in the sky'],['1974','Stephen Hawking bets Kip Thorne that it is NOT a black hole'],['Why bet against','Hawking said it was an insurance policy: if he was wrong about black holes, at least he would win the bet'],['1990','Hawking concedes and pays: a magazine subscription for Thorne'],['The detail','The magazine was Penthouse, to the annoyance of Thorne\'s wife']]},
+    {t:'RECORD', rows:[['The importance','It was the first object widely accepted as a black hole, and it opened the way for all the rest'],['2021','New measurements raised its mass from 15 to 21 suns'],['The future','The companion will also collapse, and the pair may become a source of gravitational waves']]}
+  ],
+  facts: ['It was the first black hole science truly accepted, and Hawking bet against it for sixteen years.', 'It spins so fast that it drags space itself around, almost at the limit physics allows.', 'It sits in the constellation Cygnus and is one of the brightest X-ray sources in our sky.'],
+  fict: 'The band Rush wrote two songs about it, Cygnus X-1 Book I and II, and the name became synonymous with black hole in pop culture.'
+},
+hde226868: {
+  kind: 'The star being devoured',
+  quick: [['TYPE','O9.7 Iab'],['RADIUS','~22 R☉'],['MASS','40 Suns'],['SURF. TEMP.','31,000 °C'],['ORBIT','5.6 d'],['FATE','supernova']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','5.6 days around the black hole'],['Distance from the star','About 0.2 AU, half the distance from Mercury to the Sun'],['What happens','Its stellar wind is sucked in and forms the disk that shines in X-rays']]},
+    {t:'RECORD', rows:[['The clue','It was its wobble that gave away the invisible mass next to it'],['The fate','It will itself explode as a supernova in a few million years'],['Afterwards','The system may become a pair of spiraling black holes, the kind LIGO detects']]}
+  ],
+  facts: ['It continuously loses mass to its invisible neighbor, and that falling matter is what we see in X-rays.', 'Without it nobody would have found the black hole: its motion gave the ghost away.'],
+  fict: null
+},
+k16a: {
+  kind: 'Half of the double sunset',
+  quick: [['TYPE','K5V'],['RADIUS','0.65 R☉'],['MASS','0.69 Sun'],['PAIR','Kepler-16 B (M4V)'],['DANCE','41 days'],['DISTANCE','245 ly']],
+  sections: [
+    {t:'RECORD', rows:[['The pair','A and B orbit their common center every 41 days'],['The prize','A planet that circles BOTH, Kepler-16b'],['Discovered','2011, Kepler telescope']]}
+  ],
+  facts: ['The two stars eclipse each other as seen from Earth, and that is how Kepler found the planet that orbits both.'],
+  fict: 'Star Wars: the system that made NASA draw Tatooine in an official release.'
+},
+k16b_star: {
+  kind: 'The second light of the evening',
+  quick: [['TYPE','M4V'],['RADIUS','0.23 R☉'],['MASS','0.20 Sun'],['ORBIT','41 d'],['COLOR','reddish orange'],['ROLE','the 2nd sun of Tatooine']],
+  sections: [
+    {t:'RECORD', rows:[['Dance','A and B circle their common center every 41 days'],['Seen from the planet','Two disks of different sizes and colors in the same sky'],['Eclipses','The two eclipse each other; that is how Kepler caught it all']]}
+  ],
+  facts: ['Red dwarfs like this one live for trillions of years.'],
+  fict: null
+},
+kepler16b: {
+  kind: 'The planet of the two suns',
+  quick: [['RADIUS','0.75 R♃'],['YEAR','229 d'],['ORBITS','both stars'],['TEMP','−73 °C'],['TYPE','gaseous (a cold Saturn)'],['DISCOVERED','2011']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','229 days around the PAIR of stars'],['Stability','It proved that circumbinary orbits work'],['Sky','Two sunsets a day, in different colors']]},
+    {t:'RECORD', rows:[['Discovered','2011, the 1st confirmed circumbinary planet'],['The paper','Signed even by John Knoll, of Industrial Light & Magic'],['Nature','A cold giant like Saturn; a real Tatooine would be a moon of it'],['After it','Kepler found a whole family of "Tatooines"']]}
+  ],
+  facts: ['The scene of Luke watching the two suns exists; only the rocky moon to watch it from is missing.', 'NASA announced it with official artwork of a double sunset.'],
+  fict: 'Star Wars, obviously: NASA\'s release cited Tatooine in the title.'
+},
+lich: {
+  kind: 'Lighthouse of the dead',
+  quick: [['TYPE','millisecond pulsar'],['ROTATION','161 × per second'],['RADIUS','~10 km'],['MASS','1.4 Sun'],['DISTANCE','2,300 ly'],['PLANETS','3']],
+  sections: [
+    {t:'RECORD', rows:[['What it is','A neutron star: a city\'s worth of space holding a solar mass, spinning 161 times per second'],['The clock','The pulses are so precise that tiny planets show up in the delay'],['1992','Wolszczan & Frail: the FIRST confirmed exoplanets, before any around a normal star'],['Name','Lich: the undead who commands other dead']]}
+  ],
+  facts: ['The gravity at the surface is 200 billion times that of Earth.'],
+  fict: 'The IAU embraced the theme: the whole system is named after the undead of folklore and role-playing games.'
+},
+draugr: {
+  kind: 'The smallest known exoplanet',
+  quick: [['MASS','0.02 M⊕ (2 Moons!)'],['YEAR','25 d'],['RADIATION','lethal'],['DISCOVERED','1994'],['NAME','Norse zombie'],['RADIUS','~0.3 R⊕ (est.)']],
+  sections: [
+    {t:'RECORD', rows:[['Record','The smallest known exoplanet, the mass of two Moons'],['Environment','Bathed in the pulsar\'s radiation, forever'],['Name','Draugr: the dead who guards treasures in the Norse sagas']]}
+  ],
+  facts: ['Probably formed AFTER the supernova: planets 2.0, from the wreckage.'],
+  fict: null
+},
+poltergeist: {
+  kind: 'Noisy ghost',
+  quick: [['MASS','4.3 M⊕'],['YEAR','66 d'],['PAIR','resonance with Phobetor'],['DISCOVERED','1992'],['RADIUS','~1.5 R⊕ (est.)'],['STATUS','1st in history']],
+  sections: [
+    {t:'RECORD', rows:[['History','One of the first two exoplanets ever confirmed (1992)'],['The dance','A 3:2 resonance with Phobetor gave the discovery away'],['Sky','Permanent auroras of radiation, if there is an atmosphere']]}
+  ],
+  facts: ['Finding planets around a pulsar was so unexpected that many doubted it.'],
+  fict: null
+},
+phobetor: {
+  kind: 'The nightmare',
+  quick: [['MASS','3.9 M⊕'],['YEAR','98 d'],['DISCOVERED','1992'],['NAME','god of nightmares'],['RADIUS','~1.4 R⊕ (est.)'],['CLIMATE','eternal radiation']],
+  sections: [
+    {t:'RECORD', rows:[['Christening','Phobetor, the Greek god who makes nightmares'],['Pair','Discovered together with Poltergeist in 1992'],['Importance','It proved that planets form even in the worst places in the universe']]}
+  ],
+  facts: ['If planets are born here, they are born anywhere: that was the lesson of 1992.'],
+  fict: null
+},
+wasp12s: {
+  kind: 'The devourer',
+  quick: [['TYPE','F (yellow-white)'],['RADIUS','1.66 R☉'],['SURF. TEMP.','6,000 °C'],['PLANETS','1'],['DISTANCE','~1,400 ly'],['MEAL','in progress']],
+  sections: [
+    {t:'RECORD', rows:[['Crime scene','The planet orbits so close that the star tears its atmosphere away'],['Proof','The transit comes earlier every year: the orbit is shrinking']]}
+  ],
+  facts: ['Astronomers measured the death spiral: ~3 million years left.'],
+  fict: null
+},
+wasp12b: {
+  kind: 'The planet spiraling to its death',
+  quick: [['RADIUS','1.9 R♃ (puffed up)'],['YEAR','1.09 d'],['TEMP','2,200 °C'],['ALBEDO','darker than asphalt'],['SHAPE','egg (tides)'],['LEFT','~3 million years']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','1.09 days, grazing the photosphere'],['Decay','The orbit shrinks ~29 ms per year, measured!'],['Shape','Stretched into an egg by the star\'s tide']]},
+    {t:'RECORD', rows:[['The banquet','The star sucks its atmosphere through a funnel of gas'],['Darkness','It absorbs 94% of the light, one of the blackest planets known'],['The end','The final plunge in ~3 million years, a cosmic blink']]}
+  ],
+  facts: ['It is so dark that, without the glow of its heat, it would be almost invisible.', 'Its "death spiral" was the first ever confirmed by clock.'],
+  fict: 'Every list of "hell planets" opens with it.'
+},
+cnc55a: {
+  kind: 'Host of five worlds',
+  quick: [['TYPE','G8V'],['RADIUS','0.94 R☉'],['SURF. TEMP.','5,100 °C'],['PLANETS','5'],['DISTANCE','41 ly'],['COMPANION','distant red dwarf']],
+  sections: [
+    {t:'RECORD', rows:[['Name','Named Copernicus in 2015 (IAU)'],['The system','5 planets, from super-Earth to giants'],['Visible','To the naked eye, in the constellation Cancer']]}
+  ],
+  facts: ['We model here the most famous planet; the other 4 remain in the real catalog.'],
+  fict: null
+},
+cnc55e: {
+  kind: 'The "diamond planet"',
+  quick: [['RADIUS','1.88 R⊕'],['MASS','8 M⊕'],['YEAR','17.7 HOURS'],['DAY TEMP.','~2,400 °C'],['SURFACE','ocean of lava'],['DISCOVERED','2004']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','17.7 hours, a "year" fits in a work shift'],['Distance from the star','0.015 AU, 65 × closer than the Earth to the Sun'],['Rotation','Synchronous: a hemisphere of eternal lava']]},
+    {t:'RECORD', rows:[['The diamond hypothesis','2012: if it is rich in carbon, the interior may be diamond; still debated'],['JWST','2024: signs of a CO/CO₂ atmosphere over the magma'],['Official name','Janssen, the maker of the first telescopes']]}
+  ],
+  facts: ['The dayside is an ocean of lava; the nightside, "cool" rock at 1,100 °C.', 'If the diamond hypothesis holds, it is the most expensive jewel in the catalog.'],
+  fict: '"The diamond planet" made headlines around the world, and became a Doctor Who episode by association (Midnight is another one, but every fan remembers).'
+},
+hd189a: {
+  kind: 'Active orange dwarf',
+  quick: [['TYPE','K1-K2V'],['RADIUS','0.76 R☉'],['SURF. TEMP.','4,700 °C'],['PLANETS','1 conf.'],['DISTANCE','64.5 ly'],['ACTIVITY','strong flares']],
+  sections: [
+    {t:'RECORD', rows:[['Where','The constellation Vulpecula, the little fox'],['Temper','Active, it bombards the planet with X-rays'],['Fame','It hosts one of the most studied exoplanets in history']]}
+  ],
+  facts: ['In the sky, it sits next to the Dumbbell Nebula (M27).'],
+  fict: null
+},
+hd189b: {
+  kind: 'Where it rains glass sideways',
+  quick: [['RADIUS','1.13 R♃ (~80,000 km)'],['YEAR','2.2 d'],['TEMP','~930 °C'],['WINDS','8,700 km/h'],['COLOR','cobalt blue (measured!)'],['DISCOVERED','2005']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','2.2 days, practically grazing the star'],['Rotation','Synchronous'],['Transit','It passes in front of the star every lap, which is why we know so much']]},
+    {t:'RECORD', rows:[['The color','Hubble measured the albedo in 2013: deep blue, but it is not an ocean'],['The blue','Silicate clouds, vaporized sand'],['The weather','With 8,700 km/h winds, the glass "rain" falls sideways'],['X-ray','It was the 1st exoplanet detected in X-rays (Chandra)']]}
+  ],
+  facts: ['The local forecast: 930 °C, winds at 7 times the speed of sound, sideways glass.', 'The blue of the Earth comes from the ocean; its blue, from molten sand flying.'],
+  fict: 'A staple of the "worst planets to visit" lists, the beautiful and lethal blue of the 2013 headlines.'
+},
+toi700s: {
+  kind: 'The well-behaved red dwarf',
+  quick: [['TYPE','M2V'],['RADIUS','0.42 R☉'],['SURF. TEMP.','3,200 °C'],['PLANETS','4'],['DISTANCE','101 ly'],['FLARES','rare (!)']],
+  sections: [
+    {t:'RECORD', rows:[['The difference','Red dwarfs usually fry planets with flares; this one is calm'],['The family','4 planets, with d and e in the habitable zone'],['Constellation','Dorado, in the southern sky']]}
+  ],
+  facts: ['Stars like this will live for trillions of years, plenty of time for life to try.'],
+  fict: null
+},
+toi700d: {
+  kind: 'Earth-sized, in the right zone',
+  quick: [['RADIUS','1.07 R⊕'],['YEAR','37.4 d'],['INSOLATION','86% of Earth'],['ZONE','habitable'],['DISCOVERED','2020 · TESS'],['WATER','possible']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','37.4 days'],['Rotation','Probably synchronous, eternal twilight at the terminator'],['Light','86% of what the Earth receives']]},
+    {t:'RECORD', rows:[['Milestone','TESS\'s 1st Earth-sized planet in a habitable zone (2020)'],['Confirmation','Spitzer validated it, a grand farewell for the telescope'],['The sibling','TOI-700 e (2023), also in the zone']]}
+  ],
+  facts: ['With a calm star, it is one of the best targets to look for an atmosphere.'],
+  fict: 'A star of NASA climate simulations: it has already "rained" in models of it.'
+},
+gl581s: {
+  kind: 'The dwarf of the soap opera',
+  quick: [['TYPE','M3V'],['RADIUS','0.30 R☉'],['SURF. TEMP.','3,200 °C'],['PLANETS','3 conf.'],['DISTANCE','20 ly'],['FAME','the ghost 581g']],
+  sections: [
+    {t:'RECORD', rows:[['The saga','581g "Zarmina" (2010): announced, celebrated... and undone by reanalysis'],['The line','"Chance of life: 100%", Steven Vogt, about a planet that may not exist'],['Confirmed','581e, b and c still stand'],['Cosmic mail','501 messages from Earth (2008) arrive in 2029']]}
+  ],
+  facts: ['The 581g case became a lesson: a signal of stellar activity can pretend to be a planet.'],
+  fict: 'Zarmina, the Schrödinger exoplanet: too famous to die, too weak to exist.'
+},
+gl581c: {
+  kind: 'Super-Earth at the edge of the oven',
+  quick: [['MASS','5.5 M⊕'],['RADIUS','~1.5 R⊕ (est.)'],['YEAR','13 d'],['ZONE','hot edge'],['DISCOVERED','2007'],['RISK','Venus effect']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','13 days'],['Rotation','Probably synchronous'],['Position','At the inner edge of the habitable zone']]},
+    {t:'RECORD', rows:[['2007','The first super-Earth announced as "possibly habitable"'],['Today','Consensus: a likely runaway greenhouse, a cousin of Venus'],['Legacy','It opened the era of hunting habitable worlds around red dwarfs']]}
+  ],
+  facts: ['It made front pages as "the new Earth"; science later toned it down.'],
+  fict: null
+},
+helvetios: {
+  kind: 'The star where it all began',
+  quick: [['TYPE','G2IV'],['MASS','1.1 Sun'],['RADIUS','1.24 R☉'],['SURF. TEMP.','5,500 °C'],['DISTANCE','50.5 ly'],['AGE','~7 billion years']],
+  sections: [
+    {t:'RECORD', rows:[['10/6/1995','Mayor & Queloz announce: there is a planet around 51 Pegasi, the 1st around a Sun-like star'],['The star','A near twin of the Sun, older, already retiring its hydrogen'],['Nobel','The discovery earned the 2019 Nobel Prize in Physics'],['Name','Helvetios, "the Swiss", named by public vote (IAU, 2015)']]}
+  ],
+  facts: ['Visible to the naked eye under a dark sky, in the Square of Pegasus: point and say "the era of exoplanets began there".'],
+  fict: null
+},
+dimidium: {
+  kind: 'The prototype of the hot Jupiters',
+  quick: [['MASS','≥ 0.46 M♃'],['RADIUS','~1.2 R♃ (est.)'],['YEAR','4.23 d'],['ORBIT','0.05 AU'],['TEMP','~1,000 °C'],['DISCOVERED','1995 · Nobel']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','4.23 days, almost 8 × closer to its star than Mercury to the Sun'],['Rotation','Probably synchronous'],['Climate','~1,000 °C, hot enough for silicate clouds']]},
+    {t:'RECORD', rows:[['The shock','A gas giant GLUED to its star. Theory said it was impossible'],['Method','Radial velocity: the star\'s wobble gave the planet away'],['The avalanche','Confirmed within a week (Marcy & Butler), unlocking thousands of discoveries'],['Names','Bellerophon (1995 nickname) → Dimidium, "half" in Latin (IAU, 2015)']]}
+  ],
+  facts: ['Before it, "planet" was a Solar System topic. After it, the whole sky became a catalog.', 'The official name means "half": the minimum mass is half a Jupiter.'],
+  fict: 'Bellerophon, its christening nickname, lives on in Firefly: it is the resort planet of the episode "Trash".'
+},
+lhs1140: {
+  kind: 'The best-behaved red dwarf in the neighborhood',
+  quick: [['TYPE','M4.5V'],['RADIUS','0.21 R☉'],['MASS','0.18 Sun'],['SURF. TEMP.','3,100 °C'],['DISTANCE','48.5 ly'],['AGE','~5 billion years']],
+  sections: [
+    {t:'STRUCTURE', rows:[['Type','A small red dwarf, with 18% of the mass of the Sun'],['The difference','It spins slowly and hardly ever flares, unlike most red dwarfs'],['Why it matters','A calm star gives a planet a real chance to keep its atmosphere']]},
+    {t:'RECORD', rows:[['Discovered','The system was identified in 2017, in the constellation Cetus'],['The family','Two confirmed planets, b and c'],['The target','LHS 1140 b became a top priority of James Webb']]}
+  ],
+  facts: ['Red dwarfs usually fry their planets with explosions. This one is a well-behaved exception.'],
+  fict: null
+},
+lhs1140b: {
+  kind: 'The best candidate for a world with water',
+  quick: [['RADIUS','1.73 R⊕'],['MASS','5.6 M⊕'],['YEAR','24.7 d'],['EST. TEMP.','−43 °C to 20 °C'],['ZONE','habitable'],['JWST','2024 and 2025']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','24.7 days'],['Distance from the star','0.095 AU'],['Light received','About 40% of what the Earth receives'],['Rotation','Probably synchronous, with one side always in daylight']]},
+    {t:'STRUCTURE', rows:[['Size','1.73 times the radius of the Earth and 5.6 times the mass'],['The density','Too low to be only rock: between 10% and 20% of the mass may be water'],['The hypothesis','Either an ice-covered ocean world, or a liquid ocean on the sunlit side'],['The eye of ice','If it is frozen, the dayside may have an "eye" of liquid water in the middle']]},
+    {t:'RECORD', rows:[['2024','James Webb found a hint of a nitrogen-rich atmosphere, like Earth\'s'],['2025','New observations strengthened the signal, but confirmation has not come yet'],['Why this one','A calm star, a planet in the habitable zone and a favorable transit: the ideal combination'],['What is missing','More telescope hours. It is the most contested target in the hunt for habitable worlds.']]}
+  ],
+  facts: ['It is today the best known candidate for a planet with liquid water on its surface outside the Solar System.', 'If the nitrogen atmosphere is confirmed, it will be the first atmosphere like ours found on another world.', 'By its density, between a tenth and a fifth of its mass may be water. The Earth has 0.02%.'],
+  fict: 'Whenever the news says "Earth-like planet", this is the name astronomers hope to see.'
+},
+k218estrela: {
+  kind: 'The red dwarf of the headlines',
+  quick: [['TYPE','M2.5V'],['RADIUS','0.45 R☉'],['MASS','0.36 Sun'],['SURF. TEMP.','3,500 °C'],['DISTANCE','124 ly'],['PLANETS','2']],
+  sections: [
+    {t:'STRUCTURE', rows:[['Type','An ordinary red dwarf, with a third of the mass of the Sun'],['The habitable zone','Sits very close to it, because of its faint glow'],['Behavior','Relatively calm, which helps preserve atmospheres']]},
+    {t:'RECORD', rows:[['Discovered','The system came from the K2 mission, the second life of the Kepler telescope'],['The family','K2-18 b, the famous super-Earth, and K2-18 c, farther in'],['Where','In the constellation Leo, 124 light-years away']]}
+  ],
+  facts: ['An absolutely ordinary star that made world headlines because of one of its planets.'],
+  fict: null
+},
+k218b: {
+  kind: 'The ocean world that divided science',
+  quick: [['RADIUS','2.6 R⊕'],['MASS','8.6 M⊕'],['YEAR','33 d'],['ZONE','habitable'],['WATER','vapor confirmed'],['JWST','2023 and 2025']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','33 days'],['Distance from the star','0.14 AU, inside the habitable zone of that red dwarf'],['Rotation','Probably synchronous'],['The type','Too big to be rocky, too small to be a gas giant']]},
+    {t:'STRUCTURE', rows:[['The hycean hypothesis','A global ocean of liquid water under a thick hydrogen atmosphere'],['The alternative','A mini-Neptune with no surface at all, where what looks like an ocean is just ever denser gas'],['What is known','Methane and carbon dioxide confirmed in the atmosphere. That is solid.'],['What is debated','Practically everything else']]},
+    {t:'THE CONTROVERSY', rows:[['2019','Water vapor detected, and the world announces the first habitable planet with water'],['2023','James Webb finds methane and CO₂, and a weak signal of dimethyl sulfide'],['Why it matters','On Earth that gas is produced almost only by marine life'],['2025','A new study raises the confidence in the signal and the headline comes back strong'],['The counterattack','Independent reanalyses show the signal vanishing depending on the method used'],['Where we stand','No consensus. It is the clearest example of how hard a biosignature is to prove.']]}
+  ],
+  facts: ['It is the planet that brought the phrase possible sign of life to the headlines, twice, six years apart.', 'The gas in question, on Earth, is produced mainly by marine phytoplankton.', 'It is also the perfect example of why science demands repetition: the same data, analyzed another way, gives another result.', 'Nobody even knows whether it has a surface: it may be a giant ocean or just gas all the way down.'],
+  fict: 'It became the face of the hunt for life beyond Earth, and every new analysis of it makes headlines around the world.'
+},
+kepler186: {
+  kind: 'A red dwarf with five planets',
+  quick: [['TYPE','M1V'],['RADIUS','0.47 R☉'],['MASS','0.54 Sun'],['SURF. TEMP.','3,800 °C'],['DISTANCE','580 ly'],['PLANETS','5']],
+  sections: [
+    {t:'STRUCTURE', rows:[['Type','A red dwarf with half the mass of the Sun'],['Brightness','About 4% of the light of the Sun'],['Lifetime','Tens of billions of years: it will shine long after the Sun dies']]},
+    {t:'RECORD', rows:[['The family','Five known planets, four of them hugging the star'],['The prize','Only the fifth, f, falls in the habitable zone'],['Constellation','Cygnus, 580 light-years away']]}
+  ],
+  facts: ['Red dwarfs like this are the most common kind of star in the universe: three out of every four.'],
+  fict: null
+},
+kepler186f: {
+  kind: 'The first Earth-sized planet in the right zone',
+  quick: [['RADIUS','1.11 R⊕'],['YEAR','130 d'],['LIGHT','32% of Earth'],['ZONE','habitable (edge)'],['DISCOVERED','2014'],['DISTANCE','580 ly']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','130 days'],['Distance from the star','0.43 AU'],['Light received','A third of what the Earth gets: noon there would be our late afternoon'],['Rotation','Probably not synchronous, since it is far enough away']]},
+    {t:'RECORD', rows:[['2014','Announced as the first Earth-sized planet in the habitable zone of another star'],['The size','Only 11% larger than the Earth, almost certainly rocky'],['The caveat','It sits at the cold edge of the zone: it would need a lot of greenhouse effect to have liquid water'],['The color','If it has plants, they might be dark to make use of the star\'s red light'],['Verification','Too far to measure the mass, so the composition remains an estimate']]}
+  ],
+  facts: ['It was the first Earth-sized planet found where water could be liquid.', 'The sky there would have a redder, larger sun, and the whole day would look like dusk.', 'If there were vegetation, it would probably be dark, almost black, to absorb the red light.'],
+  fict: 'NASA made a space-travel poster of it with the slogan "Where the grass is always redder on the other side".'
+},
 /* o card do próprio sistema */
 __sys: {
+  vega: { hint: 'THE STAR OF "CONTACT", OWNER OF THE 1ST DUST DISK EVER SEEN', card: { desig: 'STAR SYSTEM · LYRA', kind: 'The standard star',
+    quick: [['STAR','A0V blue-white'],['DISTANCE','25 ly'],['DISK','yes, the 1st discovered'],['PLANETS','1 candidate'],['ROTATION','12.5 h'],['FUTURE','North Star in 13,700 AD']],
+    sections: [{t:'RECORD', rows:[['The ruler of the sky','It defined magnitude 0: every stellar brightness has been measured against it'],['The disk','IRAS (1983) found here the 1st debris belt beyond the Sun'],['JWST (2024)','Photographed the disk too smooth: maybe there are no giant planets']]}],
+    facts: ['The first star photographed (1850) and the first with a recorded spectrum.'] } },
+  fomalhaut: { hint: 'THE EYE OF SAURON: A RING OF DUST WITH A GHOST INSIDE', card: { desig: 'STAR SYSTEM · PISCIS AUSTRINUS', kind: 'The most photographed ring in the sky',
+    quick: [['STAR','A3V, white and young'],['DISTANCE','25 ly'],['RINGS','3, seen by JWST'],['PLANETS','0 confirmed'],['AGE','440 million years'],['FAME','the 2008 photo']],
+    sections: [{t:'RECORD', rows:[['The image','The dust ring with the blinded center became astronomy\'s "Eye of Sauron"'],['The ghost','Fomalhaut b was announced as a planet in 2008 and vanished in 2020'],['JWST','In 2023 it revealed three nested rings, a sign of planets we have not seen yet']]}],
+    facts: ['A system under construction: here you can see planets being built, and debris colliding.'] } },
+  barnard: { hint: 'THE FASTEST STAR IN THE SKY, AND THE 4TH NEAREST', card: { desig: 'STAR SYSTEM · OPHIUCHUS', kind: 'The runaway, finally with planets',
+    quick: [['STAR','M4V red dwarf'],['DISTANCE','5.96 ly'],['PLANETS','4 (2024 and 2025)'],['AGE','~10 billion years'],['RECORD','proper motion'],['HEADING','it is approaching']],
+    sections: [{t:'RECORD', rows:[['The record','No star crosses the sky so fast as seen from Earth'],['The soap opera','Decades of planets announced and denied, all instrument defects'],['The turn','2024: ESPRESSO confirmed Barnard b. In 2025, three more.'],['Future','In 11,800 AD it will be the nearest star to the Sun']]}],
+    facts: ['A classic target of the first serious proposals for an interstellar probe.'] } },
+  cygx1: { hint: 'THE FIRST BLACK HOLE SCIENCE ACCEPTED, AND HAWKING BET AGAINST IT', card: { desig: 'BLACK HOLE · CYGNUS', kind: 'The object of Hawking\'s bet',
+    quick: [['MASS','21 Suns'],['DISTANCE','7,200 ly'],['DISCOVERED','1964'],['COMPANION','supergiant'],['ORBIT','5.6 d'],['BET','paid in 1990']],
+    sections: [{t:'RECORD', rows:[['The importance','The first object widely accepted as a black hole'],['The bet','Hawking bet Thorne it was not one, and lost in 1990'],['How we see it','The gas torn from the companion shines in X-rays as it falls']]}],
+    facts: ['Hawking paid the bet with a magazine subscription, to the annoyance of Thorne\'s wife.'] } },
+  kepler16: { hint: 'THE SYSTEM OF THE DOUBLE SUNSET', card: { desig: 'STAR SYSTEM · CYGNUS', kind: 'Tatooine confirmed by telescope',
+    quick: [['STARS','2 (K5V + M4V)'],['PLANETS','1 circumbinary'],['DISTANCE','245 ly'],['DANCE','41 days'],['PLANET\'S YEAR','229 d'],['DISCOVERED','2011']],
+    sections: [{t:'RECORD', rows:[['The feat','The first confirmed planet orbiting two stars'],['The scene','Two suns setting, one orange and one red']]}],
+    facts: ['ILM signed the paper. Seriously.'] } },
+  psr1257: { hint: 'THE FIRST EXOPLANETS IN HISTORY · AROUND A PULSAR', card: { desig: 'PULSAR SYSTEM', kind: 'The unlikely cradle',
+    quick: [['STAR','161 Hz pulsar'],['PLANETS','3'],['DISCOVERED','1992'],['THEME','the undead']],
+    sections: [{t:'RECORD', rows:[['1992','Before 51 Peg, before everything: the first exoplanets were found HERE'],['How','The pulsar is a perfect clock; planets delay the pulses'],['Names','Lich, Draugr, Poltergeist, Phobetor: the IAU had fun']]}],
+    facts: ['Even if life is impossible here, the discovery was revolutionary all the same.'] } },
+  wasp12: { hint: 'WATCH: A STAR DEVOURING A PLANET', card: { desig: 'STAR SYSTEM', kind: 'The banquet in slow motion',
+    quick: [['STAR','hot F'],['PLANETS','1 (doomed)'],['DISTANCE','~1,400 ly'],['LEFT','~3 million years']],
+    sections: [{t:'RECORD', rows:[['The event','A shrinking orbit, an atmosphere being sucked away, all measured'],['The planet','Egg-shaped, darker than asphalt']]}],
+    facts: ['The rare spectacle of the end of a world with a scheduled time.'] } },
+  cnc55: { hint: 'A YEAR HERE LASTS 17.7 HOURS', card: { desig: 'STAR SYSTEM · CANCER', kind: 'Home of the diamond planet',
+    quick: [['STAR','Copernicus (G8V)'],['PLANETS','5 (1 modeled)'],['DISTANCE','41 ly'],['HIGHLIGHT','55 Cnc e'],['VISIBLE','to the naked eye'],['DISCOVERED','2004']],
+    sections: [{t:'RECORD', rows:[['The famous one','55 Cnc e, a super-Earth of lava, maybe of diamond'],['The others','4 more confirmed planets in the real catalog']]}],
+    facts: ['Tap the planet for the details of the diamond hypothesis.'] } },
+  hd189: { hint: 'HERE IT RAINS GLASS · SIDEWAYS', card: { desig: 'STAR SYSTEM · VULPECULA', kind: 'The most hostile blue in the galaxy',
+    quick: [['STAR','active K dwarf'],['PLANETS','1'],['DISTANCE','64.5 ly'],['COLOR','cobalt blue, measured'],['WINDS','8,700 km/h'],['DISCOVERED','2005']],
+    sections: [{t:'RECORD', rows:[['The planet','A hot Jupiter glued to its star'],['Why it matters','One of the most studied exoplanets: color, weather and even X-rays']]}],
+    facts: ['Beautiful from afar. Up close, glass at 7 times the speed of sound.'] } },
+  toi700: { hint: 'THE CALM RED DWARF WITH AN EARTH-SIZED WORLD', card: { desig: 'STAR SYSTEM · DORADO', kind: 'The TESS bet',
+    quick: [['STAR','calm M2V'],['PLANETS','4'],['DISTANCE','101 ly'],['IN THE ZONE','d and e']],
+    sections: [{t:'RECORD', rows:[['TOI-700 d','Earth-sized in the habitable zone, found by TESS in 2020'],['The advantage','Without flares, atmospheres can survive']]}],
+    facts: ['One of the most promising addresses in the catalog.'] } },
+  gliese581: { hint: 'THE SYSTEM OF THE PLANET THAT MAY NEVER HAVE EXISTED', card: { desig: 'STAR SYSTEM · LIBRA', kind: 'Science, hype and a ghost',
+    quick: [['STAR','M3V'],['PLANETS','3 conf.'],['DISTANCE','20 ly'],['GHOST','581g "Zarmina"']],
+    sections: [{t:'RECORD', rows:[['The soap opera','The "first habitable world" of 2010 evaporated in the reanalysis'],['Confirmed','581c, the super-Earth that became a lesson in humility'],['2029','The 501 messages Earth sent in 2008 arrive']]}],
+    facts: ['Mark your calendar: our "hello" arrives in 2029.'] } },
+  pegasi51: { hint: '1995: THE FIRST EXOPLANET AROUND A SUN-LIKE STAR', card: { desig: 'STAR SYSTEM · PEGASUS', kind: 'Ground zero of the exoplanets',
+    quick: [['STAR','Helvetios (G2IV)'],['PLANETS','1 confirmed'],['DISTANCE','50.5 ly'],['DISCOVERED','1995'],['NOBEL','Physics 2019'],['CLASS','hot Jupiter number 1']],
+    sections: [{t:'RECORD', rows:[['The feat','Mayor & Queloz caught Dimidium through the star\'s wobble'],['The impact','A gas giant with a 4-day year rewrote the theory of planet formation'],['The prize','The 2019 Nobel Prize in Physics, 24 years later']]}],
+    facts: ['Everything this map shows beyond the Solar System descends from this discovery.'] } },
+  lhs1140: { hint: 'THE BEST KNOWN CANDIDATE FOR A WORLD WITH LIQUID WATER', card: { desig: 'STAR SYSTEM · CETUS', kind: 'The most contested target of James Webb',
+    quick: [['STAR','calm M4.5V'],['DISTANCE','48.5 ly'],['PLANETS','2'],['IN THE ZONE','b'],['WATER','10 to 20% of the mass'],['JWST','2024 and 2025']],
+    sections: [{t:'RECORD', rows:[['The planet','LHS 1140 b is a super-Earth in the habitable zone, with the density of an ocean world'],['2024','A hint of a nitrogen atmosphere, like Earth\'s'],['The advantage','The star is calm, so an atmosphere would have a chance to survive']]}],
+    facts: ['If liquid water is ever confirmed outside the Solar System, it will probably be here.'] } },
+  k218: { hint: 'THE PLANET THAT MADE ALIEN-LIFE HEADLINES, TWICE', card: { desig: 'STAR SYSTEM · LEO', kind: 'The most famous controversy in astrobiology',
+    quick: [['STAR','M2.5V red dwarf'],['DISTANCE','124 ly'],['PLANETS','2'],['IN THE ZONE','b'],['WATER','vapor confirmed'],['JWST','2023 and 2025']],
+    sections: [{t:'RECORD', rows:[['2019','Water vapor detected, and the first-habitable-planet headline goes around the world'],['2023 and 2025','A weak signal of a gas that on Earth comes from marine life'],['The counterpoint','Independent reanalyses show the signal vanishing depending on the method']]}],
+    facts: ['It is the clearest example of how hard it is to truly prove a biosignature.'] } },
+  kepler186: { hint: 'THE FIRST EARTH-SIZED PLANET FOUND IN THE HABITABLE ZONE', card: { desig: 'STAR SYSTEM · CYGNUS', kind: 'Where the grass would be red',
+    quick: [['STAR','M1V red dwarf'],['PLANETS','5'],['DISTANCE','580 ly'],['IN THE ZONE','f'],['DISCOVERED','2014'],['SIZE OF f','1.11 R⊕']],
+    sections: [{t:'RECORD', rows:[['The milestone','Kepler-186f was the first Earth-sized planet in the habitable zone of another star'],['The light','It receives a third of the light the Earth gets, and red'],['The caveat','It sits at the cold edge of the zone: liquid water depends on a greenhouse']]}],
+    facts: ['NASA made a travel poster with the slogan "where the grass is always redder".'] } },
   trappist: { hint: '7 WORLDS IN LESS SPACE THAN THE ORBIT OF MERCURY', card: { desig: 'STAR SYSTEM · AQUARIUS', kind: 'Seven compact worlds',
     quick: [['STAR','1 (M8V)'],['PLANETS','7 rocky'],['HABITABLE ZONE','3 of them'],['DISTANCE','40.7 ly'],['DISCOVERED','2016 to 2017'],['SCALE','fits inside the orbit of Mercury']],
     sections: [{t:'RECORD', rows:[['The star','An ultracool red dwarf, slightly larger than Jupiter'],['The prize','e, f and g in the habitable zone, and e is the favorite'],['James Webb','Partial verdict: b (~230 °C) and c (~110 °C) look like bare rock'],['The bet','If one of the habitable-zone planets has an atmosphere, it will be the headline of the decade']]}],
