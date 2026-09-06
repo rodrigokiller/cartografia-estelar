@@ -10875,6 +10875,7 @@ const HAB_GRUPOS = [
   ['rochosos', 'ROCHOSOS', ['mercurio', 'venus', 'terra', 'marte', 'lua']],
   ['gigantes', 'GIGANTES', ['jupiter', 'saturno', 'urano', 'netuno']],
   ['luas', 'LUAS GRANDES', ['lua', 'io', 'europa', 'ganimedes', 'tita', 'tritao']],
+  ['oceanos', 'MUNDOS OCEÂNICOS', ['europa', 'encelado', 'ganimedes', 'calisto', 'tita', 'mimas', 'dione', 'tritao', 'ceres', 'plutao']],
   ['estrelas', 'AS ESTRELAS', ['siriusb', 'sol', 'polariss', 'aldebarans', 'rigels', 'antaress', 'betelgeuses']],
   ['jupluas', 'LUAS DE JÚPITER', ['jupiter', 'io', 'europa', 'ganimedes', 'calisto']],
   ['trappist', 'TRAPPIST-1', ['t1b', 't1c', 't1d', 't1e', 't1f', 't1g', 't1h']],
@@ -12373,7 +12374,12 @@ const ROTA_AGUAS = [
   {corpo:'encelado', ms:13000},
   {corpo:'tita', ms:13000},
   {corpo:'ganimedes', ms:13000},
-  {sis:'sol', ms:7000, texto:'Quatro oceanos escondidos num só sistema. No universo, a água é a regra, não a exceção.'}
+  {corpo:'calisto', ms:11000, texto:'Calisto guarda um oceano salgado a 150 km de profundidade, longe da radiação de Júpiter: o melhor endereço para uma base humana no sistema.'},
+  {corpo:'mimas', ms:11000, texto:'A Estrela da Morte tem um oceano jovem: o bamboleio medido pela Cassini revelou, em 2024, água a 20 km de um gelo que não mostra nenhum sinal dela.'},
+  {corpo:'dione', ms:10000, texto:'Os penhascos brilhantes de Dione são gelo exposto por fraturas, e a gravidade dela sugere mais um oceano escondido.'},
+  {corpo:'tritao', ms:11000, texto:'Tritão, o mundo capturado do cinturão de Kuiper, tem gêiseres de nitrogênio e provavelmente um oceano de água e amônia por baixo.'},
+  {corpo:'ceres', ms:11000, texto:'Até no cinturão de asteroides: os faróis de Ceres são sal de uma salmoura que ainda está líquida lá embaixo.'},
+  {sis:'sol', ms:7000, texto:'Nove oceanos escondidos num só sistema, e a lista continua crescendo. No universo, a água é a regra, não a exceção.'}
 ];
 /* r147: a volta pelo céu, só no mapa 1:1 (o tour liga a escala sozinho) */
 const ROTA_CEU = [
@@ -14102,7 +14108,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r242';
+const BUILD = 'r243';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
