@@ -3229,6 +3229,32 @@ PLANETS.push(
   ],
   facts:['É o pai das Perseidas: a poeira que ele deixa para trás vira a chuva de meteoros de agosto.','O núcleo tem 26 km, o dobro do asteroide que matou os dinossauros, e a órbita dele cruza a nossa: é o maior objeto vigiado do céu.','Foi o primeiro cometa ligado a uma chuva de meteoros, por Schiaparelli em 1866.'],
   fict:'Na tradição católica as Perseidas são as Lágrimas de São Lourenço, martirizado em 10 de agosto de 258: a chuva chega todo ano na data do santo.', moons:[]},
+ {id:'encke', name:'ENCKE', desig:'2P · COMETA PERIÓDICO', kind:'O cometa mais apressado, pai das Táuridas', hab:0, gbar:0.0001, pop:'0',
+  quick:[['NÚCLEO','4,8 km'],['PERÍODO','3,3 anos, o mais curto'],['ÚLTIMA VISITA','22 OUT 2023'],['PRÓXIMA','FEV 2027'],['A CHUVA','Táuridas, out. e nov.'],['DESCOBERTA','1786']],
+  comet:true, orbita:{peri:5.1, afel:24, incl:0.20, epoca:Date.UTC(2023,9,22,7)},
+  traj:{de:2023.8, ate:2027.1}, marcos:[[2023.81,'PERIÉLIO','22 OUT 2023: a 0,34 UA do Sol, por dentro da órbita de Mercúrio, como a cada 3,3 anos'],[2025.45,'AFÉLIO','A 4,1 UA, dentro do cinturão de asteroides: ele nunca vai longe'],[2027.1,'PRÓXIMO PERIÉLIO','Fevereiro de 2027: a volta de número 65 desde que o vimos pela primeira vez']],
+  sys:{orbit:20, size:0.28, speed:3.0, angle:2.2, incl:0.15},
+  visual:{mode:'rocky', c1:'#3c3833', c2:'#57524a', c3:'#26231f', scale:6.0, seed:17.86, crater:0.9, atmo:{col:'#b0d8e0', i:0.35}},
+  sections:[
+    {t:'O MAIS APRESSADO', rows:[['O período','3,3 anos, o mais curto de todos os cometas conhecidos: dá a volta no Sol enquanto Marte dá menos de duas'],['O alcance','Do lado de dentro da órbita de Mercúrio até o meio do cinturão de asteroides, nunca além de Júpiter'],['O cansaço','Depois de milhares de passagens rasantes, sobrou pouco gelo: é um cometa velho, de cauda curta e núcleo escuro'],['O nome','Johann Encke calculou a órbita em 1819 e previu a volta: é o segundo cometa batizado pelo matemático, não pelo descobridor, como o Halley']]},
+    {t:'AS TÁURIDAS', rows:[['A chuva','Outubro e novembro: as Táuridas do Sul e do Norte, lentas, com bolas de fogo, apelidadas de fogos de Halloween'],['O complexo','A poeira dele é tão espalhada que forma uma torrente larga, atravessada pela Terra durante semanas'],['A hipótese','Fred Whipple sugeriu que o objeto de Tunguska (1908) pode ter sido um fragmento da família do Encke; segue em debate'],['O enxame','A cada poucos anos a Terra cruza um trecho mais denso e as bolas de fogo se multiplicam, como em 2015 e 2022']]},
+    {t:'REGISTRO', rows:[['1786','Visto por Pierre Méchain; depois por Caroline Herschel (1795) e Jean-Louis Pons (1805 e 1818), sem ninguém perceber que era o mesmo'],['1819','Encke liga as quatro aparições e acerta a volta de 1822'],['2013','A MESSENGER, em órbita de Mercúrio, fotografou a passagem dele rente ao planeta'],['O mistério antigo','O período encurtava um pouco a cada volta: foi a primeira pista de que a evaporação do gelo funciona como foguete']]}
+  ],
+  facts:['Tem o período mais curto de todos os cometas conhecidos: 3,3 anos, mais de sessenta voltas observadas.','É o pai das Táuridas, a chuva de bolas de fogo de outubro e novembro.','Foi o primeiro cometa a mostrar que a evaporação do gelo empurra o núcleo e muda a órbita, o efeito foguete.'],
+  fict:'Uma hipótese antiga, de Fred Whipple, liga a explosão de Tunguska (1908) a um fragmento da família dele: ninguém provou, mas a ideia atravessou o século.', moons:[]},
+ {id:'tempeltuttle', name:'TEMPEL-TUTTLE', desig:'55P · COMETA PERIÓDICO', kind:'O pai das Leônidas e das tempestades de estrelas', hab:0, gbar:0.0001, pop:'0',
+  quick:[['NÚCLEO','3,6 km'],['PERÍODO','33,2 anos'],['ÚLTIMA VISITA','28 FEV 1998'],['PRÓXIMA','MAI 2031'],['A CHUVA','Leônidas, 17 de novembro'],['SENTIDO','retrógrado · 162°']],
+  comet:true, orbita:{peri:14.6, afel:48, incl:2.84, epoca:Date.UTC(1998,1,28,2)},
+  traj:{de:1998, ate:2031.4}, marcos:[[1998.16,'ÚLTIMA VISITA','28 FEV 1998: a volta que trouxe as tempestades de Leônidas de 1999 a 2002, milhares de meteoros por hora'],[2014.8,'AFÉLIO','A 19,7 UA, perto da órbita de Urano, o ponto mais longe da volta'],[2031.4,'PRÓXIMO PERIÉLIO','Maio de 2031: as Leônidas voltam a engrossar nos anos seguintes']],
+  sys:{orbit:40, size:0.3, speed:2.4, angle:5.6, incl:0.55},
+  visual:{mode:'rocky', c1:'#403c37', c2:'#5a554d', c3:'#282522', scale:6.3, seed:18.65, crater:0.9, atmo:{col:'#b8e0e8', i:0.5}},
+  sections:[
+    {t:'AS LEÔNIDAS', rows:[['A chuva','Por volta de 17 de novembro a Terra cruza o rastro dele: as Leônidas, vindas do Leão'],['A velocidade','Ele orbita AO CONTRÁRIO dos planetas (162 graus), então a poeira bate de frente: 71 km/s, os meteoros mais rápidos que existem'],['A tempestade de 1833','Na noite de 12 para 13 de novembro caíram dezenas de milhares de meteoros por hora sobre a América do Norte: a noite em que as estrelas caíram, o nascimento da ciência dos meteoros'],['1966','No Arizona contaram 40 meteoros por SEGUNDO por alguns minutos: a maior tempestade do século XX'],['1999 a 2002','As voltas depois do periélio de 1998 trouxeram tempestades de milhares por hora, vistas na Europa e no Oriente Médio']]},
+    {t:'O CICLO DE 33 ANOS', rows:[['O padrão','As tempestades vêm em ondas, logo depois de cada passagem do cometa, e a cada 33 anos'],['O porquê','A poeira fresca fica concentrada perto do cometa: a Terra só atravessa a nuvem densa quando ele acaba de passar'],['O futuro','Depois de 2031 as previsões apontam Leônidas fortes por volta de 2034 e 2035, e a próxima grande tempestade só em 2099']]},
+    {t:'REGISTRO', rows:[['1865 e 1866','Descoberto por Ernst Tempel, em Marselha, e independentemente por Horace Tuttle, em Harvard, semanas depois'],['1867','Schiaparelli, Le Verrier e Peters ligam a órbita dele às Leônidas, no mesmo ano em que o Swift-Tuttle foi ligado às Perseidas'],['As voltas antigas','Registros de 1366 e 1699 batem com as passagens dele'],['1998','Redescoberto em 1997 e observado no periélio de 28 de fevereiro de 1998']]}
+  ],
+  facts:['É o pai das Leônidas, a chuva das tempestades: em 1833 caíram dezenas de milhares de meteoros por hora, a noite em que as estrelas caíram.','Orbita ao contrário dos planetas, então a poeira dele bate na Terra de frente a 71 km/s: os meteoros mais rápidos do céu.','As tempestades vêm em ondas de 33 anos, logo depois de cada passagem; a próxima grande só em 2099.'],
+  fict:'A tempestade de 1833 entrou na cultura americana: a canção Stars Fell on Alabama (1934) e o dito de que as estrelas caíram no Alabama vêm daquela noite.', moons:[]},
  {id:'tsuchinshan', escape:true, comet:true, periUA:0.391, name:'TSUCHINSHAN-ATLAS', desig:'C/2023 A3 · COMETA DE LONGO PERÍODO', kind:'O grande cometa de 2024', hab:0, gbar:0.0001, pop:'0',
   quick:[['NÚCLEO','poucos km'],['PERIÉLIO','27 SET 2024 · 0,39 UA'],['MAIS PERTO DA TERRA','12 OUT 2024 · 70 mi km'],['DESCOBERTA','9 JAN 2023'],['BRILHO','até magnitude −4'],['INCLINAÇÃO','139° · retrógrado']],
   sys:{orbit:58, size:0.3, speed:2.4, angle:4.4, incl:2.43},
@@ -5115,7 +5141,7 @@ const ESCALA_REAL_EL = {   /* [peri UA, afel UA, data do periélio real quando c
   jupiter:[4.951, 5.457, Date.UTC(2023,0,21)], saturno:[9.041, 10.124, Date.UTC(2032,10,24)],
   urano:[18.286, 20.096, Date.UTC(2050,7,4)], netuno:[29.81, 30.33],
   halebopp:[0.914, 370],
-  plutao:[29.7, 49.3], eris:[38.2, 97.6], sedna:[76.2, 1012], halley:[0.586, 35.1], p67:[1.24, 5.68], swift:[0.9595, 51.2]};
+  plutao:[29.7, 49.3], eris:[38.2, 97.6], sedna:[76.2, 1012], halley:[0.586, 35.1], p67:[1.24, 5.68], swift:[0.9595, 51.2], encke:[0.3386, 4.10], tempeltuttle:[0.9764, 19.70]};
 /* distância real de cada lua ao centro do corpo, em km (semi-eixo maior) */
 const ESCALA_REAL_LUAS = {
   lua:384400, fobos:9376, deimos:23463,
@@ -5648,11 +5674,11 @@ const ESCALA_REAL_NODO = {
   urano:[0.773, 74.017, 96.937], netuno:[1.770, 131.784, -86.819],
   plutao:[17.140, 110.304, 113.765],
   eris:[43.9, 36.0, 151.0], sedna:[11.9, 145.0, 311.0],
-  halley:[162.2, 59.1, 112.0], p67:[7.04, 50.1, 12.8], swift:[113.45, 139.38, 153.0]};
+  halley:[162.2, 59.1, 112.0], p67:[7.04, 50.1, 12.8], swift:[113.45, 139.38, 153.0], encke:[11.38, 334.14, 187.18], tempeltuttle:[162.49, 235.27, 172.50]};
 const ESCALA_REAL_T = {mercurio:0.2408467, venus:0.6151973, terra:1.0000174,
   marte:1.8808476, jupiter:11.862615, saturno:29.447498, urano:84.016846,
   netuno:164.79132, plutao:247.92065, eris:561.2, sedna:12676,
-  halley:75.84, p67:6.434, swift:133.28};
+  halley:75.84, p67:6.434, swift:133.28, encke:3.307, tempeltuttle:33.24};
 const ESCALA_REAL_ANC = {
   mercurio:{ma:174.794, ep:946728000000}, venus:{ma:50.447, ep:946728000000},
   terra:{ma:357.517, ep:946728000000}, marte:{ma:19.412, ep:946728000000},
@@ -5661,7 +5687,7 @@ const ESCALA_REAL_ANC = {
   plutao:{ma:14.862, ep:946728000000},
   eris:{ma:212, ep:Date.UTC(2026,5,9)}, sedna:{ma:358.6, ep:Date.UTC(2026,5,9)},
   /* cometas: a âncora é a PASSAGEM PELO PERIÉLIO (ma=0 na data), do SBDB */
-  halley:{ma:0, ep:Date.UTC(1986,1,9,11,22)}, p67:{ma:0, ep:Date.UTC(2015,7,13,2,8)}, swift:{ma:0, ep:Date.UTC(1992,11,12)}};
+  halley:{ma:0, ep:Date.UTC(1986,1,9,11,22)}, p67:{ma:0, ep:Date.UTC(2015,7,13,2,8)}, swift:{ma:0, ep:Date.UTC(1992,11,12)}, encke:{ma:0, ep:Date.UTC(2023,9,22,7)}, tempeltuttle:{ma:0, ep:Date.UTC(1998,1,28,2)}};
 /* dia sideral de cada planeta em dias terrestres (negativo = retrógrado) */
 const ESCALA_REAL_DIA = {mercurio:58.65, venus:-243.0, terra:0.997, marte:1.026,
   jupiter:0.414, saturno:0.444, urano:-0.718, netuno:0.671};
@@ -14208,7 +14234,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r248';
+const BUILD = 'r249';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

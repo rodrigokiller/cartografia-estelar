@@ -2046,6 +2046,28 @@ __gal: {
     sections: [{t:'RECORD', rows:[['Pair','It is "pulling" the dwarf NGC 5195; the interaction lights up the arms'],['History','The 1st galaxy where spiral structure was seen (1845)'],['Real address','It has a navigable system here: M51-ULS-1, the most distant planet candidate ever detected']]}],
     facts: ['The gravity of the companion works as an accelerator of stellar nurseries.'] }
 },
+encke: {
+  kind: 'The comet in the biggest hurry, father of the Taurids',
+  quick: [['NUCLEUS','4.8 km'],['PERIOD','3.3 years, the shortest'],['LAST VISIT','OCT 22, 2023'],['NEXT','FEB 2027'],['THE SHOWER','Taurids, Oct. and Nov.'],['DISCOVERED','1786']],
+  sections: [
+    {t:'THE ONE IN A HURRY', rows:[['The period','3.3 years, the shortest of all known comets: it laps the Sun while Mars does less than two'],['The reach','From inside the orbit of Mercury to the middle of the asteroid belt, never beyond Jupiter'],['The fatigue','After thousands of close passes, little ice is left: it is an old comet, with a short tail and a dark nucleus'],['The name','Johann Encke computed the orbit in 1819 and predicted the return: it is the second comet named after the mathematician, not the discoverer, like Halley']]},
+    {t:'THE TAURIDS', rows:[['The shower','October and November: the Southern and Northern Taurids, slow, with fireballs, nicknamed the Halloween fireworks'],['The complex','Its dust is so spread out that it forms a wide stream, which the Earth crosses for weeks'],['The hypothesis','Fred Whipple suggested the Tunguska object (1908) may have been a fragment of the Encke family; still debated'],['The swarm','Every few years the Earth crosses a denser stretch and the fireballs multiply, as in 2015 and 2022']]},
+    {t:'RECORD', rows:[['1786','Seen by Pierre Méchain; then by Caroline Herschel (1795) and Jean-Louis Pons (1805 and 1818), with nobody realizing it was the same one'],['1819','Encke links the four apparitions and nails the return of 1822'],['2013','MESSENGER, in orbit around Mercury, photographed its pass right by the planet'],['The old mystery','The period shortened a little each lap: it was the first clue that evaporating ice works like a rocket']]}
+  ],
+  facts: ['It has the shortest period of all known comets: 3.3 years, more than sixty observed laps.', 'It is the father of the Taurids, the fireball shower of October and November.', 'It was the first comet to show that evaporating ice pushes the nucleus and changes the orbit, the rocket effect.'],
+  fict: 'An old hypothesis, by Fred Whipple, links the Tunguska explosion (1908) to a fragment of its family: nobody proved it, but the idea crossed the century.'
+},
+tempeltuttle: {
+  kind: 'Father of the Leonids and the storms of falling stars',
+  quick: [['NUCLEUS','3.6 km'],['PERIOD','33.2 years'],['LAST VISIT','FEB 28, 1998'],['NEXT','MAY 2031'],['THE SHOWER','Leonids, November 17'],['DIRECTION','retrograde · 162°']],
+  sections: [
+    {t:'THE LEONIDS', rows:[['The shower','Around November 17 the Earth crosses its trail: the Leonids, coming from Leo'],['The speed','It orbits AGAINST the planets (162 degrees), so the dust hits head-on: 71 km/s, the fastest meteors there are'],['The storm of 1833','On the night of November 12 to 13 tens of thousands of meteors per hour fell over North America: the night the stars fell, the birth of meteor science'],['1966','In Arizona they counted 40 meteors per SECOND for a few minutes: the greatest storm of the 20th century'],['1999 to 2002','The returns after the 1998 perihelion brought storms of thousands per hour, seen in Europe and the Middle East']]},
+    {t:'THE 33-YEAR CYCLE', rows:[['The pattern','The storms come in waves, right after each pass of the comet, every 33 years'],['Why','Fresh dust stays concentrated near the comet: the Earth only crosses the dense cloud when it has just passed'],['The future','After 2031 the forecasts point to strong Leonids around 2034 and 2035, and the next great storm only in 2099']]},
+    {t:'RECORD', rows:[['1865 and 1866','Discovered by Ernst Tempel, in Marseille, and independently by Horace Tuttle, at Harvard, weeks later'],['1867','Schiaparelli, Le Verrier and Peters link its orbit to the Leonids, the same year Swift-Tuttle was linked to the Perseids'],['The old returns','Records from 1366 and 1699 match its passes'],['1998','Recovered in 1997 and observed at the perihelion of February 28, 1998']]}
+  ],
+  facts: ['It is the father of the Leonids, the shower of storms: in 1833 tens of thousands of meteors per hour fell, the night the stars fell.', 'It orbits against the planets, so its dust hits the Earth head-on at 71 km/s: the fastest meteors in the sky.', 'The storms come in 33-year waves, right after each pass; the next great one only in 2099.'],
+  fict: 'The storm of 1833 entered American culture: the song Stars Fell on Alabama (1934) and the saying that the stars fell on Alabama come from that night.'
+},
 /* o card do próprio sistema */
 __sys: {
   caranguejo: { hint: 'THE EXPLOSION OF 1054, RECORDED BY HUMAN WITNESSES', card: { desig: 'SUPERNOVA REMNANT · TAURUS', kind: 'The explosion with a date',
