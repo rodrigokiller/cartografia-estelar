@@ -12627,6 +12627,14 @@ const ROTA_CEU = [
   {constel:'cisne', ms:11000, texto:'O Cisne, a Cruz do Norte, deitado na faixa da Via Láctea. Aqui foi identificado o primeiro buraco negro reconhecido pela ciência.'},
   {corpo:'terra', ms:9000, texto:'E tudo isso é desenho visto DAQUI. Saia do sistema e as figuras se desmancham: elas só existem deste ponto do espaço.'}
 ];
+/* r254 · as chuvas de meteoros e os cometas que as alimentam */
+const ROTA_CHUVAS = [
+  {corpo:'swift', ms:12000, texto:'Swift-Tuttle, o pai das Perseidas: a cada agosto a Terra atravessa a poeira que ele deixou, e o céu risca a 59 km/s.'},
+  {corpo:'tempeltuttle', ms:12000, texto:'Tempel-Tuttle, o pai das Leônidas: em 1833 a poeira fresca dele fez chover cem mil meteoros por hora, e a ciência das chuvas nasceu naquela noite.'},
+  {corpo:'encke', ms:12000, texto:'Encke, o cometa mais apressado, volta a cada 3,3 anos e alimenta as Táuridas: bolas de fogo lentas em novembro, e a suspeita de Tunguska.'},
+  {corpo:'halley', ms:12000, texto:'O Halley cruza a órbita da Terra duas vezes: a poeira dele vira as Eta Aquáridas em maio e as Oriônidas em outubro.'},
+  {corpo:'terra', ms:9000, texto:'Toda estrela cadente é isto: um grão de cometa entrando a dezenas de km/s. A Terra atravessa esses rastros nas mesmas datas, todo ano.'}
+];
 const ROTA_CORRIDA = [
   {corpo:'luna9', ms:12000, texto:'1966. O primeiro pouso suave da humanidade em outro mundo. O solo aguentou.'},
   {corpo:'apollo8', ms:12000, texto:'1968. Os primeiros olhos humanos a ver o lado oculto, e a Terra pequena e inteira.'},
@@ -12648,7 +12656,8 @@ const ROTAS = {
   nebulosas: {nome:'NEBULOSAS',      lista:ROTA_NEBULOSAS},
   galaxias:  {nome:'GALÁXIAS',       lista:ROTA_GALAXIAS},
   corrida:   {nome:'A CORRIDA DA LUA', lista:ROTA_CORRIDA},
-  ceu:       {nome:'AS FIGURAS DO CÉU', lista:ROTA_CEU}
+  ceu:       {nome:'AS FIGURAS DO CÉU', lista:ROTA_CEU},
+  chuvas:    {nome:'AS CHUVAS DE ESTRELAS', lista:ROTA_CHUVAS}
 };
 let ROTEIRO = ROTEIRO_COMPLETO;
 function tourNome(p){
@@ -14348,7 +14357,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r253';
+const BUILD = 'r254';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
