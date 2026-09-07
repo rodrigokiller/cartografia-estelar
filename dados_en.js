@@ -2068,8 +2068,69 @@ tempeltuttle: {
   facts: ['It is the father of the Leonids, the shower of storms: in 1833 tens of thousands of meteors per hour fell, the night the stars fell.', 'It orbits against the planets, so its dust hits the Earth head-on at 71 km/s: the fastest meteors in the sky.', 'The storms come in 33-year waves, right after each pass; the next great one only in 2099.'],
   fict: 'The storm of 1833 entered American culture: the song Stars Fell on Alabama (1934) and the saying that the stars fell on Alabama come from that night.'
 },
+/* ---- r252: os recordistas (HD 80606 b, WASP-76b, PSR J1719-1438 b) ---- */
+hd80606s: {
+  kind: 'The owner of the comet-planet',
+  quick: [['TYPE','G5V (yellow)'],['RADIUS','1.04 R☉'],['SURF. TEMP.','5,300 °C'],['PLANETS','1'],['DISTANCE','~217 ly'],['COMPANION','HD 80607, ~1,200 AU away']],
+  sections: [{t:'RECORD', rows:[['What it is','A near twin of the Sun, a bit richer in metals, in Ursa Major'],['The pair','It forms a pair with HD 80607: the two were born together and orbit each other 1,200 AU apart'],['The suspect','The companion, through the Kozai effect, is what stretched the planet\'s orbit over billions of years']]}],
+  facts: ['Without the companion star, its planet would probably have an ordinary orbit.'], fict: null
+},
+hd80606b: {
+  kind: 'The planet with the six-hour summer',
+  quick: [['MASS','4.1 M♃'],['RADIUS','~1.0 R♃'],['YEAR','111.4 d'],['ECCENTRICITY','0.93'],['PERIASTRON','0.03 AU'],['APOASTRON','0.88 AU']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','111.4 days'],['Eccentricity','0.93: from 0.03 to 0.88 AU, the orbit of a comet'],['Periastron','It passes 4.5 million km from the star, six times closer than Mercury to the Sun'],['Rotation','Pseudo-synchronized with the close pass, about 36 hours'],['Here on the map','The ellipse is compressed to fit the scene; the shape is the idea, not the measure']]},
+    {t:'RECORD', rows:[['2001','Discovered by radial velocity (Naef and team, Geneva)'],['2009','Spitzer measured the temperature climbing from 500 to 1,200 °C in SIX HOURS during the pass'],['The transit','Discovered in 2009: it lasts 12 hours, one of the longest known'],['The storm','Models predict 5 km/s winds sweeping the planet after the pass'],['The cause','The companion HD 80607 stretched the orbit through the Kozai effect']]}
+  ],
+  facts: ['Every 111 days it dives close to the star and the whole atmosphere heats up 700 degrees in a single morning.', 'It has the most elongated orbit of any known planet around a normal star.', 'At its farthest point it is almost at the Earth-Sun distance; at its closest, a tenth of Mercury\'s orbit.'],
+  fict: 'It is the favorite example in exoplanet books when they want to show that a comet\'s orbit also works for a planet.'
+},
+wasp76s: {
+  kind: 'The forge',
+  quick: [['TYPE','F7V (yellow-white)'],['RADIUS','1.73 R☉'],['SURF. TEMP.','6,000 °C'],['PLANETS','1'],['DISTANCE','~640 ly'],['CONSTELLATION','Pisces']],
+  sections: [{t:'RECORD', rows:[['What it is','A star hotter and larger than the Sun, in the constellation Pisces'],['The role','It heats one side of the planet past 2,400 °C, enough to vaporize iron'],['Company','It has a faint companion a few hundred AU away']]}],
+  facts: ['Its light crossing the atmosphere of the planet is what revealed the iron rain.'], fict: null
+},
+wasp76b: {
+  kind: 'The world where it rains iron',
+  quick: [['RADIUS','1.83 R♃'],['MASS','0.92 M♃'],['YEAR','1.81 d'],['DAY','2,400 °C'],['NIGHT','~1,300 °C'],['RAIN','liquid iron']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','1.81 days'],['Rotation','Tidally locked: one side always in daylight, the other always in night'],['Distance','0.033 AU, some 4.9 million km from the star']]},
+    {t:'RECORD', rows:[['The day','Above 2,400 °C: hot enough for iron to become gas'],['The wind','It carries the iron vapor from the day side to the border with the night'],['The night','It cools to about 1,300 °C, the iron condenses and falls: rain of liquid iron'],['2020','ESPRESSO, at the VLT in Chile (Ehrenreich and team), saw the iron signature only on the evening side'],['Discovery','2013, by the WASP survey'],['The balloon','1.8 times the radius of Jupiter with less mass than it: puffed up by the heat']]}
+  ],
+  facts: ['The thermometer on the day side passes 2,400 degrees: iron turns to gas and leaves with the wind.', 'The iron rain only falls on the night side, where it cools enough for the metal to condense.', 'It is puffed up like a balloon: nearly twice the radius of Jupiter with less mass than it.'],
+  fict: 'It made headlines around the world in 2020: the planet where it rains iron. It appears in every recent documentary about extreme worlds.'
+},
+psrj1719s: {
+  kind: 'The lighthouse that kept the core of its companion',
+  quick: [['TYPE','millisecond pulsar'],['ROTATION','175 × per second'],['RADIUS','~10 km'],['MASS','1.4 Sun'],['DISTANCE','~4,000 ly'],['CONSTELLATION','Serpens']],
+  sections: [{t:'RECORD', rows:[['What it is','A neutron star spinning 175 times per second'],['How it spun up','By sucking matter from a companion for millions of years, until it was reduced to its core'],['2011','Bailes and team, with the Parkes radio telescope (Australia), find the planet-mass companion through the delay of the pulses'],['Where','About 4,000 light-years away, in Serpens']]}],
+  facts: ['The companion that spun up the pulsar is what orbits it today as a diamond planet.'], fict: null
+},
+psrj1719b: {
+  kind: 'The diamond planet',
+  quick: [['MASS','~1 M♃'],['RADIUS','< 0.4 R♃ (~28,000 km)'],['YEAR','2 h 10 min'],['DISTANCE','600,000 km from the pulsar'],['DENSITY','> 23 g/cm³'],['COMPOSITION','carbon and oxygen']],
+  sections: [
+    {t:'ORBIT & ROTATION', rows:[['Year','2 hours and 10 minutes'],['Distance','600,000 km: the whole orbit would fit inside the Sun'],['Rotation','Tidally locked, most likely']]},
+    {t:'RECORD', rows:[['What it is','Probably what is left of a white dwarf that lost 99.9 percent of its mass to the pulsar'],['The density','At least 23 g/cm³, more than twice that of lead: carbon at that pressure becomes crystal'],['The name','Diamond planet: the press coined it, and the authors did not object'],['Discovery','2011, through the delay of the pulsar\'s pulses, with the Parkes radio telescope'],['Here on the map','Size and distance are symbolic: in reality it orbits 600,000 km from a 20-km point']]}
+  ],
+  facts: ['It has the mass of Jupiter in less than half its size: hence the absurd density.', 'A year there lasts 2 hours and 10 minutes.', 'It probably was not born a planet: it was a star, and it was devoured until only the core remained.'],
+  fict: 'The diamond planet headline went around the world in 2011, and it became the classic example that nature does not respect our categories.'
+},
 /* o card do próprio sistema */
 __sys: {
+  hd80606: { hint: 'THE MOST ELONGATED ORBIT: A PLANET THAT LIVES LIKE A COMET', card: { desig: 'STAR SYSTEM', kind: 'The six-hour summer',
+    quick: [['STAR','G5, almost a Sun'],['PLANETS','1 (eccentric)'],['DISTANCE','~217 ly'],['ECCENTRICITY','0.93']],
+    sections: [{t:'RECORD', rows:[['The orbit','From 0.03 to 0.88 AU every 111 days: dive and retreat'],['The heat','700 degrees more in six hours during the pass, measured by Spitzer in 2009']]}],
+    facts: ['A planet with the orbit of a comet, measured in mid-pass.'] } },
+  wasp76: { hint: 'THE PLANET WHERE IT RAINS IRON', card: { desig: 'STAR SYSTEM', kind: 'The forge and the iron rain',
+    quick: [['STAR','hot F7'],['PLANETS','1 (ultra-hot)'],['DISTANCE','~640 ly'],['DAY','2,400 °C']],
+    sections: [{t:'RECORD', rows:[['The cycle','Iron vaporizes by day, travels with the wind and falls as rain in the night'],['The proof','ESPRESSO saw the iron signature on one side only, in 2020']]}],
+    facts: ['The only known place where the weather forecast includes iron rain.'] } },
+  psrj1719: { hint: 'THE DIAMOND PLANET: A TWO-HOUR YEAR AROUND A PULSAR', card: { desig: 'SYSTEM · PULSAR', kind: 'The diamond planet',
+    quick: [['STAR','millisecond pulsar'],['PLANETS','1'],['DISTANCE','~4,000 ly'],['YEAR','2 h 10 min']],
+    sections: [{t:'RECORD', rows:[['The planet','The mass of Jupiter in less than half the size: crystallized carbon'],['The origin','The core of a white dwarf devoured by the pulsar']]}],
+    facts: ['Probably a planet that once was a star.'] } },
   caranguejo: { hint: 'THE EXPLOSION OF 1054, RECORDED BY HUMAN WITNESSES', card: { desig: 'SUPERNOVA REMNANT · TAURUS', kind: 'The explosion with a date',
     quick: [['DISTANCE','6,500 ly'],['CATALOG','M1'],['EXPLOSION','1054'],['HEART','30 Hz pulsar'],['EXPANSION','1,500 km/s'],['WIDTH','11 ly']],
     sections: [{t:'RECORD', rows:[['1054','The Chinese record a new star visible by day for 23 days'],['What remained','Expanding filaments and, at the center, a pulsar spinning 30 times per second'],['Messier 1','The object that started the Messier catalog']]}],

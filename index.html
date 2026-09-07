@@ -2673,6 +2673,24 @@ const STARSYS = [
    sections:[{t:'REGISTRO', rows:[['WASP-12b','Júpiter quente em queda espiral, medimos a órbita encolhendo'],['Forma','A gravidade da estrela o esticou em formato de ovo'],['Cor','Mais escuro que asfalto, engole 94% da luz']]}],
    facts:['É o raro caso em que assistimos a uma estrela comendo um planeta em câmera lenta.'],
    fict:'As manchetes: “o planeta condenado”.'}},
+ {id:'hd80606', name:'HD 80606', nav:true, pos:[11.5,0,-9], hot:false,
+  card:{desig:'SISTEMA ESTELAR · ~217 AL', kind:'O planeta da órbita mais alongada', hab:null,
+   quick:[['DISTÂNCIA','~217 al'],['ESTRELA','G5 (amarela)'],['PLANETAS','1 conf.'],['EXCENTRICIDADE','0,93']],
+   sections:[{t:'REGISTRO', rows:[['HD 80606 b','Órbita de cometa: de 0,03 a 0,88 UA a cada 111 dias'],['O verão','A atmosfera aquece 700 graus em seis horas na passagem rasante'],['A culpada','A estrela companheira HD 80607 esticou a órbita ao longo de bilhões de anos']]}],
+   facts:['É o planeta de órbita mais excêntrica conhecido em volta de uma estrela normal.'],
+   fict:'O exemplo de todo livro de exoplanetas para mostrar que órbita de cometa também serve para planeta.'}},
+ {id:'wasp76', name:'WASP-76', nav:true, pos:[-8,0,-13.5], hot:false,
+  card:{desig:'SISTEMA ESTELAR · ~640 AL', kind:'Onde chove ferro', hab:null,
+   quick:[['DISTÂNCIA','~640 al'],['ESTRELA','F7 (amarela-branca)'],['PLANETAS','1 conf.'],['CHUVA','de ferro líquido']],
+   sections:[{t:'REGISTRO', rows:[['WASP-76b','Júpiter ultraquente com um lado a 2.400 °C'],['O ferro','Vira vapor de dia, o vento leva, e cai como chuva do lado da noite'],['2020','O ESPRESSO, no VLT, viu a assinatura do ferro só de um lado do planeta']]}],
+   facts:['A manchete de 2020: o planeta onde chove ferro.'],
+   fict:'Aparece em todo documentário recente sobre mundos extremos.'}},
+ {id:'psrj1719', name:'PSR J1719-1438', nav:true, pos:[17,0,-4], hot:false,
+  card:{desig:'SISTEMA · ~4.000 AL', kind:'O planeta de diamante', hab:null,
+   quick:[['DISTÂNCIA','~4.000 al'],['ESTRELA','pulsar de milissegundo'],['PLANETAS','1'],['DENSIDADE','23 g/cm³ ou mais']],
+   sections:[{t:'REGISTRO', rows:[['O planeta','Massa de Júpiter em menos da metade do tamanho: carbono cristalizado'],['A origem','Provavelmente o caroço de uma anã branca que o pulsar devorou'],['O ano','2 horas e 10 minutos: a órbita caberia dentro do Sol']]}],
+   facts:['Um planeta que provavelmente já foi uma estrela.'],
+   fict:'O planeta de diamante rodou o mundo em 2011 e virou o exemplo clássico de que a natureza não respeita as nossas categorias.'}},
  {id:'psr1257', name:'LICH (PULSAR)', nav:true, pos:[-19,0,9], hot:false,
   card:{desig:'SISTEMA · 2.300 AL', kind:'Os primeiros exoplanetas da história', hab:null,
    quick:[['DISTÂNCIA','2.300 al'],['ESTRELA','pulsar de milissegundo'],['PLANETAS','3'],['DESCOBERTA','1992 (!!)']],
@@ -3385,6 +3403,63 @@ const W12_BODIES = [
   ],
   facts:['É tão escuro que, sem o brilho do calor, seria quase invisível.','A “espiral da morte” dele foi a primeira confirmada por relógio.'],
   fict:'Toda lista de “planetas do inferno” abre com ele.', moons:[]}
+];
+const HD806_STAR = {
+  id:'hd80606s', name:'HD 80606', desig:'ESTRELA · G5V', kind:'A dona do planeta-cometa', hab:null, gbar:27,
+  quick:[['TIPO','G5V (amarela)'],['RAIO','1,04 R☉'],['TEMP. SUP.','5.300 °C'],['PLANETAS','1'],['DISTÂNCIA','~217 al'],['COMPANHEIRA','HD 80607, a ~1.200 UA']],
+  visual:{mode:'star', c1:'#fff4d6', c2:'#ffc866'},
+  sections:[{t:'REGISTRO', rows:[['O que é','Uma estrela quase gêmea do Sol, um pouco mais rica em metais, na Ursa Maior'],['A dupla','Forma um par com a HD 80607: as duas nasceram juntas e orbitam a 1.200 UA uma da outra'],['A suspeita','A companheira, pelo efeito Kozai, foi quem esticou a órbita do planeta ao longo de bilhões de anos']]}],
+  facts:['Sem a estrela companheira, o planeta dela provavelmente teria uma órbita comum.'], fict:null
+};
+const HD806_BODIES = [
+ {id:'hd80606b', name:'HD 80606 B', desig:'GIGANTE GASOSO · EXCÊNTRICO', kind:'O planeta com o verão de seis horas', hab:0, gbar:1.9, pop:'0',
+  quick:[['MASSA','4,1 M♃'],['RAIO','~1,0 R♃'],['ANO','111,4 d'],['EXCENTRICIDADE','0,93'],['PERIASTRO','0,03 UA'],['APOASTRO','0,88 UA']],
+  sys:{orbit:10.5, size:1.4, speed:1.0, angle:2.4}, orbita:{peri:4.0, afel:17, pos:0.5},
+  visual:{mode:'gas', c1:'#c9a27a', c2:'#8a5a3a', c3:'#f0d9b0', c4:'#5a3a26', bandF:4.2, turb:1.4, seed:80.6, atmo:{col:'#ffb070', i:0.6}},
+  sections:[
+    {t:'ÓRBITA & ROTAÇÃO', rows:[['Ano','111,4 dias'],['Excentricidade','0,93: de 0,03 a 0,88 UA, uma órbita de cometa'],['Periastro','Passa a 4,5 milhões de km da estrela, seis vezes mais perto que Mercúrio do Sol'],['Rotação','Pseudo-sincronizada com a passagem rasante, umas 36 horas'],['Aqui no mapa','A elipse está comprimida para caber na cena; a forma é a ideia, não a medida']]},
+    {t:'REGISTRO', rows:[['2001','Descoberto pela velocidade radial (Naef e equipe, Genebra)'],['2009','O Spitzer mediu a temperatura subindo de 500 para 1.200 °C em SEIS HORAS durante a passagem'],['O trânsito','Descoberto em 2009: dura 12 horas, um dos mais longos conhecidos'],['A tempestade','Modelos preveem ventos de 5 km/s varrendo o planeta depois da passagem'],['A causa','A companheira HD 80607 esticou a órbita pelo efeito Kozai']]}
+  ],
+  facts:['A cada 111 dias ele mergulha para perto da estrela e a atmosfera inteira aquece 700 graus em uma manhã.', 'Tem a órbita mais alongada de todos os planetas conhecidos em volta de uma estrela normal.', 'No ponto mais longe ele está quase na distância da Terra ao Sol; no mais perto, a um décimo da órbita de Mercúrio.'],
+  fict:'É o exemplo favorito dos livros de exoplanetas quando querem mostrar que órbita de cometa também serve para planeta.', moons:[]}
+];
+const W76_STAR = {
+  id:'wasp76s', name:'WASP-76', desig:'ESTRELA · F7V', kind:'A forja', hab:null, gbar:22,
+  quick:[['TIPO','F7V (amarela-branca)'],['RAIO','1,73 R☉'],['TEMP. SUP.','6.000 °C'],['PLANETAS','1'],['DISTÂNCIA','~640 al'],['CONSTELAÇÃO','Peixes']],
+  visual:{mode:'star', c1:'#fff8e6', c2:'#ffd98a'},
+  sections:[{t:'REGISTRO', rows:[['O que é','Uma estrela mais quente e maior que o Sol, na constelação de Peixes'],['O papel','Ela aquece um lado do planeta a mais de 2.400 °C, o bastante para vaporizar ferro'],['Companhia','Tem uma companheira tênue a algumas centenas de UA']]}],
+  facts:['A luz dela atravessando a atmosfera do planeta foi o que revelou a chuva de ferro.'], fict:null
+};
+const W76_BODIES = [
+ {id:'wasp76b', name:'WASP-76B', desig:'JÚPITER ULTRAQUENTE · CHUVA DE FERRO', kind:'O mundo onde chove ferro', hab:0, gbar:0.7, pop:'0',
+  quick:[['RAIO','1,83 R♃'],['MASSA','0,92 M♃'],['ANO','1,81 d'],['DIA','2.400 °C'],['NOITE','~1.300 °C'],['CHUVA','ferro líquido']],
+  sys:{orbit:6.5, size:1.8, speed:3.2, angle:0.8},
+  visual:{mode:'gas', c1:'#3a2a30', c2:'#7a3a2a', c3:'#ffb060', c4:'#241a1e', bandF:5.5, turb:2.0, seed:76.1, atmo:{col:'#ff9a50', i:1.0}},
+  sections:[
+    {t:'ÓRBITA & ROTAÇÃO', rows:[['Ano','1,81 dia'],['Rotação','Travada pela maré: um lado sempre de dia, o outro sempre de noite'],['Distância','0,033 UA, uns 4,9 milhões de km da estrela']]},
+    {t:'REGISTRO', rows:[['O dia','Mais de 2.400 °C: quente o bastante para o ferro virar gás'],['O vento','Leva o vapor de ferro do lado do dia até a fronteira com a noite'],['A noite','Esfria até uns 1.300 °C, o ferro condensa e cai: chuva de ferro líquido'],['2020','O ESPRESSO, no VLT do Chile (Ehrenreich e equipe), viu a assinatura do ferro só no lado do anoitecer'],['Descoberta','2013, pelo levantamento WASP'],['O balão','1,8 vezes o raio de Júpiter com menos massa que ele: inflado pelo calor']]}
+  ],
+  facts:['O termômetro do lado do dia passa de 2.400 graus: ferro vira gás e vai embora com o vento.', 'A chuva de ferro só cai do lado da noite, onde esfria o bastante para o metal condensar.', 'Ele é inchado como um balão: quase o dobro do raio de Júpiter com menos massa que ele.'],
+  fict:'Virou manchete no mundo todo em 2020: o planeta onde chove ferro. Aparece em todo documentário recente sobre mundos extremos.', moons:[]}
+];
+const PSR1719_STAR = {
+  id:'psrj1719s', name:'PSR J1719-1438', desig:'PULSAR DE MILISSEGUNDO', kind:'O farol que ficou com o caroço da companheira', hab:null, gbar:200000000000,
+  quick:[['TIPO','pulsar de milissegundo'],['ROTAÇÃO','175×/segundo'],['RAIO','~10 km'],['MASSA','1,4 Sol'],['DISTÂNCIA','~4.000 al'],['CONSTELAÇÃO','Serpente']],
+  visual:{mode:'star', c1:'#e8f4ff', c2:'#8fb4ff'},
+  sections:[{t:'REGISTRO', rows:[['O que é','Uma estrela de nêutrons girando 175 vezes por segundo'],['Como girou tanto','Sugando matéria de uma companheira durante milhões de anos, até reduzi-la ao caroço'],['2011','Bailes e equipe, com o radiotelescópio de Parkes (Austrália), acham o companheiro de massa planetária pelo atraso dos pulsos'],['Onde','A uns 4.000 anos-luz, na Serpente']]}],
+  facts:['A companheira que acelerou o pulsar é o que hoje orbita ele como um planeta de diamante.'], fict:null
+};
+const PSR1719_BODIES = [
+ {id:'psrj1719b', name:'PSR J1719-1438 B', desig:'PLANETA DE DIAMANTE · CAROÇO DE ESTRELA', kind:'O planeta de diamante', hab:0, gbar:16, pop:'0',
+  quick:[['MASSA','~1 M♃'],['RAIO','< 0,4 R♃ (~28.000 km)'],['ANO','2 h 10 min'],['DISTÂNCIA','600 mil km do pulsar'],['DENSIDADE','> 23 g/cm³'],['COMPOSIÇÃO','carbono e oxigênio']],
+  sys:{orbit:5, size:0.9, speed:4.2, angle:3.9},
+  visual:{mode:'rocky', c1:'#cfd6e2', c2:'#e9eef7', c3:'#8a94a6', scale:3.5, seed:17.19, crater:0.2},
+  sections:[
+    {t:'ÓRBITA & ROTAÇÃO', rows:[['Ano','2 horas e 10 minutos'],['Distância','600 mil km: a órbita inteira caberia dentro do Sol'],['Rotação','Travada pela maré, muito provavelmente']]},
+    {t:'REGISTRO', rows:[['O que é','Provavelmente o que sobrou de uma anã branca que perdeu 99,9 por cento da massa para o pulsar'],['A densidade','Pelo menos 23 g/cm³, mais que o dobro do chumbo: carbono nessa pressão vira cristal'],['O nome','Planeta de diamante: a imprensa batizou, e os autores não discordaram'],['Descoberta','2011, pelo atraso dos pulsos do pulsar, com o radiotelescópio de Parkes'],['Aqui no mapa','O tamanho e a distância são simbólicos: no real ele orbita a 600 mil km de um ponto de 20 km']]}
+  ],
+  facts:['Tem a massa de Júpiter em menos da metade do tamanho dele: daí a densidade absurda.', 'Um ano lá dura 2 horas e 10 minutos.', 'Provavelmente não nasceu planeta: era uma estrela, e foi devorada até sobrar o caroço.'],
+  fict:'A manchete do planeta de diamante rodou o mundo em 2011, e ele virou o exemplo clássico de que a natureza não respeita as nossas categorias.', moons:[]}
 ];
 const PSR_STAR = {
   id:'lich', name:'LICH', desig:'PSR B1257+12 · PULSAR', kind:'Farol dos mortos', hab:null, gbar:200000000000,
@@ -4340,6 +4415,24 @@ const SYS = {
           quick:[['ESTRELA','F quente'],['PLANETAS','1 (condenado)'],['DISTÂNCIA','~1.400 al'],['RESTAM','~3 mi anos']],
           sections:[{t:'REGISTRO', rows:[['O evento','Órbita encolhendo, atmosfera sendo sugada, tudo medido'],['O planeta','Em forma de ovo, mais escuro que asfalto']]}],
           facts:['O raro espetáculo de um fim de mundo com hora marcada.']} },
+  hd80606:{ id:'hd80606', radec:'09h22m +50°36′', name:'HD 80606', star:HD806_STAR, bodies:HD806_BODIES, belt:[], beltR:null,
+        starSize:3.2, camMax:34, hint:'A ÓRBITA MAIS ALONGADA: UM PLANETA QUE VIVE COMO COMETA',
+        card:{desig:'SISTEMA ESTELAR', kind:'O verão de seis horas', hab:null,
+          quick:[['ESTRELA','G5, quase um Sol'],['PLANETAS','1 (excêntrico)'],['DISTÂNCIA','~217 al'],['EXCENTRICIDADE','0,93']],
+          sections:[{t:'REGISTRO', rows:[['A órbita','De 0,03 a 0,88 UA a cada 111 dias: mergulho e retirada'],['O calor','700 graus a mais em seis horas na passagem, medido pelo Spitzer em 2009']]}],
+          facts:['Um planeta com órbita de cometa, medido em plena passagem.']} },
+  wasp76:{ id:'wasp76', radec:'01h46m +02°42′', name:'WASP-76', star:W76_STAR, bodies:W76_BODIES, belt:[], beltR:null,
+        starSize:3.4, camMax:30, hint:'O PLANETA ONDE CHOVE FERRO',
+        card:{desig:'SISTEMA ESTELAR', kind:'A forja e a chuva de ferro', hab:null,
+          quick:[['ESTRELA','F7 quente'],['PLANETAS','1 (ultraquente)'],['DISTÂNCIA','~640 al'],['DIA','2.400 °C']],
+          sections:[{t:'REGISTRO', rows:[['O ciclo','Ferro vaporiza de dia, viaja com o vento e cai como chuva na noite'],['A prova','O ESPRESSO viu a assinatura do ferro só de um lado, em 2020']]}],
+          facts:['O único lugar conhecido onde a previsão do tempo inclui chuva de ferro.']} },
+  psrj1719:{ id:'psrj1719', radec:'17h19m -14°38′', name:'PSR J1719-1438', star:PSR1719_STAR, bodies:PSR1719_BODIES, belt:[], beltR:null,
+        starSize:2.6, camMax:26, hint:'O PLANETA DE DIAMANTE: UM ANO DE DUAS HORAS EM VOLTA DE UM PULSAR',
+        card:{desig:'SISTEMA · PULSAR', kind:'O planeta de diamante', hab:null,
+          quick:[['ESTRELA','pulsar de milissegundo'],['PLANETAS','1'],['DISTÂNCIA','~4.000 al'],['ANO','2 h 10 min']],
+          sections:[{t:'REGISTRO', rows:[['O planeta','Massa de Júpiter em menos da metade do tamanho: carbono cristalizado'],['A origem','O caroço de uma anã branca devorada pelo pulsar']]}],
+          facts:['Provavelmente um planeta que já foi uma estrela.']} },
   psr1257:{ id:'psr1257', radec:'13h00m +12°40′', name:'LICH · PSR B1257+12', star:PSR_STAR, bodies:PSR_BODIES, belt:[], beltR:null,
         starSize:1.2, camMax:34, hint:'OS PRIMEIROS EXOPLANETAS DA HISTÓRIA · NUM PULSAR',
         card:{desig:'SISTEMA DE PULSAR', kind:'O berço improvável', hab:null,
@@ -4617,6 +4710,7 @@ reg(CNC_STAR,'cnc55'); CNC_BODIES.forEach(p=>reg(p,'cnc55'));
 reg(HD_STAR,'hd189'); HD_BODIES.forEach(p=>reg(p,'hd189'));
 reg(K16_STAR,'kepler16'); K16_BODIES.forEach(p=>reg(p,'kepler16'));
 reg(W12_STAR,'wasp12'); W12_BODIES.forEach(p=>reg(p,'wasp12'));
+reg(HD806_STAR,'hd80606'); HD806_BODIES.forEach(p=>reg(p,'hd80606')); reg(W76_STAR,'wasp76'); W76_BODIES.forEach(p=>reg(p,'wasp76')); reg(PSR1719_STAR,'psrj1719'); PSR1719_BODIES.forEach(p=>reg(p,'psrj1719'));
 reg(PSR_STAR,'psr1257'); PSR_BODIES.forEach(p=>reg(p,'psr1257'));
 reg(TOI_STAR,'toi700'); TOI_BODIES.forEach(p=>reg(p,'toi700'));
 reg(GL_STAR,'gliese581'); GL_BODIES.forEach(p=>reg(p,'gliese581'));
@@ -6814,6 +6908,7 @@ function buildSystem(sysId, spin0){
             ['kepler16', 19.28, 51.76, 245], ['pleiades', 3.79, 24.11, 444],
             ['kepler186', 19.91, 43.95, 580],
             ['kepler452', 19.73, 44.28, 1400], ['wasp12', 6.51, 29.67, 1410],
+            ['hd80606', 9.37, 50.6, 217], ['wasp76', 1.77, 2.7, 640], ['psrj1719', 17.33, -14.63, 4000],
             ['orion', 5.59, -5.39, 1344],
             ['cavalo', 5.68, -2.46, 1375], ['chama', 5.69, -1.9, 1350],
             ['psr1257', 13.00, 12.68, 2300], ['veu', 20.75, 30.7, 2400],
@@ -14253,7 +14348,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r251';
+const BUILD = 'r252';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
