@@ -14348,7 +14348,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r252';
+const BUILD = 'r253';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -14862,7 +14862,7 @@ $('#datepop').addEventListener('click', e=>{
    Datas em UTC; as marcadas aprox são aproximações honestas (o dia é certo,
    a hora não). Escolher um evento leva o relógio para o instante dele */
 const EVT_TAGS = [['todos','TODOS'],['eclipse','ECLIPSES'],['transito','TRÂNSITOS'],
-  ['estacao','ESTAÇÕES'],['planetas','PLANETAS'],['cometa','COMETAS'],['marco','MARCOS']];
+  ['estacao','ESTAÇÕES'],['planetas','PLANETAS'],['cometa','COMETAS'],['chuva','CHUVAS DE METEOROS'],['marco','MARCOS']];
 const EVENTOS = [
   {t:'ECLIPSE TOTAL DO SOL · Islândia e Espanha', d:'2026-08-12T17:46:00Z', g:'eclipse'},
   {t:'ECLIPSE PARCIAL DA LUA', d:'2026-08-28T04:13:00Z', g:'eclipse'},
@@ -14893,6 +14893,16 @@ const EVENTOS = [
     EVENTOS.push({t:'SOLSTÍCIO DE DEZEMBRO · verão no sul', d:a+'-12-21T12:00:00Z', g:'estacao', ap:1});
     EVENTOS.push({t:'TERRA NO PERIÉLIO · o mais perto do Sol', d:a+'-01-03T12:00:00Z', g:'estacao', ap:1});
     EVENTOS.push({t:'TERRA NO AFÉLIO · o mais longe do Sol', d:a+'-07-04T12:00:00Z', g:'estacao', ap:1});
+    /* r253 · as chuvas de meteoros: o pico de cada uma (a data é certa, a hora
+       não), com o cometa pai quando ele está no atlas (c: o clique cataloga) */
+    EVENTOS.push({t:t('QUADRÂNTIDAS · pico, ~80 por hora, do asteroide 2003 EH1'), d:a+'-01-03T12:00:00Z', g:'chuva', ap:1});
+    EVENTOS.push({t:t('LÍRIDAS · pico, ~18 por hora, poeira do cometa Thatcher'), d:a+'-04-22T12:00:00Z', g:'chuva', ap:1});
+    EVENTOS.push({t:t('ETA AQUÁRIDAS · pico, ~50 por hora, poeira do HALLEY'), d:a+'-05-06T12:00:00Z', g:'chuva', ap:1, c:'halley'});
+    EVENTOS.push({t:t('PERSEIDAS · pico, ~100 por hora, poeira do SWIFT-TUTTLE'), d:a+'-08-12T12:00:00Z', g:'chuva', ap:1, c:'swift'});
+    EVENTOS.push({t:t('ORIÔNIDAS · pico, ~20 por hora, poeira do HALLEY'), d:a+'-10-21T12:00:00Z', g:'chuva', ap:1, c:'halley'});
+    EVENTOS.push({t:t('TÁURIDAS · pico, bolas de fogo lentas, poeira do ENCKE'), d:a+'-11-12T12:00:00Z', g:'chuva', ap:1, c:'encke'});
+    EVENTOS.push({t:t('LEÔNIDAS · pico, ~15 por hora (tempestades a cada 33 anos), poeira do TEMPEL-TUTTLE'), d:a+'-11-17T12:00:00Z', g:'chuva', ap:1, c:'tempeltuttle'});
+    EVENTOS.push({t:t('GEMÍNIDAS · pico, ~120 por hora, poeira do asteroide Faetonte'), d:a+'-12-14T12:00:00Z', g:'chuva', ap:1});
   }
 }
 const EVTF = {q:'', tag:'todos', tempo:'fut'};
@@ -14915,7 +14925,7 @@ function evtRender(){
   }).sort((a, b)=>evtData(a) - evtData(b));
   const el = $('#evtlista');
   if(!lista.length){ el.innerHTML = '<div class="evvazio">NADA ENCONTRADO COM ESSES FILTROS.</div>'; return; }
-  el.innerHTML = lista.map(ev=>'<button class="evx' + (evtData(ev) < agora ? ' past' : '') + '" data-evt="' + ev.d + '">'
+  el.innerHTML = lista.map(ev=>'<button class="evx' + (evtData(ev) < agora ? ' past' : '') + '" data-evt="' + ev.d + '"' + (ev.c ? ' data-corpo="' + ev.c + '"' : '') + '>'
     + '<span class="evd">' + evtRotuloData(ev) + '</span>' + esc(ev.t) + '</button>').join('');
 }
 function evtChips(){
@@ -15040,6 +15050,11 @@ $('#evttempo').addEventListener('click', e=>{
 $('#evtlista').addEventListener('click', e=>{
   const b = e.target.closest('button[data-evt]'); if(!b) return;
   irParaEvento(b.dataset.evt, b.querySelector('.evd').textContent + ' · ' + b.textContent.replace(b.querySelector('.evd').textContent, '').trim());
+  /* r253 · chuva de meteoros com cometa pai no atlas: no mapa do Sol o clique
+     também CATALOGA o cometa (two-step de sempre: ENTRAR fica por conta do usuário) */
+  const cp = b.dataset.corpo;
+  if(cp && ALLBODIES[cp] && ST.sys === 'sol' && ST.level === 'system' && !(TRAJ && TRAJ.fase !== 'volta') && !(ST.mapCard && ST.mapCard.id === cp))
+    setTimeout(()=>ACTION('focus', cp), 350);
 });
 $('#dp_ir').addEventListener('click', ()=>{
   const dias = new Date(DP.a, DP.m + 1, 0).getDate();
