@@ -9839,6 +9839,14 @@ function trajStart(id){
         const spN = ACT.spinners.find(x=>x.id === id);
         if(spN){ TRAJ.naveSpin = spN.obj; TRAJ.naveSpinRot0 = spN.obj.rotation.y; spN.obj.rotation.y = 0; }
       }
+      /* r251 · a OUTRA metade do nariz torto: o modelo do foguete nasce com um
+         giro DECORATIVO fixo no filho (rotation 0.18, 0.35, 0.50: ~33 graus
+         fora do eixo Y) para ficar bonito parado no mapa. Na linha do tempo
+         esse giro sai inteiro e volta na limpeza */
+      if(TRAJ.orienta && oo.corpo.children[0]){
+        TRAJ.naveMesh = oo.corpo.children[0]; TRAJ.naveRot0 = TRAJ.naveMesh.rotation.clone();
+        TRAJ.naveMesh.rotation.set(0, 0, 0);
+      }
       /* escala real: o foguete não pode ser um gigante de milhares de km */
       /* r212 · a auditoria mediu a nave com 1,6x o raio da TERRA no 1:1 (ele
          viu no print): 0.0035 deixa ~0,66x, visível sem enganar */
@@ -10072,6 +10080,7 @@ function trajStart(id){
       TRAJ.frameFoco.add(cf.group);
       TRAJ.corpo = cf.group;
       TRAJ.cpos0 = cf.group.position.clone();
+      if(TRAJ.orienta && cf.mesh) cf.mesh.rotation.set(0, 0, 0);   /* r251 · sem o giro decorativo: o nariz é o eixo Y */
       CAMTW = null; ZOOM = null;   /* r193: o alvo do zoom deslizante desfazia este set */
       CAM.dist = TRAJ.dAlvo;   /* Terra e Lua enquadradas de saída, em qualquer modo */
     }
@@ -10207,6 +10216,7 @@ function trajCancelar(){
           luaOrb:TRAJ.luaOrb, luaLuz:TRAJ.luaLuz, luaCena:TRAJ.luaCena,
           spinMesh:TRAJ.spinMesh, spinRot0:TRAJ.spinRot0,
           naveSpin:TRAJ.naveSpin, naveSpinRot0:TRAJ.naveSpinRot0,
+          naveMesh:TRAJ.naveMesh, naveRot0:TRAJ.naveRot0, orienta:TRAJ.orienta,
           corpoEsc0:TRAJ.corpoEsc0, dias:TRAJ.dias,
           marcaLanc:TRAJ.marcaLanc, lancFio:TRAJ.lancFio, lancAz:undefined, terraGiro:null,
           trilha:TRAJ.trilha, trilhaCol:TRAJ.trilhaCol, arcoOp0:TRAJ.arcoOp0, obj:TRAJ.obj};
@@ -10216,6 +10226,7 @@ function trajLimpar(){
   document.body.classList.remove('emtraj');
   if(ACT && ACT.tempoLivre) ACT.tempoLivre();
   if(TRAJ && TRAJ.corpo && TRAJ.cpos0){ TRAJ.corpo.position.copy(TRAJ.cpos0); if(TRAJ.orienta) TRAJ.corpo.quaternion.identity(); }
+  if(TRAJ && TRAJ.naveMesh && TRAJ.naveRot0) TRAJ.naveMesh.rotation.copy(TRAJ.naveRot0);   /* r251 · o giro decorativo volta */
   if(TRAJ && TRAJ.corpoTemp){
     TRAJ.corpoTemp.visible = false;
     if(TRAJ.corpoEsc0 !== undefined) TRAJ.corpoTemp.scale.setScalar(TRAJ.corpoEsc0);
@@ -10318,6 +10329,14 @@ function trajStep(now){
       TRAJ._dir = TRAJ._dir || new THREE.Vector3();
       TRAJ._dir.copy(alvo).sub(de);
       if(TRAJ._dir.lengthSq() > 1e-18){
+        /* r251 · a tangente vem em coordenadas de MUNDO, mas o quaternion é
+           aplicado no espaço do PAI do modelo (o holder da Terra, girado pelo
+           ângulo da órbita): sem levar a direção para o espaço local o nariz
+           errava exatamente o giro do pai. Era metade do 'nunca aponta certo' */
+        TRAJ._m4 = TRAJ._m4 || new THREE.Matrix4();
+        TRAJ.corpo.parent.updateWorldMatrix(true, false);
+        TRAJ._m4.copy(TRAJ.corpo.parent.matrixWorld).invert();
+        TRAJ._dir.transformDirection(TRAJ._m4);
         TRAJ._dir.normalize();
         TRAJ._q = TRAJ._q || new THREE.Quaternion();
         TRAJ._up = TRAJ._up || new THREE.Vector3(0, 1, 0);
@@ -14234,7 +14253,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r250';
+const BUILD = 'r251';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
