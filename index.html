@@ -2529,6 +2529,17 @@ const BELT_BODIES = [
   ],
   facts:['A Hayabusa2 abriu uma cratera artificial com uma bala de cobre e coletou material do subsolo, nunca tocado pelo Sol.','Os 5,4 gramas que voltaram tinham uracila, uma das letras do RNA, e vitamina B3.','Reflete só 4 por cento da luz: mais escuro que carvão.'],
   fict:'No conto de Urashima Taro, o pescador visita o palácio do dragão no fundo do mar e volta com uma caixa que não devia abrir: a Hayabusa2 voltou do Ryugu com a caixa, e abriu.', moons:[]},
+ {id:'faetonte', name:'FAETONTE', desig:'NEA-3200 · ASTEROIDE', kind:'O asteroide que age como cometa, pai das Gemínidas', hab:0, gbar:0.0002, pop:'0',
+  belt:{angle:5.3, r:16.6},
+  quick:[['DIÂMETRO','5,8 km'],['DIA','3,6 h'],['ANO','524 d'],['PERIÉLIO','0,14 UA'],['DESCOBERTA','1983'],['CHUVA','Gemínidas · 14 DEZ']],
+  visual:{mode:'rocky', c1:'#4a5a6e', c2:'#6a7a8e', c3:'#2c3644', scale:7.2, seed:32.0, crater:0.8},
+  sections:[
+    {t:'O COMETA DE ROCHA', rows:[['O enigma','Alimenta a chuva de meteoros mais forte do ano, mas não tem gelo: é rocha, e cometa é coisa de gelo'],['O periélio','Passa a 0,14 UA do Sol, mais perto que Mercúrio: a superfície chega a 750 °C'],['A cauda','Perto do Sol ele solta uma cauda curta, provavelmente de sódio evaporando da rocha, e não de gelo'],['A cor','Azulado, raro entre asteroides: talvez a rocha cozida pelo calor extremo']]},
+    {t:'AS GEMÍNIDAS', rows:[['O elo','Em 1983, logo depois da descoberta, Fred Whipple notou que a órbita era a da chuva de dezembro'],['A chuva','Até 120 meteoros por hora no pico, 14 de dezembro, a mais rica do ano'],['O mistério','A quantidade de poeira da chuva é muito maior do que ele solta hoje: um rompimento antigo é a hipótese'],['O primeiro','Foi o primeiro asteroide ligado a uma chuva de meteoros: até então só cometas faziam isso']]},
+    {t:'REGISTRO', rows:[['1983','Descoberto pelo satélite infravermelho IRAS, o primeiro asteroide achado por satélite'],['O nome','Faetonte, o filho de Hélio que pegou o carro do Sol e quase queimou a Terra: cabe para quem passa tão perto'],['2017','Passou a 10 milhões de km da Terra, o radar de Arecibo mediu os 5,8 km'],['DESTINY+','A sonda japonesa deve sobrevoá-lo no fim da década para ver a poeira de perto'],['Aqui no mapa','Elementos orbitais do JPL na época de 9 JUN 2026: a elipse de 0,14 a 2,40 UA cruza a órbita da Terra']]}
+  ],
+  facts:['É o pai das Gemínidas, a chuva de meteoros mais rica do ano, e não é um cometa: é uma pedra de 5,8 km.','Chega a 0,14 UA do Sol, mais perto que Mercúrio, e a superfície passa de 700 graus.','Foi o primeiro asteroide descoberto por um satélite, o IRAS, em 1983.'],
+  fict:'O nome vem do mito de Faetonte, que perdeu o controle do carro do Sol e incendiou a Terra: Zeus o derrubou com um raio.', moons:[]},
  {id:'apophis', name:'APOPHIS', desig:'NEA-99942 · ASTEROIDE', kind:'A passagem rasante de 2029', hab:0, gbar:0.000004, pop:'0',
   belt:{angle:0.8, r:15.2},
   quick:[['DIÂMETRO','~340 m'],['DIA','30,6 h'],['ANO','324 d'],['DESCOBERTA','2004'],['A PASSAGEM','13 ABR 2029 · 32 mil km'],['RISCO','zero por 100 anos']],
@@ -3260,6 +3271,19 @@ PLANETS.push(
   ],
   facts:['Tem o período mais curto de todos os cometas conhecidos: 3,3 anos, mais de sessenta voltas observadas.','É o pai das Táuridas, a chuva de bolas de fogo de outubro e novembro.','Foi o primeiro cometa a mostrar que a evaporação do gelo empurra o núcleo e muda a órbita, o efeito foguete.'],
   fict:'Uma hipótese antiga, de Fred Whipple, liga a explosão de Tunguska (1908) a um fragmento da família dele: ninguém provou, mas a ideia atravessou o século.', moons:[]},
+ {id:'thatcher', name:'THATCHER', desig:'C/1861 G1 · COMETA DE LONGO PERÍODO', kind:'O cometa das Líridas, que só volta no século 23', hab:0, gbar:0.0001, pop:'0',
+  quick:[['PERÍODO','~415 anos'],['PERIÉLIO','0,92 UA · 1861'],['AFÉLIO','~110 UA'],['INCLINAÇÃO','80 graus'],['PRÓXIMA','~2276'],['CHUVA','Líridas · 22 ABR']],
+  comet:true, orbita:{peri:13.8, afel:130, incl:1.39, epoca:Date.UTC(1861,5,3)},
+  traj:{de:1861, ate:2276}, marcos:[[1861,'A DESCOBERTA E O PERIÉLIO','A. E. Thatcher o vê de Nova York em 5 de abril de 1861; passa a 0,92 UA do Sol em junho.'],[2069,'AFÉLIO · ~110 UA','O ponto mais longe, além do cinturão de Kuiper.'],[2276,'A VOLTA','Se a órbita estiver certa, ele reaparece por volta de 2276.']],
+  sys:{orbit:72, size:0.3, speed:1.0, angle:3.3, incl:1.39},
+  visual:{mode:'rocky', c1:'#3f3c38', c2:'#5c5850', c3:'#2a2825', scale:6.4, seed:18.61, crater:0.9, atmo:{col:'#a8e8d0', i:0.5}},
+  sections:[
+    {t:'AS LÍRIDAS', rows:[['A chuva','Todo 22 de abril a Terra cruza a poeira dele: uns 18 meteoros por hora, com surtos raros de 100'],['A mais antiga','Registros chineses de 687 a.C. descrevem estrelas caindo como chuva na mesma data: é a chuva mais antiga documentada'],['1803','Em Richmond, na Virgínia, o céu choveu meteoros: um dos surtos que a chuva dá de vez em quando'],['O elo','A ligação com o cometa foi feita em 1867, por Edmund Weiss e Johann Galle']]},
+    {t:'A VIAGEM', rows:[['A órbita','Quase em pé, 80 graus sobre o plano dos planetas, e alongada até uns 110 UA'],['O período','Uns 415 anos: a última visita foi em 1861 e a próxima só por volta de 2276'],['Onde está agora','Perto do afélio, além do cinturão de Kuiper, invisível a qualquer telescópio'],['Aqui no mapa','Elementos do JPL da passagem de 1861; o cênico comprime a elipse para caber']]},
+    {t:'REGISTRO', rows:[['5 ABR 1861','Descoberto por A. E. Thatcher, astrônomo amador de Nova York'],['Maio de 1861','Chegou à magnitude 2,5, visível a olho nu por semanas'],['A poeira','Os grãos das Líridas entram na atmosfera a 49 km/s']]}
+  ],
+  facts:['A chuva dele, as Líridas, é a mais antiga de que se tem registro: os chineses a anotaram em 687 a.C.','Ele só volta por volta de 2276: ninguém vivo hoje vai ver o cometa, só a poeira que ele deixou.','A órbita fica quase em pé, 80 graus sobre o plano dos planetas.'],
+  fict:'As Líridas de 1803 assustaram Richmond: os jornais da época contam gente acordada pela chuva de fogo no meio da madrugada.', moons:[]},
  {id:'tempeltuttle', name:'TEMPEL-TUTTLE', desig:'55P · COMETA PERIÓDICO', kind:'O pai das Leônidas e das tempestades de estrelas', hab:0, gbar:0.0001, pop:'0',
   quick:[['NÚCLEO','3,6 km'],['PERÍODO','33,2 anos'],['ÚLTIMA VISITA','28 FEV 1998'],['PRÓXIMA','MAI 2031'],['A CHUVA','Leônidas, 17 de novembro'],['SENTIDO','retrógrado · 162°']],
   comet:true, orbita:{peri:14.6, afel:48, incl:2.84, epoca:Date.UTC(1998,1,28,2)},
@@ -5235,7 +5259,7 @@ const ESCALA_REAL_EL = {   /* [peri UA, afel UA, data do periélio real quando c
   jupiter:[4.951, 5.457, Date.UTC(2023,0,21)], saturno:[9.041, 10.124, Date.UTC(2032,10,24)],
   urano:[18.286, 20.096, Date.UTC(2050,7,4)], netuno:[29.81, 30.33],
   halebopp:[0.914, 370],
-  plutao:[29.7, 49.3], eris:[38.2, 97.6], sedna:[76.2, 1012], halley:[0.586, 35.1], p67:[1.24, 5.68], swift:[0.9595, 51.2], encke:[0.3386, 4.10], tempeltuttle:[0.9764, 19.70]};
+  plutao:[29.7, 49.3], eris:[38.2, 97.6], sedna:[76.2, 1012], halley:[0.586, 35.1], p67:[1.24, 5.68], swift:[0.9595, 51.2], encke:[0.3386, 4.10], tempeltuttle:[0.9764, 19.70], thatcher:[0.9207, 110.44]};
 /* distância real de cada lua ao centro do corpo, em km (semi-eixo maior) */
 const ESCALA_REAL_LUAS = {
   lua:384400, fobos:9376, deimos:23463,
@@ -5247,7 +5271,7 @@ const ESCALA_REAL_LUAS = {
 /* distância real das sondas ao Sol em UA (meados de 2026) */
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, pathfinder:1.52, viking1:1.52, cassini:9.54};
 /* pedras do cinturão: [UA, raio km] (no cênico elas moram no anel desenhado) */
-const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4], bennu:[1.13, 0.245], ryugu:[1.19, 0.45], apophis:[0.92, 0.17]};
+const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4], bennu:[1.13, 0.245], ryugu:[1.19, 0.45], apophis:[0.92, 0.17], faetonte:[1.27, 2.9]};
 /* O CÉU REAL (só na escala real): as estrelas mais brilhantes do céu em
    posição VERDADEIRA (RA/DEC J2000 convertidos ao plano da eclíptica da cena)
    e cor pela classe espectral. É o começo do sonho das constelações. */
@@ -5768,11 +5792,11 @@ const ESCALA_REAL_NODO = {
   urano:[0.773, 74.017, 96.937], netuno:[1.770, 131.784, -86.819],
   plutao:[17.140, 110.304, 113.765],
   eris:[43.9, 36.0, 151.0], sedna:[11.9, 145.0, 311.0],
-  halley:[162.2, 59.1, 112.0], p67:[7.04, 50.1, 12.8], swift:[113.45, 139.38, 153.0], encke:[11.38, 334.14, 187.18], tempeltuttle:[162.49, 235.27, 172.50]};
+  halley:[162.2, 59.1, 112.0], p67:[7.04, 50.1, 12.8], swift:[113.45, 139.38, 153.0], encke:[11.38, 334.14, 187.18], tempeltuttle:[162.49, 235.27, 172.50], thatcher:[79.77, 31.87, 213.45]};
 const ESCALA_REAL_T = {mercurio:0.2408467, venus:0.6151973, terra:1.0000174,
   marte:1.8808476, jupiter:11.862615, saturno:29.447498, urano:84.016846,
   netuno:164.79132, plutao:247.92065, eris:561.2, sedna:12676,
-  halley:75.84, p67:6.434, swift:133.28, encke:3.307, tempeltuttle:33.24};
+  halley:75.84, p67:6.434, swift:133.28, encke:3.307, tempeltuttle:33.24, thatcher:415.0};
 const ESCALA_REAL_ANC = {
   mercurio:{ma:174.794, ep:946728000000}, venus:{ma:50.447, ep:946728000000},
   terra:{ma:357.517, ep:946728000000}, marte:{ma:19.412, ep:946728000000},
@@ -5781,7 +5805,7 @@ const ESCALA_REAL_ANC = {
   plutao:{ma:14.862, ep:946728000000},
   eris:{ma:212, ep:Date.UTC(2026,5,9)}, sedna:{ma:358.6, ep:Date.UTC(2026,5,9)},
   /* cometas: a âncora é a PASSAGEM PELO PERIÉLIO (ma=0 na data), do SBDB */
-  halley:{ma:0, ep:Date.UTC(1986,1,9,11,22)}, p67:{ma:0, ep:Date.UTC(2015,7,13,2,8)}, swift:{ma:0, ep:Date.UTC(1992,11,12)}, encke:{ma:0, ep:Date.UTC(2023,9,22,7)}, tempeltuttle:{ma:0, ep:Date.UTC(1998,1,28,2)}};
+  halley:{ma:0, ep:Date.UTC(1986,1,9,11,22)}, p67:{ma:0, ep:Date.UTC(2015,7,13,2,8)}, swift:{ma:0, ep:Date.UTC(1992,11,12)}, encke:{ma:0, ep:Date.UTC(2023,9,22,7)}, tempeltuttle:{ma:0, ep:Date.UTC(1998,1,28,2)}, thatcher:{ma:0, ep:Date.UTC(1861,5,3,21)}};
 /* dia sideral de cada planeta em dias terrestres (negativo = retrógrado) */
 const ESCALA_REAL_DIA = {mercurio:58.65, venus:-243.0, terra:0.997, marte:1.026,
   jupiter:0.414, saturno:0.444, urano:-0.718, netuno:0.671};
@@ -6276,7 +6300,9 @@ function buildSystem(sysId, spin0){
                     da epoca 2011 propagado pelo movimento medio 0,82446 graus/dia) */
                  bennu:{a:1.1264, e:0.2037, i:6.035, no:2.061, w:66.22, ma:70.0},
                  ryugu:{a:1.1909, e:0.1911, i:5.866, no:251.29, w:211.61, ma:62.34},
-                 apophis:{a:0.92236, e:0.19115, i:3.341, no:203.89, w:126.68, ma:175.33}};
+                 apophis:{a:0.92236, e:0.19115, i:3.341, no:203.89, w:126.68, ma:175.33},
+                 /* r255 · Faetonte, SBDB na mesma epoca (JD 2461200.5) */
+                 faetonte:{a:1.27146, e:0.88967, i:22.311, no:265.099, w:322.300, ma:301.486}};
     const ELA_EP = Date.UTC(2026,5,9);
     for(const a of S.belt){
       const eA = ELA[a.id];
@@ -14357,7 +14383,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r254';
+const BUILD = 'r255';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -14905,13 +14931,13 @@ const EVENTOS = [
     /* r253 · as chuvas de meteoros: o pico de cada uma (a data é certa, a hora
        não), com o cometa pai quando ele está no atlas (c: o clique cataloga) */
     EVENTOS.push({t:t('QUADRÂNTIDAS · pico, ~80 por hora, do asteroide 2003 EH1'), d:a+'-01-03T12:00:00Z', g:'chuva', ap:1});
-    EVENTOS.push({t:t('LÍRIDAS · pico, ~18 por hora, poeira do cometa Thatcher'), d:a+'-04-22T12:00:00Z', g:'chuva', ap:1});
+    EVENTOS.push({t:t('LÍRIDAS · pico, ~18 por hora, poeira do cometa Thatcher'), d:a+'-04-22T12:00:00Z', g:'chuva', ap:1, c:'thatcher'});
     EVENTOS.push({t:t('ETA AQUÁRIDAS · pico, ~50 por hora, poeira do HALLEY'), d:a+'-05-06T12:00:00Z', g:'chuva', ap:1, c:'halley'});
     EVENTOS.push({t:t('PERSEIDAS · pico, ~100 por hora, poeira do SWIFT-TUTTLE'), d:a+'-08-12T12:00:00Z', g:'chuva', ap:1, c:'swift'});
     EVENTOS.push({t:t('ORIÔNIDAS · pico, ~20 por hora, poeira do HALLEY'), d:a+'-10-21T12:00:00Z', g:'chuva', ap:1, c:'halley'});
     EVENTOS.push({t:t('TÁURIDAS · pico, bolas de fogo lentas, poeira do ENCKE'), d:a+'-11-12T12:00:00Z', g:'chuva', ap:1, c:'encke'});
     EVENTOS.push({t:t('LEÔNIDAS · pico, ~15 por hora (tempestades a cada 33 anos), poeira do TEMPEL-TUTTLE'), d:a+'-11-17T12:00:00Z', g:'chuva', ap:1, c:'tempeltuttle'});
-    EVENTOS.push({t:t('GEMÍNIDAS · pico, ~120 por hora, poeira do asteroide Faetonte'), d:a+'-12-14T12:00:00Z', g:'chuva', ap:1});
+    EVENTOS.push({t:t('GEMÍNIDAS · pico, ~120 por hora, poeira do asteroide Faetonte'), d:a+'-12-14T12:00:00Z', g:'chuva', ap:1, c:'faetonte'});
   }
 }
 const EVTF = {q:'', tag:'todos', tempo:'fut'};

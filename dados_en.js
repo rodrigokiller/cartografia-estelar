@@ -1205,6 +1205,17 @@ nebulosaorion: {
   facts: ['It is the nearest place where you can watch stars and planets being born right now.', 'It is in everyone\'s sky: point at Orion\'s belt and go down a little.', 'Hubble showed that most of the young stars there have a disk of dust, that is, planets under construction.'],
   fict: 'A must-see in every documentary and on astronomy book covers. In Blade Runner, Roy Batty says he saw attack ships on fire "off the shoulder of Orion".'
 },
+faetonte: {
+  kind: 'The asteroid that acts like a comet, father of the Geminids',
+  quick: [['DIAMETER','5.8 km'],['DAY','3.6 h'],['YEAR','524 d'],['PERIHELION','0.14 AU'],['DISCOVERED','1983'],['SHOWER','Geminids · DEC 14']],
+  sections: [
+    {t:'THE ROCK COMET', rows:[['The puzzle','It feeds the strongest meteor shower of the year, but it has no ice: it is rock, and comets are made of ice'],['The perihelion','It passes 0.14 AU from the Sun, closer than Mercury: the surface reaches 750 °C'],['The tail','Near the Sun it sheds a short tail, probably of sodium boiling out of the rock, not of ice'],['The color','Bluish, rare among asteroids: maybe rock baked by the extreme heat']]},
+    {t:'THE GEMINIDS', rows:[['The link','In 1983, right after the discovery, Fred Whipple noticed that the orbit was that of the December shower'],['The shower','Up to 120 meteors per hour at the peak, December 14, the richest of the year'],['The mystery','The amount of dust in the shower is far larger than what it sheds today: an ancient breakup is the hypothesis'],['The first','It was the first asteroid linked to a meteor shower: until then only comets did that']]},
+    {t:'RECORD', rows:[['1983','Discovered by the IRAS infrared satellite, the first asteroid found by a satellite'],['The name','Phaethon, the son of Helios who took the chariot of the Sun and nearly burned the Earth: fitting for something that passes so close'],['2017','It passed 10 million km from the Earth, and the Arecibo radar measured the 5.8 km'],['DESTINY+','The Japanese probe is to fly by it late in the decade to see the dust up close'],['Here on the map','JPL orbital elements at the epoch of June 9, 2026: the ellipse from 0.14 to 2.40 AU crosses the orbit of the Earth']]}
+  ],
+  facts: ['It is the father of the Geminids, the richest meteor shower of the year, and it is not a comet: it is a 5.8 km rock.', 'It gets within 0.14 AU of the Sun, closer than Mercury, and the surface passes 700 degrees.', 'It was the first asteroid discovered by a satellite, IRAS, in 1983.'],
+  fict: 'The name comes from the myth of Phaethon, who lost control of the chariot of the Sun and set the Earth on fire: Zeus struck him down with a thunderbolt.'
+},
 apophis: {
   kind: 'The close flyby of 2029',
   quick: [['DIAMETER','~340 m'],['DAY','30.6 h'],['YEAR','324 d'],['DISCOVERED','2004'],['THE FLYBY','APR 13, 2029 · 32,000 km'],['RISK','zero for 100 years']],
@@ -2056,6 +2067,17 @@ encke: {
   ],
   facts: ['It has the shortest period of all known comets: 3.3 years, more than sixty observed laps.', 'It is the father of the Taurids, the fireball shower of October and November.', 'It was the first comet to show that evaporating ice pushes the nucleus and changes the orbit, the rocket effect.'],
   fict: 'An old hypothesis, by Fred Whipple, links the Tunguska explosion (1908) to a fragment of its family: nobody proved it, but the idea crossed the century.'
+},
+thatcher: {
+  kind: 'The comet of the Lyrids, back only in the 23rd century',
+  quick: [['PERIOD','~415 years'],['PERIHELION','0.92 AU · 1861'],['APHELION','~110 AU'],['INCLINATION','80 degrees'],['NEXT','~2276'],['SHOWER','Lyrids · APR 22']],
+  sections: [
+    {t:'THE LYRIDS', rows:[['The shower','Every April 22 the Earth crosses its dust: some 18 meteors per hour, with rare outbursts of 100'],['The oldest','Chinese records from 687 BC describe stars falling like rain on the same date: it is the oldest documented shower'],['1803','In Richmond, Virginia, the sky rained meteors: one of the outbursts the shower gives now and then'],['The link','The connection to the comet was made in 1867, by Edmund Weiss and Johann Galle']]},
+    {t:'THE JOURNEY', rows:[['The orbit','Almost upright, 80 degrees above the plane of the planets, and stretched to some 110 AU'],['The period','About 415 years: the last visit was in 1861 and the next only around 2276'],['Where it is now','Near aphelion, beyond the Kuiper belt, invisible to any telescope'],['Here on the map','JPL elements from the 1861 passage; the scenic map compresses the ellipse to fit']]},
+    {t:'RECORD', rows:[['APR 5, 1861','Discovered by A. E. Thatcher, an amateur astronomer in New York'],['May 1861','It reached magnitude 2.5, visible to the naked eye for weeks'],['The dust','The grains of the Lyrids enter the atmosphere at 49 km/s']]}
+  ],
+  facts: ['Its shower, the Lyrids, is the oldest on record: the Chinese noted it in 687 BC.', 'It only returns around 2276: nobody alive today will see the comet, only the dust it left behind.', 'The orbit stands almost upright, 80 degrees above the plane of the planets.'],
+  fict: 'The Lyrids of 1803 frightened Richmond: the newspapers of the time tell of people woken by the rain of fire in the middle of the night.'
 },
 tempeltuttle: {
   kind: 'Father of the Leonids and the storms of falling stars',
