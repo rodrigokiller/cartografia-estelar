@@ -117,12 +117,13 @@ urano: {
     {t:'ORBIT & ROTATION', rows:[['Distance from the Sun','2.87 billion km (19.2 AU)'],['Year','84 years'],['Day','17 h 14 min'],['Rotation type','RETROGRADE · it spins "lying down"'],['Orbital speed','6.8 km/s'],['Axial tilt','98°'],['Seasons','Extreme: 21 years of day, 21 of night at the poles']]},
     {t:'STRUCTURE', rows:[['Diameter','50,724 km'],['Mass','8.68 × 10²⁵ kg (14.5 Earths)'],['Density','1.27 g/cm³'],['Area','8.1 billion km²'],['Interior','"Ices" of water, ammonia and methane']]},
     {t:'CLIMATE & ATMOSPHERE', rows:[['Lowest temp.','−224 °C, the record of the system'],['Atmosphere','83% H₂ · 15% He · 2% CH₄'],['Color','Methane absorbs the red → cyan'],['Water','Superheated ice mantle']]},
+    {t:'THE RINGS', rows:[['1977','Discovered by accident: a star blinked five times before and after Uranus passed in front of it, seen from the Kuiper Airborne Observatory (Elliot, Dunham and Mink)'],['What they are','13 thin rings as dark as coal; the widest, epsilon, is 20 to 100 km across'],['The shepherds','Cordelia on the inside and Ophelia on the outside hold the epsilon ring in place'],['Voyager 2','It counted 11 in 1986; Hubble found two more, far out, in 2005'],['JWST','In 2023 it photographed the rings with the planet glowing in infrared']]},
     {t:'RECORD', rows:[['Discovered','03/13/1781 · William Herschel'],['Milestone','1st planet discovered with a telescope'],['Only visit','Voyager 2 · 1986'],['Moons','Named after Shakespeare and Pope'],['Population','0']]},
     {t:'LINK & TRAVEL', rows:[['Sunlight to here','2.7 h'],['Probe from Earth','~8.5 years (Voyager 2)']]}
   ],
   facts: ['It rolls on its side: it probably took a colossal impact in the past.', 'Even closer to the Sun than Neptune, it is the COLDEST planet.', 'The atmosphere has hydrogen sulfide: the planet literally smells like rotten eggs.', 'Herschel wanted to call it "Georgium Sidus", after King George III. It did not stick.'],
   fict: 'It was visited only once, in 1986, and the next proposed mission is the number one priority of the decade in American astronomy.',
-  moonsMeta: '28 CONFIRMED · 3 MAIN'
+  moonsMeta: '28 CONFIRMED · 5 MAIN · 3 SMALL'
 },
 netuno: {
   kind: 'Ice giant',
@@ -385,6 +386,36 @@ oberon: {
   ],
   facts: ['It has the oldest, most cratered face among the large moons of Uranus, almost untouched since the formation of the system.', 'In the only close-up photo, from Voyager 2, a 6 km peak stuck out at the edge of the disk.'],
   fict: 'Oberon is the king of the fairies in Shakespeare\'s A Midsummer Night\'s Dream, husband of Titania: the couple reigns over the two largest moons of Uranus.'
+},
+puck: {
+  kind: 'The dark sprite, the largest of the small ones',
+  quick: [['DIAMETER','162 km'],['ORBIT','0.76 d'],['DISCOVERED','1985'],['DISTANCE','86,004 km'],['ALBEDO','0.11 · dark'],['PHOTO','Voyager 2, 1986']],
+  sections: [
+    {t:'THE LARGEST OF THE SMALL ONES', rows:[['What it is','The largest of the inner moons of Uranus, a dark cratered ball of 162 km between the rings and Miranda'],['The photo','Voyager 2 changed its program in a hurry to photograph it in January 1986: the only close-up image that exists'],['The craters','Three with names: Bogle, Butz and Lob, all sprites of British folklore'],['The color','As dark as coal, with an albedo of 0.11: the same color as the rings, probably the same material']]},
+    {t:'RECORD', rows:[['Discovered','DEC 30, 1985, by Voyager 2, on the way to Uranus'],['The name','Puck, the mischievous sprite of A Midsummer Night\'s Dream'],['The neighborhood','One lap every 18 hours, outside the rings and inside Miranda']]}
+  ],
+  facts: ['Voyager 2 changed its plan in a hurry to photograph it: it is the only small moon of Uranus with a close-up photo.', 'It is as dark as coal, the same color as the rings of the planet.'],
+  fict: 'Puck, Shakespeare\'s sprite, is the one who closes the play with the famous: if we shadows have offended.'
+},
+cordelia: {
+  kind: 'The inner shepherd of the epsilon ring',
+  quick: [['DIAMETER','~40 km'],['ORBIT','0.335 d'],['DISCOVERED','1986'],['DISTANCE','49,770 km'],['ROLE','inner shepherd'],['FATE','slowly falling']],
+  sections: [
+    {t:'THE SHEPHERD', rows:[['The role','It orbits just inside the epsilon ring and, with Ophelia outside, holds its edge in place by gravity'],['The proof','The rings of Uranus are as thin as threads because the shepherds sweep up what escapes: without them the ring would spread out'],['The innermost','It is the closest known moon to Uranus: one lap every 8 hours']]},
+    {t:'RECORD', rows:[['Discovered','January 1986, in the images of Voyager 2'],['The name','Cordelia, the faithful daughter of King Lear'],['The future','It orbits faster than Uranus spins: the tide pulls it slowly down, toward the planet']]}
+  ],
+  facts: ['It and Ophelia hold the epsilon ring the way sheepdogs hold the flock: one inside, one outside.', 'It orbits faster than Uranus spins, so it is slowly falling toward the planet.'],
+  fict: null
+},
+ofelia: {
+  kind: 'The outer shepherd of the epsilon ring',
+  quick: [['DIAMETER','~43 km'],['ORBIT','0.376 d'],['DISCOVERED','1986'],['DISTANCE','53,790 km'],['ROLE','outer shepherd'],['RING','epsilon']],
+  sections: [
+    {t:'THE SHEPHERD', rows:[['The role','It orbits just outside the epsilon ring, the brightest and widest of Uranus, and holds its outer edge'],['The ring','Epsilon is 20 to 100 km wide and the densest: without the shepherds it would disperse in a short time'],['The pair','Cordelia inside, Ophelia outside: the first pair of shepherds confirmed after those of Saturn']]},
+    {t:'RECORD', rows:[['Discovered','January 1986, in the images of Voyager 2'],['The name','Ophelia, from Hamlet'],['The orbit','One lap every 9 hours, between the epsilon ring and the other small moons']]}
+  ],
+  facts: ['It holds the outer edge of the epsilon ring, the brightest of Uranus, while Cordelia holds the inner one.', 'It was discovered in the images of Voyager 2, in January 1986, days before the flyby.'],
+  fict: null
 },
 tritao: {
   kind: 'Captured moon',

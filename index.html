@@ -2018,11 +2018,12 @@ PLANETS.push(
   quick:[['GRAVIDADE','0,89 g'],['TEMP. MÉDIA','−195 °C'],['DIA','17 h 14'],['ANO','84 anos'],['LUAS','28'],['ANÉIS','13']],
   sys:{orbit:40, size:1.45, speed:0.012, angle:0.9},
   visual:{mode:'gas', c1:'#9fd8dc', c2:'#8ccbd3', c3:'#b8e6e8', c4:'#7fc0c8', bandF:5.0, turb:0.5, seed:7.1, atmo:{col:'#bdf0f2', i:0.75}, rings:{rin:1.5, rout:1.95, col:'#a9c9cd', op:0.45, tilt:98, seed:5.0}},
-  moonsMeta:'28 CONFIRMADAS · 3 PRINCIPAIS',
+  moonsMeta:'28 CONFIRMADAS · 5 PRINCIPAIS · 3 PEQUENAS',
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','2,87 bi km (19,2 UA)'],['Ano','84 anos'],['Dia','17 h 14 min'],['Tipo de rotação','RETRÓGRADA · gira "deitado"'],['Veloc. orbital','6,8 km/s'],['Inclinação axial','98°'],['Estações','Extremas, 21 anos de dia, 21 de noite nos polos']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','50.724 km'],['Massa','8,68 × 10²⁵ kg (14,5 Terras)'],['Densidade','1,27 g/cm³'],['Área','8,1 bi km²'],['Interior','"Gelos" de água, amônia e metano']]},
     {t:'CLIMA & ATMOSFERA', rows:[['Temp. mínima','−224 °C, recorde do sistema'],['Atmosfera','83% H₂ · 15% He · 2% CH₄'],['Cor','O metano absorve o vermelho → ciano'],['Água','Manto de gelo superaquecido']]},
+    {t:'OS ANÉIS', rows:[['1977','Descobertos por acidente: uma estrela piscou cinco vezes antes e depois de Urano passar na frente dela, vista do avião-observatório Kuiper (Elliot, Dunham e Mink)'],['O que são','13 anéis finos e escuros como carvão; o mais largo, o épsilon, tem entre 20 e 100 km'],['As pastoras','Cordélia por dentro e Ofélia por fora seguram o anel épsilon no lugar'],['Voyager 2','Contou 11 em 1986; o Hubble achou mais dois, muito afastados, em 2005'],['JWST','Em 2023 fotografou os anéis com o planeta brilhando em infravermelho']]},
     {t:'REGISTRO', rows:[['Descoberta','13/03/1781 · William Herschel'],['Marco','1º planeta descoberto com telescópio'],['Única visita','Voyager 2 · 1986'],['Luas','Nomes de Shakespeare e Pope'],['População','0']]},
     {t:'LINK & VIAGEM', rows:[['Luz do Sol até aqui','2,7 h'],['Sonda desde a Terra','~8,5 anos (Voyager 2)']]}
   ],
@@ -2074,7 +2075,34 @@ PLANETS.push(
       {t:'REGISTRO', rows:[['Descoberta','1787 · William Herschel'],['O nome','O rei das fadas de Sonho de uma Noite de Verão'],['A mais distante','A mais externa das cinco grandes: 13,5 dias por volta'],['Única visita','Voyager 2, janeiro de 1986, e nunca mais']]}
     ],
     facts:['Tem a face mais antiga e craterizada das grandes luas de Urano, quase intocada desde a formação do sistema.','Na única foto de perto, da Voyager 2, um pico de 6 km apontava na borda do disco.'],
-    fict:'Oberon é o rei das fadas de Sonho de uma Noite de Verão, de Shakespeare, marido de Titânia: o casal reina sobre as duas maiores luas de Urano.'}
+    fict:'Oberon é o rei das fadas de Sonho de uma Noite de Verão, de Shakespeare, marido de Titânia: o casal reina sobre as duas maiores luas de Urano.'},
+   {id:'puck', name:'PUCK', desig:'URANO-XV · LUA', kind:'O duende escuro, a maior das pequenas', hab:0, gbar:0.002, pop:'0',
+    quick:[['DIÂMETRO','162 km'],['ÓRBITA','0,76 d'],['DESCOBERTA','1985'],['DISTÂNCIA','86.004 km'],['ALBEDO','0,11 · escuro'],['FOTO','Voyager 2, 1986']],
+    visual:{mode:'rocky', c1:'#5a5652', c2:'#736f6a', c3:'#3a3734', scale:3.4, seed:19.85, crater:0.8},
+    sections:[
+      {t:'A MAIOR DAS PEQUENAS', rows:[['O que é','A maior das luas internas de Urano, uma bola escura e craterizada de 162 km entre os anéis e Miranda'],['A foto','A Voyager 2 mudou o programa às pressas para fotografá-la em janeiro de 1986: a única imagem de perto que existe'],['As crateras','Três com nome: Bogle, Butz e Lob, todos duendes do folclore britânico'],['A cor','Escura como carvão, com albedo 0,11: a mesma cor dos anéis, provavelmente o mesmo material']]},
+      {t:'REGISTRO', rows:[['Descoberta','30 DEZ 1985, pela Voyager 2, a caminho de Urano'],['O nome','Puck, o duende travesso de Sonho de uma Noite de Verão'],['A vizinhança','Dá uma volta em 18 horas, por fora dos anéis e por dentro de Miranda']]}
+    ],
+    facts:['A Voyager 2 mudou o roteiro às pressas para fotografá-la: é a única lua pequena de Urano com foto de perto.','É escura como carvão, a mesma cor dos anéis do planeta.'],
+    fict:'Puck, o duende de Shakespeare, é quem abre a peça com o famoso: se nós, sombras, ofendemos.'},
+   {id:'cordelia', name:'CORDÉLIA', desig:'URANO-VI · PASTORA', kind:'A pastora de dentro do anel épsilon', hab:0, gbar:0.0005, pop:'0',
+    quick:[['DIÂMETRO','~40 km'],['ÓRBITA','0,335 d'],['DESCOBERTA','1986'],['DISTÂNCIA','49.770 km'],['PAPEL','pastora interna'],['DESTINO','cai devagar']],
+    visual:{mode:'rocky', c1:'#4e4a46', c2:'#66625c', c3:'#332f2c', scale:3.0, seed:6.1, crater:0.7},
+    sections:[
+      {t:'A PASTORA', rows:[['O papel','Orbita logo por dentro do anel épsilon e, com Ofélia por fora, segura a borda dele no lugar pela gravidade'],['A prova','Os anéis de Urano são finos como fios porque as pastoras varrem o que escapa: sem elas o anel se espalharia'],['A mais interna','É a lua mais próxima de Urano conhecida: uma volta a cada 8 horas']]},
+      {t:'REGISTRO', rows:[['Descoberta','Janeiro de 1986, nas imagens da Voyager 2'],['O nome','Cordélia, a filha fiel do Rei Lear'],['O futuro','Orbita mais rápido que Urano gira: a maré a puxa para baixo devagar, rumo ao planeta']]}
+    ],
+    facts:['Ela e Ofélia seguram o anel épsilon como cães pastores seguram o rebanho: uma por dentro, outra por fora.','Orbita mais rápido do que Urano gira e por isso está caindo devagar rumo ao planeta.'],
+    fict:null},
+   {id:'ofelia', name:'OFÉLIA', desig:'URANO-VII · PASTORA', kind:'A pastora de fora do anel épsilon', hab:0, gbar:0.0005, pop:'0',
+    quick:[['DIÂMETRO','~43 km'],['ÓRBITA','0,376 d'],['DESCOBERTA','1986'],['DISTÂNCIA','53.790 km'],['PAPEL','pastora externa'],['ANEL','épsilon']],
+    visual:{mode:'rocky', c1:'#524e4a', c2:'#6a6660', c3:'#37332f', scale:3.0, seed:6.2, crater:0.7},
+    sections:[
+      {t:'A PASTORA', rows:[['O papel','Orbita logo por fora do anel épsilon, o mais brilhante e largo de Urano, e segura a borda externa dele'],['O anel','O épsilon tem entre 20 e 100 km de largura e é o mais denso: sem as pastoras, se dispersaria em pouco tempo'],['O par','Cordélia por dentro, Ofélia por fora: o primeiro par de pastoras confirmado depois das de Saturno']]},
+      {t:'REGISTRO', rows:[['Descoberta','Janeiro de 1986, nas imagens da Voyager 2'],['O nome','Ofélia, a de Hamlet'],['A órbita','Uma volta a cada 9 horas, entre o anel épsilon e as outras luas pequenas']]}
+    ],
+    facts:['Segura a borda de fora do anel épsilon, o mais brilhante de Urano, enquanto Cordélia segura a de dentro.','Foi descoberta nas imagens da Voyager 2, em janeiro de 1986, dias antes da passagem.'],
+    fict:null}
   ]
 },
 {
@@ -5266,7 +5294,7 @@ const ESCALA_REAL_LUAS = {
   io:421700, europa:671100, ganimedes:1070400, calisto:1882700,
   tita:1221870, reia:527108, encelado:237948, dione:377396, tetis:294619, mimas:185539, japeto:3560820,
   hiperion:1481010, febe:12947780, amalteia:181366, himalia:11461000, proteu:117647, nereida:5513818,
-  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
+  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
   iss:6790, hubble:6910, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, pathfinder:1.52, viking1:1.52, cassini:9.54};
@@ -14383,7 +14411,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r255';
+const BUILD = 'r256';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
