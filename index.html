@@ -2673,6 +2673,21 @@ const STARSYS = [
    quick:[['DISTÂNCIA','65 al'],['RAIO','~44 Sóis'],['TIPO','K5 III'],['RUMO','a Pioneer 10 viaja para cá']],
    sections:[{t:'REGISTRO', rows:[['O que é','Um Sol que já envelheceu e inchou 44 vezes'],['No céu','O olho vermelho do Touro, ocultado pela Lua várias vezes por ano']]}],
    facts:['É o retrato do futuro do Sol.']}},
+ {id:'procyon', name:'PROCYON', nav:true, pos:[-3,0,-7],
+  card:{desig:'ESTRELA · 11,5 AL', kind:'A vizinha com a anã branca escondida', hab:null,
+   quick:[['DISTÂNCIA','11,5 al'],['RAIO','~2 Sóis'],['TIPO','F5 IV-V'],['COMPANHEIRA','anã branca, 40,8 anos']],
+   sections:[{t:'REGISTRO', rows:[['O que é','A oitava estrela mais brilhante do céu, a 11,5 anos-luz'],['A companheira','Uma anã branca prevista pelo bamboleio em 1844 e vista só em 1896']]}],
+   facts:['O nome quer dizer "antes do cão": ela nasce um pouco antes de Sirius.']}},
+ {id:'altair', name:'ALTAIR', nav:true, pos:[-8.5,0,12.5],
+  card:{desig:'ESTRELA · 16,7 AL', kind:'A estrela achatada pela rotação', hab:null,
+   quick:[['DISTÂNCIA','16,7 al'],['RAIO','1,6 a 2 Sóis'],['TIPO','A7 V'],['DIA','~9 horas']],
+   sections:[{t:'REGISTRO', rows:[['O giro','Dá uma volta em 9 horas: o equador corre a 290 km/s e a estrela fica oval'],['No céu','A ponta sul do Triângulo de Verão, na Águia']]}],
+   facts:['Foi a primeira estrela comum a ter a superfície fotografada como um disco, em 2007.']}},
+ {id:'deneb', name:'DENEB', nav:true, pos:[12,0,14],
+  card:{desig:'ESTRELA · ~2.600 AL', kind:'A supergigante que se vê de longe', hab:null,
+   quick:[['DISTÂNCIA','~2.600 al'],['RAIO','~200 Sóis'],['BRILHO','~200.000 Sóis'],['DESTINO','supernova']],
+   sections:[{t:'REGISTRO', rows:[['O que é','Uma das estrelas mais luminosas que se pode ver a olho nu'],['No céu','A cauda do Cisne e o topo da Cruz do Norte']]}],
+   facts:['Está umas 150 vezes mais longe que Vega e brilha quase igual no céu.']}},
  {id:'rigel', name:'RIGEL', nav:true, pos:[-14,0,9],
   card:{desig:'ESTRELA · ~860 AL', kind:'Supergigante azul de Órion', hab:null,
    quick:[['DISTÂNCIA','~860 al'],['RAIO','~75 Sóis'],['BRILHO','~120.000 Sóis'],['DESTINO','supernova']],
@@ -3130,6 +3145,51 @@ const ALD_STAR = {
   ],
   facts:['A Lua oculta Aldebaran várias vezes por ano: é a estrela brilhante mais fácil de ver sumir atrás dela.'],
   fict:'A Pioneer 10, com a placa dourada da humanidade a bordo, chega à vizinhança dela em ~2 milhões de anos.'};
+const PRO_STAR = {
+  id:'procyons', name:'PROCYON', desig:'ESTRELA · F5 IV-V', kind:'A vizinha que já começa a inchar', hab:null, gbar:12,
+  quick:[['TIPO','F5 IV-V, subgigante'],['RAIO','2,05 R☉'],['MASSA','1,5 Sol'],['TEMP. SUP.','6.300 °C'],['DISTÂNCIA','11,5 al'],['BRILHO','~7 Sóis']],
+  visual:{mode:'star', c1:'#fff9ea', c2:'#ffe9a8'},
+  sections:[
+    {t:'A VIZINHA', rows:[['O que é','Uma estrela um pouco maior e mais quente que o Sol, a 11,5 anos-luz: uma das mais próximas'],['O começo do fim','Está esgotando o hidrogênio do núcleo e começando a inchar: em algumas centenas de milhões de anos vira gigante'],['No céu','A oitava estrela mais brilhante, o Cão Menor inteiro se resume a ela e Gomeisa']]},
+    {t:'A ANÃ BRANCA', rows:[['1844','Friedrich Bessel percebeu que Procyon bamboleava e previu uma companheira invisível, como fez com Sirius'],['1896','John Schaeberle a vê pelo telescópio de Lick: uma anã branca fraca, 15 mil vezes menos brilhante'],['A dupla','As duas se orbitam a cada 40,8 anos, a uns 15 UA uma da outra']]},
+    {t:'REGISTRO', rows:[['O nome','Do grego, "antes do cão": ela nasce um pouco antes de Sirius, o Cão Maior'],['O Triângulo de Inverno','Com Sirius e Betelgeuse forma o triângulo do céu de verão do hemisfério sul'],['A viagem','A luz dela leva 11,5 anos para chegar; a Voyager 1 levaria uns 200 mil']]}
+  ],
+  facts:['O nome quer dizer "antes do cão": Procyon nasce pouco antes de Sirius no céu.','A companheira anã branca foi prevista em 1844 pelo bamboleio e só vista em 1896.'],
+  fict:'Procyon aparece como estrela de destino em Star Trek, Babylon 5 e em dezenas de jogos: vizinha e brilhante, é endereço fácil.'};
+const PRO_BODIES = [
+ {id:'procyonb', name:'PROCYON B', desig:'PROCYON · ANÃ BRANCA', kind:'A companheira que Bessel previu', hab:0, gbar:40000, pop:'·',
+  quick:[['TIPO','DQZ (anã branca)'],['MASSA','0,6 Sol'],['RAIO','0,012 R☉ (≈ Terra)'],['TEMP. SUP.','7.700 °C'],['ÓRBITA','40,8 anos'],['DISTÂNCIA','~15 UA de Procyon A']],
+  sys:{orbit:13, size:0.38, speed:0.6, angle:1.2},
+  visual:{mode:'haze', c1:'#f4f7ff', c2:'#d6e0ff', c3:'#b3c3ea', scale:2.2, seed:18.96, atmo:{col:'#a9c8ff', i:1.0}},
+  sections:[
+    {t:'O CADÁVER', rows:[['O que é','O caroço de uma estrela que já morreu: 0,6 massas solares num globo do tamanho da Terra'],['A história','Era a maior das duas e por isso morreu primeiro: inchou, perdeu as camadas e sobrou o núcleo'],['A temperatura','Uns 7.700 °C, esfriando devagar há mais de um bilhão de anos']]},
+    {t:'REGISTRO', rows:[['1844','Prevista por Bessel pelo bamboleio de Procyon A'],['1896','Vista por John Schaeberle no refrator de 36 polegadas de Lick'],['A dificuldade','Fica a menos de 5 segundos de arco da primária, 15 mil vezes mais brilhante: um vaga-lume ao lado de um farol']]}
+  ],
+  facts:['Foi prevista pela matemática 52 anos antes de alguém conseguir vê-la.','É do tamanho da Terra com 60 por cento da massa do Sol: uma colher de chá pesaria toneladas.'],
+  fict:null, moons:[]}
+];
+const ALT_STAR = {
+  id:'altairs', name:'ALTAIR', desig:'ESTRELA · A7 V', kind:'A estrela achatada pela própria rotação', hab:null, gbar:8,
+  quick:[['TIPO','A7 V'],['RAIO','1,6 a 2,0 R☉'],['MASSA','1,8 Sol'],['TEMP. SUP.','7.500 °C'],['DISTÂNCIA','16,7 al'],['DIA','~9 h']],
+  visual:{mode:'star', c1:'#ffffff', c2:'#e6ecff'},
+  sections:[
+    {t:'O PIÃO', rows:[['O giro','Dá uma volta em cerca de 9 horas: o equador corre a uns 290 km/s, mais de 100 vezes o do Sol'],['A forma','Por isso ela é oval: o raio no equador é 25 por cento maior que nos polos'],['Os polos','Mais quentes e mais brilhantes que o equador, o escurecimento por gravidade, previsto na teoria e visto nela']]},
+    {t:'A FOTO', rows:[['2007','O interferômetro CHARA, na Califórnia, juntou seis telescópios e fez a primeira imagem da superfície de uma estrela comum: ela'],['O que se viu','Um disco achatado, com os polos brilhantes e o equador escuro, exatamente como a rotação previa']]},
+    {t:'REGISTRO', rows:[['No céu','A estrela mais brilhante da Águia e a ponta sul do Triângulo de Verão, com Vega e Deneb'],['O nome','Do árabe, "a águia voadora"'],['Tanabata','No Japão ela é Hikoboshi, o pastor separado de Orihime (Vega) pelo rio da Via Láctea, e os dois só se encontram em 7 de julho']]}
+  ],
+  facts:['Gira tão rápido que é oval: o equador é 25 por cento mais largo que os polos.','Foi a primeira estrela comum a ter a superfície fotografada como um disco, em 2007.'],
+  fict:'No Tanabata japonês Altair é Hikoboshi, o pastor apaixonado, e Vega é Orihime: a Via Láctea é o rio que os separa até 7 de julho.'};
+const DEN_STAR = {
+  id:'denebs', name:'DENEB', desig:'ESTRELA · A2 Ia', kind:'A supergigante branca que se vê de longe', hab:null, gbar:0.01,
+  quick:[['TIPO','A2 Ia, supergigante'],['RAIO','~200 R☉'],['MASSA','~19 Sóis'],['TEMP. SUP.','8.500 °C'],['DISTÂNCIA','~2.600 al'],['BRILHO','~200.000 Sóis']],
+  visual:{mode:'star', c1:'#f4f7ff', c2:'#cfe0ff'},
+  sections:[
+    {t:'A DISTANTE', rows:[['O que é','Uma das estrelas mais luminosas que se pode ver a olho nu: umas 200 mil vezes o Sol'],['A distância','Tão longe que a medida é incerta: entre 1.500 e 2.600 anos-luz, cem vezes mais que Vega'],['O tamanho','Uns 200 raios solares: no lugar do Sol, chegaria perto da órbita da Terra']]},
+    {t:'O FUTURO', rows:[['O destino','Com 19 massas solares ela vai explodir como supernova em alguns milhões de anos'],['O polo','Pela precessão, por volta do ano 9800 Deneb será a estrela polar do norte']]},
+    {t:'REGISTRO', rows:[['No céu','A cauda do Cisne e o topo da Cruz do Norte; a ponta nordeste do Triângulo de Verão'],['O nome','Do árabe, "cauda"'],['A luz','A luz que vemos hoje saiu dela por volta do tempo de Roma antiga']]}
+  ],
+  facts:['Está umas 100 vezes mais longe que Vega e brilha quase igual no céu: é a mais luminosa das estrelas próximas.','Por volta do ano 9800 ela será a estrela polar.'],
+  fict:'Deneb é o farol do Triângulo de Verão e aparece como destino em incontáveis histórias de ficção científica, de Star Trek aos jogos Elite.'};
 const RIG_STAR = {
   id:'rigels', name:'RIGEL', desig:'ESTRELA · B8 Ia', kind:'A supergigante azul do pé de Órion', hab:null, gbar:0.05,
   quick:[['TIPO','B8 Ia, supergigante'],['RAIO','~75 R☉'],['MASSA','~21 Sóis'],['TEMP. SUP.','12.000 °C'],['DISTÂNCIA','~860 al'],['BRILHO','~120.000 Sóis']],
@@ -4729,6 +4789,24 @@ const SYS = {
           quick:[['ESTRELA','1 gigante laranja'],['RAIO','~44 R☉'],['PLANETAS','1 candidato em debate'],['DISTÂNCIA','65 al'],['RUMO','a Pioneer 10 viaja para cá']],
           sections:[{t:'REGISTRO', rows:[['Escala','44 vezes o raio do Sol: engoliria Mercúrio com folga'],['As Híades','O V do Touro fica ao fundo, ao DOBRO da distância'],['Ocultações','A Lua passa na frente dela várias vezes por ano']]}],
           facts:['É o retrato do futuro do Sol: uma estrela parecida que já inchou.']} },
+  procyon:{ id:'procyon', radec:'07h39m +05°13′', name:'PROCYON', star:PRO_STAR, bodies:PRO_BODIES, belt:[], beltR:null,
+        starSize:3.6, camMax:46, hint:'A ANÃ BRANCA PROCYON B ORBITA A CADA 40,8 ANOS',
+        card:{desig:'SISTEMA ESTELAR · CÃO MENOR', kind:'A vizinha e a anã branca escondida', hab:null,
+          quick:[['ESTRELAS','2 (F5 + anã branca)'],['DISTÂNCIA','11,5 al'],['RAIO','2,05 R☉'],['ÓRBITA DO PAR','40,8 anos']],
+          sections:[{t:'REGISTRO', rows:[['A vizinhança','Uma das estrelas mais próximas do Sol, a oitava mais brilhante do céu'],['A anã branca','Prevista em 1844 pelo bamboleio e vista só em 1896'],['O nome','Antes do cão: nasce pouco antes de Sirius']]}],
+          facts:['Como Sirius, tem uma anã branca ao lado: os dois vizinhos mais brilhantes do Sol guardam um cadáver estelar.']} },
+  altair:{ id:'altair', radec:'19h51m +08°52′', name:'ALTAIR', star:ALT_STAR, bodies:[], belt:[], beltR:null,
+        starSize:3.8, camMax:50, hint:'A ESTRELA OVAL · UMA VOLTA EM 9 HORAS',
+        card:{desig:'SISTEMA ESTELAR · ÁGUIA', kind:'O pião achatado', hab:null,
+          quick:[['ESTRELA','1 (A7 V)'],['DISTÂNCIA','16,7 al'],['RAIO','1,6 a 2,0 R☉'],['DIA','~9 horas']],
+          sections:[{t:'REGISTRO', rows:[['O giro','O equador corre a 290 km/s e a estrela fica oval'],['A foto','A primeira estrela comum com a superfície fotografada, em 2007'],['No céu','A ponta sul do Triângulo de Verão']]}],
+          facts:['Gira tão depressa que é 25 por cento mais larga no equador que nos polos.']} },
+  deneb:{ id:'deneb', radec:'20h41m +45°17′', name:'DENEB', star:DEN_STAR, bodies:[], belt:[], beltR:null,
+        starSize:6.0, camMax:60, hint:'SUPERGIGANTE BRANCA · 200 MIL SÓIS',
+        card:{desig:'SISTEMA ESTELAR · CISNE', kind:'A cauda do Cisne, um farol distante', hab:null,
+          quick:[['ESTRELA','1 supergigante'],['DISTÂNCIA','~2.600 al'],['RAIO','~200 R☉'],['BRILHO','~200.000 Sóis'],['DESTINO','supernova']],
+          sections:[{t:'REGISTRO', rows:[['Escala','200 raios solares: chegaria perto da órbita da Terra'],['A luz','Saiu dela na época de Roma antiga'],['O futuro','Estrela polar por volta do ano 9800']]}],
+          facts:['A mais distante das estrelas de primeira grandeza do céu.']} },
   rigel:{ id:'rigel', radec:'05h15m −08°12′', name:'RIGEL', star:RIG_STAR, bodies:[], belt:[], beltR:null,
         starSize:5.5, camMax:60, hint:'SUPERGIGANTE AZUL · 120 MIL SÓIS',
         card:{desig:'SISTEMA ESTELAR · ÓRION', kind:'O pé azul do caçador', hab:null,
@@ -4757,6 +4835,7 @@ reg(ACEN_A,'alphacen'); ACEN_BODIES.forEach(p=>reg(p,'alphacen'));
 reg(SIR_A,'sirius'); SIR_BODIES.forEach(p=>reg(p,'sirius'));
 reg(KEP_STAR,'kepler452'); KEP_BODIES.forEach(p=>reg(p,'kepler452'));
 reg(BET_STAR,'betelgeuse');
+reg(PRO_STAR,'procyon'); PRO_BODIES.forEach(p=>reg(p,'procyon')); reg(ALT_STAR,'altair'); reg(DEN_STAR,'deneb');
 reg(ALD_STAR,'aldebaran'); reg(RIG_STAR,'rigel'); reg(ANT_STAR,'antares'); reg(POL_STAR,'polaris');
 reg(CNC_STAR,'cnc55'); CNC_BODIES.forEach(p=>reg(p,'cnc55'));
 reg(HD_STAR,'hd189'); HD_BODIES.forEach(p=>reg(p,'hd189'));
@@ -6953,6 +7032,7 @@ function buildSystem(sysId, spin0){
           const SIS_CEU = [
             ['polaris', 2.53, 89.26, 433],
             ['aldebaran', 4.60, 16.51, 65], ['antares', 16.49, -26.43, 550],
+            ['procyon', 7.65, 5.22, 11.5], ['altair', 19.85, 8.87, 16.7], ['deneb', 20.69, 45.28, 2600],
             ['rigel', 5.24, -8.20, 860],
             ['barnard', 17.96, 4.69, 6], ['gliese581', 15.32, -7.72, 20],
             ['fomalhaut', 22.96, -29.62, 25], ['trappist', 23.108, -5.04, 40],
@@ -11084,7 +11164,7 @@ const HAB_GRUPOS = [
   ['gigantes', 'GIGANTES', ['jupiter', 'saturno', 'urano', 'netuno']],
   ['luas', 'LUAS GRANDES', ['lua', 'io', 'europa', 'ganimedes', 'tita', 'tritao']],
   ['oceanos', 'MUNDOS OCEÂNICOS', ['europa', 'encelado', 'ganimedes', 'calisto', 'tita', 'mimas', 'dione', 'tritao', 'ceres', 'plutao']],
-  ['estrelas', 'AS ESTRELAS', ['siriusb', 'sol', 'polariss', 'aldebarans', 'rigels', 'antaress', 'betelgeuses']],
+  ['estrelas', 'AS ESTRELAS', ['siriusb', 'sol', 'altairs', 'procyons', 'polariss', 'aldebarans', 'rigels', 'denebs', 'antaress', 'betelgeuses']],
   ['jupluas', 'LUAS DE JÚPITER', ['jupiter', 'io', 'europa', 'ganimedes', 'calisto']],
   ['trappist', 'TRAPPIST-1', ['t1b', 't1c', 't1d', 't1e', 't1f', 't1g', 't1h']],
   ['perso', 'PERSONALIZADO', null]
@@ -11804,7 +11884,7 @@ function enterTarget(act, id){
        para a cena cênica: VOA até lá no mesmo mapa (o voo da busca do r143)
        e entra emendado; o zoom out depois DEVOLVE ao mapa (bug dele) */
     if(ACT && ACT.kind==='system' && ACT.escr && ACT.sceneCeu){
-      const ceuId = {sirius:'sirius', vega:'vegaceu', alphacen:'rigilkent', betelgeuse:'betelg', antares:'antares', rigel:'rigel', aldebaran:'aldebaran', polaris:'polaris'}[id];
+      const ceuId = {sirius:'sirius', vega:'vegaceu', alphacen:'rigilkent', betelgeuse:'betelg', antares:'antares', rigel:'rigel', aldebaran:'aldebaran', polaris:'polaris', procyon:'procyon', altair:'altair', deneb:'deneb'}[id];
       if(ceuId){ voarAteEstrela(ceuId); return; }
       const alvoS = ACT.ceuAlvos && ACT.ceuAlvos[id];
       if(alvoS){ voarAteAncora(id, alvoS); return; }
@@ -13181,7 +13261,7 @@ function voarAteEstrela(idCeu){
   if(!e) return;
   const nome = CEU_NOME[idCeu] || idCeu.toUpperCase();
   const ly = CEU_LY[idCeu] || 900;
-  const sis = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse', antares:'antares', rigel:'rigel', aldebaran:'aldebaran', polaris:'polaris'}[idCeu];
+  const sis = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse', antares:'antares', rigel:'rigel', aldebaran:'aldebaran', polaris:'polaris', procyon:'procyon', altair:'altair', deneb:'deneb'}[idCeu];
   /* fora da escala 1:1 o céu é cenográfico: aí a busca só abre a ficha
      (ou entra no sistema, quando ele existe no atlas) */
   if(!(ACT && ACT.kind === 'system' && ACT.escr && ACT.sceneCeu)){
@@ -13413,7 +13493,7 @@ function fichaEstrela(id){
   const nome = CEU_NOME[id] || id.toUpperCase();
   const ly = CEU_LY[id] || 900;
   const cl = CLASSE_CEU[e[5]] || ['', ''];
-  const sis = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse', antares:'antares', rigel:'rigel', aldebaran:'aldebaran', polaris:'polaris'}[id];
+  const sis = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse', antares:'antares', rigel:'rigel', aldebaran:'aldebaran', polaris:'polaris', procyon:'procyon', altair:'altair', deneb:'deneb'}[id];
   const constel = (window.__ceuDe && window.__ceuDe[id]) || null;
   const anoLuz = Math.round(2026 - ly);
   const quando = anoLuz > 1900 ? ('em ' + anoLuz) : (anoLuz > 0 ? ('no ano ' + anoLuz) : (Math.round(-anoLuz) + ' anos antes de Cristo'));
@@ -14411,7 +14491,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r256';
+const BUILD = 'r257';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

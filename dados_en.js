@@ -1122,6 +1122,49 @@ polariss: {
   facts: ['The whole sky turns around it: in a long-exposure photo, Polaris is the still point at the center of the trails.'],
   fict: 'From Shakespeare to Interstellar, pointing at the North Star became synonymous with having a heading.'
 },
+procyons: {
+  kind: 'The neighbor that is starting to swell',
+  quick: [['TYPE','F5 IV-V, subgiant'],['RADIUS','2.05 R☉'],['MASS','1.5 Sun'],['SURF. TEMP.','6,300 °C'],['DISTANCE','11.5 ly'],['BRIGHTNESS','~7 Suns']],
+  sections: [
+    {t:'THE NEIGHBOR', rows:[['What it is','A star a bit larger and hotter than the Sun, 11.5 light-years away: one of the closest'],['The beginning of the end','It is running out of hydrogen in the core and starting to swell: in a few hundred million years it becomes a giant'],['In the sky','The eighth brightest star; the whole of Canis Minor comes down to it and Gomeisa']]},
+    {t:'THE WHITE DWARF', rows:[['1844','Friedrich Bessel noticed that Procyon wobbled and predicted an invisible companion, as he did with Sirius'],['1896','John Schaeberle sees it through the Lick telescope: a faint white dwarf, 15,000 times dimmer'],['The pair','The two orbit each other every 40.8 years, some 15 AU apart']]},
+    {t:'RECORD', rows:[['The name','From the Greek, "before the dog": it rises a little before Sirius, the Great Dog'],['The Winter Triangle','With Sirius and Betelgeuse it forms the triangle of the northern winter sky'],['The trip','Its light takes 11.5 years to arrive; Voyager 1 would take some 200,000']]}
+  ],
+  facts: ['The name means "before the dog": Procyon rises shortly before Sirius in the sky.', 'The white dwarf companion was predicted in 1844 from the wobble and only seen in 1896.'],
+  fict: 'Procyon appears as a destination star in Star Trek, Babylon 5 and dozens of games: close and bright, it is an easy address.'
+},
+procyonb: {
+  kind: 'The companion Bessel predicted',
+  quick: [['TYPE','DQZ (white dwarf)'],['MASS','0.6 Sun'],['RADIUS','0.012 R☉ (≈ Earth)'],['SURF. TEMP.','7,700 °C'],['ORBIT','40.8 years'],['DISTANCE','~15 AU from Procyon A']],
+  sections: [
+    {t:'THE CORPSE', rows:[['What it is','The core of a star that has already died: 0.6 solar masses in a globe the size of the Earth'],['The story','It was the larger of the two and so it died first: it swelled, lost its layers and the core remained'],['The temperature','About 7,700 °C, cooling slowly for more than a billion years']]},
+    {t:'RECORD', rows:[['1844','Predicted by Bessel from the wobble of Procyon A'],['1896','Seen by John Schaeberle in the 36-inch Lick refractor'],['The difficulty','It sits less than 5 arcseconds from the primary, which is 15,000 times brighter: a firefly next to a lighthouse']]}
+  ],
+  facts: ['It was predicted by mathematics 52 years before anyone managed to see it.', 'It is the size of the Earth with 60 percent of the mass of the Sun: a teaspoon would weigh tonnes.'],
+  fict: null
+},
+altairs: {
+  kind: 'The star flattened by its own spin',
+  quick: [['TYPE','A7 V'],['RADIUS','1.6 to 2.0 R☉'],['MASS','1.8 Sun'],['SURF. TEMP.','7,500 °C'],['DISTANCE','16.7 ly'],['DAY','~9 h']],
+  sections: [
+    {t:'THE SPINNING TOP', rows:[['The spin','One turn in about 9 hours: the equator runs at some 290 km/s, more than 100 times the Sun\'s'],['The shape','That is why it is oval: the radius at the equator is 25 percent larger than at the poles'],['The poles','Hotter and brighter than the equator, gravity darkening, predicted by theory and seen on it']]},
+    {t:'THE PHOTO', rows:[['2007','The CHARA interferometer in California combined six telescopes and made the first image of the surface of an ordinary star: this one'],['What was seen','A flattened disk, with bright poles and a dark equator, exactly as the rotation predicted']]},
+    {t:'RECORD', rows:[['In the sky','The brightest star of Aquila and the southern tip of the Summer Triangle, with Vega and Deneb'],['The name','From the Arabic, "the flying eagle"'],['Tanabata','In Japan it is Hikoboshi, the herdsman separated from Orihime (Vega) by the river of the Milky Way, and the two meet only on July 7']]}
+  ],
+  facts: ['It spins so fast that it is oval: the equator is 25 percent wider than the poles.', 'It was the first ordinary star to have its surface photographed as a disk, in 2007.'],
+  fict: 'In the Japanese Tanabata, Altair is Hikoboshi, the lovesick herdsman, and Vega is Orihime: the Milky Way is the river that keeps them apart until July 7.'
+},
+denebs: {
+  kind: 'The white supergiant seen from afar',
+  quick: [['TYPE','A2 Ia, supergiant'],['RADIUS','~200 R☉'],['MASS','~19 Suns'],['SURF. TEMP.','8,500 °C'],['DISTANCE','~2,600 ly'],['BRIGHTNESS','~200,000 Suns']],
+  sections: [
+    {t:'THE DISTANT ONE', rows:[['What it is','One of the most luminous stars visible to the naked eye: some 200,000 times the Sun'],['The distance','So far that the measurement is uncertain: between 1,500 and 2,600 light-years, a hundred times farther than Vega'],['The size','Some 200 solar radii: in the place of the Sun, it would reach near the orbit of the Earth']]},
+    {t:'THE FUTURE', rows:[['The fate','With 19 solar masses it will explode as a supernova within a few million years'],['The pole','Through precession, around the year 9800 Deneb will be the north pole star']]},
+    {t:'RECORD', rows:[['In the sky','The tail of the Swan and the top of the Northern Cross; the northeastern tip of the Summer Triangle'],['The name','From the Arabic, "tail"'],['The light','The light we see today left it around the time of ancient Rome']]}
+  ],
+  facts: ['It is some 100 times farther than Vega and shines almost as bright in the sky: the most luminous of the nearby stars.', 'Around the year 9800 it will be the pole star.'],
+  fict: 'Deneb is the beacon of the Summer Triangle and appears as a destination in countless science fiction stories, from Star Trek to the Elite games.'
+},
 aldebarans: {
   kind: 'The orange eye of the Bull',
   quick: [['TYPE','K5 III, giant'],['RADIUS','~44 R☉'],['MASS','~1.2 Sun'],['SURF. TEMP.','3,600 °C'],['DISTANCE','65 ly'],['BRIGHTNESS','~440 Suns']],
@@ -2360,6 +2403,18 @@ __sys: {
     quick: [['STAR','triple Cepheid'],['RADIUS','~37 R☉'],['DISTANCE','~433 ly'],['PULSE','4 days'],['NORTH UNTIL','~12,000 years (then Vega)']],
     sections: [{t:'RECORD', rows:[['The post','The Earth\'s axis points almost exactly at it'],['Precession','Thuban was once the north; Vega will be'],['The ruler','A Cepheid: its pulse measures distances across the universe']]}],
     facts: ['In a long-exposure photo of the sky, it is the center of the star trails.'] } },
+  procyon: { hint: 'THE WHITE DWARF PROCYON B ORBITS EVERY 40.8 YEARS', card: { desig: 'STAR SYSTEM · CANIS MINOR', kind: 'The neighbor and the hidden white dwarf',
+    quick: [['STARS','2 (F5 + white dwarf)'],['DISTANCE','11.5 ly'],['RADIUS','2.05 R☉'],['ORBIT OF THE PAIR','40.8 years']],
+    sections: [{t:'RECORD', rows:[['The neighborhood','One of the closest stars to the Sun, the eighth brightest in the sky'],['The white dwarf','Predicted in 1844 from the wobble and seen only in 1896'],['The name','Before the dog: it rises shortly before Sirius']]}],
+    facts: ['Like Sirius, it has a white dwarf beside it: the two brightest neighbors of the Sun both keep a stellar corpse.'] } },
+  altair: { hint: 'THE OVAL STAR · ONE TURN IN 9 HOURS', card: { desig: 'STAR SYSTEM · AQUILA', kind: 'The flattened spinning top',
+    quick: [['STAR','1 (A7 V)'],['DISTANCE','16.7 ly'],['RADIUS','1.6 to 2.0 R☉'],['DAY','~9 hours']],
+    sections: [{t:'RECORD', rows:[['The spin','The equator runs at 290 km/s and the star becomes oval'],['The photo','The first ordinary star with its surface photographed, in 2007'],['In the sky','The southern tip of the Summer Triangle']]}],
+    facts: ['It spins so fast that it is 25 percent wider at the equator than at the poles.'] } },
+  deneb: { hint: 'WHITE SUPERGIANT · 200,000 SUNS', card: { desig: 'STAR SYSTEM · CYGNUS', kind: 'The tail of the Swan, a distant beacon',
+    quick: [['STAR','1 supergiant'],['DISTANCE','~2,600 ly'],['RADIUS','~200 R☉'],['BRIGHTNESS','~200,000 Suns'],['FATE','supernova']],
+    sections: [{t:'RECORD', rows:[['Scale','200 solar radii: it would reach near the orbit of the Earth'],['The light','It left the star around the time of ancient Rome'],['The future','Pole star around the year 9800']]}],
+    facts: ['The most distant of the first-magnitude stars in the sky.'] } },
   aldebaran: { hint: 'ORANGE GIANT · THE FUTURE OF THE SUN', card: { desig: 'STAR SYSTEM · TAURUS', kind: 'The eye of the Bull, an aged Sun',
     quick: [['STAR','1 orange giant'],['RADIUS','~44 R☉'],['PLANETS','1 candidate under debate'],['DISTANCE','65 ly'],['HEADING','Pioneer 10 is traveling here']],
     sections: [{t:'RECORD', rows:[['Scale','44 times the radius of the Sun: it would swallow Mercury with room to spare'],['The Hyades','The V of Taurus lies in the background, at TWICE the distance'],['Occultations','The Moon passes in front of it several times a year']]}],
