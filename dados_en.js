@@ -103,12 +103,13 @@ saturno: {
     {t:'ORBIT & ROTATION', rows:[['Distance from the Sun','1.43 billion km (9.5 AU)'],['Year','29.4 years'],['Day','10 h 33 min'],['Rotation type','Prograde'],['Orbital speed','9.7 km/s'],['Axial tilt','26.7°'],['Seasons','Yes, ~7 years each']]},
     {t:'STRUCTURE', rows:[['Diameter','116,460 km'],['Mass','5.68 × 10²⁶ kg (95 Earths)'],['Density','0.69 g/cm³, it would float on water'],['Area','42.7 billion km²'],['Rings','282,000 km wide · ~10 m to 1 km thick']]},
     {t:'CLIMATE & ATMOSPHERE', rows:[['Mean temp.','−139 °C'],['Atmosphere','96% H₂ · 3% He'],['Winds','up to 1,800 km/h'],['Polar hexagon','A six-sided storm at the north pole'],['Water','Ice, the rings are 99% water ice']]},
+    {t:'THE RINGS', rows:[['The age','Cassini weighed the rings in the 2017 Grand Finale: too light to be ancient, some 100 to 400 million years, the dinosaurs already existed when they formed'],['Ring rain','Tonnes of ice fall into Saturn every second, guided by the magnetic field: in some 300 million years the rings will be gone'],['The parts','C, B and A from the inside out, the Cassini Division between B and A, the thin F ring outside and the E ring, made of the geysers of Enceladus'],['The shepherds','Pan opens the Encke Gap inside the A ring; Prometheus sculpts the F ring, with Pandora outside'],['The thickness','280,000 km wide and only tens of meters thick: a sheet of paper the size of a football field']]},
     {t:'RECORD', rows:[['Discovered','Antiquity'],['Rings identified','1655 · Christiaan Huygens'],['Mission','Cassini (2004 to 2017) · final plunge into the planet'],['Population','0']]},
     {t:'LINK & TRAVEL', rows:[['Sunlight to here','79.7 min'],['Probe from Earth','~7 years (Cassini)']]}
   ],
   facts: ['It is the only planet less dense than water.', 'The rings are young (maybe ~100 million years) and will vanish in the distant future: it "rains" ring onto the planet.', 'In 2025 the count of confirmed moons jumped to 274, the record of the system.'],
   fict: 'Interstellar: the wormhole appears in orbit around Saturn.',
-  moonsMeta: '274 CONFIRMED · 9 MAIN'
+  moonsMeta: '274 CONFIRMED · 9 MAIN · 3 SHEPHERDS'
 },
 urano: {
   kind: 'Ice giant',
@@ -386,6 +387,36 @@ oberon: {
   ],
   facts: ['It has the oldest, most cratered face among the large moons of Uranus, almost untouched since the formation of the system.', 'In the only close-up photo, from Voyager 2, a 6 km peak stuck out at the edge of the disk.'],
   fict: 'Oberon is the king of the fairies in Shakespeare\'s A Midsummer Night\'s Dream, husband of Titania: the couple reigns over the two largest moons of Uranus.'
+},
+pan: {
+  kind: 'The ravioli that opens the Encke Gap',
+  quick: [['DIMENSIONS','35 × 35 × 23 km'],['ORBIT','0.575 d'],['DISCOVERED','1990'],['DISTANCE','133,584 km'],['WHERE','inside the A ring'],['SHAPE','ravioli']],
+  sections: [
+    {t:'THE INNER SHEPHERD', rows:[['The role','It orbits INSIDE the A ring and sweeps a 325 km lane, the Encke Gap: where it passes, no ice is left'],['The prediction','In 1985 the waves at the edge of the gap gave away an unseen moon; in 1990 Mark Showalter found it in the old Voyager 2 photos'],['The shape','Cassini passed 24,000 km away in March 2017: a ravioli, with a skirt at the equator made of the ring material it collects']]},
+    {t:'RECORD', rows:[['Discovered','1990, in the Voyager 2 images of 1981'],['The name','Pan, the god of shepherds: fitting for the moon that shepherds the ring'],['The orbit','One lap every 13.8 hours, in the middle of the gap it opens itself']]}
+  ],
+  facts: ['It opens the Encke Gap, a 325 km void in the A ring, just by passing: the ice that enters its orbit is thrown out.', 'It has a skirt at the equator made of ring material, and the 2017 Cassini photo looks like a ravioli.'],
+  fict: 'The 2017 ravioli photo became a worldwide meme: the internet spent a week debating whether it was a ravioli, an empanada or a flying saucer.'
+},
+prometeu: {
+  kind: 'The shepherd that steals ice from the F ring',
+  quick: [['DIMENSIONS','136 × 79 × 59 km'],['ORBIT','0.613 d'],['DISCOVERED','1980'],['DISTANCE','139,380 km'],['WHERE','inside the F ring'],['EVERY','14.7 h, a tug']],
+  sections: [
+    {t:'THE THIEF', rows:[['The role','It orbits just inside the F ring, the narrowest and strangest ring of Saturn, and every 14.7 hours it comes close to it'],['What it does','On each approach it tears a strand of ice from the ring and leaves a channel: Cassini filmed the streamers and knots it sculpts'],['The F ring','A thread a few hundred km wide with braids, knots and clumps, the most dynamic ring known']]},
+    {t:'RECORD', rows:[['Discovered','October 1980, in the Voyager 1 photos'],['The name','Prometheus, the titan who stole fire from the gods: here it steals ice from the ring'],['The shape','An elongated 136 km potato, full of grooves']]}
+  ],
+  facts: ['Every 14.7 hours it comes close to the F ring and tears a strand of ice from it: Cassini filmed the streamers it leaves.', 'The F ring is the narrowest and oddest of Saturn, and it is this moon that sculpts it.'],
+  fict: null
+},
+pandora: {
+  kind: 'The outer shepherd of the F ring, less of a shepherd than it seemed',
+  quick: [['DIMENSIONS','104 × 81 × 64 km'],['ORBIT','0.629 d'],['DISCOVERED','1980'],['DISTANCE','141,720 km'],['WHERE','outside the F ring'],['PHOTO','Cassini, 2016']],
+  sections: [
+    {t:'THE OUTER SHEPHERD', rows:[['The role','It orbits just outside the F ring, and for decades it was described as the outer shepherd holding the ring with Prometheus'],['The revision','Cassini studies showed that Prometheus is the one in charge of the F ring; Pandora disturbs it less than was thought'],['The photo','In December 2016 Cassini passed 40,000 km away: a crater-filled potato, coated with fine dust from the ring']]},
+    {t:'RECORD', rows:[['Discovered','October 1980, in the Voyager 1 photos, together with Prometheus'],['The name','Pandora, of the box: the small moons of Saturn follow the mythology of the titans and giants'],['The orbit','One lap every 15.1 hours, a little slower than Prometheus']]}
+  ],
+  facts: ['For decades it was called the outer shepherd of the F ring, but Cassini showed that Prometheus is the one sculpting the ring.', 'Its surface is smooth because of the fine ring dust that settles on it.'],
+  fict: null
 },
 puck: {
   kind: 'The dark sprite, the largest of the small ones',

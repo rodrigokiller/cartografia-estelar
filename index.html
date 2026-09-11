@@ -1913,11 +1913,12 @@ PLANETS.push(
   quick:[['GRAVIDADE','1,06 g'],['TEMP. TOPO','−139 °C'],['DIA','10 h 33'],['ANO','29,4 anos'],['LUAS','274'],['ANÉIS','SIM']],
   sys:{orbit:34, size:2.15, speed:0.034, angle:5.6},
   visual:{mode:'gas', c1:'#e2d3ac', c2:'#c6b184', c3:'#f0e8d2', c4:'#a98f60', bandF:8.0, turb:0.9, seed:4.7, atmo:{col:'#f0e2b8', i:0.5}, rings:{rin:1.35, rout:2.35, col:'#d8caa6', op:0.9, tilt:26.7, seed:2.0}},
-  moonsMeta:'274 CONFIRMADAS · 9 PRINCIPAIS',
+  moonsMeta:'274 CONFIRMADAS · 9 PRINCIPAIS · 3 PASTORAS',
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','1,43 bi km (9,5 UA)'],['Ano','29,4 anos'],['Dia','10 h 33 min'],['Tipo de rotação','Prógrada'],['Veloc. orbital','9,7 km/s'],['Inclinação axial','26,7°'],['Estações','Sim, ~7 anos cada']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','116.460 km'],['Massa','5,68 × 10²⁶ kg (95 Terras)'],['Densidade','0,69 g/cm³, flutuaria na água'],['Área','42,7 bi km²'],['Anéis','282.000 km de largura · ~10 m a 1 km de espessura']]},
     {t:'CLIMA & ATMOSFERA', rows:[['Temp. média','−139 °C'],['Atmosfera','96% H₂ · 3% He'],['Ventos','até 1.800 km/h'],['Hexágono polar','Tempestade de 6 lados no polo norte'],['Água','Gelo, os anéis são 99% gelo d\'água']]},
+    {t:'OS ANÉIS', rows:[['A idade','A Cassini pesou os anéis no Grand Finale de 2017: leves demais para serem antigos, uns 100 a 400 milhões de anos, os dinossauros já existiam quando eles se formaram'],['A chuva de anéis','Toneladas de gelo caem em Saturno a cada segundo, guiadas pelo campo magnético: em uns 300 milhões de anos os anéis terão sumido'],['As partes','C, B e A de dentro para fora, a divisão de Cassini entre B e A, o anel F fino por fora e o E, feito dos gêiseres de Encélado'],['As pastoras','Pan abre a divisão de Encke dentro do anel A; Prometeu esculpe o anel F, com Pandora por fora'],['A espessura','280 mil km de largura e só dezenas de metros de espessura: uma folha de papel do tamanho de um campo de futebol']]},
     {t:'REGISTRO', rows:[['Descoberta','Antiguidade'],['Anéis identificados','1655 · Christiaan Huygens'],['Missão','Cassini (2004–2017) · mergulho final no planeta'],['População','0']]},
     {t:'LINK & VIAGEM', rows:[['Luz do Sol até aqui','79,7 min'],['Sonda desde a Terra','~7 anos (Cassini)']]}
   ],
@@ -2010,6 +2011,33 @@ PLANETS.push(
       {t:'REGISTRO', rows:[['Descoberta','1899 · William Pickering, a primeira lua achada por fotografia'],['A visita','A Cassini passou por ela na CHEGADA, em 2004: 2.000 km, antes de todas as outras'],['Rotação','9,3 h, solta da órbita: ela nem é travada como as luas de verdade']]}
     ],
     facts:['Febe orbita ao contrário de tudo em Saturno: é um mundo do cinturão de Kuiper capturado.','A poeira dela pinta o lado escuro de Jápeto: as duas fichas se explicam.'],
+    fict:null},
+   {id:'pan', name:'PAN', desig:'SATURNO-XVIII · PASTORA', kind:'O ravióli que abre a divisão de Encke', hab:0, gbar:0.0002, pop:'0',
+    quick:[['DIMENSÕES','35 × 35 × 23 km'],['ÓRBITA','0,575 d'],['DESCOBERTA','1990'],['DISTÂNCIA','133.584 km'],['ONDE','dentro do anel A'],['FORMA','ravióli']],
+    visual:{mode:'rocky', c1:'#cfc8bc', c2:'#e6e0d4', c3:'#9a9285', scale:3.2, seed:19.90, crater:0.5},
+    sections:[
+      {t:'A PASTORA DE DENTRO', rows:[['O papel','Orbita DENTRO do anel A e varre uma faixa de 325 km, a divisão de Encke: onde ela passa, não sobra gelo'],['A previsão','Em 1985 as ondas na borda da divisão denunciaram uma lua invisível; em 1990 Mark Showalter a achou nas fotos velhas da Voyager 2'],['A forma','A Cassini passou a 24 mil km em março de 2017: um ravióli, com uma saia no equador feita do próprio material do anel que ela recolhe']]},
+      {t:'REGISTRO', rows:[['Descoberta','1990, nas imagens da Voyager 2 de 1981'],['O nome','Pã, o deus dos pastores: cabe para a lua que pastoreia o anel'],['A órbita','Uma volta a cada 13,8 horas, no meio da divisão que ela mesma abre']]}
+    ],
+    facts:['Ela abre a divisão de Encke, um vão de 325 km no anel A, só de passar: o gelo que entra na órbita dela é jogado para fora.','Tem uma saia no equador feita do material do anel, e a foto da Cassini de 2017 parece um ravióli.'],
+    fict:'A foto do ravióli de 2017 virou meme no mundo inteiro: a internet passou uma semana discutindo se era ravióli, empanada ou disco voador.'},
+   {id:'prometeu', name:'PROMETEU', desig:'SATURNO-XVI · PASTORA', kind:'A pastora que rouba gelo do anel F', hab:0, gbar:0.0005, pop:'0',
+    quick:[['DIMENSÕES','136 × 79 × 59 km'],['ÓRBITA','0,613 d'],['DESCOBERTA','1980'],['DISTÂNCIA','139.380 km'],['ONDE','por dentro do anel F'],['A CADA','14,7 h, um puxão']],
+    visual:{mode:'rocky', c1:'#d6d0c4', c2:'#ece7dc', c3:'#a39b8e', scale:3.4, seed:19.80, crater:0.6},
+    sections:[
+      {t:'A LADRA', rows:[['O papel','Orbita logo por dentro do anel F, o mais estreito e estranho de Saturno, e a cada 14,7 horas chega perto dele'],['O que faz','Em cada aproximação arranca um fio de gelo do anel e deixa um canal: a Cassini filmou as tiras e os nós que ela esculpe'],['O anel F','Um fio de poucas centenas de km com tranças, nós e grumos, o anel mais dinâmico que se conhece']]},
+      {t:'REGISTRO', rows:[['Descoberta','Outubro de 1980, nas fotos da Voyager 1'],['O nome','Prometeu, o titã que roubou o fogo dos deuses: aqui ele rouba gelo do anel'],['A forma','Uma batata alongada de 136 km, cheia de sulcos']]}
+    ],
+    facts:['A cada 14,7 horas ela chega perto do anel F e arranca um fio de gelo dele: a Cassini filmou as tiras que ela deixa.','O anel F é o mais estreito e o mais esquisito de Saturno, e é ela quem o esculpe.'],
+    fict:null},
+   {id:'pandora', name:'PANDORA', desig:'SATURNO-XVII · PASTORA', kind:'A pastora de fora do anel F, menos pastora do que parecia', hab:0, gbar:0.0004, pop:'0',
+    quick:[['DIMENSÕES','104 × 81 × 64 km'],['ÓRBITA','0,629 d'],['DESCOBERTA','1980'],['DISTÂNCIA','141.720 km'],['ONDE','por fora do anel F'],['FOTO','Cassini, 2016']],
+    visual:{mode:'rocky', c1:'#cbc5b9', c2:'#e2ddd2', c3:'#978f82', scale:3.3, seed:19.81, crater:0.7},
+    sections:[
+      {t:'A PASTORA DE FORA', rows:[['O papel','Orbita logo por fora do anel F, e por décadas foi descrita como a pastora externa que segura o anel com Prometeu'],['A revisão','Os estudos da Cassini mostraram que quem manda no anel F é Prometeu; Pandora perturba menos do que se pensava'],['A foto','Em dezembro de 2016 a Cassini passou a 40 mil km: uma batata cheia de crateras, coberta de poeira fina do anel']]},
+      {t:'REGISTRO', rows:[['Descoberta','Outubro de 1980, nas fotos da Voyager 1, junto com Prometeu'],['O nome','Pandora, a da caixa: as luas pequenas de Saturno seguem a mitologia dos titãs e gigantes'],['A órbita','Uma volta a cada 15,1 horas, um pouco mais devagar que Prometeu']]}
+    ],
+    facts:['Por décadas foi chamada de pastora externa do anel F, mas a Cassini mostrou que quem esculpe o anel é Prometeu.','A superfície é lisa por causa da poeira fina do anel que cai nela.'],
     fict:null}
   ]
 },
@@ -5373,7 +5401,7 @@ const ESCALA_REAL_LUAS = {
   io:421700, europa:671100, ganimedes:1070400, calisto:1882700,
   tita:1221870, reia:527108, encelado:237948, dione:377396, tetis:294619, mimas:185539, japeto:3560820,
   hiperion:1481010, febe:12947780, amalteia:181366, himalia:11461000, proteu:117647, nereida:5513818,
-  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
+  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, pan:133584, prometeu:139380, pandora:141720, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
   iss:6790, hubble:6910, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, pathfinder:1.52, viking1:1.52, cassini:9.54};
@@ -6267,7 +6295,7 @@ function buildSystem(sysId, spin0){
     /* as luas também aparecem no mapa do sistema, em miniatura */
     if(p.moons && p.moons.length && !p.satOf && !p.comet && !ehEscape(p) && !p.region){
       /* r160: teto 6→8; r229: 8→9 (Hipérion e Febe entraram em Saturno) */
-      p.moons.slice(0, QLOW ? 5 : 9).forEach((m, mi)=>{
+      p.moons.slice(0, QLOW ? 6 : 12).forEach((m, mi)=>{
         const mh = new THREE.Object3D();
         mh.position.set(obX, 0, obZ);
         if(elip) elip.extras.push(mh);
@@ -14491,7 +14519,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r257';
+const BUILD = 'r258';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
