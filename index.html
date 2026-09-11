@@ -2140,11 +2140,12 @@ PLANETS.push(
   quick:[['GRAVIDADE','1,14 g'],['TEMP. MÉDIA','−201 °C'],['DIA','16 h 06'],['ANO','165 anos'],['LUAS','16'],['VENTOS','2.100 km/h']],
   sys:{orbit:45, size:1.4, speed:0.006, angle:2.8},
   visual:{mode:'gas', c1:'#2f5ecf', c2:'#1f3f9e', c3:'#4d7de6', c4:'#16307e', bandF:6.5, turb:1.0, seed:5.3, spot:{pos:[-1.8,-0.3], r:0.25, col:'#12296b', on:1}, atmo:{col:'#5f8cff', i:0.95}},
-  moonsMeta:'16 CONFIRMADAS · 3 PRINCIPAIS',
+  moonsMeta:'16 CONFIRMADAS · 3 PRINCIPAIS · 2 INTERNAS',
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','4,50 bi km (30 UA)'],['Ano','165 anos'],['Dia','16 h 06 min'],['Tipo de rotação','Prógrada'],['Veloc. orbital','5,4 km/s'],['Inclinação axial','28,3°'],['Estações','Sim, ~40 anos cada']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','49.244 km'],['Massa','1,02 × 10²⁶ kg (17 Terras)'],['Densidade','1,64 g/cm³'],['Área','7,6 bi km²'],['Interior','Possível "chuva de diamantes"']]},
     {t:'CLIMA & ATMOSFERA', rows:[['Temp. média','−201 °C'],['Atmosfera','80% H₂ · 19% He · 1,5% CH₄'],['Ventos','Até 2.100 km/h, os mais fortes do sistema'],['Grande Mancha Escura','Tempestades que surgem e somem'],['Água','Manto de gelo']]},
+    {t:'OS ANÉIS E OS ARCOS', rows:[['1984','Ocultações de estrelas mostraram anéis incompletos: pedaços que piscavam de um lado e não do outro'],['1989','A Voyager 2 viu os cinco anéis inteiros, tênues e escuros como pó: Galle, Le Verrier, Lassell, Arago e Adams'],['Os arcos','O anel Adams tem quatro trechos mais densos, Liberté, Égalité, Fraternité e Courage, presos pela lua Galateia'],['O que muda','Os arcos estão se apagando desde 1989, e Liberté quase sumiu: ninguém sabe ainda o porquê'],['Os nomes','Astrônomos que caçaram Netuno: Galle o achou, Le Verrier o previu, Adams o previu também']]},
     {t:'REGISTRO', rows:[['Descoberta','23/09/1846 · Galle & Le Verrier'],['Marco','Previsto pela MATEMÁTICA antes de ser visto'],['Única visita','Voyager 2 · 1989'],['1 ano netuniano','Completou a 1ª órbita pós-descoberta em 2011'],['População','0']]},
     {t:'LINK & VIAGEM', rows:[['Luz do Sol até aqui','4,2 h'],['Sonda desde a Terra','~12 anos (Voyager 2)']]}
   ],
@@ -2170,6 +2171,24 @@ PLANETS.push(
       {t:'REGISTRO', rows:[['1989','Descoberta nas imagens da Voyager 2, a única sonda que passou por Netuno'],['Pharos','A cratera de 230 km, mais da metade do diâmetro da lua'],['O nome','O deus do mar que mudava de forma, pastor das focas de Poseidon']]}
     ],
     facts:['É a segunda maior lua de Netuno e ficou escondida até 1989, porque é escura como carvão e colada no brilho do planeta.','Tem quase o tamanho máximo que um corpo pode ter sem que a própria gravidade o arredonde.'],
+    fict:null},
+   {id:'galateia', name:'GALATEIA', desig:'NETUNO-VI · PASTORA', kind:'A pastora dos arcos do anel Adams', hab:0, gbar:0.002, pop:'0',
+    quick:[['DIMENSÕES','176 × 174 × 160 km'],['ÓRBITA','0,429 d'],['DESCOBERTA','1989'],['DISTÂNCIA','61.953 km'],['PAPEL','pastora dos arcos'],['RESSONÂNCIA','42:43 com o anel']],
+    visual:{mode:'rocky', c1:'#5f5a56', c2:'#7a7570', c3:'#3d3936', scale:3.2, seed:19.89, crater:0.7},
+    sections:[
+      {t:'OS ARCOS', rows:[['O enigma','O anel Adams tem quatro trechos mais densos, os arcos Liberté, Égalité, Fraternité e Courage, que pela física deveriam se espalhar em poucos anos'],['A pastora','Galateia orbita logo por dentro e a ressonância 42:43 com o anel prende o material nos arcos'],['O que muda','Os arcos estão se apagando: Liberté quase sumiu desde a Voyager 2, e ninguém sabe por quê']]},
+      {t:'REGISTRO', rows:[['Descoberta','Julho de 1989, nas imagens da Voyager 2, semanas antes da passagem'],['O nome','Galateia, a nereida amada pelo ciclope Polifemo'],['A órbita','Uma volta a cada 10,3 horas, mais rápida que o dia de Netuno: a maré a puxa para baixo devagar']]}
+    ],
+    facts:['Ela prende os arcos do anel Adams pela ressonância 42:43: sem ela o material se espalharia pelo anel inteiro em poucos anos.','Orbita mais rápido do que Netuno gira e por isso está caindo devagar rumo ao planeta.'],
+    fict:null},
+   {id:'larissa', name:'LARISSA', desig:'NETUNO-VII · LUA', kind:'A lua achada por uma estrela que piscou', hab:0, gbar:0.003, pop:'0',
+    quick:[['DIMENSÕES','216 × 204 × 168 km'],['ÓRBITA','0,555 d'],['DESCOBERTA','1981'],['DISTÂNCIA','73.548 km'],['FORMA','irregular, craterizada'],['FOTO','Voyager 2, 1989']],
+    visual:{mode:'rocky', c1:'#66615c', c2:'#807a74', c3:'#423e3a', scale:3.4, seed:19.81, crater:0.8},
+    sections:[
+      {t:'A ESTRELA QUE PISCOU', rows:[['1981','Uma estrela sumiu por alguns segundos atrás de algo perto de Netuno, visto por Reitsema e equipe: a primeira pista, sem saber o que era'],['1989','A Voyager 2 confirma: era uma lua, a quarta maior de Netuno, e fotografa uma batata escura cheia de crateras'],['A cor','Escura, refletindo uns 9 por cento da luz, como as outras internas']]},
+      {t:'REGISTRO', rows:[['O nome','Larissa, uma ninfa amante de Poseidon'],['A órbita','Uma volta a cada 13,3 horas, entre Galateia e Proteu'],['O futuro','Como Galateia, orbita mais rápido que o dia de Netuno e desce devagar']]}
+    ],
+    facts:['Foi descoberta em 1981 quando uma estrela piscou atrás dela por segundos, oito anos antes da Voyager 2 confirmar.','É a quarta maior lua de Netuno, e mesmo assim é só uma batata escura de 200 km.'],
     fict:null},
    {id:'nereida', name:'NEREIDA', desig:'NETUNO-II · LUA', kind:'A lua da órbita mais excêntrica que se conhece', hab:0, gbar:0.007, pop:'0',
     quick:[['DIÂMETRO','~340 km'],['GRAVIDADE','0,007 g'],['ÓRBITA','360,1 d'],['DESCOBERTA','1949'],['DISTÂNCIA','1,4 a 9,7 mi km'],['EXCENTRICIDADE','0,75']],
@@ -5408,7 +5427,7 @@ const ESCALA_REAL_LUAS = {
   io:421700, europa:671100, ganimedes:1070400, calisto:1882700,
   tita:1221870, reia:527108, encelado:237948, dione:377396, tetis:294619, mimas:185539, japeto:3560820,
   hiperion:1481010, febe:12947780, amalteia:181366, himalia:11461000, proteu:117647, nereida:5513818,
-  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, pan:133584, prometeu:139380, pandora:141720, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
+  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, galateia:61953, larissa:73548, pan:133584, prometeu:139380, pandora:141720, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
   iss:6790, hubble:6910, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, pathfinder:1.52, viking1:1.52, cassini:9.54};
@@ -14752,7 +14771,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r262';
+const BUILD = 'r263';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

@@ -133,12 +133,13 @@ netuno: {
     {t:'ORBIT & ROTATION', rows:[['Distance from the Sun','4.50 billion km (30 AU)'],['Year','165 years'],['Day','16 h 06 min'],['Rotation type','Prograde'],['Orbital speed','5.4 km/s'],['Axial tilt','28.3°'],['Seasons','Yes, ~40 years each']]},
     {t:'STRUCTURE', rows:[['Diameter','49,244 km'],['Mass','1.02 × 10²⁶ kg (17 Earths)'],['Density','1.64 g/cm³'],['Area','7.6 billion km²'],['Interior','Possible "diamond rain"']]},
     {t:'CLIMATE & ATMOSPHERE', rows:[['Mean temp.','−201 °C'],['Atmosphere','80% H₂ · 19% He · 1.5% CH₄'],['Winds','Up to 2,100 km/h, the strongest in the system'],['Great Dark Spot','Storms that appear and vanish'],['Water','Ice mantle']]},
+    {t:'THE RINGS AND THE ARCS', rows:[['1984','Stellar occultations showed incomplete rings: pieces that blinked on one side and not on the other'],['1989','Voyager 2 saw the five whole rings, faint and dark as dust: Galle, Le Verrier, Lassell, Arago and Adams'],['The arcs','The Adams ring has four denser stretches, Liberté, Égalité, Fraternité and Courage, held in place by the moon Galatea'],['What is changing','The arcs have been fading since 1989, and Liberté has almost vanished: nobody knows why yet'],['The names','Astronomers who hunted Neptune: Galle found it, Le Verrier predicted it, Adams predicted it too']]},
     {t:'RECORD', rows:[['Discovered','09/23/1846 · Galle & Le Verrier'],['Milestone','Predicted by MATHEMATICS before it was seen'],['Only visit','Voyager 2 · 1989'],['1 Neptunian year','Completed its 1st orbit since discovery in 2011'],['Population','0']]},
     {t:'LINK & TRAVEL', rows:[['Sunlight to here','4.2 h'],['Probe from Earth','~12 years (Voyager 2)']]}
   ],
   facts: ['It was discovered "on paper": Le Verrier calculated where it should be from the perturbations on Uranus.', 'Since its discovery (1846), it has completed only 1 lap around the Sun.', 'It gets 900 times less sunlight than Earth, and still has the most violent winds.', 'Deep inside, the pressure probably makes it rain real DIAMONDS.'],
   fict: 'Ad Astra: the final station of the journey orbits Neptune.',
-  moonsMeta: '16 CONFIRMED · 1 MAIN'
+  moonsMeta: '16 CONFIRMED · 3 MAIN · 2 INNER'
 },
 plutao: {
   kind: 'Dwarf planet',
@@ -446,6 +447,26 @@ ofelia: {
     {t:'RECORD', rows:[['Discovered','January 1986, in the images of Voyager 2'],['The name','Ophelia, from Hamlet'],['The orbit','One lap every 9 hours, between the epsilon ring and the other small moons']]}
   ],
   facts: ['It holds the outer edge of the epsilon ring, the brightest of Uranus, while Cordelia holds the inner one.', 'It was discovered in the images of Voyager 2, in January 1986, days before the flyby.'],
+  fict: null
+},
+galateia: {
+  kind: 'The shepherd of the arcs of the Adams ring',
+  quick: [['DIMENSIONS','176 × 174 × 160 km'],['ORBIT','0.429 d'],['DISCOVERED','1989'],['DISTANCE','61,953 km'],['ROLE','shepherd of the arcs'],['RESONANCE','42:43 with the ring']],
+  sections: [
+    {t:'THE ARCS', rows:[['The puzzle','The Adams ring has four denser stretches, the arcs Liberté, Égalité, Fraternité and Courage, which by physics should spread out within a few years'],['The shepherd','Galatea orbits just inside and the 42:43 resonance with the ring holds the material in the arcs'],['What is changing','The arcs are fading: Liberté has almost vanished since Voyager 2, and nobody knows why']]},
+    {t:'RECORD', rows:[['Discovered','July 1989, in the Voyager 2 images, weeks before the flyby'],['The name','Galatea, the nereid loved by the cyclops Polyphemus'],['The orbit','One lap every 10.3 hours, faster than the day of Neptune: the tide pulls it slowly down']]}
+  ],
+  facts: ['It holds the arcs of the Adams ring through the 42:43 resonance: without it the material would spread around the whole ring within a few years.', 'It orbits faster than Neptune spins, so it is slowly falling toward the planet.'],
+  fict: null
+},
+larissa: {
+  kind: 'The moon found by a star that blinked',
+  quick: [['DIMENSIONS','216 × 204 × 168 km'],['ORBIT','0.555 d'],['DISCOVERED','1981'],['DISTANCE','73,548 km'],['SHAPE','irregular, cratered'],['PHOTO','Voyager 2, 1989']],
+  sections: [
+    {t:'THE STAR THAT BLINKED', rows:[['1981','A star vanished for a few seconds behind something near Neptune, seen by Reitsema and team: the first clue, without knowing what it was'],['1989','Voyager 2 confirms: it was a moon, the fourth largest of Neptune, and photographs a dark, crater-filled potato'],['The color','Dark, reflecting some 9 percent of the light, like the other inner moons']]},
+    {t:'RECORD', rows:[['The name','Larissa, a nymph and lover of Poseidon'],['The orbit','One lap every 13.3 hours, between Galatea and Proteus'],['The future','Like Galatea, it orbits faster than the day of Neptune and slowly descends']]}
+  ],
+  facts: ['It was discovered in 1981 when a star blinked behind it for seconds, eight years before Voyager 2 confirmed it.', 'It is the fourth largest moon of Neptune, and still only a dark 200 km potato.'],
   fict: null
 },
 tritao: {
