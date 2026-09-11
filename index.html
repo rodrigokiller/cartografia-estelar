@@ -5570,7 +5570,10 @@ const CEU_LINHAS = {
     ['nuser','xiser'],['xiser','etaser'],['etaser','thetaser']]},
   ofiuco:{nome:'OFIÚCO', seg:[['rasalhague','kappaoph'],['kappaoph','yedpost'],['yedpost','yedprior'],
     ['yedpost','zetaoph'],['zetaoph','sabik'],['sabik','cebalrai'],['cebalrai','rasalhague'],
-    ['yedprior','lambdaoph'],['lambdaoph','cebalrai']]}};
+    ['yedprior','lambdaoph'],['lambdaoph','cebalrai']]},
+  /* r260 · asterismos: figuras que não são constelações oficiais, mas todo mundo usa */
+  triverao:{nome:'TRIÂNGULO DE VERÃO', ast:true, seg:[['vegaceu','altair'],['altair','deneb'],['deneb','vegaceu']]},
+  triinverno:{nome:'TRIÂNGULO DE INVERNO', ast:true, seg:[['sirius','procyon'],['procyon','betelg'],['betelg','sirius']]}};
 /* a FICHA de cada constelação (r137): clicar no nome do céu abre isto e
    acende o desenho dela. Sempre sobre o céu real, nunca sobre o app */
 const CEU_FICHA = {
@@ -5734,6 +5737,22 @@ const CEU_FICHA = {
       {t:'A ESTRELA QUE NÃO ANDA', rows:[['Por quê','Ela está quase em cima do eixo da Terra'],['O uso','Aponta o norte e a altura dela no céu dá a sua latitude'],['Não é a mais brilhante','É a 48ª: a fama vem da posição, não do brilho']]}],
     facts:['Polaris não é uma estrela brilhante: é a 48ª do céu, e a fama vem só da posição.','A altura dela acima do horizonte é exatamente a sua latitude no planeta.','No Brasil ela é quase invisível: só aparece rente ao horizonte no extremo norte.'],
     fict:'Foi a bússola de todo navegador do hemisfério norte por milhares de anos, e o símbolo de quem fugia rumo ao norte.'},
+  triverao:{desig:'ASTERISMO · TRIÂNGULO DE VERÃO', kind:'Três estrelas de três constelações, o marco do céu de junho a setembro',
+    quick:[['O QUE É','um asterismo, não uma constelação'],['AS TRÊS','Vega, Altair e Deneb'],['DE ONDE','Lira, Águia e Cisne'],['NO BRASIL','céu de INVERNO, ao norte, a noite inteira'],['A MAIS PRÓXIMA','Altair, 16,7 al'],['A MAIS LONGE','Deneb, ~2.600 al']],
+    sections:[
+      {t:'COMO ACHAR', rows:[['A hora','De junho a setembro, olhando para o norte depois de escurecer: três estrelas brancas muito brilhantes num triângulo grande'],['O topo','Vega, a mais brilhante das três, quase no zênite para quem está no hemisfério norte'],['A ponta','Altair, ladeada por duas estrelas menores, é a ponta sul do triângulo'],['O terceiro','Deneb, a cauda do Cisne, fecha o triângulo a nordeste, com a Via Láctea passando por dentro']]},
+      {t:'O NOME', rows:[['Verão de quem','O nome é do hemisfério norte, onde ele domina as noites de verão; no Brasil ele aparece no inverno, baixo ao norte'],['Quem batizou','O astrônomo austríaco Oswald Thomas, nos anos 1930, e Patrick Moore popularizou na TV inglesa nos anos 1950'],['Tanabata','No Japão Vega é Orihime e Altair é Hikoboshi, os amantes separados pelo rio da Via Láctea que se encontram em 7 de julho']]},
+      {t:'AS DISTÂNCIAS', rows:[['A ilusão','As três parecem vizinhas e não são: Altair está a 17 anos-luz, Vega a 25 e Deneb a uns 2.600'],['O que isso diz','Deneb brilha quase igual a Vega estando 100 vezes mais longe: é 200 mil vezes mais luminosa que o Sol']]}],
+    facts:['As três estrelas do triângulo pertencem a três constelações diferentes: Lira, Águia e Cisne.','Deneb está 100 vezes mais longe que Vega e brilha quase igual: é a mais luminosa das estrelas de primeira grandeza.','No Brasil o Triângulo de Verão aparece no inverno: o nome é do hemisfério norte.'],
+    fict:'É o cenário do Tanabata japonês: Vega e Altair são os amantes Orihime e Hikoboshi, separados pela Via Láctea e reunidos uma noite por ano.'},
+  triinverno:{desig:'ASTERISMO · TRIÂNGULO DE INVERNO', kind:'Sírius, Procíon e Betelgeuse: o triângulo quase perfeito do céu de verão do Brasil',
+    quick:[['O QUE É','um asterismo, não uma constelação'],['AS TRÊS','Sírius, Procíon e Betelgeuse'],['DE ONDE','Cão Maior, Cão Menor e Órion'],['NO BRASIL','céu de VERÃO, alto, de dezembro a março'],['A MAIS BRILHANTE','Sírius, a mais brilhante do céu'],['A MAIS LONGE','Betelgeuse, ~550 al']],
+    sections:[
+      {t:'COMO ACHAR', rows:[['A hora','De dezembro a março, alto no céu depois das 21 h: ache Órion pelas Três Marias'],['Betelgeuse','O ombro vermelho de Órion é o vértice de cima'],['Sírius','Siga a linha das Três Marias para o lado oposto de Aldebaran: a estrela mais brilhante do céu'],['Procíon','A terceira, sozinha, fecha o triângulo com Sírius e Betelgeuse quase equilátero']]},
+      {t:'O NOME', rows:[['Inverno de quem','O nome é do hemisfério norte; no Brasil é o triângulo do verão, o que faz par com Órion nas noites de janeiro'],['As cores','Uma vermelha (Betelgeuse), uma branca-azulada (Sírius) e uma amarelada (Procíon): três idades e três temperaturas no mesmo triângulo']]},
+      {t:'AS TRÊS', rows:[['Sírius','A 8,6 anos-luz, com uma anã branca ao lado'],['Procíon','A 11,5 anos-luz, também com uma anã branca: os dois vizinhos brilhantes do Sol guardam um cadáver estelar'],['Betelgeuse','A supergigante vermelha condenada, a uns 550 anos-luz, que vai explodir um dia']]}],
+    facts:['É quase um triângulo equilátero, e as três estrelas têm três cores diferentes: vermelha, branca e amarela.','Duas das três (Sírius e Procíon) têm uma anã branca como companheira.','No Brasil ele é o triângulo do verão: o nome vem do hemisfério norte.'],
+    fict:'Betelgeuse, Sírius e Procíon são os três destinos mais citados da ficção científica clássica, e todos cabem num triângulo que qualquer criança acha em janeiro.'},
   caomenor:{desig:'CONSTELAÇÃO · CANIS MINOR', kind:'Duas estrelas e um cachorro',
     quick:[['A PRINCIPAL','Procíon, 11,5 al'],['PROCÍON','a 8ª mais brilhante do céu'],['O NOME','o que vem antes do cão'],['ESTRELAS','praticamente duas'],['NO BRASIL','verão, ao lado de Órion'],['O TRIÂNGULO','com Sírius e Betelgeuse']],
     sections:[
@@ -14524,7 +14543,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r259';
+const BUILD = 'r260';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

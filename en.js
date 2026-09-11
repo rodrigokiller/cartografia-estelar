@@ -258,7 +258,7 @@ gal: {
 ceu: {
   orion:'ORION', cruzeiro:'SOUTHERN CROSS', ursamaior:'URSA MAJOR', cassiopeia:'CASSIOPEIA', escorpiao:'SCORPIUS', touro:'TAURUS', gemeos:'GEMINI', leao:'LEO', virgem:'VIRGO',
   cisne:'CYGNUS', lira:'LYRA', aguia:'AQUILA', sagitario:'SAGITTARIUS', centauro:'CENTAURUS', caomaior:'CANIS MAJOR', perseu:'PERSEUS', andromeda:'ANDROMEDA', pegaso:'PEGASUS',
-  boieiro:'BOOTES', ursamenor:'URSA MINOR', caomenor:'CANIS MINOR', serpente:'SERPENS', ofiuco:'OPHIUCHUS'
+  boieiro:'BOOTES', ursamenor:'URSA MINOR', caomenor:'CANIS MINOR', serpente:'SERPENS', ofiuco:'OPHIUCHUS', triverao:'SUMMER TRIANGLE', triinverno:'WINTER TRIANGLE'
 },
 /* troca de PALAVRAS em designações compostas (ordem importa: as longas primeiro) */
 palavras: [
