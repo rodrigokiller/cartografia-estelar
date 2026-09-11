@@ -63,3 +63,9 @@ A camada SATÉLITES AO VIVO NA TERRA usa dois terceiros, os dois sem chave:
 | --- | --- | --- |
 | Elementos orbitais (TLE) dos grupos stations, visual, gps-ops, galileo, glo-ops e science | CelesTrak, `https://celestrak.org/NORAD/elements/gp.php` (Dr. T.S. Kelso) | dados públicos; a fotografia `tle_snapshot.js` é gerada por `node tools/tle.js` |
 | Propagador SGP4 (`satellite.js` 5.0.0) | `https://github.com/shashwatak/satellite-js`, carregada do cdnjs só quando a camada liga | MIT |
+
+## Terremotos (r262)
+
+| O quê | Fonte | Licença |
+| --- | --- | --- |
+| Tremores de magnitude 2,5 ou mais nas últimas 24 horas (GeoJSON) | USGS Earthquake Hazards Program, `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson` | domínio público (governo dos Estados Unidos) |

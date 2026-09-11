@@ -1179,6 +1179,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-regua="1"><span>RÉGUA DE DISTÂNCIAS (ESCALA 1:1)</span><b>LIGADO</b></div>
     <div class="filtrow" data-ecl="1"><span>ECLÍPTICA E ZODÍACO</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-satvivo="1"><span>SATÉLITES AO VIVO NA TERRA (CELESTRAK)</span><b>DESLIGADO</b></div>
+    <div class="filtrow" data-sismos="1"><span>TERREMOTOS DAS ÚLTIMAS 24 H (USGS)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-reguadisco="1"><span>DISCO DA RÉGUA</span><b>LIGADO</b></div>
     <div class="rgcor">
       <span>COR DA RÉGUA</span>
@@ -6044,6 +6045,77 @@ function satVivoTick(){
     if(s.anc) s.anc.position.set(x, y, z);
   }
   SATV.geo.attributes.position.needsUpdate = true;
+}
+/* ================= r262 · TERREMOTOS DAS ÚLTIMAS 24 H (USGS) =================
+   O catálogo público do USGS (GeoJSON, sem chave, com CORS) de magnitude 2,5 ou
+   mais nas últimas 24 horas, como pontos na superfície da Terra do 1:1: filhos
+   do mesh, na mesma convenção de longitude do r165/r261. Cada ponto é clicável
+   e abre uma ficha própria (ACTION 'sismo', no molde das fronteiras).      */
+const SISM = {on:false, carregando:false, pronto:false, erro:null, lista:[], act:null, grupo:null, picks:[], lbl:null, quando:0};
+async function sismosCarrega(){
+  if(SISM.carregando) return;
+  SISM.carregando = true;
+  try{
+    const r = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson');
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    const gj = await r.json();
+    SISM.lista = (gj.features || []).filter(f=>f.geometry && f.properties && isFinite(f.properties.mag)).map((f, i)=>({
+      i, mag:f.properties.mag, lugar:f.properties.place || '?', quando:f.properties.time, prof:f.geometry.coordinates[2],
+      lon:f.geometry.coordinates[0], lat:f.geometry.coordinates[1], alerta:f.properties.alert || null, tsunami:!!f.properties.tsunami,
+      sentido:f.properties.felt || 0, url:f.properties.url || ''}));
+    SISM.pronto = true; SISM.quando = Date.now();
+    RLOG.push('sismos-' + SISM.lista.length);
+    const maior = SISM.lista.reduce((a, b)=>(!a || b.mag > a.mag) ? b : a, null);
+    showHint(t('TERREMOTOS DAS ÚLTIMAS 24 H') + ' · ' + SISM.lista.length + (maior ? ' · ' + t('O MAIOR') + ' M ' + maior.mag.toFixed(1) + ' · ' + maior.lugar : ''));
+  }catch(e){ SISM.erro = e; showHint(t('TERREMOTOS: NÃO CARREGOU') + ' · ' + e.message); }
+  SISM.carregando = false;
+}
+function sismosDesmonta(){
+  if(SISM.grupo && SISM.grupo.parent) SISM.grupo.parent.remove(SISM.grupo);
+  if(SISM.act && SISM.act.pickables) for(const p of SISM.picks){ const i = SISM.act.pickables.indexOf(p); if(i >= 0) SISM.act.pickables.splice(i, 1); }
+  if(SISM.lbl){ if(SISM.lbl.el && SISM.lbl.el.parentNode) SISM.lbl.el.parentNode.removeChild(SISM.lbl.el); if(SISM.act && SISM.act.labels){ const i = SISM.act.labels.indexOf(SISM.lbl); if(i >= 0) SISM.act.labels.splice(i, 1); } }
+  SISM.grupo = null; SISM.picks = []; SISM.lbl = null; SISM.act = null;
+  if(ST.mapCard && ST.mapCard.type === 'sismo'){ ST.mapCard = null; uiSync(); }
+}
+function sismosMonta(){
+  const mesh = satVivoTerra(); if(!mesh) return false;
+  const KM = ESCR_UA/149597870, R = 6371*KM*1.003;
+  const g = new THREE.Group();
+  let maior = null;
+  for(const q of SISM.lista){
+    const la = q.lat*Math.PI/180, lo = q.lon*Math.PI/180;
+    const cor = q.mag >= 6 ? 0xff5a3c : (q.mag >= 4.5 ? 0xff9a3c : 0xffc98a);
+    const raio = KM*(180 + Math.max(0, q.mag - 2.5)*120);   /* 180 km na base, 600 km num M6 */
+    const m = new THREE.Mesh(new THREE.SphereGeometry(raio, 10, 8), new THREE.MeshBasicMaterial({color:cor, transparent:true, opacity:0.85}));
+    m.position.set(R*Math.cos(la)*Math.cos(lo), R*Math.sin(la), -R*Math.cos(la)*Math.sin(lo));
+    m.userData = {act:'sismo', id:q.i, r:raio};
+    g.add(m); SISM.picks.push(m); ACT.pickables.push(m);
+    if(!maior || q.mag > maior.mag) maior = q;
+  }
+  mesh.add(g);
+  SISM.grupo = g; SISM.act = ACT;
+  if(maior){
+    const anc = SISM.picks[SISM.lista.indexOf(maior)];
+    const L = {el:makeLabel('M ' + maior.mag.toFixed(1) + ' · ' + maior.lugar.toUpperCase(), 'faint mini', ()=>ACTION('sismo', maior.i)), mini:true, lid:'sismo_' + maior.i, lidPai:'terra', escrMr:0.0005,
+      get:v=>{ anc.getWorldPosition(v); v.y += Math.max(0.00003, CAM.dist*0.012); }};
+    ACT.labels.push(L); SISM.lbl = L;
+  }
+  return true;
+}
+function sismosTick(){
+  if(!SISM.pronto){ if(!SISM.carregando && !SISM.erro) sismosCarrega(); return; }
+  const mesh = satVivoTerra();
+  if(!mesh){ if(SISM.grupo) sismosDesmonta(); return; }
+  if(SISM.act !== ACT || !SISM.grupo || SISM.grupo.parent !== mesh){ sismosDesmonta(); sismosMonta(); }
+}
+function fichaSismo(q){
+  const d = new Date(q.quando);
+  const quando = d.getUTCDate() + ' ' + MESES_N[d.getUTCMonth()] + ' ' + d.getUTCFullYear() + ' · ' + String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0') + ' UTC';
+  const forca = q.mag >= 7 ? t('Grande: destrói ao redor do epicentro') : (q.mag >= 6 ? t('Forte: sentido a centenas de km') : (q.mag >= 4.5 ? t('Moderado: sentido por muita gente') : t('Leve: quase ninguém sente')));
+  return {name:'M ' + q.mag.toFixed(1) + ' · ' + q.lugar, desig:t('TERREMOTO · USGS · ÚLTIMAS 24 H'), kind:forca, hab:null,
+    quick:[[t('MAGNITUDE'), q.mag.toFixed(1)],[t('PROFUNDIDADE'), Math.round(q.prof) + ' km'],[t('QUANDO'), quando],['LAT / LON', q.lat.toFixed(2) + ' / ' + q.lon.toFixed(2)],[t('ALERTA'), q.alerta ? q.alerta.toUpperCase() : t('nenhum')],[t('TSUNAMI'), q.tsunami ? t('aviso emitido') : t('sem aviso')]],
+    sections:[{t:t('REGISTRO'), rows:[[t('Fonte'), t('Catálogo público do USGS, magnitude 2,5 ou mais nas últimas 24 horas')],[t('A escala'), t('Cada grau de magnitude é 32 vezes mais energia: um M6 solta a energia de mil M4')],[t('A profundidade'), q.prof < 70 ? t('Raso: os que mais se sentem na superfície') : (q.prof < 300 ? t('Intermediário') : t('Profundo: a placa mergulhando no manto'))],[t('Quem sentiu'), q.sentido ? (q.sentido + ' ' + t('relatos ao USGS')) : t('sem relatos ainda')]]}],
+    facts:[t('A Terra treme umas 50 vezes por dia acima de magnitude 2,5; a maioria ninguém sente.'), t('Quase todos acontecem nas bordas das placas: o Anel de Fogo do Pacífico concentra 90 por cento.')], fict:null};
 }
 /* a régua nasce LIGADA e o disco dela DESLIGADO: fica só a barra do
    rodapé, que é discreta (padrão dele) */
@@ -10957,6 +11029,7 @@ REGUA.cor = Math.max(0, Math.min(REGUA_CORES.length - 1, parseInt(store.get('car
 REGUA.hex = store.get('carto:reguahex', '') || null;
 ECLV.on = store.get('carto:ecl', '0') === '1';
 SATV.on = store.get('carto:satvivo', '0') === '1';
+SISM.on = store.get('carto:sismos', '0') === '1';
 REGUA.disco = store.get('carto:reguadisco', '1') === '1';
 document.documentElement.style.setProperty('--reguacor', REGUA.hex || REGUA_CORES[REGUA.cor][2]);
 { const ee = store.get('carto:escrexp', '00'); ESCR_EXP.terra = ee[0] === '1'; ESCR_EXP.teto = ee[1] === '1'; }
@@ -11920,6 +11993,13 @@ function ACTION(act, id){
     AUDIO.sfx('sel');
     uiSync();
     if(!jaEraG) mirarNoCeu(id);
+    return;
+  }
+  if(act==='sismo'){   /* r262 · a ficha do tremor: abre, e o segundo clique fecha */
+    const jaEraS = ST.mapCard && ST.mapCard.type==='sismo' && ST.mapCard.id===id;
+    ST.mapCard = jaEraS ? null : {type:'sismo', id, act};
+    AUDIO.sfx('sel');
+    uiSync();
     return;
   }
   if(act==='fronteira'){
@@ -13696,6 +13776,10 @@ function currentEntity(){
       const bb = ALLBODIES[ST.mapCard.id];
       return {type:'map', b:bb, nav:true, navKind:'body', navId:bb.id};
     }
+    if(ST.mapCard.type==='sismo'){   /* r262 */
+      const q = SISM.lista[ST.mapCard.id];
+      if(q) return {type:'map', b:fichaSismo(q), nav:false};
+    }
     if(ST.mapCard.type==='fronteira'){
       const fr = FRONTEIRAS[ST.mapCard.id];
       /* r176 · o CENTRO DA GALÁXIA dá para ENTRAR: o sistema do Sagittarius A*
@@ -14668,7 +14752,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r261';
+const BUILD = 'r262';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -15458,6 +15542,8 @@ function cfgSync(){
   if(rec){ rec.classList.toggle('off', !ECLV.on); rec.querySelector('b').textContent = ECLV.on ? t('LIGADO') : t('DESLIGADO'); }
   const rsv = document.querySelector('[data-satvivo]');
   if(rsv){ rsv.classList.toggle('off', !SATV.on); rsv.querySelector('b').textContent = SATV.on ? t('LIGADO') : t('DESLIGADO'); }
+  const rsm = document.querySelector('[data-sismos]');
+  if(rsm){ rsm.classList.toggle('off', !SISM.on); rsm.querySelector('b').textContent = SISM.on ? t('LIGADO') : t('DESLIGADO'); }
   const rrd = document.querySelector('[data-reguadisco]');
   if(rrd){ rrd.classList.toggle('off', !REGUA.disco); rrd.querySelector('b').textContent = REGUA.disco ? t('LIGADO') : t('DESLIGADO'); }
   const rrg = document.querySelector('[data-regua]');
@@ -15556,6 +15642,15 @@ const cfgRowClick = e=>{
     cfgSync();
     if(!SATV.on) satVivoDesmonta();
     else if(!satVivoTerra()) showHint(t('SATÉLITES AO VIVO: LIGUE A ESCALA 1:1 E CHEGUE PERTO DA TERRA'));
+    return;
+  }
+  const rSm = e.target.closest('[data-sismos]');
+  if(rSm){
+    SISM.on = !SISM.on;
+    store.set('carto:sismos', SISM.on ? '1' : '0');
+    cfgSync();
+    if(!SISM.on) sismosDesmonta();
+    else if(!satVivoTerra()) showHint(t('TERREMOTOS: LIGUE A ESCALA 1:1 E CHEGUE PERTO DA TERRA'));
     return;
   }
   const rReg = e.target.closest('[data-regua]');
@@ -15832,6 +15927,7 @@ function loop(){
     }
   }
   if(SATV.on) satVivoTick();   /* r261 */
+  if(SISM.on) sismosTick();   /* r262 */
   if(DIVE) diveStep(now);
   if(VOOCEU) vooCeuStep(now);
   if(TRAJ) trajStep(now);
