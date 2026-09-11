@@ -1178,6 +1178,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-hz="1"><span>ZONA HABITÁVEL DA ESTRELA</span><b>LIGADO</b></div>
     <div class="filtrow" data-regua="1"><span>RÉGUA DE DISTÂNCIAS (ESCALA 1:1)</span><b>LIGADO</b></div>
     <div class="filtrow" data-ecl="1"><span>ECLÍPTICA E ZODÍACO</span><b>DESLIGADO</b></div>
+    <div class="filtrow" data-satvivo="1"><span>SATÉLITES AO VIVO NA TERRA (CELESTRAK)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-reguadisco="1"><span>DISCO DA RÉGUA</span><b>LIGADO</b></div>
     <div class="rgcor">
       <span>COR DA RÉGUA</span>
@@ -5921,6 +5922,129 @@ const CEUN = {on:false};  /* nomes das estrelas: nascem DESLIGADOS */
 /* os botões de debug (TUT/TST/PRM/RSC) saíram do topo: aparecem só com o
    mesmo Shift+D que mostra o chip DIAG */
 const ECLV = {on:false};  /* a ECLÍPTICA e o zodíaco: nasce DESLIGADA (ordem dele) */
+/* ================= r261 · SATÉLITES AO VIVO (CelesTrak + satellite.js) =================
+   A camada põe na Terra do mapa 1:1 os satélites de VERDADE, em posição real pelo
+   relógio do app: os TLE vêm do CelesTrak (sem chave, com CORS) e o SGP4 é a
+   satellite.js (MIT, carregada do cdnjs só quando a camada liga). Sem rede, entra
+   a fotografia tle_snapshot.js gerada por tools/tle.js. Os pontos moram DENTRO da
+   malha da Terra (filhos do mesh), então giram com o dia e entortam com o eixo de
+   graça: ECEF (x para a longitude 0, y para 90 E, z norte) vira o espaço local da
+   textura (cos L, sen lat, -sen L), a convenção do r165. Enquanto a camada está na
+   cena, a ISS e o Hubble simbólicos descansam: os de verdade estão lá.               */
+const SATV = {on:false, carregando:false, pronto:false, erro:null, sats:[], act:null, pontos:null, geo:null, cursor:0, escondidos:[], lbls:[], ultimoAviso:0, fonte:''};
+const SATV_GRUPOS = [['stations', 0xffc98a], ['visual', 0xffffff], ['gps-ops', 0x8fe0a8], ['galileo', 0x8fe0d8], ['glo-ops', 0xa8d8a0], ['science', 0x8fc8ff]];
+const SATV_NOMES = {25544:'ISS', 48274:'TIANGONG', 20580:'HUBBLE'};
+function satVivoScript(src){ return new Promise((ok, erro)=>{ const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = ()=>erro(new Error('falhou ' + src)); document.head.appendChild(s); }); }
+function satVivoParse(txt, grupo, cor){
+  const L = String(txt || '').split('\n').map(x=>x.replace(/\r/g, '')).filter(x=>x.trim().length);
+  const out = [];
+  for(let i = 0; i + 2 < L.length; i += 3){
+    if(L[i+1][0] !== '1' || L[i+2][0] !== '2') continue;
+    try{
+      const rec = satellite.twoline2satrec(L[i+1], L[i+2]);
+      if(rec.error) continue;
+      out.push({nome:L[i].trim(), norad:parseInt(L[i+1].slice(2, 7), 10), rec, grupo, cor});
+    }catch(e){}
+  }
+  return out;
+}
+async function satVivoCarrega(){
+  if(SATV.carregando || SATV.pronto) return;
+  SATV.carregando = true;
+  try{
+    if(typeof satellite === 'undefined') await satVivoScript('https://cdnjs.cloudflare.com/ajax/libs/satellite.js/5.0.0/satellite.min.js');
+    const porGrupo = {};
+    let fonte = 'CELESTRAK';
+    try{
+      const rs = await Promise.all(SATV_GRUPOS.map(g=>fetch('https://celestrak.org/NORAD/elements/gp.php?GROUP=' + g[0] + '&FORMAT=tle').then(r=>{ if(!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })));
+      SATV_GRUPOS.forEach((g, i)=>{ porGrupo[g[0]] = rs[i]; });
+    }catch(e){
+      if(typeof TLE_SNAPSHOT === 'undefined') await satVivoScript('tle_snapshot.js');
+      for(const g of SATV_GRUPOS) porGrupo[g[0]] = TLE_SNAPSHOT.grupos[g[0]] || '';
+      fonte = t('FOTOGRAFIA DE') + ' ' + TLE_SNAPSHOT.dia;
+    }
+    const visto = new Set(), sats = [];
+    for(const g of SATV_GRUPOS) for(const s of satVivoParse(porGrupo[g[0]], g[0], g[1])){ if(visto.has(s.norad)) continue; visto.add(s.norad); sats.push(s); }
+    if(!sats.length) throw new Error('0 TLE');
+    SATV.sats = sats; SATV.fonte = fonte; SATV.pronto = true;
+    RLOG.push('satvivo-' + sats.length);
+    showHint(t('SATÉLITES AO VIVO') + ' · ' + sats.length + ' · ' + fonte);
+  }catch(e){ SATV.erro = e; showHint(t('SATÉLITES AO VIVO: NÃO CARREGOU') + ' · ' + e.message); }
+  SATV.carregando = false;
+}
+function satVivoTerra(){
+  if(!ACT || ACT.kind !== 'system' || !ACT.escr || ST.sys !== 'sol' || !ACT.objs || !ACT.liveGiro) return null;
+  const oo = ACT.objs.find(x=>x.id === 'terra'); if(!oo) return null;
+  const lv = ACT.liveGiro.find(x=>x.grupo === oo.corpo);
+  return lv ? lv.mesh : null;
+}
+function satVivoDesmonta(){
+  if(SATV.pontos && SATV.pontos.parent) SATV.pontos.parent.remove(SATV.pontos);
+  if(SATV.geo) SATV.geo.dispose();
+  for(const l of SATV.lbls){
+    if(l.el && l.el.parentNode) l.el.parentNode.removeChild(l.el);
+    if(SATV.act && SATV.act.labels){ const i = SATV.act.labels.indexOf(l); if(i >= 0) SATV.act.labels.splice(i, 1); }
+  }
+  for(const s of SATV.sats) if(s.anc){ if(s.anc.parent) s.anc.parent.remove(s.anc); s.anc = null; }
+  for(const o of SATV.escondidos){ if(o.holder) o.holder.visible = true; if(o.lbl) o.lbl.off = false; }
+  SATV.pontos = null; SATV.geo = null; SATV.lbls = []; SATV.escondidos = []; SATV.act = null;
+}
+function satVivoMonta(){
+  const mesh = satVivoTerra(); if(!mesh) return false;
+  const n = SATV.sats.length;
+  const pos = new Float32Array(n*3), col = new Float32Array(n*3);
+  const c = new THREE.Color();
+  SATV.sats.forEach((s, i)=>{ c.setHex(s.cor); col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b; });
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const mat = new THREE.PointsMaterial({size:(QLOW ? 3.6 : 2.6), sizeAttenuation:false, vertexColors:true, transparent:true, opacity:0.95});
+  const pts = new THREE.Points(geo, mat); pts.frustumCulled = false; pts.renderOrder = 5;
+  mesh.add(pts);
+  SATV.pontos = pts; SATV.geo = geo; SATV.act = ACT; SATV.cursor = 0;
+  for(const id of ['iss', 'hubble']){
+    const oo = ACT.objs.find(x=>x.id === id);
+    if(oo && oo.holder){ oo.holder.visible = false; if(oo.lbl) oo.lbl.off = true; SATV.escondidos.push(oo); }
+  }
+  for(const s of SATV.sats){
+    const nm = SATV_NOMES[s.norad]; if(!nm) continue;
+    const anc = new THREE.Object3D(); mesh.add(anc); s.anc = anc;
+    const L = {el:makeLabel(nm, 'faint mini'), mini:true, lid:'sat_' + s.norad, lidPai:'terra', escrMr:0.0005,
+      get:v=>{ anc.getWorldPosition(v); v.y += Math.max(0.00003, CAM.dist*0.012); }};
+    ACT.labels.push(L); SATV.lbls.push(L);
+  }
+  return true;
+}
+function satVivoTick(){
+  if(!SATV.pronto){ if(!SATV.carregando && !SATV.erro) satVivoCarrega(); return; }
+  const mesh = satVivoTerra();
+  if(!mesh){ if(SATV.pontos) satVivoDesmonta(); return; }
+  if(SATV.act !== ACT || !SATV.pontos || SATV.pontos.parent !== mesh){ satVivoDesmonta(); if(!satVivoMonta()) return; }
+  /* o TLE só vale perto da própria época: viajando no tempo os pontos somem, com aviso */
+  const valido = Math.abs(SIMT.data - Date.now()) < 30*86400000;
+  SATV.pontos.visible = valido;
+  for(const l of SATV.lbls) l.off = !valido;
+  if(!valido){
+    if(performance.now() - SATV.ultimoAviso > 8000){ SATV.ultimoAviso = performance.now(); showHint(t('SATÉLITES AO VIVO: OS TLE SÓ VALEM PERTO DE HOJE')); }
+    return;
+  }
+  const data = new Date(SIMT.data), gmst = satellite.gstime(data);
+  const KM = ESCR_UA/149597870;
+  const arr = SATV.geo.attributes.position.array;
+  const n = SATV.sats.length, lote = Math.min(n, 220);
+  for(let k = 0; k < lote; k++){
+    const i = SATV.cursor; SATV.cursor = (SATV.cursor + 1) % n;
+    const s = SATV.sats[i];
+    let p = null;
+    try{ const pv = satellite.propagate(s.rec, data); p = pv && pv.position; }catch(e){}
+    if(!p || typeof p !== 'object' || !isFinite(p.x)){ arr[i*3] = arr[i*3+1] = arr[i*3+2] = 0; continue; }
+    const e = satellite.eciToEcf(p, gmst);
+    const x = e.x*KM, y = e.z*KM, z = -e.y*KM;
+    arr[i*3] = x; arr[i*3+1] = y; arr[i*3+2] = z;
+    if(s.anc) s.anc.position.set(x, y, z);
+  }
+  SATV.geo.attributes.position.needsUpdate = true;
+}
 /* a régua nasce LIGADA e o disco dela DESLIGADO: fica só a barra do
    rodapé, que é discreta (padrão dele) */
 const REGUA = {on:true, cor:0, hex:null, disco:false};
@@ -10832,6 +10956,7 @@ REGUA.on = store.get('carto:regua', '1') === '1';
 REGUA.cor = Math.max(0, Math.min(REGUA_CORES.length - 1, parseInt(store.get('carto:reguacor', '0'), 10) || 0));
 REGUA.hex = store.get('carto:reguahex', '') || null;
 ECLV.on = store.get('carto:ecl', '0') === '1';
+SATV.on = store.get('carto:satvivo', '0') === '1';
 REGUA.disco = store.get('carto:reguadisco', '1') === '1';
 document.documentElement.style.setProperty('--reguacor', REGUA.hex || REGUA_CORES[REGUA.cor][2]);
 { const ee = store.get('carto:escrexp', '00'); ESCR_EXP.terra = ee[0] === '1'; ESCR_EXP.teto = ee[1] === '1'; }
@@ -14543,7 +14668,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r260';
+const BUILD = 'r261';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -15331,6 +15456,8 @@ function cfgSync(){
   if(rcn){ rcn.classList.toggle('off', !CEUN.on); rcn.querySelector('b').textContent = CEUN.on ? t('LIGADO') : t('DESLIGADO'); }
   const rec = document.querySelector('[data-ecl]');
   if(rec){ rec.classList.toggle('off', !ECLV.on); rec.querySelector('b').textContent = ECLV.on ? t('LIGADO') : t('DESLIGADO'); }
+  const rsv = document.querySelector('[data-satvivo]');
+  if(rsv){ rsv.classList.toggle('off', !SATV.on); rsv.querySelector('b').textContent = SATV.on ? t('LIGADO') : t('DESLIGADO'); }
   const rrd = document.querySelector('[data-reguadisco]');
   if(rrd){ rrd.classList.toggle('off', !REGUA.disco); rrd.querySelector('b').textContent = REGUA.disco ? t('LIGADO') : t('DESLIGADO'); }
   const rrg = document.querySelector('[data-regua]');
@@ -15420,6 +15547,15 @@ const cfgRowClick = e=>{
     cfgSync();
     if(ACT && ACT.eclLinha) ACT.eclLinha.visible = ECLV.on;
     if(ACT && ACT.labels) ACT.labels.forEach(l=>{ if(l.eclLbl) l.off = !ECLV.on; });
+    return;
+  }
+  const rSv = e.target.closest('[data-satvivo]');
+  if(rSv){
+    SATV.on = !SATV.on;
+    store.set('carto:satvivo', SATV.on ? '1' : '0');
+    cfgSync();
+    if(!SATV.on) satVivoDesmonta();
+    else if(!satVivoTerra()) showHint(t('SATÉLITES AO VIVO: LIGUE A ESCALA 1:1 E CHEGUE PERTO DA TERRA'));
     return;
   }
   const rReg = e.target.closest('[data-regua]');
@@ -15695,6 +15831,7 @@ function loop(){
       if(tg.op) tg.mat.opacity = (k < 1) ? (tg.baseOp + (0.95 - tg.baseOp)*e) : pulse;
     }
   }
+  if(SATV.on) satVivoTick();   /* r261 */
   if(DIVE) diveStep(now);
   if(VOOCEU) vooCeuStep(now);
   if(TRAJ) trajStep(now);

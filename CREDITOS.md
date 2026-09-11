@@ -53,3 +53,13 @@ projeção cilíndrica 2:1.
    a imagem é preenchimento chapado, então as calotas dele ficam lisas.
 
 **Regra:** nada de imagem entra sem URL e licença anotadas aqui ANTES do commit.
+
+
+## Satélites ao vivo (r261)
+
+A camada SATÉLITES AO VIVO NA TERRA usa dois terceiros, os dois sem chave:
+
+| O quê | Fonte | Licença |
+| --- | --- | --- |
+| Elementos orbitais (TLE) dos grupos stations, visual, gps-ops, galileo, glo-ops e science | CelesTrak, `https://celestrak.org/NORAD/elements/gp.php` (Dr. T.S. Kelso) | dados públicos; a fotografia `tle_snapshot.js` é gerada por `node tools/tle.js` |
+| Propagador SGP4 (`satellite.js` 5.0.0) | `https://github.com/shashwatak/satellite-js`, carregada do cdnjs só quando a camada liga | MIT |
