@@ -783,6 +783,38 @@ sputnik: {
   facts: ['It was just a 58 cm sphere with a radio, and it changed the history of the 20th century in 21 days of beeps.', 'Any ham radio operator on the planet could tune in to its signal: perfect propaganda.', 'Three months after launch it reentered and became a meteor over the Atlantic.'],
   fict: '"Sputnik moment" became an expression for any technological scare, and its beep opens countless Cold War films.'
 },
+skylab: {
+  kind: 'The first American station, the one that fell on Australia',
+  quick: [['LAUNCH','5/14/1973 · Saturn V'],['MASS','77 t'],['CREWS','3 · 171 days'],['ALTITUDE','435 km'],['REENTRY','7/11/1979'],['WHERE IT FELL','Western Australia']],
+  sections: [
+    {t:'THE IMPROVISED STATION', rows:[['What it was','The third stage of a Saturn V turned into a home: 350 m³, the largest habitable volume until the ISS'],['The launch','The last Saturn V to fly; a minute in, the micrometeoroid shield tore off and took one of the two solar wings'],['The repair','The first crew opened an emergency parasol and freed the remaining wing: the repair saved the station'],['The crews','Three, of 28, 59 and 84 days: the 84-day record stood until Salyut 6']]},
+    {t:'THE FALL', rows:[['The problem','The Space Shuttle that was to boost it was late, and solar activity puffed up the atmosphere: the orbit decayed early'],['JUL 11, 1979','It reentered over the Indian Ocean and Western Australia: pieces fell near Esperance'],['The fine','The Shire of Esperance fined NASA 400 dollars for littering; it was paid 30 years later by an American DJ']]},
+    {t:'RECORD', rows:[['The science','The Apollo Telescope Mount solar observatory: the first X-ray images of the Sun taken by people'],['The Earth','Photos and experiments of the surface: the beginning of crewed remote sensing']]}
+  ],
+  facts: ['It was the third stage of a Saturn V with the home built inside.', 'It lost a solar wing at launch and was saved by a parasol improvised by the first crew.', 'It fell on Australia in 1979 and NASA got a 400-dollar littering fine.'],
+  fict: 'The fall of Skylab became a pop event in 1979: end-of-the-world parties, T-shirts and newspaper prizes for whoever found a piece.'
+},
+mir: {
+  kind: 'The first modular station, 15 years in orbit',
+  quick: [['LAUNCH','2/20/1986'],['MASS','~130 t'],['MODULES','7'],['ALTITUDE','~370 km'],['VISITORS','125 people'],['REENTRY','3/23/2001']],
+  sections: [
+    {t:'THE FIRST MODULAR ONE', rows:[['What it was','The first station assembled from modules launched separately, the model the ISS would follow'],['The records','Valeri Polyakov spent 437 consecutive days aboard (1994-95), still the record'],['Mir-Shuttle','From 1995 to 1998 the American Space Shuttle docked nine times: the dress rehearsal for the ISS'],['The end','Deorbited on purpose on March 23, 2001, falling into the South Pacific']]},
+    {t:'THE SCARES', rows:[['1997','A fire aboard in February, and in June a Progress cargo ship collided with the Spektr module, which depressurized'],['The age','Designed for 5 years, it lasted 15: in the last years the cosmonauts spent more time repairing than researching']]},
+    {t:'RECORD', rows:[['1986','The core module launched, in February'],['Visitors','125 people from 12 countries'],['The name','Mir: peace, and also world, in Russian']]}
+  ],
+  facts: ['It was the first station assembled from modules, the model for the ISS.', 'Valeri Polyakov spent 437 consecutive days on it: the record for time in space to this day.', 'Designed for 5 years, it lasted 15, with a fire and a collision on its résumé.'],
+  fict: 'Mir appears in Armageddon (1998) exploding rather unrealistically, and in countless documentaries as the station that would not die.'
+},
+tiangong: {
+  kind: 'The heavenly palace, the station of China',
+  quick: [['LAUNCH','4/29/2021 · Tianhe'],['MASS','~100 t'],['MODULES','3'],['ALTITUDE','~390 km'],['CREW','3 (rotates every 6 months)'],['ONE LAP','~92 min']],
+  sections: [
+    {t:'THE HEAVENLY PALACE', rows:[['What it is','The space station of China, T-shaped: the core module Tianhe and the laboratories Wentian and Mengtian'],['The assembly','Tianhe in April 2021, Wentian in July 2022, Mengtian in October 2022: complete in 18 months'],['The crew','Three taikonauts in six-month shifts since 2022, occupied without interruption'],['The size','A fifth of the mass of the ISS, but the same kind of life aboard: experiments, spacewalks, lessons for schools']]},
+    {t:'RECORD', rows:[['Why its own','China was kept out of the ISS by a decision of the American Congress in 2011, and built its own'],['The telescope','Xuntian, a Hubble-class telescope, is to orbit alongside and dock for maintenance'],['Here on the map','With live satellites on, it appears in its real position from the CelesTrak TLE']]}
+  ],
+  facts: ['It was assembled in 18 months with three launches, in a T shape.', 'It has been occupied without interruption since 2022, with three people aboard in six-month shifts.'],
+  fict: 'Tiangong means heavenly palace; the movie version appeared in Gravity (2013), as the station that saves Sandra Bullock\'s character.'
+},
 jwst: {
   kind: 'The golden mirror at the L2 point',
   quick: [['LAUNCH','12/25/2021'],['WHERE','L2 point, 1.5 million km'],['MIRROR','6.5 m, 18 hexagons'],['SUNSHIELD','a tennis court'],['SEES','infrared'],['1ST IMAGE','7/12/2022']],

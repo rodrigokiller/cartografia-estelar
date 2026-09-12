@@ -69,7 +69,7 @@ ui: {
   '◉ A BANCADA · MUNDOS LADO A LADO':'◉ THE BENCH · WORLDS SIDE BY SIDE', 'Copiar o link desta bancada':'Copy the link to this bench',
   'ADICIONAR UM CORPO À BANCADA...':'ADD A BODY TO THE BENCH...',
   'Os globos giram com o motor de verdade do mapa, na inclinação real de cada eixo. Toque num nome para pô-lo ou tirá-lo da bancada (até doze; a fileira rola de lado).':'The globes spin with the real engine of the map, at the true tilt of each axis. Tap a name to add it to or remove it from the bench (up to twelve; the row scrolls sideways).',
-  'HABITÁVEIS':'HABITABLE', 'ROCHOSOS':'ROCKY', 'GIGANTES':'GIANTS', 'LUAS GRANDES':'LARGE MOONS', 'AS ESTRELAS':'THE STARS', 'LUAS DE JÚPITER':'MOONS OF JUPITER', 'PERSONALIZADO':'CUSTOM',
+  'HABITÁVEIS':'HABITABLE', 'ROCHOSOS':'ROCKY', 'GIGANTES':'GIANTS', 'LUAS GRANDES':'LARGE MOONS', 'AS ESTRELAS':'THE STARS', 'LUAS DE JÚPITER':'MOONS OF JUPITER', 'AS ESTAÇÕES ESPACIAIS':'THE SPACE STATIONS', 'PERSONALIZADO':'CUSTOM',
   'MUNDOS OCEÂNICOS':'OCEAN WORLDS',
   'Calisto guarda um oceano salgado a 150 km de profundidade, longe da radiação de Júpiter: o melhor endereço para uma base humana no sistema.':'Callisto keeps a salty ocean 150 km down, far from Jupiter\'s radiation: the best address for a human base in the system.',
   'A Estrela da Morte tem um oceano jovem: o bamboleio medido pela Cassini revelou, em 2024, água a 20 km de um gelo que não mostra nenhum sinal dela.':'The Death Star has a young ocean: the wobble measured by Cassini revealed, in 2024, water 20 km under ice that shows no sign of it.',

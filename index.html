@@ -2412,6 +2412,41 @@ const SATELITES = [
   ],
   facts:['Era só uma esfera de 58 cm com um rádio, e mudou a história do século XX em 21 dias de bip.','Qualquer radioamador do planeta podia sintonizar o sinal dele: propaganda perfeita.','Três meses depois do lançamento ele reentrou e virou meteoro sobre o Atlântico.'],
   fict:'"Momento Sputnik" virou expressão para qualquer susto tecnológico, e o bip dele abre incontáveis filmes da Guerra Fria.', moons:[]},
+ {id:'skylab', name:'SKYLAB', desig:'ESTAÇÃO · 1973', kind:'A primeira estação americana, a que caiu na Austrália', hab:0, gbar:0, pop:'0',
+  satelite:true, satOf:'terra', morto:true,
+  quick:[['LANÇAMENTO','14/5/1973 · Saturn V'],['MASSA','77 t'],['TRIPULAÇÕES','3 · 171 dias'],['ALTITUDE','435 km'],['REENTRADA','11/7/1979'],['ONDE CAIU','Austrália Ocidental']],
+  sys:{orbit:1.35, size:0.11, speed:2.3, angle:3.7},
+  visual:{mode:'rocky', c1:'#d8d4c8', c2:'#ece8dc', c3:'#9a968c', scale:7.0, seed:19.73, crater:0.05},
+  sections:[
+    {t:'A ESTAÇÃO IMPROVISADA', rows:[['O que era','O terceiro estágio de um Saturn V transformado em casa: 350 m³, o maior volume habitável até a ISS'],['O lançamento','O último Saturn V a voar; um minuto depois o escudo contra micrometeoritos se soltou e levou um dos dois painéis solares'],['O conserto','A primeira tripulação abriu um guarda-sol de emergência e soltou o painel que restava: o reparo salvou a estação'],['As tripulações','Três, de 28, 59 e 84 dias: o recorde de 84 dias durou até a Salyut 6']]},
+    {t:'A QUEDA', rows:[['O problema','O ônibus espacial que ia empurrá-la para cima atrasou, e a atividade do Sol inflou a atmosfera: a órbita decaiu antes'],['11 JUL 1979','Reentrou sobre o Índico e a Austrália Ocidental: pedaços caíram perto de Esperance'],['A multa','O condado de Esperance multou a NASA em 400 dólares por lixo jogado; foi paga 30 anos depois por um DJ americano']]},
+    {t:'REGISTRO', rows:[['A ciência','O telescópio solar Apollo Telescope Mount: as primeiras imagens do Sol em raios X feitas por gente'],['A Terra','Fotos e experimentos da superfície: o começo do sensoriamento remoto tripulado']]}
+  ],
+  facts:['Era o terceiro estágio de um Saturn V com a casa montada dentro.','Perdeu um painel solar no lançamento e foi salva por um guarda-sol improvisado pela primeira tripulação.','Caiu na Austrália em 1979 e a NASA levou uma multa de 400 dólares por lixo.'],
+  fict:'A queda do Skylab virou evento pop em 1979: festas de fim do mundo, camisetas e prêmios de jornal para quem achasse um pedaço.', moons:[]},
+ {id:'mir', name:'MIR', desig:'ESTAÇÃO · 1986', kind:'A primeira estação modular, 15 anos em órbita', hab:0, gbar:0, pop:'0',
+  satelite:true, satOf:'terra', morto:true,
+  quick:[['LANÇAMENTO','20/2/1986'],['MASSA','~130 t'],['MÓDULOS','7'],['ALTITUDE','~370 km'],['VISITANTES','125 pessoas'],['REENTRADA','23/3/2001']],
+  sys:{orbit:1.45, size:0.12, speed:2.2, angle:1.6},
+  visual:{mode:'rocky', c1:'#c8c8cc', c2:'#e0e0e4', c3:'#8a8a90', scale:7.0, seed:19.86, crater:0.05},
+  sections:[
+    {t:'A PRIMEIRA MODULAR', rows:[['O que era','A primeira estação montada em módulos lançados separados, o modelo que a ISS seguiria'],['Os recordes','Valeri Polyakov passou 437 dias seguidos a bordo (1994-95), o recorde até hoje'],['Mir-Shuttle','De 1995 a 1998 o ônibus espacial americano acoplou nove vezes: o ensaio geral da ISS'],['O fim','Desorbitada de propósito em 23 de março de 2001, caindo no Pacífico Sul']]},
+    {t:'OS SUSTOS', rows:[['1997','Um incêndio a bordo em fevereiro, e em junho um cargueiro Progress colidiu com o módulo Spektr, que despressurizou'],['A idade','Projetada para 5 anos, durou 15: nos últimos anos os cosmonautas gastavam mais tempo consertando do que pesquisando']]},
+    {t:'REGISTRO', rows:[['1986','Lançado o módulo central, em fevereiro'],['Visitantes','125 pessoas de 12 países'],['O nome','Mir: paz, e também mundo, em russo']]}
+  ],
+  facts:['Foi a primeira estação montada em módulos, o modelo da ISS.','Valeri Polyakov passou 437 dias seguidos nela: o recorde de permanência no espaço até hoje.','Projetada para 5 anos, durou 15, com incêndio e colisão no currículo.'],
+  fict:'A Mir aparece em Armageddon (1998) explodindo de forma pouco realista, e em incontáveis documentários como a estação que não morria.', moons:[]},
+ {id:'tiangong', name:'TIANGONG', desig:'ESTAÇÃO · 2021', kind:'O palácio celestial, a estação da China', hab:0, gbar:0, pop:'3 taikonautas',
+  satelite:true, satOf:'terra',
+  quick:[['LANÇAMENTO','29/4/2021 · Tianhe'],['MASSA','~100 t'],['MÓDULOS','3'],['ALTITUDE','~390 km'],['TRIPULAÇÃO','3 (troca a cada 6 meses)'],['UMA VOLTA','~92 min']],
+  sys:{orbit:1.25, size:0.11, speed:2.1, angle:2.9},
+  visual:{mode:'rocky', c1:'#d0d4dc', c2:'#e8ecf4', c3:'#8e9298', scale:7.0, seed:20.21, crater:0.05},
+  sections:[
+    {t:'O PALÁCIO CELESTIAL', rows:[['O que é','A estação espacial da China, em forma de T: o módulo central Tianhe e os laboratórios Wentian e Mengtian'],['A montagem','Tianhe em abril de 2021, Wentian em julho de 2022, Mengtian em outubro de 2022: completa em 18 meses'],['A tripulação','Três taikonautas em turnos de seis meses desde 2022, ocupada sem interrupção'],['O tamanho','Um quinto da massa da ISS, mas com o mesmo tipo de vida a bordo: experimentos, caminhadas espaciais, aulas para escolas']]},
+    {t:'REGISTRO', rows:[['Por que própria','A China ficou de fora da ISS por decisão do Congresso americano em 2011, e construiu a sua'],['O telescópio','O Xuntian, um telescópio do porte do Hubble, deve orbitar junto e acoplar para manutenção'],['Aqui no mapa','Com os satélites ao vivo ligados, ela aparece na posição real pelo TLE do CelesTrak']]}
+  ],
+  facts:['Foi montada em 18 meses com três lançamentos, em forma de T.','Está ocupada sem interrupção desde 2022, com três pessoas a bordo em turnos de seis meses.'],
+  fict:'Tiangong quer dizer palácio celestial; a versão de cinema apareceu em Gravidade (2013), como a estação que salva a personagem de Sandra Bullock.', moons:[]},
  {id:'jwst', name:'JAMES WEBB', desig:'TELESCÓPIO · 2021', kind:'O espelho de ouro no ponto L2', hab:0, gbar:0, pop:'0',
   satelite:true, satOf:'terra',
   quick:[['LANÇAMENTO','25/12/2021'],['ONDE','ponto L2, 1,5 mi km'],['ESPELHO','6,5 m, 18 hexágonos'],['PARASSOL','uma quadra de tênis'],['ENXERGA','infravermelho'],['1ª IMAGEM','12/7/2022']],
@@ -5470,7 +5505,7 @@ const ESCALA_REAL_LUAS = {
   tita:1221870, reia:527108, encelado:237948, dione:377396, tetis:294619, mimas:185539, japeto:3560820,
   hiperion:1481010, febe:12947780, amalteia:181366, himalia:11461000, proteu:117647, nereida:5513818,
   miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, metis:128000, tebe:221900, galateia:61953, larissa:73548, pan:133584, prometeu:139380, pandora:141720, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
-  iss:6790, hubble:6910, jwst:1500000};
+  iss:6790, hubble:6910, tiangong:6760, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, hyakutake:55, mcnaught:41, pathfinder:1.52, viking1:1.52, cassini:9.54};
 /* pedras do cinturão: [UA, raio km] (no cênico elas moram no anel desenhado) */
@@ -6000,8 +6035,8 @@ const SATV_GRUPOS = [['stations', 0xffc98a], ['visual', 0xffffff], ['gps-ops', 0
 const SATV_GRUPO_NOME = {stations:'ESTAÇÕES', visual:'OS MAIS BRILHANTES', 'gps-ops':'GPS', galileo:'GALILEO', 'glo-ops':'GLONASS', science:'CIÊNCIA'};
 /* os famosos: o modelo desenhado (fora de escala, como as naves das missões), o card de
    sempre quando ele existe no atlas, e a trilha da órbita */
-const SATV_NOMES = {25544:{nome:'ISS', corpo:'iss', modelo:'iss', tam:0.00012, tamC:0.16}, 48274:{nome:'TIANGONG', corpo:null, modelo:'iss', tam:0.00009, tamC:0.12}, 20580:{nome:'HUBBLE', corpo:'hubble', modelo:'hubble', tam:0.00008, tamC:0.10}};
-const SATV_CORPO = {iss:25544, hubble:20580};
+const SATV_NOMES = {25544:{nome:'ISS', corpo:'iss', modelo:'iss', tam:0.00012, tamC:0.16}, 48274:{nome:'TIANGONG', corpo:'tiangong', modelo:'tiangong', tam:0.00009, tamC:0.12}, 20580:{nome:'HUBBLE', corpo:'hubble', modelo:'hubble', tam:0.00008, tamC:0.10}};
+const SATV_CORPO = {iss:25544, hubble:20580, tiangong:48274};
 function satVivoAtivo(){ return FILTROBJ.satelite !== false && !!ACT && ACT.kind === 'system' && ST.sys === 'sol'; }
 function satVivoScript(src){ return new Promise((ok, erro)=>{ const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = ()=>erro(new Error('falhou ' + src)); document.head.appendChild(s); }); }
 function satVivoParse(txt, grupo, cor){
@@ -9576,10 +9611,34 @@ function grupoSLS(raio){
   return {group:wrap, mesh:g};
 }
 /* despacho: cada nave famosa tem o próprio modelo; o resto usa a sonda */
+/* r268 · o Skylab: o cilindro do estágio S-IVB, a asa solar que sobrou, o guarda-sol e o
+   telescópio solar em cima com os quatro painéis em cruz */
+function grupoSkylab(raio){
+  const g = new THREE.Group();
+  const mCorpo = new THREE.MeshBasicMaterial({color:0xd8d4c8, map:texNave().placas});
+  const mOuro = new THREE.MeshBasicMaterial({color:0xc9a55a, map:texNave().metal});
+  const mPainel = new THREE.MeshBasicMaterial({color:0x2a3a5a, side:THREE.DoubleSide, map:texNave().placas});
+  const mEscuro = new THREE.MeshBasicMaterial({color:0x3a3a42, map:texNave().metal});
+  const k = raio*0.9;
+  const corpo = _cil(mCorpo, k*0.22, k*0.22, k*1.1, 16); g.add(corpo);
+  const sol = _box(mOuro, k*0.02, k*0.5, k*0.46); sol.position.set(k*0.23, k*0.1, 0); g.add(sol);   /* o guarda-sol improvisado */
+  const asa = _box(mPainel, k*0.9, k*0.02, k*0.28); asa.position.set(-k*0.62, 0, 0); g.add(asa);   /* a asa que sobrou */
+  const adap = _cil(mCorpo, k*0.14, k*0.22, k*0.2, 16); adap.position.y = k*0.65; g.add(adap);
+  const atm = _cil(mEscuro, k*0.1, k*0.1, k*0.35, 12); atm.position.y = k*0.95; g.add(atm);      /* o Apollo Telescope Mount */
+  for(let i = 0; i < 4; i++){
+    const a = i*Math.PI/2;
+    const p = _box(mPainel, k*0.5, k*0.02, k*0.14);
+    p.position.set(Math.cos(a)*k*0.38, k*0.95, Math.sin(a)*k*0.38); p.rotation.y = -a; g.add(p);
+  }
+  const wrap = new THREE.Group(); wrap.add(g); g.rotation.set(0.25, 0.4, 0.35);
+  return {group:wrap, mesh:g};
+}
 function grupoNave(id, raio){
   if(id === 'apollo11' || id === 'apollo13' || id === 'apollo8' || id === 'apollo17') return grupoFoguete(raio);
   if(id === 'artemis1' || id === 'artemis2') return grupoSLS(raio);
   if(id === 'iss') return grupoISS(raio);
+  if(id === 'tiangong' || id === 'mir') return grupoISS(raio*0.85);   /* r268 · treliça e painéis: a mesma família */
+  if(id === 'skylab') return grupoSkylab(raio);
   if(id === 'hubble') return grupoHubble(raio);
   if(id === 'sputnik') return grupoSputnik(raio);
   if(id === 'jwst') return grupoJWST(raio);
@@ -11598,6 +11657,7 @@ const HAB_GRUPOS = [
   ['oceanos', 'MUNDOS OCEÂNICOS', ['europa', 'encelado', 'ganimedes', 'calisto', 'tita', 'mimas', 'dione', 'tritao', 'ceres', 'plutao']],
   ['estrelas', 'AS ESTRELAS', ['siriusb', 'sol', 'altairs', 'procyons', 'polariss', 'aldebarans', 'rigels', 'denebs', 'antaress', 'betelgeuses']],
   ['jupluas', 'LUAS DE JÚPITER', ['jupiter', 'io', 'europa', 'ganimedes', 'calisto']],
+  ['estacoes', 'AS ESTAÇÕES ESPACIAIS', ['skylab', 'mir', 'iss', 'tiangong']],
   ['trappist', 'TRAPPIST-1', ['t1b', 't1c', 't1d', 't1e', 't1f', 't1g', 't1h']],
   ['perso', 'PERSONALIZADO', null]
 ];
@@ -14961,7 +15021,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r267';
+const BUILD = 'r268';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
