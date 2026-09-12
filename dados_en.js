@@ -845,6 +845,28 @@ halley: {
   facts: ['Mark Twain was born and died with Halley in the sky (1835 and 1910), as he himself predicted.', 'In 1910 people sold "anti-comet pills" against the gas of the tail. They worked: nobody died.'],
   fict: 'Practically every almanac, novel and cartoon of the 20th century has Halley, from Tintin to The Simpsons.'
 },
+hyakutake: {
+  kind: 'The great comet of 1996, the one with the longest tail ever measured',
+  quick: [['NUCLEUS','~4 km'],['PERIHELION','MAY 1, 1996 · 0.23 AU'],['CLOSEST TO EARTH','MAR 25, 1996 · 15 million km'],['DISCOVERED','JAN 30, 1996'],['TAIL','570 million km'],['INCLINATION','125° · retrograde']],
+  sections: [
+    {t:'THE GREAT COMET OF 1996', rows:[['The surprise','Discovered two months before it passed: a Japanese amateur, with binoculars, saw what the surveys had not'],['The pass','March 25, 1996, 0.1 AU from Earth: the blue ion tail stretched more than 100 degrees, from horizon to horizon'],['The brightness','Magnitude zero, visible from any city, blue-green to the naked eye'],['X-rays','ROSAT saw the comet in X-rays, a first for a comet: the solar wind stripping electrons from its gas']]},
+    {t:'THE TAIL', rows:[['The record','The Ulysses probe, by chance, crossed its ion tail 3.8 AU from the nucleus: 570 million km, the longest tail ever measured'],['How we know','The solar wind changed suddenly in the instruments, and the math led back to the comet: the discovery came in 2000, four years later']]},
+    {t:'THE JOURNEY', rows:[['The orbit','Almost upright and backwards: 125 degrees above the plane of the planets'],['The period','It came in with some 17,000 years; the pass by the planets stretched it to some 70,000'],['Where it is now','Some 55 AU out, beyond the Kuiper belt, invisible'],['Here on the map','JPL elements from the 1996 passage; today the distance comes from the near-parabolic calculation']]}
+  ],
+  facts: ['Its tail, measured by the Ulysses probe, was 570 million km long: almost four times the Earth-Sun distance.', 'It passed 15 million km from the Earth: the closest approach of a bright comet in two centuries.', 'It was the first comet seen in X-rays.'],
+  fict: 'The great comet of 1996 took the world by surprise a year before Hale-Bopp: two great comets in a row, something that had not happened in a century.'
+},
+mcnaught: {
+  kind: 'The great comet of 2007, seen in broad daylight',
+  quick: [['NUCLEUS','~20 km (est.)'],['PERIHELION','JAN 12, 2007 · 0.17 AU'],['BRIGHTNESS','magnitude −5.5'],['DISCOVERED','AUG 7, 2006'],['TAIL','35-degree fan'],['ORBIT','hyperbolic: never returns']],
+  sections: [
+    {t:'THE GREAT COMET OF 2007', rows:[['The brightness','Magnitude −5.5 at perihelion: brighter than Venus, and people saw it by day by blocking the Sun with a hand'],['The fan','The dust tail, curved and striped, opened 35 degrees over Chile, Australia and South Africa in mid-January'],['The brightest','The brightest comet in 40 years, since Ikeya-Seki in 1965'],['Ulysses again','The same probe that crossed the tail of Hyakutake went through this one in 2007, 1.6 AU from the nucleus']]},
+    {t:'THE JOURNEY', rows:[['The orbit','Hyperbolic, 78 degrees above the plane: it came from the Oort cloud and the push of the Sun threw it out'],['The perihelion','0.17 AU, inside the orbit of Mercury'],['Where it is now','Some 41 AU out, beyond Neptune, headed for interstellar space'],['Here on the map','JPL elements; today the distance comes from the parabolic calculation']]},
+    {t:'RECORD', rows:[['AUG 7, 2006','Discovered by Robert McNaught, the most prolific living comet discoverer, in the Siding Spring survey'],['SOHO','The satellite that watches the Sun filmed it crossing its field of view in the days of perihelion']]}
+  ],
+  facts: ['It was visible in broad daylight, next to the Sun, at magnitude −5.5: the brightest comet in four decades.', 'The tail fanned out 35 degrees over the southern hemisphere: anyone in Brazil or Chile saw the show for free.', 'The orbit is hyperbolic: that was its only visit to the Sun.'],
+  fict: 'The photos of the fan over the Pacific and Patagonia are among the most reproduced comet images in history.'
+},
 tsuchinshan: {
   kind: 'The great comet of 2024',
   quick: [['NUCLEUS','a few km'],['PERIHELION','SEP 27, 2024 · 0.39 AU'],['CLOSEST TO EARTH','OCT 12, 2024 · 70 million km'],['DISCOVERED','JAN 9, 2023'],['BRIGHTNESS','up to magnitude −4'],['TILT','139° · retrograde']],
