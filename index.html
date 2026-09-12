@@ -2325,6 +2325,9 @@ const PLANETAS_SONDAS = [
   fict:'Leva gravado o poema In Praise of Mystery, de Ada Limón, com um verso na primeira pessoa do plural: nós também somos feitos de água.', moons:[]},
  {id:'parker', name:'PARKER', desig:'SONDA SOLAR · 2018', kind:'A máquina mais rápida da história, mergulhando no Sol', hab:0, gbar:0, pop:'0',
   nave:true, orbita:{peri:2.8, afel:11.5, incl:0.06, epoca:Date.UTC(2024,11,24,11,53)},
+  /* r273 · a linha do tempo percorre a ÓRBITA FINAL (a elipse desenhada): os sete anos de catapultas em Vênus
+     encolheram a órbita e não cabem numa elipse só, ficam na ficha */
+  traj:{de:2024.98, ate:2026.7}, marcos:[[2024.98,'O MERGULHO RECORDE','24 de dezembro de 2024: a 6,1 milhões de km da superfície do Sol, dentro da coroa, a 692 mil km/h. O escudo a 1.400 °C, os instrumentos na sombra a temperatura ambiente.'],[2025.22,'O SEGUNDO MERGULHO','22 de março de 2025: a mesma distância e a mesma velocidade; o sinal de vida chegou dias depois, como no primeiro.'],[2025.47,'O TERCEIRO, E O FIM DA MISSÃO PRIMÁRIA','19 de junho de 2025: a missão de sete anos se cumpre; a estendida segue enquanto o combustível e o escudo aguentarem.'],[2026.7,'HOJE','A cada 88 dias, mais um mergulho na coroa: a órbita não muda mais, sem Vênus no caminho.']],
   quick:[['LANÇAMENTO','12/8/2018 · Delta IV Heavy'],['PERIÉLIO','6,1 milhões de km · 24/12/2024'],['VELOCIDADE','692 mil km/h · recorde'],['ESCUDO','1.400 °C · 11 cm de carbono'],['ÓRBITA','88 dias'],['CATAPULTAS','7 em Vênus']],
   sys:{orbit:7, size:0.10, speed:2.0, angle:0.4},
   visual:{mode:'rocky', c1:'#d8d0c0', c2:'#f0e8d8', c3:'#9a9080', scale:7.0, seed:20.18, crater:0.05},
@@ -10537,7 +10540,7 @@ function anoDe(b){
   return null;
 }
 /* leva até a linha do tempo de onde estiver: volta ao sistema e dá o play */
-function temLinhaDoTempo(b){ return !!(b && (ehEscape(b) || b.comet || (b.foguete && b.traj))); }
+function temLinhaDoTempo(b){ return !!(b && (ehEscape(b) || b.comet || (b.nave && b.traj) || (b.foguete && b.traj))); }   /* r273 · nave em órbita fechada (Parker) também */
 /* SISTEMA PLANETÁRIO: o corpo focado vira o centro de um mini sistema, as
    luas se espalham em anéis com as órbitas desenhadas e a câmera recua */
 function subSistema(){
@@ -10596,7 +10599,7 @@ function trajStart(id){
   const skLuaP = focoPalco ? ACT.subKids.find(k=>k.tDias) : null;
   const dLuaFoco = skLuaP ? (skLuaP.rAtual || skLuaP.base) : 132.7;
   const o = (!focoPalco && ACT && ACT.sel && ACT.sel.orbits) ? ACT.sel.orbits.find(x=>x.id===id) : null;
-  if(!b || (!focoPalco && (!o || !o.obj)) || !(ehEscape(b) || b.comet || (b.foguete && b.traj)) || DIVE) return;
+  if(!b || (!focoPalco && (!o || !o.obj)) || !(ehEscape(b) || b.comet || (b.nave && b.traj) || (b.foguete && b.traj)) || DIVE) return;
   /* emendar uma linha do tempo na outra vazava a Lua escondida: limpa antes */
   if(TRAJ) trajLimpar();
   ZOOM = null;   /* r212 · o alvo do zoom deslizante desfazia a chegada da câmera
@@ -15144,7 +15147,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r272';
+const BUILD = 'r273';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
