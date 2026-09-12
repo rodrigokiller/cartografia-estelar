@@ -2741,7 +2741,17 @@ const BELT_BODIES = [
     {t:'REGISTRO', rows:[['O que é','O maior de uma família de cacos de colisão, o mais escuro dos alvos da Lucy'],['Queta','Uma lua de 1 km descoberta pelo Hubble em 2020, na preparação da missão'],['Descoberta','19 de setembro de 1973, por C. J. van Houten e Tom Gehrels, nas placas de Palomar'],['Aqui no mapa','Elementos do JPL na época de 9 JUN 2026: no cênico ele fica na órbita de Júpiter, 60 graus à frente']]}
   ],
   facts:['Fica preso 60 graus à frente de Júpiter, no ponto L4, com milhares de companheiros: os fósseis da migração dos gigantes.','A Lucy passa por ele em agosto de 2027, e pela lua Queta, de 1 km.'],
-  fict:'Euríbates era o arauto de Odisseu na Ilíada; os troianos do L4 são o campo grego.', moons:[]},
+  fict:'Euríbates era o arauto de Odisseu na Ilíada; os troianos do L4 são o campo grego.', moons:[
+   {id:'queta', name:'QUETA', desig:'EURÍBATES-I · LUA', kind:'A lua de um quilômetro que a Lucy vai caçar', hab:0, gbar:0.0001, pop:'0',
+    quick:[['DIÂMETRO','~1,2 km'],['ÓRBITA','82,5 d'],['DESCOBERTA','2020'],['DISTÂNCIA','~2.350 km'],['O DONO','Euríbates, 64 km'],['VISITA','Lucy · AGO 2027']],
+    visual:{mode:'rocky', c1:'#5a5449', c2:'#7a7264', c3:'#3a352e', scale:4.0, seed:20.20, crater:0.6},
+    sections:[
+      {t:'A CAÇADA', rows:[['A descoberta','Achada em imagens do Hubble de setembro de 2018 e confirmada em janeiro de 2020, quando a Lucy já estava construída: um pontinho seis mil vezes mais fraco que o dono'],['O tamanho','Uns 1,2 km, contra 64 km de Euríbates: uma das menores luas já vistas em volta de um asteroide'],['A órbita','Dá a volta a uns 2.350 km em 82 dias, devagar, o que revela a massa e a densidade de Euríbates'],['A Lucy','A sonda passa pelo par em agosto de 2027 e vai medir os dois: pela órbita da lua sai o peso do dono']]},
+      {t:'REGISTRO', rows:[['2018','As primeiras imagens, no Hubble, durante a preparação dos alvos da Lucy'],['2020','Confirmada e anunciada pela equipe de Keith Noll; a Lucy ganhou um alvo a mais sem sair do caminho'],['O nome','Queta, o apelido de Enriqueta Basilio, a atleta mexicana que acendeu a pira olímpica de 1968: os satélites dos troianos levam nomes de atletas olímpicos']]}
+    ],
+    facts:['Tem só um quilômetro e orbita um asteroide de 64 km: foi achada pelo Hubble em 2020, quando a sonda Lucy já estava pronta.','O nome homenageia Enriqueta Basilio, a primeira mulher a acender a pira olímpica, em 1968.'],
+    fict:'Os satélites dos troianos ganham nomes de atletas olímpicos, uma regra da IAU: Queta foi a primeira, pela atleta que acendeu a pira de 1968 na Cidade do México.'}
+  ]},
  {id:'hektor', name:'HEITOR', desig:'TROIANO-624 · L4 · ASTEROIDE', kind:'O maior dos troianos, um amendoim duplo', hab:0, gbar:0.005, pop:'0',
   troiano:1, belt:{angle:1.15, r:31.2},
   quick:[['DIMENSÕES','~370 × 200 km'],['ONDE','ponto L4'],['ANO','12,1 anos'],['FORMA','dois lobos, contato binário'],['LUA','Skamandrios, 12 km'],['DESCOBERTA','1907']],
@@ -2761,7 +2771,17 @@ const BELT_BODIES = [
     {t:'REGISTRO', rows:[['Descoberta','17 de outubro de 1906, por August Kopff: o segundo troiano achado, depois de Aquiles'],['A visita','A Lucy fecha a missão nele, em março de 2033, depois de uma catapulta na Terra em 2030'],['Aqui no mapa','Elementos do JPL na época de 9 JUN 2026: no cênico ele fica na órbita de Júpiter, 60 graus atrás']]}
   ],
   facts:['É um binário de dois corpos quase iguais girando um em volta do outro a cada 4,3 dias.','É o último alvo da Lucy, em 2033, do lado de trás de Júpiter.'],
-  fict:'Pátroclo, o amigo de Aquiles; Menécio, o pai dele: o par leva a genealogia da Ilíada.', moons:[]},
+  fict:'Pátroclo, o amigo de Aquiles; Menécio, o pai dele: o par leva a genealogia da Ilíada.', moons:[
+   {id:'menoetius', name:'MENÉCIO', desig:'PÁTROCLO-I · LUA', kind:'A metade do par: dois troianos quase iguais girando um em volta do outro', hab:0, gbar:0.004, pop:'0',
+    quick:[['DIÂMETRO','104 km'],['ÓRBITA','4,3 d'],['DESCOBERTA','2001'],['DISTÂNCIA','680 km'],['O DONO','Pátroclo, 113 km'],['VISITA','Lucy · MAR 2033']],
+    visual:{mode:'rocky', c1:'#4c4a46', c2:'#6a675f', c3:'#2e2c29', scale:4.4, seed:20.21, crater:0.7},
+    sections:[
+      {t:'O PAR', rows:[['Dois iguais','113 km e 104 km, separados por 680 km, girando em volta do centro comum a cada 4,3 dias: um binário de verdade, não um planeta com lua'],['A densidade','Uns 0,9 g/cm3, menos que a água: muito gelo e muito vazio, o retrato de um corpo nascido lá fora, no cinturão de Kuiper, e capturado no L5'],['A pista','Por isso a Lucy vai lá: um par de gelo entre os troianos é a prova viva de que os planetas gigantes migraram e espalharam o Sistema Solar'],['As marés','Os dois giram travados, sempre mostrando a mesma face um para o outro']]},
+      {t:'REGISTRO', rows:[['2001','Descoberto em 22 de setembro no Gemini Norte, com óptica adaptativa, por William Merline e equipe: o primeiro binário entre os troianos'],['2006','Batizado Menécio, o pai de Pátroclo na Ilíada'],['2033','A Lucy sobrevoa os dois em 2 de março de 2033, a última parada da viagem, e vai vê-los eclipsando um ao outro']]}
+    ],
+    facts:['Pátroclo e Menécio são um par quase igual, 113 e 104 km, girando um em volta do outro a cada 4,3 dias.','A densidade abaixo da água diz que o par nasceu no cinturão de Kuiper e foi capturado pelos troianos.'],
+    fict:'Na Ilíada, Menécio é o pai de Pátroclo, o amigo de Aquiles: a lua ganhou o nome do pai porque o par é quase uma família de tamanhos iguais.'}
+  ]},
  {id:'faetonte', name:'FAETONTE', desig:'NEA-3200 · ASTEROIDE', kind:'O asteroide que age como cometa, pai das Gemínidas', hab:0, gbar:0.0002, pop:'0',
   belt:{angle:5.3, r:16.6},
   quick:[['DIÂMETRO','5,8 km'],['DIA','3,6 h'],['ANO','524 d'],['PERIÉLIO','0,14 UA'],['DESCOBERTA','1983'],['CHUVA','Gemínidas · 14 DEZ']],
@@ -2783,7 +2803,27 @@ const BELT_BODIES = [
     {t:'REGISTRO', rows:[['2004','Descoberto em junho no Kitt Peak; em dezembro a chance de impacto em 2029 chegou a 2,7 por cento, a maior já calculada para um asteroide'],['O alarme','Foi o único objeto a atingir o nível 4 na escala de Torino; fotos antigas derrubaram o risco de 2029 em dias'],['2021','O radar de Goldstone refinou a órbita e descartou impacto por pelo menos cem anos'],['O nome','Apófis, a serpente do caos da mitologia egípcia, que tenta engolir o Sol toda noite']]}
   ],
   facts:['Em 13 de abril de 2029 ele passa a 32 mil km da Terra, mais perto que os satélites geoestacionários, e dá para ver a olho nu.','Em 2004 chegou a ter 2,7 por cento de chance de impacto, o maior alarme da história dos asteroides; hoje o risco é zero por um século.','A OSIRIS-APEX, a sonda que trouxe a amostra de Bennu, vai orbitá-lo logo depois da passagem para ver o que a maré da Terra fez nele.'],
-  fict:'Os descobridores eram fãs de Stargate SG-1, e batizaram a pedra com o nome do vilão da série, que por sua vez vem da serpente egípcia do caos.', moons:[]}
+  fict:'Os descobridores eram fãs de Stargate SG-1, e batizaram a pedra com o nome do vilão da série, que por sua vez vem da serpente egípcia do caos.', moons:[]},
+ {id:'dinkinesh', name:'DINKINESH', desig:'152830 · ASTEROIDE', kind:'A primeira parada da Lucy, com a lua dupla que ninguém esperava', hab:0, gbar:0.00001, pop:'0',
+  belt:{angle:2.3, r:21.0},
+  quick:[['DIÂMETRO','790 m'],['DIA','3,7 h'],['ANO','3,2 anos'],['DESCOBERTA','1999'],['LUA','Selam, 220 m'],['VISITA','Lucy · 1 NOV 2023']],
+  visual:{mode:'rocky', c1:'#6a6257', c2:'#8a8172', c3:'#463f36', scale:8.0, seed:23.11, crater:0.8},
+  sections:[
+    {t:'1 DE NOVEMBRO DE 2023', rows:[['O teste','A Lucy passou a 430 km dele a 16 mil km/h para testar o sistema que segue o alvo sozinho: a pedra menor que a sonda já visitou, escolhida em janeiro de 2023 por estar no caminho'],['A surpresa','As fotos mostraram uma lua, e a lua era DUPLA: dois pedaços encostados, o primeiro binário de contato visto orbitando outro asteroide'],['A forma','Uma crista no equador e uma vala: sinal de que ele girou rápido, soltou material e a poeira formou a lua'],['O tamanho','790 m, do tamanho de um estádio; a lua tem 220 m e orbita a 3,1 km, a cada 53 horas']]},
+    {t:'REGISTRO', rows:[['1999','Descoberto em 4 de novembro pelo LINEAR, no Novo México, como 1999 VD57'],['O nome','Dinkinesh, "você é maravilhosa" em amárico: é o nome etíope do fóssil Lucy, que batizou a sonda'],['A lua','Selam, "paz" em amárico, o nome do fóssil de uma criança achado perto da Lucy'],['Aqui no mapa','Elementos do JPL na época de 9 de junho de 2026; no cinturão interno, a 2,2 UA']]}
+  ],
+  facts:['Foi a primeira parada da sonda Lucy, em 1 de novembro de 2023, e revelou uma lua feita de dois pedaços encostados.','O nome é o do fóssil Lucy em amárico: "você é maravilhosa".','Tem 790 metros: é o menor asteroide do cinturão principal já visitado por uma sonda.'],
+  fict:null, moons:[
+   {id:'selam', name:'SELAM', desig:'DINKINESH-I · LUA', kind:'A lua de dois pedaços encostados', hab:0, gbar:0.00001, pop:'0',
+    quick:[['DIÂMETRO','220 m, dois lobos'],['ÓRBITA','52,7 h'],['DESCOBERTA','2023'],['DISTÂNCIA','3,1 km'],['FORMA','binário de contato'],['O DONO','Dinkinesh, 790 m']],
+    visual:{mode:'rocky', c1:'#6a6257', c2:'#8a8172', c3:'#463f36', scale:5.0, seed:23.12, crater:0.6},
+    sections:[
+      {t:'A LUA DUPLA', rows:[['A revelação','Nas primeiras fotos da Lucy parecia uma lua comum; nas seguintes, tiradas de outro ângulo, apareceram dois lobos de 210 e 230 m encostados'],['O inédito','Binários de contato são comuns entre cometas e asteroides (o Arrokoth é um), mas nunca se tinha visto um orbitando outro asteroide'],['A origem','A poeira solta pela crista de Dinkinesh formou dois corpos que se aproximaram devagar até encostar, sem se quebrar'],['A órbita','Dá a volta a 3,1 km do dono a cada 52,7 horas, travada, sempre com o mesmo lado virado para ele']]},
+      {t:'REGISTRO', rows:[['1 NOV 2023','Descoberta na passagem da Lucy, anunciada no mesmo dia'],['O nome','Selam, "paz" em amárico, o fóssil de uma menina de 3 anos achado em 2000 na Etiópia, apelidado de bebê da Lucy']]}
+    ],
+    facts:['É uma lua feita de dois pedaços encostados, o primeiro binário de contato visto em volta de outro asteroide.','Dá a volta em Dinkinesh a cada 53 horas, a só 3 km dele.'],
+    fict:'Selam é o fóssil de uma menina apelidado de bebê da Lucy: a sonda Lucy achou a lua da Dinkinesh, e o nome fechou a família.'}
+  ]}
 ];
 </script>
 <script>
@@ -3593,6 +3633,45 @@ PLANETS.push(
   ],
   facts:['A chuva dele, as Líridas, é a mais antiga de que se tem registro: os chineses a anotaram em 687 a.C.','Ele só volta por volta de 2276: ninguém vivo hoje vai ver o cometa, só a poeira que ele deixou.','A órbita fica quase em pé, 80 graus sobre o plano dos planetas.'],
   fict:'As Líridas de 1803 assustaram Richmond: os jornais da época contam gente acordada pela chuva de fogo no meio da madrugada.', moons:[]},
+ {id:'wirtanen', name:'WIRTANEN', desig:'46P · COMETA PERIÓDICO', kind:'O cometa de Natal de 2018, que a Rosetta quase visitou', hab:0, gbar:0.0001, pop:'0',
+  quick:[['NÚCLEO','1,2 km'],['PERÍODO','5,4 anos'],['ÚLTIMA VISITA','MAI 2024'],['PRÓXIMA','NOV 2029'],['A PASSAGEM','16 DEZ 2018 · 11,6 mi km'],['DESCOBERTA','1948']],
+  comet:true, orbita:{peri:15.8, afel:26, incl:0.205, epoca:Date.UTC(2018,11,12,22)},
+  traj:{de:2018.9, ate:2029.9}, marcos:[[2018.95,'PERIÉLIO','12 DEZ 2018: a 1,06 UA do Sol, quase na órbita da Terra'],[2018.96,'A PASSAGEM PELA TERRA','16 DEZ 2018: a 11,6 milhões de km, a décima passagem mais próxima de um cometa na era moderna; visível a olho nu perto das Plêiades'],[2021.67,'AFÉLIO','A 5,1 UA, na órbita de Júpiter: é ele quem mexe na órbita do cometa a cada volta'],[2024.4,'PERIÉLIO','Maio de 2024: a volta seguinte, do lado oposto ao da Terra, quase invisível'],[2029.85,'PRÓXIMO PERIÉLIO','Novembro de 2029: de novo perto da Terra, uma boa passagem']],
+  sys:{orbit:21, size:0.26, speed:3.0, angle:4.0, incl:0.2},
+  visual:{mode:'rocky', c1:'#3e3a35', c2:'#5a554c', c3:'#282520', scale:6.0, seed:19.48, crater:0.9, atmo:{col:'#b8e0d8', i:0.45}},
+  sections:[
+    {t:'O NATAL DE 2018', rows:[['A passagem','Em 16 de dezembro de 2018 passou a 11,6 milhões de km da Terra, 30 vezes a distância da Lua: uma das dez aproximações mais próximas de um cometa desde que se mede'],['A olho nu','Chegou à magnitude 4, uma bola verde difusa do tamanho da Lua cheia perto das Plêiades, sem cauda visível: a coma inteira apontava para longe e a Terra a via de frente'],['O verde','A cor vem do carbono diatômico brilhando na coma, como em quase todo cometa visto de perto'],['Hiperativo','Para um núcleo de 1,2 km ele solta água demais: uma das superfícies mais ativas conhecidas, com jatos que os telescópios viram mudar de noite para noite']]},
+    {t:'O ALVO DA ROSETTA', rows:[['O plano','Era o destino original da missão Rosetta, a que pousaria num cometa; a sonda foi desenhada para ele'],['A troca','O lançamento de janeiro de 2003 atrasou pela falha de um Ariane 5 e a janela fechou: a ESA trocou para o 67P, e o Philae pousou lá em 2014'],['O que não foi','Se tivesse ido, o Philae teria caído num núcleo quatro vezes menor e muito mais ativo']]},
+    {t:'REGISTRO', rows:[['1948','Descoberto em 17 de janeiro por Carl Wirtanen, em placas do Observatório Lick, na Califórnia'],['1972 e 1984','Duas passagens perto de Júpiter encurtaram o período de 6,7 para 5,4 anos e trouxeram o periélio para dentro'],['2018','A campanha mundial de observação: Hubble, ALMA, Arecibo e os amadores mediram o núcleo, o giro de 9 horas e a água'],['Aqui no mapa','Elementos do JPL na época de dezembro de 2018; o cênico comprime a elipse']]}
+  ],
+  facts:['Em dezembro de 2018 passou a 11,6 milhões de km da Terra, uma das dez aproximações mais próximas de um cometa já medidas, visível a olho nu.','Era o alvo original da Rosetta: um atraso no lançamento mandou a sonda para o 67P.','Para um núcleo de só 1,2 km, é um dos cometas mais ativos que existem: solta água como um cometa muito maior.'],
+  fict:'Ganhou o apelido de cometa de Natal em 2018: uma bola verde perto das Plêiades nas noites de dezembro, fotografada por meio mundo.', moons:[]},
+ {id:'giacobini', name:'GIACOBINI-ZINNER', desig:'21P · COMETA PERIÓDICO', kind:'O pai das Dracônidas e o primeiro cometa visitado por uma sonda', hab:0, gbar:0.0001, pop:'0',
+  quick:[['NÚCLEO','~2 km'],['PERÍODO','6,6 anos'],['ÚLTIMA VISITA','25 MAR 2025'],['PRÓXIMA','2031'],['A CHUVA','Dracônidas · 8 OUT'],['DESCOBERTA','1900']],
+  comet:true, orbita:{peri:15.2, afel:27, incl:0.56, epoca:Date.UTC(2018,8,10,6)},
+  traj:{de:2018.6, ate:2031.9}, marcos:[[2018.69,'PERIÉLIO','10 SET 2018: a 1,01 UA do Sol e a 58 milhões de km da Terra, a passagem mais próxima desde a descoberta; binóculos bastavam'],[2021.97,'AFÉLIO','A 6,0 UA, além de Júpiter'],[2025.23,'PERIÉLIO','25 MAR 2025: a volta seguinte, longe da Terra'],[2028.5,'AFÉLIO','De novo a 6 UA'],[2031.8,'PRÓXIMO PERIÉLIO','Por volta de outubro de 2031']],
+  sys:{orbit:21.5, size:0.27, speed:2.9, angle:0.9, incl:0.56},
+  visual:{mode:'rocky', c1:'#3a3733', c2:'#55514a', c3:'#25231f', scale:6.2, seed:19.00, crater:0.9, atmo:{col:'#b0dce0', i:0.42}},
+  sections:[
+    {t:'AS DRACÔNIDAS', rows:[['A chuva','8 e 9 de outubro, com o radiante na cabeça do Dragão: os meteoros mais lentos do calendário, 20 km/s, e a única chuva grande que é melhor no começo da noite'],['As tempestades','Em 1933 e em 1946 o céu da Europa chegou a milhares de meteoros por hora, quando a Terra cruzou a poeira fresca da passagem do cometa'],['Os surtos','2011 (uns 600 por hora sobre a Europa) e 2018 (uma centena, dias depois do periélio); no resto dos anos, quase nada'],['A regra','A chuva só explode quando o cometa passa perto no mesmo ano: a poeira ainda não se espalhou']]},
+    {t:'A PRIMEIRA VISITA', rows:[['ICE','Em 11 de setembro de 1985 a sonda ICE (a antiga ISEE-3, redirecionada) atravessou a cauda dele a 7.800 km do núcleo: a primeira sonda a passar por um cometa, seis meses antes da armada do Halley'],['O que viu','Mediu o plasma da cauda e o campo magnético dobrando em volta do cometa, sem câmera: a foto ficou para a Giotto, no Halley'],['A manobra','A ISEE-3 vigiava o vento solar; para chegar ao cometa fez cinco passagens pela Lua, uma delas a 120 km, a acrobacia orbital de Robert Farquhar']]},
+    {t:'REGISTRO', rows:[['1900','Descoberto em 20 de dezembro por Michel Giacobini, em Nice'],['1913','Reencontrado por Ernst Zinner, em Bamberg, quando o previsto era a volta de 1907: as duas passagens ligadas, o nome duplo'],['A química','É o protótipo dos cometas pobres em carbono em cadeia: uma família química à parte, formada em outro canto do disco'],['Aqui no mapa','Elementos do JPL na época de setembro de 2018; o cênico comprime a elipse']]}
+  ],
+  facts:['Foi o primeiro cometa visitado por uma sonda: a ICE atravessou a cauda dele em setembro de 1985, antes do Halley.','É o pai das Dracônidas, a chuva de 8 de outubro que em 1933 e 1946 virou tempestade de milhares de meteoros por hora.','Os meteoros dele são os mais lentos do ano, 20 km/s, e a chuva é melhor no começo da noite, ao contrário das outras.'],
+  fict:'As Dracônidas de 1933 caíram sobre a Europa como neve: relatos falam de gente parando na rua para ver o céu riscado, sem saber que era a poeira fresca de um cometa que tinha passado quatro meses antes.', moons:[]},
+ {id:'tuttle', name:'TUTTLE', desig:'8P · COMETA PERIÓDICO', kind:'O pai das Ursídeas, um núcleo de dois pedaços', hab:0, gbar:0.0001, pop:'0',
+  quick:[['NÚCLEO','5,7 + 3,6 km'],['PERÍODO','13,6 anos'],['ÚLTIMA VISITA','27 AGO 2021'],['PRÓXIMA','2035'],['A CHUVA','Ursídeas · 22 DEZ'],['DESCOBERTA','1790']],
+  comet:true, orbita:{peri:15.4, afel:38, incl:0.96, epoca:Date.UTC(2008,0,27)},
+  traj:{de:2008, ate:2035.4}, marcos:[[2008.0,'A PASSAGEM PELA TERRA','2 JAN 2008: a 37 milhões de km; o radar de Arecibo viu o núcleo em dois pedaços'],[2008.07,'PERIÉLIO','27 JAN 2008: a 1,03 UA do Sol'],[2014.9,'AFÉLIO','A 10,4 UA, além de Saturno: a órbita mais alta desta família'],[2021.65,'PERIÉLIO','27 AGO 2021: do outro lado do Sol, fraco'],[2028.5,'AFÉLIO','De novo além de Saturno'],[2035.3,'PRÓXIMO PERIÉLIO','Por volta de 2035']],
+  sys:{orbit:23, size:0.28, speed:2.5, angle:5.2, incl:0.96},
+  visual:{mode:'rocky', c1:'#3c3934', c2:'#58534b', c3:'#26241f', scale:6.4, seed:17.90, crater:0.9, atmo:{col:'#acdce6', i:0.4}},
+  sections:[
+    {t:'DOIS PEDAÇOS', rows:[['O radar','Em janeiro de 2008, com o cometa a 37 milhões de km, o radar de Arecibo mostrou o núcleo: dois corpos encostados, de 5,7 e 3,6 km, um binário de contato'],['A pista','Foi a primeira vez que um radar viu a forma do núcleo de um cometa: a técnica que depois desenhou o 67P e o Arrokoth'],['A órbita','Quase em pé, 55 graus sobre o plano, do lado de dentro da órbita da Terra até além de Saturno em 13,6 anos'],['A cor','Apareceu com a coma verde, como o Wirtanen, na virada do ano de 2008']]},
+    {t:'AS URSÍDEAS', rows:[['A chuva','A última do ano: pico em 22 de dezembro, radiante perto de Kochab, na Ursa Menor, uns 10 meteoros por hora, quase sempre ignorada'],['Os surtos','1945 e 1986 deram mais de 100 por hora, e o estranho é que o cometa estava perto do AFÉLIO nas duas vezes: a poeira velha, presa em ressonância com Júpiter, chega atrasada'],['Quem vê','Só o hemisfério norte, e no frio: o radiante fica perto do polo celeste']]},
+    {t:'REGISTRO', rows:[['1790','Visto por Pierre Méchain em 9 de janeiro, o mesmo caçador de cometas do Encke'],['1858','Horace Tuttle o reencontra e liga as duas aparições: 68 anos e cinco voltas depois'],['O sobrenome','Tuttle tem três cometas famosos: este, o Swift-Tuttle das Perseidas e o Tempel-Tuttle das Leônidas'],['Aqui no mapa','Elementos do JPL na época de janeiro de 2008; o cênico comprime a elipse']]}
+  ],
+  facts:['O radar de Arecibo mostrou em 2008 que o núcleo dele são dois pedaços encostados, de 5,7 e 3,6 km.','É o pai das Ursídeas, a última chuva do ano, no solstício de dezembro.','Horace Tuttle assina três cometas famosos: este, o Swift-Tuttle das Perseidas e o Tempel-Tuttle das Leônidas.'],
+  fict:'Horace Tuttle foi herói de guerra, caçador de cometas e depois desertor acusado de desvio de dinheiro na Marinha: ainda assim três chuvas de meteoros carregam o nome dele.', moons:[]},
  {id:'tempeltuttle', name:'TEMPEL-TUTTLE', desig:'55P · COMETA PERIÓDICO', kind:'O pai das Leônidas e das tempestades de estrelas', hab:0, gbar:0.0001, pop:'0',
   quick:[['NÚCLEO','3,6 km'],['PERÍODO','33,2 anos'],['ÚLTIMA VISITA','28 FEV 1998'],['PRÓXIMA','MAI 2031'],['A CHUVA','Leônidas, 17 de novembro'],['SENTIDO','retrógrado · 162°']],
   comet:true, orbita:{peri:14.6, afel:48, incl:2.84, epoca:Date.UTC(1998,1,28,2)},
@@ -5611,19 +5690,19 @@ const ESCALA_REAL_EL = {   /* [peri UA, afel UA, data do periélio real quando c
   jupiter:[4.951, 5.457, Date.UTC(2023,0,21)], saturno:[9.041, 10.124, Date.UTC(2032,10,24)],
   urano:[18.286, 20.096, Date.UTC(2050,7,4)], netuno:[29.81, 30.33],
   halebopp:[0.914, 370],
-  plutao:[29.7, 49.3], eris:[38.2, 97.6], sedna:[76.2, 1012], halley:[0.586, 35.1], p67:[1.24, 5.68], swift:[0.9595, 51.2], encke:[0.3386, 4.10], tempeltuttle:[0.9764, 19.70], thatcher:[0.9207, 110.44], parker:[0.046, 0.73]};
+  plutao:[29.7, 49.3], eris:[38.2, 97.6], sedna:[76.2, 1012], halley:[0.586, 35.1], p67:[1.24, 5.68], swift:[0.9595, 51.2], encke:[0.3386, 4.10], tempeltuttle:[0.9764, 19.70], wirtanen:[1.0554, 5.130], giacobini:[1.0134, 5.987], tuttle:[1.0273, 10.373], thatcher:[0.9207, 110.44], parker:[0.046, 0.73]};
 /* distância real de cada lua ao centro do corpo, em km (semi-eixo maior) */
 const ESCALA_REAL_LUAS = {
   lua:384400, fobos:9376, deimos:23463,
   io:421700, europa:671100, ganimedes:1070400, calisto:1882700,
   tita:1221870, reia:527108, encelado:237948, dione:377396, tetis:294619, mimas:185539, japeto:3560820,
   hiperion:1481010, febe:12947780, amalteia:181366, himalia:11461000, proteu:117647, nereida:5513818,
-  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, disnomia:37273, metis:128000, tebe:221900, galateia:61953, larissa:73548, pan:133584, prometeu:139380, pandora:141720, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
+  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, disnomia:37273, queta:2350, menoetius:680, selam:3.1, metis:128000, tebe:221900, galateia:61953, larissa:73548, pan:133584, prometeu:139380, pandora:141720, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
   iss:6790, hubble:6910, tiangong:6760, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, hyakutake:55, mcnaught:41, juice:1.0, clipper:1.1, lucy:3.6, pathfinder:1.52, viking1:1.52, cassini:9.54};
 /* pedras do cinturão: [UA, raio km] (no cênico elas moram no anel desenhado) */
-const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4], bennu:[1.13, 0.245], ryugu:[1.19, 0.45], apophis:[0.92, 0.17], faetonte:[1.27, 2.9], higia:[3.15, 217], interamnia:[3.06, 166], eurybates:[5.22, 32], hektor:[5.28, 112], patroclus:[5.21, 57]};
+const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4], bennu:[1.13, 0.245], ryugu:[1.19, 0.45], apophis:[0.92, 0.17], faetonte:[1.27, 2.9], higia:[3.15, 217], interamnia:[3.06, 166], eurybates:[5.22, 32], hektor:[5.28, 112], patroclus:[5.21, 57], dinkinesh:[2.19, 0.395]};
 /* O CÉU REAL (só na escala real): as estrelas mais brilhantes do céu em
    posição VERDADEIRA (RA/DEC J2000 convertidos ao plano da eclíptica da cena)
    e cor pela classe espectral. É o começo do sonho das constelações. */
@@ -6604,11 +6683,11 @@ const ESCALA_REAL_NODO = {
   urano:[0.773, 74.017, 96.937], netuno:[1.770, 131.784, -86.819],
   plutao:[17.140, 110.304, 113.765],
   eris:[43.9, 36.0, 151.0], sedna:[11.9, 145.0, 311.0],
-  halley:[162.2, 59.1, 112.0], p67:[7.04, 50.1, 12.8], swift:[113.45, 139.38, 153.0], encke:[11.38, 334.14, 187.18], tempeltuttle:[162.49, 235.27, 172.50], thatcher:[79.77, 31.87, 213.45]};
+  halley:[162.2, 59.1, 112.0], p67:[7.04, 50.1, 12.8], swift:[113.45, 139.38, 153.0], encke:[11.38, 334.14, 187.18], tempeltuttle:[162.49, 235.27, 172.50], wirtanen:[11.75, 82.16, 356.34], giacobini:[32.00, 195.40, 172.81], tuttle:[54.98, 270.34, 207.51], thatcher:[79.77, 31.87, 213.45]};
 const ESCALA_REAL_T = {mercurio:0.2408467, venus:0.6151973, terra:1.0000174,
   marte:1.8808476, jupiter:11.862615, saturno:29.447498, urano:84.016846,
   netuno:164.79132, plutao:247.92065, eris:561.2, sedna:12676,
-  halley:75.84, p67:6.434, swift:133.28, encke:3.307, tempeltuttle:33.24, thatcher:415.0, parker:0.241};
+  halley:75.84, p67:6.434, swift:133.28, encke:3.307, tempeltuttle:33.24, wirtanen:5.439, giacobini:6.549, tuttle:13.610, thatcher:415.0, parker:0.241};
 const ESCALA_REAL_ANC = {
   mercurio:{ma:174.794, ep:946728000000}, venus:{ma:50.447, ep:946728000000},
   terra:{ma:357.517, ep:946728000000}, marte:{ma:19.412, ep:946728000000},
@@ -6617,7 +6696,7 @@ const ESCALA_REAL_ANC = {
   plutao:{ma:14.862, ep:946728000000},
   eris:{ma:212, ep:Date.UTC(2026,5,9)}, sedna:{ma:358.6, ep:Date.UTC(2026,5,9)},
   /* cometas: a âncora é a PASSAGEM PELO PERIÉLIO (ma=0 na data), do SBDB */
-  halley:{ma:0, ep:Date.UTC(1986,1,9,11,22)}, p67:{ma:0, ep:Date.UTC(2015,7,13,2,8)}, swift:{ma:0, ep:Date.UTC(1992,11,12)}, encke:{ma:0, ep:Date.UTC(2023,9,22,7)}, tempeltuttle:{ma:0, ep:Date.UTC(1998,1,28,2)}, thatcher:{ma:0, ep:Date.UTC(1861,5,3,21)}, parker:{ma:0, ep:Date.UTC(2024,11,24,11,53)}};
+  halley:{ma:0, ep:Date.UTC(1986,1,9,11,22)}, p67:{ma:0, ep:Date.UTC(2015,7,13,2,8)}, swift:{ma:0, ep:Date.UTC(1992,11,12)}, encke:{ma:0, ep:Date.UTC(2023,9,22,7)}, tempeltuttle:{ma:0, ep:Date.UTC(1998,1,28,2)}, wirtanen:{ma:0, ep:Date.UTC(2018,11,12,22,21)}, giacobini:{ma:0, ep:Date.UTC(2018,8,10,6,23)}, tuttle:{ma:0, ep:Date.UTC(2008,0,27,0,26)}, thatcher:{ma:0, ep:Date.UTC(1861,5,3,21)}, parker:{ma:0, ep:Date.UTC(2024,11,24,11,53)}};
 /* dia sideral de cada planeta em dias terrestres (negativo = retrógrado) */
 const ESCALA_REAL_DIA = {mercurio:58.65, venus:-243.0, terra:0.997, marte:1.026,
   jupiter:0.414, saturno:0.444, urano:-0.718, netuno:0.671};
@@ -7124,7 +7203,9 @@ function buildSystem(sysId, spin0){
                  /* r274 · os troianos, SBDB na mesma epoca: o warp do cenico os poe na orbita de Jupiter */
                  eurybates:{a:5.21737, e:0.09060, i:8.051, no:43.559, w:28.700, ma:125.748},
                  hektor:{a:5.27699, e:0.02434, i:18.147, no:342.802, w:181.289, ma:24.914},
-                 patroclus:{a:5.20598, e:0.13915, i:22.064, no:44.350, w:308.838, ma:58.675}};
+                 patroclus:{a:5.20598, e:0.13915, i:22.064, no:44.350, w:308.838, ma:58.675},
+                 /* r278 · Dinkinesh, SBDB na mesma epoca (a primeira parada da Lucy) */
+                 dinkinesh:{a:2.191769, e:0.112682, i:2.093, no:21.353, w:66.916, ma:29.608}};
     const ELA_EP = Date.UTC(2026,5,9);
     var troianosC = [];   /* r274 · no cênico os troianos são amarrados ao holder de Júpiter (var: o avancarAnos mora no escopo da função) */
     for(const a of S.belt){
@@ -15308,7 +15389,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r277';
+const BUILD = 'r279';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -15861,7 +15942,9 @@ const EVENTOS = [
     EVENTOS.push({t:t('PERSEIDAS · pico, ~100 por hora, poeira do SWIFT-TUTTLE'), d:a+'-08-12T12:00:00Z', g:'chuva', ap:1, c:'swift'});
     EVENTOS.push({t:t('ORIÔNIDAS · pico, ~20 por hora, poeira do HALLEY'), d:a+'-10-21T12:00:00Z', g:'chuva', ap:1, c:'halley'});
     EVENTOS.push({t:t('TÁURIDAS · pico, bolas de fogo lentas, poeira do ENCKE'), d:a+'-11-12T12:00:00Z', g:'chuva', ap:1, c:'encke'});
+    EVENTOS.push({t:t('DRACÔNIDAS · pico, ~10 por hora (tempestades em 1933 e 1946), poeira do GIACOBINI-ZINNER'), d:a+'-10-08T12:00:00Z', g:'chuva', ap:1, c:'giacobini'});
     EVENTOS.push({t:t('LEÔNIDAS · pico, ~15 por hora (tempestades a cada 33 anos), poeira do TEMPEL-TUTTLE'), d:a+'-11-17T12:00:00Z', g:'chuva', ap:1, c:'tempeltuttle'});
+    EVENTOS.push({t:t('URSÍDEAS · pico, ~10 por hora, a última chuva do ano, poeira do TUTTLE'), d:a+'-12-22T12:00:00Z', g:'chuva', ap:1, c:'tuttle'});
     EVENTOS.push({t:t('GEMÍNIDAS · pico, ~120 por hora, poeira do asteroide Faetonte'), d:a+'-12-14T12:00:00Z', g:'chuva', ap:1, c:'faetonte'});
   }
 }

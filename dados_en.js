@@ -2362,6 +2362,79 @@ __gal: {
     sections: [{t:'RECORD', rows:[['Pair','It is "pulling" the dwarf NGC 5195; the interaction lights up the arms'],['History','The 1st galaxy where spiral structure was seen (1845)'],['Real address','It has a navigable system here: M51-ULS-1, the most distant planet candidate ever detected']]}],
     facts: ['The gravity of the companion works as an accelerator of stellar nurseries.'] }
 },
+queta: {
+  kind: 'The one-kilometer moon that Lucy will hunt',
+  quick: [['DIAMETER','~1.2 km'],['ORBIT','82.5 d'],['DISCOVERED','2020'],['DISTANCE','~2,350 km'],['THE OWNER','Eurybates, 64 km'],['VISIT','Lucy · AUG 2027']],
+  sections: [
+    {t:'THE HUNT', rows:[['The discovery','Found in Hubble images from September 2018 and confirmed in January 2020, when Lucy was already built: a speck six thousand times fainter than its owner'],['The size','Some 1.2 km, against 64 km for Eurybates: one of the smallest moons ever seen around an asteroid'],['The orbit','It circles at some 2,350 km in 82 days, slowly, which reveals the mass and density of Eurybates'],['Lucy','The probe flies past the pair in August 2027 and will measure both: the orbit of the moon gives the weight of the owner']]},
+    {t:'RECORD', rows:[['2018','The first images, on Hubble, while the Lucy targets were being prepared'],['2020','Confirmed and announced by the team of Keith Noll; Lucy gained one more target without leaving its path'],['The name','Queta, the nickname of Enriqueta Basilio, the Mexican athlete who lit the Olympic cauldron in 1968: satellites of Trojans carry the names of Olympic athletes']]}
+  ],
+  facts: ['It is only a kilometer across and orbits a 64 km asteroid: Hubble found it in 2020, when the Lucy probe was already ready.', 'The name honors Enriqueta Basilio, the first woman to light the Olympic cauldron, in 1968.'],
+  fict: 'Satellites of Trojans get the names of Olympic athletes, an IAU rule: Queta was the first, after the athlete who lit the 1968 cauldron in Mexico City.'
+},
+menoetius: {
+  kind: 'Half of the pair: two nearly equal Trojans circling each other',
+  quick: [['DIAMETER','104 km'],['ORBIT','4.3 d'],['DISCOVERED','2001'],['DISTANCE','680 km'],['THE OWNER','Patroclus, 113 km'],['VISIT','Lucy · MAR 2033']],
+  sections: [
+    {t:'THE PAIR', rows:[['Two equals','113 km and 104 km, 680 km apart, circling their common center every 4.3 days: a true binary, not a planet with a moon'],['The density','Some 0.9 g/cm3, less than water: lots of ice and lots of void, the portrait of a body born far out, in the Kuiper belt, and captured at L5'],['The clue','That is why Lucy goes there: an icy pair among the Trojans is living proof that the giant planets migrated and scattered the Solar System'],['The tides','The two spin locked, always showing the same face to each other']]},
+    {t:'RECORD', rows:[['2001','Discovered on September 22 at Gemini North, with adaptive optics, by William Merline and team: the first binary among the Trojans'],['2006','Named Menoetius, the father of Patroclus in the Iliad'],['2033','Lucy flies past both on March 2, 2033, the last stop of the voyage, and will see them eclipsing each other']]}
+  ],
+  facts: ['Patroclus and Menoetius are a nearly equal pair, 113 and 104 km, circling each other every 4.3 days.', 'A density below water says the pair was born in the Kuiper belt and captured by the Trojans.'],
+  fict: 'In the Iliad, Menoetius is the father of Patroclus, the friend of Achilles: the moon got the name of the father because the pair is almost a family of equal sizes.'
+},
+dinkinesh: {
+  kind: 'The first stop of Lucy, with the double moon nobody expected',
+  quick: [['DIAMETER','790 m'],['DAY','3.7 h'],['YEAR','3.2 years'],['DISCOVERED','1999'],['MOON','Selam, 220 m'],['VISIT','Lucy · NOV 1, 2023']],
+  sections: [
+    {t:'NOVEMBER 1, 2023', rows:[['The test','Lucy passed 430 km from it at 16,000 km/h to test the system that tracks the target on its own: the smallest rock the probe has visited, chosen in January 2023 for being on the way'],['The surprise','The photos showed a moon, and the moon was DOUBLE: two pieces touching, the first contact binary seen orbiting another asteroid'],['The shape','A ridge at the equator and a trough: signs that it spun fast, shed material, and the dust formed the moon'],['The size','790 m, the size of a stadium; the moon is 220 m and orbits at 3.1 km, every 53 hours']]},
+    {t:'RECORD', rows:[['1999','Discovered on November 4 by LINEAR, in New Mexico, as 1999 VD57'],['The name','Dinkinesh, "you are marvelous" in Amharic: the Ethiopian name of the Lucy fossil, which named the probe'],['The moon','Selam, "peace" in Amharic, the name of the fossil of a child found near Lucy'],['Here on the map','JPL elements at the epoch of June 9, 2026; in the inner belt, at 2.2 AU']]}
+  ],
+  facts: ['It was the first stop of the Lucy probe, on November 1, 2023, and revealed a moon made of two pieces touching.', 'The name is that of the Lucy fossil in Amharic: "you are marvelous".', 'It is 790 meters across: the smallest main-belt asteroid ever visited by a probe.'],
+  fict: null
+},
+selam: {
+  kind: 'The moon made of two pieces touching',
+  quick: [['DIAMETER','220 m, two lobes'],['ORBIT','52.7 h'],['DISCOVERED','2023'],['DISTANCE','3.1 km'],['SHAPE','contact binary'],['THE OWNER','Dinkinesh, 790 m']],
+  sections: [
+    {t:'THE DOUBLE MOON', rows:[['The reveal','In the first Lucy photos it looked like an ordinary moon; in the next ones, taken from another angle, two lobes of 210 and 230 m appeared touching'],['The first','Contact binaries are common among comets and asteroids (Arrokoth is one), but none had ever been seen orbiting another asteroid'],['The origin','Dust shed by the ridge of Dinkinesh formed two bodies that drifted together slowly until they touched, without breaking'],['The orbit','It circles 3.1 km from its owner every 52.7 hours, locked, always with the same side facing it']]},
+    {t:'RECORD', rows:[['NOV 1, 2023','Discovered during the Lucy flyby, announced the same day'],['The name','Selam, "peace" in Amharic, the fossil of a 3-year-old girl found in 2000 in Ethiopia, nicknamed the baby of Lucy']]}
+  ],
+  facts: ['It is a moon made of two pieces touching, the first contact binary seen around another asteroid.', 'It circles Dinkinesh every 53 hours, only 3 km away.'],
+  fict: 'Selam is the fossil of a girl nicknamed the baby of Lucy: the Lucy probe found the moon of Dinkinesh, and the name closed the family.'
+},
+wirtanen: {
+  kind: 'The Christmas comet of 2018, which Rosetta almost visited',
+  quick: [['NUCLEUS','1.2 km'],['PERIOD','5.4 years'],['LAST VISIT','MAY 2024'],['NEXT','NOV 2029'],['THE PASS','DEC 16, 2018 · 11.6 million km'],['DISCOVERED','1948']],
+  sections: [
+    {t:'CHRISTMAS 2018', rows:[['The pass','On December 16, 2018 it passed 11.6 million km from Earth, 30 times the distance of the Moon: one of the ten closest approaches of a comet since measurements began'],['Naked eye','It reached magnitude 4, a diffuse green ball the size of the full Moon near the Pleiades, with no visible tail: the whole coma pointed away and Earth saw it head-on'],['The green','The color comes from diatomic carbon glowing in the coma, as in almost every comet seen up close'],['Hyperactive','For a 1.2 km nucleus it sheds far too much water: one of the most active surfaces known, with jets that telescopes saw change from night to night']]},
+    {t:'THE ROSETTA TARGET', rows:[['The plan','It was the original destination of the Rosetta mission, the one that would land on a comet; the probe was designed for it'],['The switch','The January 2003 launch slipped after an Ariane 5 failure and the window closed: ESA switched to 67P, and Philae landed there in 2014'],['What was not','Had it gone, Philae would have dropped onto a nucleus four times smaller and far more active']]},
+    {t:'RECORD', rows:[['1948','Discovered on January 17 by Carl Wirtanen, on plates from Lick Observatory, in California'],['1972 and 1984','Two passes near Jupiter cut the period from 6.7 to 5.4 years and pulled the perihelion inward'],['2018','The worldwide observing campaign: Hubble, ALMA, Arecibo and the amateurs measured the nucleus, the 9-hour spin and the water'],['Here on the map','JPL elements at the epoch of December 2018; the scenic map compresses the ellipse']]}
+  ],
+  facts: ['In December 2018 it passed 11.6 million km from Earth, one of the ten closest approaches of a comet ever measured, visible to the naked eye.', 'It was the original target of Rosetta: a launch delay sent the probe to 67P instead.', 'For a nucleus of only 1.2 km, it is one of the most active comets there are: it sheds water like a much bigger comet.'],
+  fict: 'It earned the nickname Christmas comet in 2018: a green ball near the Pleiades on December nights, photographed by half the world.'
+},
+giacobini: {
+  kind: 'Father of the Draconids and the first comet visited by a probe',
+  quick: [['NUCLEUS','~2 km'],['PERIOD','6.6 years'],['LAST VISIT','MAR 25, 2025'],['NEXT','2031'],['THE SHOWER','Draconids · OCT 8'],['DISCOVERED','1900']],
+  sections: [
+    {t:'THE DRACONIDS', rows:[['The shower','October 8 and 9, with the radiant in the head of the Dragon: the slowest meteors of the calendar, 20 km/s, and the only major shower that is best in the early evening'],['The storms','In 1933 and in 1946 the sky over Europe reached thousands of meteors per hour, when Earth crossed the fresh dust of the passage of the comet'],['The outbursts','2011 (some 600 per hour over Europe) and 2018 (a hundred, days after perihelion); in the other years, almost nothing'],['The rule','The shower only explodes when the comet passes close in the same year: the dust has not spread yet']]},
+    {t:'THE FIRST VISIT', rows:[['ICE','On September 11, 1985 the ICE probe (the former ISEE-3, redirected) crossed its tail 7,800 km from the nucleus: the first probe to pass a comet, six months before the Halley armada'],['What it saw','It measured the plasma of the tail and the magnetic field folding around the comet, with no camera: the photo was left to Giotto, at Halley'],['The maneuver','ISEE-3 was watching the solar wind; to reach the comet it made five lunar passes, one of them at 120 km, the orbital acrobatics of Robert Farquhar']]},
+    {t:'RECORD', rows:[['1900','Discovered on December 20 by Michel Giacobini, in Nice'],['1913','Recovered by Ernst Zinner, in Bamberg, when the expected return was 1907: the two passages linked, the double name'],['The chemistry','It is the prototype of the carbon-chain depleted comets: a chemical family apart, formed in another corner of the disk'],['Here on the map','JPL elements at the epoch of September 2018; the scenic map compresses the ellipse']]}
+  ],
+  facts: ['It was the first comet visited by a probe: ICE crossed its tail in September 1985, before Halley.', 'It is the father of the Draconids, the October 8 shower that in 1933 and 1946 became a storm of thousands of meteors per hour.', 'Its meteors are the slowest of the year, 20 km/s, and the shower is best in the early evening, unlike the others.'],
+  fict: 'The Draconids of 1933 fell over Europe like snow: accounts tell of people stopping in the street to watch the streaked sky, unaware it was the fresh dust of a comet that had passed four months earlier.'
+},
+tuttle: {
+  kind: 'Father of the Ursids, a nucleus in two pieces',
+  quick: [['NUCLEUS','5.7 + 3.6 km'],['PERIOD','13.6 years'],['LAST VISIT','AUG 27, 2021'],['NEXT','2035'],['THE SHOWER','Ursids · DEC 22'],['DISCOVERED','1790']],
+  sections: [
+    {t:'TWO PIECES', rows:[['The radar','In January 2008, with the comet 37 million km away, the Arecibo radar showed the nucleus: two bodies touching, 5.7 and 3.6 km, a contact binary'],['The clue','It was the first time a radar saw the shape of the nucleus of a comet: the technique that later drew 67P and Arrokoth'],['The orbit','Nearly upright, 55 degrees above the plane, from inside the orbit of Earth to beyond Saturn in 13.6 years'],['The color','It showed a green coma, like Wirtanen, at the turn of the year 2008']]},
+    {t:'THE URSIDS', rows:[['The shower','The last of the year: peak on December 22, radiant near Kochab, in Ursa Minor, some 10 meteors per hour, almost always ignored'],['The outbursts','1945 and 1986 gave more than 100 per hour, and the odd thing is that the comet was near APHELION both times: the old dust, trapped in resonance with Jupiter, arrives late'],['Who sees it','Only the northern hemisphere, and in the cold: the radiant sits near the celestial pole']]},
+    {t:'RECORD', rows:[['1790','Seen by Pierre Méchain on January 9, the same comet hunter as Encke'],['1858','Horace Tuttle recovers it and links the two apparitions: 68 years and five laps later'],['The surname','Tuttle has three famous comets: this one, Swift-Tuttle of the Perseids and Tempel-Tuttle of the Leonids'],['Here on the map','JPL elements at the epoch of January 2008; the scenic map compresses the ellipse']]}
+  ],
+  facts: ['The Arecibo radar showed in 2008 that its nucleus is two pieces touching, 5.7 and 3.6 km.', 'It is the father of the Ursids, the last shower of the year, at the December solstice.', 'Horace Tuttle signs three famous comets: this one, Swift-Tuttle of the Perseids and Tempel-Tuttle of the Leonids.'],
+  fict: 'Horace Tuttle was a war hero, a comet hunter and later a deserter accused of embezzlement in the Navy: even so, three meteor showers carry his name.'
+},
 encke: {
   kind: 'The comet in the biggest hurry, father of the Taurids',
   quick: [['NUCLEUS','4.8 km'],['PERIOD','3.3 years, the shortest'],['LAST VISIT','OCT 22, 2023'],['NEXT','FEB 2027'],['THE SHOWER','Taurids, Oct. and Nov.'],['DISCOVERED','1786']],
