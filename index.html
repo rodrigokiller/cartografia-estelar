@@ -2185,7 +2185,7 @@ PLANETS.push(
   quick:[['GRAVIDADE','0,89 g'],['TEMP. MÉDIA','−195 °C'],['DIA','17 h 14'],['ANO','84 anos'],['LUAS','28'],['ANÉIS','13']],
   sys:{orbit:40, size:1.45, speed:0.012, angle:0.9},
   visual:{mode:'gas', c1:'#9fd8dc', c2:'#8ccbd3', c3:'#b8e6e8', c4:'#7fc0c8', bandF:5.0, turb:0.5, seed:7.1, atmo:{col:'#bdf0f2', i:0.75}, rings:{rin:1.5, rout:1.95, col:'#a9c9cd', op:0.45, tilt:98, seed:5.0}},
-  moonsMeta:'28 CONFIRMADAS · 5 PRINCIPAIS · 3 PEQUENAS',
+  moonsMeta:'28 CONFIRMADAS · 5 PRINCIPAIS · 6 PEQUENAS',
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','2,87 bi km (19,2 UA)'],['Ano','84 anos'],['Dia','17 h 14 min'],['Tipo de rotação','RETRÓGRADA · gira "deitado"'],['Veloc. orbital','6,8 km/s'],['Inclinação axial','98°'],['Estações','Extremas, 21 anos de dia, 21 de noite nos polos']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','50.724 km'],['Massa','8,68 × 10²⁵ kg (14,5 Terras)'],['Densidade','1,27 g/cm³'],['Área','8,1 bi km²'],['Interior','"Gelos" de água, amônia e metano']]},
@@ -2269,7 +2269,34 @@ PLANETS.push(
       {t:'REGISTRO', rows:[['Descoberta','Janeiro de 1986, nas imagens da Voyager 2'],['O nome','Ofélia, a de Hamlet'],['A órbita','Uma volta a cada 9 horas, entre o anel épsilon e as outras luas pequenas']]}
     ],
     facts:['Segura a borda de fora do anel épsilon, o mais brilhante de Urano, enquanto Cordélia segura a de dentro.','Foi descoberta nas imagens da Voyager 2, em janeiro de 1986, dias antes da passagem.'],
-    fict:null}
+    fict:null},
+   {id:'bianca', name:'BIANCA', desig:'URANO-VIII · PEQUENA', kind:'A menor do enxame de Pórcia', hab:0, gbar:0.00001, pop:'0',
+    quick:[['DIÂMETRO','~51 km'],['ÓRBITA','0,435 d'],['DESCOBERTA','1986'],['DISTÂNCIA','59.166 km'],['O GRUPO','enxame de Pórcia'],['FOTO','Voyager 2, 1986']],
+    visual:{mode:'rocky', c1:'#6e6f78', c2:'#8c8d96', c3:'#46474e', scale:3.0, seed:19.86, crater:0.7},
+    sections:[
+      {t:'O ENXAME', rows:[['O grupo','Entre Ofélia e Puck, nove luas pequenas se apertam em 20 mil km: o enxame de Pórcia, o sistema de luas mais lotado que se conhece'],['A instabilidade','As órbitas se perturbam tanto que os cálculos dão colisões em alguns milhões de anos: Créssida e Desdêmona são as primeiras da fila'],['A cara','Escura como os anéis, coberta de material que a radiação enegreceu; alongada, de tão perto do planeta']]},
+      {t:'REGISTRO', rows:[['Descoberta','23 de janeiro de 1986, pela Voyager 2, um dia antes da passagem'],['O nome','Bianca, a irmã de Catarina em A Megera Domada: as luas de Urano levam nomes de Shakespeare e Pope']]}
+    ],
+    facts:['Faz parte do enxame de Pórcia: nove luas apertadas em 20 mil km, o sistema mais lotado que se conhece.','As órbitas do enxame são instáveis: os cálculos preveem colisões em alguns milhões de anos.'],
+    fict:'Bianca, a irmã boazinha de A Megera Domada, a que todos os pretendentes querem: Urano tem as luas de Shakespeare.'},
+   {id:'cressida', name:'CRÉSSIDA', desig:'URANO-IX · PEQUENA', kind:'A que vai bater em Desdêmona', hab:0, gbar:0.00003, pop:'0',
+    quick:[['DIÂMETRO','~80 km'],['ÓRBITA','0,464 d'],['DESCOBERTA','1986'],['DISTÂNCIA','61.767 km'],['O GRUPO','enxame de Pórcia'],['O FUTURO','colisão em ~1 milhão de anos']],
+    visual:{mode:'rocky', c1:'#6c6d76', c2:'#8a8b94', c3:'#44454c', scale:3.1, seed:19.87, crater:0.7},
+    sections:[
+      {t:'A COLISÃO ANUNCIADA', rows:[['A vizinha','Desdêmona orbita a só 900 km por fora; as duas se perturbam a cada aproximação'],['O cálculo','Os modelos dão a colisão entre elas em algo como um milhão de anos, um piscar de olhos para o Sistema Solar'],['A pista do anel','Créssida faz uma ondulação no anel eta de Urano, e por ela se mediu a massa: uma bola de gelo de densidade 0,86']]},
+      {t:'REGISTRO', rows:[['Descoberta','9 de janeiro de 1986, pela Voyager 2'],['O nome','Créssida, a troiana de Troilo e Créssida, de Shakespeare']]}
+    ],
+    facts:['Vai colidir com Desdêmona, a vizinha a 900 km, em algo como um milhão de anos.','A massa dela foi pesada pela ondulação que ela faz no anel eta de Urano.'],
+    fict:null},
+   {id:'julieta', name:'JULIETA', desig:'URANO-XI · PEQUENA', kind:'A maior do enxame de Pórcia depois da própria Pórcia', hab:0, gbar:0.00005, pop:'0',
+    quick:[['DIÂMETRO','~94 km'],['ÓRBITA','0,493 d'],['DESCOBERTA','1986'],['DISTÂNCIA','64.358 km'],['O GRUPO','enxame de Pórcia'],['FORMA','alongada, 150 × 74 km']],
+    visual:{mode:'rocky', c1:'#6f7079', c2:'#8d8e97', c3:'#47484f', scale:3.1, seed:19.88, crater:0.7},
+    sections:[
+      {t:'A ALONGADA', rows:[['A forma','Uns 150 km de comprimento por 74 de largura, esticada pelas marés de Urano: a lua mais alongada do enxame'],['O grupo','Segunda maior do enxame de Pórcia, atrás só de Pórcia (135 km); as duas dominam as perturbações do grupo'],['A cara','Escura como as outras: o mesmo material enegrecido dos anéis']]},
+      {t:'REGISTRO', rows:[['Descoberta','3 de janeiro de 1986, pela Voyager 2, uma das primeiras achadas na aproximação'],['O nome','Julieta, a de Romeu e Julieta']]}
+    ],
+    facts:['É esticada como um charuto, 150 por 74 km: as marés de Urano a alongam.','A segunda maior do enxame de Pórcia, o grupo apertado e instável entre Ofélia e Puck.'],
+    fict:'Julieta ao lado de Bianca e Créssida: o enxame de Pórcia é um elenco de Shakespeare em órbita.'}
   ]
 },
 {
@@ -2277,7 +2304,7 @@ PLANETS.push(
   quick:[['GRAVIDADE','1,14 g'],['TEMP. MÉDIA','−201 °C'],['DIA','16 h 06'],['ANO','165 anos'],['LUAS','16'],['VENTOS','2.100 km/h']],
   sys:{orbit:45, size:1.4, speed:0.006, angle:2.8},
   visual:{mode:'gas', c1:'#2f5ecf', c2:'#1f3f9e', c3:'#4d7de6', c4:'#16307e', bandF:6.5, turb:1.0, seed:5.3, spot:{pos:[-1.8,-0.3], r:0.25, col:'#12296b', on:1}, atmo:{col:'#5f8cff', i:0.95}},
-  moonsMeta:'16 CONFIRMADAS · 3 PRINCIPAIS · 2 INTERNAS',
+  moonsMeta:'16 CONFIRMADAS · 3 PRINCIPAIS · 5 INTERNAS',
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','4,50 bi km (30 UA)'],['Ano','165 anos'],['Dia','16 h 06 min'],['Tipo de rotação','Prógrada'],['Veloc. orbital','5,4 km/s'],['Inclinação axial','28,3°'],['Estações','Sim, ~40 anos cada']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','49.244 km'],['Massa','1,02 × 10²⁶ kg (17 Terras)'],['Densidade','1,64 g/cm³'],['Área','7,6 bi km²'],['Interior','Possível "chuva de diamantes"']]},
@@ -2336,6 +2363,33 @@ PLANETS.push(
       {t:'REGISTRO', rows:[['1949','Descoberta por Gerard Kuiper por fotografia, 103 anos depois de Tritão'],['Até 1989','Foi a segunda e última lua conhecida de Netuno por quatro décadas'],['O nome','As Nereidas, as cinquenta ninfas do mar da mitologia grega']]}
     ],
     facts:['Tem a órbita mais excêntrica de todas as luas conhecidas: a distância a Netuno varia sete vezes numa volta só.','Por quarenta anos, de 1949 a 1989, Netuno tinha só duas luas conhecidas: Tritão e ela.'],
+    fict:null},
+   {id:'naiade', name:'NÁIADE', desig:'NETUNO-III · INTERNA', kind:'A mais interna de Netuno, na dança de esquiva com Talassa', hab:0, gbar:0.00002, pop:'0',
+    quick:[['DIÂMETRO','~60 km'],['ÓRBITA','0,294 d'],['DESCOBERTA','1989'],['DISTÂNCIA','48.227 km'],['A DANÇA','com Talassa, 73:69'],['INCLINAÇÃO','4,7 graus']],
+    visual:{mode:'rocky', c1:'#7a8494', c2:'#98a2b2', c3:'#4e5663', scale:3.2, seed:19.89, crater:0.7},
+    sections:[
+      {t:'A DANÇA DE ESQUIVA', rows:[['O par','Náiade e Talassa orbitam a só 1.850 km de distância radial uma da outra, mais perto do que qualquer outro par de luas conhecido'],['O truque','A órbita de Náiade é inclinada 4,7 graus: a cada passagem ela cruza a de Talassa ora por cima, ora por baixo, numa ressonância de 73 voltas para 69, e as duas nunca chegam a menos de 3.500 km'],['A descoberta','Mark Showalter e equipe acharam a coreografia em 2019, nas imagens do Hubble: um zigue-zague que nenhuma outra lua faz'],['A queda','Orbita mais rápido do que Netuno gira: as marés a puxam para dentro; um dia se desfaz nos anéis']]},
+      {t:'REGISTRO', rows:[['Descoberta','Setembro de 1989, nas imagens da Voyager 2, a última lua achada pela sonda'],['O nome','As náiades, ninfas das fontes e dos rios, filhas de Netuno na mitologia'],['Onde','Por dentro do anel Galle, a 48 mil km do centro']]}
+    ],
+    facts:['Cruza a órbita de Talassa ora por cima, ora por baixo, numa ressonância 73:69: a dança de esquiva achada pelo Hubble em 2019.','É a lua mais interna de Netuno e vai cair nele um dia, puxada pelas marés.'],
+    fict:null},
+   {id:'talassa', name:'TALASSA', desig:'NETUNO-IV · INTERNA', kind:'A parceira de Náiade na dança de esquiva', hab:0, gbar:0.00003, pop:'0',
+    quick:[['DIÂMETRO','~82 km'],['ÓRBITA','0,311 d'],['DESCOBERTA','1989'],['DISTÂNCIA','50.075 km'],['A DANÇA','com Náiade, 73:69'],['FORMA','um disco achatado']],
+    visual:{mode:'rocky', c1:'#7e8898', c2:'#9ca6b6', c3:'#525a67', scale:3.2, seed:19.90, crater:0.6},
+    sections:[
+      {t:'A PARCEIRA', rows:[['O par','Anda 1.850 km por fora de Náiade, no plano do equador de Netuno; é a de dentro que se inclina e desvia'],['A forma','Um disco achatado, de tão perto do planeta: as marés a esticam pelo equador'],['O anel','Orbita entre os anéis Galle e Le Verrier, e a poeira que ela solta ajuda a alimentar o anel'],['O fim','Como Náiade, orbita mais rápido do que Netuno gira e desce devagar']]},
+      {t:'REGISTRO', rows:[['Descoberta','Setembro de 1989, pela Voyager 2'],['O nome','Talassa, a personificação grega do mar, filha de Éter e Hemera']]}
+    ],
+    facts:['Forma com Náiade o par de luas mais próximo conhecido: 1.850 km de diferença de raio, sem nunca se tocar.','É achatada como um disco: as marés de Netuno a esticam pelo equador.'],
+    fict:null},
+   {id:'despina', name:'DESPINA', desig:'NETUNO-V · INTERNA', kind:'A pastora de dentro do anel Le Verrier', hab:0, gbar:0.0001, pop:'0',
+    quick:[['DIÂMETRO','~150 km'],['ÓRBITA','0,335 d'],['DESCOBERTA','1989'],['DISTÂNCIA','52.526 km'],['ONDE','logo por dentro do anel Le Verrier'],['O PAPEL','pastora do anel']],
+    visual:{mode:'rocky', c1:'#7c8696', c2:'#9aa4b4', c3:'#505866', scale:3.3, seed:19.91, crater:0.7},
+    sections:[
+      {t:'A PASTORA', rows:[['O anel','Orbita a poucos centenas de km por dentro do anel Le Verrier e segura a borda interna dele, como as pastoras de Saturno'],['A cara','Irregular, escura e cheia de crateras; nenhuma sonda passou perto o bastante para ver detalhe'],['A queda','Também orbita mais rápido do que Netuno gira: o destino é o mesmo das irmãs de dentro']]},
+      {t:'REGISTRO', rows:[['Descoberta','Julho de 1989, pela Voyager 2, semanas antes do encontro'],['O nome','Despina, filha de Netuno e Deméter na mitologia grega']]}
+    ],
+    facts:['Segura a borda de dentro do anel Le Verrier, como uma pastora de Saturno.','Foi achada pela Voyager 2 em julho de 1989, ainda a caminho de Netuno.'],
     fict:null}
   ]
 },
@@ -5840,7 +5894,7 @@ const ESCALA_REAL_LUAS = {
   io:421700, europa:671100, ganimedes:1070400, calisto:1882700,
   tita:1221870, reia:527108, encelado:237948, dione:377396, tetis:294619, mimas:185539, japeto:3560820,
   hiperion:1481010, febe:12947780, amalteia:181366, himalia:11461000, proteu:117647, nereida:5513818,
-  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, disnomia:37273, queta:2350, menoetius:680, selam:3.1, metis:128000, tebe:221900, galateia:61953, larissa:73548, pan:133584, prometeu:139380, pandora:141720, jano:151460, epimeteu:151410, telesto:294619, calipso:294619, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
+  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, disnomia:37273, queta:2350, menoetius:680, selam:3.1, metis:128000, tebe:221900, galateia:61953, larissa:73548, naiade:48227, talassa:50075, despina:52526, pan:133584, prometeu:139380, pandora:141720, jano:151460, epimeteu:151410, telesto:294619, calipso:294619, puck:86004, cordelia:49770, ofelia:53790, bianca:59166, cressida:61767, julieta:64358, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
   iss:6790, hubble:6910, tiangong:6760, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, hyakutake:55, mcnaught:41, atlasg3:7.8, juice:1.0, clipper:1.1, lucy:3.6, pathfinder:1.52, viking1:1.52, cassini:9.54};
@@ -15903,7 +15957,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r287';
+const BUILD = 'r288';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

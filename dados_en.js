@@ -126,7 +126,7 @@ urano: {
   ],
   facts: ['It rolls on its side: it probably took a colossal impact in the past.', 'Even closer to the Sun than Neptune, it is the COLDEST planet.', 'The atmosphere has hydrogen sulfide: the planet literally smells like rotten eggs.', 'Herschel wanted to call it "Georgium Sidus", after King George III. It did not stick.'],
   fict: 'It was visited only once, in 1986, and the next proposed mission is the number one priority of the decade in American astronomy.',
-  moonsMeta: '28 CONFIRMED · 5 MAIN · 3 SMALL'
+  moonsMeta: '28 CONFIRMED · 5 MAIN · 6 SMALL'
 },
 netuno: {
   kind: 'Ice giant',
@@ -141,7 +141,7 @@ netuno: {
   ],
   facts: ['It was discovered "on paper": Le Verrier calculated where it should be from the perturbations on Uranus.', 'Since its discovery (1846), it has completed only 1 lap around the Sun.', 'It gets 900 times less sunlight than Earth, and still has the most violent winds.', 'Deep inside, the pressure probably makes it rain real DIAMONDS.'],
   fict: 'Ad Astra: the final station of the journey orbits Neptune.',
-  moonsMeta: '16 CONFIRMED · 3 MAIN · 2 INNER'
+  moonsMeta: '16 CONFIRMED · 3 MAIN · 5 INNER'
 },
 plutao: {
   kind: 'Dwarf planet',
@@ -2498,6 +2498,66 @@ calipso: {
   ],
   facts: ['It is the most reflective object known in the Solar System: the fresh ice of the E ring, spread by Enceladus, covers the surface.', 'It always trails 60 degrees behind Tethys, at the L5 point, mirroring Telesto.'],
   fict: 'Calypso, the nymph who held Odysseus for seven years: the moon is held forever at 60 degrees from Tethys.'
+},
+naiade: {
+  kind: 'The innermost moon of Neptune, in the dance of avoidance with Thalassa',
+  quick: [['DIAMETER','~60 km'],['ORBIT','0.294 d'],['DISCOVERED','1989'],['DISTANCE','48,227 km'],['THE DANCE','with Thalassa, 73:69'],['INCLINATION','4.7 degrees']],
+  sections: [
+    {t:'THE DANCE OF AVOIDANCE', rows:[['The pair','Naiad and Thalassa orbit only 1,850 km apart in radius, closer than any other known pair of moons'],['The trick','The orbit of Naiad is tilted 4.7 degrees: at each pass it crosses that of Thalassa now above, now below, in a resonance of 73 laps to 69, and the two never come within 3,500 km'],['The discovery','Mark Showalter and team found the choreography in 2019, in Hubble images: a zigzag no other moon does'],['The fall','It orbits faster than Neptune spins: the tides pull it inward; one day it breaks up into the rings']]},
+    {t:'RECORD', rows:[['Discovered','September 1989, in Voyager 2 images, the last moon found by the probe'],['The name','The naiads, nymphs of springs and rivers, daughters of Neptune in mythology'],['Where','Inside the Galle ring, 48,000 km from the center']]}
+  ],
+  facts: ['It crosses the orbit of Thalassa now above, now below, in a 73:69 resonance: the dance of avoidance found by Hubble in 2019.', 'It is the innermost moon of Neptune and will one day fall into it, pulled by the tides.'],
+  fict: null
+},
+talassa: {
+  kind: 'The partner of Naiad in the dance of avoidance',
+  quick: [['DIAMETER','~82 km'],['ORBIT','0.311 d'],['DISCOVERED','1989'],['DISTANCE','50,075 km'],['THE DANCE','with Naiad, 73:69'],['SHAPE','a flattened disk']],
+  sections: [
+    {t:'THE PARTNER', rows:[['The pair','It runs 1,850 km outside Naiad, in the plane of the equator of Neptune; it is the inner one that tilts and dodges'],['The shape','A flattened disk, from being so close to the planet: the tides stretch it along the equator'],['The ring','It orbits between the Galle and Le Verrier rings, and the dust it sheds helps feed the ring'],['The end','Like Naiad, it orbits faster than Neptune spins and slowly descends']]},
+    {t:'RECORD', rows:[['Discovered','September 1989, by Voyager 2'],['The name','Thalassa, the Greek personification of the sea, daughter of Aether and Hemera']]}
+  ],
+  facts: ['With Naiad it forms the closest known pair of moons: 1,850 km of difference in radius, never touching.', 'It is flattened like a disk: the tides of Neptune stretch it along the equator.'],
+  fict: null
+},
+despina: {
+  kind: 'The inner shepherd of the Le Verrier ring',
+  quick: [['DIAMETER','~150 km'],['ORBIT','0.335 d'],['DISCOVERED','1989'],['DISTANCE','52,526 km'],['WHERE','just inside the Le Verrier ring'],['THE ROLE','ring shepherd']],
+  sections: [
+    {t:'THE SHEPHERD', rows:[['The ring','It orbits a few hundred km inside the Le Verrier ring and holds its inner edge, like the shepherds of Saturn'],['The face','Irregular, dark and full of craters; no probe passed close enough to see detail'],['The fall','It too orbits faster than Neptune spins: the fate is the same as that of its inner sisters']]},
+    {t:'RECORD', rows:[['Discovered','July 1989, by Voyager 2, weeks before the encounter'],['The name','Despina, daughter of Neptune and Demeter in Greek mythology']]}
+  ],
+  facts: ['It holds the inner edge of the Le Verrier ring, like a shepherd of Saturn.', 'It was found by Voyager 2 in July 1989, still on the way to Neptune.'],
+  fict: null
+},
+bianca: {
+  kind: 'The smallest of the Portia swarm',
+  quick: [['DIAMETER','~51 km'],['ORBIT','0.435 d'],['DISCOVERED','1986'],['DISTANCE','59,166 km'],['THE GROUP','Portia swarm'],['PHOTO','Voyager 2, 1986']],
+  sections: [
+    {t:'THE SWARM', rows:[['The group','Between Ophelia and Puck, nine small moons crowd into 20,000 km: the Portia swarm, the most crowded system of moons known'],['The instability','The orbits disturb each other so much that the calculations give collisions within a few million years: Cressida and Desdemona are first in line'],['The face','Dark like the rings, coated in material blackened by radiation; elongated, from being so close to the planet']]},
+    {t:'RECORD', rows:[['Discovered','January 23, 1986, by Voyager 2, a day before the flyby'],['The name','Bianca, the sister of Katherina in The Taming of the Shrew: the moons of Uranus carry names from Shakespeare and Pope']]}
+  ],
+  facts: ['It is part of the Portia swarm: nine moons packed into 20,000 km, the most crowded system known.', 'The orbits of the swarm are unstable: calculations predict collisions within a few million years.'],
+  fict: 'Bianca, the gentle sister in The Taming of the Shrew, the one every suitor wants: Uranus has the moons of Shakespeare.'
+},
+cressida: {
+  kind: 'The one that will hit Desdemona',
+  quick: [['DIAMETER','~80 km'],['ORBIT','0.464 d'],['DISCOVERED','1986'],['DISTANCE','61,767 km'],['THE GROUP','Portia swarm'],['THE FUTURE','collision in ~1 million years']],
+  sections: [
+    {t:'THE ANNOUNCED COLLISION', rows:[['The neighbor','Desdemona orbits only 900 km farther out; the two disturb each other at every approach'],['The calculation','Models give the collision between them in something like a million years, a blink of an eye for the Solar System'],['The clue in the ring','Cressida makes a ripple in the eta ring of Uranus, and through it its mass was measured: a ball of ice of density 0.86']]},
+    {t:'RECORD', rows:[['Discovered','January 9, 1986, by Voyager 2'],['The name','Cressida, the Trojan woman of Troilus and Cressida, by Shakespeare']]}
+  ],
+  facts: ['It will collide with Desdemona, its neighbor 900 km away, in something like a million years.', 'Its mass was weighed by the ripple it makes in the eta ring of Uranus.'],
+  fict: null
+},
+julieta: {
+  kind: 'The largest of the Portia swarm after Portia itself',
+  quick: [['DIAMETER','~94 km'],['ORBIT','0.493 d'],['DISCOVERED','1986'],['DISTANCE','64,358 km'],['THE GROUP','Portia swarm'],['SHAPE','elongated, 150 × 74 km']],
+  sections: [
+    {t:'THE ELONGATED ONE', rows:[['The shape','Some 150 km long by 74 wide, stretched by the tides of Uranus: the most elongated moon of the swarm'],['The group','Second largest of the Portia swarm, behind only Portia (135 km); the two dominate the perturbations of the group'],['The face','Dark like the others: the same blackened material of the rings']]},
+    {t:'RECORD', rows:[['Discovered','January 3, 1986, by Voyager 2, one of the first found on approach'],['The name','Juliet, of Romeo and Juliet']]}
+  ],
+  facts: ['It is stretched like a cigar, 150 by 74 km: the tides of Uranus elongate it.', 'The second largest of the Portia swarm, the crowded, unstable group between Ophelia and Puck.'],
+  fict: 'Juliet next to Bianca and Cressida: the Portia swarm is a Shakespeare cast in orbit.'
 },
 encke: {
   kind: 'The comet in the biggest hurry, father of the Taurids',
