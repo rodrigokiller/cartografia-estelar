@@ -145,7 +145,7 @@ netuno: {
 },
 plutao: {
   kind: 'Dwarf planet',
-  quick: [['GRAVITY','0.06 g'],['MEAN TEMP.','−229 °C'],['DAY','6.4 d'],['YEAR','248 years'],['MOONS','5'],['HEART','yes ♥']],
+  quick: [['GRAVITY','0.06 g'],['MEAN TEMP.','−229 °C'],['DAY','6.4 d'],['YEAR','248 years'],['MOONS','5'],['HEART','yes, Tombaugh Regio']],
   sections: [
     {t:'ORBIT & ROTATION', rows:[['Distance from the Sun','5.9 billion km (39.5 AU, average)'],['Orbit','Eccentric, sometimes closer than Neptune'],['Year','248 years'],['Day','6.4 days'],['Rotation type','Retrograde · synchronous with Charon'],['Axial tilt','120°'],['Seasons','Yes, extreme']]},
     {t:'STRUCTURE', rows:[['Diameter','2,377 km (smaller than the Moon)'],['Mass','1.31 × 10²² kg'],['Density','1.85 g/cm³'],['Area','17.7 million km² (≈ Russia)'],['Tombaugh Regio','The heart-shaped plain of N₂ ice']]},
@@ -493,6 +493,7 @@ tebe: {
   fict: null
 },
 disnomia: {
+  desig: 'ERIS-I · MOON',
   kind: 'The moon that weighed Eris and demoted Pluto',
   quick: [['DIAMETER','~615 km'],['ORBIT','15.8 d'],['DISCOVERED','2005'],['DISTANCE','37,273 km'],['COLOR','very dark'],['ROTATION','locked, probably']],
   sections: [
@@ -765,6 +766,7 @@ clipper: {
   fict: 'It carries the poem In Praise of Mystery by Ada Limón, with a line in the first person plural: we, too, are made of water.'
 },
 parker: {
+  desig: 'SOLAR PROBE · 2018',
   kind: 'The fastest machine in history, diving into the Sun',
   quick: [['LAUNCH','8/12/2018 · Delta IV Heavy'],['PERIHELION','6.1 million km · 12/24/2024'],['SPEED','692,000 km/h · record'],['SHIELD','1,400 °C · 11 cm of carbon'],['ORBIT','88 days'],['SLINGSHOTS','7 at Venus']],
   sections: [
@@ -1186,7 +1188,7 @@ t1d: {
 },
 t1e: {
   kind: 'Rocky · tidally locked',
-  quick: [['RADIUS','0.92 R⊕'],['GRAVITY','~0.8 g'],['YEAR','6.1 d'],['EQ. TEMP.','~−22 °C'],['MOONS','0'],['WATER','likely ★']],
+  quick: [['RADIUS','0.92 R⊕'],['GRAVITY','~0.8 g'],['YEAR','6.1 d'],['EQ. TEMP.','~−22 °C'],['MOONS','0'],['WATER','likely']],
   sections: [
     {t:'ORBIT & ROTATION', rows:[['Distance from the star','0.029 AU'],['Year','6.10 days'],['Zone','HABITABLE ZONE, the favorite'],['Rotation type','Synchronous, one side in eternal day, the other in eternal night'],['Seasons','No (no relevant tilt)']]},
     {t:'RECORD', rows:[['Discovered','2016 to 2017 · TRAPPIST telescope + Spitzer'],['Method','Transit (shadow on the star)'],['Water','Possible on the ones in the habitable zone'],['Population','?']]}
@@ -1463,6 +1465,7 @@ ngc6611: {
   fict: null
 },
 pilares: {
+  desig: 'M16 · STAR-FORMING REGION',
   kind: 'The most famous photograph of the universe',
   quick: [['HEIGHT','4 to 5 light-years'],['DISTANCE','6,500 ly'],['MATERIAL','hydrogen and dust'],['PHOTO','Hubble · 1995'],['REDONE','JWST · 2022'],['INSIDE','stars being born']],
   sections: [
@@ -1546,6 +1549,7 @@ vegastar: {
   fict: 'Contact (Carl Sagan): the alien signal comes from Vega, and Ellie travels there. · In the Japanese Tanabata, Vega is the weaver Orihime, separated from the herder Altair by the river of the Milky Way.'
 },
 vegab: {
+  desig: 'CANDIDATE · UNCONFIRMED',
   kind: 'The planet that may exist',
   quick: [['STATUS','candidate (2021)'],['MASS','~20 M⊕ (if real)'],['RADIUS','~4 R⊕ (est.)'],['YEAR','2.43 d'],['TEMP','~2,700 °C'],['METHOD','radial velocity']],
   sections: [
@@ -1707,6 +1711,7 @@ wasp12s: {
   fict: null
 },
 wasp12b: {
+  desig: 'HOT JUPITER · DOOMED',
   kind: 'The planet spiraling to its death',
   quick: [['RADIUS','1.9 R♃ (puffed up)'],['YEAR','1.09 d'],['TEMP','2,200 °C'],['ALBEDO','darker than asphalt'],['SHAPE','egg (tides)'],['LEFT','~3 million years']],
   sections: [
@@ -1745,6 +1750,7 @@ hd189a: {
   fict: null
 },
 hd189b: {
+  desig: 'HOT JUPITER · COBALT BLUE',
   kind: 'Where it rains glass sideways',
   quick: [['RADIUS','1.13 R♃ (~80,000 km)'],['YEAR','2.2 d'],['TEMP','~930 °C'],['WINDS','8,700 km/h'],['COLOR','cobalt blue (measured!)'],['DISCOVERED','2005']],
   sections: [
@@ -1802,6 +1808,7 @@ helvetios: {
   fict: null
 },
 dimidium: {
+  desig: '51 PEGASI b · HOT JUPITER',
   kind: 'The prototype of the hot Jupiters',
   quick: [['MASS','≥ 0.46 M♃'],['RADIUS','~1.2 R♃ (est.)'],['YEAR','4.23 d'],['ORBIT','0.05 AU'],['TEMP','~1,000 °C'],['DISCOVERED','1995 · Nobel']],
   sections: [
@@ -1875,6 +1882,7 @@ kepler186f: {
 },
 /* ---- fase 3, parte 3 (r248): nebulosas, aglomerados, Andromeda e o Redemoinho: o atlas inteiro ---- */
 pulsarcaranguejo: {
+  desig: 'PSR B0531+21 · NEUTRON STAR',
   kind: 'The heart left over from the explosion',
   quick: [['TYPE','young pulsar'],['RADIUS','~10 km'],['MASS','1.4 Sun'],['ROTATION','30 × per second'],['BIRTH','the year 1054'],['DISTANCE','6,500 ly']],
   sections: [
@@ -1925,6 +1933,7 @@ sigmaori: {
   fict: null
 },
 cabecacavalo: {
+  desig: 'BARNARD 33 · DARK NEBULA',
   kind: 'The most famous silhouette in the sky',
   quick: [['DISTANCE','1,375 ly'],['HEIGHT','~3.5 light-years'],['TYPE','dark nebula'],['DISCOVERED','1888'],['CATALOG','Barnard 33'],['LIFESPAN','~5 million years']],
   sections: [
@@ -1975,6 +1984,7 @@ olhodegato: {
   fict: 'The Hubble image became a poster, a book cover and an icon: when someone draws a cosmic eye, they are copying it.'
 },
 bajamar: {
+  desig: 'NORTH AMERICA · THE IONIZER',
   kind: 'The hidden star that lights a continent',
   quick: [['TYPE','O3.5, extremely rare'],['RADIUS','~10 R☉'],['MASS','~60 Suns'],['DISTANCE','~2,600 ly'],['FOUND IN','2004'],['NAME','Bajamar, 2020']],
   sections: [
@@ -2114,6 +2124,7 @@ r136: {
   fict: null
 },
 tarantula: {
+  desig: '30 DORADUS · GIANT NURSERY',
   kind: 'The largest star factory in the neighborhood',
   quick: [['DISTANCE','160,000 ly'],['WIDTH','~1,000 light-years'],['STARS','~800,000'],['GALAXY','Magellanic'],['NAKED EYE','yes ✓'],['CATALOG','30 Doradus']],
   sections: [
@@ -2184,6 +2195,7 @@ etacarinae: {
   fict: 'It is the favorite candidate for the next naked-eye supernova, a constant presence in documentaries.'
 },
 carinaneb: {
+  desig: 'NGC 3372 · GIANT NURSERY',
   kind: 'The largest bright nebula in the sky',
   quick: [['DISTANCE','7,500 ly'],['WIDTH','~300 light-years'],['CATALOG','NGC 3372'],['NAKED EYE','yes, from the south'],['SIZE','4 × Orion'],['JWST','first image, 2022']],
   sections: [
@@ -2294,6 +2306,7 @@ g1enxame: {
   fict: null
 },
 p2buraco: {
+  desig: 'P2 · CORE OF ANDROMEDA',
   kind: 'Fifty times the black hole of our galaxy',
   quick: [['TYPE','supermassive black hole'],['MASS','~140 million Suns'],['RADIUS','~1.2 R☉ (horizon)'],['DISTANCE','2.5 million ly'],['NUCLEUS','double (P1 and P2)'],['COMPARISON','50 × Sgr A*']],
   sections: [
@@ -2365,6 +2378,7 @@ __gal: {
     facts: ['The gravity of the companion works as an accelerator of stellar nurseries.'] }
 },
 queta: {
+  desig: 'EURYBATES-I · MOON',
   kind: 'The one-kilometer moon that Lucy will hunt',
   quick: [['DIAMETER','~1.2 km'],['ORBIT','82.5 d'],['DISCOVERED','2020'],['DISTANCE','~2,350 km'],['THE OWNER','Eurybates, 64 km'],['VISIT','Lucy · AUG 2027']],
   sections: [
@@ -2375,6 +2389,7 @@ queta: {
   fict: 'Satellites of Trojans get the names of Olympic athletes, an IAU rule: Queta was the first, after the athlete who lit the 1968 cauldron in Mexico City.'
 },
 menoetius: {
+  desig: 'PATROCLUS-I · MOON',
   kind: 'Half of the pair: two nearly equal Trojans circling each other',
   quick: [['DIAMETER','104 km'],['ORBIT','4.3 d'],['DISCOVERED','2001'],['DISTANCE','680 km'],['THE OWNER','Patroclus, 113 km'],['VISIT','Lucy · MAR 2033']],
   sections: [
@@ -2395,6 +2410,7 @@ dinkinesh: {
   fict: null
 },
 selam: {
+  desig: 'DINKINESH-I · MOON',
   kind: 'The moon made of two pieces touching',
   quick: [['DIAMETER','220 m, two lobes'],['ORBIT','52.7 h'],['DISCOVERED','2023'],['DISTANCE','3.1 km'],['SHAPE','contact binary'],['THE OWNER','Dinkinesh, 790 m']],
   sections: [
@@ -2500,6 +2516,7 @@ calipso: {
   fict: 'Calypso, the nymph who held Odysseus for seven years: the moon is held forever at 60 degrees from Tethys.'
 },
 naiade: {
+  desig: 'NEPTUNE-III · INNER',
   kind: 'The innermost moon of Neptune, in the dance of avoidance with Thalassa',
   quick: [['DIAMETER','~60 km'],['ORBIT','0.294 d'],['DISCOVERED','1989'],['DISTANCE','48,227 km'],['THE DANCE','with Thalassa, 73:69'],['INCLINATION','4.7 degrees']],
   sections: [
@@ -2510,6 +2527,7 @@ naiade: {
   fict: null
 },
 talassa: {
+  desig: 'NEPTUNE-IV · INNER',
   kind: 'The partner of Naiad in the dance of avoidance',
   quick: [['DIAMETER','~82 km'],['ORBIT','0.311 d'],['DISCOVERED','1989'],['DISTANCE','50,075 km'],['THE DANCE','with Naiad, 73:69'],['SHAPE','a flattened disk']],
   sections: [
@@ -2520,6 +2538,7 @@ talassa: {
   fict: null
 },
 despina: {
+  desig: 'NEPTUNE-V · INNER',
   kind: 'The inner shepherd of the Le Verrier ring',
   quick: [['DIAMETER','~150 km'],['ORBIT','0.335 d'],['DISCOVERED','1989'],['DISTANCE','52,526 km'],['WHERE','just inside the Le Verrier ring'],['THE ROLE','ring shepherd']],
   sections: [
@@ -2600,6 +2619,7 @@ hd80606s: {
   facts: ['Without the companion star, its planet would probably have an ordinary orbit.'], fict: null
 },
 hd80606b: {
+  desig: 'GAS GIANT · ECCENTRIC',
   kind: 'The planet with the six-hour summer',
   quick: [['MASS','4.1 M♃'],['RADIUS','~1.0 R♃'],['YEAR','111.4 d'],['ECCENTRICITY','0.93'],['PERIASTRON','0.03 AU'],['APOASTRON','0.88 AU']],
   sections: [
@@ -2616,6 +2636,7 @@ wasp76s: {
   facts: ['Its light crossing the atmosphere of the planet is what revealed the iron rain.'], fict: null
 },
 wasp76b: {
+  desig: 'ULTRA-HOT JUPITER · IRON RAIN',
   kind: 'The world where it rains iron',
   quick: [['RADIUS','1.83 R♃'],['MASS','0.92 M♃'],['YEAR','1.81 d'],['DAY','2,400 °C'],['NIGHT','~1,300 °C'],['RAIN','liquid iron']],
   sections: [
@@ -2626,12 +2647,14 @@ wasp76b: {
   fict: 'It made headlines around the world in 2020: the planet where it rains iron. It appears in every recent documentary about extreme worlds.'
 },
 psrj1719s: {
+  desig: 'MILLISECOND PULSAR',
   kind: 'The lighthouse that kept the core of its companion',
   quick: [['TYPE','millisecond pulsar'],['ROTATION','175 × per second'],['RADIUS','~10 km'],['MASS','1.4 Sun'],['DISTANCE','~4,000 ly'],['CONSTELLATION','Serpens']],
   sections: [{t:'RECORD', rows:[['What it is','A neutron star spinning 175 times per second'],['How it spun up','By sucking matter from a companion for millions of years, until it was reduced to its core'],['2011','Bailes and team, with the Parkes radio telescope (Australia), find the planet-mass companion through the delay of the pulses'],['Where','About 4,000 light-years away, in Serpens']]}],
   facts: ['The companion that spun up the pulsar is what orbits it today as a diamond planet.'], fict: null
 },
 psrj1719b: {
+  desig: 'DIAMOND PLANET · CORE OF A STAR',
   kind: 'The diamond planet',
   quick: [['MASS','~1 M♃'],['RADIUS','< 0.4 R♃ (~28,000 km)'],['YEAR','2 h 10 min'],['DISTANCE','600,000 km from the pulsar'],['DENSITY','> 23 g/cm³'],['COMPOSITION','carbon and oxygen']],
   sections: [

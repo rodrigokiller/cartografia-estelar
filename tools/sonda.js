@@ -51,7 +51,7 @@ const dorme = ms=>new Promise(ok=>setTimeout(ok, ms));
 (async ()=>{
   const perfil = path.join(require('os').tmpdir(), 'universatlas-sonda-' + process.pid);
   const proc = cp.spawn(chrome, ['--headless=new', '--no-sandbox', '--lang=' + LANG, '--hide-scrollbars', '--remote-debugging-port=' + PORTA,
-    '--user-data-dir=' + perfil, '--window-size=1000,760', 'file:///' + pagina.replace(/\\/g, '/') + '#' + HASH], {stdio:'ignore'});
+    '--user-data-dir=' + perfil, '--window-size=' + (process.env.SONDA_WIN || '1000,760'), 'file:///' + pagina.replace(/\\/g, '/') + '#' + HASH], {stdio:'ignore'});
   const t0 = Date.now();
   let cdp = null, saida = 'TIMEOUT';
   try{

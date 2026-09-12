@@ -352,6 +352,7 @@ body.touch #datepop{bottom:auto;top:62px;left:12px;z-index:80;max-width:calc(100
 body.touch #localcard{left:8px;right:8px;width:auto;bottom:8px;max-height:45%}
 body.touch #localinfo{display:none}
 body.touch #localpop{width:100vw;height:100dvh;padding:8px;clip-path:none}
+body.touch #localpop::before,body.touch #localpop::after{display:none}   /* r290 · sem chanfro, sem as diagonais */
 body.touch #localbussola{width:60px;height:60px} body.touch #localmapa{width:120px} body.touch #localmapacv{width:120px;height:60px}
 /* r286 · o céu de hoje (molde do satpop) */
 #ceupop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:27;display:none;
@@ -1827,7 +1828,7 @@ void main(){
 
 const SUN = {
   id:'sol', name:'SOL', desig:'ESTRELA · G2V', kind:'Anã amarela', hab:null, gbar:28,
-  quick:[['TIPO','G2V'],['RAIO','1 R☉'],['TEMP. SUP.','5.505 °C'],['ROTAÇÃO','25–35 d'],['IDADE','4,6 bi anos'],['PLANETAS','8']],
+  quick:[['TIPO','G2V'],['RAIO','1 R☉'],['TEMP. SUP.','5.505 °C'],['ROTAÇÃO','25-35 d'],['IDADE','4,6 bi anos'],['PLANETAS','8']],
   visual:{mode:'star', c1:'#ff7a1e', c2:'#ffd76b', atmo:{col:'#ffb54a', i:1.6}},
   sections:[
     {t:'ESTRUTURA', rows:[['Diâmetro','1,39 mi km (109 Terras)'],['Massa','1,99 × 10³⁰ kg'],['Densidade','1,41 g/cm³'],['Gravidade','28 g'],['Temp. do núcleo','15 mi °C']]},
@@ -2055,7 +2056,7 @@ PLANETS.push(
     {t:'ESTRUTURA', rows:[['Diâmetro','116.460 km'],['Massa','5,68 × 10²⁶ kg (95 Terras)'],['Densidade','0,69 g/cm³, flutuaria na água'],['Área','42,7 bi km²'],['Anéis','282.000 km de largura · ~10 m a 1 km de espessura']]},
     {t:'CLIMA & ATMOSFERA', rows:[['Temp. média','−139 °C'],['Atmosfera','96% H₂ · 3% He'],['Ventos','até 1.800 km/h'],['Hexágono polar','Tempestade de 6 lados no polo norte'],['Água','Gelo, os anéis são 99% gelo d\'água']]},
     {t:'OS ANÉIS', rows:[['A idade','A Cassini pesou os anéis no Grand Finale de 2017: leves demais para serem antigos, uns 100 a 400 milhões de anos, os dinossauros já existiam quando eles se formaram'],['A chuva de anéis','Toneladas de gelo caem em Saturno a cada segundo, guiadas pelo campo magnético: em uns 300 milhões de anos os anéis terão sumido'],['As partes','C, B e A de dentro para fora, a divisão de Cassini entre B e A, o anel F fino por fora e o E, feito dos gêiseres de Encélado'],['As pastoras','Pan abre a divisão de Encke dentro do anel A; Prometeu esculpe o anel F, com Pandora por fora'],['A espessura','280 mil km de largura e só dezenas de metros de espessura: uma folha de papel do tamanho de um campo de futebol']]},
-    {t:'REGISTRO', rows:[['Descoberta','Antiguidade'],['Anéis identificados','1655 · Christiaan Huygens'],['Missão','Cassini (2004–2017) · mergulho final no planeta'],['População','0']]},
+    {t:'REGISTRO', rows:[['Descoberta','Antiguidade'],['Anéis identificados','1655 · Christiaan Huygens'],['Missão','Cassini (2004-2017) · mergulho final no planeta'],['População','0']]},
     {t:'LINK & VIAGEM', rows:[['Luz do Sol até aqui','79,7 min'],['Sonda desde a Terra','~7 anos (Cassini)']]}
   ],
   facts:['É o único planeta menos denso que a água.','Os anéis são jovens (talvez ~100 mi de anos) e vão sumir num futuro distante, "chove" anel no planeta.','Em 2025 o total de luas confirmadas saltou para 274, o recorde do sistema.'],
@@ -2428,7 +2429,7 @@ PLANETS.push(
 },
 {
   id:'plutao', name:'PLUTÃO', desig:'KBO-134340 · PLANETA ANÃO', kind:'Planeta anão', hab:2, gbar:0.06, pop:'0',
-  quick:[['GRAVIDADE','0,06 g'],['TEMP. MÉDIA','−229 °C'],['DIA','6,4 d'],['ANO','248 anos'],['LUAS','5'],['CORAÇÃO','sim ♥']],
+  quick:[['GRAVIDADE','0,06 g'],['TEMP. MÉDIA','−229 °C'],['DIA','6,4 d'],['ANO','248 anos'],['LUAS','5'],['CORAÇÃO','sim, o Tombaugh Regio']],
   sys:{orbit:50, size:0.42, speed:0.004, angle:4.9, incl:0.3},
   anao:true, orbita:{peri:44, afel:58, pos:0.22},
   visual:{mode:'rocky', c1:'#c7a582', c2:'#9a7a5c', c3:'#6e523f', scale:3.6, seed:14.2, crater:0.35, cap:0.8, capAmt:0.35, capCol:'#e8ddd0', spot:{pos:[0.4,-0.1], r:0.5, col:'#e6d7c4', on:1}},
@@ -3040,7 +3041,7 @@ const TRAPPIST_STAR = {
   visual:{mode:'star', c1:'#c92f14', c2:'#ff8a4a', atmo:{col:'#ff6a3a', i:1.6}},
   sections:[
     {t:'ESTRUTURA', rows:[['Tipo','Anã vermelha ultrafria (M8V)'],['Raio','Pouco maior que Júpiter'],['Massa','9% da massa do Sol'],['Temperatura','2.290 °C'],['Vida útil','Trilhões de anos, vai sobreviver ao Sol']]},
-    {t:'REGISTRO', rows:[['Distância','40,7 anos-luz'],['Constelação','Aquário'],['Planetas','7, todos rochosos, descobertos em 2016–17'],['James Webb','Já tirou a temperatura de b e c: parecem mundos sem atmosfera'],['Na fila','e, f e g: a zona habitável ainda está em julgamento']]}
+    {t:'REGISTRO', rows:[['Distância','40,7 anos-luz'],['Constelação','Aquário'],['Planetas','7, todos rochosos, descobertos em 2016-17'],['James Webb','Já tirou a temperatura de b e c: parecem mundos sem atmosfera'],['Na fila','e, f e g: a zona habitável ainda está em julgamento']]}
   ],
   facts:['Os 7 planetas caberiam DENTRO da órbita de Mercúrio.','Vistos de um deles, os vizinhos apareceriam no céu maiores que a nossa Lua.'],
   fict:null
@@ -3050,7 +3051,7 @@ function tp(id,name,idx,quick,rows,facts,vis,hab,gbar){
     quick, visual:vis, moons:[],
     sections:[
       {t:'ÓRBITA & ROTAÇÃO', rows:rows.concat([['Tipo de rotação','Síncrona, um lado em dia eterno, o outro em noite eterna'],['Estações','Não (sem inclinação relevante)']])},
-      {t:'REGISTRO', rows:[['Descoberta','2016–2017 · telescópio TRAPPIST + Spitzer'],['Método','Trânsito (sombra na estrela)'],['Água','Possível nos da zona habitável'],['População','?']]}
+      {t:'REGISTRO', rows:[['Descoberta','2016-2017 · telescópio TRAPPIST + Spitzer'],['Método','Trânsito (sombra na estrela)'],['Água','Possível nos da zona habitável'],['População','?']]}
     ],
     facts};
 }
@@ -3067,7 +3068,7 @@ const TRAPPIST_PLANETS = [
    [['Distância da estrela','0,022 UA'],['Ano','4,05 dias'],['Zona','Borda quente da zona habitável']],
    ['Temperatura de equilíbrio parecida com a da Terra, mas tudo depende da atmosfera.'],
    {mode:'rocky', c1:'#b09a6e', c2:'#cbb488', c3:'#84714f', scale:4.0, seed:23.3, crater:0.4}, 32, 0.62),
- tp('t1e','TRAPPIST-1E','e',[['RAIO','0,92 R⊕'],['GRAVIDADE','~0,8 g'],['ANO','6,1 d'],['TEMP. EQ.','~−22 °C'],['LUAS','0'],['ÁGUA','provável ★']],
+ tp('t1e','TRAPPIST-1E','e',[['RAIO','0,92 R⊕'],['GRAVIDADE','~0,8 g'],['ANO','6,1 d'],['TEMP. EQ.','~−22 °C'],['LUAS','0'],['ÁGUA','provável']],
    [['Distância da estrela','0,029 UA'],['Ano','6,10 dias'],['Zona','ZONA HABITÁVEL, o favorito']],
    ['O melhor candidato do sistema: densidade parecida com a da Terra, possível oceano.','Se tiver atmosfera, o lado do "anoitecer eterno" teria clima ameno perpétuo.','Próximo da fila do James Webb: depois do veredito seco de b e c, é ele quem carrega a esperança.'],
    {mode:'earth', c1:'#4a7a52', c2:'#8a9a5f', c3:'#b8a06e', seaCol:'#12406e', sea:0.5, scale:3.2, seed:24.9, cap:0.72, capAmt:0.7, capCol:'#e8f0f4', atmo:{col:'#7ab8e8', i:1.2}, clouds:{amt:0.8, scale:4.0, col:'#ffffff'}}, 68, 0.82),
@@ -3110,7 +3111,7 @@ const STARSYS = [
    facts:['Sirius B tem a massa do Sol comprimida no tamanho da Terra: 1 colher de chá pesa toneladas.']}},
  {id:'trappist', name:'TRAPPIST-1', nav:true, pos:[-12,0,6], hot:false,
   card:{desig:'SISTEMA ESTELAR · 40,7 AL', kind:'Anã vermelha · 7 planetas rochosos', hab:null,
-   quick:[['DISTÂNCIA','40,7 al'],['PLANETAS','7 rochosos'],['ZONA HABIT.','3'],['DESCOBERTA','2016–17']],
+   quick:[['DISTÂNCIA','40,7 al'],['PLANETAS','7 rochosos'],['ZONA HABIT.','3'],['DESCOBERTA','2016-17']],
    sections:[{t:'REGISTRO', rows:[['Estrela','Anã vermelha ultrafria, pouco maior que Júpiter'],['Sistema','7 planetas em órbitas menores que a de Mercúrio'],['James Webb','Já mediu b e c, provavelmente sem atmosfera; a zona habitável é a próxima']]}],
    facts:['O sistema com mais planetas do tamanho da Terra já encontrado até hoje.']}},
  {id:'polaris', name:'POLARIS', nav:true, pos:[-2,0,22],
@@ -3151,7 +3152,7 @@ const STARSYS = [
  {id:'betelgeuse', name:'BETELGEUSE', nav:true, pos:[-6,0,-16], hot:true,
   card:{desig:'ESTRELA · ~550 AL', kind:'Supergigante vermelha', hab:null,
    quick:[['DISTÂNCIA','~550 al'],['RAIO','~760 Sóis'],['IDADE','~10 mi anos'],['DESTINO','supernova']],
-   sections:[{t:'REGISTRO', rows:[['Tamanho','No lugar do Sol, engoliria até Júpiter'],['Futuro','Vai explodir em supernova, amanhã ou daqui a 100 mil anos'],['2019–20','O "Grande Escurecimento" fez o mundo achar que era a hora'],['Quando explodir','Brilhará como a Lua cheia, visível de dia']]}],
+   sections:[{t:'REGISTRO', rows:[['Tamanho','No lugar do Sol, engoliria até Júpiter'],['Futuro','Vai explodir em supernova, amanhã ou daqui a 100 mil anos'],['2019-20','O "Grande Escurecimento" fez o mundo achar que era a hora'],['Quando explodir','Brilhará como a Lua cheia, visível de dia']]}],
    facts:['É tão inchada e difusa que sua "superfície" é quase um vácuo quente.']}},
  {id:'cnc55', name:'55 CANCRI', nav:true, pos:[-16.5,0,-3.5], hot:false,
   card:{desig:'SISTEMA ESTELAR · 41 AL', kind:'Lar do “planeta-diamante”', hab:null,
@@ -3433,7 +3434,7 @@ const STARSYS = [
 const GALAXIES = [
  {id:'vialactea', radec:'17h46m −29°00′', name:'VIA LÁCTEA', nav:true, pos:[0,0,0], hue:0.58, tilt:[0.4,0.2],
   card:{desig:'GALÁXIA · CASA', kind:'Espiral barrada (SBbc)', hab:null,
-   quick:[['DIÂMETRO','~100 mil al'],['ESTRELAS','100–400 bi'],['IDADE','13,6 bi anos'],['BURACO NEGRO','Sgr A*']],
+   quick:[['DIÂMETRO','~100 mil al'],['ESTRELAS','100-400 bi'],['IDADE','13,6 bi anos'],['BURACO NEGRO','Sgr A*']],
    sections:[{t:'REGISTRO', rows:[['Centro','Sagittarius A*: buraco negro de 4,1 mi de massas solares'],['Nossa posição','Braço de Órion, a 26 mil al do centro'],['Ano galáctico','O Sol leva ~230 mi de anos para dar 1 volta'],['Vizinhança','Grupo Local, ~80 galáxias']]}],
    facts:['Da última volta do Sol na galáxia para cá, os dinossauros surgiram e sumiram.']}},
  {id:'sombrero', radec:'12h40m −11°37′', name:'SOMBRERO · M104', nav:true, pos:[-14,9,-26], hue:0.09, tilt:[1.35,0.1],
@@ -3481,21 +3482,21 @@ const ACEN_A = {
   visual:{mode:'star', c1:'#fff2c4', c2:'#ffc25e'},
   sections:[
     {t:'ESTRUTURA', rows:[['Tipo','G2V, mesma classe do Sol'],['Massa','1,1 massa solar'],['Raio','1,22 R☉'],['Temperatura','5.500 °C'],['Luminosidade','1,5× o Sol']]},
-    {t:'REGISTRO', rows:[['Distância','4,37 anos-luz, o sistema mais próximo'],['Constelação','Centauro'],['Sistema','Triplo: A + B + Proxima'],['Órbita A–B','79,9 anos · 11 a 36 UA'],['Curiosidade','A “estrela” mais brilhante do céu de Marte']]}
+    {t:'REGISTRO', rows:[['Distância','4,37 anos-luz, o sistema mais próximo'],['Constelação','Centauro'],['Sistema','Triplo: A + B + Proxima'],['Órbita A-B','79,9 anos · 11 a 36 UA'],['Curiosidade','A “estrela” mais brilhante do céu de Marte']]}
   ],
   facts:['Daqui, o Sol seria só uma estrela na constelação de Cassiopeia.','Com a tecnologia atual de sondas, a viagem levaria ~70 mil anos.'],
   fict:'Avatar, Pandora é uma lua fictícia deste sistema. A Frota Estelar situa aqui um dos primeiros estaleiros.'
 };
 const ACEN_BODIES = [
  {id:'acenb', name:'ALPHA CEN B', desig:'αCEN · ESTRELA COMPANHEIRA', kind:'Anã laranja (K1V)', hab:null, gbar:31, pop:'·',
-  quick:[['TIPO','K1V'],['TEMP. SUP.','5.000 °C'],['MASSA','0,9 Sol'],['RAIO','0,86 R☉'],['ÓRBITA','79,9 anos'],['SEPARAÇÃO','11–36 UA']],
+  quick:[['TIPO','K1V'],['TEMP. SUP.','5.000 °C'],['MASSA','0,9 Sol'],['RAIO','0,86 R☉'],['ÓRBITA','79,9 anos'],['SEPARAÇÃO','11-36 UA']],
   sys:{orbit:16, size:1.15, speed:0.5, angle:0.9},
   visual:{mode:'star', c1:'#ffd9a0', c2:'#ff9a4d'},
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Órbita ao redor de A','79,9 anos'],['Distância de A','11 a 36 UA (elíptica)'],['Vista de um planeta de A','Brilharia como centenas de luas cheias']]},
     {t:'REGISTRO', rows:[['Tipo','K1V, anã laranja, um pouco menor que o Sol'],['Temperatura','~5.000 °C'],['Planetas','Nenhum confirmado até hoje'],['Nota','Já foi anunciado um planeta aqui (αCen Bb), depois refutado']]}
   ],
-  facts:['A e B chegam tão perto quanto Sol–Saturno, e tão longe quanto Sol–Plutão.'], fict:null, moons:[]},
+  facts:['A e B chegam tão perto quanto Sol-Saturno, e tão longe quanto Sol-Plutão.'], fict:null, moons:[]},
  {id:'proxima', name:'PROXIMA CENTAURI', desig:'αCEN C · ESTRELA', kind:'Anã vermelha (M5.5Ve) · flare star', hab:null, gbar:45, pop:'·',
   quick:[['TIPO','M5.5Ve'],['TEMP. SUP.','2.700 °C'],['MASSA','0,12 Sol'],['RAIO','0,15 R☉'],['DISTÂNCIA','4,24 al'],['PLANETAS','2 confirmados']],
   sys:{orbit:30, size:0.6, speed:0.28, angle:3.6},
@@ -3533,7 +3534,7 @@ const SIR_A = {
   visual:{mode:'star', c1:'#eaf2ff', c2:'#9fc4ff'},
   sections:[
     {t:'ESTRUTURA', rows:[['Tipo','A1V, branca, quente e jovem'],['Massa','2,06 massas solares'],['Temperatura','9.940 °C'],['Idade','~240 mi anos'],['Luminosidade','25× o Sol']]},
-    {t:'REGISTRO', rows:[['Distância','8,6 anos-luz'],['Constelação','Cão Maior'],['Nome','Do grego seirios, “ardente”'],['Companheira','Sirius B, a anã branca (toque na órbita)'],['No Egito antigo','Seu nascer helíaco anunciava a cheia do Nilo']]}
+    {t:'REGISTRO', rows:[['Distância','8,6 anos-luz'],['Constelação','Cão Maior'],['Nome','Do grego seirios, “ardente”'],['Companheira','Sirius B, a anã branca'],['No Egito antigo','Seu nascer helíaco anunciava a cheia do Nilo']]}
   ],
   facts:['Brilha o dobro da segunda mais brilhante (Canopus).','Está se aproximando: daqui a 60 mil anos brilhará ainda mais.'],
   fict:'Harry Potter, Sirius Black, o animago em forma de cão, homenageia a estrela do Cão Maior.'
@@ -3664,7 +3665,7 @@ const ANT_STAR = {
   fict:'O nome significa RIVAL DE MARTE: os antigos achavam que a estrela e o planeta disputavam quem era mais vermelho.'};
 const BET_STAR = {
   id:'betelgeuses', name:'BETELGEUSE', desig:'ESTRELA · M1-2 Ia', kind:'Supergigante vermelha em fim de vida', hab:null, gbar:0.03,
-  quick:[['TIPO','M1-2 Ia'],['RAIO','~760 R☉'],['MASSA','16–19 Sol'],['TEMP. SUP.','3.300 °C'],['IDADE','~8–10 mi anos'],['DISTÂNCIA','~550 al']],
+  quick:[['TIPO','M1-2 Ia'],['RAIO','~760 R☉'],['MASSA','16-19 Sol'],['TEMP. SUP.','3.300 °C'],['IDADE','~8-10 mi anos'],['DISTÂNCIA','~550 al']],
   visual:{mode:'star', c1:'#c9451a', c2:'#ff9a52'},
   sections:[
     {t:'ESTRUTURA', rows:[['Raio','~760 raios solares. No lugar do Sol, a superfície dela passaria da órbita de Júpiter'],['Massa','16 a 19 massas solares, mas espalhadas num volume gigantesco'],['Densidade','O "gás" da superfície é mais rarefeito que o melhor vácuo feito em laboratório'],['Temperatura','3.300 °C, fria para uma estrela, e é por isso que ela é vermelha'],['Perda de massa','Sopra o equivalente a uma Terra por ano, e se envolve na própria poeira']]},
@@ -3680,7 +3681,7 @@ const BELT_HUB = {
   id:'cinturao', name:'CINTURÃO DE ASTEROIDES', desig:'SOL · REGIÃO', kind:'Anel de escombros entre Marte e Júpiter',
   hab:2, gbar:0.03, pop:'0 (por enquanto, a mineração vem aí)', moonsMeta:'PRINCIPAIS CORPOS',
   region:true, field:{shape:'ring', r0:5.5, r1:19, h:2.2, col:0x8a929c, rock:0x6b7480, size:0.13},
-  quick:[['EXTENSÃO','2,1–3,3 UA'],['CORPOS','>1 milhão'],['MASSA TOTAL','4% da Lua'],['MAIOR','Ceres'],['DISTÂNCIA MÉDIA','~1 mi km entre rochas'],['ORIGEM','planeta que não nasceu']],
+  quick:[['EXTENSÃO','2,1-3,3 UA'],['CORPOS','>1 milhão'],['MASSA TOTAL','4% da Lua'],['MAIOR','Ceres'],['DISTÂNCIA MÉDIA','~1 mi km entre rochas'],['ORIGEM','planeta que não nasceu']],
   visual:{mode:'rocky', c1:'#5f676f', c2:'#8a929c', c3:'#3d434a', scale:6.5, seed:77.3, crater:0.95},
   sections:[
     {t:'REGISTRO', rows:[['O que é','Restos de formação planetária que Júpiter nunca deixou virar planeta'],['Densidade real','Sondas o atravessam sem nem mirar, filmes exageram'],['Composição','Rocha, metal e gelo · Ceres tem até água'],['Visitantes','Dawn (Ceres/Vesta) · NEAR (Eros) · Lucy em rota']]}
@@ -3692,7 +3693,7 @@ const KUIPER_HUB = {
   id:'kuiper', name:'CINTURÃO DE KUIPER', desig:'SOL · REGIÃO TRANSNETUNIANA', kind:'O terceiro reino do Sistema Solar',
   hab:1, gbar:0.05, pop:'0', moonsMeta:'MUNDOS ANÕES & RELÍQUIAS',
   region:true, field:{shape:'ring', r0:6, r1:20, h:3.4, col:0x7e8fae, rock:0x59637a, size:0.15},
-  quick:[['EXTENSÃO','30–55 UA'],['OBJETOS','>100 mil (>100 km)'],['REI','Plutão'],['MASSA','~2% da Terra'],['VISITADO','New Horizons'],['IDADE','material original de 4,6 bi anos']],
+  quick:[['EXTENSÃO','30-55 UA'],['OBJETOS','>100 mil (>100 km)'],['REI','Plutão'],['MASSA','~2% da Terra'],['VISITADO','New Horizons'],['IDADE','material original de 4,6 bi anos']],
   visual:{mode:'rocky', c1:'#6a7688', c2:'#9aa8bd', c3:'#454e5e', scale:6.0, seed:99.1, crater:0.9},
   sections:[
     {t:'REGISTRO', rows:[['O que é','Um anel de mundos congelados além de Netuno, sobras intactas da formação do sistema'],['Previsto','Por Gerard Kuiper (1951), confirmado só em 1992'],['Habitantes ilustres','Plutão, Éris, Makemake, Haumea, Arrokoth'],['Cometas','É o berço dos cometas de curto período, como o Halley'],['Além dele','A Nuvem de Oort, até 1 ano-luz de distância']]}
@@ -3727,7 +3728,7 @@ PLANETS.push(
  {id:'sedna', name:'SEDNA', desig:'PLANETA ANÃO · CONFINS', kind:'O mundo mais solitário conhecido', hab:0, gbar:0.03, pop:'0',
   anao:true, sys:{orbit:100, size:0.30, speed:0.001, angle:4.0},
   orbita:{peri:66, afel:130, pos:0.93, incl:0.21},
-  quick:[['DIÂMETRO','~1.000 km'],['ANO','~11.400 anos'],['DISTÂNCIA','76–900 UA'],['COR','a mais vermelha do sistema'],['DESCOBERTA','2003'],['PERIÉLIO','~2076']],
+  quick:[['DIÂMETRO','~1.000 km'],['ANO','~11.400 anos'],['DISTÂNCIA','76-900 UA'],['COR','a mais vermelha do sistema'],['DESCOBERTA','2003'],['PERIÉLIO','~2076']],
   visual:{mode:'rocky', c1:'#a85a48', c2:'#c87a5e', c3:'#7a3e32', scale:4.4, seed:90.3, crater:0.3},
   sections:[
     {t:'A ÓRBITA IMPOSSÍVEL', rows:[['Excentricidade','De 76 a 900 UA: uma volta leva 11.400 anos, mais que toda a civilização escrita'],['O mistério','Nada conhecido explica como ela foi parar lá: nem planetas, nem o Kuiper'],['As hipóteses','Uma estrela que passou perto no berço do Sol, ou o Planeta Nove, ainda não visto'],['Posição aqui','Chegando ao periélio de ~2076: a única visita dela na nossa era. As distâncias seguem a escala comprimida da cena']]},
@@ -3739,7 +3740,7 @@ PLANETS.push(
  {id:'eris', name:'ÉRIS', desig:'PLANETA ANÃO · TRANSNETUNIANO', kind:'A que destronou Plutão', hab:1, gbar:0.084, pop:'0',
   anao:true, sys:{orbit:70, size:0.38, speed:0.002, angle:2.2},
   orbita:{peri:52, afel:85, incl:0.77},
-  quick:[['DIÂMETRO','2.326 km'],['ANO','558 anos'],['DISTÂNCIA','38–98 UA'],['TEMP','−243 °C'],['LUA','Disnomia'],['DESCOBERTA','2005']],
+  quick:[['DIÂMETRO','2.326 km'],['ANO','558 anos'],['DISTÂNCIA','38-98 UA'],['TEMP','−243 °C'],['LUA','Disnomia'],['DESCOBERTA','2005']],
   visual:{mode:'rocky', c1:'#d8dde4', c2:'#f2f5f9', c3:'#aab2bd', scale:4.8, seed:66.2, crater:0.25, atmo:{col:'#cfe0f5', i:0.35}},
   sections:[
     {t:'A ÓRBITA SELVAGEM', rows:[['Excentricidade','De 38 a 98 UA: no periélio chega mais perto que Plutão no afélio'],['Inclinação','44 graus fora do plano dos planetas, a maior entre os grandes anões'],['Hoje','Perto do afélio: o Sol visto de lá é só uma estrela muito brilhante'],['Posição aqui','A elipse é real na forma; as distâncias seguem a escala comprimida da cena']]},
@@ -3763,7 +3764,7 @@ PLANETS.push(
   sys:{orbit:23, size:0.26, speed:2.0, angle:2.4},
   traj:{de:2015, ate:2028},
   marcos:[[2015,'PERIÉLIO COM A ROSETTA AO LADO'],[2016,'ADEUS, ROSETTA'],[2022,'AFÉLIO'],[2028,'PRÓXIMO PERIÉLIO']],
-  quick:[['NÚCLEO','4,3 × 4,1 km, dois lobos'],['PERÍODO','6,45 anos'],['DISTÂNCIA','1,24–5,68 UA'],['VISITA','Rosetta, 2014-2016'],['POUSO','Philae, 12/11/2014'],['PRÓXIMO PERIÉLIO','2028']],
+  quick:[['NÚCLEO','4,3 × 4,1 km, dois lobos'],['PERÍODO','6,45 anos'],['DISTÂNCIA','1,24-5,68 UA'],['VISITA','Rosetta, 2014-2016'],['POUSO','Philae, 12/11/2014'],['PRÓXIMO PERIÉLIO','2028']],
   visual:{mode:'rocky', c1:'#5a5248', c2:'#7a7266', c3:'#3a342c', scale:6.5, seed:67.0, crater:0.9},
   sections:[
     {t:'A MISSÃO ROSETTA', rows:[['10 anos de viagem','A sonda europeia perseguiu o cometa por uma década antes de alcançá-lo em 2014'],['O pouso','O módulo Philae quicou DUAS vezes e parou de lado numa fenda, mas trabalhou'],['Dois anos juntos','A Rosetta orbitou o cometa durante o periélio inteiro, vendo os jatos acordarem'],['O fim','Em 2016 ela desceu de vez e ficou lá: está pousada no cometa até hoje']]},
@@ -3783,7 +3784,7 @@ PLANETS.push(
   facts:['Ficou dezoito meses visível a olho nu, o recorde de qualquer cometa na história registrada.','A órbita é quase perpendicular ao plano dos planetas: ele fura o Sistema Solar de cima a baixo.'],
   fict:'O Grande Cometa de 1997 pairou sobre uma geração: entrou em fotos de família, capas de disco e na memória de quem olhou para o céu naquele ano.', moons:[]},
  {id:'halley', name:'COMETA HALLEY', desig:'1P · COMETA PERIÓDICO', kind:'O cometa de todas as gerações', hab:0, gbar:0.0001, pop:'0',
-  quick:[['NÚCLEO','15 × 8 km'],['PERÍODO','75–76 anos'],['ÚLTIMA VISITA','1986'],['PRÓXIMA','2061'],['VELOCIDADE','até 254 mil km/h'],['REGISTROS','desde 240 a.C.']],
+  quick:[['NÚCLEO','15 × 8 km'],['PERÍODO','75-76 anos'],['ÚLTIMA VISITA','1986'],['PRÓXIMA','2061'],['VELOCIDADE','até 254 mil km/h'],['REGISTROS','desde 240 a.C.']],
   comet:true, orbita:{peri:8.6, afel:47, incl:0.31},
   /* r259 · a linha do tempo começa em 1682 (a passagem que o próprio Halley viu): com o
      período fixo de 75,84 anos as voltas de 1682, 1758, 1835 e 1910 caem a menos de um ano
@@ -3794,7 +3795,7 @@ PLANETS.push(
   visual:{mode:'rocky', c1:'#3f3c38', c2:'#5c5850', c3:'#2a2825', scale:6.4, seed:19.86, crater:0.9, atmo:{col:'#a8e8d0', i:0.5}},
   sections:[
     {t:'AS PASSAGENS', rows:[['240 a.C.','O registro mais antigo certo, nas crônicas chinesas; a Babilônia anotou a de 164 a.C. em tabuinhas de argila'],['1066','Passa meses antes da Batalha de Hastings e a Tapeçaria de Bayeux o borda como presságio, com a legenda isti mirant stella'],['1301','Giotto o vê e o pinta como a Estrela de Belém na Adoração dos Magos da Capela Scrovegni, em Pádua'],['1682','Edmond Halley o observa e em 1705 prova que é o mesmo cometa de 1531 e 1607: a volta prevista para 1758 se cumpre, e o cometa ganha o nome dele'],['1910','A Terra atravessa a cauda; a imprensa fala em cianogênio venenoso e vendem-se pílulas e máscaras anticometa; Mark Twain, nascido na passagem de 1835, morre um dia depois do periélio'],['1986','A passagem mais estudada e a menos bonita a olho nu: cinco sondas o visitam, e a Giotto fotografa o núcleo em forma de amendoim a 600 km']]},
-    {t:'ÓRBITA & ROTAÇÃO', rows:[['Período','75–76 anos, órbita real MUITO excêntrica (aqui simbólica)'],['Alcance','De dentro da órbita de Vênus até além de Netuno'],['Sentido','Retrógrado, na contramão dos planetas']]},
+    {t:'ÓRBITA & ROTAÇÃO', rows:[['Período','75-76 anos, órbita real MUITO excêntrica (aqui simbólica)'],['Alcance','De dentro da órbita de Vênus até além de Netuno'],['Sentido','Retrógrado, na contramão dos planetas']]},
     {t:'REGISTRO', rows:[['Edmond Halley','Previu em 1705 o retorno de 1758, não viveu para ver, mas ganhou o nome'],['1066','Bordado na Tapeçaria de Bayeux como presságio'],['1986','A sonda Giotto fotografou o núcleo de perto'],['Herança','As chuvas de meteoros Orionídeas e Eta Aquáridas são poeira dele']]}
   ],
   facts:['Mark Twain nasceu e morreu com o Halley no céu (1835 e 1910), como ele mesmo previu.','Em 1910 venderam “pílulas anticometa” contra o gás da cauda. Funcionaram: ninguém morreu.'],
@@ -3965,7 +3966,7 @@ PLANETS.push(
   facts:['É o terceiro objeto interestelar confirmado, e o mais rápido e mais hiperbólico dos três: excentricidade 6,1.','Pode ser mais velho que o Sistema Solar: a trajetória aponta para o disco espesso da galáxia, de estrelas com 7 bilhões de anos.','As sondas em órbita de Marte fizeram as fotos mais próximas dele, em outubro de 2025.'],
   fict:'Como na ʻOumuamua, Avi Loeb levantou a hipótese de nave alienígena; a resposta veio em espectros: gelo de CO₂, poeira e níquel, um cometa de outra estrela.', moons:[]},
  {id:'oumuamua', escape:true, periUA:0.256, name:'ʻOUMUAMUA', desig:'1I/2017 U1 · VISITANTE INTERESTELAR', kind:'O primeiro mensageiro de outra estrela', hab:0, gbar:0.00001, pop:'0 (até onde sabemos…)',
-  quick:[['TAMANHO','~100–400 m'],['FORMA','charuto/panqueca 10:1'],['ORIGEM','outro sistema estelar'],['VELOCIDADE','87 km/s'],['DETECÇÃO','2017 · Pan-STARRS'],['STATUS','já foi embora']],
+  quick:[['TAMANHO','~100-400 m'],['FORMA','charuto/panqueca 10:1'],['ORIGEM','outro sistema estelar'],['VELOCIDADE','87 km/s'],['DETECÇÃO','2017 · Pan-STARRS'],['STATUS','já foi embora']],
   sys:{orbit:57, size:0.26, speed:3.4, angle:1.2, incl:0.7},
   visual:{mode:'rocky', c1:'#8a4f3a', c2:'#b0714f', c3:'#5c3223', scale:7.5, seed:20.17, crater:0.6},
   sections:[
@@ -4043,7 +4044,7 @@ const OORT_HUB = {
   id:'oort', name:'NUVEM DE OORT', desig:'SOL · FRONTEIRA FINAL', kind:'A concha de gelo que embrulha o sistema',
   hab:0, gbar:0.0001, pop:'0',
   region:true, field:{shape:'shell', r0:7, r1:19, col:0xa8c0dc, rock:0x7d8ea6, size:0.13},
-  quick:[['EXTENSÃO','2 mil–100 mil UA'],['ALCANCE','quase 1 ano-luz'],['NÚCLEOS','trilhões'],['ORIGEM','cometas de longo período'],['VISTA','nunca, só inferida'],['VOYAGER 1','chega em ~300 anos']],
+  quick:[['EXTENSÃO','2 mil-100 mil UA'],['ALCANCE','quase 1 ano-luz'],['NÚCLEOS','trilhões'],['ORIGEM','cometas de longo período'],['VISTA','nunca, só inferida'],['VOYAGER 1','chega em ~300 anos']],
   visual:{mode:'rocky', c1:'#aab8c8', c2:'#d5e0ec', c3:'#7a8798', scale:5.8, seed:1950.0, crater:0.5, atmo:{col:'#cfe0f5', i:0.4}},
   sections:[
     {t:'REGISTRO', rows:[['O que é','Uma casca esférica de trilhões de núcleos de gelo, prevista por Jan Oort em 1950'],['Escala','A borda externa fica a quase 1 ano-luz, um quarto do caminho até Alpha Centauri'],['Função','Despensa dos cometas de longo período, como o Hale-Bopp'],['Voyager 1','Entra nela em ~300 anos… e leva 30 mil anos para atravessar'],['Prova','Ninguém nunca a viu, sabemos dela pelas órbitas dos cometas que ela nos manda']]}
@@ -4241,7 +4242,7 @@ const VEGA_DISK = {
   id:'vegadisk', name:'DISCO DE VEGA', desig:'VEGA · DISCO DE DETRITOS', kind:'O primeiro anel de poeira visto fora do Sol',
   hab:0, gbar:0.01, pop:'0',
   region:true, field:{shape:'ring', r0:6, r1:18, h:1.1, col:0xaebbd0, rock:0x76839a, size:0.12},
-  quick:[['EXTENSÃO','~70–100 UA'],['DESCOBERTA','1983 · IRAS'],['MATERIAL','poeira e planetesimais'],['TEMP','−190 °C'],['APELIDO','“fenômeno Vega”'],['RETRATO','JWST · 2024']],
+  quick:[['EXTENSÃO','~70-100 UA'],['DESCOBERTA','1983 · IRAS'],['MATERIAL','poeira e planetesimais'],['TEMP','−190 °C'],['APELIDO','“fenômeno Vega”'],['RETRATO','JWST · 2024']],
   visual:{mode:'rocky', c1:'#8a93a5', c2:'#b8c2d2', c3:'#5c6474', scale:6.2, seed:83.1, crater:0.7},
   sections:[
     {t:'REGISTRO', rows:[['1983','O satélite IRAS notou calor demais vindo de Vega: poeira morna, o 1º disco de detritos de outra estrela'],['O que é','Um cinturão de escombros como o nosso Kuiper, visto de frente'],['JWST (2024)','Fotografou o disco: liso, sem falhas. Sinal de que talvez NÃO existam planetas gigantes ali'],['Legado','O “fenômeno Vega” virou o método clássico de flagrar sistemas em formação']]}
@@ -5036,14 +5037,14 @@ const SYS = {
   trappist:{ id:'trappist', radec:'23h06m −05°02′', name:'TRAPPIST-1', star:TRAPPIST_STAR, bodies:TRAPPIST_PLANETS, belt:[], beltR:null,
         starSize:1.5, camMax:40, hint:'7 MUNDOS EM MENOS ESPAÇO QUE A ÓRBITA DE MERCÚRIO',
         card:{desig:'SISTEMA ESTELAR · AQUÁRIO', kind:'Sete mundos compactos', hab:null,
-          quick:[['ESTRELA','1 (M8V)'],['PLANETAS','7 rochosos'],['ZONA HABITÁVEL','3 deles'],['DISTÂNCIA','40,7 al'],['DESCOBERTA','2016–17'],['ESCALA','cabe na órbita de Mercúrio']],
+          quick:[['ESTRELA','1 (M8V)'],['PLANETAS','7 rochosos'],['ZONA HABITÁVEL','3 deles'],['DISTÂNCIA','40,7 al'],['DESCOBERTA','2016-17'],['ESCALA','cabe na órbita de Mercúrio']],
           sections:[{t:'REGISTRO', rows:[['A estrela','Anã vermelha ultrafria, pouco maior que Júpiter'],['O prêmio','e, f e g na zona habitável, e é o favorito'],['James Webb','Veredito parcial: b (~230 °C) e c (~110 °C) parecem rocha nua'],['A aposta','Se um dos da zona habitável tiver atmosfera, será a manchete da década']]}],
           facts:['Vistos de um planeta, os vizinhos apareceriam maiores que a nossa Lua no céu.']} },
   alphacen:{ id:'alphacen', radec:'14h40m −60°50′', name:'ALPHA CENTAURI', star:ACEN_A, bodies:ACEN_BODIES, belt:[], beltR:null,
         starSize:3.2, camMax:60, hint:'SISTEMA TRIPLO · PROXIMA GUARDA DOIS PLANETAS',
         card:{desig:'SISTEMA ESTELAR · CENTAURO', kind:'Os vizinhos de porta', hab:null,
-          quick:[['ESTRELAS','3 (A, B e Proxima)'],['PLANETAS','2 confirmados'],['DISTÂNCIA','4,24–4,37 al'],['ÓRBITA A–B','79,9 anos'],['ZONA HABITÁVEL','Proxima b'],['VIAGEM (hoje)','~70 mil anos']],
-          sections:[{t:'REGISTRO', rows:[['A e B','Um par tipo Sol dançando a 11–36 UA'],['Proxima','Anã vermelha a 0,2 al do par, AQUI fora de escala'],['Por que importa','O sistema mais próximo, alvo nº 1 de sondas interestelares']]}],
+          quick:[['ESTRELAS','3 (A, B e Proxima)'],['PLANETAS','2 confirmados'],['DISTÂNCIA','4,24-4,37 al'],['ÓRBITA A-B','79,9 anos'],['ZONA HABITÁVEL','Proxima b'],['VIAGEM (hoje)','~70 mil anos']],
+          sections:[{t:'REGISTRO', rows:[['A e B','Um par tipo Sol dançando a 11-36 UA'],['Proxima','Anã vermelha a 0,2 al do par, AQUI fora de escala'],['Por que importa','O sistema mais próximo, alvo nº 1 de sondas interestelares']]}],
           facts:['Breakthrough Starshot: velas de luz chegariam em ~20 anos.']} },
   sirius:{ id:'sirius', radec:'06h45m −16°43′', name:'SISTEMA SIRIUS', star:SIR_A, bodies:SIR_BODIES, belt:[], beltR:null,
         starSize:3.6, camMax:46, hint:'A ANÃ BRANCA SIRIUS B ORBITA A CADA 50 ANOS',
@@ -5377,7 +5378,7 @@ const SYS = {
         starSize:9, camMax:70, hint:'NENHUM PLANETA CATALOGADO · SUPERGIGANTE EM FIM DE VIDA',
         card:{desig:'SISTEMA ESTELAR · ÓRION', kind:'Uma bomba-relógio magnífica', hab:null,
           quick:[['ESTRELA','1 supergigante'],['RAIO','~760 R☉'],['PLANETAS','nenhum catalogado'],['DISTÂNCIA','~550 al'],['IDADE','~10 mi anos'],['DESTINO','supernova']],
-          sections:[{t:'REGISTRO', rows:[['Escala','No lugar do Sol, engoliria até Júpiter'],['2019–20','O Grande Escurecimento, poeira derrubou o brilho'],['Quando explodir','Brilhará como a Lua cheia, visível de dia']]}],
+          sections:[{t:'REGISTRO', rows:[['Escala','No lugar do Sol, engoliria até Júpiter'],['2019-20','O Grande Escurecimento, poeira derrubou o brilho'],['Quando explodir','Brilhará como a Lua cheia, visível de dia']]}],
           facts:['Pode já ter explodido, a luz levaria ~550 anos para nos contar.']} }
 };
 const ALLBODIES = {};
@@ -5452,7 +5453,7 @@ if(typeof I18N !== 'undefined' && I18N){
     if(b.desig) b.desig = tpal(b.desig);
     /* r233 · ficha traduzida por inteiro quando existe em dados_en.js */
     const d = DEN[id];
-    if(d){ for(const k of ['kind', 'quick', 'sections', 'facts', 'fict', 'exLuas', 'moonsMeta']) if(d[k] !== undefined) b[k] = d[k]; }
+    if(d){ for(const k of ['desig', 'kind', 'quick', 'sections', 'facts', 'fict', 'exLuas', 'moonsMeta']) if(d[k] !== undefined) b[k] = d[k]; }   /* r290 · desig traduzido quando a ficha EN traz */
     else if(b.moonsMeta) b.moonsMeta = tpal(b.moonsMeta);
   }
   if(DEN.__sys) for(const sid in DEN.__sys){
@@ -5837,7 +5838,7 @@ function updateLabels(){
        constelações (sempre:true) atravessam o declutter; na linha do tempo
        a regra descansa inteira (a rota precisa dos nomes) */
     if(ACT.escr && ACT.kind==='system' && CAM.dist < 0.8 && !TRAJ){
-      const dono = ST.mapCard ? (ST.mapCard.id || ST.mapCard) : null;
+      const dono = ST.mapCard ? ((!ST.mapCard.type || ST.mapCard.type === 'body') ? ST.mapCard.id : ((ST.mapCard.type === 'satlive' || ST.mapCard.type === 'sismo') ? 'terra' : null)) : null;   /* r290 */
       const fica = (dono && L.lid && (L.lid === dono || L.lidPai === dono)) || L.sempre;
       if(!fica){ L.el.style.display = 'none'; continue; }
     }
@@ -6456,7 +6457,7 @@ const SATV = {carregando:false, pronto:false, erro:null, sats:[], porNorad:{}, a
   escondidos:[], orbEsc:[], lbls:[], famosos:[], trilhas:[], foco:null, cardSat:null, q:0, ultimoAviso:0, fonte:''};
 const SATCFG = {grupos:{}, lixo:true};   /* r280 · lido do store no boot (bloco de baixo) */
 const SATV_GRUPOS = [['stations', 0xffc98a], ['visual', 0xffffff], ['gps-ops', 0x8fe0a8], ['galileo', 0x8fe0d8], ['glo-ops', 0xa8d8a0], ['science', 0x8fc8ff]];
-const SATV_GRUPO_NOME = {stations:'ESTAÇÕES', visual:'OS MAIS BRILHANTES', 'gps-ops':'GPS', galileo:'GALILEO', 'glo-ops':'GLONASS', science:'CIÊNCIA'};
+const SATV_GRUPO_NOME = {stations:'ESTAÇÕES ESPACIAIS', visual:'OS MAIS BRILHANTES', 'gps-ops':'GPS', galileo:'GALILEO', 'glo-ops':'GLONASS', science:'CIÊNCIA'};
 /* os famosos: o modelo desenhado (fora de escala, como as naves das missões), o card de
    sempre quando ele existe no atlas, e a trilha da órbita */
 const SATV_NOMES = {25544:{nome:'ISS', corpo:'iss', modelo:'iss', tam:0.00012, tamC:0.16}, 48274:{nome:'TIANGONG', corpo:'tiangong', modelo:'tiangong', tam:0.00009, tamC:0.12}, 20580:{nome:'HUBBLE', corpo:'hubble', modelo:'hubble', tam:0.00008, tamC:0.10}};
@@ -6537,8 +6538,13 @@ function satVivoDesmonta(){
     if(SATV.pontos){ const i = A.pickables.indexOf(SATV.pontos); if(i >= 0) A.pickables.splice(i, 1); }
     for(const f of SATV.famosos){ const i = A.pickables.indexOf(f.pk); if(i >= 0) A.pickables.splice(i, 1); }
   }
-  for(const f of SATV.famosos){ if(f.anc.parent) f.anc.parent.remove(f.anc); f.sat.anc = null; }
-  for(const tr of SATV.trilhas){ if(tr.linha.parent) tr.linha.parent.remove(tr.linha); tr.linha.geometry.dispose(); }
+  /* r290 · sem vazar: materiais, alvos, modelos, trilhas, as âncoras da piscina e do foco */
+  const solta = o=>{ if(o.geometry) o.geometry.dispose(); if(o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m=>m.dispose()); };
+  if(SATV.pontos && SATV.pontos.material) SATV.pontos.material.dispose();
+  for(const f of SATV.famosos){ if(f.anc.parent) f.anc.parent.remove(f.anc); f.sat.anc = null; solta(f.pk); f.modelo.traverse(solta); }
+  for(const tr of SATV.trilhas){ if(tr.linha.parent) tr.linha.parent.remove(tr.linha); solta(tr.linha); }
+  if(SATV.pool) for(const p of SATV.pool) if(p.P.anc.parent) p.P.anc.parent.remove(p.P.anc);
+  if(SATV.focoAnc && SATV.focoAnc.parent) SATV.focoAnc.parent.remove(SATV.focoAnc);
   for(const l of SATV.lbls){
     if(l.el && l.el.parentNode) l.el.parentNode.removeChild(l.el);
     if(A && A.labels){ const i = A.labels.indexOf(l); if(i >= 0) A.labels.splice(i, 1); }
@@ -6546,7 +6552,7 @@ function satVivoDesmonta(){
   /* os simbólicos voltam: holder, rótulo, pick e órbita */
   for(const o of SATV.escondidos){ if(o.holder) o.holder.visible = true; if(o.lbl) o.lbl.off = false; if(o.pick && A && A.pickables && A.pickables.indexOf(o.pick) < 0) A.pickables.push(o.pick); }
   for(const l of SATV.orbEsc) l.visible = true;
-  SATV.pontos = null; SATV.geo = null; SATV.lbls = []; SATV.escondidos = []; SATV.orbEsc = []; SATV.famosos = []; SATV.trilhas = []; SATV.act = null; SATV.mesh = null; SATV.cardSat = null;
+  SATV.pontos = null; SATV.geo = null; SATV.lbls = []; SATV.escondidos = []; SATV.orbEsc = []; SATV.famosos = []; SATV.trilhas = []; SATV.act = null; SATV.mesh = null; SATV.cardSat = null; SATV.foco = null; SATV.pool = null; SATV.focoAnc = null;
   if(ST.mapCard && ST.mapCard.type === 'satlive'){ ST.mapCard = null; uiSync(); }
   if(A) applySel();
 }
@@ -6779,7 +6785,10 @@ function satVivoIr(i){
   if(!(ST.mapCard && ST.mapCard.type === 'satlive' && ST.mapCard.id === i)) ACTION('satlive', i);
   if(ST.mapCard && ST.mapCard.type === 'satlive') ST.mapCard.entrou = true;   /* r283 · só o ENTRAR (ou a busca) trava no satélite */
   const alvo = new THREE.Vector3(), a = SATV.geo.attributes.position.array;
-  SATV.focoAnc.position.set(a[i*3], a[i*3+1], a[i*3+2]); SATV.focoAnc.getWorldPosition(alvo);
+  { let pp = null; try{ const pv = satellite.propagate(s.rec, new Date(SIMT.data)); pp = pv && pv.position; }catch(e){}
+    if(pp && isFinite(pp.x)){ const vL = satVivoLocal(pp, satellite.gstime(new Date(SIMT.data)), new THREE.Vector3()); SATV.focoAnc.position.copy(vL); a[i*3] = vL.x; a[i*3+1] = vL.y; a[i*3+2] = vL.z; SATV.geo.attributes.position.needsUpdate = true; }
+    else SATV.focoAnc.position.set(a[i*3], a[i*3+1], a[i*3+2]); }   /* r290 · no primeiro laço só 220 pontos foram propagados: o alvo podia estar em (0,0,0) */
+  SATV.focoAnc.getWorldPosition(alvo);
   /* a câmera chega pelo lado de FORA (na direção Terra -> satélite): mantendo o giro antigo ela podia
      parar dentro da Terra ou olhar o satélite por trás dela */
   const cT = new THREE.Vector3(); SATV.mesh.updateWorldMatrix(true, false); cT.setFromMatrixPosition(SATV.mesh.matrixWorld);
@@ -6820,7 +6829,8 @@ function localSol(ms){
   const T = (localJD(ms) - 2451545)/36525;
   const L0 = 280.46646 + 36000.76983*T + 0.0003032*T*T, M = (357.52911 + 35999.05029*T - 0.0001537*T*T)*D2R;
   const C = (1.914602 - 0.004817*T - 0.000014*T*T)*Math.sin(M) + (0.019993 - 0.000101*T)*Math.sin(2*M) + 0.000289*Math.sin(3*M);
-  const lam = ((L0 + C) % 360 + 360) % 360, e = 0.016708634 - 0.000042037*T, nu = M + C*D2R;
+  const Om = (125.04 - 1934.136*T)*D2R;   /* r290 · a longitude APARENTE: aberração e nutação (Meeus 25.8) */
+  const lam = ((L0 + C - 0.00569 - 0.00478*Math.sin(Om)) % 360 + 360) % 360, e = 0.016708634 - 0.000042037*T, nu = M + C*D2R;
   const R = 1.000001018*(1 - e*e)/(1 + e*Math.cos(nu));
   return {lam:lam*D2R, beta:0, r:R*149597870};
 }
@@ -6867,6 +6877,22 @@ function localAltAz(ra, dec, lst, lat){
   return {alt, az:((az % (2*Math.PI)) + 2*Math.PI) % (2*Math.PI)};
 }
 function localDir(alt, az){ return new THREE.Vector3(Math.cos(alt)*Math.sin(az), Math.sin(alt), -Math.cos(alt)*Math.cos(az)); }
+/* r290 · a PRECESSÃO de J2000 para a data (Meeus 21.3): o catálogo e os elementos dos planetas são J2000, o tempo
+   sideral e o Sol/Lua são da data; sem isso as estrelas ficavam 0,36 grau fora do lugar em 2026 */
+function localPrecMatriz(ms){
+  const T = (localJD(ms) - 2451545)/36525, s = Math.PI/648000;
+  const ze = (2306.2181*T + 0.30188*T*T + 0.017998*T*T*T)*s, z = (2306.2181*T + 1.09468*T*T + 0.018203*T*T*T)*s, th = (2004.3109*T - 0.42665*T*T - 0.041833*T*T*T)*s;
+  const cz = Math.cos(ze), sz = Math.sin(ze), cZ = Math.cos(z), sZ = Math.sin(z), ct = Math.cos(th), st = Math.sin(th);
+  return [cz*ct*cZ - sz*sZ, -sz*ct*cZ - cz*sZ, -st*cZ, cz*ct*sZ + sz*cZ, -sz*ct*sZ + cz*cZ, -st*sZ, cz*st, -sz*st, ct];
+}
+/* equatorial J2000 (ra, dec) -> horizonte da data, com a precessão aplicada ao vetor */
+function localAltAzPrec(ra, dec, lst, lat, P){
+  const cd = Math.cos(dec), x = cd*Math.cos(ra), y = cd*Math.sin(ra), zz = Math.sin(dec);
+  const vx = P[0]*x + P[1]*y + P[2]*zz, vy = P[3]*x + P[4]*y + P[5]*zz, vz = P[6]*x + P[7]*y + P[8]*zz;
+  const cL = Math.cos(lst), sL = Math.sin(lst), cφ = Math.cos(lat), sφ = Math.sin(lat), m = cL*vx + sL*vy;
+  const e = -(sL*vx - cL*vy), n = vz*cφ - m*sφ, u = m*cφ + vz*sφ;
+  return {alt:Math.asin(Math.max(-1, Math.min(1, u))), az:((Math.atan2(e, n) % (2*Math.PI)) + 2*Math.PI) % (2*Math.PI)};
+}
 /* tudo que aparece no céu do lugar na data ms */
 function localCalc(ms, lat, lon){
   const eps = localObliq(ms), lst = (localGMST(ms) + lon)*D2R, φ = lat*D2R;
@@ -6880,21 +6906,24 @@ function localCalc(ms, lat, lon){
   const angLua = 2*Math.asin(1737.4/td), angSol = 2*Math.asin(695700/sol.r);
   /* separações: Sol-Lua (eclipse solar) e Lua-antissol (eclipse lunar), na esfera do céu */
   const dS = localDir(hs.alt, hs.az), dL = localDir(hl.alt, hl.az);
-  const sepSL = Math.acos(Math.max(-1, Math.min(1, dS.dot(dL)))), sepAnti = Math.acos(Math.max(-1, Math.min(1, -dS.dot(dL))));
-  const umbra = 0.72*D2R;   /* o raio da sombra da Terra na distância da Lua, aproximado */
-  const eclLunar = sepAnti < umbra + angLua/2 ? (sepAnti < umbra - angLua/2 ? 'total' : 'parcial') : null;
+  const hlG = localAltAz(ql.ra, ql.dec, lst, φ), dLg = localDir(hlG.alt, hlG.az);   /* r290 · o eclipse LUNAR é geocêntrico: a paralaxe do lugar (até 1 grau) não entra nele */
+  const sepSL = Math.acos(Math.max(-1, Math.min(1, dS.dot(dL)))), sepAnti = Math.acos(Math.max(-1, Math.min(1, -dS.dot(dLg))));
+  /* r290 · o raio da UMBRA na distância da Lua (Danjon: 1,02 x (paralaxe da Lua + paralaxe do Sol - semidiâmetro do Sol)) e o
+     semidiâmetro GEOCÊNTRICO da Lua: a classificação do eclipse lunar não depende do lugar */
+  const umbra = 1.02*(Math.asin(6378/lua.r) + 8.794/3600*D2R - angSol/2), angLuaG = 2*Math.asin(1737.4/lua.r);
+  const eclLunar = sepAnti < umbra + angLuaG/2 ? (sepAnti < umbra - angLuaG/2 ? 'total' : 'parcial') : null;
   const tol = 0.03*D2R;   /* a Lua abreviada erra uns 2 arcominutos: folga na classificação (o desenho segue a geometria) */
   const eclSolar = sepSL < (angSol + angLua)/2 ? (sepSL < Math.abs(angLua - angSol)/2 + tol ? (angLua >= angSol ? 'total' : 'anular') : 'parcial') : null;
-  const terra = localKepler('terra', ms);
+  const terra = localKepler('terra', ms), PM = localPrecMatriz(ms);
   const planetas = [];
   for(const id of ['mercurio', 'venus', 'marte', 'jupiter', 'saturno']){
     const P = localKepler(id, ms); if(!P || !terra) continue;
     const x = P.x - terra.x, y = P.y - terra.y, z = P.z - terra.z, d = Math.hypot(x, y, z);
-    const q = localEquat(Math.atan2(y, x), Math.asin(z/d), eps), hz = localAltAz(q.ra, q.dec, lst, φ);
+    const q = localEquat(Math.atan2(y, x), Math.asin(z/d), 23.4392911*D2R), hz = localAltAzPrec(q.ra, q.dec, lst, φ, PM);   /* r290 · elementos J2000: eclíptica J2000 e precessão */
     const rS = Math.hypot(P.x, P.y, P.z), fase = (1 + (P.x*x + P.y*y + P.z*z)/(rS*d))/2;
     planetas.push({id, nome:ALLBODIES[id] ? ALLBODIES[id].name : id.toUpperCase(), alt:hz.alt, az:hz.az, d, fase});
   }
-  return {lst, eps, sol:{alt:hs.alt, az:hs.az, ang:angSol}, lua:{alt:hl.alt, az:hl.az, ang:angLua, ilum:(1 - Math.cos(sepSL))/2, eclLunar, eclSolar, sepSL}, planetas};
+  return {lst, eps, PM, sol:{alt:hs.alt, az:hs.az, ang:angSol}, lua:{alt:hl.alt, az:hl.az, ang:angLua, ilum:(1 - Math.cos(sepSL))/2, eclLunar, eclSolar, sepSL}, planetas};
 }
 /* a seleção do lugar no mapa: satélites e tremores somem, sobra a Terra; tocar nela abre o céu */
 function localSelecao(liga){
@@ -6902,7 +6931,11 @@ function localSelecao(liga){
   if(typeof SISM !== 'undefined' && SISM.grupo) SISM.grupo.visible = !LOCAL.sel;
   if(LOCAL.sel){
     showHint(t('TOQUE NUM LUGAR DA TERRA · o céu desse lugar abre em seguida'));
-    if(ACT && ACT.kind === 'system' && ST.sys === 'sol' && !(ST.mapCard && ST.mapCard.id === 'terra' && (ACT.escr ? CAM.dist < 0.02 : CAM.dist < 6))) irAoCorpo('terra');
+    if(ACT && ACT.kind === 'system' && ST.sys === 'sol' && !(ST.mapCard && ST.mapCard.id === 'terra' && (ACT.escr ? CAM.dist < 0.02 : CAM.dist < 6))){
+      if(ACT.escr) irAoCorpo('terra');
+      else { const pkT = acharPick('terra'); if(pkT){ const vT = pkT.getWorldPosition(new THREE.Vector3()); ST.mapCard = {type:'body', id:'terra', act:'focus', t:performance.now(), entrou:true};
+        CAMTW = {t0:performance.now(), ms:1800, f:{yaw:CAM.yaw, pitch:CAM.pitch, dist:CAM.dist}, t:{yaw:CAM.yaw, pitch:Math.max(0.2, CAM.pitch), dist:4.5}, p0:CAM.pivot.clone(), p1:vT, segue:'terra'}; ZOOM = null; } }   /* r290 · no cênico voa dentro do mapa: a cena de foco não tem a Terra do mapa */
+    }
   }
   uiSync();
 }
@@ -7084,14 +7117,17 @@ function localFrame(){
   const lst = C.lst, φ = LOCAL.lat*D2R;
   /* as estrelas do catálogo giram com o tempo sideral */
   const pos = LOCAL.pos; let vis = 0;
-  ESTRELAS_CEU.forEach((s, i)=>{ const hz = localAltAz(s[2]*15*D2R, s[3]*D2R, lst, φ); const d = localDir(hz.alt, hz.az).multiplyScalar(700); pos[i*3] = d.x; pos[i*3+1] = d.y; pos[i*3+2] = d.z; if(hz.alt > 0) vis++; });
+  const PM = C.PM;
+  ESTRELAS_CEU.forEach((s, i)=>{ const hz = localAltAzPrec(s[2]*15*D2R, s[3]*D2R, lst, φ, PM); const d = localDir(hz.alt, hz.az).multiplyScalar(700); pos[i*3] = d.x; pos[i*3+1] = d.y; pos[i*3+2] = d.z; if(hz.alt > 0) vis++; });
   LOCAL.pB.geometry.attributes.position.needsUpdate = true; LOCAL.pF.geometry.attributes.position.needsUpdate = true; LOCAL.linhas.geometry.attributes.position.needsUpdate = true;
   const sunAlt = Math.sin(C.sol.alt), noite = 1 - Math.min(1, Math.max(0, (sunAlt + 0.14)/0.16));
   LOCAL.pB.material.opacity = 0.95*noite; LOCAL.pF.material.opacity = 0.85*noite; LOCAL.linhas.material.opacity = 0.28*noite;
   /* r289 · as 5 mil estrelas do catálogo grande, giradas por matriz (equatorial -> horizonte) */
   if(LOCAL.p6a){
     const eq = LOCAL.eq6, p6 = LOCAL.pos6, cL = Math.cos(lst), sL = Math.sin(lst), cφ = Math.cos(φ), sφ = Math.sin(φ);
-    for(let i = 0, n = eq.length/3; i < n; i++){ const vx = eq[i*3], vy = eq[i*3+1], vz = eq[i*3+2], m = cL*vx + sL*vy; const e = -(sL*vx - cL*vy), nn = vz*cφ - m*sφ, u = m*cφ + vz*sφ; p6[i*3] = e*720; p6[i*3+1] = u*720; p6[i*3+2] = -nn*720; }
+    for(let i = 0, n = eq.length/3; i < n; i++){ const x0 = eq[i*3], y0 = eq[i*3+1], z0 = eq[i*3+2];
+      const vx = PM[0]*x0 + PM[1]*y0 + PM[2]*z0, vy = PM[3]*x0 + PM[4]*y0 + PM[5]*z0, vz = PM[6]*x0 + PM[7]*y0 + PM[8]*z0, m = cL*vx + sL*vy;   /* r290 · precessão */
+      const e = -(sL*vx - cL*vy), nn = vz*cφ - m*sφ, u = m*cφ + vz*sφ; p6[i*3] = e*720; p6[i*3+1] = u*720; p6[i*3+2] = -nn*720; }
     LOCAL.p6a.geometry.attributes.position.needsUpdate = true; LOCAL.p6b.geometry.attributes.position.needsUpdate = true;
     LOCAL.p6a.material.opacity = 0.9*noite; LOCAL.p6b.material.opacity = 0.6*noite;
   }
@@ -7118,7 +7154,7 @@ function localFrame(){
   if(C.lua.alt > -0.02) rot(dL, t('LUA') + ' · ' + Math.round(C.lua.ilum*100) + '%' + (C.lua.eclLunar ? ' · ' + t('ECLIPSE') + ' ' + t(C.lua.eclLunar.toUpperCase()) : ''), 'lua', 'lua', 'corpo');
   for(const p of C.planetas) if(LOCAL.plan[p.id].visible) rot(localDir(p.alt, p.az), p.nome, 'pla', p.id, 'corpo');
   if(noite > 0.3){
-    ESTRELAS_CEU.forEach((s, i)=>{ if(s[4] > 1.0 || !s[1]) return; const hz = localAltAz(s[2]*15*D2R, s[3]*D2R, lst, φ); if(hz.alt > 0.01) rot(localDir(hz.alt, hz.az), t(s[1]), 'est', s[0], 'estrela'); });
+    ESTRELAS_CEU.forEach((s, i)=>{ if(s[4] > 1.0 || !s[1]) return; const hz = localAltAzPrec(s[2]*15*D2R, s[3]*D2R, lst, φ, PM); if(hz.alt > 0.01) rot(localDir(hz.alt, hz.az), t(s[1]), 'est', s[0], 'estrela'); });
     /* r289 · o nome de cada constelação no centroide das estrelas dela (só as acima do horizonte) */
     const cv3 = new THREE.Vector3();
     for(const k in LOCAL.consIdx){ const ids = LOCAL.consIdx[k]; if(!ids.length) continue; cv3.set(0, 0, 0); for(const i of ids) cv3.x += pos[i*3], cv3.y += pos[i*3+1], cv3.z += pos[i*3+2]; cv3.normalize(); if(cv3.y > 0.03) rot(cv3, t(CEU_LINHAS[k].nome), 'con', k, 'constel'); }
@@ -7210,6 +7246,7 @@ function satVivoTick(){
   const mesh = satVivoTerra();
   if(!mesh){ if(SATV.pontos) satVivoDesmonta(); return; }
   if(SATV.act !== ACT || !SATV.pontos || SATV.pontos.parent !== mesh){ satVivoDesmonta(); if(!satVivoMonta()) return; }
+  if(SATV.foco && !(ST.mapCard && ST.mapCard.type === 'satlive' && ST.mapCard.id === SATV.foco.i)) SATV.foco = null;   /* r290 · a ficha mudou: o foco solta (alfa, trilha e nome) */
   /* os simbólicos ficam quietos mesmo que o applySel os acorde */
   for(const o of SATV.escondidos){ if(o.holder) o.holder.visible = false; if(o.lbl) o.lbl.off = true; if(o.pick){ const i = ACT.pickables.indexOf(o.pick); if(i >= 0) ACT.pickables.splice(i, 1); } }
   for(const l of SATV.orbEsc) l.visible = false;
@@ -7289,6 +7326,7 @@ async function sismosCarrega(){
 function sismosDesmonta(){
   if(SISM.grupo && SISM.grupo.parent) SISM.grupo.parent.remove(SISM.grupo);
   if(SISM.act && SISM.act.pickables) for(const p of SISM.picks){ const i = SISM.act.pickables.indexOf(p); if(i >= 0) SISM.act.pickables.splice(i, 1); }
+  for(const p of SISM.picks){ if(p.geometry) p.geometry.dispose(); if(p.material) p.material.dispose(); }   /* r290 · sem vazar */
   if(SISM.lbl){ if(SISM.lbl.el && SISM.lbl.el.parentNode) SISM.lbl.el.parentNode.removeChild(SISM.lbl.el); if(SISM.act && SISM.act.labels){ const i = SISM.act.labels.indexOf(SISM.lbl); if(i >= 0) SISM.act.labels.splice(i, 1); } }
   SISM.grupo = null; SISM.picks = []; SISM.lbl = null; SISM.act = null;
   if(ST.mapCard && ST.mapCard.type === 'sismo'){ ST.mapCard = null; uiSync(); }
@@ -7308,6 +7346,7 @@ function sismosMonta(){
     g.add(m); SISM.picks.push(m); ACT.pickables.push(m);
     if(!maior || q.mag > maior.mag) maior = q;
   }
+  g.visible = !LOCAL.sel;   /* r290 */
   mesh.add(g);
   SISM.grupo = g; SISM.act = ACT;
   if(maior){
@@ -7363,11 +7402,11 @@ const ESCALA_REAL_NODO = {
   urano:[0.773, 74.017, 96.937], netuno:[1.770, 131.784, -86.819],
   plutao:[17.140, 110.304, 113.765],
   eris:[43.9, 36.0, 151.0], sedna:[11.9, 145.0, 311.0],
-  halley:[162.2, 59.1, 112.0], p67:[7.04, 50.1, 12.8], swift:[113.45, 139.38, 153.0], encke:[11.38, 334.14, 187.18], tempeltuttle:[162.49, 235.27, 172.50], wirtanen:[11.75, 82.16, 356.34], giacobini:[32.00, 195.40, 172.81], tuttle:[54.98, 270.34, 207.51], ponsbrooks:[74.19, 255.86, 198.99], thatcher:[79.77, 31.87, 213.45]};
+  halebopp:[89.43, 282.47, 130.59], halley:[162.2, 59.1, 112.0], p67:[7.04, 50.1, 12.8], swift:[113.45, 139.38, 153.0], encke:[11.38, 334.14, 187.18], tempeltuttle:[162.49, 235.27, 172.50], wirtanen:[11.75, 82.16, 356.34], giacobini:[32.00, 195.40, 172.81], tuttle:[54.98, 270.34, 207.51], ponsbrooks:[74.19, 255.86, 198.99], thatcher:[79.77, 31.87, 213.45]};
 const ESCALA_REAL_T = {mercurio:0.2408467, venus:0.6151973, terra:1.0000174,
   marte:1.8808476, jupiter:11.862615, saturno:29.447498, urano:84.016846,
   netuno:164.79132, plutao:247.92065, eris:561.2, sedna:12676,
-  halley:75.84, p67:6.434, swift:133.28, encke:3.307, tempeltuttle:33.24, wirtanen:5.439, giacobini:6.549, tuttle:13.610, ponsbrooks:71.25, thatcher:415.0, parker:0.241};
+  halebopp:2533, halley:75.84, p67:6.434, swift:133.28, encke:3.307, tempeltuttle:33.24, wirtanen:5.439, giacobini:6.549, tuttle:13.610, ponsbrooks:71.25, thatcher:415.0, parker:0.241};
 const ESCALA_REAL_ANC = {
   mercurio:{ma:174.794, ep:946728000000}, venus:{ma:50.447, ep:946728000000},
   terra:{ma:357.517, ep:946728000000}, marte:{ma:19.412, ep:946728000000},
@@ -7376,7 +7415,7 @@ const ESCALA_REAL_ANC = {
   plutao:{ma:14.862, ep:946728000000},
   eris:{ma:212, ep:Date.UTC(2026,5,9)}, sedna:{ma:358.6, ep:Date.UTC(2026,5,9)},
   /* cometas: a âncora é a PASSAGEM PELO PERIÉLIO (ma=0 na data), do SBDB */
-  halley:{ma:0, ep:Date.UTC(1986,1,9,11,22)}, p67:{ma:0, ep:Date.UTC(2015,7,13,2,8)}, swift:{ma:0, ep:Date.UTC(1992,11,12)}, encke:{ma:0, ep:Date.UTC(2023,9,22,7)}, tempeltuttle:{ma:0, ep:Date.UTC(1998,1,28,2)}, wirtanen:{ma:0, ep:Date.UTC(2018,11,12,22,21)}, giacobini:{ma:0, ep:Date.UTC(2018,8,10,6,23)}, tuttle:{ma:0, ep:Date.UTC(2008,0,27,0,26)}, ponsbrooks:{ma:0, ep:Date.UTC(2024,3,21,15,9)}, thatcher:{ma:0, ep:Date.UTC(1861,5,3,21)}, parker:{ma:0, ep:Date.UTC(2024,11,24,11,53)}};
+  halebopp:{ma:0, ep:Date.UTC(1997,3,1,3,16)}, halley:{ma:0, ep:Date.UTC(1986,1,9,11,22)}, p67:{ma:0, ep:Date.UTC(2015,7,13,2,8)}, swift:{ma:0, ep:Date.UTC(1992,11,12)}, encke:{ma:0, ep:Date.UTC(2023,9,22,7)}, tempeltuttle:{ma:0, ep:Date.UTC(1998,1,28,2)}, wirtanen:{ma:0, ep:Date.UTC(2018,11,12,22,21)}, giacobini:{ma:0, ep:Date.UTC(2018,8,10,6,23)}, tuttle:{ma:0, ep:Date.UTC(2008,0,27,0,26)}, ponsbrooks:{ma:0, ep:Date.UTC(2024,3,21,15,9)}, thatcher:{ma:0, ep:Date.UTC(1861,5,3,21)}, parker:{ma:0, ep:Date.UTC(2024,11,24,11,53)}};
 /* dia sideral de cada planeta em dias terrestres (negativo = retrógrado) */
 const ESCALA_REAL_DIA = {mercurio:58.65, venus:-243.0, terra:0.997, marte:1.026,
   jupiter:0.414, saturno:0.444, urano:-0.718, netuno:0.671};
@@ -8779,7 +8818,7 @@ function buildSystem(sysId, spin0){
         /* e as órbitas das LUAS do corpo travado acendem sozinhas: o mapa vira
            o sistema planetário só de aproximar (ideia dele). Respeita o filtro
            de objetos; ao afastar, applySel restaura o estado normal. */
-        const dono2 = ST.mapCard ? (ST.mapCard.id || ST.mapCard) : null;
+        const dono2 = ST.mapCard ? ((!ST.mapCard.type || ST.mapCard.type === 'body') ? ST.mapCard.id : ((ST.mapCard.type === 'satlive' || ST.mapCard.type === 'sismo') ? 'terra' : null)) : null;   /* r290 */
         const dzL = (dono2 && CAM.dist < 1.2) ? Math.min(1, (1.2 - CAM.dist)/0.6) : 0;
         if(dzL > 0){
           ACT._zLua = true;
@@ -13131,6 +13170,7 @@ function pushNav(){
 }
 function navRestore(s){
   NAVH.guard = true;
+  clearTimeout(NAVH._gt); NAVH._gt = setTimeout(()=>{ NAVH.guard = false; }, 3000);   /* r290 · se a troca não consumir a guarda, ela não engole o próximo registro */
   /* r277 · mesma cena 1:1: voa até o corpo guardado (ou volta ao Sol) em vez de reconstruir */
   if(s.level==='system' && s.escr && ACT && ACT.kind==='system' && ACT.escr && ST.sys===s.sys){
     if(s.alvo && acharPick(s.alvo)){ aproximarNoMapa(s.alvo); NAVH.guard = false; navSync(); return; }
@@ -13271,54 +13311,19 @@ function ACTION(act, id){
   /* constelação não é lugar onde se entra: o clique abre a ficha e acende o
      desenho, e clicar de novo fecha (sem two-step de viagem) */
   /* r176 · galáxia vizinha clicada no céu do 1:1: ficha, sem two-step de viagem */
-  if(act==='galviz'){
-    const jaEraG = ST.mapCard && ST.mapCard.type==='galviz' && ST.mapCard.id===id;
-    ST.mapCard = jaEraG ? null : {type:'galviz', id, act};
+  /* r290 · as fichas de toque único (galáxia vizinha, satélite, tremor, fronteira, estrela, constelação): o segundo
+     toque FECHA pelo fecharFicha (pivô, volta à Terra, endereço) e abrir também escreve o endereço */
+  const jaEra = ST.mapCard && ST.mapCard.type === act && ST.mapCard.id === id;
+  if(act==='galviz' || act==='satlive' || act==='sismo' || act==='fronteira' || act==='estrela' || act==='constel'){
+    if(act==='estrela') marcaVizinha(id);
+    if(act==='constel') marcaConstel(id);
     AUDIO.sfx('sel');
-    uiSync();
-    if(!jaEraG) mirarNoCeu(id);
-    return;
-  }
-  if(act==='satlive'){   /* r264 · a ficha mínima de um satélite ao vivo; a trilha dele acende */
-    const jaEraV = ST.mapCard && ST.mapCard.type==='satlive' && ST.mapCard.id===id;
-    ST.mapCard = jaEraV ? null : {type:'satlive', id, act};
-    SATV.foco = jaEraV ? null : (SATV.sats[id] || null);
-    SATV.q = 0;   /* a trilha redesenha no próximo quadro */
-    AUDIO.sfx('sel');
-    uiSync();
-    return;
-  }
-  if(act==='sismo'){   /* r262 · a ficha do tremor: abre, e o segundo clique fecha */
-    const jaEraS = ST.mapCard && ST.mapCard.type==='sismo' && ST.mapCard.id===id;
-    ST.mapCard = jaEraS ? null : {type:'sismo', id, act};
-    AUDIO.sfx('sel');
-    uiSync();
-    return;
-  }
-  if(act==='fronteira'){
-    const jaEra3 = ST.mapCard && ST.mapCard.type==='fronteira' && ST.mapCard.id===id;
-    ST.mapCard = jaEra3 ? null : {type:'fronteira', id, act};
-    AUDIO.sfx('sel');
-    uiSync();
-    if(!jaEra3) mirarNoCeu(id);
-    return;
-  }
-  if(act==='estrela'){
-    marcaVizinha(id);
-    const jaEra2 = ST.mapCard && ST.mapCard.type==='estrela' && ST.mapCard.id===id;
-    ST.mapCard = jaEra2 ? null : {type:'estrela', id, act};
-    AUDIO.sfx('sel');
-    uiSync();
-    if(!jaEra2) mirarNoCeu(id);
-    return;
-  }
-  if(act==='constel'){
-    marcaConstel(id);
-    const jaEra = ST.mapCard && ST.mapCard.type==='constel' && ST.mapCard.id===id;
-    ST.mapCard = jaEra ? null : {type:'constel', id, act};
-    AUDIO.sfx('sel');
-    uiSync();
-    if(!jaEra) showHint('CONSTELAÇÃO ' + (CEU_LINHAS[id] ? CEU_LINHAS[id].nome : '') + ' · O DESENHO ESTÁ ACESO NO CÉU');
+    if(jaEra){ fecharFicha(); return; }
+    ST.mapCard = {type:act, id, act};
+    if(act==='satlive'){ SATV.foco = SATV.sats[id] || null; SATV.q = 0; }   /* r264 · a trilha dele acende */
+    uiSync(); syncHash();
+    if(act==='galviz' || act==='fronteira' || act==='estrela') mirarNoCeu(id);
+    if(act==='constel') showHint('CONSTELAÇÃO ' + (CEU_LINHAS[id] ? CEU_LINHAS[id].nome : '') + ' · O DESENHO ESTÁ ACESO NO CÉU');
     return;
   }
   if(ST.mapCard && ST.mapCard.id===id && ST.mapCard.act===act){
@@ -13328,7 +13333,7 @@ function ACTION(act, id){
     if(performance.now() - (ST.mapCard.t || 0) > 340){ enterTarget(act, id); return; }
     return;
   }
-  ST.mapCard = {type:(act==='focus') ? 'body' : act, id, act, t:performance.now()};
+  ST.mapCard = {type:(act==='focus') ? 'body' : (act === 'sys' ? 'starsys' : act), id, act, t:performance.now()};   /* r290 · 'sys' (o marcador do céu galáctico) é a ficha de sistema: sem o tipo, o card estourava */
   AUDIO.sfx('sel');
   if(act === 'sys') mirarNoCeu(id);   /* sistema clicado no céu: centraliza nele */
   somDeEpoca(id);
@@ -13403,6 +13408,7 @@ function aproximarNoMapa(id){
 }
 function enterTarget(act, id){
   if(TRAJ) return;
+  if(act === 'sys') act = 'starsys';   /* r290 · o segundo toque no marcador do céu caía no ramo da galáxia */
   ST.mapCard = null;
   AUDIO.sfx('enter');
   if(act==='focus'){
@@ -15106,10 +15112,13 @@ function currentEntity(){
     }
     if(ST.mapCard.type==='starsys'){
       const s = STARSYS.find(x=>x.id===ST.mapCard.id);
-      return {type:'map', b:Object.assign({name:s.name}, s.card), nav:s.nav, navKind:'sys', navId:s.id};
+      if(s) return {type:'map', b:Object.assign({name:s.name}, s.card), nav:s.nav, navKind:'sys', navId:s.id};
     }
-    const g = GALAXIES.find(x=>x.id===ST.mapCard.id);
-    return {type:'map', b:Object.assign({name:g.name}, g.card), nav:g.nav, navKind:'gal', navId:g.id};
+    const g = (!ST.mapCard.type || ST.mapCard.type === 'galaxy') ? GALAXIES.find(x=>x.id===ST.mapCard.id) : null;
+    if(g) return {type:'map', b:Object.assign({name:g.name}, g.card), nav:g.nav, navKind:'gal', navId:g.id};
+    /* r290 · ficha sem dono (índice velho de satélite ou tremor, id desconhecido): limpa em vez de estourar no uiSync */
+    ST.mapCard = null;
+    return currentEntity();
   }
   if(ST.level==='focus') return {type:'body', b:ALLBODIES[ST.body]};
   if(ST.level==='system'){
@@ -15130,6 +15139,20 @@ function currentEntity(){
   return {type:'map', b:UNIVERSE_CARD, self:true};
 }
 
+/* r290 · FECHAR A FICHA num lugar só (o ✕, o ESC, o VOLTAR AO PANORAMA e o segundo toque chamam aqui): a trilha do
+   satélite apaga, no 1:1 colado num corpo o pivô fica nele, satélite e tremor devolvem a Terra, nave devolve o pai,
+   e o endereço acompanha (antes o ESC largava o pivô no Sol e o F5 reabria a ficha fechada) */
+function fecharFicha(){
+  if(!ST.mapCard) return;
+  const mc = ST.mapCard, tipo = mc.type || 'body';
+  if(tipo === 'satlive' && typeof SATV !== 'undefined'){ SATV.foco = null; SATV.q = 0; }
+  if(ACT && ACT.escr && ACT.kind === 'system' && CAM.dist < 5 && tipo === 'body' && ALLBODIES[mc.id]) ACT.pivoSegue = mc.id;
+  const bFecha = tipo === 'body' && ALLBODIES[mc.id];
+  const paraTerra = (tipo === 'satlive' || tipo === 'sismo') && ACT && ACT.kind === 'system' && ST.sys === 'sol';
+  ST.mapCard = (bFecha && bFecha.satOf && ALLBODIES[bFecha.satOf] && ACT && ACT.kind === 'system')
+    ? {type:'body', id:bFecha.satOf, act:'focus', t:performance.now()} : (paraTerra ? {type:'body', id:'terra', act:'focus', t:performance.now()} : null);
+  uiSync(); syncHash();
+}
 function cardRender(){
   const cur = currentEntity(), b = cur.b;
   const lockOn = ST.level==='focus';
@@ -15309,7 +15332,7 @@ function cardRender(){
     }
   }
   if(cur.type==='map' && !cur.self && !cur.nav){
-    h += '<div class="notice">'+t('ROTA INDISPONÍVEL: dados de navegação insuficientes. Sonda em trânsito.')+'</div>';
+    if(cur.b && (cur.b.sonda || cur.b.escape || cur.b.satelite)) h += '<div class="notice">'+t('ROTA INDISPONÍVEL: dados de navegação insuficientes. Sonda em trânsito.')+'</div>';   /* r290 · tremor e constelação não são sondas */
     h += '<button class="xbtn" id="backpan">'+t('← VOLTAR AO PANORAMA')+'</button>';
   }
   if(cur.sysd) h += '<div class="notice">'+esc(SYS[ST.sys].hint)+t('. Afaste o zoom para subir de escala.')+'</div>';
@@ -15375,18 +15398,7 @@ function cardRender(){
       showHint('A VIA LÁCTEA VISTA DE CIMA · O SISTEMA SOLAR FICA NUM BRAÇO');
       return;
     }
-    /* r193 · fechar a ficha de uma missão, sonda ou satélite volta para o
-       PAI dela (a Terra), não para o sistema inteiro (pedido dele) */
-    if(ST.mapCard && ST.mapCard.type === 'satlive' && typeof SATV !== 'undefined'){ SATV.foco = null; SATV.q = 0; }   /* r276 */
-    /* r280 · no 1:1 colado num corpo, fechar a ficha NÃO devolve o pivô ao Sol (ele 'caía no sistema solar'):
-       a câmera fica no corpo até o zoom out */
-    if(ACT && ACT.escr && ACT.kind === 'system' && CAM.dist < 5 && ST.mapCard && (ST.mapCard.type === 'body' || !ST.mapCard.type) && ALLBODIES[ST.mapCard.id]) ACT.pivoSegue = ST.mapCard.id;
-    const bFecha = ST.mapCard && ST.mapCard.type === 'body' && ALLBODIES[ST.mapCard.id];
-    /* r277 · fechar a ficha de um satélite ao vivo ou de um tremor devolve a TERRA (ele perdia a seleção) */
-    const paraTerra = ST.mapCard && (ST.mapCard.type === 'satlive' || ST.mapCard.type === 'sismo') && ACT && ACT.kind === 'system' && ST.sys === 'sol';
-    ST.mapCard = (bFecha && bFecha.satOf && ALLBODIES[bFecha.satOf] && ACT && ACT.kind === 'system')
-      ? {type:'body', id:bFecha.satOf, act:'focus', t:performance.now()} : (paraTerra ? {type:'body', id:'terra', act:'focus', t:performance.now()} : null);
-    uiSync(); syncHash();
+    fecharFicha();   /* r290 · a lógica do fechar mora em fecharFicha (r193, r276, r277, r280) */
   });
   const bgc = $('#btngalcima'); if(bgc) bgc.addEventListener('click', ()=>{
     if(!(ACT && ACT.galCentro)) return;
@@ -15425,7 +15437,7 @@ function cardRender(){
     const box = document.getElementById(el.dataset.mais);
     if(box){ box.classList.add('aberto'); el.remove(); }
   }));
-  const bp = $('#backpan'); if(bp) bp.addEventListener('click', ()=>{ ST.mapCard=null; uiSync(); });
+  const bp = $('#backpan'); if(bp) bp.addEventListener('click', fecharFicha);   /* r290 */
 }
 
 function uiSync(){
@@ -15461,7 +15473,7 @@ const SEGV = new THREE.Vector3();   /* alvo da trava de centro no mapa */
    SELECIONADA (âmbar) nunca entra na dança: fica intocável. */
 function fadeInCamada(cls){
   if(!ACT || !ACT.sel || !ACT.sel.orbits){ applySel(); return; }
-  const selId = ST.mapCard ? ST.mapCard.id : null;
+  const selId = (ST.mapCard && (!ST.mapCard.type || ST.mapCard.type === 'body')) ? ST.mapCard.id : null;   /* r290 · só ficha de corpo escolhe órbita */
   const alvo = ACT.sel.orbits.filter(o=>o.cls === cls && o.id !== selId);
   if(!alvo.length){ applySel(); return; }
   for(const o of alvo){ o.mat.opacity = 0; if(o.obj) o.obj.visible = true; }
@@ -15476,7 +15488,7 @@ function fadeInCamada(cls){
 }
 function fadeCamada(cls){
   if(!ACT || !ACT.sel || !ACT.sel.orbits){ applySel(); return; }
-  const selId = ST.mapCard ? ST.mapCard.id : null;
+  const selId = (ST.mapCard && (!ST.mapCard.type || ST.mapCard.type === 'body')) ? ST.mapCard.id : null;   /* r290 · só ficha de corpo escolhe órbita */
   const alvo = ACT.sel.orbits.filter(o=>o.cls === cls && o.id !== selId && o.obj && o.obj.visible);
   if(!alvo.length){ applySel(); return; }
   const t0 = performance.now(), dur = 420;
@@ -15493,7 +15505,7 @@ function aplicaObjetos(){
   /* r193 · a seleção vence o filtro: sonda escondida que foi clicada, buscada
      ou aberta por link aparece mesmo assim (regra dele) */
   const escolhidos = new Set();
-  if(ST.mapCard && ST.mapCard.id) escolhidos.add(ST.mapCard.id);
+  if(ST.mapCard && ST.mapCard.id && (!ST.mapCard.type || ST.mapCard.type === 'body')) escolhidos.add(ST.mapCard.id);   /* r290 */
   if(typeof TRAJ !== 'undefined' && TRAJ && TRAJ.id) escolhidos.add(TRAJ.id);
   for(const o of ACT.objs){
     if(o.sempreOculto){
@@ -15514,7 +15526,7 @@ function applySel(){
   if(ACT && ACT._zf) ACT._zf = null;
   aplicaObjetos();
   if(!ACT || !ACT.sel){ SELFX = null; return; }
-  const selId = ST.mapCard ? ST.mapCard.id : null;
+  const selId = (ST.mapCard && (!ST.mapCard.type || ST.mapCard.type === 'body')) ? ST.mapCard.id : null;   /* r290 · só ficha de corpo escolhe órbita */
   /* a constelação escolhida acende em âmbar por cima do desenho azul */
   if(ACT.ceuSelFn) ACT.ceuSelFn((ST.mapCard && ST.mapCard.type==='constel') ? ST.mapCard.id : null);
   /* MODO CÉU (r151, ideia dele): com uma constelação ou estrela na ficha, o
@@ -15797,12 +15809,13 @@ function dolly(f){
       /* corpo travado na escala real: o zoom desce até o grão encher a tela */
       /* ST.mapCard é um OBJETO (a trava usa .id): passar ele inteiro fazia o
          acharPick falhar sempre e o zoom parava no piso (o 1,5 MI KM dele) */
-      const pkSel = ST.mapCard ? acharPick((ST.mapCard.type === 'satlive' || ST.mapCard.type === 'sismo') ? 'terra' : (ST.mapCard.id || ST.mapCard)) : null;   /* r276 · o piso do zoom segue a Terra com satélite ou tremor na ficha */
+      const tipoSel = ST.mapCard ? (ST.mapCard.type || 'body') : null;   /* r290 · constelação, estrela e fronteira na ficha não travavam o piso em 0,02 */
+      const pkSel = (tipoSel === 'body' || tipoSel === 'satlive' || tipoSel === 'sismo') ? acharPick((tipoSel === 'satlive' || tipoSel === 'sismo') ? 'terra' : ST.mapCard.id) : null;   /* r276 · o piso do zoom segue a Terra com satélite ou tremor na ficha */
       /* r157: dá para chegar bem mais perto (era 3,2 raios, agora 1,45): o
          contínuo para dentro precisa do corpo enchendo a tela */
-      minEf = (pkSel && pkSel.userData.r) ? Math.max(0.0004, pkSel.userData.r*1.45) : 0.02;
-      if(ST.mapCard && ST.mapCard.type === 'satlive') minEf = 0.00009;   /* r277 · no satélite o zoom vai até o desenho (como nas missões) */
-      if(pkSel && pkSel.userData.vivo) minEf = 0.00009;   /* r280 · a ISS pelo card de sempre também (o alvo vivo travava o zoom a 4 mil km) */
+      minEf = (pkSel && pkSel.userData.r) ? Math.max(0.0004, pkSel.userData.r*1.45) : ((tipoSel && tipoSel !== 'body' && tipoSel !== 'satlive' && tipoSel !== 'sismo') ? CAM.min : 0.02);
+      if(ST.mapCard && ST.mapCard.type === 'satlive' && ST.mapCard.entrou) minEf = 0.00009;   /* r277 · no satélite o zoom vai até o desenho (como nas missões); r290 · só com a câmera NELE (com o pivô na Terra o zoom entrava no planeta) */
+      if(pkSel && pkSel.userData.vivo && ST.mapCard && ST.mapCard.entrou) minEf = 0.00009;   /* r280 · a ISS pelo card de sempre também (o alvo vivo travava o zoom a 4 mil km); r290 · só depois do ENTRAR */
     } else if(ST.mapCard) minEf = Math.min(CAM.min, 4.2);
   }
   ZOOM = {d1:clamp(alvo, minEf, CAM.max)};
@@ -15814,10 +15827,12 @@ function rayHit(x, y){
   raycaster.setFromCamera(ndc, camera);
   /* r264 · a nuvem de satélites ao vivo é um Points: o raio de acerto acompanha o zoom */
   raycaster.params.Points.threshold = Math.max(0.00002, CAM.dist*0.0015*(matchMedia('(pointer: coarse)').matches ? 30 : 10));   /* ~30 px no dedo, ~10 no mouse */
+  if(typeof SATV !== 'undefined' && SATV.pontos && SATV.mesh) satVivoOclusaoPrep();   /* r290 */
   const hits = raycaster.intersectObjects(ACT.pickables, false)
     .filter(h=>!h.object.userData.escondido && !(h.object.userData.cinturao && FILTROBJ.cinturao === false)
       && !(h.object.isPoints && h.object.userData.pontos && !(SATV.sats[h.index] && SATV.sats[h.index].alfa > 0.5))   /* r280 · pontinho desbotado não pega clique */
-      && !(h.object.userData.sat && !(h.object.userData.sat.alfa > 0.5)));
+      && !(h.object.userData.sat && !(h.object.userData.sat.alfa > 0.5))
+      && !(h.object.userData.vivo && (!(SATV.pontos && SATV.pontos.visible) || satVivoOculto(h.point))));   /* r290 · nem invisível, nem atrás da Terra */
   if(!hits.length) return null;
   /* o alvo da Terra é uma esfera de milhares de km que ENGOLE as órbitas baixas: quem
      clica em cima de um satélite quer o satélite, então o acerto vivo vence o planeta */
@@ -16035,7 +16050,7 @@ function togglePhoto(touch){
 
 window.addEventListener('keydown', e=>{
   const tag = e.target && e.target.tagName;
-  if(tag==='INPUT' || tag==='TEXTAREA') return;
+  if(tag==='INPUT' || tag==='TEXTAREA' || tag==='SELECT' || (e.target && e.target.isContentEditable)) return;   /* r290 */
   if(e.key==='ArrowRight') step(1);
   else if(e.key==='ArrowLeft') step(-1);
   else if(e.key==='/' || e.key==='s' || e.key==='S'){ e.preventDefault(); findOpen(); }
@@ -16047,7 +16062,10 @@ window.addEventListener('keydown', e=>{
     else if(TOUR.on) tourStop();
     else if(TRAJ && TRAJ.fase!=='volta') trajCancelar();
     else if($('#tourpop').classList.contains('on')) $('#tourpop').classList.remove('on');
-    else if(TOUR.on && TOUR.pausado) tourPause();
+    else if($('#evtpop').classList.contains('on')) $('#evtpop').classList.remove('on');   /* r290 · os popovers novos fecham no ESC */
+    else if($('#satpop').classList.contains('on')) $('#satpop').classList.remove('on');
+    else if($('#habpop').classList.contains('on')) $('#habpop').classList.remove('on');
+    else if($('#player').classList.contains('on')) $('#player').classList.remove('on');
     else if($('#datepop').classList.contains('on')) $('#datepop').classList.remove('on');
     else if($('#cfgpop').classList.contains('on')) $('#cfgpop').classList.remove('on');
     else if($('#filtpop').classList.contains('on')) $('#filtpop').classList.remove('on');
@@ -16057,7 +16075,7 @@ window.addEventListener('keydown', e=>{
     else if($('#cmp').classList.contains('on')) closeCmp();
     else if($('#help').classList.contains('on')) $('#help').classList.remove('on');
     else if(typeof voltarParaCasa === 'function' && voltarParaCasa()){}   /* longe de casa, o ESC traz de volta */
-    else if(ST.mapCard){ ST.mapCard = null; uiSync(); }
+    else if(ST.mapCard) fecharFicha();   /* r290 · o ESC fecha como o ✕ (antes largava o pivô no Sol) */
     else up();
   }
   else if(e.key==='D' && e.shiftKey){ /* telemetria secreta: chip + botões de debug */
@@ -16090,7 +16108,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r289';
+const BUILD = 'r290';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -16647,9 +16665,9 @@ const EVENTOS = [
   {t:'TRÂNSITO DE MERCÚRIO', d:'2039-11-07T08:46:00Z', g:'transito', ap:1},
   {t:'OPOSIÇÃO DE MARTE · o melhor Marte do céu', d:'2027-02-19T12:00:00Z', g:'planetas', ap:1},
   {t:'OPOSIÇÃO DE MARTE', d:'2029-03-25T12:00:00Z', g:'planetas', ap:1},
-  {t:'OPOSIÇÃO DE JÚPITER', d:'2027-03-30T12:00:00Z', g:'planetas', ap:1},
+  {t:'OPOSIÇÃO DE JÚPITER', d:'2027-02-11T12:00:00Z', g:'planetas', ap:1},
   {t:'PERIÉLIO DO 67P · a cauda cresce', d:'2028-07-10T12:00:00Z', g:'cometa', ap:1},
-  {t:'PERIÉLIO DO HALLEY · a volta dele', d:'2061-07-28T12:00:00Z', g:'cometa'},
+  {t:'PERIÉLIO DO HALLEY · a volta dele', d:'2061-07-28T12:00:00Z', g:'cometa', ap:1},
   {t:'SEDNA NO PERIÉLIO · a visita de 11 mil anos', d:'2076-07-01T12:00:00Z', g:'marco', ap:1},
   {t:'PLUTÃO CRUZA A ÓRBITA DE NETUNO', d:'2227-01-01T12:00:00Z', g:'marco', ap:1}
 ];
@@ -16683,7 +16701,7 @@ function evtData(ev){ return new Date(ev.d).getTime(); }
 function evtRotuloData(ev){
   const d = new Date(ev.d);
   const dia = d.getUTCDate() + ' ' + MESES_N[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
-  return dia + (ev.ap ? ' · aprox' : ' · ' + String(d.getUTCHours()).padStart(2,'0') + ':' + String(d.getUTCMinutes()).padStart(2,'0') + ' UTC');
+  return dia + (ev.ap ? t(' · aprox') : ' · ' + String(d.getUTCHours()).padStart(2,'0') + ':' + String(d.getUTCMinutes()).padStart(2,'0') + ' UTC');
 }
 function evtRender(){
   const agora = Date.now();
@@ -16696,9 +16714,9 @@ function evtRender(){
     return true;
   }).sort((a, b)=>evtData(a) - evtData(b));
   const el = $('#evtlista');
-  if(!lista.length){ el.innerHTML = '<div class="evvazio">NADA ENCONTRADO COM ESSES FILTROS.</div>'; return; }
+  if(!lista.length){ el.innerHTML = '<div class="evvazio">' + t('NADA ENCONTRADO COM ESSES FILTROS.') + '</div>'; return; }
   el.innerHTML = lista.map(ev=>'<button class="evx' + (evtData(ev) < agora ? ' past' : '') + '" data-evt="' + ev.d + '"' + (ev.c ? ' data-corpo="' + ev.c + '"' : '') + '>'
-    + '<span class="evd">' + evtRotuloData(ev) + '</span>' + esc(ev.t) + '</button>').join('');
+    + '<span class="evd">' + evtRotuloData(ev) + '</span>' + esc(t(ev.t)) + '</button>').join('');   /* r290 · os eventos traduzem */
 }
 function evtChips(){
   $('#evttags').innerHTML = EVT_TAGS.map(tg=>'<button data-tag="' + tg[0] + '"' + (EVTF.tag === tg[0] ? ' class="on"' : '') + '>' + t(tg[1]) + '</button>').join('');
@@ -16711,7 +16729,7 @@ function irParaEvento(iso, rotulo){
   $('#evtpop').classList.remove('on');
   $('#datepop').classList.remove('on');
   simClockUI();
-  showHint('SISTEMA EM · ' + rotulo);
+  showHint(t('SISTEMA EM · ') + rotulo);
 }
 $('#dp_eventos').addEventListener('click', ()=>{
   $('#datepop').classList.remove('on');
@@ -16831,6 +16849,7 @@ $('#habchips').addEventListener('click', e=>{
   habMonta();
 });
 $('#evtq').addEventListener('input', e=>{ EVTF.q = evtNorm(e.target.value.trim()); evtRender(); });
+$('#evtq').addEventListener('keydown', e=>{ if(e.key === 'Escape'){ e.preventDefault(); $('#evtpop').classList.remove('on'); } });   /* r290 */
 $('#evttags').addEventListener('click', e=>{
   const b = e.target.closest('button[data-tag]'); if(!b) return;
   EVTF.tag = b.dataset.tag; evtChips(); evtRender();
@@ -17305,8 +17324,9 @@ function loop(){
       if(tg.op) tg.mat.opacity = (k < 1) ? (tg.baseOp + (0.95 - tg.baseOp)*e) : pulse;
     }
   }
+  if(LOCAL.sel && !(ACT && ACT.kind === 'system' && ST.sys === 'sol')) localSelecao(false);   /* r290 · trocou de cena: a escolha do lugar solta */
   satVivoTick();   /* r261/r264 · no 1:1 a classe SATÉLITES do filtro é a camada ao vivo */
-  if(SISM.on) sismosTick();   /* r262 */
+  if(SISM.on && ACT && ACT.escr) sismosTick(); else if(SISM.grupo) sismosDesmonta();   /* r262; r290 · só no 1:1 (no cênico montava esferas de km dentro da Terra desenhada) */
   if(DIVE) diveStep(now);
   if(VOOCEU) vooCeuStep(now);
   if(TRAJ) trajStep(now);
