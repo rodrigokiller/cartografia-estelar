@@ -111,7 +111,7 @@ saturno: {
   ],
   facts: ['It is the only planet less dense than water.', 'The rings are young (maybe ~100 million years) and will vanish in the distant future: it "rains" ring onto the planet.', 'In 2025 the count of confirmed moons jumped to 274, the record of the system.'],
   fict: 'Interstellar: the wormhole appears in orbit around Saturn.',
-  moonsMeta: '274 CONFIRMED · 9 MAIN · 3 SHEPHERDS'
+  moonsMeta: '274 CONFIRMED · 9 MAIN · 3 SHEPHERDS · 4 CO-ORBITAL'
 },
 urano: {
   kind: 'Ice giant',
@@ -2458,6 +2458,46 @@ atlasg3: {
   ],
   facts: ['On January 13, 2025 it passed 14 million km from the Sun and reached magnitude −3.5: it could be seen in daylight.', 'The nucleus fell apart a week after perihelion, and the tail went on alone across the southern sky, a ghost comet.', 'It was photographed from the Space Station by Don Pettit, rising over the limb of the Earth.'],
   fict: 'A sungrazer that is not from the Kreutz family: the previous visit was 160,000 years ago, when Homo sapiens still lived only in Africa.'
+},
+jano: {
+  kind: 'The one that swaps orbits with Epimetheus every four years',
+  quick: [['DIMENSIONS','203 × 185 × 153 km'],['ORBIT','0.695 d'],['DISCOVERED','1966'],['DISTANCE','151,460 km'],['THE PAIR','Epimetheus, 50 km closer in'],['THE SWAP','every 4 years (2026, 2030)']],
+  sections: [
+    {t:'THE DANCE', rows:[['One orbit for two','Janus and Epimetheus travel the SAME orbit, 151,000 km from Saturn, with 50 km of difference in radius; the inner one is slightly faster and catches up with the outer every four years'],['The swap','Coming within some 10,000 km of each other, gravity pulls: the inner one gains energy and rises, the outer loses it and drops; they trade lanes without ever crossing and go on for another four years'],['The horseshoe','Seen from one of the two, the other draws a horseshoe: it comes, almost arrives, and turns back. It is the only such pair in the Solar System'],['When','The swaps happened in 2006, 2010, 2014, 2018, 2022 and early 2026; the next one is around 2030']]},
+    {t:'RECORD', rows:[['Discovered','December 15, 1966, by Audouin Dollfus, at Pic du Midi; for years astronomers confused the two as a single moon, and Voyager 1 split the pair in 1980'],['The name','Janus, the Roman god of doors, with two faces: a moon with two names and two orbits fits the myth'],['The ring','The two shed dust that forms a thin ring along the shared orbit, seen by Cassini in 2006'],['The face','A low-density rubble pile (0.63), full of craters, with the ground covered in fine dust from the rings']]}
+  ],
+  facts: ['It shares the same orbit with Epimetheus and the two swap places every four years, without ever crossing.', 'For 14 years it was counted as a single moon with Epimetheus: Voyager 1 split the pair in 1980.'],
+  fict: 'Janus, the two-faced god of doors, named a moon that spent years being mistaken for its sister: the name turned out perfect by accident.'
+},
+epimeteu: {
+  kind: 'The smaller half of the pair that swaps orbits',
+  quick: [['DIMENSIONS','129 × 114 × 106 km'],['ORBIT','0.694 d'],['DISCOVERED','1966'],['DISTANCE','151,410 km'],['THE PAIR','Janus, 50 km farther out'],['THE SWAP','every 4 years']],
+  sections: [
+    {t:'THE PAIR', rows:[['The swap','Every four years it catches up with Janus (or is caught), the two trade lanes and the 50 km difference flips sign; nobody overtakes anybody'],['The shape','A 116 km potato with large craters (Hilairea and Pollux) and valleys that suggest a body broken and reassembled'],['Cassini','Photographed up close in 2007 and 2015: the smooth dusty surface, like that of the other ring moons']]},
+    {t:'RECORD', rows:[['Discovered','December 18, 1966, by Richard Walker, three days after Janus, and for years taken for the same object'],['The name','Epimetheus, the brother of Prometheus: the one who thinks AFTERWARD (Prometheus thinks ahead); the moon confused for 14 years got the right name'],['1980','Voyager 1 showed they were two moons on a single orbit, the first known co-orbital pair']]}
+  ],
+  facts: ['It was discovered three days after Janus and spent 14 years being taken for the same moon.', 'The name is that of the brother of Prometheus, the one who thinks afterward: fitting for a moon only understood in 1980.'],
+  fict: null
+},
+telesto: {
+  kind: 'The Trojan that runs 60 degrees ahead of Tethys',
+  quick: [['DIMENSIONS','33 × 24 × 20 km'],['ORBIT','1.888 d'],['DISCOVERED','1980'],['DISTANCE','294,619 km'],['WHERE','L4 point of Tethys'],['PHOTO','Cassini, 2005']],
+  sections: [
+    {t:'THE TROJAN', rows:[['The point','It orbits at the L4 point of Tethys, 60 degrees ahead, on the same orbit: like the Trojans of Jupiter, but inside a system of moons'],['The pair','Calypso does the same 60 degrees behind (L5): Tethys carries both as an escort, the only known case of a moon with Trojans on both sides, together with Dione'],['The face','Cassini passed 14,000 km away in 2005: almost no craters, covered by a smooth blanket of fine dust from the E ring, as if it had been sanded']]},
+    {t:'RECORD', rows:[['Discovered','April 8, 1980, from the ground, by Smith, Reitsema, Larson and Fountain, taking advantage of the ring plane seen edge-on'],['The name','Telesto, one of the Oceanids, daughter of Oceanus and Tethys']]}
+  ],
+  facts: ['It always runs 60 degrees ahead of Tethys, at the Lagrange point L4: a Trojan inside the system of Saturn.', 'The surface is as smooth as if it had been sanded: the dust of the E ring covers everything.'],
+  fict: null
+},
+calipso: {
+  kind: 'The Trojan that trails 60 degrees behind Tethys, the whitest object in the system',
+  quick: [['DIMENSIONS','30 × 23 × 14 km'],['ORBIT','1.888 d'],['DISCOVERED','1980'],['DISTANCE','294,619 km'],['WHERE','L5 point of Tethys'],['ALBEDO','1.3 · the highest known']],
+  sections: [
+    {t:'THE WHITEST', rows:[['The record','It reflects more light than it receives head-on (geometric albedo 1.3, the highest in the Solar System): the surface is fresh ice and dust from the E ring, which Enceladus throws out'],['The point','It orbits at the L5 of Tethys, 60 degrees behind, mirroring Telesto on the other side'],['The face','Cassini saw in 2010 an elongated, smooth body, with very few craters, covered in fine material sliding down the slopes']]},
+    {t:'RECORD', rows:[['Discovered','March 13, 1980, by Pascu, Seidelmann, Baum and Currie, also from the ground, with the rings edge-on'],['The name','Calypso, the nymph who kept Odysseus seven years on the island of Ogygia']]}
+  ],
+  facts: ['It is the most reflective object known in the Solar System: the fresh ice of the E ring, spread by Enceladus, covers the surface.', 'It always trails 60 degrees behind Tethys, at the L5 point, mirroring Telesto.'],
+  fict: 'Calypso, the nymph who held Odysseus for seven years: the moon is held forever at 60 degrees from Tethys.'
 },
 encke: {
   kind: 'The comet in the biggest hurry, father of the Taurids',

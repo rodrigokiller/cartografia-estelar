@@ -165,12 +165,12 @@ body.touch #topright{z-index:76}
 #panel::before,#panel::after,#findbox::before,#findbox::after,#cmpcard::before,#cmpcard::after,
 #helpcard::before,#helpcard::after,#player::before,#player::after,#misscard::before,#misscard::after,
 #filtpop::before,#filtpop::after,#cfgpop::before,#cfgpop::after,#tut::before,#tut::after,
-#datepop::before,#datepop::after,#tourpop::before,#tourpop::after,#habpop::before,#habpop::after,#evtpop::before,#evtpop::after,#satpop::before,#satpop::after{
+#datepop::before,#datepop::after,#tourpop::before,#tourpop::after,#habpop::before,#habpop::after,#evtpop::before,#evtpop::after,#satpop::before,#satpop::after,#ceupop::before,#ceupop::after{
   content:'';position:absolute;pointer-events:none;z-index:2}
-#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before,#filtpop::before,#cfgpop::before,#tut::before,#datepop::before,#tourpop::before,#habpop::before,#evtpop::before,#satpop::before{
+#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before,#filtpop::before,#cfgpop::before,#tut::before,#datepop::before,#tourpop::before,#habpop::before,#evtpop::before,#satpop::before,#ceupop::before{
   left:-1px;top:-1px;
   background:linear-gradient(-45deg,transparent calc(50% - 1px),var(--line2) calc(50% - 1px),var(--line2) 50%,transparent 50%)}
-#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after,#filtpop::after,#cfgpop::after,#tut::after,#datepop::after,#tourpop::after,#habpop::after,#evtpop::after,#satpop::after{
+#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after,#filtpop::after,#cfgpop::after,#tut::after,#datepop::after,#tourpop::after,#habpop::after,#evtpop::after,#satpop::after,#ceupop::after{
   right:-1px;bottom:-1px;
   background:linear-gradient(-45deg,transparent 50%,var(--line2) 50%,var(--line2) calc(50% + 1px),transparent calc(50% + 1px))}
 #panel::before,#panel::after{width:18px;height:18px}
@@ -186,9 +186,10 @@ body.touch #topright{z-index:76}
 #datepop::before,#datepop::after{width:10px;height:10px}
 #tourpop::before,#tourpop::after{width:10px;height:10px}
 #habpop::before,#habpop::after{width:10px;height:10px}
-#evtpop::before,#evtpop::after,#satpop::before,#satpop::after{width:10px;height:10px}
+#evtpop::before,#evtpop::after,#satpop::before,#satpop::after,#ceupop::before,#ceupop::after{width:10px;height:10px}
 #evtpop{position:relative}
 #satpop{position:relative}
+#ceupop{position:relative}
 #tourpoplista .filtrow b{color:var(--amber)}
 #tut::before{background:linear-gradient(-45deg,transparent calc(50% - 1px),rgba(255,180,84,.45) calc(50% - 1px),rgba(255,180,84,.45) 50%,transparent 50%)}
 #tut::after{background:linear-gradient(-45deg,transparent 50%,rgba(255,180,84,.45) 50%,rgba(255,180,84,.45) calc(50% + 1px),transparent calc(50% + 1px))}
@@ -299,6 +300,19 @@ body.touch #datepop{bottom:auto;top:62px;left:12px;z-index:80;max-width:calc(100
   width:min(400px,94vw);background:var(--panel);border:1px solid var(--line2);padding:14px 16px 12px;
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
 #satpop.on{display:block;animation:tourpopnasce .24s ease-out}
+/* r286 · o céu de hoje (molde do satpop) */
+#ceupop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:27;display:none;
+  width:min(440px,94vw);background:var(--panel);border:1px solid var(--line2);padding:14px 16px 12px;
+  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+#ceupop.on{display:block;animation:tourpopnasce .24s ease-out}
+#ceupop .tphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:2.5px;color:var(--amber)}
+#ceupop .tphead button{width:20px;height:20px;background:none;border:1px solid var(--line2);color:var(--dim);
+  font-family:var(--mono);font-size:9px;line-height:1;cursor:pointer;padding:0}
+#ceupop .tpn{font-family:var(--mono);font-size:8.5px;letter-spacing:1.2px;color:var(--dim2);line-height:1.7;margin-top:10px}
+#ceulista .satrow span{line-height:1.5}
+#ceulista .satrow em{font-style:normal;color:var(--amber)}
+#ceulista .satrow b{color:var(--ion);border:1px solid var(--line2);padding:2px 7px;font-size:8.5px}
 #satpop .tphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
   font-family:var(--mono);font-size:9.5px;letter-spacing:2.5px;color:var(--amber)}
 #satpop .tphead button{width:20px;height:20px;background:none;border:1px solid var(--line2);color:var(--dim);
@@ -365,6 +379,7 @@ body.emsistema #simclock{display:flex}
 #simclock button{background:none;border:none;color:var(--dim);opacity:.55;cursor:pointer;
   font-size:10px;padding:0 2px;line-height:1}
 #simclock button:hover{opacity:1;color:var(--amber)}
+#simlua{width:14px;height:14px;cursor:pointer;opacity:.9;flex:none}   /* r284 · a fase da Lua na data do relógio */
 #simlive{font-size:8.5px !important;letter-spacing:1.5px;border:1px solid rgba(122,140,170,.28) !important;padding:2px 7px !important;border-radius:2px}
 #simlive.on{color:#79c98f !important;opacity:.95 !important;border-color:rgba(121,201,143,.5) !important}
 #simvel{font-size:13px !important}
@@ -1043,7 +1058,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   </div>
 
   <div id="reguabar"><div class="rbline"><i></i><b></b><i></i></div><span id="rbtxt"></span></div>
-  <div id="simclock"><span id="simdata"></span><button id="simpp" data-tip="Pausar ou continuar o tempo">⏸</button><button id="simgo" data-tip="Ir para uma data">◈</button><button id="simlive" data-tip="Relógio travado no AGORA: clique para voltar ao vivo">● AO VIVO</button><button id="simvel" data-tip="Velocidade do tempo">»</button></div>
+  <div id="simclock"><span id="simdata"></span><canvas id="simlua" width="28" height="28" data-tip=""></canvas><button id="simpp" data-tip="Pausar ou continuar o tempo">⏸</button><button id="simgo" data-tip="Ir para uma data">◈</button><button id="simlive" data-tip="Relógio travado no AGORA: clique para voltar ao vivo">● AO VIVO</button><button id="simvel" data-tip="Velocidade do tempo">»</button></div>
 
   <button class="chev" id="chevL" title="Anterior">‹</button>
   <button class="chev" id="chevR" title="Próximo">›</button>
@@ -1123,6 +1138,11 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="tphead"><span>◌ SATÉLITES AO VIVO</span><button id="satpopx">✕</button></div>
     <div id="satlista"></div>
     <div class="tpn">Os pontos vêm do catálogo CelesTrak, na posição de agora. Desmarcar um grupo esconde os pontos, os nomes e as órbitas dele. Afastando o zoom, os satélites somem por ordem de altitude, os mais baixos primeiro.</div>
+  </div>
+  <div id="ceupop">
+    <div class="tphead"><span>◎ O CÉU DE HOJE</span><button id="ceupopx">✕</button></div>
+    <div id="ceulista"></div>
+    <div class="tpn">Lido do próprio mapa na data do relógio: a Lua, os planetas em relação ao Sol e os cometas perto do periélio. MIRAR põe a câmera na Terra olhando para o astro.</div>
   </div>
   <div id="datepop">
     <button class="fpx">✕</button>
@@ -1962,7 +1982,7 @@ PLANETS.push(
   quick:[['GRAVIDADE','1,06 g'],['TEMP. TOPO','−139 °C'],['DIA','10 h 33'],['ANO','29,4 anos'],['LUAS','274'],['ANÉIS','SIM']],
   sys:{orbit:34, size:2.15, speed:0.034, angle:5.6},
   visual:{mode:'gas', c1:'#e2d3ac', c2:'#c6b184', c3:'#f0e8d2', c4:'#a98f60', bandF:8.0, turb:0.9, seed:4.7, atmo:{col:'#f0e2b8', i:0.5}, rings:{rin:1.35, rout:2.35, col:'#d8caa6', op:0.9, tilt:26.7, seed:2.0}},
-  moonsMeta:'274 CONFIRMADAS · 9 PRINCIPAIS · 3 PASTORAS',
+  moonsMeta:'274 CONFIRMADAS · 9 PRINCIPAIS · 3 PASTORAS · 4 CO-ORBITAIS',
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','1,43 bi km (9,5 UA)'],['Ano','29,4 anos'],['Dia','10 h 33 min'],['Tipo de rotação','Prógrada'],['Veloc. orbital','9,7 km/s'],['Inclinação axial','26,7°'],['Estações','Sim, ~7 anos cada']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','116.460 km'],['Massa','5,68 × 10²⁶ kg (95 Terras)'],['Densidade','0,69 g/cm³, flutuaria na água'],['Área','42,7 bi km²'],['Anéis','282.000 km de largura · ~10 m a 1 km de espessura']]},
@@ -2087,7 +2107,43 @@ PLANETS.push(
       {t:'REGISTRO', rows:[['Descoberta','Outubro de 1980, nas fotos da Voyager 1, junto com Prometeu'],['O nome','Pandora, a da caixa: as luas pequenas de Saturno seguem a mitologia dos titãs e gigantes'],['A órbita','Uma volta a cada 15,1 horas, um pouco mais devagar que Prometeu']]}
     ],
     facts:['Por décadas foi chamada de pastora externa do anel F, mas a Cassini mostrou que quem esculpe o anel é Prometeu.','A superfície é lisa por causa da poeira fina do anel que cai nela.'],
-    fict:null}
+    fict:null},
+   {id:'jano', name:'JANO', desig:'SATURNO-X · CO-ORBITAL', kind:'A que troca de órbita com Epimeteu a cada quatro anos', hab:0, gbar:0.0007, pop:'0',
+    quick:[['DIMENSÕES','203 × 185 × 153 km'],['ÓRBITA','0,695 d'],['DESCOBERTA','1966'],['DISTÂNCIA','151.460 km'],['O PAR','Epimeteu, 50 km mais perto'],['A TROCA','a cada 4 anos (2026, 2030)']],
+    visual:{mode:'rocky', c1:'#cfc9bd', c2:'#e4dfd4', c3:'#9b9386', scale:3.4, seed:19.66, crater:0.8},
+    sections:[
+      {t:'A DANÇA', rows:[['Uma órbita para duas','Jano e Epimeteu andam na MESMA órbita, a 151 mil km de Saturno, com 50 km de diferença de raio; o de dentro é um pouco mais rápido e alcança o de fora a cada quatro anos'],['A troca','Chegando a uns 10 mil km um do outro, a gravidade puxa: o de dentro ganha energia e sobe, o de fora perde e desce; eles trocam de faixa sem nunca se cruzar e seguem por mais quatro anos'],['A ferradura','Visto de um dos dois, o outro desenha uma ferradura: vem, quase chega, e volta. É o único par assim no Sistema Solar'],['Quando','As trocas aconteceram em 2006, 2010, 2014, 2018, 2022 e no começo de 2026; a próxima é por volta de 2030']]},
+      {t:'REGISTRO', rows:[['Descoberta','15 de dezembro de 1966, por Audouin Dollfus, em Pic du Midi; por anos os astrônomos confundiram os dois numa lua só, e a Voyager 1 separou o par em 1980'],['O nome','Jano, o deus romano das portas, com duas caras: uma lua com dois nomes e duas órbitas cabe no mito'],['O anel','Os dois soltam poeira que forma um anel fino ao longo da órbita compartilhada, visto pela Cassini em 2006'],['A cara','Um monte de entulho de baixa densidade (0,63), cheio de crateras, com o solo coberto de poeira fina dos anéis']]}
+    ],
+    facts:['Divide a mesma órbita com Epimeteu e os dois trocam de lugar a cada quatro anos, sem nunca se cruzar.','Por 14 anos foi contada como uma lua só com Epimeteu: a Voyager 1 separou o par em 1980.'],
+    fict:'Jano, o deus das portas com duas caras, batizou uma lua que passou anos sendo confundida com a irmã: o nome ficou perfeito por acidente.'},
+   {id:'epimeteu', name:'EPIMETEU', desig:'SATURNO-XI · CO-ORBITAL', kind:'A metade menor do par que troca de órbita', hab:0, gbar:0.0004, pop:'0',
+    quick:[['DIMENSÕES','129 × 114 × 106 km'],['ÓRBITA','0,694 d'],['DESCOBERTA','1966'],['DISTÂNCIA','151.410 km'],['O PAR','Jano, 50 km mais longe'],['A TROCA','a cada 4 anos']],
+    visual:{mode:'rocky', c1:'#c9c3b7', c2:'#dfdacf', c3:'#958d80', scale:3.4, seed:19.67, crater:0.85},
+    sections:[
+      {t:'O PAR', rows:[['A troca','A cada quatro anos alcança Jano (ou é alcançada), os dois trocam de faixa e a diferença de 50 km inverte de sinal; ninguém ultrapassa ninguém'],['A forma','Uma batata de 116 km com crateras grandes (Hilairea e Pollux) e vales que sugerem um corpo partido e remontado'],['A Cassini','Fotografada de perto em 2007 e 2015: a superfície lisa de poeira, como a das outras luas dos anéis']]},
+      {t:'REGISTRO', rows:[['Descoberta','18 de dezembro de 1966, por Richard Walker, três dias depois de Jano, e por anos tomada pelo mesmo objeto'],['O nome','Epimeteu, o irmão de Prometeu: o que pensa DEPOIS (Prometeu pensa antes); a lua confundida por 14 anos ganhou o nome certo'],['1980','A Voyager 1 mostrou que eram duas luas numa órbita só, o primeiro par co-orbital conhecido']]}
+    ],
+    facts:['Foi descoberta três dias depois de Jano e passou 14 anos sendo tomada pela mesma lua.','O nome é o do irmão de Prometeu, o que pensa depois: combina com uma lua que só foi entendida em 1980.'],
+    fict:null},
+   {id:'telesto', name:'TELESTO', desig:'SATURNO-XIII · TROIANA DE TÉTIS', kind:'A troiana que vai 60 graus à frente de Tétis', hab:0, gbar:0.0001, pop:'0',
+    quick:[['DIMENSÕES','33 × 24 × 20 km'],['ÓRBITA','1,888 d'],['DESCOBERTA','1980'],['DISTÂNCIA','294.619 km'],['ONDE','ponto L4 de Tétis'],['FOTO','Cassini, 2005']],
+    visual:{mode:'rocky', c1:'#d6d1c6', c2:'#ebe7de', c3:'#a49c8f', scale:3.0, seed:19.80, crater:0.5},
+    sections:[
+      {t:'A TROIANA', rows:[['O ponto','Orbita no ponto L4 de Tétis, 60 graus à frente, na mesma órbita: como os troianos de Júpiter, mas dentro de um sistema de luas'],['A dupla','Calipso faz o mesmo 60 graus atrás (L5): Tétis leva as duas como escolta, o único caso conhecido de uma lua com troianas dos dois lados junto com Dione'],['A cara','A Cassini passou a 14 mil km em 2005: quase sem crateras, coberta por um manto liso de poeira fina do anel E, como se tivesse sido lixada']]},
+      {t:'REGISTRO', rows:[['Descoberta','8 de abril de 1980, do chão, por Smith, Reitsema, Larson e Fountain, aproveitando o plano dos anéis visto de lado'],['O nome','Telesto, uma das Oceânides, filha de Oceano e Tétis']]}
+    ],
+    facts:['Vai sempre 60 graus à frente de Tétis, no ponto de Lagrange L4: uma troiana dentro do sistema de Saturno.','A superfície é lisa como se tivesse sido lixada: a poeira do anel E cobre tudo.'],
+    fict:null},
+   {id:'calipso', name:'CALIPSO', desig:'SATURNO-XIV · TROIANA DE TÉTIS', kind:'A troiana que vem 60 graus atrás de Tétis, o objeto mais branco do sistema', hab:0, gbar:0.0001, pop:'0',
+    quick:[['DIMENSÕES','30 × 23 × 14 km'],['ÓRBITA','1,888 d'],['DESCOBERTA','1980'],['DISTÂNCIA','294.619 km'],['ONDE','ponto L5 de Tétis'],['ALBEDO','1,3 · o mais alto conhecido']],
+    visual:{mode:'rocky', c1:'#e6e3dc', c2:'#f4f2ee', c3:'#b3ada3', scale:3.0, seed:19.81, crater:0.4},
+    sections:[
+      {t:'A MAIS BRANCA', rows:[['O recorde','Reflete mais luz do que recebe de frente (albedo geométrico 1,3, o maior do Sistema Solar): a superfície é gelo fresco e poeira do anel E, que Encélado joga para fora'],['O ponto','Orbita no L5 de Tétis, 60 graus atrás, espelhando Telesto do outro lado'],['A cara','A Cassini viu em 2010 um corpo alongado e liso, com pouquíssimas crateras, coberto de material fino escorrendo pelas encostas']]},
+      {t:'REGISTRO', rows:[['Descoberta','13 de março de 1980, por Pascu, Seidelmann, Baum e Currie, também do chão, com os anéis de lado'],['O nome','Calipso, a ninfa que segurou Odisseu sete anos na ilha de Ogígia']]}
+    ],
+    facts:['É o objeto mais reflexivo conhecido no Sistema Solar: o gelo fresco do anel E, que Encélado espalha, cobre a superfície.','Vem sempre 60 graus atrás de Tétis, no ponto L5, espelhando Telesto.'],
+    fict:'Calipso, a ninfa que prendeu Odisseu por sete anos: a lua é presa para sempre a 60 graus de Tétis.'}
   ]
 },
 {
@@ -5750,7 +5806,7 @@ const ESCALA_REAL_LUAS = {
   io:421700, europa:671100, ganimedes:1070400, calisto:1882700,
   tita:1221870, reia:527108, encelado:237948, dione:377396, tetis:294619, mimas:185539, japeto:3560820,
   hiperion:1481010, febe:12947780, amalteia:181366, himalia:11461000, proteu:117647, nereida:5513818,
-  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, disnomia:37273, queta:2350, menoetius:680, selam:3.1, metis:128000, tebe:221900, galateia:61953, larissa:73548, pan:133584, prometeu:139380, pandora:141720, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
+  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, disnomia:37273, queta:2350, menoetius:680, selam:3.1, metis:128000, tebe:221900, galateia:61953, larissa:73548, pan:133584, prometeu:139380, pandora:141720, jano:151460, epimeteu:151410, telesto:294619, calipso:294619, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
   iss:6790, hubble:6910, tiangong:6760, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, hyakutake:55, mcnaught:41, atlasg3:7.8, juice:1.0, clipper:1.1, lucy:3.6, pathfinder:1.52, viking1:1.52, cassini:9.54};
@@ -6623,6 +6679,70 @@ const SATV_OPER = [[/^ISS|^ZARYA|^NAUKA/, 'NASA · Roscosmos · ESA · JAXA · C
   [/^PROGRESS|^SOYUZ/, 'Roscosmos (visitante da ISS)'], [/DRAGON/, 'SpaceX (visitante da ISS)'], [/^CYGNUS/, 'Northrop Grumman'], [/^IRIDIUM/, 'Iridium'],
   [/R\/B/, 'estágio de foguete (lixo espacial)'], [/^SL-|^CZ-|DEB\b/, 'destroço ou estágio (lixo espacial)']];
 function satVivoOperador(nome){ const n = String(nome || '').toUpperCase(); for(const [re, op] of SATV_OPER) if(re.test(n)) return op; return null; }
+/* r286 · O CÉU DE HOJE: lê o mapa na data do relógio. Elongação = ângulo Sol-Terra-astro; a leste do Sol o astro
+   se põe depois dele (brilha ao anoitecer), a oeste nasce antes (de madrugada). O sinal de 'leste' vem do produto
+   vetorial no plano da cena (calibrado por sonda com Vênus vespertino em SET 2026). */
+const CEU_LESTE = 1;
+function ceuPosDe(id){ const pk = ACT && ACT.pickables && ACT.pickables.find(x=>x.userData && x.userData.id === id); if(!pk) return null; return pk.getWorldPosition(new THREE.Vector3()); }
+function ceuLuaQuando(idade){
+  if(idade < 1.8 || idade > 27.7) return t('some na luz do Sol, invisível');
+  if(idade < 9.2) return t('visível ao anoitecer, se põe antes da meia-noite');
+  if(idade < 12.9) return t('alta ao anoitecer, se põe de madrugada');
+  if(idade < 16.6) return t('nasce ao pôr do sol e brilha a noite inteira');
+  if(idade < 20.3) return t('nasce depois do anoitecer, alta de madrugada');
+  return t('nasce de madrugada, visível ao amanhecer');
+}
+function ceuElongTxt(el, leste){
+  if(el < 10) return Math.round(el) + '° ' + t('do Sol: invisível, perdido no clarão');
+  if(el > 150) return Math.round(el) + '° ' + t('do Sol: oposto a ele, visível a noite inteira');
+  return Math.round(el) + '° ' + (leste ? t('a leste do Sol: brilha ao anoitecer') : t('a oeste do Sol: brilha de madrugada'));
+}
+function ceuHojeCalc(){
+  if(!(ACT && ACT.escr)) return [];   /* só no 1:1 (as elongações do cênico mentem) */
+  const E = ceuPosDe('terra'), S = ceuPosDe('sol'); if(!E || !S) return [];
+  const vS = S.clone().sub(E).normalize(), itens = [];
+  const lua = ceuPosDe('lua');
+  if(lua){ const f = faseDaLua(); itens.push({id:'lua', nome:t('LUA'), txt:t(nomeDaFase(f.idade)) + ' · ' + Math.round(f.ilum*100) + '% · ' + ceuLuaQuando(f.idade)}); }
+  for(const id of ['mercurio', 'venus', 'marte', 'jupiter', 'saturno']){
+    const P = ceuPosDe(id); if(!P) continue;
+    const vP = P.clone().sub(E).normalize();
+    const el = Math.acos(Math.max(-1, Math.min(1, vS.dot(vP))))*180/Math.PI;
+    const cr = new THREE.Vector3().crossVectors(vS, vP).y;
+    itens.push({id, nome:ALLBODIES[id].name, el, cr, leste:cr*CEU_LESTE > 0, txt:ceuElongTxt(el, cr*CEU_LESTE > 0)});
+  }
+  for(const id in ESCALA_REAL_ANC){
+    const b = ALLBODIES[id]; if(!b || !b.comet) continue;
+    const T = ESCALA_REAL_T[id], ep = ESCALA_REAL_ANC[id].ep; if(!T || !ep) continue;
+    const per = T*365.25*86400000; let dt = ((SIMT.data - ep) % per + per) % per; if(dt > per/2) dt -= per;
+    const dias = dt/86400000; if(Math.abs(dias) > 90) continue;
+    const P = ceuPosDe(id); if(!P) continue;
+    itens.push({id, nome:b.name, txt:(dias < 0 ? t('periélio em') + ' ' + Math.round(-dias) + ' ' + t('dias') : t('passou pelo periélio há') + ' ' + Math.round(dias) + ' ' + t('dias')) + ' · ' + (P.distanceTo(S)/ESCR_UA).toFixed(2) + ' UA ' + t('do Sol')});
+  }
+  return itens;
+}
+function ceuHojeAbre(){
+  const el = document.getElementById('ceulista'); if(!el) return;
+  const itens = ceuHojeCalc();
+  el.innerHTML = itens.length ? itens.map(x=>'<div class="satrow" data-mira="' + x.id + '"><span><em>' + esc(x.nome) + '</em> · ' + esc(x.txt) + '</span><b>' + t('MIRAR') + '</b></div>').join('') : '<div class="tpn">' + t('só no mapa 1:1 do Sistema Solar') + '</div>';
+  document.getElementById('ceupop').classList.add('on');
+  if(typeof tutInicia === 'function' && typeof TUT !== 'undefined' && !TUT.v.has('ceuhoje')) setTimeout(()=>tutInicia('ceuhoje', [
+    {tx:'O CÉU DE HOJE lê o mapa na <b>data do relógio</b>: a fase da Lua e quando ela aparece, quanto cada planeta está afastado do Sol e os cometas perto do periélio.'},
+    {tx:'A regra é simples: astro <b>a leste</b> do Sol se põe depois dele e brilha ao anoitecer; <b>a oeste</b> nasce antes, de madrugada; colado no Sol, invisível; oposto ao Sol, a noite inteira.'},
+    {tx:'<b>MIRAR</b> põe a câmera na Terra olhando para o astro, na direção real: ele aparece logo acima do disco. Mude a data no relógio e a lista muda junto.', alvo:'#ceupop'}
+  ]), 500);
+}
+function ceuHojeMirar(id){
+  if(!(ACT && ACT.kind === 'system')) return;
+  const E = ceuPosDe('terra'), P = ceuPosDe(id); if(!E || !P) return;
+  ST.mapCard = {type:'body', id:'terra', act:'focus', t:performance.now(), entrou:true}; ACT.pivoSegue = null;
+  const d = P.clone().sub(E).normalize();
+  let yaw = Math.atan2(-d.x, -d.z), pitch = Math.max(-1.3, Math.min(1.3, Math.asin(Math.max(-1, Math.min(1, -d.y))) + 0.06));
+  while(yaw - CAM.yaw > Math.PI) yaw -= 2*Math.PI; while(yaw - CAM.yaw < -Math.PI) yaw += 2*Math.PI;
+  CAMTW = {t0:performance.now(), ms:1800, f:{yaw:CAM.yaw, pitch:CAM.pitch, dist:CAM.dist}, t:{yaw, pitch, dist:(ACT.escr ? 0.03 : 4.5)}, p0:CAM.pivot.clone(), p1:E.clone(), segue:'terra'};
+  ZOOM = null; uiSync();
+  document.getElementById('ceupop').classList.remove('on');
+  showHint(t('OLHANDO DA TERRA PARA') + ' ' + (ALLBODIES[id] ? ALLBODIES[id].name : t('LUA')));
+}
 /* r280 · o CONFIGURADOR dos satélites ao vivo (ideia dele): os grupos do catálogo com a legenda das cores e o lixo
    espacial (estágios e destroços), guardado em carto:satcfg; desligar esconde ponto, nome, órbita e clique */
 const SATV_LIXO = /R\/B|\bDEB\b|^SL-\d|^CZ-\d/;
@@ -7190,7 +7310,7 @@ function buildSystem(sysId, spin0){
     /* as luas também aparecem no mapa do sistema, em miniatura */
     if(p.moons && p.moons.length && !p.satOf && !p.comet && !ehEscape(p) && !p.region){
       /* r160: teto 6→8; r229: 8→9 (Hipérion e Febe entraram em Saturno) */
-      p.moons.slice(0, QLOW ? 6 : 12).forEach((m, mi)=>{
+      p.moons.slice(0, QLOW ? 8 : 16).forEach((m, mi)=>{   /* r285 · teto 16: Saturno com as co-orbitais */
         const mh = new THREE.Object3D();
         mh.position.set(obX, 0, obZ);
         if(elip) elip.extras.push(mh);
@@ -14606,6 +14726,8 @@ function cardRender(){
   let h = '';
   /* ENTRAR agora mora no TOPO do card, como o Rodrigo pediu */
   if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='satlive' ? t('▶ ENTRAR · TRAVAR NO SATÉLITE') : (cur.navKind==='body'?t('▶ ENTRAR · TRAVAR LINK'):t('▶ ENTRAR · TRAVAR ROTA')))+'</button>';
+  { const bT = (cur.type==='body') ? cur.b : ((cur.navKind==='body' && ALLBODIES[cur.navId]) ? ALLBODIES[cur.navId] : null);
+    if(bT && bT.id === 'terra' && ACT && ACT.kind === 'system' && ST.sys === 'sol' && ACT.escr) h += '<button class="xbtn" id="btnceuhoje">'+t('◎ O CÉU DE HOJE')+'</button>'; }   /* r286 · só no 1:1: no cênico os raios comprimidos mudam as elongações (sonda: Marte 1 grau contra 59) */
   { const bHab = (cur.type==='body') ? cur.b : ((cur.navKind==='body' && ALLBODIES[cur.navId]) ? ALLBODIES[cur.navId] : null);
     if(bHab && bHab.visual && MODEMAP[bHab.visual.mode] === 4)
       h += '<button class="xbtn" id="btnhab">'+t('◉ MUNDOS HABITÁVEIS LADO A LADO')+'</button>';
@@ -14782,6 +14904,7 @@ function cardRender(){
   }));
   const xe = $('#xexp'); if(xe) xe.addEventListener('click', ()=>{ ST.expanded=!ST.expanded; cardRender(); if(isMobile()&&ST.expanded)$('#panel').classList.add('expanded'); });
   const hb2 = $('#btnhab'); if(hb2) hb2.addEventListener('click', ()=>abrirHab(cur.b && cur.b.id));
+  const hc2 = $('#btnceuhoje'); if(hc2) hc2.addEventListener('click', ceuHojeAbre);   /* r286 */
   const cb = $('#cmpbtn'); if(cb) cb.addEventListener('click', ()=>{
     const ce = currentEntity(); if(!ce || !ce.b) return;
     const b = ce.b;
@@ -15538,7 +15661,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r283';
+const BUILD = 'r286';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -15942,8 +16065,31 @@ function simClockUI(){
   let txt = d.getDate() + ' ' + MESES_N[d.getMonth()] + ' ' + d.getFullYear();
   if(SIMT.vel==='real' || SIMT.vel==='seg' || SIMT.vel==='hora') txt += ' · ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
   el.textContent = txt;
+  luaNoRelogio();   /* r284 */
   const pp = $('#simpp'); if(pp) pp.textContent = SIMT.pausado ? '▶' : '⏸';
   if(typeof liveSync === 'function') liveSync();
+}
+/* r284 · A LUA NO RELÓGIO: o disco da fase na data simulada, como se vê do BRASIL (no hemisfério sul o lado
+   iluminado fica espelhado em relação aos diagramas do norte: a crescente acende à esquerda). O balão traz a fase, a
+   idade, a fração iluminada e o próximo eclipse do catálogo; tocar abre os EVENTOS filtrados em eclipses. */
+const LUA_SUL = true;
+function proximoEclipse(){
+  try{ const agora = SIMT.data; return EVENTOS.filter(e=>e.g === 'eclipse' && evtData(e) >= agora).sort((a, b)=>evtData(a) - evtData(b))[0] || null; }catch(e){ return null; }
+}
+function luaNoRelogio(){
+  const c = document.getElementById('simlua'); if(!c) return;
+  const f = faseDaLua(), k = f.ilum, cresc = f.idade < 14.765;
+  let ladoLuz = cresc ? 1 : -1; if(LUA_SUL) ladoLuz = -ladoLuz;   /* +1 = iluminada à direita */
+  const ctx = c.getContext('2d'), R = 12.5, cx = 14, cy = 14;
+  ctx.clearRect(0, 0, 28, 28);
+  ctx.fillStyle = '#243049'; ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#e8e2c8'; ctx.beginPath(); ctx.arc(cx, cy, R, -Math.PI/2, Math.PI/2, ladoLuz < 0); ctx.fill();   /* a metade iluminada */
+  ctx.fillStyle = (k >= 0.5) ? '#e8e2c8' : '#243049';   /* o terminador: uma elipse que engorda a luz (gibosa) ou come (crescente) */
+  ctx.beginPath(); ctx.ellipse(cx, cy, Math.max(0.01, Math.abs(2*k - 1))*R, R, 0, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = 'rgba(150,180,230,.55)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.stroke();
+  const prox = proximoEclipse();
+  c.dataset.tip = t(nomeDaFase(f.idade)) + ' · ' + f.idade.toFixed(1) + ' ' + t('dias') + ' · ' + Math.round(k*100) + '% ' + t('iluminada')
+    + (prox ? ' · ' + t('PRÓXIMO ECLIPSE') + ': ' + t(prox.t) + ' · ' + ((typeof evtRotuloData === 'function') ? evtRotuloData(prox) : '') : '') + ' · ' + t('como se vê do Brasil');
 }
 /* AO VIVO: o estado é derivado (vel real e sem pausa); clicar trava no agora */
 function liveSync(){
@@ -15955,6 +16101,10 @@ $('#simlive').addEventListener('click', ()=>{
   store.set('carto:vel', 'real');
   cfgSync(); simClockUI();
   showHint('AO VIVO · O RELÓGIO CORRE NO AGORA');
+});
+$('#simlua').addEventListener('click', ()=>{   /* r284 · a Lua abre os eventos já nos eclipses */
+  EVTF.tag = 'eclipse'; EVTF.tempo = 'fut';
+  if(typeof evtChips === 'function') evtChips(); evtRender(); $('#evtpop').classList.add('on');
 });
 $('#simvel').addEventListener('click', ()=>{
   $('#datepop').classList.remove('on');
@@ -16142,6 +16292,8 @@ $('#dp_eventos').addEventListener('click', ()=>{
 });
 $('#evtpopx').addEventListener('click', ()=>$('#evtpop').classList.remove('on'));
 $('#satpopx').addEventListener('click', ()=>$('#satpop').classList.remove('on'));   /* r280 */
+$('#ceupopx').addEventListener('click', ()=>$('#ceupop').classList.remove('on'));   /* r286 */
+$('#ceulista').addEventListener('click', e=>{ const r = e.target.closest('[data-mira]'); if(r) ceuHojeMirar(r.dataset.mira); });
 $('#satlista').addEventListener('click', e=>{
   const r = e.target.closest('.satrow'); if(!r) return;
   if(r.dataset.sg) SATCFG.grupos[r.dataset.sg] = (SATCFG.grupos[r.dataset.sg] === false);
