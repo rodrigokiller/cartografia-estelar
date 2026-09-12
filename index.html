@@ -1836,11 +1836,12 @@ PLANETS.push(
   quick:[['GRAVIDADE','2,53 g'],['TEMP. TOPO','−110 °C'],['DIA','9 h 56'],['ANO','11,9 anos'],['LUAS','95'],['ANÉIS','tênues']],
   sys:{orbit:27, size:2.5, speed:0.084, angle:3.4},
   visual:{mode:'gas', c1:'#d9c5a3', c2:'#a4713e', c3:'#efe6d4', c4:'#8a5330', bandF:9.0, turb:1.4, seed:2.2, spot:{pos:[1.1,-0.35], r:0.34, col:'#c25438', on:1}, atmo:{col:'#e8d4b0', i:0.55}},
-  moonsMeta:'95 CONFIRMADAS · 6 PRINCIPAIS',
+  moonsMeta:'95 CONFIRMADAS · 6 PRINCIPAIS · 2 INTERNAS',
   sections:[
     {t:'ÓRBITA & ROTAÇÃO', rows:[['Distância do Sol','778,5 mi km (5,2 UA)'],['Ano','11,86 anos'],['Dia','9 h 56 min, o mais rápido'],['Tipo de rotação','Prógrada'],['Veloc. orbital','13,1 km/s'],['Inclinação axial','3,1°'],['Estações','Mínimas']]},
     {t:'ESTRUTURA', rows:[['Diâmetro','139.820 km (11 Terras)'],['Massa','1,90 × 10²⁷ kg (318 Terras)'],['Densidade','1,33 g/cm³'],['Área','61,4 bi km² (121× a Terra)'],['Superfície','Não tem, gás até virar H metálico']]},
     {t:'CLIMA & ATMOSFERA', rows:[['Temp. topo das nuvens','−110 °C'],['Atmosfera','90% H₂ · 10% He'],['Grande Mancha Vermelha','Tempestade maior que a Terra, ativa há séculos'],['Ventos','~600 km/h'],['Água','Vapor em camadas profundas']]},
+    {t:'OS ANÉIS', rows:[['1979','A Voyager 1 os achou numa única foto superexposta, em março: ninguém esperava anéis em Júpiter'],['O que são','Poeira, não gelo: quatro anéis tênues e escuros, quase invisíveis daqui'],['As partes','O anel principal fino, o halo inflado por dentro dele, e os dois gossamer, de Amalteia e de Tebe, por fora'],['De onde vem','Da poeira arrancada das luas pequenas pelos micrometeoritos: Métis e Adrasteia alimentam o principal, Amalteia e Tebe os gossamer'],['A Juno','Em 2016 fotografou os anéis por DENTRO, olhando para fora, com as estrelas de Órion atrás']]},
     {t:'REGISTRO', rows:[['Descoberta','Antiguidade'],['Luas galileanas','1610 · Galileu Galilei'],['Missão ativa','Juno (NASA) · Europa Clipper a caminho'],['População','0']]},
     {t:'LINK & VIAGEM', rows:[['Luz do Sol até aqui','43,3 min'],['Sonda desde a Terra','~5 anos (Juno)']]}
   ],
@@ -1897,6 +1898,24 @@ PLANETS.push(
     ],
     facts:['Foi a última lua do Sistema Solar descoberta a olho, pelo ocular do telescópio: depois de 1892, só fotografia.','É o objeto mais vermelho conhecido do Sistema Solar, pintado pelo enxofre dos vulcões de Io.'],
     fict:'Arthur C. Clarke pôs uma expedição nela em Júpiter Cinco (1953), e os irmãos Strugatsky escreveram O Caminho para Amalteia (1960).'},
+   {id:'metis', name:'MÉTIS', desig:'JÚPITER-XVI · LUA', kind:'A mais interna, dentro do anel principal', hab:0, gbar:0.0005, pop:'0',
+    quick:[['DIMENSÕES','60 × 40 × 34 km'],['ÓRBITA','0,295 d'],['DESCOBERTA','1979'],['DISTÂNCIA','128.000 km'],['ONDE','na borda do anel principal'],['DESTINO','cai devagar']],
+    visual:{mode:'rocky', c1:'#6a5f56', c2:'#857a70', c3:'#463e38', scale:3.0, seed:19.79, crater:0.7},
+    sections:[
+      {t:'A MAIS INTERNA', rows:[['O que é','A lua mais próxima de Júpiter: uma volta a cada 7 horas, mais rápido que o dia do planeta'],['O anel','Orbita na borda externa do anel principal e é uma das fontes dele: a poeira arrancada dela por micrometeoritos'],['O futuro','Por orbitar mais rápido que Júpiter gira, a maré a puxa para baixo: um dia cai no planeta']]},
+      {t:'REGISTRO', rows:[['Descoberta','Março de 1979, por Stephen Synnott nas imagens da Voyager 1'],['O nome','Métis, a primeira esposa de Zeus, deusa da prudência'],['A visita','A Galileo a fotografou nos anos 1990: uma batata de 60 km, uma das formas mais alongadas entre as luas']]}
+    ],
+    facts:['É a lua mais próxima de Júpiter e dá a volta em 7 horas, mais rápido que o próprio planeta gira.','A poeira que sai dela é uma das fontes do anel principal de Júpiter.'],
+    fict:null},
+   {id:'tebe', name:'TEBE', desig:'JÚPITER-XIV · LUA', kind:'A fonte do anel gossamer de fora', hab:0, gbar:0.0013, pop:'0',
+    quick:[['DIMENSÕES','116 × 98 × 84 km'],['ÓRBITA','0,675 d'],['DESCOBERTA','1979'],['DISTÂNCIA','221.900 km'],['CRATERA','Zethus, 40 km'],['ANEL','gossamer de Tebe']],
+    visual:{mode:'rocky', c1:'#7a6a5c', c2:'#968578', c3:'#52453c', scale:3.4, seed:19.80, crater:0.8},
+    sections:[
+      {t:'A FONTE DO ANEL', rows:[['O papel','A poeira arrancada dela pelos impactos se espalha num anel tênue, o gossamer de Tebe, que vai até a órbita dela'],['A cratera','Zethus, com 40 km, quase metade da lua: ela sobreviveu por pouco'],['A vizinha','Amalteia faz o mesmo com o gossamer de dentro: os dois anéis são as duas luas se desfazendo devagar']]},
+      {t:'REGISTRO', rows:[['Descoberta','Março de 1979, por Stephen Synnott nas imagens da Voyager 1'],['O nome','Tebe, uma ninfa amante de Zeus; a cratera leva o nome do filho deles'],['A visita','A Galileo passou perto no ano 2000 e fez as únicas fotos de perto']]}
+    ],
+    facts:['A poeira que sai dela forma um anel inteiro de Júpiter, o gossamer de Tebe.','A cratera Zethus tem 40 km numa lua de 100: o impacto quase a partiu.'],
+    fict:null},
    {id:'himalia', name:'HIMALIA', desig:'JÚPITER-VI · LUA', kind:'A maior das luas irregulares de Júpiter', hab:0, gbar:0.006, pop:'0',
     quick:[['DIÂMETRO','~170 km'],['GRAVIDADE','0,006 g'],['ÓRBITA','250,6 d'],['DESCOBERTA','1904'],['DISTÂNCIA','11,5 mi km'],['INCLINAÇÃO','27,5°']],
     visual:{mode:'rocky', c1:'#6e6a64', c2:'#8c8781', c3:'#4c4844', scale:3.2, seed:19.04, crater:0.75},
@@ -5426,7 +5445,7 @@ const ESCALA_REAL_LUAS = {
   io:421700, europa:671100, ganimedes:1070400, calisto:1882700,
   tita:1221870, reia:527108, encelado:237948, dione:377396, tetis:294619, mimas:185539, japeto:3560820,
   hiperion:1481010, febe:12947780, amalteia:181366, himalia:11461000, proteu:117647, nereida:5513818,
-  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, galateia:61953, larissa:73548, pan:133584, prometeu:139380, pandora:141720, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
+  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, metis:128000, tebe:221900, galateia:61953, larissa:73548, pan:133584, prometeu:139380, pandora:141720, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
   iss:6790, hubble:6910, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, pathfinder:1.52, viking1:1.52, cassini:9.54};
@@ -14918,7 +14937,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r265';
+const BUILD = 'r266';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

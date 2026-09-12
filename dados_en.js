@@ -89,12 +89,13 @@ jupiter: {
     {t:'ORBIT & ROTATION', rows:[['Distance from the Sun','778.5 million km (5.2 AU)'],['Year','11.86 years'],['Day','9 h 56 min, the fastest'],['Rotation type','Prograde'],['Orbital speed','13.1 km/s'],['Axial tilt','3.1°'],['Seasons','Minimal']]},
     {t:'STRUCTURE', rows:[['Diameter','139,820 km (11 Earths)'],['Mass','1.90 × 10²⁷ kg (318 Earths)'],['Density','1.33 g/cm³'],['Area','61.4 billion km² (121 × Earth)'],['Surface','None, gas all the way down to metallic H']]},
     {t:'CLIMATE & ATMOSPHERE', rows:[['Cloud-top temp.','−110 °C'],['Atmosphere','90% H₂ · 10% He'],['Great Red Spot','A storm bigger than Earth, active for centuries'],['Winds','~600 km/h'],['Water','Vapor in the deep layers']]},
+    {t:'THE RINGS', rows:[['1979','Voyager 1 found them in a single overexposed photo, in March: nobody expected rings at Jupiter'],['What they are','Dust, not ice: four faint, dark rings, almost invisible from here'],['The parts','The thin main ring, the halo puffed up inside it, and the two gossamer rings, of Amalthea and of Thebe, outside'],['Where it comes from','From the dust knocked off the small moons by micrometeoroids: Metis and Adrastea feed the main ring, Amalthea and Thebe the gossamer rings'],['Juno','In 2016 it photographed the rings from INSIDE, looking outward, with the stars of Orion behind']]},
     {t:'RECORD', rows:[['Discovered','Antiquity'],['Galilean moons','1610 · Galileo Galilei'],['Active mission','Juno (NASA) · Europa Clipper on its way'],['Population','0']]},
     {t:'LINK & TRAVEL', rows:[['Sunlight to here','43.3 min'],['Probe from Earth','~5 years (Juno)']]}
   ],
   facts: ['It has 2.5 times the mass of all the other planets combined.', 'It works as the system\'s "vacuum cleaner": its gravity deflects comets and asteroids.', 'Galileo\'s 4 moons (1610) were the first proof that not everything orbits the Earth.'],
   fict: '2001: A Space Odyssey: destination of the Discovery One.',
-  moonsMeta: '95 CONFIRMED · 4 MAIN'
+  moonsMeta: '95 CONFIRMED · 6 MAIN · 2 INNER'
 },
 saturno: {
   kind: 'Gas giant · ringed',
@@ -467,6 +468,26 @@ larissa: {
     {t:'RECORD', rows:[['The name','Larissa, a nymph and lover of Poseidon'],['The orbit','One lap every 13.3 hours, between Galatea and Proteus'],['The future','Like Galatea, it orbits faster than the day of Neptune and slowly descends']]}
   ],
   facts: ['It was discovered in 1981 when a star blinked behind it for seconds, eight years before Voyager 2 confirmed it.', 'It is the fourth largest moon of Neptune, and still only a dark 200 km potato.'],
+  fict: null
+},
+metis: {
+  kind: 'The innermost, inside the main ring',
+  quick: [['DIMENSIONS','60 × 40 × 34 km'],['ORBIT','0.295 d'],['DISCOVERED','1979'],['DISTANCE','128,000 km'],['WHERE','at the edge of the main ring'],['FATE','slowly falling']],
+  sections: [
+    {t:'THE INNERMOST', rows:[['What it is','The closest moon to Jupiter: one lap every 7 hours, faster than the day of the planet'],['The ring','It orbits at the outer edge of the main ring and is one of its sources: the dust knocked off it by micrometeoroids'],['The future','Because it orbits faster than Jupiter spins, the tide pulls it down: one day it falls into the planet']]},
+    {t:'RECORD', rows:[['Discovered','March 1979, by Stephen Synnott in the Voyager 1 images'],['The name','Metis, the first wife of Zeus, goddess of prudence'],['The visit','Galileo photographed it in the 1990s: a 60 km potato, one of the most elongated shapes among moons']]}
+  ],
+  facts: ['It is the closest moon to Jupiter and laps it in 7 hours, faster than the planet itself spins.', 'The dust that leaves it is one of the sources of the main ring of Jupiter.'],
+  fict: null
+},
+tebe: {
+  kind: 'The source of the outer gossamer ring',
+  quick: [['DIMENSIONS','116 × 98 × 84 km'],['ORBIT','0.675 d'],['DISCOVERED','1979'],['DISTANCE','221,900 km'],['CRATER','Zethus, 40 km'],['RING','Thebe gossamer']],
+  sections: [
+    {t:'THE SOURCE OF THE RING', rows:[['The role','The dust knocked off it by impacts spreads into a faint ring, the Thebe gossamer, which reaches out to its orbit'],['The crater','Zethus, 40 km across, almost half the moon: it barely survived'],['The neighbor','Amalthea does the same with the inner gossamer: the two rings are the two moons slowly coming apart']]},
+    {t:'RECORD', rows:[['Discovered','March 1979, by Stephen Synnott in the Voyager 1 images'],['The name','Thebe, a nymph and lover of Zeus; the crater is named after their son'],['The visit','Galileo passed close in the year 2000 and took the only close-up photos']]}
+  ],
+  facts: ['The dust that leaves it forms a whole ring of Jupiter, the Thebe gossamer.', 'The Zethus crater is 40 km across on a 100 km moon: the impact nearly split it.'],
   fict: null
 },
 tritao: {
