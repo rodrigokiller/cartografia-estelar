@@ -3497,10 +3497,21 @@ PLANETS.push(
   visual:{mode:'rocky', c1:'#d8dde4', c2:'#f2f5f9', c3:'#aab2bd', scale:4.8, seed:66.2, crater:0.25, atmo:{col:'#cfe0f5', i:0.35}},
   sections:[
     {t:'A ÓRBITA SELVAGEM', rows:[['Excentricidade','De 38 a 98 UA: no periélio chega mais perto que Plutão no afélio'],['Inclinação','44 graus fora do plano dos planetas, a maior entre os grandes anões'],['Hoje','Perto do afélio: o Sol visto de lá é só uma estrela muito brilhante'],['Posição aqui','A elipse é real na forma; as distâncias seguem a escala comprimida da cena']]},
+    {t:'A PESAGEM', rows:[['2005','Descoberta por Mike Brown, Chad Trujillo e David Rabinowitz em fotos de 2003: maior que Plutão, pela primeira vez'],['A crise','Ou Éris virava o décimo planeta ou Plutão deixava de ser o nono: a IAU decidiu em agosto de 2006, e nasceu a classe dos planetas anões'],['2007','A órbita da lua Disnomia deu a massa: 27 por cento mais que Plutão'],['2010','Uma ocultação estelar mostrou que ela é ligeiramente MENOR que Plutão em diâmetro, mas bem mais densa']]},
     {t:'REGISTRO', rows:[['Descoberta','2005 · Mike Brown, apelidada de “Xena”'],['O caos','É 27% mais massiva que Plutão, forçou a definição de “planeta” em 2006'],['Nome','Deusa grega da discórdia. Perfeito.'],['Superfície','Gelo de metano quase puro, um dos objetos mais refletivos do sistema']]}
   ],
   facts:['Mike Brown, o descobridor, usa o título “o homem que matou Plutão” com orgulho.','No afélio, o Sol visto de lá é só uma estrela muito brilhante.','A órbita dela é tão inclinada e esticada que levou décadas para alguém notar o ponto de luz.'],
-  fict:'O nome da deusa da discórdia foi escolhido pela briga astronômica que ela causou, a trivia é a própria história.', moons:[]},
+  fict:'O nome da deusa da discórdia foi escolhido pela briga astronômica que ela causou, a trivia é a própria história.', moons:[
+   {id:'disnomia', name:'DISNOMIA', desig:'ÉRIS-I · LUA', kind:'A lua que pesou Éris e rebaixou Plutão', hab:0, gbar:0.005, pop:'0',
+    quick:[['DIÂMETRO','~615 km'],['ÓRBITA','15,8 d'],['DESCOBERTA','2005'],['DISTÂNCIA','37.273 km'],['COR','muito escura'],['ROTAÇÃO','travada, provavelmente']],
+    visual:{mode:'rocky', c1:'#4a4a50', c2:'#66666e', c3:'#2e2e33', scale:4.0, seed:20.05, crater:0.5},
+    sections:[
+      {t:'A BALANÇA', rows:[['O truque','Uma lua é uma balança: pelo período e pela distância da órbita dela, a lei de Kepler dá a massa do planeta'],['2007','Mike Brown e Emily Schaller mediram a órbita de Disnomia com o Hubble e o Keck: Éris tem 27 por cento mais massa que Plutão'],['O efeito','Foi a prova de que Plutão não era o maior dos anões: a decisão da IAU de 2006 ganhou o número que faltava']]},
+      {t:'REGISTRO', rows:[['Descoberta','10 de setembro de 2005, no Keck, com óptica adaptativa, meses depois de Éris'],['O nome','Disnomia, a deusa da desordem, filha de Éris'],['A piada','O apelido de Éris era Xena; a lua virou Gabrielle, a companheira da série, antes do nome oficial'],['O tamanho','Uns 615 km, um quarto de Éris: uma das maiores luas de planeta anão']]}
+    ],
+    facts:['Foi medindo a órbita dela que se pesou Éris: 27 por cento mais massa que Plutão.','Antes do nome oficial, Éris e a lua eram apelidadas Xena e Gabrielle, pela série de TV.'],
+    fict:'O apelido Xena, da guerreira de TV, foi o nome de trabalho de Éris por dois anos, e a lua era Gabrielle: a IAU trocou pelos nomes gregos em 2006.'}
+  ]},
  {id:'p67', name:'COMETA 67P', desig:'CHURYUMOV-GERASIMENKO · COMETA', kind:'O patinho de borracha da Rosetta', hab:0, gbar:0.00002, pop:'0',
   comet:true, orbita:{peri:18.5, afel:28.5, pos:0.85, incl:0.12},
   sys:{orbit:23, size:0.26, speed:2.0, angle:2.4},
@@ -5606,7 +5617,7 @@ const ESCALA_REAL_LUAS = {
   io:421700, europa:671100, ganimedes:1070400, calisto:1882700,
   tita:1221870, reia:527108, encelado:237948, dione:377396, tetis:294619, mimas:185539, japeto:3560820,
   hiperion:1481010, febe:12947780, amalteia:181366, himalia:11461000, proteu:117647, nereida:5513818,
-  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, metis:128000, tebe:221900, galateia:61953, larissa:73548, pan:133584, prometeu:139380, pandora:141720, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
+  miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, disnomia:37273, metis:128000, tebe:221900, galateia:61953, larissa:73548, pan:133584, prometeu:139380, pandora:141720, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
   iss:6790, hubble:6910, tiangong:6760, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, hyakutake:55, mcnaught:41, juice:1.0, clipper:1.1, lucy:3.6, pathfinder:1.52, viking1:1.52, cassini:9.54};
@@ -15214,7 +15225,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r274';
+const BUILD = 'r275';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

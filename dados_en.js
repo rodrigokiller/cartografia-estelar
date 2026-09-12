@@ -490,6 +490,16 @@ tebe: {
   facts: ['The dust that leaves it forms a whole ring of Jupiter, the Thebe gossamer.', 'The Zethus crater is 40 km across on a 100 km moon: the impact nearly split it.'],
   fict: null
 },
+disnomia: {
+  kind: 'The moon that weighed Eris and demoted Pluto',
+  quick: [['DIAMETER','~615 km'],['ORBIT','15.8 d'],['DISCOVERED','2005'],['DISTANCE','37,273 km'],['COLOR','very dark'],['ROTATION','locked, probably']],
+  sections: [
+    {t:'THE SCALE', rows:[['The trick','A moon is a scale: from the period and the distance of its orbit, Kepler\'s law gives the mass of the planet'],['2007','Mike Brown and Emily Schaller measured the orbit of Dysnomia with Hubble and Keck: Eris has 27 percent more mass than Pluto'],['The effect','It was the proof that Pluto was not the largest of the dwarfs: the 2006 IAU decision got the number it was missing']]},
+    {t:'RECORD', rows:[['Discovered','September 10, 2005, at Keck, with adaptive optics, months after Eris'],['The name','Dysnomia, the goddess of lawlessness, daughter of Eris'],['The joke','The nickname of Eris was Xena; the moon became Gabrielle, the companion from the TV series, before the official name'],['The size','Some 615 km, a quarter of Eris: one of the largest moons of a dwarf planet']]}
+  ],
+  facts: ['It was by measuring its orbit that Eris was weighed: 27 percent more mass than Pluto.', 'Before the official names, Eris and the moon were nicknamed Xena and Gabrielle, after the TV series.'],
+  fict: 'The nickname Xena, from the TV warrior, was the working name of Eris for two years, and the moon was Gabrielle: the IAU swapped them for the Greek names in 2006.'
+},
 tritao: {
   kind: 'Captured moon',
   quick: [['DIAMETER','2,707 km'],['ORBIT','5.9 d'],['DISCOVERED','1846'],['DIRECTION','retrograde'],['TEMP.','−235 °C'],['GEYSERS','active']],
@@ -913,6 +923,7 @@ eris: {
   quick: [['DIAMETER','2,326 km'],['YEAR','558 years'],['DISTANCE','38 to 98 AU'],['TEMP','−243 °C'],['MOON','Dysnomia'],['DISCOVERED','2005']],
   sections: [
     {t:'THE WILD ORBIT', rows:[['Eccentricity','From 38 to 98 AU: at perihelion it gets closer than Pluto at aphelion'],['Tilt','44 degrees out of the plane of the planets, the largest among the big dwarfs'],['Today','Near aphelion: the Sun seen from there is just a very bright star'],['Position here','The ellipse is real in shape; distances follow the compressed scale of the scene']]},
+    {t:'THE WEIGHING', rows:[['2005','Discovered by Mike Brown, Chad Trujillo and David Rabinowitz in photos from 2003: larger than Pluto, for the first time'],['The crisis','Either Eris became the tenth planet or Pluto stopped being the ninth: the IAU decided in August 2006, and the class of dwarf planets was born'],['2007','The orbit of the moon Dysnomia gave the mass: 27 percent more than Pluto'],['2010','A stellar occultation showed it is slightly SMALLER than Pluto in diameter, but much denser']]},
     {t:'RECORD', rows:[['Discovered','2005 · Mike Brown, nicknamed "Xena"'],['The chaos','It is 27% more massive than Pluto, and forced the definition of "planet" in 2006'],['Name','The Greek goddess of discord. Perfect.'],['Surface','Almost pure methane ice, one of the most reflective objects in the system']]}
   ],
   facts: ['Mike Brown, the discoverer, proudly uses the title "the man who killed Pluto".', 'At aphelion, the Sun seen from there is just a very bright star.', 'Its orbit is so tilted and stretched that it took decades for anyone to notice the point of light.'],
