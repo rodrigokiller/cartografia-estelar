@@ -2386,6 +2386,8 @@ const SATELITES = [
   visual:{mode:'rocky', c1:'#c8c8d0', c2:'#e8e8ee', c3:'#8a8a94', scale:7.0, seed:20.0, crater:0.1},
   sections:[
     {t:'A CASA', rows:[['Construção','Mais de 40 lançamentos ao longo de 13 anos, montada peça por peça em órbita'],['Quem fez','15 países, com Estados Unidos e Rússia dividindo a espinha dorsal'],['A rotina','16 voltas na Terra por dia: um nascer do sol a cada 45 minutos'],['Posição aqui','Simbólica: na escala real ela quase encostaria na superfície']]},
+    {t:'OS MÓDULOS', rows:[['Zarya (1998)','O primeiro: o bloco russo de carga e energia, lançado num Proton, que deu a partida na montagem'],['Unity (1998)','O nó americano que juntou os dois lados, trazido pelo ônibus Endeavour duas semanas depois'],['Zvezda (2000)','O módulo de serviço russo: alojamentos, motores e o controle da estação; foi ele que permitiu a primeira tripulação'],['Destiny (2001)','O laboratório americano, o coração científico do lado ocidental'],['Kibo (2008-09)','O laboratório japonês, o maior módulo da estação, com a varanda exposta ao vácuo'],['Columbus (2008)','O laboratório europeu, trazido pelo Atlantis'],['A cúpula (2010)','As sete janelas de onde vêm quase todas as fotos da Terra tiradas de lá'],['Nauka (2021)','O último grande módulo russo, 14 anos atrasado, e o braço robótico europeu']]},
+    {t:'A APOSENTADORIA', rows:[['A data','A NASA e os parceiros mantêm a estação até 2030; a Rússia confirmou até 2028'],['Como termina','Um veículo de desorbitação da SpaceX, contratado em 2024 por 843 milhões de dólares, vai empurrá-la para uma reentrada controlada sobre o Pacífico Sul, longe de tudo, no ponto Nemo'],['O que vem depois','Estações comerciais (Axiom, Vast, Starlab) e a Lunar Gateway em volta da Lua'],['O legado','Mais de 3 mil experimentos e 280 pessoas de 23 países em um quarto de século']]},
     {t:'REGISTRO', rows:[['Habitação contínua','Desde 2 de novembro de 2000 sempre houve alguém morando lá'],['Visível a olho nu','Sim: parece uma estrela rápida cruzando o céu ao anoitecer'],['Ciência','Milhares de experimentos em microgravidade, de cristais a corações artificiais'],['Futuro','Aposentadoria prevista para ±2030, com reentrada dirigida no Pacífico']]}
   ],
   facts:['É a estrutura mais cara já construída: mais de 150 bilhões de dólares.','Desde novembro de 2000 a humanidade nunca mais esteve inteira no planeta: sempre há alguém lá em cima.','Dá uma volta completa na Terra em 92 minutos, a 28 mil km/h.'],
@@ -15021,7 +15023,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r268';
+const BUILD = 'r269';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
