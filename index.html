@@ -1178,7 +1178,6 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-hz="1"><span>ZONA HABITÁVEL DA ESTRELA</span><b>LIGADO</b></div>
     <div class="filtrow" data-regua="1"><span>RÉGUA DE DISTÂNCIAS (ESCALA 1:1)</span><b>LIGADO</b></div>
     <div class="filtrow" data-ecl="1"><span>ECLÍPTICA E ZODÍACO</span><b>DESLIGADO</b></div>
-    <div class="filtrow" data-satvivo="1"><span>SATÉLITES AO VIVO NA TERRA (CELESTRAK)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-sismos="1"><span>TERREMOTOS DAS ÚLTIMAS 24 H (USGS)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-reguadisco="1"><span>DISCO DA RÉGUA</span><b>LIGADO</b></div>
     <div class="rgcor">
@@ -5943,6 +5942,7 @@ const CEUN = {on:false};  /* nomes das estrelas: nascem DESLIGADOS */
    mesmo Shift+D que mostra o chip DIAG */
 const ECLV = {on:false};  /* a ECLÍPTICA e o zodíaco: nasce DESLIGADA (ordem dele) */
 /* ================= r261 · SATÉLITES AO VIVO (CelesTrak + satellite.js) =================
+   (r264: UMA COISA SÓ: no 1:1 a classe SATÉLITES do filtro É esta camada; o cênico segue simbólico)
    A camada põe na Terra do mapa 1:1 os satélites de VERDADE, em posição real pelo
    relógio do app: os TLE vêm do CelesTrak (sem chave, com CORS) e o SGP4 é a
    satellite.js (MIT, carregada do cdnjs só quando a camada liga). Sem rede, entra
@@ -5951,9 +5951,15 @@ const ECLV = {on:false};  /* a ECLÍPTICA e o zodíaco: nasce DESLIGADA (ordem d
    graça: ECEF (x para a longitude 0, y para 90 E, z norte) vira o espaço local da
    textura (cos L, sen lat, -sen L), a convenção do r165. Enquanto a camada está na
    cena, a ISS e o Hubble simbólicos descansam: os de verdade estão lá.               */
-const SATV = {on:false, carregando:false, pronto:false, erro:null, sats:[], act:null, pontos:null, geo:null, cursor:0, escondidos:[], lbls:[], ultimoAviso:0, fonte:''};
+const SATV = {carregando:false, pronto:false, erro:null, sats:[], porNorad:{}, act:null, mesh:null, pontos:null, geo:null, cursor:0,
+  escondidos:[], orbEsc:[], lbls:[], famosos:[], trilhas:[], foco:null, cardSat:null, q:0, ultimoAviso:0, fonte:''};
 const SATV_GRUPOS = [['stations', 0xffc98a], ['visual', 0xffffff], ['gps-ops', 0x8fe0a8], ['galileo', 0x8fe0d8], ['glo-ops', 0xa8d8a0], ['science', 0x8fc8ff]];
-const SATV_NOMES = {25544:'ISS', 48274:'TIANGONG', 20580:'HUBBLE'};
+const SATV_GRUPO_NOME = {stations:'ESTAÇÕES', visual:'OS MAIS BRILHANTES', 'gps-ops':'GPS', galileo:'GALILEO', 'glo-ops':'GLONASS', science:'CIÊNCIA'};
+/* os famosos: o modelo desenhado (fora de escala, como as naves das missões), o card de
+   sempre quando ele existe no atlas, e a trilha da órbita */
+const SATV_NOMES = {25544:{nome:'ISS', corpo:'iss', modelo:'iss', tam:0.00012}, 48274:{nome:'TIANGONG', corpo:null, modelo:'iss', tam:0.00009}, 20580:{nome:'HUBBLE', corpo:'hubble', modelo:'hubble', tam:0.00008}};
+const SATV_CORPO = {iss:25544, hubble:20580};
+function satVivoAtivo(){ return FILTROBJ.satelite !== false && !!ACT && ACT.kind === 'system' && !!ACT.escr && ST.sys === 'sol'; }
 function satVivoScript(src){ return new Promise((ok, erro)=>{ const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = ()=>erro(new Error('falhou ' + src)); document.head.appendChild(s); }); }
 function satVivoParse(txt, grupo, cor){
   const L = String(txt || '').split('\n').map(x=>x.replace(/\r/g, '')).filter(x=>x.trim().length);
@@ -5984,7 +5990,7 @@ async function satVivoCarrega(){
       fonte = t('FOTOGRAFIA DE') + ' ' + TLE_SNAPSHOT.dia;
     }
     const visto = new Set(), sats = [];
-    for(const g of SATV_GRUPOS) for(const s of satVivoParse(porGrupo[g[0]], g[0], g[1])){ if(visto.has(s.norad)) continue; visto.add(s.norad); sats.push(s); }
+    for(const g of SATV_GRUPOS) for(const s of satVivoParse(porGrupo[g[0]], g[0], g[1])){ if(visto.has(s.norad)) continue; visto.add(s.norad); s.i = sats.length; sats.push(s); SATV.porNorad[s.norad] = s; }
     if(!sats.length) throw new Error('0 TLE');
     SATV.sats = sats; SATV.fonte = fonte; SATV.pronto = true;
     RLOG.push('satvivo-' + sats.length);
@@ -5998,16 +6004,32 @@ function satVivoTerra(){
   const lv = ACT.liveGiro.find(x=>x.grupo === oo.corpo);
   return lv ? lv.mesh : null;
 }
+function satVivoLocal(p, gmst, out){
+  /* ECEF (x lon 0, y 90 E, z norte) para o espaço local da textura da Terra (r165) */
+  const e = satellite.eciToEcf(p, gmst), KM = ESCR_UA/149597870;
+  out.set(e.x*KM, e.z*KM, -e.y*KM);
+  return out;
+}
 function satVivoDesmonta(){
+  const A = SATV.act;
   if(SATV.pontos && SATV.pontos.parent) SATV.pontos.parent.remove(SATV.pontos);
   if(SATV.geo) SATV.geo.dispose();
+  if(A && A.pickables){
+    if(SATV.pontos){ const i = A.pickables.indexOf(SATV.pontos); if(i >= 0) A.pickables.splice(i, 1); }
+    for(const f of SATV.famosos){ const i = A.pickables.indexOf(f.pk); if(i >= 0) A.pickables.splice(i, 1); }
+  }
+  for(const f of SATV.famosos){ if(f.anc.parent) f.anc.parent.remove(f.anc); f.sat.anc = null; }
+  for(const tr of SATV.trilhas){ if(tr.linha.parent) tr.linha.parent.remove(tr.linha); tr.linha.geometry.dispose(); }
   for(const l of SATV.lbls){
     if(l.el && l.el.parentNode) l.el.parentNode.removeChild(l.el);
-    if(SATV.act && SATV.act.labels){ const i = SATV.act.labels.indexOf(l); if(i >= 0) SATV.act.labels.splice(i, 1); }
+    if(A && A.labels){ const i = A.labels.indexOf(l); if(i >= 0) A.labels.splice(i, 1); }
   }
-  for(const s of SATV.sats) if(s.anc){ if(s.anc.parent) s.anc.parent.remove(s.anc); s.anc = null; }
-  for(const o of SATV.escondidos){ if(o.holder) o.holder.visible = true; if(o.lbl) o.lbl.off = false; }
-  SATV.pontos = null; SATV.geo = null; SATV.lbls = []; SATV.escondidos = []; SATV.act = null;
+  /* os simbólicos voltam: holder, rótulo, pick e órbita */
+  for(const o of SATV.escondidos){ if(o.holder) o.holder.visible = true; if(o.lbl) o.lbl.off = false; if(o.pick && A && A.pickables && A.pickables.indexOf(o.pick) < 0) A.pickables.push(o.pick); }
+  for(const l of SATV.orbEsc) l.visible = true;
+  SATV.pontos = null; SATV.geo = null; SATV.lbls = []; SATV.escondidos = []; SATV.orbEsc = []; SATV.famosos = []; SATV.trilhas = []; SATV.act = null; SATV.mesh = null; SATV.cardSat = null;
+  if(ST.mapCard && ST.mapCard.type === 'satlive'){ ST.mapCard = null; uiSync(); }
+  if(A) applySel();
 }
 function satVivoMonta(){
   const mesh = satVivoTerra(); if(!mesh) return false;
@@ -6020,37 +6042,115 @@ function satVivoMonta(){
   geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
   const mat = new THREE.PointsMaterial({size:(QLOW ? 3.6 : 2.6), sizeAttenuation:false, vertexColors:true, transparent:true, opacity:0.95});
   const pts = new THREE.Points(geo, mat); pts.frustumCulled = false; pts.renderOrder = 5;
+  pts.userData = {act:'satlive', pontos:true, vivo:true};   /* o clique num ponto qualquer abre a ficha mínima dele */
   mesh.add(pts);
-  SATV.pontos = pts; SATV.geo = geo; SATV.act = ACT; SATV.cursor = 0;
-  for(const id of ['iss', 'hubble']){
+  ACT.pickables.push(pts);
+  SATV.pontos = pts; SATV.geo = geo; SATV.act = ACT; SATV.mesh = mesh; SATV.cursor = 0;
+  /* os simbólicos com TLE (ISS, Hubble) descansam: holder, rótulo, órbita e o PICK (assim
+     acharPick('iss') acha o de verdade, e o ENTRAR do card voa até ele) */
+  for(const id in SATV_CORPO){
+    if(!SATV.porNorad[SATV_CORPO[id]]) continue;
     const oo = ACT.objs.find(x=>x.id === id);
-    if(oo && oo.holder){ oo.holder.visible = false; if(oo.lbl) oo.lbl.off = true; SATV.escondidos.push(oo); }
+    if(oo){ SATV.escondidos.push(oo); if(oo.holder) oo.holder.visible = false; if(oo.lbl) oo.lbl.off = true; if(oo.pick){ const i = ACT.pickables.indexOf(oo.pick); if(i >= 0) ACT.pickables.splice(i, 1); } }
+    if(ACT.sel && ACT.sel.orbits){ const ol = ACT.sel.orbits.find(x=>x.id === id); if(ol && ol.obj){ SATV.orbEsc.push(ol.obj); ol.obj.visible = false; } }
   }
+  /* os famosos: modelo desenhado (fora de escala, como as naves das missões), alvo de clique e rótulo */
   for(const s of SATV.sats){
-    const nm = SATV_NOMES[s.norad]; if(!nm) continue;
+    const f = SATV_NOMES[s.norad]; if(!f) continue;
     const anc = new THREE.Object3D(); mesh.add(anc); s.anc = anc;
-    const L = {el:makeLabel(nm, 'faint mini'), mini:true, lid:'sat_' + s.norad, lidPai:'terra', escrMr:0.0005,
+    const mv = grupoNave(f.modelo, f.tam); anc.add(mv.group);
+    const pk = new THREE.Mesh(new THREE.SphereGeometry(f.tam*1.3, 8, 8), new THREE.MeshBasicMaterial({visible:false}));
+    pk.userData = f.corpo ? {act:'focus', id:f.corpo, r:f.tam, vivo:true} : {act:'satlive', id:s.i, r:f.tam, vivo:true};
+    anc.add(pk); ACT.pickables.push(pk);
+    const L = {el:makeLabel(f.nome, 'faint mini', ()=>ACTION(pk.userData.act, pk.userData.id)), mini:true, lid:f.corpo || ('sat_' + s.norad), lidPai:'terra', escrMr:0.0005,
       get:v=>{ anc.getWorldPosition(v); v.y += Math.max(0.00003, CAM.dist*0.012); }};
     ACT.labels.push(L); SATV.lbls.push(L);
+    SATV.famosos.push({sat:s, anc, pk, modelo:mv.group});
   }
   return true;
 }
+/* a órbita dos próximos 90 minutos (a elipse no espaço, expressa no quadro atual da Terra) */
+function satVivoTrilha(s){
+  let tr = SATV.trilhas.find(x=>x.sat === s);
+  if(!tr){
+    const N = 72, geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array((N + 1)*3), 3));
+    const linha = new THREE.Line(geo, new THREE.LineBasicMaterial({color:s.cor, transparent:true, opacity:0.55}));
+    linha.frustumCulled = false; linha.renderOrder = 4;
+    SATV.mesh.add(linha);
+    tr = {sat:s, linha, N}; SATV.trilhas.push(tr);
+  }
+  const per = 2*Math.PI/s.rec.no;   /* período em minutos, do movimento médio do TLE */
+  const t0 = SIMT.data, gmst = satellite.gstime(new Date(t0));
+  const arr = tr.linha.geometry.attributes.position.array, v = new THREE.Vector3();
+  for(let k = 0; k <= tr.N; k++){
+    let p = null;
+    try{ const pv = satellite.propagate(s.rec, new Date(t0 + k/tr.N*per*60000)); p = pv && pv.position; }catch(e){}
+    if(!p || !isFinite(p.x)){ arr[k*3] = arr[k*3+1] = arr[k*3+2] = 0; continue; }
+    satVivoLocal(p, gmst, v);
+    arr[k*3] = v.x; arr[k*3+1] = v.y; arr[k*3+2] = v.z;
+  }
+  tr.linha.geometry.attributes.position.needsUpdate = true;
+  return tr;
+}
+function satVivoTrilhas(){
+  const quer = new Set();
+  if(FILTROS.satelite !== false) for(const f of SATV.famosos) quer.add(f.sat);
+  if(SATV.foco) quer.add(SATV.foco);
+  for(const s of quer) satVivoTrilha(s);
+  for(const tr of SATV.trilhas) tr.linha.visible = quer.has(tr.sat);
+}
+/* a linha AGORA do card: latitude, longitude, altitude e velocidade */
+function satVivoLinha(s){
+  try{
+    const d = new Date(SIMT.data), pv = satellite.propagate(s.rec, d);
+    if(!pv || !pv.position || !isFinite(pv.position.x)) return t('AGORA · fora da validade do TLE');
+    const gd = satellite.eciToGeodetic(pv.position, satellite.gstime(d));
+    const lat = gd.latitude*180/Math.PI, lon = gd.longitude*180/Math.PI;
+    const vel = pv.velocity ? Math.hypot(pv.velocity.x, pv.velocity.y, pv.velocity.z) : 0;
+    return t('AGORA') + ' · ' + Math.abs(lat).toFixed(1) + '° ' + (lat >= 0 ? 'N' : 'S') + ' · ' + Math.abs(lon).toFixed(1) + '° ' + (lon >= 0 ? 'L' : 'O')
+      + ' · ' + Math.round(gd.height) + ' km · ' + vel.toFixed(2) + ' km/s';
+  }catch(e){ return ''; }
+}
+/* qual satélite ao vivo o card atual está mostrando (o de sempre da ISS e do Hubble, ou um ponto clicado) */
+function satVivoDoCard(cur){
+  SATV.cardSat = null;
+  if(!SATV.pronto || !SATV.pontos) return null;
+  if(ST.mapCard && ST.mapCard.type === 'satlive'){ SATV.cardSat = SATV.sats[ST.mapCard.id] || null; return SATV.cardSat; }
+  const b = cur && cur.b; if(!b || !b.id || !SATV_CORPO[b.id]) return null;
+  SATV.cardSat = SATV.porNorad[SATV_CORPO[b.id]] || null;
+  return SATV.cardSat;
+}
+function fichaSat(s){
+  const rec = s.rec, per = 2*Math.PI/rec.no, inc = rec.inclo*180/Math.PI;
+  const f = SATV_NOMES[s.norad];
+  let alt = '?';
+  try{ const d = new Date(SIMT.data), pv = satellite.propagate(rec, d); const gd = satellite.eciToGeodetic(pv.position, satellite.gstime(d)); alt = Math.round(gd.height) + ' km'; }catch(e){}
+  return {name:(f ? f.nome : s.nome), desig:t('SATÉLITE · AO VIVO · CELESTRAK'), kind:t(SATV_GRUPO_NOME[s.grupo] || s.grupo), hab:null,
+    quick:[[t('ALTITUDE'), alt],[t('PERÍODO'), per.toFixed(1) + ' min'],[t('INCLINAÇÃO'), inc.toFixed(1) + '°'],[t('EXCENTRICIDADE'), rec.ecco.toFixed(4)],['NORAD', String(s.norad)],[t('GRUPO'), t(SATV_GRUPO_NOME[s.grupo] || s.grupo)]],
+    sections:[{t:t('REGISTRO'), rows:[[t('Fonte'), t('Elementos orbitais (TLE) do CelesTrak, propagados pelo SGP4 no relógio do app')],[t('A órbita'), t('A linha desenhada é a volta dos próximos 90 minutos: uma volta inteira em') + ' ' + per.toFixed(0) + ' min'],[t('O tamanho'), t('O ponto é simbólico: um satélite tem metros, a Terra tem milhares de km')]]}],
+    facts:[t('Os TLE são atualizados várias vezes por dia: a posição vale para hoje, não para viagens no tempo.')], fict:null};
+}
 function satVivoTick(){
+  if(!satVivoAtivo()){ if(SATV.pontos) satVivoDesmonta(); return; }
   if(!SATV.pronto){ if(!SATV.carregando && !SATV.erro) satVivoCarrega(); return; }
   const mesh = satVivoTerra();
   if(!mesh){ if(SATV.pontos) satVivoDesmonta(); return; }
   if(SATV.act !== ACT || !SATV.pontos || SATV.pontos.parent !== mesh){ satVivoDesmonta(); if(!satVivoMonta()) return; }
-  /* o TLE só vale perto da própria época: viajando no tempo os pontos somem, com aviso */
+  /* os simbólicos ficam quietos mesmo que o applySel os acorde */
+  for(const o of SATV.escondidos){ if(o.holder) o.holder.visible = false; if(o.lbl) o.lbl.off = true; if(o.pick){ const i = ACT.pickables.indexOf(o.pick); if(i >= 0) ACT.pickables.splice(i, 1); } }
+  for(const l of SATV.orbEsc) l.visible = false;
   const valido = Math.abs(SIMT.data - Date.now()) < 30*86400000;
   SATV.pontos.visible = valido;
   for(const l of SATV.lbls) l.off = !valido;
+  for(const f of SATV.famosos) f.anc.visible = valido;
+  for(const tr of SATV.trilhas) if(!valido) tr.linha.visible = false;
   if(!valido){
     if(performance.now() - SATV.ultimoAviso > 8000){ SATV.ultimoAviso = performance.now(); showHint(t('SATÉLITES AO VIVO: OS TLE SÓ VALEM PERTO DE HOJE')); }
     return;
   }
   const data = new Date(SIMT.data), gmst = satellite.gstime(data);
-  const KM = ESCR_UA/149597870;
-  const arr = SATV.geo.attributes.position.array;
+  const arr = SATV.geo.attributes.position.array, v = new THREE.Vector3();
   const n = SATV.sats.length, lote = Math.min(n, 220);
   for(let k = 0; k < lote; k++){
     const i = SATV.cursor; SATV.cursor = (SATV.cursor + 1) % n;
@@ -6058,12 +6158,16 @@ function satVivoTick(){
     let p = null;
     try{ const pv = satellite.propagate(s.rec, data); p = pv && pv.position; }catch(e){}
     if(!p || typeof p !== 'object' || !isFinite(p.x)){ arr[i*3] = arr[i*3+1] = arr[i*3+2] = 0; continue; }
-    const e = satellite.eciToEcf(p, gmst);
-    const x = e.x*KM, y = e.z*KM, z = -e.y*KM;
-    arr[i*3] = x; arr[i*3+1] = y; arr[i*3+2] = z;
-    if(s.anc) s.anc.position.set(x, y, z);
+    satVivoLocal(p, gmst, v);
+    arr[i*3] = v.x; arr[i*3+1] = v.y; arr[i*3+2] = v.z;
+    if(s.anc) s.anc.position.copy(v);
   }
   SATV.geo.attributes.position.needsUpdate = true;
+  /* os famosos e o clicado seguem o relógio TODO quadro (o modelo não pode ficar para trás do ponto) */
+  for(const f of SATV.famosos){ try{ const pv = satellite.propagate(f.sat.rec, data); if(pv && pv.position && isFinite(pv.position.x)) f.anc.position.copy(satVivoLocal(pv.position, gmst, v)); }catch(e){} }
+  SATV.q++;
+  if(SATV.q % 45 === 1) satVivoTrilhas();
+  if(SATV.q % 30 === 0 && SATV.cardSat){ const el = document.getElementById('liveinfo'); if(el) el.textContent = satVivoLinha(SATV.cardSat); }
 }
 /* ================= r262 · TERREMOTOS DAS ÚLTIMAS 24 H (USGS) =================
    O catálogo público do USGS (GeoJSON, sem chave, com CORS) de magnitude 2,5 ou
@@ -11047,7 +11151,6 @@ REGUA.on = store.get('carto:regua', '1') === '1';
 REGUA.cor = Math.max(0, Math.min(REGUA_CORES.length - 1, parseInt(store.get('carto:reguacor', '0'), 10) || 0));
 REGUA.hex = store.get('carto:reguahex', '') || null;
 ECLV.on = store.get('carto:ecl', '0') === '1';
-SATV.on = store.get('carto:satvivo', '0') === '1';
 SISM.on = store.get('carto:sismos', '0') === '1';
 REGUA.disco = store.get('carto:reguadisco', '1') === '1';
 document.documentElement.style.setProperty('--reguacor', REGUA.hex || REGUA_CORES[REGUA.cor][2]);
@@ -12012,6 +12115,15 @@ function ACTION(act, id){
     AUDIO.sfx('sel');
     uiSync();
     if(!jaEraG) mirarNoCeu(id);
+    return;
+  }
+  if(act==='satlive'){   /* r264 · a ficha mínima de um satélite ao vivo; a trilha dele acende */
+    const jaEraV = ST.mapCard && ST.mapCard.type==='satlive' && ST.mapCard.id===id;
+    ST.mapCard = jaEraV ? null : {type:'satlive', id, act};
+    SATV.foco = jaEraV ? null : (SATV.sats[id] || null);
+    SATV.q = 0;   /* a trilha redesenha no próximo quadro */
+    AUDIO.sfx('sel');
+    uiSync();
     return;
   }
   if(act==='sismo'){   /* r262 · a ficha do tremor: abre, e o segundo clique fecha */
@@ -13795,6 +13907,10 @@ function currentEntity(){
       const bb = ALLBODIES[ST.mapCard.id];
       return {type:'map', b:bb, nav:true, navKind:'body', navId:bb.id};
     }
+    if(ST.mapCard.type==='satlive'){   /* r264 */
+      const sv = SATV.sats[ST.mapCard.id];
+      if(sv) return {type:'map', b:fichaSat(sv), nav:false};
+    }
     if(ST.mapCard.type==='sismo'){   /* r262 */
       const q = SISM.lista[ST.mapCard.id];
       if(q) return {type:'map', b:fichaSismo(q), nav:false};
@@ -14023,6 +14139,8 @@ function cardRender(){
     h += '<button class="xbtn" id="backpan">'+t('← VOLTAR AO PANORAMA')+'</button>';
   }
   if(cur.sysd) h += '<div class="notice">'+esc(SYS[ST.sys].hint)+t('. Afaste o zoom para subir de escala.')+'</div>';
+  /* r264 · satélite ao vivo no card: a linha AGORA (latitude, longitude, altitude, velocidade), atualizada pelo laço */
+  { const sv = satVivoDoCard(cur); if(sv) h = h.replace('<div class="qgrid">', '<div id="liveinfo">' + esc(satVivoLinha(sv)) + '</div><div class="qgrid">'); }
 
   if(lockOn && ST.body === 'lua'){
     const d = new Date(), f = faseDaLua();
@@ -14511,9 +14629,21 @@ function rayHit(x, y){
   if(!ACT || !ACT.pickables.length) return null;
   const ndc = new THREE.Vector2(((x-CRECT.left)/CRECT.width)*2-1, -((y-CRECT.top)/CRECT.height)*2+1);
   raycaster.setFromCamera(ndc, camera);
+  /* r264 · a nuvem de satélites ao vivo é um Points: o raio de acerto acompanha o zoom */
+  raycaster.params.Points.threshold = (ACT.escr ? Math.max(0.00002, CAM.dist*0.012) : 1);
   const hits = raycaster.intersectObjects(ACT.pickables, false)
     .filter(h=>!h.object.userData.escondido && !(h.object.userData.cinturao && FILTROBJ.cinturao === false));
-  return hits.length ? hits[0].object.userData : null;
+  if(!hits.length) return null;
+  /* o alvo da Terra é uma esfera de milhares de km que ENGOLE as órbitas baixas: quem
+     clica em cima de um satélite quer o satélite, então o acerto vivo vence o planeta */
+  const h0 = hits.find(x=>x.object.userData.vivo && !x.object.isPoints) || hits.find(x=>x.object.userData.vivo) || hits[0];
+  if(h0.object.isPoints && h0.object.userData.pontos){
+    /* o ponto de um famoso (ISS, Hubble) abre o card de sempre, não a ficha mínima */
+    const sv = SATV.sats[h0.index], fv = sv && SATV_NOMES[sv.norad];
+    if(fv && fv.corpo) return {act:'focus', id:fv.corpo};
+    return Object.assign({}, h0.object.userData, {id:h0.index});
+  }
+  return h0.object.userData;
 }
 function pick(x, y){
   if(document.body.classList.contains('photo')) return;
@@ -14522,7 +14652,7 @@ function pick(x, y){
     const R = matchMedia('(pointer: coarse)').matches ? 34 : 18;
     const v = new THREE.Vector3(); let best = null, bd = 1e9;
     for(const o of ACT.pickables){
-      if(o.userData.escondido || (o.userData.cinturao && FILTROBJ.cinturao === false)) continue;
+      if(o.isPoints || o.userData.escondido || (o.userData.cinturao && FILTROBJ.cinturao === false)) continue;
       o.getWorldPosition(v); v.project(camera);
       if(v.z > 1) continue;
       const px = ( v.x*0.5+0.5)*CRECT.width  + CRECT.left;
@@ -14771,7 +14901,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r263';
+const BUILD = 'r264';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -15559,8 +15689,6 @@ function cfgSync(){
   if(rcn){ rcn.classList.toggle('off', !CEUN.on); rcn.querySelector('b').textContent = CEUN.on ? t('LIGADO') : t('DESLIGADO'); }
   const rec = document.querySelector('[data-ecl]');
   if(rec){ rec.classList.toggle('off', !ECLV.on); rec.querySelector('b').textContent = ECLV.on ? t('LIGADO') : t('DESLIGADO'); }
-  const rsv = document.querySelector('[data-satvivo]');
-  if(rsv){ rsv.classList.toggle('off', !SATV.on); rsv.querySelector('b').textContent = SATV.on ? t('LIGADO') : t('DESLIGADO'); }
   const rsm = document.querySelector('[data-sismos]');
   if(rsm){ rsm.classList.toggle('off', !SISM.on); rsm.querySelector('b').textContent = SISM.on ? t('LIGADO') : t('DESLIGADO'); }
   const rrd = document.querySelector('[data-reguadisco]');
@@ -15652,15 +15780,6 @@ const cfgRowClick = e=>{
     cfgSync();
     if(ACT && ACT.eclLinha) ACT.eclLinha.visible = ECLV.on;
     if(ACT && ACT.labels) ACT.labels.forEach(l=>{ if(l.eclLbl) l.off = !ECLV.on; });
-    return;
-  }
-  const rSv = e.target.closest('[data-satvivo]');
-  if(rSv){
-    SATV.on = !SATV.on;
-    store.set('carto:satvivo', SATV.on ? '1' : '0');
-    cfgSync();
-    if(!SATV.on) satVivoDesmonta();
-    else if(!satVivoTerra()) showHint(t('SATÉLITES AO VIVO: LIGUE A ESCALA 1:1 E CHEGUE PERTO DA TERRA'));
     return;
   }
   const rSm = e.target.closest('[data-sismos]');
@@ -15945,7 +16064,7 @@ function loop(){
       if(tg.op) tg.mat.opacity = (k < 1) ? (tg.baseOp + (0.95 - tg.baseOp)*e) : pulse;
     }
   }
-  if(SATV.on) satVivoTick();   /* r261 */
+  satVivoTick();   /* r261/r264 · no 1:1 a classe SATÉLITES do filtro é a camada ao vivo */
   if(SISM.on) sismosTick();   /* r262 */
   if(DIVE) diveStep(now);
   if(VOOCEU) vooCeuStep(now);

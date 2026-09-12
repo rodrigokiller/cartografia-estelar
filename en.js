@@ -97,7 +97,12 @@ ui: {
   /* eventos */
   '◈ EVENTOS DO CÉU':'◈ SKY EVENTS', 'BUSCAR EVENTO...':'SEARCH EVENTS...',
   'Escolher um evento leva o relógio do sistema para o instante dele. Datas com ·aprox são aproximadas.':'Choosing an event takes the system clock to its exact moment. Dates marked ·aprox are approximate.',
-  'SATÉLITES AO VIVO NA TERRA (CELESTRAK)':'LIVE SATELLITES ON EARTH (CELESTRAK)', 'SATÉLITES AO VIVO':'LIVE SATELLITES', 'FOTOGRAFIA DE':'SNAPSHOT OF',
+  'SATÉLITES AO VIVO':'LIVE SATELLITES', 'FOTOGRAFIA DE':'SNAPSHOT OF', 'AGORA':'NOW', 'AGORA · fora da validade do TLE':'NOW · outside the validity of the TLE',
+  'SATÉLITE · AO VIVO · CELESTRAK':'SATELLITE · LIVE · CELESTRAK', 'ESTAÇÕES':'STATIONS', 'OS MAIS BRILHANTES':'THE BRIGHTEST', 'CIÊNCIA':'SCIENCE', 'ALTITUDE':'ALTITUDE', 'PERÍODO':'PERIOD',
+  'INCLINAÇÃO':'INCLINATION', 'EXCENTRICIDADE':'ECCENTRICITY', 'GRUPO':'GROUP', 'Elementos orbitais (TLE) do CelesTrak, propagados pelo SGP4 no relógio do app':'Orbital elements (TLE) from CelesTrak, propagated by SGP4 on the app clock',
+  'A órbita':'The orbit', 'A linha desenhada é a volta dos próximos 90 minutos: uma volta inteira em':'The drawn line is the lap of the next 90 minutes: a full lap in', 'O tamanho':'The size',
+  'O ponto é simbólico: um satélite tem metros, a Terra tem milhares de km':'The dot is symbolic: a satellite is meters across, the Earth is thousands of km',
+  'Os TLE são atualizados várias vezes por dia: a posição vale para hoje, não para viagens no tempo.':'The TLE are updated several times a day: the position is valid for today, not for time travel.',
   'SATÉLITES AO VIVO: NÃO CARREGOU':'LIVE SATELLITES: FAILED TO LOAD', 'SATÉLITES AO VIVO: OS TLE SÓ VALEM PERTO DE HOJE':'LIVE SATELLITES: THE TLE ARE ONLY VALID NEAR TODAY',
   'SATÉLITES AO VIVO: LIGUE A ESCALA 1:1 E CHEGUE PERTO DA TERRA':'LIVE SATELLITES: TURN ON THE 1:1 SCALE AND GET CLOSE TO EARTH',
   'TERREMOTOS DAS ÚLTIMAS 24 H (USGS)':'EARTHQUAKES OF THE LAST 24 H (USGS)', 'TERREMOTOS DAS ÚLTIMAS 24 H':'EARTHQUAKES OF THE LAST 24 H', 'O MAIOR':'THE LARGEST',
