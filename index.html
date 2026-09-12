@@ -2696,6 +2696,26 @@ const BELT_BODIES = [
   ],
   facts:['A Hayabusa2 abriu uma cratera artificial com uma bala de cobre e coletou material do subsolo, nunca tocado pelo Sol.','Os 5,4 gramas que voltaram tinham uracila, uma das letras do RNA, e vitamina B3.','Reflete só 4 por cento da luz: mais escuro que carvão.'],
   fict:'No conto de Urashima Taro, o pescador visita o palácio do dragão no fundo do mar e volta com uma caixa que não devia abrir: a Hayabusa2 voltou do Ryugu com a caixa, e abriu.', moons:[]},
+ {id:'higia', name:'HÍGIA', desig:'CINTURÃO-10 · ASTEROIDE', kind:'A quarta maior pedra do cinturão, redonda como um planeta anão', hab:0, gbar:0.009, pop:'0',
+  belt:{angle:3.9, r:23.4},
+  quick:[['DIÂMETRO','434 km'],['DIA','13,8 h'],['ANO','5,6 anos'],['DESCOBERTA','1849'],['FORMA','quase esférica'],['TIPO','C · escura, rica em carbono']],
+  visual:{mode:'rocky', c1:'#3e3c3a', c2:'#5a5754', c3:'#262524', scale:6.0, seed:18.49, crater:0.8},
+  sections:[
+    {t:'A REDONDA', rows:[['O que é','A quarta maior pedra do cinturão, depois de Ceres, Vesta e Palas: 434 km, escura como carvão'],['2019','O VLT do ESO a fotografou em detalhe: é quase uma esfera, o que levou astrônomos a propor que seja um planeta anão, como Ceres'],['A origem','Provavelmente se despedaçou e se juntou de novo há 2 bilhões de anos, num impacto que a deixou redonda'],['A família','Lidera uma família de mais de 7 mil asteroides, os cacos do mesmo impacto']]},
+    {t:'REGISTRO', rows:[['Descoberta','12 de abril de 1849, por Annibale de Gasparis, em Nápoles'],['O nome','Hígia, a deusa grega da saúde, filha de Asclépio'],['Aqui no mapa','Elementos do JPL na época de 9 JUN 2026: a elipse de 2,81 a 3,49 UA, no cinturão externo']]}
+  ],
+  facts:['É a quarta maior pedra do cinturão e quase uma esfera: pode ser o menor planeta anão do Sistema Solar.','Lidera uma família de 7 mil asteroides, os cacos de um impacto de 2 bilhões de anos atrás.'],
+  fict:null, moons:[]},
+ {id:'interamnia', name:'INTERAMNIA', desig:'CINTURÃO-704 · ASTEROIDE', kind:'A quinta maior, a mais massiva depois das quatro grandes', hab:0, gbar:0.007, pop:'0',
+  belt:{angle:0.7, r:22.8},
+  quick:[['DIÂMETRO','332 km'],['DIA','8,7 h'],['ANO','5,3 anos'],['DESCOBERTA','1910'],['INCLINAÇÃO','17°'],['ALBEDO','0,07 · muito escura']],
+  visual:{mode:'rocky', c1:'#35332f', c2:'#4e4b46', c3:'#211f1d', scale:6.2, seed:19.10, crater:0.85},
+  sections:[
+    {t:'A ESCURA', rows:[['O que é','A quinta maior pedra do cinturão, 332 km, e a mais massiva depois de Ceres, Vesta, Palas e Hígia'],['Por que tão pouco conhecida','Reflete só 7 por cento da luz e nunca recebeu visita: nem a Dawn, nem nenhuma outra sonda'],['A órbita','Inclinada 17 graus, um dos maiores corpos fora do plano do cinturão'],['A forma','Em 2020 o VLT mostrou um elipsoide quase em equilíbrio, como Hígia: talvez outra candidata a planeta anão']]},
+    {t:'REGISTRO', rows:[['Descoberta','2 de outubro de 1910, por Vincenzo Cerulli, em Teramo, na Itália'],['O nome','Interamnia, o nome latino de Teramo, a cidade do observatório'],['Aqui no mapa','Elementos do JPL na época de 9 JUN 2026: a elipse de 2,58 a 3,53 UA, inclinada 17 graus']]}
+  ],
+  facts:['É a quinta maior pedra do cinturão e uma das mais escuras: reflete só 7 por cento da luz.','Nenhuma sonda passou por ela, e a órbita inclinada 17 graus a tira do plano das outras.'],
+  fict:null, moons:[]},
  {id:'faetonte', name:'FAETONTE', desig:'NEA-3200 · ASTEROIDE', kind:'O asteroide que age como cometa, pai das Gemínidas', hab:0, gbar:0.0002, pop:'0',
   belt:{angle:5.3, r:16.6},
   quick:[['DIÂMETRO','5,8 km'],['DIA','3,6 h'],['ANO','524 d'],['PERIÉLIO','0,14 UA'],['DESCOBERTA','1983'],['CHUVA','Gemínidas · 14 DEZ']],
@@ -5546,7 +5566,7 @@ const ESCALA_REAL_LUAS = {
 /* distância real das sondas ao Sol em UA (meados de 2026) */
 const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, hyakutake:55, mcnaught:41, juice:1.0, clipper:1.1, pathfinder:1.52, viking1:1.52, cassini:9.54};
 /* pedras do cinturão: [UA, raio km] (no cênico elas moram no anel desenhado) */
-const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4], bennu:[1.13, 0.245], ryugu:[1.19, 0.45], apophis:[0.92, 0.17], faetonte:[1.27, 2.9]};
+const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4], bennu:[1.13, 0.245], ryugu:[1.19, 0.45], apophis:[0.92, 0.17], faetonte:[1.27, 2.9], higia:[3.15, 217], interamnia:[3.06, 166]};
 /* O CÉU REAL (só na escala real): as estrelas mais brilhantes do céu em
    posição VERDADEIRA (RA/DEC J2000 convertidos ao plano da eclíptica da cena)
    e cor pela classe espectral. É o começo do sonho das constelações. */
@@ -6912,7 +6932,10 @@ function buildSystem(sysId, spin0){
                  ryugu:{a:1.1909, e:0.1911, i:5.866, no:251.29, w:211.61, ma:62.34},
                  apophis:{a:0.92236, e:0.19115, i:3.341, no:203.89, w:126.68, ma:175.33},
                  /* r255 · Faetonte, SBDB na mesma epoca (JD 2461200.5) */
-                 faetonte:{a:1.27146, e:0.88967, i:22.311, no:265.099, w:322.300, ma:301.486}};
+                 faetonte:{a:1.27146, e:0.88967, i:22.311, no:265.099, w:322.300, ma:301.486},
+                 /* r271 · Higia e Interamnia, SBDB na mesma epoca */
+                 higia:{a:3.15097, e:0.10671, i:3.830, no:283.120, w:312.424, ma:252.034},
+                 interamnia:{a:3.05681, e:0.15506, i:17.315, no:280.167, w:94.062, ma:221.145}};
     const ELA_EP = Date.UTC(2026,5,9);
     for(const a of S.belt){
       const eA = ELA[a.id];
@@ -15058,7 +15081,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r270';
+const BUILD = 'r271';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

@@ -1439,6 +1439,26 @@ nebulosaorion: {
   facts: ['It is the nearest place where you can watch stars and planets being born right now.', 'It is in everyone\'s sky: point at Orion\'s belt and go down a little.', 'Hubble showed that most of the young stars there have a disk of dust, that is, planets under construction.'],
   fict: 'A must-see in every documentary and on astronomy book covers. In Blade Runner, Roy Batty says he saw attack ships on fire "off the shoulder of Orion".'
 },
+higia: {
+  kind: 'The fourth largest rock of the belt, round like a dwarf planet',
+  quick: [['DIAMETER','434 km'],['DAY','13.8 h'],['YEAR','5.6 years'],['DISCOVERED','1849'],['SHAPE','nearly spherical'],['TYPE','C · dark, carbon-rich']],
+  sections: [
+    {t:'THE ROUND ONE', rows:[['What it is','The fourth largest rock of the belt, after Ceres, Vesta and Pallas: 434 km, as dark as coal'],['2019','The VLT of ESO photographed it in detail: it is almost a sphere, which led astronomers to propose it as a dwarf planet, like Ceres'],['The origin','It probably shattered and came back together 2 billion years ago, in an impact that left it round'],['The family','It leads a family of more than 7,000 asteroids, the shards of the same impact']]},
+    {t:'RECORD', rows:[['Discovered','April 12, 1849, by Annibale de Gasparis, in Naples'],['The name','Hygieia, the Greek goddess of health, daughter of Asclepius'],['Here on the map','JPL elements at the epoch of June 9, 2026: the ellipse from 2.81 to 3.49 AU, in the outer belt']]}
+  ],
+  facts: ['It is the fourth largest rock of the belt and almost a sphere: it may be the smallest dwarf planet of the Solar System.', 'It leads a family of 7,000 asteroids, the shards of an impact 2 billion years ago.'],
+  fict: null
+},
+interamnia: {
+  kind: 'The fifth largest, the most massive after the big four',
+  quick: [['DIAMETER','332 km'],['DAY','8.7 h'],['YEAR','5.3 years'],['DISCOVERED','1910'],['INCLINATION','17°'],['ALBEDO','0.07 · very dark']],
+  sections: [
+    {t:'THE DARK ONE', rows:[['What it is','The fifth largest rock of the belt, 332 km, and the most massive after Ceres, Vesta, Pallas and Hygiea'],['Why so little known','It reflects only 7 percent of the light and has never had a visitor: not Dawn, not any other probe'],['The orbit','Inclined 17 degrees, one of the largest bodies out of the plane of the belt'],['The shape','In 2020 the VLT showed an ellipsoid nearly in equilibrium, like Hygiea: maybe another dwarf planet candidate']]},
+    {t:'RECORD', rows:[['Discovered','October 2, 1910, by Vincenzo Cerulli, in Teramo, Italy'],['The name','Interamnia, the Latin name of Teramo, the city of the observatory'],['Here on the map','JPL elements at the epoch of June 9, 2026: the ellipse from 2.58 to 3.53 AU, inclined 17 degrees']]}
+  ],
+  facts: ['It is the fifth largest rock of the belt and one of the darkest: it reflects only 7 percent of the light.', 'No probe has passed by it, and the orbit inclined 17 degrees takes it out of the plane of the others.'],
+  fict: null
+},
 faetonte: {
   kind: 'The asteroid that acts like a comet, father of the Geminids',
   quick: [['DIAMETER','5.8 km'],['DAY','3.6 h'],['YEAR','524 d'],['PERIHELION','0.14 AU'],['DISCOVERED','1983'],['SHOWER','Geminids · DEC 14']],
