@@ -2299,6 +2299,41 @@ const PLANETAS_SONDAS = [
   ],
   facts:['Tirou a primeira foto da superfície de Marte, sete anos exatos depois do pouso da Apollo 11.','Um dos quatro experimentos de vida deu sinal positivo, e o debate científico dura até hoje.','Planejada para 90 dias, trabalhou seis anos no solo.'],
   fict:'O resultado ambíguo do experimento de vida alimenta livros há meio século: e se ela achou, e ninguém acreditou?', moons:[]},
+ {id:'juice', name:'JUICE', desig:'SONDA · 2023', kind:'A caminho das luas geladas de Júpiter', hab:0, gbar:0, pop:'0',
+  sonda:true,
+  traj:{de:2023.28, ate:2026.75}, marcos:[[2023.28,'LANÇAMENTO','14 de abril de 2023: o penúltimo Ariane 5, de Kourou, na Guiana Francesa.'],[2024.65,'A DUPLA CATAPULTA','Agosto de 2024: passa pela Lua e pela Terra em 24 horas, a primeira catapulta dupla Lua-Terra da história.'],[2025.65,'VÊNUS','Agosto de 2025: a catapulta em Vênus, com a sonda protegida do calor pela antena.'],[2026.75,'A TERRA DE NOVO','29 de setembro de 2026: a segunda passagem pela Terra; a terceira em 2029, e Júpiter em julho de 2031.']],
+  quick:[['LANÇAMENTO','14/4/2023 · Ariane 5'],['CHEGADA','julho de 2031, a Júpiter'],['O ALVO','Ganimedes, Calisto e Europa'],['O FIM','em órbita de Ganimedes, 2034-35'],['CATAPULTAS','Lua-Terra, Vênus, Terra, Terra'],['AGÊNCIA','ESA']],
+  sys:{orbit:16.2, size:0.10, speed:0.4, angle:1.3},
+  visual:{mode:'rocky', c1:'#c8b894', c2:'#e0d0ac', c3:'#8e7e60', scale:7.0, seed:20.23, crater:0.05},
+  sections:[
+    {t:'A MISSÃO', rows:[['O nome','JUpiter ICy moons Explorer: a primeira missão europeia ao sistema exterior'],['O alvo','Os oceanos escondidos de Ganimedes, Calisto e Europa: 35 sobrevoos, e no fim a primeira ÓRBITA em volta de uma lua de outro planeta, Ganimedes'],['O caminho','Oito anos e quatro catapultas gravitacionais: sem elas o foguete não daria conta de mandar 6 toneladas até Júpiter'],['Os painéis','85 m² de painéis solares, os maiores já enviados ao sistema exterior: em Júpiter o Sol brilha 25 vezes menos']]},
+    {t:'REGISTRO', rows:[['Onde está agora','No caminho de volta à Terra para a catapulta de 29 de setembro de 2026, a cerca de 1 UA do Sol'],['O radar','Vai medir a espessura do gelo de Ganimedes com um radar que enxerga 9 km para baixo'],['A dupla','Chega em 2031, um ano depois da Europa Clipper da NASA: as duas vão trabalhar juntas'],['Aqui no mapa','O arco é a rota desenhada até a posição de hoje; as catapultas estão na linha do tempo']]}
+  ],
+  facts:['Vai ser a primeira sonda a orbitar uma lua de outro planeta: Ganimedes, em 2034.','Precisa de quatro catapultas gravitacionais em oito anos para chegar a Júpiter.','Leva os maiores painéis solares já mandados ao sistema exterior: 85 metros quadrados.'],
+  fict:'A JUICE leva uma placa com as páginas do livro em que Galileu anunciou as luas de Júpiter, em 1610.', moons:[]},
+ {id:'clipper', name:'EUROPA CLIPPER', desig:'SONDA · 2024', kind:'A caçadora do oceano de Europa', hab:0, gbar:0, pop:'0',
+  sonda:true,
+  traj:{de:2024.79, ate:2026.92}, marcos:[[2024.79,'LANÇAMENTO','14 de outubro de 2024, num Falcon Heavy do Cabo Canaveral, depois do furacão Milton adiar a decolagem.'],[2025.16,'MARTE','1 de março de 2025: a catapulta em Marte, passando a 884 km e testando os instrumentos no planeta.'],[2026.92,'A TERRA','3 de dezembro de 2026: a catapulta na Terra que a manda para Júpiter; chegada em abril de 2030.']],
+  quick:[['LANÇAMENTO','14/10/2024 · Falcon Heavy'],['CHEGADA','abril de 2030, a Júpiter'],['O ALVO','Europa, 49 sobrevoos'],['MAIS PERTO','25 km da superfície'],['TAMANHO','30 m com os painéis abertos'],['AGÊNCIA','NASA']],
+  sys:{orbit:16.6, size:0.10, speed:0.4, angle:2.1},
+  visual:{mode:'rocky', c1:'#c8ccd4', c2:'#e4e8f0', c3:'#8a8e96', scale:7.0, seed:20.24, crater:0.05},
+  sections:[
+    {t:'A MISSÃO', rows:[['O alvo','O oceano de Europa, com o dobro da água da Terra debaixo de um gelo de uns 20 km'],['A tática','Não orbita Europa: a radiação de Júpiter fritaria a sonda em semanas; orbita Júpiter e passa por Europa 49 vezes, chegando a 25 km'],['O que procura','Se o oceano tem os ingredientes da vida: gelo fino, plumas, química da superfície'],['O tamanho','A maior sonda planetária da NASA: 30 metros de ponta a ponta com os painéis abertos']]},
+    {t:'REGISTRO', rows:[['Onde está agora','No caminho de volta à Terra para a catapulta de 3 de dezembro de 2026, a cerca de 1,1 UA do Sol'],['O susto','Em 2024 transistores dela se mostraram sensíveis à radiação; a NASA testou e decidiu lançar mesmo assim'],['A placa','Leva um poema de Ada Limón e 2,6 milhões de nomes gravados num chip'],['Aqui no mapa','O arco é a rota desenhada até a posição de hoje; as catapultas estão na linha do tempo']]}
+  ],
+  facts:['É a maior sonda planetária que a NASA já construiu: 30 metros com os painéis abertos.','Vai passar 49 vezes por Europa, a até 25 km da superfície, sem nunca orbitá-la: a radiação não deixa.','Chega a Júpiter em 2030, um ano antes da JUICE europeia.'],
+  fict:'Leva gravado o poema In Praise of Mystery, de Ada Limón, com um verso na primeira pessoa do plural: nós também somos feitos de água.', moons:[]},
+ {id:'parker', name:'PARKER', desig:'SONDA SOLAR · 2018', kind:'A máquina mais rápida da história, mergulhando no Sol', hab:0, gbar:0, pop:'0',
+  nave:true, orbita:{peri:2.8, afel:11.5, incl:0.06, epoca:Date.UTC(2024,11,24,11,53)},
+  quick:[['LANÇAMENTO','12/8/2018 · Delta IV Heavy'],['PERIÉLIO','6,1 milhões de km · 24/12/2024'],['VELOCIDADE','692 mil km/h · recorde'],['ESCUDO','1.400 °C · 11 cm de carbono'],['ÓRBITA','88 dias'],['CATAPULTAS','7 em Vênus']],
+  sys:{orbit:7, size:0.10, speed:2.0, angle:0.4},
+  visual:{mode:'rocky', c1:'#d8d0c0', c2:'#f0e8d8', c3:'#9a9080', scale:7.0, seed:20.18, crater:0.05},
+  sections:[
+    {t:'O MERGULHO', rows:[['O recorde','Em 24 de dezembro de 2024 passou a 6,1 milhões de km da superfície do Sol, dentro da coroa, a 692 mil km/h: o objeto mais rápido que a humanidade já construiu'],['O escudo','Uma placa de carbono de 11 cm segura 1.400 °C do lado do Sol enquanto os instrumentos ficam a temperatura ambiente na sombra'],['Como chegou','Sete catapultas em Vênus, cada uma encolhendo a órbita, de 2018 a 2024'],['O que descobriu','As dobras do vento solar (switchbacks), a zona sem poeira perto do Sol e a origem do vento rápido']]},
+    {t:'REGISTRO', rows:[['O nome','Eugene Parker, o físico que previu o vento solar em 1958: a primeira sonda da NASA batizada com o nome de alguém vivo, e ele assistiu ao lançamento'],['A carona','Um chip com 1,1 milhão de nomes do público'],['A órbita','Desde 2024 dá uma volta a cada 88 dias, entre 0,046 e 0,73 UA'],['Aqui no mapa','A elipse é a órbita final (0,046 a 0,73 UA); a orientação dela no espaço é aproximada']]}
+  ],
+  facts:['É o objeto mais rápido já construído pela humanidade: 692 mil km/h no periélio.','Passou dentro da coroa do Sol, a 6,1 milhões de km da superfície, e sobreviveu.','Foi batizada com o nome de um cientista vivo, Eugene Parker, que viu o lançamento aos 91 anos.'],
+  fict:'A ideia de tocar o Sol vem do mito de Ícaro; a NASA vendeu a missão exatamente com esse mote, e dessa vez as asas aguentaram.', moons:[]},
  {id:'cassini', name:'CASSINI', desig:'SONDA · 1997-2017', kind:'A rainha de Saturno e o mergulho final', hab:0, gbar:0, pop:'0',
   sonda:true,
   traj:{de:1997.8, ate:2017.7}, marcos:[[1997.8,'LANÇAMENTO'],[2000.99,'SOBREVOO DE JÚPITER'],[2004.5,'CHEGADA A SATURNO'],[2005.03,'HUYGENS DESCE EM TITÃ','A primeira descida num mundo do sistema solar exterior.'],[2013.55,'O DIA EM QUE A TERRA SORRIU'],[2017.7,'GRAND FINALE · O MERGULHO','Cassini virou parte de Saturno: o mergulho protegeu as luas oceânicas.']],
@@ -5499,7 +5534,7 @@ const ESCALA_REAL_EL = {   /* [peri UA, afel UA, data do periélio real quando c
   jupiter:[4.951, 5.457, Date.UTC(2023,0,21)], saturno:[9.041, 10.124, Date.UTC(2032,10,24)],
   urano:[18.286, 20.096, Date.UTC(2050,7,4)], netuno:[29.81, 30.33],
   halebopp:[0.914, 370],
-  plutao:[29.7, 49.3], eris:[38.2, 97.6], sedna:[76.2, 1012], halley:[0.586, 35.1], p67:[1.24, 5.68], swift:[0.9595, 51.2], encke:[0.3386, 4.10], tempeltuttle:[0.9764, 19.70], thatcher:[0.9207, 110.44]};
+  plutao:[29.7, 49.3], eris:[38.2, 97.6], sedna:[76.2, 1012], halley:[0.586, 35.1], p67:[1.24, 5.68], swift:[0.9595, 51.2], encke:[0.3386, 4.10], tempeltuttle:[0.9764, 19.70], thatcher:[0.9207, 110.44], parker:[0.046, 0.73]};
 /* distância real de cada lua ao centro do corpo, em km (semi-eixo maior) */
 const ESCALA_REAL_LUAS = {
   lua:384400, fobos:9376, deimos:23463,
@@ -5509,7 +5544,7 @@ const ESCALA_REAL_LUAS = {
   miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, metis:128000, tebe:221900, galateia:61953, larissa:73548, pan:133584, prometeu:139380, pandora:141720, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
   iss:6790, hubble:6910, tiangong:6760, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
-const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, hyakutake:55, mcnaught:41, pathfinder:1.52, viking1:1.52, cassini:9.54};
+const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, hyakutake:55, mcnaught:41, juice:1.0, clipper:1.1, pathfinder:1.52, viking1:1.52, cassini:9.54};
 /* pedras do cinturão: [UA, raio km] (no cênico elas moram no anel desenhado) */
 const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4], bennu:[1.13, 0.245], ryugu:[1.19, 0.45], apophis:[0.92, 0.17], faetonte:[1.27, 2.9]};
 /* O CÉU REAL (só na escala real): as estrelas mais brilhantes do céu em
@@ -6371,7 +6406,7 @@ const ESCALA_REAL_NODO = {
 const ESCALA_REAL_T = {mercurio:0.2408467, venus:0.6151973, terra:1.0000174,
   marte:1.8808476, jupiter:11.862615, saturno:29.447498, urano:84.016846,
   netuno:164.79132, plutao:247.92065, eris:561.2, sedna:12676,
-  halley:75.84, p67:6.434, swift:133.28, encke:3.307, tempeltuttle:33.24, thatcher:415.0};
+  halley:75.84, p67:6.434, swift:133.28, encke:3.307, tempeltuttle:33.24, thatcher:415.0, parker:0.241};
 const ESCALA_REAL_ANC = {
   mercurio:{ma:174.794, ep:946728000000}, venus:{ma:50.447, ep:946728000000},
   terra:{ma:357.517, ep:946728000000}, marte:{ma:19.412, ep:946728000000},
@@ -6380,7 +6415,7 @@ const ESCALA_REAL_ANC = {
   plutao:{ma:14.862, ep:946728000000},
   eris:{ma:212, ep:Date.UTC(2026,5,9)}, sedna:{ma:358.6, ep:Date.UTC(2026,5,9)},
   /* cometas: a âncora é a PASSAGEM PELO PERIÉLIO (ma=0 na data), do SBDB */
-  halley:{ma:0, ep:Date.UTC(1986,1,9,11,22)}, p67:{ma:0, ep:Date.UTC(2015,7,13,2,8)}, swift:{ma:0, ep:Date.UTC(1992,11,12)}, encke:{ma:0, ep:Date.UTC(2023,9,22,7)}, tempeltuttle:{ma:0, ep:Date.UTC(1998,1,28,2)}, thatcher:{ma:0, ep:Date.UTC(1861,5,3,21)}};
+  halley:{ma:0, ep:Date.UTC(1986,1,9,11,22)}, p67:{ma:0, ep:Date.UTC(2015,7,13,2,8)}, swift:{ma:0, ep:Date.UTC(1992,11,12)}, encke:{ma:0, ep:Date.UTC(2023,9,22,7)}, tempeltuttle:{ma:0, ep:Date.UTC(1998,1,28,2)}, thatcher:{ma:0, ep:Date.UTC(1861,5,3,21)}, parker:{ma:0, ep:Date.UTC(2024,11,24,11,53)}};
 /* dia sideral de cada planeta em dias terrestres (negativo = retrógrado) */
 const ESCALA_REAL_DIA = {mercurio:58.65, venus:-243.0, terra:0.997, marte:1.026,
   jupiter:0.414, saturno:0.444, urano:-0.718, netuno:0.671};
@@ -6427,7 +6462,7 @@ function classeDaLinha(p){
   if(p.anao) return 'anao';
   if(p.foguete) return 'foguete';
   if(p.satelite) return 'satelite';
-  if(p.sonda) return 'sonda';
+  if(p.sonda || p.nave) return 'sonda';   /* r270 · nave em órbita fechada (Parker) usa a linha das sondas */
   if(p.comet || p.escape) return 'cometa';
   return 'planeta';
 }
@@ -6665,7 +6700,7 @@ function buildSystem(sysId, spin0){
        escolhe o mapa de verdade quando existe, e com ele vêm anel, atmosfera e
        nuvem no mesmo lugar de sempre */
     const aoVivoP = giraPeloSol(p.id);
-    const bg = (p.sonda || p.satelite || p.foguete)
+    const bg = (p.sonda || p.satelite || p.foguete || p.nave)
       ? grupoNave(p.id, p.sys.size*2.6)
       : makeBodyGroup(p, p.sys.size, 40);
     bg.group.position.set(obX, 0, obZ);
@@ -6706,7 +6741,7 @@ function buildSystem(sysId, spin0){
        de foco, existe só CHEGAR PERTO. Para o corpo aguentar o zoom fundo, ele
        troca de pele quando a câmera se aproxima: a esfera ganha malha fina e
        entram as nuvens e a atmosfera, exatamente como na cena de foco */
-    if(escrAtivo && !p.sonda && !p.satelite && !p.foguete)
+    if(escrAtivo && !p.sonda && !p.satelite && !p.foguete && !p.nave)
       detalhaveis.push({id:p.id, grupo:bg.group, mesh:bg.mesh, v:p.visual, r:p.sys.size, feito:false});
     /* r157 · OS ANÉIS DE MIRA SAÍRAM (decisão dele, depois de duas tentativas:
        como sprite ficavam grossos demais, como linha viravam elipse conforme o
@@ -15023,7 +15058,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r269';
+const BUILD = 'r270';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

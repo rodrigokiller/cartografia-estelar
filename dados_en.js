@@ -692,6 +692,36 @@ viking1: {
   facts: ['It took the first photo of the surface of Mars, exactly seven years after the Apollo 11 landing.', 'One of the four life experiments came back positive, and the scientific debate lasts to this day.', 'Planned for 90 days, it worked for six years on the ground.'],
   fict: 'The ambiguous result of the life experiment has fed books for half a century: what if it found it, and nobody believed?'
 },
+juice: {
+  kind: 'On its way to the icy moons of Jupiter',
+  quick: [['LAUNCH','4/14/2023 · Ariane 5'],['ARRIVAL','July 2031, at Jupiter'],['THE TARGET','Ganymede, Callisto and Europa'],['THE END','in orbit around Ganymede, 2034-35'],['SLINGSHOTS','Moon-Earth, Venus, Earth, Earth'],['AGENCY','ESA']],
+  sections: [
+    {t:'THE MISSION', rows:[['The name','JUpiter ICy moons Explorer: the first European mission to the outer system'],['The target','The hidden oceans of Ganymede, Callisto and Europa: 35 flybys, and at the end the first ORBIT around a moon of another planet, Ganymede'],['The path','Eight years and four gravity assists: without them the rocket could not send 6 tonnes to Jupiter'],['The panels','85 m² of solar panels, the largest ever sent to the outer system: at Jupiter the Sun shines 25 times fainter']]},
+    {t:'RECORD', rows:[['Where it is now','On the way back to Earth for the slingshot of September 29, 2026, about 1 AU from the Sun'],['The radar','It will measure the thickness of the ice of Ganymede with a radar that sees 9 km down'],['The pair','It arrives in 2031, a year after NASA\'s Europa Clipper: the two will work together'],['Here on the map','The arc is the route drawn up to today\'s position; the slingshots are on the timeline']]}
+  ],
+  facts: ['It will be the first probe to orbit a moon of another planet: Ganymede, in 2034.', 'It needs four gravity assists over eight years to reach Jupiter.', 'It carries the largest solar panels ever sent to the outer system: 85 square meters.'],
+  fict: 'JUICE carries a plaque with the pages of the book in which Galileo announced the moons of Jupiter, in 1610.'
+},
+clipper: {
+  kind: 'The hunter of the ocean of Europa',
+  quick: [['LAUNCH','10/14/2024 · Falcon Heavy'],['ARRIVAL','April 2030, at Jupiter'],['THE TARGET','Europa, 49 flybys'],['CLOSEST','25 km from the surface'],['SIZE','30 m with the panels open'],['AGENCY','NASA']],
+  sections: [
+    {t:'THE MISSION', rows:[['The target','The ocean of Europa, with twice the water of the Earth under some 20 km of ice'],['The tactic','It does not orbit Europa: the radiation of Jupiter would fry the probe in weeks; it orbits Jupiter and passes Europa 49 times, getting within 25 km'],['What it looks for','Whether the ocean has the ingredients of life: thin ice, plumes, surface chemistry'],['The size','The largest planetary probe of NASA: 30 meters end to end with the panels open']]},
+    {t:'RECORD', rows:[['Where it is now','On the way back to Earth for the slingshot of December 3, 2026, about 1.1 AU from the Sun'],['The scare','In 2024 its transistors turned out sensitive to radiation; NASA tested them and decided to launch anyway'],['The plaque','It carries a poem by Ada Limón and 2.6 million names etched on a chip'],['Here on the map','The arc is the route drawn up to today\'s position; the slingshots are on the timeline']]}
+  ],
+  facts: ['It is the largest planetary probe NASA has ever built: 30 meters with the panels open.', 'It will pass Europa 49 times, as close as 25 km from the surface, without ever orbiting it: the radiation does not allow it.', 'It reaches Jupiter in 2030, a year before the European JUICE.'],
+  fict: 'It carries the poem In Praise of Mystery by Ada Limón, with a line in the first person plural: we, too, are made of water.'
+},
+parker: {
+  kind: 'The fastest machine in history, diving into the Sun',
+  quick: [['LAUNCH','8/12/2018 · Delta IV Heavy'],['PERIHELION','6.1 million km · 12/24/2024'],['SPEED','692,000 km/h · record'],['SHIELD','1,400 °C · 11 cm of carbon'],['ORBIT','88 days'],['SLINGSHOTS','7 at Venus']],
+  sections: [
+    {t:'THE DIVE', rows:[['The record','On December 24, 2024 it passed 6.1 million km from the surface of the Sun, inside the corona, at 692,000 km/h: the fastest object humanity has ever built'],['The shield','An 11 cm carbon plate holds 1,400 °C on the Sun side while the instruments stay at room temperature in the shade'],['How it got there','Seven slingshots at Venus, each shrinking the orbit, from 2018 to 2024'],['What it found','The folds of the solar wind (switchbacks), the dust-free zone near the Sun and the origin of the fast wind']]},
+    {t:'RECORD', rows:[['The name','Eugene Parker, the physicist who predicted the solar wind in 1958: the first NASA probe named after a living person, and he watched the launch'],['The ride','A chip with 1.1 million names from the public'],['The orbit','Since 2024 one lap every 88 days, between 0.046 and 0.73 AU'],['Here on the map','The ellipse is the final orbit (0.046 to 0.73 AU); its orientation in space is approximate']]}
+  ],
+  facts: ['It is the fastest object ever built by humanity: 692,000 km/h at perihelion.', 'It passed inside the corona of the Sun, 6.1 million km from the surface, and survived.', 'It was named after a living scientist, Eugene Parker, who watched the launch at 91.'],
+  fict: 'The idea of touching the Sun comes from the myth of Icarus; NASA sold the mission with exactly that motto, and this time the wings held.'
+},
 cassini: {
   kind: 'The queen of Saturn and the final plunge',
   quick: [['LAUNCH','10/15/1997'],['ARRIVAL','7/1/2004, 7 years of travel'],['AT SATURN','13 years and 294 orbits'],['THE PASSENGER','ESA\'s Huygens probe'],['DISCOVERIES','Enceladus geysers, Titan seas'],['THE END','9/15/2017, deliberate plunge']],
