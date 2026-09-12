@@ -5957,9 +5957,9 @@ const SATV_GRUPOS = [['stations', 0xffc98a], ['visual', 0xffffff], ['gps-ops', 0
 const SATV_GRUPO_NOME = {stations:'ESTAÇÕES', visual:'OS MAIS BRILHANTES', 'gps-ops':'GPS', galileo:'GALILEO', 'glo-ops':'GLONASS', science:'CIÊNCIA'};
 /* os famosos: o modelo desenhado (fora de escala, como as naves das missões), o card de
    sempre quando ele existe no atlas, e a trilha da órbita */
-const SATV_NOMES = {25544:{nome:'ISS', corpo:'iss', modelo:'iss', tam:0.00012}, 48274:{nome:'TIANGONG', corpo:null, modelo:'iss', tam:0.00009}, 20580:{nome:'HUBBLE', corpo:'hubble', modelo:'hubble', tam:0.00008}};
+const SATV_NOMES = {25544:{nome:'ISS', corpo:'iss', modelo:'iss', tam:0.00012, tamC:0.16}, 48274:{nome:'TIANGONG', corpo:null, modelo:'iss', tam:0.00009, tamC:0.12}, 20580:{nome:'HUBBLE', corpo:'hubble', modelo:'hubble', tam:0.00008, tamC:0.10}};
 const SATV_CORPO = {iss:25544, hubble:20580};
-function satVivoAtivo(){ return FILTROBJ.satelite !== false && !!ACT && ACT.kind === 'system' && !!ACT.escr && ST.sys === 'sol'; }
+function satVivoAtivo(){ return FILTROBJ.satelite !== false && !!ACT && ACT.kind === 'system' && ST.sys === 'sol'; }
 function satVivoScript(src){ return new Promise((ok, erro)=>{ const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = ()=>erro(new Error('falhou ' + src)); document.head.appendChild(s); }); }
 function satVivoParse(txt, grupo, cor){
   const L = String(txt || '').split('\n').map(x=>x.replace(/\r/g, '')).filter(x=>x.trim().length);
@@ -5999,15 +5999,29 @@ async function satVivoCarrega(){
   SATV.carregando = false;
 }
 function satVivoTerra(){
-  if(!ACT || ACT.kind !== 'system' || !ACT.escr || ST.sys !== 'sol' || !ACT.objs || !ACT.liveGiro) return null;
+  if(!ACT || ACT.kind !== 'system' || ST.sys !== 'sol' || !ACT.objs || !ACT.liveGiro) return null;
   const oo = ACT.objs.find(x=>x.id === 'terra'); if(!oo) return null;
   const lv = ACT.liveGiro.find(x=>x.grupo === oo.corpo);
-  return lv ? lv.mesh : null;
+  if(!lv) return null;
+  /* r265 · no 1:1 os pontos moram no MESH (quadro fixo na Terra: ECEF gira com o dia); no
+     cênico moram no PAI do mesh (o eixo inclinado SEM o giro decorativo: o quadro ECI), porque
+     lá a Terra roda de enfeite e o satélite não pode rodar junto com o chão */
+  return ACT.escr ? lv.mesh : (lv.mesh.parent || lv.mesh);
 }
 function satVivoLocal(p, gmst, out){
-  /* ECEF (x lon 0, y 90 E, z norte) para o espaço local da textura da Terra (r165) */
-  const e = satellite.eciToEcf(p, gmst), KM = ESCR_UA/149597870;
-  out.set(e.x*KM, e.z*KM, -e.y*KM);
+  const KM = ESCR_UA/149597870;
+  if(SATV.escr){
+    /* ECEF (x lon 0, y 90 E, z norte) para o espaço local da textura da Terra (r165) */
+    const e = satellite.eciToEcf(p, gmst);
+    out.set(e.x*KM, e.z*KM, -e.y*KM);
+    return out;
+  }
+  /* cênico: ÓRBITA ESTIMADA. A direção é a real (ECI: inclinação, fase e período de verdade),
+     a altitude é comprimida em log para caber na Terra desenhada: a ISS (420 km) fica a 1,5
+     raios, o GPS (20 mil km) a 2,8, um geoestacionário a 3,0. Honesto no card ('estimada') */
+  const r = Math.hypot(p.x, p.y, p.z) || 1, alt = Math.max(0, r - 6371);
+  const rc = SATV.R*(1.25 + 0.9*Math.log10(1 + alt/400));
+  out.set(p.x/r*rc, p.z/r*rc, -p.y/r*rc);
   return out;
 }
 function satVivoDesmonta(){
@@ -6033,6 +6047,8 @@ function satVivoDesmonta(){
 }
 function satVivoMonta(){
   const mesh = satVivoTerra(); if(!mesh) return false;
+  SATV.escr = !!ACT.escr;
+  { const pkT = ACT.pickables.find(x=>x.userData && x.userData.id === 'terra'); SATV.R = (pkT && pkT.userData.r) || 0.9; }
   const n = SATV.sats.length;
   const pos = new Float32Array(n*3), col = new Float32Array(n*3);
   const c = new THREE.Color();
@@ -6058,12 +6074,13 @@ function satVivoMonta(){
   for(const s of SATV.sats){
     const f = SATV_NOMES[s.norad]; if(!f) continue;
     const anc = new THREE.Object3D(); mesh.add(anc); s.anc = anc;
-    const mv = grupoNave(f.modelo, f.tam); anc.add(mv.group);
-    const pk = new THREE.Mesh(new THREE.SphereGeometry(f.tam*1.3, 8, 8), new THREE.MeshBasicMaterial({visible:false}));
-    pk.userData = f.corpo ? {act:'focus', id:f.corpo, r:f.tam, vivo:true} : {act:'satlive', id:s.i, r:f.tam, vivo:true};
+    const tam = SATV.escr ? f.tam : SATV.R*f.tamC;
+    const mv = grupoNave(f.modelo, tam); anc.add(mv.group);
+    const pk = new THREE.Mesh(new THREE.SphereGeometry(tam*1.3, 8, 8), new THREE.MeshBasicMaterial({visible:false}));
+    pk.userData = f.corpo ? {act:'focus', id:f.corpo, r:tam, vivo:true} : {act:'satlive', id:s.i, r:tam, vivo:true};
     anc.add(pk); ACT.pickables.push(pk);
-    const L = {el:makeLabel(f.nome, 'faint mini', ()=>ACTION(pk.userData.act, pk.userData.id)), mini:true, lid:f.corpo || ('sat_' + s.norad), lidPai:'terra', escrMr:0.0005,
-      get:v=>{ anc.getWorldPosition(v); v.y += Math.max(0.00003, CAM.dist*0.012); }};
+    const L = {el:makeLabel(f.nome, 'faint mini', ()=>ACTION(pk.userData.act, pk.userData.id)), mini:true, lid:f.corpo || ('sat_' + s.norad), lidPai:'terra', escrMr:(SATV.escr ? 0.0005 : 0),
+      get:v=>{ anc.getWorldPosition(v); v.y += SATV.escr ? Math.max(0.00003, CAM.dist*0.012) : tam*1.3; }};
     ACT.labels.push(L); SATV.lbls.push(L);
     SATV.famosos.push({sat:s, anc, pk, modelo:mv.group});
   }
@@ -6128,7 +6145,7 @@ function fichaSat(s){
   try{ const d = new Date(SIMT.data), pv = satellite.propagate(rec, d); const gd = satellite.eciToGeodetic(pv.position, satellite.gstime(d)); alt = Math.round(gd.height) + ' km'; }catch(e){}
   return {name:(f ? f.nome : s.nome), desig:t('SATÉLITE · AO VIVO · CELESTRAK'), kind:t(SATV_GRUPO_NOME[s.grupo] || s.grupo), hab:null,
     quick:[[t('ALTITUDE'), alt],[t('PERÍODO'), per.toFixed(1) + ' min'],[t('INCLINAÇÃO'), inc.toFixed(1) + '°'],[t('EXCENTRICIDADE'), rec.ecco.toFixed(4)],['NORAD', String(s.norad)],[t('GRUPO'), t(SATV_GRUPO_NOME[s.grupo] || s.grupo)]],
-    sections:[{t:t('REGISTRO'), rows:[[t('Fonte'), t('Elementos orbitais (TLE) do CelesTrak, propagados pelo SGP4 no relógio do app')],[t('A órbita'), t('A linha desenhada é a volta dos próximos 90 minutos: uma volta inteira em') + ' ' + per.toFixed(0) + ' min'],[t('O tamanho'), t('O ponto é simbólico: um satélite tem metros, a Terra tem milhares de km')]]}],
+    sections:[{t:t('REGISTRO'), rows:[[t('Fonte'), t('Elementos orbitais (TLE) do CelesTrak, propagados pelo SGP4 no relógio do app')],[t('A órbita'), t('A linha desenhada é a volta dos próximos 90 minutos: uma volta inteira em') + ' ' + per.toFixed(0) + ' min'],[t('O tamanho'), t('O ponto é simbólico: um satélite tem metros, a Terra tem milhares de km')],[t('Aqui no mapa'), SATV.escr ? t('Escala 1:1: altitude e órbita reais') : t('Mapa cênico: órbita ESTIMADA, com a altitude comprimida para caber na Terra desenhada; inclinação, fase e período são os reais')]]}],
     facts:[t('Os TLE são atualizados várias vezes por dia: a posição vale para hoje, não para viagens no tempo.')], fict:null};
 }
 function satVivoTick(){
@@ -14630,7 +14647,7 @@ function rayHit(x, y){
   const ndc = new THREE.Vector2(((x-CRECT.left)/CRECT.width)*2-1, -((y-CRECT.top)/CRECT.height)*2+1);
   raycaster.setFromCamera(ndc, camera);
   /* r264 · a nuvem de satélites ao vivo é um Points: o raio de acerto acompanha o zoom */
-  raycaster.params.Points.threshold = (ACT.escr ? Math.max(0.00002, CAM.dist*0.012) : 1);
+  raycaster.params.Points.threshold = Math.max(0.00002, CAM.dist*0.012);
   const hits = raycaster.intersectObjects(ACT.pickables, false)
     .filter(h=>!h.object.userData.escondido && !(h.object.userData.cinturao && FILTROBJ.cinturao === false));
   if(!hits.length) return null;
@@ -14901,7 +14918,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r264';
+const BUILD = 'r265';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
