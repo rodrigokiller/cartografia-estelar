@@ -2486,7 +2486,7 @@ const SATELITES = [
   fict:'Tiangong quer dizer palácio celestial; a versão de cinema apareceu em Gravidade (2013), como a estação que salva a personagem de Sandra Bullock.', moons:[]},
  {id:'jwst', name:'JAMES WEBB', desig:'TELESCÓPIO · 2021', kind:'O espelho de ouro no ponto L2', hab:0, gbar:0, pop:'0',
   satelite:true, satOf:'terra',
-  quick:[['LANÇAMENTO','25/12/2021'],['ONDE','ponto L2, 1,5 mi km'],['ESPELHO','6,5 m, 18 hexágonos'],['PARASSOL','uma quadra de tênis'],['ENXERGA','infravermelho'],['1ª IMAGEM','12/7/2022']],
+  quick:[['LANÇAMENTO','25/12/2021'],['ÓRBITA','180 d, em volta de L2, a 1,5 mi km'],['ESPELHO','6,5 m, 18 hexágonos'],['PARASSOL','uma quadra de tênis'],['ENXERGA','infravermelho'],['1ª IMAGEM','12/7/2022']],
   sys:{orbit:2.1, size:0.11, speed:1.1, angle:5.6},
   visual:{mode:'rocky', c1:'#d8b054', c2:'#f0d084', c3:'#9a7a34', scale:7.0, seed:20.21, crater:0.05},
   sections:[
@@ -6209,17 +6209,67 @@ function satVivoMonta(){
   for(const s of SATV.sats){
     const f = SATV_NOMES[s.norad]; if(!f) continue;
     const anc = new THREE.Object3D(); mesh.add(anc); s.anc = anc;
-    const tam = SATV.escr ? f.tam : SATV.R*f.tamC;
-    const mv = grupoNave(f.modelo, tam); anc.add(mv.group);
-    const pk = new THREE.Mesh(new THREE.SphereGeometry(tam*1.3, 8, 8), new THREE.MeshBasicMaterial({visible:false}));
-    pk.userData = f.corpo ? {act:'focus', id:f.corpo, r:tam, vivo:true} : {act:'satlive', id:s.i, r:tam, vivo:true};
+    /* r272 · o modelo nasce com tamanho 1 e é escalado por quadro ao TAMANHO ANGULAR do pontinho
+       (ele viu a ISS do tamanho de meio continente no celular); o alvo de clique tem raio fixo */
+    const rPk = SATV.escr ? 0.00006 : SATV.R*0.06;
+    const mv = grupoNave(f.modelo, 1); anc.add(mv.group); mv.group.visible = false;
+    const pk = new THREE.Mesh(new THREE.SphereGeometry(1.3, 8, 8), new THREE.MeshBasicMaterial({visible:false}));
+    pk.userData = f.corpo ? {act:'focus', id:f.corpo, r:rPk, vivo:true} : {act:'satlive', id:s.i, r:rPk, vivo:true};
     anc.add(pk); ACT.pickables.push(pk);
+    anc.scale.setScalar(rPk);
     const L = {el:makeLabel(f.nome, 'faint mini', ()=>ACTION(pk.userData.act, pk.userData.id)), mini:true, lid:f.corpo || ('sat_' + s.norad), lidPai:'terra', escrMr:(SATV.escr ? 0.0005 : 0),
-      get:v=>{ anc.getWorldPosition(v); v.y += SATV.escr ? Math.max(0.00003, CAM.dist*0.012) : tam*1.3; }};
+      get:v=>{ anc.getWorldPosition(v); v.y += SATV.escr ? Math.max(0.00003, CAM.dist*0.012) : Math.max(SATV.tamAng*1.5, CAM.dist*0.012); }};
     ACT.labels.push(L); SATV.lbls.push(L);
     SATV.famosos.push({sat:s, anc, pk, modelo:mv.group});
   }
+  /* r272 · 'o que é o que': até 5 rótulos para os satélites mais perto do CENTRO da tela,
+     reatribuídos a cada 15 quadros (só de perto da Terra, para não virar bagunça) */
+  SATV.pool = [];
+  for(let k = 0; k < 5; k++){
+    const P = {local:new THREE.Vector3(), sat:null};
+    const L = {el:makeLabel('', 'faint mini'), mini:true, off:true, lid:'satpool' + k, lidPai:'terra',
+      get:v=>{ v.copy(P.local); SATV.mesh.localToWorld(v); v.y += SATV.escr ? Math.max(0.00003, CAM.dist*0.012) : CAM.dist*0.012; }};
+    L.el.addEventListener('click', ()=>{ if(P.sat) ACTION('satlive', P.sat.i); });
+    ACT.labels.push(L); SATV.lbls.push(L); SATV.pool.push({L, P});
+  }
   return true;
+}
+function satVivoPerto(){ return SATV.escr ? CAM.dist < 0.08 : CAM.dist < SATV.R*9; }
+/* a escolha dos rótulos do centro e o acerto por pixel na nuvem (usados pelo laço e pelo pick) */
+function satVivoProjeta(){
+  const out = [], v = new THREE.Vector3(), a = SATV.geo.attributes.position.array;
+  const W = CRECT.width, H = CRECT.height;
+  for(let i = 0; i < SATV.sats.length; i++){
+    v.set(a[i*3], a[i*3+1], a[i*3+2]); if(!v.x && !v.y && !v.z) continue;
+    SATV.mesh.localToWorld(v); v.project(camera);
+    if(v.z > 1 || Math.abs(v.x) > 1.05 || Math.abs(v.y) > 1.05) continue;
+    out.push({i, px:(v.x*0.5 + 0.5)*W + CRECT.left, py:(-v.y*0.5 + 0.5)*H + CRECT.top, z:v.z});
+  }
+  return out;
+}
+function satVivoRotulosCentro(){
+  if(!SATV.pool) return;
+  const ocupa = new Set(SATV.famosos.map(f=>f.sat.i));
+  if(!satVivoPerto() || !SATV.pontos.visible){ for(const p of SATV.pool){ p.L.off = true; p.P.sat = null; } return; }
+  const cx = CRECT.left + CRECT.width/2, cy = CRECT.top + CRECT.height/2;
+  const RC = matchMedia('(pointer: coarse)').matches ? 120 : 90;
+  const perto = satVivoProjeta().filter(q=>!ocupa.has(q.i)).map(q=>({q, d:Math.hypot(q.px - cx, q.py - cy)})).filter(x=>x.d < RC).sort((x, y)=>x.d - y.d).slice(0, SATV.pool.length);
+  SATV.pool.forEach((p, k)=>{
+    const e = perto[k];
+    if(!e){ p.L.off = true; p.P.sat = null; return; }
+    const s = SATV.sats[e.q.i], a = SATV.geo.attributes.position.array;
+    p.P.sat = s; p.P.local.set(a[e.q.i*3], a[e.q.i*3+1], a[e.q.i*3+2]);
+    p.L.el.textContent = s.nome.length > 18 ? s.nome.slice(0, 17) + '…' : s.nome;
+    p.L.off = false;
+  });
+}
+function satVivoPickPx(x, y, R){
+  if(!SATV.pontos || !SATV.pontos.visible) return null;
+  let best = null, bd = 1e9;
+  for(const q of satVivoProjeta()){ const d = Math.hypot(q.px - x, q.py - y); if(d < bd){ bd = d; best = q; } }
+  if(!best || bd > R) return null;
+  const s = SATV.sats[best.i], f = SATV_NOMES[s.norad];
+  return (f && f.corpo) ? {act:'focus', id:f.corpo} : {act:'satlive', id:best.i};
 }
 /* a órbita dos próximos 90 minutos (a elipse no espaço, expressa no quadro atual da Terra) */
 function satVivoTrilha(s){
@@ -6316,8 +6366,16 @@ function satVivoTick(){
   }
   SATV.geo.attributes.position.needsUpdate = true;
   /* os famosos e o clicado seguem o relógio TODO quadro (o modelo não pode ficar para trás do ponto) */
-  for(const f of SATV.famosos){ try{ const pv = satellite.propagate(f.sat.rec, data); if(pv && pv.position && isFinite(pv.position.x)) f.anc.position.copy(satVivoLocal(pv.position, gmst, v)); }catch(e){} }
+  /* r272 · o modelo do famoso só aparece de perto, do tamanho do pontinho (tamanho angular ~5 px) */
+  const perto = satVivoPerto();
+  SATV.tamAng = Math.min(SATV.escr ? 0.0004 : SATV.R*0.12, Math.max(1e-7, CAM.dist*0.0035));
+  for(const f of SATV.famosos){
+    try{ const pv = satellite.propagate(f.sat.rec, data); if(pv && pv.position && isFinite(pv.position.x)) f.anc.position.copy(satVivoLocal(pv.position, gmst, v)); }catch(e){}
+    f.modelo.visible = perto;
+    if(perto) f.anc.scale.setScalar(SATV.tamAng); else f.anc.scale.setScalar(f.pk.userData.r);
+  }
   SATV.q++;
+  if(SATV.q % 15 === 2) satVivoRotulosCentro();
   if(SATV.q % 45 === 1) satVivoTrilhas();
   if(SATV.q % 30 === 0 && SATV.cardSat){ const el = document.getElementById('liveinfo'); if(el) el.textContent = satVivoLinha(SATV.cardSat); }
 }
@@ -6771,7 +6829,10 @@ function buildSystem(sysId, spin0){
     pick.position.set(obX, 0, obZ); pick.userData = {act:'focus', id:p.id, r:p.sys.size};
     if(elip) elip.pick = pick;
     holder.add(pick); pickables.push(pick);
-    if(!fuga) orbiters.push({holder, spd:(p.orbita?0:p.sys.speed), orb:(p.satOf||p.orbita)?0:p.sys.orbit});   /* escape e elipse ficam parados; o Halley espera décadas no afélio */
+    /* r272 · satélite com período em DIAS na ficha (o James Webb em L2: ~180 d) orbita pelo relógio,
+       não pelo balé decorativo (ele viu o Webb dando a volta na Terra em minutos) */
+    const satD = (p.satOf && !p.foguete) ? (()=>{ const q = (p.quick || []).find(x=>x[0] === 'ÓRBITA' || x[0] === 'ORBIT'); const dd = q ? diasDaOrbita(q[1]) : 0; return dd > 0.5 ? dd : 0; })() : 0;
+    if(!fuga) orbiters.push({holder, spd:(p.orbita?0:p.sys.speed), orb:(p.satOf||p.orbita)?0:p.sys.orbit, tDias:satD});   /* escape e elipse ficam parados; o Halley espera décadas no afélio */
     const gp = bg.group;
     labels.push({el:makeLabel(p.name, p.satOf?'faint mini':'', ()=>ACTION('focus', p.id)),
       mini:!!p.satOf,
@@ -14810,7 +14871,7 @@ function rayHit(x, y){
   const ndc = new THREE.Vector2(((x-CRECT.left)/CRECT.width)*2-1, -((y-CRECT.top)/CRECT.height)*2+1);
   raycaster.setFromCamera(ndc, camera);
   /* r264 · a nuvem de satélites ao vivo é um Points: o raio de acerto acompanha o zoom */
-  raycaster.params.Points.threshold = Math.max(0.00002, CAM.dist*0.012);
+  raycaster.params.Points.threshold = Math.max(0.00002, CAM.dist*0.0015*(matchMedia('(pointer: coarse)').matches ? 30 : 10));   /* ~30 px no dedo, ~10 no mouse */
   const hits = raycaster.intersectObjects(ACT.pickables, false)
     .filter(h=>!h.object.userData.escondido && !(h.object.userData.cinturao && FILTROBJ.cinturao === false));
   if(!hits.length) return null;
@@ -14841,6 +14902,8 @@ function pick(x, y){
       if(d < bd){ bd = d; best = o; }
     }
     if(best && bd <= R) ud = best.userData;
+    /* r272 · a nuvem de satélites ao vivo também entra no acerto por pixel (o dedo não acertava os pontinhos) */
+    if(typeof satVivoPickPx === 'function'){ const us = satVivoPickPx(x, y, R); if(us && (!best || bd > R*0.6)) ud = us; }
   }
   if(ud) ACTION(ud.act, ud.id);
   else if(ST.level==='focus' && ST.mapCard){ ST.mapCard = null; uiSync(); }
@@ -15081,7 +15144,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r271';
+const BUILD = 'r272';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){

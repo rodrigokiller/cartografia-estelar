@@ -849,7 +849,7 @@ tiangong: {
 },
 jwst: {
   kind: 'The golden mirror at the L2 point',
-  quick: [['LAUNCH','12/25/2021'],['WHERE','L2 point, 1.5 million km'],['MIRROR','6.5 m, 18 hexagons'],['SUNSHIELD','a tennis court'],['SEES','infrared'],['1ST IMAGE','7/12/2022']],
+  quick: [['LAUNCH','12/25/2021'],['ORBIT','180 d, around L2, 1.5 million km away'],['MIRROR','6.5 m, 18 hexagons'],['SUNSHIELD','a tennis court'],['SEES','infrared'],['1ST IMAGE','7/12/2022']],
   sections: [
     {t:'THE MACHINE', rows:[['The mirror','6.5 meters across in 18 GOLD-coated hexagons, folded to fit in the rocket'],['The sunshield','Five layers the size of a tennis court, keeping the cold side at −230 °C'],['No repairs','At 1.5 million km, too far for any servicing mission: it had to work the first time'],['Position here','Symbolic: it does NOT orbit the Earth, it sits at the L2 point, four times farther than the Moon']]},
     {t:'RECORD', rows:[['The deployment','344 single points of failure in the first weeks, all of them worked'],['7/12/2022','The first batch of images, with the Cosmic Cliffs of Carina'],['What it sees','In infrared: the first galaxies of the universe and the atmospheres of exoplanets'],['Duo','It works together with Hubble, each in its own band of light']]}
