@@ -164,7 +164,7 @@ ui: {
   '⬢ LINK TRAVADO':'⬢ LINK LOCKED', 'MODO MAPA':'MAP MODE', 'Fechar esta ficha':'Close this card', 'Fechar o Sistema Solar e olhar a galáxia':'Close the Solar System and look at the galaxy',
   'FOTO':'PHOTO', 'DESENHO':'DRAWING', 'Alternar entre a foto de verdade e o mapa desenhado':'Switch between the real photo and the drawn map',
   'LINHA DO TEMPO':'TIMELINE', 'Percorrer a rota no tempo':'Travel the route through time',
-  '▶ ENTRAR · TRAVAR LINK':'▶ ENTER · LOCK LINK', '▶ ENTRAR · TRAVAR ROTA':'▶ ENTER · LOCK ROUTE',
+  '▶ ENTRAR · TRAVAR NO SATÉLITE':'▶ ENTER · LOCK ON THE SATELLITE', '▶ ENTRAR · TRAVAR LINK':'▶ ENTER · LOCK LINK', '▶ ENTRAR · TRAVAR ROTA':'▶ ENTER · LOCK ROUTE',
   '◉ MUNDOS HABITÁVEIS LADO A LADO':'◉ HABITABLE WORLDS SIDE BY SIDE', '◉ PÔR NA BANCADA':'◉ PUT ON THE BENCH', '◎ VER A GALÁXIA DE CIMA':'◎ SEE THE GALAXY FROM ABOVE',
   'IR PARA':'GO TO', '≋ VER A LINHA DO TEMPO':'≋ SEE THE TIMELINE', '◈ FECHAR O SISTEMA PLANETÁRIO':'◈ CLOSE THE PLANETARY SYSTEM', '◈ VER O SISTEMA PLANETÁRIO':'◈ SEE THE PLANETARY SYSTEM',
   '← VOLTAR A ':'← BACK TO ', 'LUAS DE ':'MOONS OF ', 'LUAS · ':'MOONS · ', ' CONFIRMADAS':' CONFIRMED', ' CONFIRMADA':' CONFIRMED', ' VISITADOS':' VISITED', 'TOQUE P/ VISITAR':'TAP TO VISIT',

@@ -6439,12 +6439,13 @@ function satVivoMonta(){
   ]); }, 900);
   return true;
 }
-function satVivoPerto(){ return SATV.escr ? CAM.dist < 0.08 : CAM.dist < SATV.R*9; }
+function satVivoPerto(){ const d = SATV.dTerra || CAM.dist; return SATV.escr ? d < 0.08 : d < SATV.R*9; }   /* r283 · pela distância à Terra, não ao pivô */
 /* r280 · oclusão pela Terra (prep uma vez por quadro; o teste é o segmento câmera-satélite cruzar a esfera) */
 function satVivoOclusaoPrep(){
   const C = SATV._C || (SATV._C = new THREE.Vector3()); SATV.mesh.updateWorldMatrix(true, false); C.setFromMatrixPosition(SATV.mesh.matrixWorld);
   SATV._RT = SATV.escr ? 6371*ESCR_UA/149597870 : SATV.R;
   (SATV._cd || (SATV._cd = new THREE.Vector3())).subVectors(C, camera.position);
+  SATV.dTerra = SATV._cd.length();   /* r283 · travado no Webb a 10 mil km, a Terra a 1,5 milhão de km mostrava os satélites todos */
 }
 function satVivoOculto(v){
   const d = SATV._d || (SATV._d = new THREE.Vector3()); d.subVectors(v, camera.position);
@@ -6461,7 +6462,7 @@ function satVivoAlfa(s){
   let r, K;
   if(SATV.escr){ r = s.rApo*ESCR_UA/149597870; K = 0.06; }   /* 0,06: a ISS some entre 80 e 190 mil km de zoom, o GPS entre 320 e 740 mil, um geoestacionário a ~1 milhão */
   else { const alt = Math.max(0, s.rApo - 6371); r = SATV.R*(1.25 + 0.9*Math.log10(1 + alt/400)); K = 0.167; }
-  const x = r/(Math.max(1e-9, CAM.dist)*K);
+  const x = r/(Math.max(1e-9, SATV.dTerra || CAM.dist)*K);
   return Math.max(0, Math.min(1, (x - 0.6)/0.8));
 }
 function satVivoAlfas(){
@@ -6599,6 +6600,7 @@ function satVivoIr(i){
     return;
   }
   if(!(ST.mapCard && ST.mapCard.type === 'satlive' && ST.mapCard.id === i)) ACTION('satlive', i);
+  if(ST.mapCard && ST.mapCard.type === 'satlive') ST.mapCard.entrou = true;   /* r283 · só o ENTRAR (ou a busca) trava no satélite */
   const alvo = new THREE.Vector3(), a = SATV.geo.attributes.position.array;
   SATV.focoAnc.position.set(a[i*3], a[i*3+1], a[i*3+2]); SATV.focoAnc.getWorldPosition(alvo);
   /* a câmera chega pelo lado de FORA (na direção Terra -> satélite): mantendo o giro antigo ela podia
@@ -6691,10 +6693,10 @@ function satVivoTick(){
   SATV.geo.attributes.position.needsUpdate = true;
   /* os famosos e o clicado seguem o relógio TODO quadro (o modelo não pode ficar para trás do ponto) */
   /* r272 · o modelo do famoso só aparece de perto, do tamanho do pontinho (tamanho angular ~5 px) */
+  satVivoOclusaoPrep(); const vw = SATV._vw || (SATV._vw = new THREE.Vector3());
   const perto = satVivoPerto();
   SATV.tamAng = Math.min(SATV.escr ? 0.0004 : SATV.R*0.12, Math.max(1e-7, CAM.dist*0.0035));
   if(SATV.q % 3 === 0 || !SATV.alfaOk) satVivoAlfas();   /* r280 · o desbotar por altitude */
-  satVivoOclusaoPrep(); const vw = SATV._vw || (SATV._vw = new THREE.Vector3());
   for(const f of SATV.famosos){
     try{ const pv = satellite.propagate(f.sat.rec, data); if(pv && pv.position && isFinite(pv.position.x)) f.anc.position.copy(satVivoLocal(pv.position, gmst, v)); }catch(e){}
     const vivo = perto && f.sat.alfa > 0.5;
@@ -6895,6 +6897,7 @@ function buildSystem(sysId, spin0){
   const labels = [], pickables = [], spinners = [];
 
   const starSizeEf = escrAtivo ? escrTam(696000) : S.starSize;
+  const navesAng = [];   /* r283 · modelos simbólicos com tamanho angular no 1:1 (declarado no topo: TDZ) */
   const star = makeBodyGroup(S.star, starSizeEf, 48);
   const starGlow = star.group.children.find(c=>c.isSprite) || null;
   scene.add(star.group);
@@ -7119,6 +7122,7 @@ function buildSystem(sysId, spin0){
     bg.group.position.set(obX, 0, obZ);
     if(elip) elip.grupo = bg.group;
     holder.add(bg.group);
+    if(escrAtivo && (p.sonda || p.satelite || p.foguete || p.nave)) navesAng.push({g:bg.group, base:p.sys.size*2.6});
     fadeObjs[p.id] = bg.group;   /* encolhe no mergulho, menos o corpo visado */
     /* r165 · com o mapa de verdade na cara do planeta o giro deixa de ser
        decorativo: a longitude que está debaixo do Sol tem que ser a de agora.
@@ -8172,7 +8176,7 @@ function buildSystem(sysId, spin0){
     });
   }
   const camMaxDin = escrAtivo ? 4e6*LY_UA*ESCR_UA : Math.max(S.camMax || 60, alcance * 1.7);
-  return {kind:'system', scene, sceneCeu, eclLinha, aneisMira, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, liveGiro, solLuz, spinners, ceuPicks, ceuAlvos, galCentro, galPolo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
+  return {kind:'system', scene, sceneCeu, eclLinha, aneisMira, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, liveGiro, solLuz, spinners, navesAng, ceuPicks, ceuAlvos, galCentro, galPolo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
@@ -12836,7 +12840,7 @@ function aproximarNoMapa(id){
   const alvo = new THREE.Vector3();
   pk.getWorldPosition(alvo);
   const r = pk.userData.r || 0.001;
-  ST.mapCard = {type:'body', id, act:'focus', t:performance.now()};
+  ST.mapCard = {type:'body', id, act:'focus', t:performance.now(), entrou:true};   /* r283 · entrou: a trava pode seguir um satélite */
   markVisited(id);
   pushNav();   /* r277 · o corpo entra no registro « » */
   CAMTW = {t0:performance.now(), ms:2400,
@@ -14524,7 +14528,7 @@ function currentEntity(){
     }
     if(ST.mapCard.type==='satlive'){   /* r264 */
       const sv = SATV.sats[ST.mapCard.id];
-      if(sv) return {type:'map', b:fichaSat(sv), nav:false};
+      if(sv) return {type:'map', b:fichaSat(sv), nav:true, navKind:'satlive', navId:sv.i};   /* r283 · ENTRAR voa e trava; o toque só abre a ficha */
     }
     if(ST.mapCard.type==='sismo'){   /* r262 */
       const q = SISM.lista[ST.mapCard.id];
@@ -14601,7 +14605,7 @@ function cardRender(){
 
   let h = '';
   /* ENTRAR agora mora no TOPO do card, como o Rodrigo pediu */
-  if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='body'?t('▶ ENTRAR · TRAVAR LINK'):t('▶ ENTRAR · TRAVAR ROTA'))+'</button>';
+  if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='satlive' ? t('▶ ENTRAR · TRAVAR NO SATÉLITE') : (cur.navKind==='body'?t('▶ ENTRAR · TRAVAR LINK'):t('▶ ENTRAR · TRAVAR ROTA')))+'</button>';
   { const bHab = (cur.type==='body') ? cur.b : ((cur.navKind==='body' && ALLBODIES[cur.navId]) ? ALLBODIES[cur.navId] : null);
     if(bHab && bHab.visual && MODEMAP[bHab.visual.mode] === 4)
       h += '<button class="xbtn" id="btnhab">'+t('◉ MUNDOS HABITÁVEIS LADO A LADO')+'</button>';
@@ -14805,7 +14809,7 @@ function cardRender(){
     if(TRAJ && TRAJ.fase!=='volta') trajCancelar();
     else trajStart(cur.navId);
   });
-  const ng = $('#navgo'); if(ng) ng.addEventListener('click', ()=>{ enterTarget(cur.navKind==='gal' ? 'galaxy' : (cur.navKind==='sys' ? 'starsys' : 'focus'), cur.navId); });
+  const ng = $('#navgo'); if(ng) ng.addEventListener('click', ()=>{ if(cur.navKind === 'satlive'){ satVivoIr(cur.navId); return; } enterTarget(cur.navKind==='gal' ? 'galaxy' : (cur.navKind==='sys' ? 'starsys' : 'focus'), cur.navId); });
   const cx = $('#cardx2'); if(cx) cx.addEventListener('click', ()=>{
     /* r176 · no zoom galáctico o ✕ do card do SISTEMA SOLAR fecha a casa:
        seleciona a VIA LÁCTEA e centraliza nela olhando de cima (pedido dele) */
@@ -15534,7 +15538,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r282';
+const BUILD = 'r283';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -16766,12 +16770,21 @@ function loop(){
        constelação */
     /* r276 · a ficha de um satélite ao vivo ou de um tremor TRAVA NA TERRA: sem isso a trava soltava
        e o pivô escorria de volta ao Sol (era o 'seleciona o Sol' que ele viu ao tocar num pontinho) */
-    const naTerra = ST.mapCard && (ST.mapCard.type === 'satlive' || ST.mapCard.type === 'sismo');
-    const travavel = ST.mapCard && (!ST.mapCard.type || ST.mapCard.type === 'body' || ST.mapCard.type === 'starsys' || naTerra);
+    /* r283 · os modelos simbólicos de satélite e sonda no 1:1 têm tamanho ANGULAR (o Webb parecia um continente) */
+    if(ACT.escr && ACT.navesAng && ACT.navesAng.length){
+      const vN = SEGV;
+      for(const nv of ACT.navesAng){ nv.g.getWorldPosition(vN); const tam = Math.min(0.0004, Math.max(1e-7, vN.distanceTo(camera.position)*0.0035)); nv.g.scale.setScalar(Math.min(1, tam/nv.base)); }
+    }
+    /* r283 · o PRIMEIRO TOQUE num satélite perto da Terra não trava (pedido dele): a ficha abre e o pivô fica na Terra;
+       só o ENTRAR (entrou) segue o satélite. Vale para o ponto (satlive) e para os famosos pelo card de sempre */
+    const pertoTerra = (typeof SATV !== 'undefined' && SATV.pontos) ? satVivoPerto() : (ACT.escr && CAM.dist < 0.08);
+    const soltoNaTerra = ST.mapCard && !ST.mapCard.entrou && pertoTerra && ((ST.mapCard.type === 'satlive') || (ST.mapCard.type === 'body' && ALLBODIES[ST.mapCard.id] && ALLBODIES[ST.mapCard.id].satOf === 'terra'));
+    const naTerra = ST.mapCard && (soltoNaTerra || ST.mapCard.type === 'sismo' || (ST.mapCard.type === 'satlive' && !ST.mapCard.entrou));
+    const travavel = ST.mapCard && (!ST.mapCard.type || ST.mapCard.type === 'body' || ST.mapCard.type === 'starsys' || ST.mapCard.type === 'satlive' || naTerra);   /* r283 · satlive sempre travável (entrou: no satélite; senão na Terra) */
     if(travavel){
       ACT.pivoSegue = null;
       /* r277 · com um satélite na ficha a trava segue O SATÉLITE (como qualquer corpo escolhido, pedido dele) */
-      if(ST.mapCard.type === 'satlive' && typeof SATV !== 'undefined' && SATV.foco && SATV.focoAnc){ SATV.focoAnc.getWorldPosition(SEGV); CAM.pivot.lerp(SEGV, Math.min(1, dt*5.2)); }
+      if(ST.mapCard.type === 'satlive' && ST.mapCard.entrou && typeof SATV !== 'undefined' && SATV.foco && SATV.focoAnc){ SATV.focoAnc.getWorldPosition(SEGV); CAM.pivot.lerp(SEGV, Math.min(1, dt*5.2)); }
       else { const pk = ACT.pickables.find(x=>x.userData.id===(naTerra ? 'terra' : ST.mapCard.id));
       if(pk){ pk.getWorldPosition(SEGV); CAM.pivot.lerp(SEGV, Math.min(1, dt*5.2)); } }
     } else if(ST.mapCard && ST.mapCard.type === 'galviz' && ST.mapCard.id === 'vialactea'
