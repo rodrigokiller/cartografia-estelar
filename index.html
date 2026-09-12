@@ -1799,7 +1799,8 @@ const PLANETS = [
     {t:'ESTRUTURA', rows:[['Diâmetro','12.742 km'],['Massa','5,97 × 10²⁴ kg'],['Densidade','5,51 g/cm³ (a maior do sistema)'],['Área','510 mi km²'],['Placas tectônicas','Sim, único confirmado']]},
     {t:'CLIMA & ATMOSFERA', rows:[['Temp. mín. registrada','−89 °C (Antártida)'],['Temp. máx. registrada','57 °C'],['Atmosfera','78% N₂ · 21% O₂ · 1% Ar'],['Pressão','1 atm'],['Água','71% da superfície · líquida']]},
     {t:'REGISTRO', rows:[['Descoberta','·'],['Vida','Único planeta conhecido com vida'],['População','8,1 bilhões de humanos'],['Satélites artificiais','~10.000 ativos']]},
-    {t:'LINK & VIAGEM', rows:[['Luz do Sol até aqui','8,3 min'],['Você está aqui','☉']]}
+    {t:'LINK & VIAGEM', rows:[['Luz do Sol até aqui','8,3 min'],['Você está aqui','☉']]},
+    {t:'AS CHUVAS DE METEOROS', rows:[['O que é','Toda estrela cadente de chuva é um grão de cometa (ou de asteroide) queimando a 80 km de altura: a Terra cruza a mesma torrente de poeira todo ano, na mesma data'],['Quadrântidas · 3 JAN','Curtas e intensas, até 120 por hora; o pai é o asteroide 2003 EH1, provavelmente um cometa apagado'],['Líridas · 22 ABR','A chuva mais antiga registrada (687 a.C.); poeira do cometa Thatcher, que só volta em 2276'],['Eta Aquáridas · 6 MAI','Os grãos do Halley, rápidos (66 km/s), melhores no hemisfério sul de madrugada'],['Perseidas · 12 AGO','A mais famosa: uns 100 por hora, poeira do Swift-Tuttle, as Lágrimas de São Lourenço'],['Dracônidas · 8 OUT','Lentas e traiçoeiras: quase nada na maioria dos anos, tempestades em 1933 e 1946; poeira do Giacobini-Zinner'],['Oriônidas · 21 OUT','A segunda visita do Halley no ano, saindo do braço erguido de Órion'],['Táuridas · 12 NOV','Poucas, mas com bolas de fogo lentas: a torrente larga do Encke'],['Leônidas · 17 NOV','Tempestades a cada 33 anos (1833, 1966, 1999): poeira fresca do Tempel-Tuttle'],['Gemínidas · 14 DEZ','A mais rica, uns 120 por hora e coloridos; o pai é o asteroide Faetonte, o cometa de rocha'],['Ursídeas · 22 DEZ','A última do ano, discreta, perto do polo norte celeste: poeira do Tuttle']]}
   ],
   facts:['Não é uma esfera perfeita: o raio no equador é 21 km maior que nos polos.','A Lua se afasta de nós 3,8 cm por ano.','Vista de longe, é um "pálido ponto azul", a foto da Voyager 1 foi tirada a 6 bilhões de km.'],
   fict:'Star Trek, sede da Frota Estelar (São Francisco, séc. XXIII). The Expanse, governada pela ONU.',
@@ -1838,7 +1839,8 @@ const PLANETS = [
     visual:{mode:'rocky', c1:'#6b625c', c2:'#847a72', c3:'#4e4741', scale:7.0, seed:5.5, crater:1.0},
     sections:[
       {t:'A CONDENADA', rows:[['A queda','Desce ~1,8 m por século: a maré de Marte puxa ela para dentro'],['O fim','Em ~50 milhões de anos cruza o limite de Roche e vira um ANEL em volta de Marte'],['As estrias','Os sulcos compridos da superfície podem ser o começo do despedaçamento'],['Stickney','A cratera de 9 km: o impacto quase partiu a lua ao meio']]},
-      {t:'REGISTRO', rows:[['Descoberta','1877 · Asaph Hall, seis dias depois de Deimos'],['O nome','Fobos, o Medo, filho de Ares'],['O céu de Marte','Nasce no OESTE e cruza o céu duas vezes por dia marciano'],['A missão','A MMX, da JAXA, vai pousar nela e trazer amostra de volta']]}
+      {t:'REGISTRO', rows:[['Descoberta','1877 · Asaph Hall, seis dias depois de Deimos'],['O nome','Fobos, o Medo, filho de Ares'],['O céu de Marte','Nasce no OESTE e cruza o céu duas vezes por dia marciano'],['A missão','A MMX, da JAXA, vai pousar nela e trazer amostra de volta']]},
+      {t:'A MMX', rows:[['A missão','Martian Moons eXploration, da JAXA: a primeira sonda a POUSAR em Fobos e trazer amostra de volta, com o rover IDEFIX (França e Alemanha) e um espectrômetro da NASA a bordo'],['O lançamento','Previsto para o fim de 2026 num foguete H3, de Tanegashima; chega a Marte em 2027 e passa três anos numa órbita quase-síncrona com Fobos, a poucas dezenas de km da superfície'],['A coleta','Dois pousos curtos, de poucas horas cada, com uma broca que cava 2 cm e recolhe pelo menos 10 g; o rover IDEFIX, de 25 kg, é solto antes para ver o chão de perto'],['A pergunta','Fobos é um asteroide capturado ou um pedaço de Marte arrancado por um impacto? A amostra responde: gelo e carbono dizem asteroide, minerais marcianos dizem impacto'],['A volta','Sobrevoos de Deimos no caminho e a cápsula caindo na Terra em 2031: a segunda amostra de uma lua, depois da nossa'],['O bônus','Uma câmera 8K (com a NHK) e três anos olhando o clima de Marte de cima: o vento, a poeira e as nuvens']]}
     ],
     facts:['Orbita mais rápido do que Marte gira: nasce no oeste e cruza o céu duas vezes por dia marciano.','Desce 1,8 metro por século: em uns 50 milhões de anos vira um anel em volta de Marte.'],
     fict:'Fobos é o cenário do primeiro Doom (1993): a base da UAC onde tudo começa fica exatamente nela.'},
@@ -3698,6 +3700,19 @@ PLANETS.push(
   ],
   facts:['O radar de Arecibo mostrou em 2008 que o núcleo dele são dois pedaços encostados, de 5,7 e 3,6 km.','É o pai das Ursídeas, a última chuva do ano, no solstício de dezembro.','Horace Tuttle assina três cometas famosos: este, o Swift-Tuttle das Perseidas e o Tempel-Tuttle das Leônidas.'],
   fict:'Horace Tuttle foi herói de guerra, caçador de cometas e depois desertor acusado de desvio de dinheiro na Marinha: ainda assim três chuvas de meteoros carregam o nome dele.', moons:[]},
+ {id:'ponsbrooks', name:'PONS-BROOKS', desig:'12P · COMETA PERIÓDICO', kind:'O cometa do diabo de 2024, o dos chifres', hab:0, gbar:0.0001, pop:'0',
+  quick:[['NÚCLEO','~30 km'],['PERÍODO','71 anos'],['ÚLTIMA VISITA','21 ABR 2024'],['PRÓXIMA','2095'],['INCLINAÇÃO','74 graus'],['DESCOBERTA','1812']],
+  comet:true, orbita:{peri:11.7, afel:60, incl:1.295, epoca:Date.UTC(2024,3,21,15)},
+  traj:{de:1954.3, ate:2095.7}, marcos:[[1954.39,'PERIÉLIO','22 MAI 1954: a volta anterior, a olho nu no hemisfério norte'],[1989.9,'AFÉLIO','A 33,6 UA, além de Netuno'],[2023.55,'A EXPLOSÃO','20 JUL 2023: o brilho sobe cem vezes numa noite e a coma abre em dois chifres: o cometa do diabo'],[2024.31,'PERIÉLIO','21 ABR 2024: a 0,78 UA; a olho nu no crepúsculo, e ao lado do Sol eclipsado em 8 ABR 2024'],[2024.42,'MAIS PERTO DA TERRA','2 JUN 2024: a 1,55 UA, já no céu do sul'],[2060.0,'AFÉLIO','De novo a 33,6 UA'],[2095.6,'PRÓXIMO PERIÉLIO','Por volta de agosto de 2095']],
+  sys:{orbit:30, size:0.3, speed:1.5, angle:2.6, incl:1.295},
+  visual:{mode:'rocky', c1:'#3d3a36', c2:'#5b564e', c3:'#282520', scale:6.2, seed:18.12, crater:0.9, atmo:{col:'#b4e0dc', i:0.5}},
+  sections:[
+    {t:'O COMETA DO DIABO', rows:[['As explosões','Em 20 de julho de 2023, a 3,9 UA do Sol, o brilho subiu cem vezes numa noite e a coma abriu em dois chifres: a foto correu o mundo como o cometa do diabo (ou a Millennium Falcon)'],['A causa','Criovulcanismo: bolsões de gelo sob pressão que estouram e lançam gás e poeira; a sombra do próprio núcleo na nuvem desenha os chifres'],['A repetição','Outras explosões em outubro, novembro e dezembro de 2023, cada uma refazendo os chifres por alguns dias'],['Um velho conhecido','Em 1883 ele também explodiu várias vezes na aproximação: é o jeito dele']]},
+    {t:'A VOLTA DE 2024', rows:[['O periélio','21 de abril de 2024, a 0,78 UA do Sol, entre as órbitas de Vênus e da Terra'],['O eclipse','Em 8 de abril de 2024, no eclipse total dos Estados Unidos e do México, ele estava a 25 graus do Sol escondido e apareceu nas fotos da totalidade'],['O brilho','Chegou perto da magnitude 4, baixo no crepúsculo do noroeste em março e abril, com a cauda azul de íons'],['O sul','Depois do periélio mergulhou para o céu do sul, mais perto da Terra em 2 de junho, a 1,55 UA']]},
+    {t:'REGISTRO', rows:[['1812','Descoberto em 12 de julho por Jean-Louis Pons, em Marselha, o maior caçador de cometas da história, com 37 descobertas'],['1883','Reencontrado por William Brooks, em Nova York, sem que ninguém esperasse: as duas passagens ligadas pelo cálculo, e o nome duplo'],['O tipo','Cometa do tipo Halley: período de 71 anos, órbita em pé (74 graus) e um dos maiores núcleos conhecidos, uns 30 km'],['Aqui no mapa','Elementos do JPL na época de 2024; o cênico comprime a elipse']]}
+  ],
+  facts:['Em julho de 2023 explodiu e ganhou dois chifres de gás: virou o cometa do diabo das fotos.','Volta a cada 71 anos numa órbita em pé; a última passagem foi em abril de 2024, ao lado do Sol eclipsado.','Jean-Louis Pons, que o achou em 1812, descobriu 37 cometas: o recorde de todos os tempos a olho nu.'],
+  fict:'O apelido de cometa do diabo veio dos dois chifres da coma; a internet preferiu chamar de Millennium Falcon, e as duas fotos são a mesma explosão.', moons:[]},
  {id:'tempeltuttle', name:'TEMPEL-TUTTLE', desig:'55P · COMETA PERIÓDICO', kind:'O pai das Leônidas e das tempestades de estrelas', hab:0, gbar:0.0001, pop:'0',
   quick:[['NÚCLEO','3,6 km'],['PERÍODO','33,2 anos'],['ÚLTIMA VISITA','28 FEV 1998'],['PRÓXIMA','MAI 2031'],['A CHUVA','Leônidas, 17 de novembro'],['SENTIDO','retrógrado · 162°']],
   comet:true, orbita:{peri:14.6, afel:48, incl:2.84, epoca:Date.UTC(1998,1,28,2)},
@@ -3735,6 +3750,18 @@ PLANETS.push(
   ],
   facts:['Foi visível em pleno dia, ao lado do Sol, com magnitude −5,5: o cometa mais brilhante em quatro décadas.','A cauda abriu em leque por 35 graus sobre o hemisfério sul: quem estava no Brasil ou no Chile viu o show de graça.','A órbita é hiperbólica: essa foi a única visita dele ao Sol.'],
   fict:'As fotos do leque sobre o Pacífico e a Patagônia estão entre as imagens de cometa mais reproduzidas da história.', moons:[]},
+ {id:'atlasg3', escape:true, comet:true, periUA:0.0935, name:'ATLAS G3', desig:'C/2024 G3 · COMETA DE LONGO PERÍODO', kind:'O mais brilhante de 2025: visto de dia, desfeito na saída', hab:0, gbar:0.0001, pop:'0',
+  quick:[['NÚCLEO','pequeno, desfeito'],['PERIÉLIO','13 JAN 2025 · 0,094 UA'],['BRILHO','magnitude −3,5, de dia'],['DESCOBERTA','5 ABR 2024'],['INCLINAÇÃO','117° · retrógrado'],['A VOLTA ANTERIOR','há ~160 mil anos']],
+  sys:{orbit:60, size:0.28, speed:2.2, angle:1.9, incl:2.04},
+  traj:{de:2024.25, ate:2026.8}, marcos:[[2024.26,'DESCOBERTA','5 ABR 2024: o ATLAS de Río Hurtado, no Chile, a 4,4 UA do Sol, magnitude 19'],[2025.03,'PERIÉLIO','13 JAN 2025: a 0,094 UA, 14 milhões de km do Sol, por dentro da órbita de Mercúrio: magnitude −3,5, visível de dia ao lado do Sol'],[2025.06,'O SHOW DO SUL','Fim de janeiro de 2025: a cauda de poeira de mais de 20 graus no crepúsculo do hemisfério sul, em leque, com riscas'],[2025.07,'O NÚCLEO SE DESFAZ','Por volta de 20 de janeiro de 2025 a cabeça some: sobra a cauda, um cometa fantasma'],[2026.7,'RUMO AO GELO','A uns 8 UA, saindo do sistema numa rota que não volta']],
+  visual:{mode:'rocky', c1:'#57534c', c2:'#7a756b', c3:'#3a3733', scale:6.5, seed:20.24, crater:0.8, atmo:{col:'#cce8f4', i:0.6}},
+  sections:[
+    {t:'O GRANDE COMETA DE 2025', rows:[['O periélio','13 de janeiro de 2025, a 0,094 UA do Sol, mais perto que Mercúrio: a superfície do núcleo passou dos 400 graus'],['De dia','Chegou à magnitude −3,5, mais brilhante que Júpiter: nos dias em volta do periélio dava para ver de dia, a poucos graus do Sol, com a mão tapando o disco'],['O SOHO','O coronógrafo do satélite SOHO o filmou atravessando o campo com a cauda inteira, como só acontece com os rasantes do Sol'],['O hemisfério sul','Da segunda quinzena de janeiro, o crepúsculo do sul (Chile, Austrália, Brasil) ganhou uma cauda de poeira de mais de 20 graus, em leque, riscada pelas sincrônicas de cada surto de poeira']]},
+    {t:'O FIM', rows:[['A morte','Por volta de 19 e 20 de janeiro de 2025 a condensação central sumiu e a cabeça ficou alongada: o núcleo se desfez na saída, cozido pela passagem rasante'],['O fantasma','A cauda continuou visível por semanas, sem cabeça: um cometa sem cometa, como o Lovejoy de 2011'],['A órbita','Inclinada 117 graus, retrógrada; a volta anterior foi há uns 160 mil anos, e a saída ficou levemente hiperbólica: o que sobrou não volta'],['Da ISS','O astronauta Don Pettit fotografou a cauda nascendo por cima do limbo da Terra, da Estação Espacial, em janeiro de 2025']]},
+    {t:'REGISTRO', rows:[['5 ABR 2024','Descoberto pelo ATLAS (Asteroid Terrestrial-impact Last Alert System) em Río Hurtado, no Chile, a 4,4 UA do Sol'],['A aposta','Rasante com periélio a 0,09 UA: ou brilha muito ou se desfaz; fez os dois'],['Aqui no mapa','A hipérbole com o periélio real; a posição de hoje pela conta parabólica']]}
+  ],
+  facts:['Em 13 de janeiro de 2025 passou a 14 milhões de km do Sol e chegou à magnitude −3,5: dava para ver de dia.','O núcleo se desfez uma semana depois do periélio, e a cauda seguiu sozinha pelo céu do sul, um cometa fantasma.','Foi fotografado da Estação Espacial por Don Pettit, nascendo por cima do limbo da Terra.'],
+  fict:'Um rasante do Sol que não é da família Kreutz: a visita anterior foi há 160 mil anos, quando o Homo sapiens ainda vivia só na África.', moons:[]},
  {id:'tsuchinshan', escape:true, comet:true, periUA:0.391, name:'TSUCHINSHAN-ATLAS', desig:'C/2023 A3 · COMETA DE LONGO PERÍODO', kind:'O grande cometa de 2024', hab:0, gbar:0.0001, pop:'0',
   quick:[['NÚCLEO','poucos km'],['PERIÉLIO','27 SET 2024 · 0,39 UA'],['MAIS PERTO DA TERRA','12 OUT 2024 · 70 mi km'],['DESCOBERTA','9 JAN 2023'],['BRILHO','até magnitude −4'],['INCLINAÇÃO','139° · retrógrado']],
   sys:{orbit:58, size:0.3, speed:2.4, angle:4.4, incl:2.43},
@@ -5716,7 +5743,7 @@ const ESCALA_REAL_EL = {   /* [peri UA, afel UA, data do periélio real quando c
   jupiter:[4.951, 5.457, Date.UTC(2023,0,21)], saturno:[9.041, 10.124, Date.UTC(2032,10,24)],
   urano:[18.286, 20.096, Date.UTC(2050,7,4)], netuno:[29.81, 30.33],
   halebopp:[0.914, 370],
-  plutao:[29.7, 49.3], eris:[38.2, 97.6], sedna:[76.2, 1012], halley:[0.586, 35.1], p67:[1.24, 5.68], swift:[0.9595, 51.2], encke:[0.3386, 4.10], tempeltuttle:[0.9764, 19.70], wirtanen:[1.0554, 5.130], giacobini:[1.0134, 5.987], tuttle:[1.0273, 10.373], thatcher:[0.9207, 110.44], parker:[0.046, 0.73]};
+  plutao:[29.7, 49.3], eris:[38.2, 97.6], sedna:[76.2, 1012], halley:[0.586, 35.1], p67:[1.24, 5.68], swift:[0.9595, 51.2], encke:[0.3386, 4.10], tempeltuttle:[0.9764, 19.70], wirtanen:[1.0554, 5.130], giacobini:[1.0134, 5.987], tuttle:[1.0273, 10.373], ponsbrooks:[0.7809, 33.589], thatcher:[0.9207, 110.44], parker:[0.046, 0.73]};
 /* distância real de cada lua ao centro do corpo, em km (semi-eixo maior) */
 const ESCALA_REAL_LUAS = {
   lua:384400, fobos:9376, deimos:23463,
@@ -5726,7 +5753,7 @@ const ESCALA_REAL_LUAS = {
   miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, disnomia:37273, queta:2350, menoetius:680, selam:3.1, metis:128000, tebe:221900, galateia:61953, larissa:73548, pan:133584, prometeu:139380, pandora:141720, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
   iss:6790, hubble:6910, tiangong:6760, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
-const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, hyakutake:55, mcnaught:41, juice:1.0, clipper:1.1, lucy:3.6, pathfinder:1.52, viking1:1.52, cassini:9.54};
+const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, hyakutake:55, mcnaught:41, atlasg3:7.8, juice:1.0, clipper:1.1, lucy:3.6, pathfinder:1.52, viking1:1.52, cassini:9.54};
 /* pedras do cinturão: [UA, raio km] (no cênico elas moram no anel desenhado) */
 const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4], bennu:[1.13, 0.245], ryugu:[1.19, 0.45], apophis:[0.92, 0.17], faetonte:[1.27, 2.9], higia:[3.15, 217], interamnia:[3.06, 166], eurybates:[5.22, 32], hektor:[5.28, 112], patroclus:[5.21, 57], dinkinesh:[2.19, 0.395]};
 /* O CÉU REAL (só na escala real): as estrelas mais brilhantes do céu em
@@ -6788,11 +6815,11 @@ const ESCALA_REAL_NODO = {
   urano:[0.773, 74.017, 96.937], netuno:[1.770, 131.784, -86.819],
   plutao:[17.140, 110.304, 113.765],
   eris:[43.9, 36.0, 151.0], sedna:[11.9, 145.0, 311.0],
-  halley:[162.2, 59.1, 112.0], p67:[7.04, 50.1, 12.8], swift:[113.45, 139.38, 153.0], encke:[11.38, 334.14, 187.18], tempeltuttle:[162.49, 235.27, 172.50], wirtanen:[11.75, 82.16, 356.34], giacobini:[32.00, 195.40, 172.81], tuttle:[54.98, 270.34, 207.51], thatcher:[79.77, 31.87, 213.45]};
+  halley:[162.2, 59.1, 112.0], p67:[7.04, 50.1, 12.8], swift:[113.45, 139.38, 153.0], encke:[11.38, 334.14, 187.18], tempeltuttle:[162.49, 235.27, 172.50], wirtanen:[11.75, 82.16, 356.34], giacobini:[32.00, 195.40, 172.81], tuttle:[54.98, 270.34, 207.51], ponsbrooks:[74.19, 255.86, 198.99], thatcher:[79.77, 31.87, 213.45]};
 const ESCALA_REAL_T = {mercurio:0.2408467, venus:0.6151973, terra:1.0000174,
   marte:1.8808476, jupiter:11.862615, saturno:29.447498, urano:84.016846,
   netuno:164.79132, plutao:247.92065, eris:561.2, sedna:12676,
-  halley:75.84, p67:6.434, swift:133.28, encke:3.307, tempeltuttle:33.24, wirtanen:5.439, giacobini:6.549, tuttle:13.610, thatcher:415.0, parker:0.241};
+  halley:75.84, p67:6.434, swift:133.28, encke:3.307, tempeltuttle:33.24, wirtanen:5.439, giacobini:6.549, tuttle:13.610, ponsbrooks:71.25, thatcher:415.0, parker:0.241};
 const ESCALA_REAL_ANC = {
   mercurio:{ma:174.794, ep:946728000000}, venus:{ma:50.447, ep:946728000000},
   terra:{ma:357.517, ep:946728000000}, marte:{ma:19.412, ep:946728000000},
@@ -6801,7 +6828,7 @@ const ESCALA_REAL_ANC = {
   plutao:{ma:14.862, ep:946728000000},
   eris:{ma:212, ep:Date.UTC(2026,5,9)}, sedna:{ma:358.6, ep:Date.UTC(2026,5,9)},
   /* cometas: a âncora é a PASSAGEM PELO PERIÉLIO (ma=0 na data), do SBDB */
-  halley:{ma:0, ep:Date.UTC(1986,1,9,11,22)}, p67:{ma:0, ep:Date.UTC(2015,7,13,2,8)}, swift:{ma:0, ep:Date.UTC(1992,11,12)}, encke:{ma:0, ep:Date.UTC(2023,9,22,7)}, tempeltuttle:{ma:0, ep:Date.UTC(1998,1,28,2)}, wirtanen:{ma:0, ep:Date.UTC(2018,11,12,22,21)}, giacobini:{ma:0, ep:Date.UTC(2018,8,10,6,23)}, tuttle:{ma:0, ep:Date.UTC(2008,0,27,0,26)}, thatcher:{ma:0, ep:Date.UTC(1861,5,3,21)}, parker:{ma:0, ep:Date.UTC(2024,11,24,11,53)}};
+  halley:{ma:0, ep:Date.UTC(1986,1,9,11,22)}, p67:{ma:0, ep:Date.UTC(2015,7,13,2,8)}, swift:{ma:0, ep:Date.UTC(1992,11,12)}, encke:{ma:0, ep:Date.UTC(2023,9,22,7)}, tempeltuttle:{ma:0, ep:Date.UTC(1998,1,28,2)}, wirtanen:{ma:0, ep:Date.UTC(2018,11,12,22,21)}, giacobini:{ma:0, ep:Date.UTC(2018,8,10,6,23)}, tuttle:{ma:0, ep:Date.UTC(2008,0,27,0,26)}, ponsbrooks:{ma:0, ep:Date.UTC(2024,3,21,15,9)}, thatcher:{ma:0, ep:Date.UTC(1861,5,3,21)}, parker:{ma:0, ep:Date.UTC(2024,11,24,11,53)}};
 /* dia sideral de cada planeta em dias terrestres (negativo = retrógrado) */
 const ESCALA_REAL_DIA = {mercurio:58.65, venus:-243.0, terra:0.997, marte:1.026,
   jupiter:0.414, saturno:0.444, urano:-0.718, netuno:0.671};
@@ -14676,6 +14703,12 @@ function cardRender(){
       h += fileira(t('SONDAS LANÇADAS DAQUI'), '<span>'+sondas.length+t(' · ≋ VÊ A ROTA')+'</span>',
         listaBadges(sondas, 5), sondas.length);
     }
+    /* r281 · a Terra é o palco das chuvas de meteoros: a fileira com o cometa pai de cada uma (tocar abre a ficha dele) */
+    if(bodyish.id === 'terra'){
+      const CHUVAS = [['QUADRÂNTIDAS · 3 JAN', null], ['LÍRIDAS · 22 ABR', 'thatcher'], ['ETA AQUÁRIDAS · 6 MAI', 'halley'], ['PERSEIDAS · 12 AGO', 'swift'], ['DRACÔNIDAS · 8 OUT', 'giacobini'], ['ORIÔNIDAS · 21 OUT', 'halley'], ['TÁURIDAS · 12 NOV', 'encke'], ['LEÔNIDAS · 17 NOV', 'tempeltuttle'], ['GEMÍNIDAS · 14 DEZ', 'faetonte'], ['URSÍDEAS · 22 DEZ', 'tuttle']];
+      const hC = '<div class="badges">' + CHUVAS.map(c=>{ const pai = c[1] && ALLBODIES[c[1]]; return pai ? '<button class="mbadge" data-go="' + pai.id + '" data-tip="' + esc(pai.name) + '">' + t(c[0]) + '</button>' : '<span class="mbadge" data-tip="2003 EH1">' + t(c[0]) + '</span>'; }).join('') + '</div>';
+      h += fileira(t('AS CHUVAS DE METEOROS'), '<span>' + CHUVAS.length + t(' · O COMETA PAI DE CADA UMA') + '</span>', hC, CHUVAS.length);
+    }
     /* a Lua é o ÍNDICE do museu: quem já veio, em ordem cronológica */
     if(bodyish.id === 'lua'){
       const ordemV = ['luna9','apollo8','apollo11','apollo13','luna16','apollo17','change4','slim','artemis1','artemis2'];
@@ -15501,7 +15534,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r280';
+const BUILD = 'r282';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -16024,6 +16057,7 @@ const EVENTOS = [
   {t:'ECLIPSE ANULAR DO SOL', d:'2028-01-26T15:08:00Z', g:'eclipse', ap:1},
   {t:'ECLIPSE TOTAL DO SOL · Austrália e Nova Zelândia', d:'2028-07-22T02:56:00Z', g:'eclipse'},
   {t:'APOPHIS PASSA A 32 MIL KM DA TERRA · a olho nu na Europa e na África', d:'2029-04-13T21:46:00Z', g:'marco'},
+  {t:'MMX DECOLA PARA FOBOS · a janela de lançamento da JAXA (H3, Tanegashima)', d:'2026-10-20T00:00:00Z', g:'marco', ap:1, c:'fobos'},
   {t:'ECLIPSE TOTAL DA LUA', d:'2028-12-31T16:52:00Z', g:'eclipse', ap:1},
   {t:'ECLIPSE TOTAL DA LUA', d:'2029-06-26T03:22:00Z', g:'eclipse', ap:1},
   {t:'TRÂNSITO DE MERCÚRIO', d:'2032-11-13T08:54:00Z', g:'transito'},
