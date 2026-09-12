@@ -69,3 +69,10 @@ A camada SATÉLITES AO VIVO NA TERRA usa dois terceiros, os dois sem chave:
 | O quê | Fonte | Licença |
 | --- | --- | --- |
 | Tremores de magnitude 2,5 ou mais nas últimas 24 horas (GeoJSON) | USGS Earthquake Hazards Program, `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson` | domínio público (governo dos Estados Unidos) |
+
+## O céu de um lugar (r289)
+
+| O quê | Fonte | Licença |
+| --- | --- | --- |
+| As 5.044 estrelas até magnitude 6 do céu local (`ceu6.js`: RA, DEC, magnitude, B-V e o número HR) | Yale Bright Star Catalogue (BSC5), no recorte `stars.6.json` do d3-celestial de Olaf Frohn, `https://github.com/ofrohn/d3-celestial` | BSD-3-Clause (d3-celestial); o catálogo de Yale é de domínio público |
+| Sol e Lua no céu local (fórmulas) | Jean Meeus, Astronomical Algorithms, caps. 25 e 47 (termos principais) | algoritmos publicados |
