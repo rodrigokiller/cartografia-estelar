@@ -251,6 +251,7 @@ body.touch #topright{z-index:76}
 #tourpop .tpn{margin-top:10px;font-family:var(--mono);font-size:8.5px;letter-spacing:1.4px;
   color:var(--dim2);line-height:1.8}
 #datepop.on{display:block}
+body.touch #datepop{bottom:auto;top:62px;left:12px;z-index:80;max-width:calc(100vw - 24px)}   /* r276 · no celular ficava embaixo da folha do card */
 #datepop .dcols{display:flex;gap:14px;margin:8px 0 10px}
 #datepop .dcol{display:flex;flex-direction:column;align-items:center;gap:4px}
 #datepop .dcol b{font-family:var(--mono);font-size:13px;color:var(--ion);min-width:44px;text-align:center}
@@ -6273,7 +6274,7 @@ function satVivoMonta(){
     pk.userData = f.corpo ? {act:'focus', id:f.corpo, r:rPk, vivo:true} : {act:'satlive', id:s.i, r:rPk, vivo:true};
     anc.add(pk); ACT.pickables.push(pk);
     anc.scale.setScalar(rPk);
-    const L = {el:makeLabel(f.nome, 'faint mini', ()=>ACTION(pk.userData.act, pk.userData.id)), mini:true, lid:f.corpo || ('sat_' + s.norad), lidPai:'terra', escrMr:(SATV.escr ? 0.0005 : 0),
+    const L = {el:makeLabel(f.nome, 'faint mini', ()=>ACTION(pk.userData.act, pk.userData.id)), mini:true, sempre:true, lid:f.corpo || ('sat_' + s.norad), lidPai:'terra', escrMr:(SATV.escr ? 0.0005 : 0),
       get:v=>{ anc.getWorldPosition(v); v.y += SATV.escr ? Math.max(0.00003, CAM.dist*0.012) : Math.max(SATV.tamAng*1.5, CAM.dist*0.012); }};
     ACT.labels.push(L); SATV.lbls.push(L);
     SATV.famosos.push({sat:s, anc, pk, modelo:mv.group});
@@ -6282,10 +6283,13 @@ function satVivoMonta(){
      reatribuídos a cada 15 quadros (só de perto da Terra, para não virar bagunça) */
   SATV.pool = [];
   for(let k = 0; k < 5; k++){
-    const P = {local:new THREE.Vector3(), sat:null};
-    const L = {el:makeLabel('', 'faint mini'), mini:true, off:true, lid:'satpool' + k, lidPai:'terra',
-      get:v=>{ v.copy(P.local); SATV.mesh.localToWorld(v); v.y += SATV.escr ? Math.max(0.00003, CAM.dist*0.012) : CAM.dist*0.012; }};
-    L.el.addEventListener('click', ()=>{ if(P.sat) ACTION('satlive', P.sat.i); });
+    const P = {sat:null, anc:new THREE.Object3D()};
+    mesh.add(P.anc);
+    /* âncora + getWorldPosition (a matriz fresca de cada quadro: por localToWorld o rótulo só
+       andava ao soltar o arrasto); sempre:true atravessa o declutter do zoom fundo, que só deixa
+       os rótulos do corpo travado (com a ficha de um satélite aberta todos sumiam) */
+    const L = {el:makeLabel('', 'faint mini', ()=>{ if(P.sat) ACTION('satlive', P.sat.i); }), mini:true, off:true, sempre:true, lid:'satpool' + k, lidPai:'terra',
+      get:v=>{ P.anc.getWorldPosition(v); v.y += SATV.escr ? Math.max(0.00003, CAM.dist*0.012) : CAM.dist*0.012; }};
     ACT.labels.push(L); SATV.lbls.push(L); SATV.pool.push({L, P});
   }
   return true;
@@ -6295,9 +6299,19 @@ function satVivoPerto(){ return SATV.escr ? CAM.dist < 0.08 : CAM.dist < SATV.R*
 function satVivoProjeta(){
   const out = [], v = new THREE.Vector3(), a = SATV.geo.attributes.position.array;
   const W = CRECT.width, H = CRECT.height;
+  /* r276 · oclusão: satélite atrás da Terra não ganha rótulo nem clique (ele viu rótulos apontando
+     para o lado de trás). Teste: o segmento câmera-satélite atravessa a esfera da Terra? */
+  const C = new THREE.Vector3(); SATV.mesh.updateWorldMatrix(true, false); C.setFromMatrixPosition(SATV.mesh.matrixWorld);
+  const RT = SATV.escr ? 6371*ESCR_UA/149597870 : SATV.R;
+  const cam = camera.position, cd = new THREE.Vector3().subVectors(C, cam);
+  const d = new THREE.Vector3();
   for(let i = 0; i < SATV.sats.length; i++){
     v.set(a[i*3], a[i*3+1], a[i*3+2]); if(!v.x && !v.y && !v.z) continue;
-    SATV.mesh.localToWorld(v); v.project(camera);
+    SATV.mesh.localToWorld(v);
+    d.subVectors(v, cam);
+    const L2 = d.lengthSq(), tt = cd.dot(d)/L2;
+    if(tt > 0 && tt < 1){ const q2 = cd.lengthSq() - (cd.dot(d)*cd.dot(d))/L2; if(q2 < RT*RT) continue; }
+    v.project(camera);
     if(v.z > 1 || Math.abs(v.x) > 1.05 || Math.abs(v.y) > 1.05) continue;
     out.push({i, px:(v.x*0.5 + 0.5)*W + CRECT.left, py:(-v.y*0.5 + 0.5)*H + CRECT.top, z:v.z});
   }
@@ -6314,7 +6328,7 @@ function satVivoRotulosCentro(){
     const e = perto[k];
     if(!e){ p.L.off = true; p.P.sat = null; return; }
     const s = SATV.sats[e.q.i], a = SATV.geo.attributes.position.array;
-    p.P.sat = s; p.P.local.set(a[e.q.i*3], a[e.q.i*3+1], a[e.q.i*3+2]);
+    p.P.sat = s; p.P.anc.position.set(a[e.q.i*3], a[e.q.i*3+1], a[e.q.i*3+2]);
     p.L.el.textContent = s.nome.length > 18 ? s.nome.slice(0, 17) + '…' : s.nome;
     p.L.off = false;
   });
@@ -6430,6 +6444,7 @@ function satVivoTick(){
     f.modelo.visible = perto;
     if(perto) f.anc.scale.setScalar(SATV.tamAng); else f.anc.scale.setScalar(f.pk.userData.r);
   }
+  if(SATV.pool){ const a2 = SATV.geo.attributes.position.array; for(const p of SATV.pool) if(p.P.sat) p.P.anc.position.set(a2[p.P.sat.i*3], a2[p.P.sat.i*3+1], a2[p.P.sat.i*3+2]); }
   SATV.q++;
   if(SATV.q % 15 === 2) satVivoRotulosCentro();
   if(SATV.q % 45 === 1) satVivoTrilhas();
@@ -6621,7 +6636,7 @@ function buildSystem(sysId, spin0){
   scene.add(star.group);
   fadeObjs[S.star.id] = star.group;
   spinners.push({obj:star.mesh, spd:0.02});
-  const starPick = new THREE.Mesh(new THREE.SphereGeometry(starSizeEf+0.8, 8, 8),
+  const starPick = new THREE.Mesh(new THREE.SphereGeometry(escrAtivo ? Math.max(starSizeEf*2, 0.02) : starSizeEf+0.8, 8, 8),   /* r276 · no 1:1 o alvo do Sol era 0,87 un, 3 graus a 1 UA */
     new THREE.MeshBasicMaterial({visible:false}));
   starPick.userData = {act:'focus', id:S.star.id, r:starSizeEf};
   scene.add(starPick); pickables.push(starPick);
@@ -14524,6 +14539,7 @@ function cardRender(){
     }
     /* r193 · fechar a ficha de uma missão, sonda ou satélite volta para o
        PAI dela (a Terra), não para o sistema inteiro (pedido dele) */
+    if(ST.mapCard && ST.mapCard.type === 'satlive' && typeof SATV !== 'undefined'){ SATV.foco = null; SATV.q = 0; }   /* r276 */
     const bFecha = ST.mapCard && ST.mapCard.type === 'body' && ALLBODIES[ST.mapCard.id];
     ST.mapCard = (bFecha && bFecha.satOf && ALLBODIES[bFecha.satOf] && ACT && ACT.kind === 'system')
       ? {type:'body', id:bFecha.satOf, act:'focus', t:performance.now()} : null;
@@ -14938,7 +14954,7 @@ function dolly(f){
       /* corpo travado na escala real: o zoom desce até o grão encher a tela */
       /* ST.mapCard é um OBJETO (a trava usa .id): passar ele inteiro fazia o
          acharPick falhar sempre e o zoom parava no piso (o 1,5 MI KM dele) */
-      const pkSel = ST.mapCard ? acharPick(ST.mapCard.id || ST.mapCard) : null;
+      const pkSel = ST.mapCard ? acharPick((ST.mapCard.type === 'satlive' || ST.mapCard.type === 'sismo') ? 'terra' : (ST.mapCard.id || ST.mapCard)) : null;   /* r276 · o piso do zoom segue a Terra com satélite ou tremor na ficha */
       /* r157: dá para chegar bem mais perto (era 3,2 raios, agora 1,45): o
          contínuo para dentro precisa do corpo enchendo a tela */
       minEf = (pkSel && pkSel.userData.r) ? Math.max(0.0004, pkSel.userData.r*1.45) : 0.02;
@@ -15225,7 +15241,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r275';
+const BUILD = 'r276';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -16442,9 +16458,12 @@ function loop(){
        unidades E ANDA JUNTO com a câmera todo quadro: o pivô corria atrás
        para sempre, e era esse o 'zoom estranho' que ele viu ao clicar numa
        constelação */
-    const travavel = ST.mapCard && (!ST.mapCard.type || ST.mapCard.type === 'body' || ST.mapCard.type === 'starsys');
+    /* r276 · a ficha de um satélite ao vivo ou de um tremor TRAVA NA TERRA: sem isso a trava soltava
+       e o pivô escorria de volta ao Sol (era o 'seleciona o Sol' que ele viu ao tocar num pontinho) */
+    const naTerra = ST.mapCard && (ST.mapCard.type === 'satlive' || ST.mapCard.type === 'sismo');
+    const travavel = ST.mapCard && (!ST.mapCard.type || ST.mapCard.type === 'body' || ST.mapCard.type === 'starsys' || naTerra);
     if(travavel){
-      const pk = ACT.pickables.find(x=>x.userData.id===ST.mapCard.id);
+      const pk = ACT.pickables.find(x=>x.userData.id===(naTerra ? 'terra' : ST.mapCard.id));
       if(pk){ pk.getWorldPosition(SEGV); CAM.pivot.lerp(SEGV, Math.min(1, dt*5.2)); }
     } else if(ST.mapCard && ST.mapCard.type === 'galviz' && ST.mapCard.id === 'vialactea'
               && ACT.galCentro && ACT.escr){
