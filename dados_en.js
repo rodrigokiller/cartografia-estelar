@@ -692,6 +692,46 @@ viking1: {
   facts: ['It took the first photo of the surface of Mars, exactly seven years after the Apollo 11 landing.', 'One of the four life experiments came back positive, and the scientific debate lasts to this day.', 'Planned for 90 days, it worked for six years on the ground.'],
   fict: 'The ambiguous result of the life experiment has fed books for half a century: what if it found it, and nobody believed?'
 },
+eurybates: {
+  kind: 'The Trojan that Lucy visits in 2027',
+  quick: [['DIAMETER','64 km'],['WHERE','L4 point, 60° ahead of Jupiter'],['YEAR','11.9 years'],['MOON','Queta, ~1 km'],['DISCOVERED','1973'],['VISIT','Lucy · AUG 2027']],
+  sections: [
+    {t:'THE TROJANS', rows:[['What they are','Asteroids trapped at the L4 and L5 Lagrange points of Jupiter, 60 degrees ahead of and behind it in the same orbit: more than 10,000 cataloged, maybe as many as the main belt'],['The two camps','The leading one (L4) carries names of Greeks from the Iliad, the trailing one (L5) of Trojans; Hektor and Patroclus ended up on the wrong side because they were named before the rule'],['The origin','Probably captured from the Kuiper belt when the giants migrated, 4 billion years ago: fossils of the young system']]},
+    {t:'RECORD', rows:[['What it is','The largest of a family of collision shards, the darkest of Lucy\'s targets'],['Queta','A 1 km moon discovered by Hubble in 2020, in the preparation of the mission'],['Discovered','September 19, 1973, by C. J. van Houten and Tom Gehrels, on the Palomar plates'],['Here on the map','JPL elements at the epoch of June 9, 2026: on the scenic map it sits on the orbit of Jupiter, 60 degrees ahead']]}
+  ],
+  facts: ['It is trapped 60 degrees ahead of Jupiter, at the L4 point, with thousands of companions: the fossils of the migration of the giants.', 'Lucy passes by it in August 2027, and by the 1 km moon Queta.'],
+  fict: 'Eurybates was the herald of Odysseus in the Iliad; the L4 Trojans are the Greek camp.'
+},
+hektor: {
+  kind: 'The largest of the Trojans, a double peanut',
+  quick: [['DIMENSIONS','~370 × 200 km'],['WHERE','L4 point'],['YEAR','12.1 years'],['SHAPE','two lobes, contact binary'],['MOON','Skamandrios, 12 km'],['DISCOVERED','1907']],
+  sections: [
+    {t:'THE GIANT', rows:[['The size','The largest known Trojan: some 250 km in mean diameter, but elongated like a 370 km peanut'],['The shape','Two lobes touching, probably two bodies that came together slowly'],['The moon','Skamandrios, 12 km, discovered at Keck in 2006, orbits in 3 days'],['The wrong side','Hektor was a Trojan, but sits in the Greek camp (L4): it was named in 1907, before the rule of the two camps']]},
+    {t:'RECORD', rows:[['Discovered','February 10, 1907, by August Kopff, in Heidelberg'],['Inclination','18 degrees above the plane: one of the most inclined Trojans'],['Here on the map','JPL elements at the epoch of June 9, 2026']]}
+  ],
+  facts: ['It is the largest Trojan of Jupiter and is shaped like a peanut: two lobes of rock touching.', 'Hektor was a Trojan, but sits in the Greek camp: it was named before the rule that separates the two swarms.'],
+  fict: null
+},
+patroclus: {
+  kind: 'The binary pair that closes the journey of Lucy',
+  quick: [['DIAMETER','113 km + 104 km'],['WHERE','L5 point, 60° behind Jupiter'],['YEAR','11.9 years'],['THE PAIR','Menoetius, 680 km away'],['DISCOVERED','1906'],['VISIT','Lucy · MAR 2033']],
+  sections: [
+    {t:'THE PAIR', rows:[['What it is','Two nearly equal bodies, Patroclus and Menoetius, circling each other every 4.3 days, 680 km apart: a true binary, not a moon'],['The density','Less than that of water: they are loose balls of ice and rock, similar to the objects of the Kuiper belt'],['The wrong side','Patroclus was a Greek, but sits in the Trojan camp (L5): named in 1906, before the rule']]},
+    {t:'RECORD', rows:[['Discovered','October 17, 1906, by August Kopff: the second Trojan found, after Achilles'],['The visit','Lucy closes the mission at it, in March 2033, after an Earth slingshot in 2030'],['Here on the map','JPL elements at the epoch of June 9, 2026: on the scenic map it sits on the orbit of Jupiter, 60 degrees behind']]}
+  ],
+  facts: ['It is a binary of two nearly equal bodies circling each other every 4.3 days.', 'It is the last target of Lucy, in 2033, on the trailing side of Jupiter.'],
+  fict: 'Patroclus, the friend of Achilles; Menoetius, his father: the pair carries the genealogy of the Iliad.'
+},
+lucy: {
+  kind: 'The fossil hunter: twelve years among the Trojans of Jupiter',
+  quick: [['LAUNCH','10/16/2021 · Atlas V'],['TARGETS','8 asteroids in 12 years'],['FIRST TROJAN','Eurybates · AUG 2027'],['THE END','Patroclus and Menoetius · MAR 2033'],['THE NAME','the 3.2-million-year-old fossil'],['AGENCY','NASA']],
+  sections: [
+    {t:'THE MISSION', rows:[['The name','Lucy, the 3.2-million-year-old Australopithecus fossil that rewrote human origins: the Trojans are the fossils of the Solar System'],['The itinerary','Twelve years, two Earth slingshots, two warm-up asteroids in the belt, five Trojans in the L4 camp and the Patroclus-Menoetius pair in L5: no probe has visited so many worlds'],['The surprise','Dinkinesh, the first target, had a moon made of two touching pieces, the first contact-binary moon ever seen'],['The power','The largest solar panels ever used so far from the Sun, 7 meters across each']]},
+    {t:'RECORD', rows:[['Where it is now','After Donaldjohanson, on the way to the L4 camp, some 3.6 AU from the Sun'],['The plaque','It carries a plaque with messages from Carl Sagan, the Beatles (the song that named the fossil) and poets'],['Here on the map','The arc is the route drawn up to today\'s position; the flybys done so far are on the timeline']]}
+  ],
+  facts: ['It will visit eight asteroids in twelve years, the record for any probe.', 'The name comes from the Lucy fossil, which in turn comes from the Beatles song playing at the camp in 1974.', 'The first target, Dinkinesh, had a moon made of two touching pieces: nobody had seen one like it.'],
+  fict: 'The Lucy plaque carries the lyrics of Lucy in the Sky with Diamonds: the probe, the fossil and the Beatles song in the same name.'
+},
 juice: {
   kind: 'On its way to the icy moons of Jupiter',
   quick: [['LAUNCH','4/14/2023 · Ariane 5'],['ARRIVAL','July 2031, at Jupiter'],['THE TARGET','Ganymede, Callisto and Europa'],['THE END','in orbit around Ganymede, 2034-35'],['SLINGSHOTS','Moon-Earth, Venus, Earth, Earth'],['AGENCY','ESA']],

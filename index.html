@@ -2299,6 +2299,18 @@ const PLANETAS_SONDAS = [
   ],
   facts:['Tirou a primeira foto da superfície de Marte, sete anos exatos depois do pouso da Apollo 11.','Um dos quatro experimentos de vida deu sinal positivo, e o debate científico dura até hoje.','Planejada para 90 dias, trabalhou seis anos no solo.'],
   fict:'O resultado ambíguo do experimento de vida alimenta livros há meio século: e se ela achou, e ninguém acreditou?', moons:[]},
+ {id:'lucy', name:'LUCY', desig:'SONDA · 2021', kind:'A caçadora de fósseis: doze anos entre os troianos de Júpiter', hab:0, gbar:0, pop:'0',
+  sonda:true,
+  traj:{de:2021.79, ate:2026.7}, marcos:[[2021.79,'LANÇAMENTO','16 de outubro de 2021, num Atlas V; um painel solar não travou de todo, e a missão seguiu assim mesmo.'],[2022.79,'A TERRA','16 de outubro de 2022: a primeira catapulta, a 350 km, mais baixo que a ISS.'],[2023.83,'DINKINESH','1 de novembro de 2023: o ensaio geral num asteroide de 790 m do cinturão, que se revelou com uma lua dupla, Selam.'],[2024.95,'A TERRA DE NOVO','13 de dezembro de 2024: a segunda catapulta manda a sonda para os troianos.'],[2025.30,'DONALDJOHANSON','20 de abril de 2025: um asteroide de 8 km em forma de dois cones encostados, batizado pelo descobridor do fóssil Lucy.'],[2026.7,'RUMO AO L4','A caminho do campo grego: Euríbates em agosto de 2027, depois Polymele, Leucus e Orus; Pátroclo em 2033.']],
+  quick:[['LANÇAMENTO','16/10/2021 · Atlas V'],['ALVOS','8 asteroides em 12 anos'],['PRIMEIRO TROIANO','Euríbates · AGO 2027'],['O FIM','Pátroclo e Menécio · MAR 2033'],['O NOME','o fóssil de 3,2 milhões de anos'],['AGÊNCIA','NASA']],
+  sys:{orbit:26, size:0.10, speed:0.4, angle:0.9},
+  visual:{mode:'rocky', c1:'#c8ccd4', c2:'#e4e8f0', c3:'#8a8e96', scale:7.0, seed:20.21, crater:0.05},
+  sections:[
+    {t:'A MISSÃO', rows:[['O nome','Lucy, o fóssil de Australopithecus de 3,2 milhões de anos que reescreveu a origem humana: os troianos são os fósseis do Sistema Solar'],['O roteiro','Doze anos, duas catapultas na Terra, dois asteroides do cinturão de aquecimento, cinco troianos no campo L4 e o par Pátroclo-Menécio no L5: nenhuma sonda visitou tantos mundos'],['A surpresa','Dinkinesh, o primeiro alvo, tinha uma lua feita de dois pedaços encostados, a primeira lua de contato binário já vista'],['A energia','Os maiores painéis solares já usados tão longe do Sol, 7 metros de diâmetro cada']]},
+    {t:'REGISTRO', rows:[['Onde está agora','Depois de Donaldjohanson, a caminho do campo L4, a uns 3,6 UA do Sol'],['A placa','Leva uma placa com mensagens de Carl Sagan, dos Beatles (a música que deu nome ao fóssil) e de poetas'],['Aqui no mapa','O arco é a rota desenhada até a posição de hoje; os sobrevoos feitos estão na linha do tempo']]}
+  ],
+  facts:['Vai visitar oito asteroides em doze anos, o recorde de qualquer sonda.','O nome vem do fóssil Lucy, que por sua vez vem da música dos Beatles que tocava no acampamento em 1974.','O primeiro alvo, Dinkinesh, tinha uma lua de dois pedaços encostados: ninguém tinha visto uma assim.'],
+  fict:'A placa da Lucy leva a letra de Lucy in the Sky with Diamonds: a sonda, o fóssil e a música dos Beatles no mesmo nome.', moons:[]},
  {id:'juice', name:'JUICE', desig:'SONDA · 2023', kind:'A caminho das luas geladas de Júpiter', hab:0, gbar:0, pop:'0',
   sonda:true,
   traj:{de:2023.28, ate:2026.75}, marcos:[[2023.28,'LANÇAMENTO','14 de abril de 2023: o penúltimo Ariane 5, de Kourou, na Guiana Francesa.'],[2024.65,'A DUPLA CATAPULTA','Agosto de 2024: passa pela Lua e pela Terra em 24 horas, a primeira catapulta dupla Lua-Terra da história.'],[2025.65,'VÊNUS','Agosto de 2025: a catapulta em Vênus, com a sonda protegida do calor pela antena.'],[2026.75,'A TERRA DE NOVO','29 de setembro de 2026: a segunda passagem pela Terra; a terceira em 2029, e Júpiter em julho de 2031.']],
@@ -2719,6 +2731,36 @@ const BELT_BODIES = [
   ],
   facts:['É a quinta maior pedra do cinturão e uma das mais escuras: reflete só 7 por cento da luz.','Nenhuma sonda passou por ela, e a órbita inclinada 17 graus a tira do plano das outras.'],
   fict:null, moons:[]},
+ {id:'eurybates', name:'EURÍBATES', desig:'TROIANO-3548 · L4 · ASTEROIDE', kind:'O troiano que a Lucy visita em 2027', hab:0, gbar:0.002, pop:'0',
+  troiano:1, belt:{angle:1.0, r:30.5},
+  quick:[['DIÂMETRO','64 km'],['ONDE','ponto L4, 60° à frente de Júpiter'],['ANO','11,9 anos'],['LUA','Queta, ~1 km'],['DESCOBERTA','1973'],['VISITA','Lucy · AGO 2027']],
+  visual:{mode:'rocky', c1:'#4a4744', c2:'#66625e', c3:'#2c2a28', scale:6.0, seed:35.48, crater:0.8},
+  sections:[
+    {t:'OS TROIANOS', rows:[['O que são','Asteroides presos nos pontos de Lagrange L4 e L5 de Júpiter, 60 graus à frente e atrás dele na mesma órbita: mais de 10 mil catalogados, talvez tantos quanto o cinturão principal'],['Os dois campos','O da frente (L4) leva nomes de gregos da Ilíada, o de trás (L5) de troianos; Heitor e Pátroclo ficaram do lado errado porque foram batizados antes da regra'],['A origem','Provavelmente capturados do cinturão de Kuiper quando os gigantes migraram, há 4 bilhões de anos: fósseis do sistema jovem']]},
+    {t:'REGISTRO', rows:[['O que é','O maior de uma família de cacos de colisão, o mais escuro dos alvos da Lucy'],['Queta','Uma lua de 1 km descoberta pelo Hubble em 2020, na preparação da missão'],['Descoberta','19 de setembro de 1973, por C. J. van Houten e Tom Gehrels, nas placas de Palomar'],['Aqui no mapa','Elementos do JPL na época de 9 JUN 2026: no cênico ele fica na órbita de Júpiter, 60 graus à frente']]}
+  ],
+  facts:['Fica preso 60 graus à frente de Júpiter, no ponto L4, com milhares de companheiros: os fósseis da migração dos gigantes.','A Lucy passa por ele em agosto de 2027, e pela lua Queta, de 1 km.'],
+  fict:'Euríbates era o arauto de Odisseu na Ilíada; os troianos do L4 são o campo grego.', moons:[]},
+ {id:'hektor', name:'HEITOR', desig:'TROIANO-624 · L4 · ASTEROIDE', kind:'O maior dos troianos, um amendoim duplo', hab:0, gbar:0.005, pop:'0',
+  troiano:1, belt:{angle:1.15, r:31.2},
+  quick:[['DIMENSÕES','~370 × 200 km'],['ONDE','ponto L4'],['ANO','12,1 anos'],['FORMA','dois lobos, contato binário'],['LUA','Skamandrios, 12 km'],['DESCOBERTA','1907']],
+  visual:{mode:'rocky', c1:'#4e4a45', c2:'#6a655f', c3:'#2e2b28', scale:6.4, seed:6.24, crater:0.85},
+  sections:[
+    {t:'O GIGANTE', rows:[['O tamanho','O maior troiano conhecido: uns 250 km de diâmetro médio, mas alongado como um amendoim de 370 km'],['A forma','Dois lobos encostados, provavelmente dois corpos que se juntaram devagar'],['A lua','Skamandrios, de 12 km, descoberta no Keck em 2006, orbita em 3 dias'],['O lado errado','Heitor era troiano, mas está no campo grego (L4): foi batizado em 1907, antes da regra dos dois campos']]},
+    {t:'REGISTRO', rows:[['Descoberta','10 de fevereiro de 1907, por August Kopff, em Heidelberg'],['Inclinação','18 graus sobre o plano: um dos troianos mais inclinados'],['Aqui no mapa','Elementos do JPL na época de 9 JUN 2026']]}
+  ],
+  facts:['É o maior troiano de Júpiter e tem forma de amendoim: dois lobos de rocha encostados.','Heitor era troiano, mas está no campo grego: foi batizado antes da regra que separa os dois enxames.'],
+  fict:null, moons:[]},
+ {id:'patroclus', name:'PÁTROCLO', desig:'TROIANO-617 · L5 · ASTEROIDE', kind:'O par binário que fecha a viagem da Lucy', hab:0, gbar:0.004, pop:'0',
+  troiano:-1, belt:{angle:-1.05, r:30.8},
+  quick:[['DIÂMETRO','113 km + 104 km'],['ONDE','ponto L5, 60° atrás de Júpiter'],['ANO','11,9 anos'],['O PAR','Menécio, a 680 km'],['DESCOBERTA','1906'],['VISITA','Lucy · MAR 2033']],
+  visual:{mode:'rocky', c1:'#46433f', c2:'#615d58', c3:'#292725', scale:6.2, seed:6.17, crater:0.8},
+  sections:[
+    {t:'O PAR', rows:[['O que é','Dois corpos quase iguais, Pátroclo e Menécio, girando um em volta do outro a cada 4,3 dias, a 680 km: um binário de verdade, não uma lua'],['A densidade','Menos que a da água: são bolas de gelo e pedra frouxas, parecidas com os objetos do cinturão de Kuiper'],['O lado errado','Pátroclo era grego, mas está no campo troiano (L5): batizado em 1906, antes da regra']]},
+    {t:'REGISTRO', rows:[['Descoberta','17 de outubro de 1906, por August Kopff: o segundo troiano achado, depois de Aquiles'],['A visita','A Lucy fecha a missão nele, em março de 2033, depois de uma catapulta na Terra em 2030'],['Aqui no mapa','Elementos do JPL na época de 9 JUN 2026: no cênico ele fica na órbita de Júpiter, 60 graus atrás']]}
+  ],
+  facts:['É um binário de dois corpos quase iguais girando um em volta do outro a cada 4,3 dias.','É o último alvo da Lucy, em 2033, do lado de trás de Júpiter.'],
+  fict:'Pátroclo, o amigo de Aquiles; Menécio, o pai dele: o par leva a genealogia da Ilíada.', moons:[]},
  {id:'faetonte', name:'FAETONTE', desig:'NEA-3200 · ASTEROIDE', kind:'O asteroide que age como cometa, pai das Gemínidas', hab:0, gbar:0.0002, pop:'0',
   belt:{angle:5.3, r:16.6},
   quick:[['DIÂMETRO','5,8 km'],['DIA','3,6 h'],['ANO','524 d'],['PERIÉLIO','0,14 UA'],['DESCOBERTA','1983'],['CHUVA','Gemínidas · 14 DEZ']],
@@ -5567,9 +5609,9 @@ const ESCALA_REAL_LUAS = {
   miranda:129390, ariel:190900, umbriel:266000, titania:435910, oberon:583520, metis:128000, tebe:221900, galateia:61953, larissa:73548, pan:133584, prometeu:139380, pandora:141720, puck:86004, cordelia:49770, ofelia:53790, tritao:354759, caronte:19591, estige:42656, nix:48694, cerbero:57783, hidra:64738,
   iss:6790, hubble:6910, tiangong:6760, jwst:1500000};
 /* distância real das sondas ao Sol em UA (meados de 2026) */
-const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, hyakutake:55, mcnaught:41, juice:1.0, clipper:1.1, pathfinder:1.52, viking1:1.52, cassini:9.54};
+const ESCALA_REAL_SONDA = {voyager1:171, voyager2:143, pioneer10:141, newhorizons:61, oumuamua:45, tsuchinshan:9, atlas3i:11, hyakutake:55, mcnaught:41, juice:1.0, clipper:1.1, lucy:3.6, pathfinder:1.52, viking1:1.52, cassini:9.54};
 /* pedras do cinturão: [UA, raio km] (no cênico elas moram no anel desenhado) */
-const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4], bennu:[1.13, 0.245], ryugu:[1.19, 0.45], apophis:[0.92, 0.17], faetonte:[1.27, 2.9], higia:[3.15, 217], interamnia:[3.06, 166]};
+const ESCALA_REAL_AST = {ceres:[2.77, 470], vesta:[2.36, 263], palas:[2.77, 256], eros:[1.46, 8.4], bennu:[1.13, 0.245], ryugu:[1.19, 0.45], apophis:[0.92, 0.17], faetonte:[1.27, 2.9], higia:[3.15, 217], interamnia:[3.06, 166], eurybates:[5.22, 32], hektor:[5.28, 112], patroclus:[5.21, 57]};
 /* O CÉU REAL (só na escala real): as estrelas mais brilhantes do céu em
    posição VERDADEIRA (RA/DEC J2000 convertidos ao plano da eclíptica da cena)
    e cor pela classe espectral. É o começo do sonho das constelações. */
@@ -6999,9 +7041,33 @@ function buildSystem(sysId, spin0){
                  faetonte:{a:1.27146, e:0.88967, i:22.311, no:265.099, w:322.300, ma:301.486},
                  /* r271 · Higia e Interamnia, SBDB na mesma epoca */
                  higia:{a:3.15097, e:0.10671, i:3.830, no:283.120, w:312.424, ma:252.034},
-                 interamnia:{a:3.05681, e:0.15506, i:17.315, no:280.167, w:94.062, ma:221.145}};
+                 interamnia:{a:3.05681, e:0.15506, i:17.315, no:280.167, w:94.062, ma:221.145},
+                 /* r274 · os troianos, SBDB na mesma epoca: o warp do cenico os poe na orbita de Jupiter */
+                 eurybates:{a:5.21737, e:0.09060, i:8.051, no:43.559, w:28.700, ma:125.748},
+                 hektor:{a:5.27699, e:0.02434, i:18.147, no:342.802, w:181.289, ma:24.914},
+                 patroclus:{a:5.20598, e:0.13915, i:22.064, no:44.350, w:308.838, ma:58.675}};
     const ELA_EP = Date.UTC(2026,5,9);
+    var troianosC = [];   /* r274 · no cênico os troianos são amarrados ao holder de Júpiter (var: o avancarAnos mora no escopo da função) */
     for(const a of S.belt){
+      if(!escrAtivo && a.troiano && holderDe.jupiter){
+        /* o Júpiter cênico tem período comprimido, então a elipse real do ELA acertava o raio mas
+           não o ângulo: aqui o troiano mora num holder próprio que copia o de Júpiter todo quadro,
+           60 graus à frente (L4) ou atrás (L5), com um jitter pequeno para o enxame não empilhar */
+        const hT = new THREE.Object3D(); scene.add(hT);
+        const off = a.troiano*Math.PI/3 + (a.belt.angle - Math.round(a.belt.angle))*0.25;
+        const rT = ALLBODIES.jupiter.sys.orbit;
+        const dot = new THREE.Mesh(new THREE.SphereGeometry(0.17, 10, 10), new THREE.MeshBasicMaterial({color:0xa8b2be}));
+        dot.position.set(rT, 0, 0); hT.add(dot);
+        const pick = new THREE.Mesh(new THREE.SphereGeometry(1.0, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
+        pick.position.copy(dot.position); pick.userData = {act:'focus', id:a.id, r:0.17};
+        hT.add(pick); pickables.push(pick);
+        const lblT = {el:makeLabel(a.name, 'faint', ()=>ACTION('focus', a.id)), get:v=>{ dot.getWorldPosition(v); v.y += 0.5; }};
+        labels.push(lblT);
+        objReg.push({id:a.id, cls:'asteroide', holder:hT, pick:pick, lbl:lblT});
+        troianosC.push({h:hT, off});
+        hT.rotation.y = holderDe.jupiter.rotation.y + off;
+        continue;
+      }
       const eA = ELA[a.id];
       if(eA){
         const rDe = u2 => escrAtivo ? u2*ESCR_UA : (15 + 3.95*(u2 - 1));
@@ -7140,6 +7206,7 @@ function buildSystem(sysId, spin0){
     }
     /* viagem no tempo grande usa o salto exato; passinho fica com o integrador */
     for(const e of elipticos) (Math.abs(anos) > e.T/50 ? elipSalta : elipAvanca)(e, anos);
+    if(typeof troianosC !== 'undefined' && troianosC && troianosC.length && holderDe.jupiter) for(const tj of troianosC) tj.h.rotation.y = holderDe.jupiter.rotation.y + tj.off;   /* r274 */
   }
   /* se o relógio já foi viajado para outra data, a cena nasce sincronizada */
   avancarAnos((SIMT.data - SIM_HOJE)/MS_ANO);
@@ -15147,7 +15214,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r273';
+const BUILD = 'r274';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
