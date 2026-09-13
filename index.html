@@ -5559,6 +5559,42 @@ function dirCeu(raH, decG){
 }
 const CORCEU_G = {O:0xa8c8ff, B:0xb8d4ff, A:0xe8f0ff, F:0xfff4e0, G:0xfff0c0, K:0xffd9a0, M:0xffb388};
 /* devolve {cena, pos} com as estrelas e as linhas das constelações */
+/* ================= r298 · A FAIXA DA VIA LACTEA =================
+   ~9 mil pontos difusos em coordenadas GALACTICAS reais (l, b), convertidos para RA/Dec J2000 (polo norte galactico
+   RA 192,86 Dec 27,13; longitude do polo celeste 122,93): a faixa engrossa e clareia para o centro (Sagitario), afina no
+   anticentro (Auriga e Touro), com o bojo, a GRANDE FENDA (a faixa escura de Aquila a Escorpiao) e o SACO DE CARVAO
+   ao lado do Cruzeiro. Determinista (semente fixa), gerada uma vez. Cada ponto: [ra graus, dec graus, quente 0..1]. */
+let VIA_FAIXA_CACHE = null;
+function viaLacteaLista(){
+  if(VIA_FAIXA_CACHE) return VIA_FAIXA_CACHE;
+  let s = 20260913; const rnd = ()=>{ s = (s*1664525 + 1013904223) % 4294967296; return s/4294967296; };
+  const gauss = ()=>{ const u = Math.max(1e-9, rnd()), v = rnd(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); };
+  const aNGP = 192.85948*D2R, dNGP = 27.12825*D2R, lNCP = 122.93192*D2R, out = [];
+  let guarda = 0;
+  while(out.length < 9000 && guarda++ < 300000){
+    const lc = rnd()*360 - 180;                                   /* longitude galactica centrada no centro (Sagitario) */
+    const w = 0.30 + 0.60*Math.exp(-(lc/70)*(lc/70)) + 0.9*Math.exp(-(lc/16)*(lc/16));
+    if(rnd()*1.8 > w) continue;
+    const sig = 3.2 + 5.5*Math.exp(-(lc/45)*(lc/45)), b = gauss()*sig;
+    if(lc > -12 && lc < 45 && Math.abs(b - 1.5) < 2.8 && rnd() < 0.7) continue;     /* a Grande Fenda */
+    if(Math.hypot(lc + 57, b + 1) < 3.5 && rnd() < 0.85) continue;                    /* o Saco de Carvao */
+    const l = lc*D2R, bb = b*D2R, dl = lNCP - l;
+    const sd = Math.sin(dNGP)*Math.sin(bb) + Math.cos(dNGP)*Math.cos(bb)*Math.cos(dl);
+    const y = Math.cos(bb)*Math.sin(dl), x = Math.cos(dNGP)*Math.sin(bb) - Math.sin(dNGP)*Math.cos(bb)*Math.cos(dl);
+    const ra = ((aNGP + Math.atan2(y, x))/D2R + 720) % 360, dec = Math.asin(Math.max(-1, Math.min(1, sd)))/D2R;
+    out.push([ra, dec, Math.exp(-(lc/40)*(lc/40))]);
+  }
+  VIA_FAIXA_CACHE = out; return out;
+}
+/* monta a faixa numa cena: dirDe(ra graus, dec graus) devolve o Vector3 da posicao; pontos aditivos, tamanho em pixels */
+function viaLacteaPontos(cena, dirDe, tam, op){
+  const L = viaLacteaLista(), pos = new Float32Array(L.length*3), col = new Float32Array(L.length*3);
+  L.forEach((it, i)=>{ const v = dirDe(it[0], it[1]); pos[i*3] = v.x; pos[i*3+1] = v.y; pos[i*3+2] = v.z;
+    const q = it[2]; col[i*3] = 0.80 + 0.20*q; col[i*3+1] = 0.86 + 0.06*q; col[i*3+2] = 1.0 - 0.22*q; });
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const pts = new THREE.Points(g, new THREE.PointsMaterial({size:tam, map:TEX_DOT, vertexColors:true, sizeAttenuation:false, transparent:true, opacity:op, depthWrite:false, blending:THREE.AdditiveBlending}));
+  pts.frustumCulled = false; pts.userData.op0 = op; cena.add(pts); return pts;
+}
 function ceuProfundo(){
   const cena = new THREE.Scene(), pos = {};
   const gBril = [], gNorm = [];
@@ -5596,6 +5632,7 @@ function ceuProfundo(){
   linhas.frustumCulled = false;
   linhas.visible = CEUV.on;
   cena.add(linhas);
+  cena.userData.viaFaixa = viaLacteaPontos(cena, (ra, dec)=>dirCeu(ra/15, dec).multiplyScalar(4e9), QLOW ? 5 : 6, 0.075);   /* r298 */
   return {cena, pos, linhas, pontos:[p1, p2]};
 }
 function makeStars(count, spread, size, op){
@@ -5809,6 +5846,9 @@ function updateLabels(){
      mais, as estrelas vão aparecendo por ordem de distância (a 5 anos-luz
      nascem Alpha Centauri e Sírius, a 12 vem Procíon, Altair, Vega...) */
   const dLy = (ACT.escr && ACT.kind === 'system') ? CAM.dist/(LY_UA*ESCR_UA) : 0;
+  /* r298 · a faixa da Via Lactea desbota entre 20 e 220 anos-luz de casa */
+  const vf = ACT.sceneCeu && ACT.sceneCeu.userData && ACT.sceneCeu.userData.viaFaixa;
+  if(vf){ const kv = 1 - Math.min(1, Math.max(0, (dLy - 20)/200)); vf.visible = kv > 0.01; vf.material.opacity = vf.userData.op0*kv; }
   const foraDeCasa = dLy > 0.25;
   for(const L of ACT.labels){
     if(L.off){ oculta(L); continue; }
@@ -7114,6 +7154,11 @@ function localMonta(){
   /* r296 · as estacoes espaciais cruzando o ceu (ISS e Tiangong), pelos TLE dos satelites ao vivo */
   const est = {}; for(const id in LOCAL_EST){ const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:TEX_DOT, color:0xffc98a, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending})); sp.visible = false; sc.add(sp); est[id] = sp; }
   LOCAL.est = est; LOCAL.estPos = {};
+  /* r298 · a faixa da Via Lactea no quadro EQUATORIAL, girada por matriz a cada quadro (a mesma conta das estrelas) */
+  if(!LOCAL.via){
+    const via = viaLacteaPontos(sc, (ra, dec)=>{ const r = ra*D2R, d = dec*D2R; return new THREE.Vector3(Math.cos(d)*Math.cos(r), Math.cos(d)*Math.sin(r), Math.sin(d)).multiplyScalar(720); }, QLOW ? 4.5 : 5.5, 0.085);
+    via.matrixAutoUpdate = false; via.renderOrder = -5; LOCAL.via = via;
+  }
   LOCAL.r = r; LOCAL.sc = sc; LOCAL.cam = cam; LOCAL.dome = dome; LOCAL.pos = pos; LOCAL.pB = pB; LOCAL.pF = pF; LOCAL.linhas = linhas;
   LOCAL.solDisco = solDisco; LOCAL.solGlow = solGlow; LOCAL.lua = lua; LOCAL.luaMat = luaMat; LOCAL.luz = luz; LOCAL.plan = plan;
   /* arrastar gira o olhar; a roda muda o campo */
@@ -7288,6 +7333,13 @@ function localFrame(){
   LOCAL.pB.geometry.attributes.position.needsUpdate = true; LOCAL.pF.geometry.attributes.position.needsUpdate = true; LOCAL.linhas.geometry.attributes.position.needsUpdate = true;
   const sunAlt = Math.sin(C.sol.alt), noite = 1 - Math.min(1, Math.max(0, (sunAlt + 0.14)/0.16));
   document.getElementById('localpop').classList.toggle('dia', noite < 0.25);   /* r294 · de dia os rótulos escurecem para ler no azul */
+  if(LOCAL.via){   /* r298 · a faixa gira com o ceu: matriz das imagens da base equatorial (precessao, tempo sideral, latitude) */
+    const PMv = C.PM, cLv = Math.cos(lst), sLv = Math.sin(lst), cφv = Math.cos(φ), sφv = Math.sin(φ);
+    const Mv = (x0, y0, z0)=>{ const vx = PMv[0]*x0 + PMv[1]*y0 + PMv[2]*z0, vy = PMv[3]*x0 + PMv[4]*y0 + PMv[5]*z0, vz = PMv[6]*x0 + PMv[7]*y0 + PMv[8]*z0, m = cLv*vx + sLv*vy; const e = -(sLv*vx - cLv*vy), nn = vz*cφv - m*sφv, u = m*cφv + vz*sφv; return [e, u, -nn]; };
+    const va = Mv(1, 0, 0), vb = Mv(0, 1, 0), vc = Mv(0, 0, 1);
+    LOCAL.via.matrix.set(va[0], vb[0], vc[0], 0, va[1], vb[1], vc[1], 0, va[2], vb[2], vc[2], 0, 0, 0, 0, 1);
+    LOCAL.via.material.opacity = 0.085*Math.max(noite, 0.12);
+  }
   /* r293 · de dia as estrelas não somem de vez (pedido dele): as brilhantes e as linhas ficam com um mínimo de presença */
   LOCAL.pB.material.opacity = 0.95*Math.max(noite, 0.4); LOCAL.pF.material.opacity = 0.85*Math.max(noite, 0.22); LOCAL.linhas.material.opacity = 0.28*Math.max(noite, 0.5);
   /* r289 · as 5 mil estrelas do catálogo grande, giradas por matriz (equatorial -> horizonte) */
@@ -8472,6 +8524,8 @@ function buildSystem(sysId, spin0){
     };
     mkCeu(gBril, 3.6, 0.98);
     mkCeu(gNorm, 2.3, 0.85);
+    /* r298 · a faixa da Via Lactea no ceu do mapa (desbota ao sair de casa: de longe a galaxia 3D assume) */
+    sceneCeu.userData.viaFaixa = viaLacteaPontos(sceneCeu, (ra, dec)=>dirDe(ra/15, dec).multiplyScalar(4e9), QLOW ? 5 : 6, 0.075);
     /* estrelas-sistema clicáveis pela LABEL e pelo ponto (ele tentou a label) */
     const CEU_SIS = {sirius:'sirius', vegaceu:'vega', rigilkent:'alphacen', betelg:'betelgeuse'};
     /* de qual constelação cada estrela faz parte (sai do próprio desenho) */
@@ -16473,7 +16527,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r297';
+const BUILD = 'r298';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
