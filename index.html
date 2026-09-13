@@ -1201,7 +1201,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="tpn">Os pontos vêm do catálogo CelesTrak, na posição de agora. Desmarcar um grupo esconde os pontos, os nomes e as órbitas dele. Afastando o zoom, os satélites somem por ordem de altitude, os mais baixos primeiro.</div>
   </div>
   <div id="localpop">
-    <div class="lphead"><span id="localtit">◎ PLANETÁRIO</span><span class="lpbtns"><button id="localhud" data-tip="Esconder ou mostrar a bússola e o mapa">HUD</button><button id="localdata" data-tip="Ver o céu em outra data">◈</button><button id="localx">✕</button></span></div>
+    <div class="lphead"><span id="localtit">◎ PLANETÁRIO</span><span class="lpbtns"><button id="localiss" data-tip="As próximas passagens da ISS e da Tiangong neste lugar">ISS</button><button id="localhud" data-tip="Esconder ou mostrar a bússola e o mapa">HUD</button><button id="localdata" data-tip="Ver o céu em outra data">◈</button><button id="localx">✕</button></span></div>
     <div id="localwrap">
       <canvas id="localcv"></canvas>
       <div id="locallbls"></div>
@@ -6939,7 +6939,7 @@ function localCalc(ms, lat, lon){
     const rS = Math.hypot(P.x, P.y, P.z), fase = (1 + (P.x*x + P.y*y + P.z*z)/(rS*d))/2;
     planetas.push({id, nome:ALLBODIES[id] ? ALLBODIES[id].name : id.toUpperCase(), alt:hz.alt, az:hz.az, d, fase});
   }
-  return {lst, eps, PM, sol:{alt:hs.alt, az:hs.az, ang:angSol}, lua:{alt:hl.alt, az:hl.az, ang:angLua, ilum:(1 - Math.cos(sepSL))/2, eclLunar, eclSolar, sepSL}, planetas};
+  return {lst, eps, PM, sol:{alt:hs.alt, az:hs.az, ang:angSol, ra:qs.ra, dec:qs.dec}, lua:{alt:hl.alt, az:hl.az, ang:angLua, ilum:(1 - Math.cos(sepSL))/2, eclLunar, eclSolar, sepSL}, planetas};
 }
 /* a seleção do lugar no mapa: satélites e tremores somem, sobra a Terra; tocar nela abre o céu */
 function localSelecao(liga){
@@ -7110,6 +7110,9 @@ function localMonta(){
   const CORP = {mercurio:0xd0c8b8, venus:0xfff4dc, marte:0xff9a6a, jupiter:0xffe2b0, saturno:0xf4dca0};
   const plan = {};
   for(const id in CORP){ const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:TEX_DOT, color:CORP[id], transparent:true, depthWrite:false, blending:THREE.AdditiveBlending})); sc.add(sp); plan[id] = sp; }
+  /* r296 · as estacoes espaciais cruzando o ceu (ISS e Tiangong), pelos TLE dos satelites ao vivo */
+  const est = {}; for(const id in LOCAL_EST){ const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:TEX_DOT, color:0xffc98a, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending})); sp.visible = false; sc.add(sp); est[id] = sp; }
+  LOCAL.est = est; LOCAL.estPos = {};
   LOCAL.r = r; LOCAL.sc = sc; LOCAL.cam = cam; LOCAL.dome = dome; LOCAL.pos = pos; LOCAL.pB = pB; LOCAL.pF = pF; LOCAL.linhas = linhas;
   LOCAL.solDisco = solDisco; LOCAL.solGlow = solGlow; LOCAL.lua = lua; LOCAL.luaMat = luaMat; LOCAL.luz = luz; LOCAL.plan = plan;
   /* arrastar gira o olhar; a roda muda o campo */
@@ -7140,6 +7143,69 @@ function localResize(){
   if(!LOCAL.r) return;
   const wrap = document.getElementById('localwrap'), W = Math.max(50, wrap.clientWidth), H = Math.max(50, wrap.clientHeight);
   LOCAL.r.setSize(W, H, false); LOCAL.cam.aspect = W/H; LOCAL.cam.updateProjectionMatrix(); LOCAL.W = W; LOCAL.H = H; LOCAL.ultimo = 0;
+}
+/* ================= r296 · AS PASSAGENS DA ISS no planetario =================
+   Os mesmos TLE dos satelites ao vivo (o catalogo e carregado quando o planetario abre), propagados pela satellite.js
+   para o lugar escolhido (ecfToLookAngles). A estacao aparece como um ponto ambar cruzando o ceu quando esta acima do
+   horizonte e ao Sol, cinza quando atravessa a sombra da Terra (cilindro: atras do plano do Sol e a menos de um raio
+   do eixo). O botao ISS lista as passagens VISIVEIS a olho nu dos proximos 5 dias: acima de 10 graus, Sol abaixo de
+   -6 graus e estacao iluminada, varridas de minuto em minuto. */
+const LOCAL_EST = {iss:25544, tiangong:48274};
+function localEstGarante(){ if(typeof satVivoCarrega === 'function' && !SATV.pronto && !SATV.carregando && !SATV.erro) satVivoCarrega(); }
+function localSolRaDec(ms){ const sol = localSol(ms), q = localEquat(sol.lam, 0, localObliq(ms)); return {ra:q.ra, dec:q.dec}; }
+function localEstPos(norad, ms, lat, lon, sol){
+  if(typeof satellite === 'undefined' || !SATV.pronto) return null;
+  const s = SATV.porNorad[norad]; if(!s || !s.rec) return null;
+  const d = new Date(ms); let pv = null; try{ pv = satellite.propagate(s.rec, d); }catch(e){ return null; }
+  const p = pv && pv.position; if(!p || typeof p !== 'object' || !isFinite(p.x)) return null;
+  const gmst = satellite.gstime(d), ecf = satellite.eciToEcf(p, gmst);
+  const la = satellite.ecfToLookAngles({longitude:lon*D2R, latitude:lat*D2R, height:0}, ecf);
+  let luz = true;
+  if(sol){
+    const sx = Math.cos(sol.dec)*Math.cos(sol.ra), sy = Math.cos(sol.dec)*Math.sin(sol.ra), sz = Math.sin(sol.dec), dp = p.x*sx + p.y*sy + p.z*sz;
+    if(dp < 0){ const qx = p.x - dp*sx, qy = p.y - dp*sy, qz = p.z - dp*sz; if(Math.sqrt(qx*qx + qy*qy + qz*qz) < 6371) luz = false; }
+  }
+  return {alt:la.elevation, az:la.azimuth, dist:la.rangeSat, luz};
+}
+function localPassagens(norad, ms0, lat, lon, dias){
+  const out = []; if(typeof satellite === 'undefined' || !SATV.pronto || !SATV.porNorad[norad]) return out;
+  const passo = 60000, fim = ms0 + dias*86400000, solCache = {};
+  const solRD = ms=>{ const k = Math.floor(ms/3600000); return solCache[k] || (solCache[k] = localSolRaDec(ms)); };
+  const solAlt = ms=>{ const q = solRD(ms); return localAltAz(q.ra, q.dec, (localGMST(ms) + lon)*D2R, lat*D2R).alt; };
+  let dentro = null;
+  for(let ms = ms0; ms <= fim; ms += passo){
+    const e = localEstPos(norad, ms, lat, lon, solRD(ms));
+    const vis = !!(e && e.alt > 10*D2R && e.luz && solAlt(ms) < -6*D2R);
+    if(vis && !dentro) dentro = {ini:ms, max:e.alt, msMax:ms, azIni:e.az, azFim:e.az};
+    if(vis && dentro){ dentro.azFim = e.az; if(e.alt > dentro.max){ dentro.max = e.alt; dentro.msMax = ms; } }
+    if(!vis && dentro){ dentro.fim = ms - passo; out.push(dentro); dentro = null; if(out.length >= 8) break; }
+  }
+  return out;
+}
+function localRumo(az){ return t(['N', 'NE', 'L', 'SE', 'S', 'SO', 'O', 'NO'][Math.round((((az/D2R) % 360) + 360) % 360/45) % 8]); }
+function localPassagensCard(){
+  const el = document.getElementById('localcard'); if(!el) return;
+  localEstGarante();
+  const eye = '<div class="lc-eye"><span>' + t('ESTAÇÕES ESPACIAIS · PRÓXIMOS 5 DIAS') + '</span><button id="localcardx">✕</button></div>';
+  if(typeof satellite === 'undefined' || !SATV.pronto){
+    el.innerHTML = '<div class="popscroll">' + eye + '<h3>ISS · TIANGONG</h3><div class="lc-kind">' + t(SATV.erro ? 'OS DADOS DOS SATÉLITES NÃO CARREGARAM' : 'CARREGANDO OS DADOS DOS SATÉLITES... toque de novo em instantes') + '</div></div>';
+    el.classList.add('on'); document.getElementById('localcardx').addEventListener('click', localCardFecha); return;
+  }
+  const hhmm = ms=>{ const d = new Date(ms); return String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0'); };
+  let h = '<div class="popscroll">' + eye;
+  for(const id in LOCAL_EST){
+    const ps = localPassagens(LOCAL_EST[id], SIMT.data, LOCAL.lat, LOCAL.lon, 5);
+    h += '<h3>' + (id === 'iss' ? 'ISS' : 'TIANGONG') + '</h3><div class="lc-kind">' + (ps.length ? t('PASSAGENS VISÍVEIS A OLHO NU: ACIMA DE 10°, DE NOITE, COM A ESTAÇÃO AO SOL') : t('NENHUMA PASSAGEM VISÍVEL NOS PRÓXIMOS 5 DIAS DESTE LUGAR')) + '</div>';
+    if(ps.length) h += '<div class="lc-q">' + ps.map(p=>{ const d = new Date(p.ini); return '<div><div class="k">' + d.getUTCDate() + ' ' + MESES_N[d.getUTCMonth()] + ' · ' + hhmm(p.ini) + ' UTC</div><div class="v">' + Math.round(p.max/D2R) + '° · ' + localRumo(p.azIni) + ' › ' + localRumo(p.azFim) + ' · ' + Math.max(1, Math.round((p.fim - p.ini)/60000)) + ' min</div><button class="lc-go" data-ver="' + p.msMax + '">' + t('▶ VER ESTA PASSAGEM') + '</button></div>'; }).join('') + '</div>';
+  }
+  h += '<div class="lc-kind" style="margin-top:8px">' + t('Horários em UTC · dados: os TLE do CelesTrak, os mesmos dos satélites ao vivo') + '</div></div>';
+  el.innerHTML = h; el.classList.add('on');
+  document.getElementById('localcardx').addEventListener('click', localCardFecha);
+  el.querySelectorAll('button[data-ver]').forEach(b=>b.addEventListener('click', ()=>{
+    SIMT.data = +b.dataset.ver; SIMT.vel = 'seg'; SIMT.pausado = false; if(typeof simClockUI === 'function') simClockUI(); LOCAL.ultimo = 0;
+    const e = localEstPos(LOCAL_EST.iss, SIMT.data, LOCAL.lat, LOCAL.lon, null); if(e && e.alt > 0){ LOCAL.az = e.az/D2R; LOCAL.alt = Math.min(80, e.alt/D2R); }
+    showHint(t('O RELÓGIO FOI AO PONTO ALTO DA PASSAGEM'));
+  }));
 }
 function localFrame(){
   if(!LOCAL.on){ LOCAL.laco = false; return; }
@@ -7175,6 +7241,11 @@ function localFrame(){
   LOCAL.lua.position.copy(dL).multiplyScalar(600); LOCAL.lua.scale.setScalar(600*Math.tan(C.lua.ang/2)); LOCAL.lua.visible = C.lua.alt > -0.02;
   LOCAL.luz.position.copy(dS).multiplyScalar(1000); LOCAL.luz.target.position.set(0, 0, 0);
   if(C.lua.eclLunar){ LOCAL.luz.intensity = C.lua.eclLunar === 'total' ? 0.12 : 0.5; LOCAL.luz.color.setHex(C.lua.eclLunar === 'total' ? 0xff7a48 : 0xffc8a8); } else { LOCAL.luz.intensity = 1.35; LOCAL.luz.color.setHex(0xffffff); }
+  /* r296 · as estacoes cruzando o ceu: ponto ambar ao Sol, cinza na sombra da Terra */
+  localEstGarante();
+  for(const id in LOCAL_EST){ const sp = LOCAL.est[id]; const e = localEstPos(LOCAL_EST[id], ms, LOCAL.lat, LOCAL.lon, C.sol); LOCAL.estPos[id] = e;
+    if(!e || e.alt <= 0){ sp.visible = false; continue; }
+    sp.visible = true; sp.position.copy(localDir(e.alt, e.az)).multiplyScalar(650); sp.scale.setScalar(e.luz ? 5.5 : 3.8); sp.material.color.setHex(e.luz ? 0xffc98a : 0x8a94a8); sp.material.opacity = e.luz ? 0.95 : 0.55; }
   for(const p of C.planetas){ const sp = LOCAL.plan[p.id]; const d = localDir(p.alt, p.az); sp.position.copy(d).multiplyScalar(700); const mag = p.id === 'venus' ? 5.5 : (p.id === 'jupiter' ? 5 : (p.id === 'marte' ? 4 : (p.id === 'saturno' ? 3.6 : 3.2))); sp.scale.setScalar(mag*(0.55 + 0.45*noite)); sp.visible = p.alt > -0.01 && (noite > 0.05 || p.id === 'venus'); }
   /* a câmera olha para (az, alt) */
   const dV = localDir(LOCAL.alt*D2R, LOCAL.az*D2R);
@@ -7189,6 +7260,7 @@ function localFrame(){
   if(C.sol.alt > -0.02) rot(dS, t('SOL') + (C.lua.eclSolar ? ' · ' + t('ECLIPSE') + ' ' + t(C.lua.eclSolar.toUpperCase()) : ''), 'sol', 'sol', 'corpo');
   if(C.lua.alt > -0.02) rot(dL, t('LUA') + ' · ' + Math.round(C.lua.ilum*100) + '%' + (C.lua.eclLunar ? ' · ' + t('ECLIPSE') + ' ' + t(C.lua.eclLunar.toUpperCase()) : ''), 'lua', 'lua', 'corpo');
   for(const p of C.planetas) if(LOCAL.plan[p.id].visible) rot(localDir(p.alt, p.az), p.nome, 'pla', p.id, 'corpo');
+  for(const id in LOCAL_EST){ const e = LOCAL.estPos[id]; if(e && e.alt > 0.005) rot(localDir(e.alt, e.az), (id === 'iss' ? 'ISS' : 'TIANGONG') + (e.luz ? '' : ' · ' + t('NA SOMBRA')), 'pla', id, 'corpo'); }   /* r296 */
   {   /* r293 · os nomes das brilhantes e das constelações aparecem de dia também */
     ESTRELAS_CEU.forEach((s, i)=>{ if(s[4] > 1.0 || !s[1]) return; const hz = localAltAzPrec(s[2]*15*D2R, s[3]*D2R, lst, φ, PM); if(hz.alt > 0.01) rot(localDir(hz.alt, hz.az), t(s[1]), 'est', s[0], 'estrela'); });
     /* r289 · o nome de cada constelação no centroide das estrelas dela (só as acima do horizonte) */
@@ -16335,7 +16407,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r295';
+const BUILD = 'r296';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -16979,6 +17051,10 @@ $('#dp_eventos').addEventListener('click', ()=>{
 $('#evtpopx').addEventListener('click', ()=>$('#evtpop').classList.remove('on'));
 $('#satpopx').addEventListener('click', ()=>$('#satpop').classList.remove('on'));   /* r280 */
 $('#localx').addEventListener('click', localFecha);   /* r287 */
+$('#localiss').addEventListener('click', ()=>{
+  localPassagensCard();
+  if(typeof tutInicia === 'function') tutInicia('isspass', [{tx:'<b>PASSAGENS:</b> a ISS e a Tiangong aparecem no céu deste lugar como um ponto âmbar quando estão ao Sol, cinza quando cruzam a sombra da Terra. A lista traz as passagens visíveis a olho nu dos próximos 5 dias; ▶ VER leva o relógio ao ponto alto de cada uma e vira o olhar para ela.'}]);
+});
 $('#localhud').addEventListener('click', ()=>{ LOCAL.hud = !LOCAL.hud; $('#localpop').classList.toggle('semhud', !LOCAL.hud); store.set('carto:localhud', LOCAL.hud ? '1' : '0'); });
 $('#localdata').addEventListener('click', ()=>{ $('#simgo').click(); });
 $('#lmzin').addEventListener('click', ()=>{ LOCAL.zoomMapa = Math.min(8, LOCAL.zoomMapa*2); localMapa(); });
