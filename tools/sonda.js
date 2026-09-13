@@ -61,7 +61,7 @@ const dorme = ms=>new Promise(ok=>setTimeout(ok, ms));
     await cdp.send('Runtime.enable');
     while(Date.now() - t0 < TMAX*1000){
       const r = await cdp.eval(`(function(){ try{ if(typeof window.__sonda !== 'function') return ''; if(window.__err && window.__err.length) return 'ERRO DE BOOT: ' + window.__err.slice(0, 3).join(' || '); window.__sonda(); return window.__res || ''; }catch(err){ return 'ERRO-SONDA: ' + err.message + ' ' + String(err.stack || '').replace(/\\s+/g, ' ').slice(0, 300); } })()`).catch(e=>'');
-      if(r){ saida = r; break; }
+      if(r){ saida = r; if(process.env.SONDA_SHOT){ try{ const sh = await cdp.send('Page.captureScreenshot', {format:'png'}); fs.writeFileSync(process.env.SONDA_SHOT, Buffer.from(sh.data, 'base64')); saida += ' · print ' + process.env.SONDA_SHOT; }catch(e){ saida += ' · sem print: ' + e.message; } } break; }   /* SONDA_SHOT=arquivo.png: tira o print quando a sonda termina */
       await dorme(250);
     }
   }catch(e){ saida = 'FALHA: ' + e.message; }
