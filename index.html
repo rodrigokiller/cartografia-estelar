@@ -314,6 +314,7 @@ body.touch #datepop{bottom:auto;top:62px;left:12px;z-index:80;max-width:calc(100
 #localpop .lpbtns button{height:20px;min-width:20px;background:none;border:1px solid var(--line2);color:var(--dim);
   font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;line-height:1;cursor:pointer;padding:0 6px}
 #localpop .lpbtns button:hover{color:var(--amber);border-color:var(--amber)}
+#localpop .lpbtns button.on{color:var(--amber);border-color:var(--amber);background:rgba(255,180,84,.12)}   /* r297 · APONTAR ligado */
 #localwrap{position:relative;flex:1;min-height:0;overflow:hidden;background:#04060c;touch-action:none}
 #localcv{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab}
 #locallbls{position:absolute;inset:0;pointer-events:none;overflow:hidden}
@@ -1201,7 +1202,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="tpn">Os pontos vêm do catálogo CelesTrak, na posição de agora. Desmarcar um grupo esconde os pontos, os nomes e as órbitas dele. Afastando o zoom, os satélites somem por ordem de altitude, os mais baixos primeiro.</div>
   </div>
   <div id="localpop">
-    <div class="lphead"><span id="localtit">◎ PLANETÁRIO</span><span class="lpbtns"><button id="localiss" data-tip="As próximas passagens da ISS e da Tiangong neste lugar">ISS</button><button id="localhud" data-tip="Esconder ou mostrar a bússola e o mapa">HUD</button><button id="localdata" data-tip="Ver o céu em outra data">◈</button><button id="localx">✕</button></span></div>
+    <div class="lphead"><span id="localtit">◎ PLANETÁRIO</span><span class="lpbtns"><button id="localsens" data-tip="Apontar o celular para o céu: giroscópio e bússola (pede permissão)">APONTAR</button><button id="localgps" data-tip="Usar a posição do aparelho (pede permissão)">GPS</button><button id="localiss" data-tip="As próximas passagens da ISS e da Tiangong neste lugar">ISS</button><button id="localhud" data-tip="Esconder ou mostrar a bússola e o mapa">HUD</button><button id="localdata" data-tip="Ver o céu em outra data">◈</button><button id="localx">✕</button></span></div>
     <div id="localwrap">
       <canvas id="localcv"></canvas>
       <div id="locallbls"></div>
@@ -7001,7 +7002,7 @@ function localAbre(lat, lon){
     {tx:'O mapa no canto mostra onde você está: toque nele para mudar de lugar, + e − dão zoom, ⛶ abre o mapa grande com a busca de lugares. O botão ◈ muda a data: eclipses, a Lua e os planetas obedecem. HUD esconde a bússola e o mapa.', alvo:'#localmapa'}
   ]), 600);
 }
-function localFecha(){ LOCAL.on = false; document.getElementById('localpop').classList.remove('on'); localCardFecha(); localMapaGrande(false); }
+function localFecha(){ if(LOCAL.sens) localSensores(false); LOCAL.on = false; document.getElementById('localpop').classList.remove('on'); localCardFecha(); localMapaGrande(false); }
 /* r289 · o mini card dentro do céu: Sol, Lua, planetas (a ficha do atlas), estrelas famosas (fichaEstrela) e constelações (CEU_FICHA) */
 function localCardFecha(){ const el = document.getElementById('localcard'); if(el) el.classList.remove('on'); }
 function localFicha(id, tipo){
@@ -7119,12 +7120,13 @@ function localMonta(){
   const wrap = document.getElementById('localwrap');
   let drag = null;
   const dedos = new Map(); let pinca = null;
-  cv.addEventListener('pointerdown', e=>{ dedos.set(e.pointerId, {x:e.clientX, y:e.clientY}); if(dedos.size === 2){ const p = [...dedos.values()]; pinca = {d0:Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y), fov0:LOCAL.fov}; drag = null; return; } drag = {x:e.clientX, y:e.clientY, az:LOCAL.az, alt:LOCAL.alt, mexeu:false}; try{ cv.setPointerCapture(e.pointerId); }catch(er){} });
+  cv.addEventListener('pointerdown', e=>{ dedos.set(e.pointerId, {x:e.clientX, y:e.clientY}); if(dedos.size === 2){ const p = [...dedos.values()]; pinca = {d0:Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y), fov0:LOCAL.fov}; drag = null; return; } drag = {x:e.clientX, y:e.clientY, az:LOCAL.az, alt:LOCAL.alt, mexeu:false, off:LOCAL.sensOff || 0}; try{ cv.setPointerCapture(e.pointerId); }catch(er){} });
   cv.addEventListener('pointermove', e=>{
     if(dedos.has(e.pointerId)) dedos.set(e.pointerId, {x:e.clientX, y:e.clientY});
     if(pinca && dedos.size === 2){ const p = [...dedos.values()]; const d = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y); LOCAL.fov = Math.max(30, Math.min(100, pinca.fov0*pinca.d0/Math.max(20, d))); cam.fov = LOCAL.fov; cam.updateProjectionMatrix(); LOCAL.ultimo = 0; return; }   /* r289 · a pinça muda o campo no toque */
     if(!drag) return; const k = LOCAL.fov/Math.max(300, wrap.clientWidth);
     if(Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 6) drag.mexeu = true;
+    if(LOCAL.sens){ LOCAL.sensOff = drag.off - (e.clientX - drag.x)*k; LOCAL.ultimo = 0; return; }   /* r297 · com os sensores no comando, o arrasto de lado corrige a bússola */
     LOCAL.az = drag.az - (e.clientX - drag.x)*k; LOCAL.alt = Math.max(-25, Math.min(89, drag.alt + (e.clientY - drag.y)*k)); LOCAL.ultimo = 0; });
   const solta = e=>{ dedos.delete(e.pointerId); if(dedos.size < 2) pinca = null; if(drag && !drag.mexeu && e.type === 'pointerup'){ const r = cv.getBoundingClientRect(); localToqueNoCeu(e.clientX - r.left, e.clientY - r.top); } drag = null; };   /* r289 · o toque parado escolhe o astro mais perto */
   cv.addEventListener('pointerup', solta); cv.addEventListener('pointercancel', solta);
@@ -7207,6 +7209,70 @@ function localPassagensCard(){
     showHint(t('O RELÓGIO FOI AO PONTO ALTO DA PASSAGEM'));
   }));
 }
+/* ================= r297 · APONTAR O CELULAR PARA O CEU (sensores) e a posicao do aparelho =================
+   Opt-in por botao, nunca automatico (regra dele): 'APONTAR' pede a permissao dos sensores (o iOS 13+ exige um gesto)
+   e passa a dirigir o olhar pelo giroscopio e pela bussola: o rumo da camera traseira e R·(0,0,-1), com
+   R = Rz(alpha)·Rx(beta)·Ry(gamma) (W3C), lido no quadro Leste-Norte-Cima; a rolagem do aparelho vira o 'up' da
+   camera pelo topo da tela (screen.orientation.angle). No iOS a bussola vem de webkitCompassHeading (o alpha de la e
+   relativo); no Android do evento deviceorientationabsolute. A bussola dos celulares erra alguns graus (declinacao
+   magnetica, interferencia): arrastar de lado enquanto os sensores mandam CORRIGE o rumo (LOCAL.sensOff). 'GPS' pede a
+   posicao ao aparelho uma vez e poe o lugar nela; nada sai do aparelho (fica no carto:local como qualquer lugar). */
+function localSensEvento(e){
+  if(!LOCAL.sens) return;
+  let alpha = e.alpha, beta = e.beta, gamma = e.gamma;
+  if(alpha === null || beta === null || gamma === null || alpha === undefined) return;
+  let abs = e.absolute === true || e.type === 'deviceorientationabsolute';
+  if(typeof e.webkitCompassHeading === 'number' && isFinite(e.webkitCompassHeading)){ alpha = 360 - e.webkitCompassHeading; abs = true; }
+  if(!abs && LOCAL.sensAbs) return;   /* ja temos a bussola de verdade: o evento relativo nao manda */
+  if(abs) LOCAL.sensAbs = true;
+  const A = alpha*D2R, B = beta*D2R, G = gamma*D2R, cA = Math.cos(A), sA = Math.sin(A), cB = Math.cos(B), sB = Math.sin(B), cG = Math.cos(G), sG = Math.sin(G);
+  /* R = Rz(A) Rx(B) Ry(G): as colunas no quadro Leste-Norte-Cima */
+  const c1 = [cA*cG - sA*sB*sG, cG*sA + cA*sB*sG, -cB*sG];
+  const c2 = [-cB*sA, cA*cB, sB];
+  const c3 = [cA*sG + cG*sA*sB, sA*sG - cA*cG*sB, cB*cG];
+  const gE = -c3[0], gN = -c3[1], gU = -c3[2];   /* o rumo da camera traseira: -z do aparelho */
+  const off = LOCAL.sensOff || 0;
+  const az = (Math.atan2(gE, gN)/D2R + off + 360) % 360, alt = Math.asin(Math.max(-1, Math.min(1, gU)))/D2R;
+  /* o topo da tela no aparelho, pela rotacao da tela */
+  const ang = (screen.orientation && typeof screen.orientation.angle === 'number') ? screen.orientation.angle : (typeof window.orientation === 'number' ? window.orientation : 0);
+  const tx = ang === 90 ? -1 : ((ang === 270 || ang === -90) ? 1 : 0), ty = ang === 0 ? 1 : (ang === 180 ? -1 : 0);
+  const uE = c1[0]*tx + c2[0]*ty, uN = c1[1]*tx + c2[1]*ty, uU = c1[2]*tx + c2[2]*ty;
+  const o = off*D2R, co = Math.cos(o), so = Math.sin(o), uE2 = uE*co + uN*so, uN2 = -uE*so + uN*co;   /* a correcao gira o up junto */
+  const k = LOCAL.sensK === undefined ? 1 : 0.35;   /* o primeiro evento entra direto, os outros suavizados */
+  const dAz = ((az - LOCAL.az + 540) % 360) - 180;
+  LOCAL.az = (LOCAL.az + dAz*k + 360) % 360; LOCAL.alt = LOCAL.alt + (alt - LOCAL.alt)*k; LOCAL.sensK = 1; LOCAL.sensN = (LOCAL.sensN || 0) + 1;
+  if(!LOCAL.sensUp) LOCAL.sensUp = new THREE.Vector3();
+  LOCAL.sensUp.set(uE2, uU, -uN2);   /* Leste-Norte-Cima -> cena: leste +x, cima +y, norte -z */
+  if(LOCAL.sensUp.lengthSq() < 0.5) LOCAL.sensUp.set(0, 1, 0);
+  LOCAL.ultimo = 0;
+}
+function localSensSync(){ const b = document.getElementById('localsens'); if(b) b.classList.toggle('on', !!LOCAL.sens); }
+async function localSensores(liga){
+  if(!liga){
+    LOCAL.sens = false; window.removeEventListener('deviceorientationabsolute', localSensEvento); window.removeEventListener('deviceorientation', localSensEvento); LOCAL.sensUp = null; localSensSync();
+    showHint(t('SENSORES DESLIGADOS · arraste para olhar')); return;
+  }
+  if(typeof DeviceOrientationEvent === 'undefined'){ showHint(t('ESTE APARELHO NÃO TEM SENSORES DE ORIENTAÇÃO')); return; }
+  if(typeof DeviceOrientationEvent.requestPermission === 'function'){
+    let r = 'denied'; try{ r = await DeviceOrientationEvent.requestPermission(); }catch(e){}
+    if(r !== 'granted'){ showHint(t('SEM PERMISSÃO PARA OS SENSORES · libere nos ajustes do navegador')); return; }
+  }
+  LOCAL.sens = true; LOCAL.sensOff = 0; LOCAL.sensK = undefined; LOCAL.sensAbs = false; LOCAL.sensN = 0;
+  if('ondeviceorientationabsolute' in window) window.addEventListener('deviceorientationabsolute', localSensEvento);
+  window.addEventListener('deviceorientation', localSensEvento);
+  /* apontar so faz sentido AGORA: o relogio vai ao vivo */
+  if(SIMT.vel !== 'real'){ SIMT.vel = 'real'; SIMT.pausado = false; SIMT.data = Date.now(); if(typeof simClockUI === 'function') simClockUI(); }
+  localSensSync();
+  showHint(t('APONTE O CELULAR PARA O CÉU · arraste de lado se a bússola errar'));
+  setTimeout(()=>{ if(LOCAL.sens && !LOCAL.sensN) showHint(t('OS SENSORES NÃO RESPONDEM · este navegador não os libera aqui')); }, 3000);
+  if(typeof tutInicia === 'function') tutInicia('sensores', [{tx:'<b>APONTAR:</b> o giroscópio e a bússola do celular dirigem o olhar: aponte a parte de trás do aparelho para um astro e o planetário mostra o que é. A bússola dos celulares erra alguns graus: arraste de lado até a Lua ou uma estrela conhecida bater. Toque em APONTAR de novo para voltar ao arrasto.'}]);
+}
+function localGps(){
+  if(!navigator.geolocation){ showHint(t('ESTE NAVEGADOR NÃO DÁ A POSIÇÃO')); return; }
+  showHint(t('PEDINDO A POSIÇÃO AO APARELHO...'));
+  navigator.geolocation.getCurrentPosition(p=>{ localVaiPara(p.coords.latitude, p.coords.longitude); LOCAL.ultimo = 0; showHint(t('LUGAR: A SUA POSIÇÃO') + ' · ' + p.coords.latitude.toFixed(2) + ', ' + p.coords.longitude.toFixed(2)); },
+    ()=>showHint(t('SEM ACESSO À POSIÇÃO · escolha o lugar no mapa')), {enableHighAccuracy:false, timeout:10000, maximumAge:600000});
+}
 function localFrame(){
   if(!LOCAL.on){ LOCAL.laco = false; return; }
   requestAnimationFrame(localFrame);
@@ -7249,7 +7315,7 @@ function localFrame(){
   for(const p of C.planetas){ const sp = LOCAL.plan[p.id]; const d = localDir(p.alt, p.az); sp.position.copy(d).multiplyScalar(700); const mag = p.id === 'venus' ? 5.5 : (p.id === 'jupiter' ? 5 : (p.id === 'marte' ? 4 : (p.id === 'saturno' ? 3.6 : 3.2))); sp.scale.setScalar(mag*(0.55 + 0.45*noite)); sp.visible = p.alt > -0.01 && (noite > 0.05 || p.id === 'venus'); }
   /* a câmera olha para (az, alt) */
   const dV = localDir(LOCAL.alt*D2R, LOCAL.az*D2R);
-  cam.position.set(0, 0, 0); cam.lookAt(dV.x*10, dV.y*10, dV.z*10); cam.up.set(0, 1, 0);
+  cam.position.set(0, 0, 0); if(LOCAL.sens && LOCAL.sensUp) cam.up.copy(LOCAL.sensUp); else cam.up.set(0, 1, 0); cam.lookAt(dV.x*10, dV.y*10, dV.z*10);   /* r297 · o up vem do topo da tela do aparelho */
   LOCAL.r.render(LOCAL.sc, cam);
   /* os rótulos, projetados */
   const lb = document.getElementById('locallbls'); let hh = '';
@@ -16407,7 +16473,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r296';
+const BUILD = 'r297';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -17051,6 +17117,8 @@ $('#dp_eventos').addEventListener('click', ()=>{
 $('#evtpopx').addEventListener('click', ()=>$('#evtpop').classList.remove('on'));
 $('#satpopx').addEventListener('click', ()=>$('#satpop').classList.remove('on'));   /* r280 */
 $('#localx').addEventListener('click', localFecha);   /* r287 */
+$('#localsens').addEventListener('click', ()=>localSensores(!LOCAL.sens));
+$('#localgps').addEventListener('click', localGps);
 $('#localiss').addEventListener('click', ()=>{
   localPassagensCard();
   if(typeof tutInicia === 'function') tutInicia('isspass', [{tx:'<b>PASSAGENS:</b> a ISS e a Tiangong aparecem no céu deste lugar como um ponto âmbar quando estão ao Sol, cinza quando cruzam a sombra da Terra. A lista traz as passagens visíveis a olho nu dos próximos 5 dias; ▶ VER leva o relógio ao ponto alto de cada uma e vira o olhar para ela.'}]);
