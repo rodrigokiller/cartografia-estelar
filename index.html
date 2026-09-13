@@ -330,6 +330,10 @@ body.touch #datepop{bottom:auto;top:62px;left:12px;z-index:80;max-width:calc(100
 #localpop.semhud #localbussola,#localpop.semhud #localmapa{display:none}
 #locallbls .llbl[data-id]{pointer-events:auto;cursor:pointer}
 #locallbls .llbl.con{color:#7f9ac4;font-size:9.5px;letter-spacing:3px;opacity:.85}
+/* r294 · de dia o texto escurece e ganha halo claro: legível no azul do céu (pedido dele) */
+#localpop.dia #locallbls .llbl{color:#182a4e;text-shadow:0 0 3px rgba(255,255,255,.9),0 0 7px rgba(255,255,255,.7)}
+#localpop.dia #locallbls .llbl.sol{color:#8a4a08} #localpop.dia #locallbls .llbl.lua{color:#4a4630} #localpop.dia #locallbls .llbl.pla{color:#1a3c7a}
+#localpop.dia #locallbls .llbl.est{color:#2c3f66} #localpop.dia #locallbls .llbl.con{color:#2f5285;opacity:.95} #localpop.dia #locallbls .llbl.hz{color:#b05a00}
 #localcard{position:absolute;right:10px;bottom:10px;width:250px;max-height:62%;display:none;background:rgba(6,12,24,.92);border:1px solid var(--line2);padding:10px 12px;
   font-family:var(--mono);color:var(--ion);clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
 #localcard.on{display:flex;flex-direction:column}
@@ -1197,7 +1201,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="tpn">Os pontos vêm do catálogo CelesTrak, na posição de agora. Desmarcar um grupo esconde os pontos, os nomes e as órbitas dele. Afastando o zoom, os satélites somem por ordem de altitude, os mais baixos primeiro.</div>
   </div>
   <div id="localpop">
-    <div class="lphead"><span id="localtit">◎ O CÉU DE UM LUGAR</span><span class="lpbtns"><button id="localhud" data-tip="Esconder ou mostrar a bússola e o mapa">HUD</button><button id="localdata" data-tip="Ver o céu em outra data">◈</button><button id="localx">✕</button></span></div>
+    <div class="lphead"><span id="localtit">◎ PLANETÁRIO</span><span class="lpbtns"><button id="localhud" data-tip="Esconder ou mostrar a bússola e o mapa">HUD</button><button id="localdata" data-tip="Ver o céu em outra data">◈</button><button id="localx">✕</button></span></div>
     <div id="localwrap">
       <canvas id="localcv"></canvas>
       <div id="locallbls"></div>
@@ -6941,7 +6945,7 @@ function localSelecao(liga){
   LOCAL.sel = !!liga;
   if(typeof SISM !== 'undefined' && SISM.grupo) SISM.grupo.visible = !LOCAL.sel;
   if(LOCAL.sel){
-    showHint(t('TOQUE NUM LUGAR DA TERRA · o céu desse lugar abre em seguida'));
+    showHint(t('TOQUE NUM LUGAR DA TERRA · o planetário desse lugar abre em seguida'));
     if(ACT && ACT.kind === 'system' && ST.sys === 'sol' && !(ST.mapCard && ST.mapCard.id === 'terra' && (ACT.escr ? CAM.dist < 0.02 : CAM.dist < 6))){
       if(ACT.escr) irAoCorpo('terra');
       else { const pkT = acharPick('terra'); if(pkT){ const vT = pkT.getWorldPosition(new THREE.Vector3()); ST.mapCard = {type:'body', id:'terra', act:'focus', t:performance.now(), entrou:true}; markVisited('terra'); pushNav(); syncHash();
@@ -6991,7 +6995,7 @@ function localAbre(lat, lon){
   localResize(); localMapa(); LOCAL.ultimo = 0;
   if(!LOCAL.laco){ LOCAL.laco = true; requestAnimationFrame(localFrame); }
   if(typeof tutInicia === 'function' && typeof TUT !== 'undefined' && !TUT.v.has('ceulocal')) setTimeout(()=>tutInicia('ceulocal', [
-    {tx:'Este é o céu <b>desse lugar</b>, na data e na hora do relógio. Arraste para os lados para girar o olhar, para cima até o zênite, para baixo até o chão. A bússola diz para onde você olha.'},
+    {tx:'Este é o <b>planetário</b> desse lugar, na data e na hora do relógio. Arraste para os lados para girar o olhar, para cima até o zênite, para baixo até o chão. A bússola diz para onde você olha.'},
     {tx:'Toque num astro (o Sol, a Lua, um planeta, uma estrela com nome, uma constelação): um card abre aqui dentro, com o atalho para a ficha do mapa.'},
     {tx:'O mapa no canto mostra onde você está: toque nele para mudar de lugar, + e − dão zoom, ⛶ abre o mapa grande com a busca de lugares. O botão ◈ muda a data: eclipses, a Lua e os planetas obedecem. HUD esconde a bússola e o mapa.', alvo:'#localmapa'}
   ]), 600);
@@ -7046,10 +7050,13 @@ function localMonta(){
   r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
   const sc = new THREE.Scene(), cam = new THREE.PerspectiveCamera(LOCAL.fov, 1.6, 0.1, 3000);
   /* a abóbada: dia, crepúsculo e noite pela altura do Sol; abaixo do horizonte o chão */
-  const dome = new THREE.Mesh(new THREE.SphereGeometry(900, 64, 48), new THREE.ShaderMaterial({side:THREE.BackSide, depthWrite:true, extensions:{derivatives:true},
-    uniforms:{uSunAlt:{value:0}, uSunDir:{value:new THREE.Vector3(0, 0, -1)}},
-    vertexShader:'varying vec3 vD; void main(){ vD = normalize(position); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
-    fragmentShader:'uniform float uSunAlt; uniform vec3 uSunDir; varying vec3 vD;\n'
+  /* r294 · a PAISAGEM (ele: 'poderia parecer que tem um chão ali e sou eu olhando no horizonte'): sem grade. O horizonte
+     ganha o relevo de duas cadeias de morros (ruído no azimute, seamless por cos/sin), e o chão é um plano em PERSPECTIVA
+     visto de 1,7 m de altura: a distância no chão vem da depressão (d = 1,7/tan), a textura é fbm nessa coordenada (grande
+     perto dos pés, comprimida no horizonte) e a névoa toma conta ao longe. O piso (hemisfério de raio 400) usa o mesmo
+     shader e sobe 5 graus acima do horizonte para tampar as estrelas atrás dos morros; acima do relevo ele descarta o pixel */
+  const domeUni = {uSunAlt:{value:0}, uSunDir:{value:new THREE.Vector3(0, 0, -1)}};
+  const domeFrag = NOISE_GLSL + 'uniform float uSunAlt; uniform vec3 uSunDir; uniform float uPiso; varying vec3 vD;\n'
       + 'void main(){ float h = vD.y; float day = smoothstep(-0.10, 0.12, uSunAlt); float tw = exp(-abs(uSunAlt + 0.02)*14.0);\n'
       + ' vec3 night = mix(vec3(0.045,0.06,0.11), vec3(0.012,0.016,0.04), clamp(h*1.4, 0.0, 1.0));\n'
       + ' vec3 dayc = mix(vec3(0.66,0.80,0.96), vec3(0.20,0.44,0.86), clamp(h*1.5, 0.0, 1.0));\n'
@@ -7057,20 +7064,27 @@ function localMonta(){
       + ' float twk = max(0.0, dot(normalize(vec3(vD.x, 0.0, vD.z)), normalize(vec3(uSunDir.x, 0.0, uSunDir.z))));\n'
       + ' c += vec3(0.98,0.48,0.16)*tw*pow(twk, 3.0)*max(0.0, 1.0 - h*3.5);\n'
       + ' c += mix(vec3(0.0), vec3(0.55,0.65,0.80), day)*exp(-max(h, 0.0)*22.0)*0.30;\n'
-      + ' if(h < 0.0){ float dep = -h; vec3 g0 = mix(vec3(0.044,0.052,0.074), vec3(0.165,0.195,0.235), day);\n'
-      + '   vec3 c2 = mix(g0*1.25, g0*0.65, clamp(dep*2.2, 0.0, 1.0));\n'
-      + '   vec3 nevoa = mix(vec3(0.06,0.075,0.11), vec3(0.62,0.72,0.86), day); c2 = mix(c2, nevoa, exp(-dep*40.0)*0.7);\n'
-      + '   float az = atan(vD.x, -vD.z); float sa = sin(az*12.0); float ga = abs(sa)/max(fwidth(sa), 1e-5);\n'
-      + '   float sd = sin(dep*57.2958*0.3141593); float gd = abs(sd)/max(fwidth(sd), 1e-5);\n'
-      + '   float lin = (1.0 - smoothstep(0.7, 1.6, ga))*smoothstep(0.02, 0.10, dep)*(1.0 - smoothstep(0.85, 1.25, dep)) + (1.0 - smoothstep(0.7, 1.6, gd));\n'
-      + '   c2 += vec3(0.30,0.50,0.90)*lin*0.22*mix(0.6, 1.0, day); c = c2; }\n'
-      + ' float hl = 1.0 - smoothstep(0.0, fwidth(h)*1.3 + 1e-5, abs(h)); c = mix(c, mix(vec3(0.42,0.50,0.64), vec3(0.85,0.90,1.0), day), hl*0.85);\n'
-      + ' gl_FragColor = vec4(c, 1.0); }'}));
+      + ' float az = atan(vD.x, -vD.z); vec3 ca = vec3(cos(az), sin(az), 0.0);\n'
+      + ' float r1 = 0.008 + 0.034*fbm(ca*2.2 + vec3(0.0, 0.0, 5.0)); float r2 = 0.002 + 0.018*fbm(ca*5.0 + vec3(0.0, 0.0, 11.0));\n'
+      + ' if(uPiso > 0.5 && h > max(r1, r2) + 0.003) discard;\n'
+      + ' vec3 nevoa = mix(vec3(0.055,0.065,0.095), vec3(0.64,0.73,0.86), day);\n'
+      + ' vec3 solo = mix(vec3(0.030,0.034,0.028), vec3(0.27,0.30,0.21), day);\n'
+      + ' float fw = fwidth(h) + 1e-5;\n'
+      + ' vec3 morroL = mix(solo*0.55, nevoa, 0.55 + 0.15*day); vec3 morroP = mix(solo*0.45, nevoa, 0.22);\n'
+      + ' c = mix(morroL, c, smoothstep(r1 - fw, r1 + fw, h));\n'
+      + ' c = mix(morroP, c, smoothstep(r2 - fw, r2 + fw, h));\n'
+      + ' if(h < 0.0){ float dep = -h; float d = 1.7/max(tan(dep), 0.002); vec2 g = vec2(sin(az), -cos(az))*d;\n'
+      + '   float n1 = fbm(vec3(g*0.08, 3.0)); float n2 = fbm(vec3(g*0.45, 9.0)); float at = exp(-d/70.0);\n'
+      + '   vec3 c2 = solo*(1.0 + ((n1 - 0.5)*0.55 + (n2 - 0.5)*0.35)*at);\n'
+      + '   c2 = mix(c2, nevoa, 1.0 - exp(-d/700.0)); c = c2; }\n'
+      + ' gl_FragColor = vec4(c, 1.0); }';
+  const domeMat = (ehPiso)=>new THREE.ShaderMaterial({side:THREE.BackSide, depthWrite:true, extensions:{derivatives:true},
+    uniforms:{uSunAlt:domeUni.uSunAlt, uSunDir:domeUni.uSunDir, uPiso:{value:ehPiso ? 1 : 0}},
+    vertexShader:'varying vec3 vD; void main(){ vD = normalize(position); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
+    fragmentShader:domeFrag});
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(900, 64, 48), domeMat(false));
   dome.renderOrder = -10; sc.add(dome);
-  /* r293 · o PISO: um hemisfério opaco por dentro, mais perto que as estrelas (raio 400 contra 700), com o MESMO material do
-     chão: o que está abaixo do horizonte fica atrás dele. As estrelas e as linhas das constelações apareciam através do
-     chão (print dele ao pôr do sol), e era isso que dava a cara de oco */
-  const piso = new THREE.Mesh(new THREE.SphereGeometry(400, 64, 24, 0, Math.PI*2, Math.PI/2, Math.PI/2), dome.material);
+  const piso = new THREE.Mesh(new THREE.SphereGeometry(400, 64, 24, 0, Math.PI*2, Math.PI/2 - 0.09, Math.PI/2 + 0.09), domeMat(true));
   piso.renderOrder = -9; sc.add(piso);
   /* as estrelas e as constelações do catálogo do céu */
   const n = ESTRELAS_CEU.length, pos = new Float32Array(n*3), col = new Float32Array(n*3), c = new THREE.Color();
@@ -7140,6 +7154,7 @@ function localFrame(){
   ESTRELAS_CEU.forEach((s, i)=>{ const hz = localAltAzPrec(s[2]*15*D2R, s[3]*D2R, lst, φ, PM); const d = localDir(hz.alt, hz.az).multiplyScalar(700); pos[i*3] = d.x; pos[i*3+1] = d.y; pos[i*3+2] = d.z; if(hz.alt > 0) vis++; });
   LOCAL.pB.geometry.attributes.position.needsUpdate = true; LOCAL.pF.geometry.attributes.position.needsUpdate = true; LOCAL.linhas.geometry.attributes.position.needsUpdate = true;
   const sunAlt = Math.sin(C.sol.alt), noite = 1 - Math.min(1, Math.max(0, (sunAlt + 0.14)/0.16));
+  document.getElementById('localpop').classList.toggle('dia', noite < 0.25);   /* r294 · de dia os rótulos escurecem para ler no azul */
   /* r293 · de dia as estrelas não somem de vez (pedido dele): as brilhantes e as linhas ficam com um mínimo de presença */
   LOCAL.pB.material.opacity = 0.95*Math.max(noite, 0.4); LOCAL.pF.material.opacity = 0.85*Math.max(noite, 0.22); LOCAL.linhas.material.opacity = 0.28*Math.max(noite, 0.5);
   /* r289 · as 5 mil estrelas do catálogo grande, giradas por matriz (equatorial -> horizonte) */
@@ -15236,7 +15251,7 @@ function cardRender(){
   /* ENTRAR agora mora no TOPO do card, como o Rodrigo pediu */
   if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='satlive' ? t('▶ ENTRAR · TRAVAR NO SATÉLITE') : (cur.navKind==='body'?t('▶ ENTRAR · TRAVAR LINK'):t('▶ ENTRAR · TRAVAR ROTA')))+'</button>';
   { const bT = (cur.type==='body') ? cur.b : ((cur.navKind==='body' && ALLBODIES[cur.navId]) ? ALLBODIES[cur.navId] : null);
-    if(bT && bT.id === 'terra' && ACT && ACT.kind === 'system' && ST.sys === 'sol') h += '<button class="xbtn" id="btnlocal">'+t(LOCAL.sel ? '✕ CANCELAR A ESCOLHA DO LUGAR' : '◎ VER O CÉU DE UM LUGAR')+'</button>'; }   /* r287 */
+    if(bT && bT.id === 'terra' && ACT && ACT.kind === 'system' && ST.sys === 'sol') h += '<button class="xbtn" id="btnlocal">'+t(LOCAL.sel ? '✕ CANCELAR A ESCOLHA DO LUGAR' : '◎ ABRIR O PLANETÁRIO')+'</button>'; }   /* r287 */
   { const bHab = (cur.type==='body') ? cur.b : ((cur.navKind==='body' && ALLBODIES[cur.navId]) ? ALLBODIES[cur.navId] : null);
     if(bHab && bHab.visual && MODEMAP[bHab.visual.mode] === 4)
       h += '<button class="xbtn" id="btnhab">'+t('◉ MUNDOS HABITÁVEIS LADO A LADO')+'</button>';
@@ -16165,7 +16180,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r293';
+const BUILD = 'r294';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
