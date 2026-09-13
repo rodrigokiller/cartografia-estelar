@@ -1617,6 +1617,7 @@ barnardb: {
   fict: 'After 60 years of imaginary planets here, the real one showed up.'
 },
 cygx1: {
+  desig: 'STELLAR BLACK HOLE',
   kind: 'The first black hole humanity accepted',
   quick: [['MASS','21 Suns'],['RADIUS','~0.09 R☉ (horizon)'],['DISTANCE','7,200 ly'],['DISCOVERED','1964'],['COMPANION','blue supergiant'],['SPIN','~95% of the limit']],
   sections: [
@@ -1656,6 +1657,7 @@ k16b_star: {
   fict: null
 },
 kepler16b: {
+  desig: 'CIRCUMBINARY · “TATOOINE”',
   kind: 'The planet of the two suns',
   quick: [['RADIUS','0.75 R♃'],['YEAR','229 d'],['ORBITS','both stars'],['TEMP','−73 °C'],['TYPE','gaseous (a cold Saturn)'],['DISCOVERED','2011']],
   sections: [
@@ -1944,6 +1946,7 @@ cabecacavalo: {
   fict: 'Bedroom poster, notebook cover and eternal logo: when someone draws "space", half the time they draw this silhouette.'
 },
 pa99lente: {
+  desig: 'M31 · ANONYMOUS STAR',
   kind: 'A star of Andromeda that blinked once',
   quick: [['TYPE','star in M31'],['RADIUS','~1 R☉ (est.)'],['MASS','0.02 to 3.6 Sun'],['DISTANCE','2.5 million ly'],['EVENT','microlensing, 1999'],['REPEATS','never']],
   sections: [
@@ -2317,6 +2320,7 @@ p2buraco: {
   fict: 'It is the galactic center that science fiction most often adopts as a destination, from Mass Effect to countless space operas.'
 },
 p1disco: {
+  desig: 'M31 · ECCENTRIC DISK',
   kind: 'The false second nucleus of Andromeda',
   quick: [['WHAT IT IS','a disk of stars'],['RADIUS','~5 light-years'],['STARS','millions'],['ORBIT','elongated'],['SPEED','1,000 km/s'],['REVEALED','Hubble, 1993']],
   sections: [

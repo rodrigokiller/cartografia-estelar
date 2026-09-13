@@ -165,12 +165,12 @@ body.touch #topright{z-index:76}
 #panel::before,#panel::after,#findbox::before,#findbox::after,#cmpcard::before,#cmpcard::after,
 #helpcard::before,#helpcard::after,#player::before,#player::after,#misscard::before,#misscard::after,
 #filtpop::before,#filtpop::after,#cfgpop::before,#cfgpop::after,#tut::before,#tut::after,
-#datepop::before,#datepop::after,#tourpop::before,#tourpop::after,#habpop::before,#habpop::after,#evtpop::before,#evtpop::after,#satpop::before,#satpop::after,#ceupop::before,#ceupop::after,#localpop::before,#localpop::after{
+#datepop::before,#datepop::after,#tourpop::before,#tourpop::after,#habpop::before,#habpop::after,#evtpop::before,#evtpop::after,#satpop::before,#satpop::after,#localpop::before,#localpop::after,#localcard::before,#localcard::after{
   content:'';position:absolute;pointer-events:none;z-index:2}
-#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before,#filtpop::before,#cfgpop::before,#tut::before,#datepop::before,#tourpop::before,#habpop::before,#evtpop::before,#satpop::before,#ceupop::before,#localpop::before{
+#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before,#filtpop::before,#cfgpop::before,#tut::before,#datepop::before,#tourpop::before,#habpop::before,#evtpop::before,#satpop::before,#localpop::before,#localcard::before{
   left:-1px;top:-1px;
   background:linear-gradient(-45deg,transparent calc(50% - 1px),var(--line2) calc(50% - 1px),var(--line2) 50%,transparent 50%)}
-#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after,#filtpop::after,#cfgpop::after,#tut::after,#datepop::after,#tourpop::after,#habpop::after,#evtpop::after,#satpop::after,#ceupop::after,#localpop::after{
+#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after,#filtpop::after,#cfgpop::after,#tut::after,#datepop::after,#tourpop::after,#habpop::after,#evtpop::after,#satpop::after,#localpop::after,#localcard::after{
   right:-1px;bottom:-1px;
   background:linear-gradient(-45deg,transparent 50%,var(--line2) 50%,var(--line2) calc(50% + 1px),transparent calc(50% + 1px))}
 #panel::before,#panel::after{width:18px;height:18px}
@@ -186,16 +186,16 @@ body.touch #topright{z-index:76}
 #datepop::before,#datepop::after{width:10px;height:10px}
 #tourpop::before,#tourpop::after{width:10px;height:10px}
 #habpop::before,#habpop::after{width:10px;height:10px}
-#evtpop::before,#evtpop::after,#satpop::before,#satpop::after,#ceupop::before,#ceupop::after{width:10px;height:10px}
+#evtpop::before,#evtpop::after,#satpop::before,#satpop::after{width:10px;height:10px}
+#localcard::before,#localcard::after{width:8px;height:8px}
 #evtpop{position:relative}
 #satpop{position:relative}
-#ceupop{position:relative}
 #localpop::before,#localpop::after{width:12px;height:12px}
 #localpop{position:relative}
 #tourpoplista .filtrow b{color:var(--amber)}
 #tut::before{background:linear-gradient(-45deg,transparent calc(50% - 1px),rgba(255,180,84,.45) calc(50% - 1px),rgba(255,180,84,.45) 50%,transparent 50%)}
 #tut::after{background:linear-gradient(-45deg,transparent 50%,rgba(255,180,84,.45) 50%,rgba(255,180,84,.45) calc(50% + 1px),transparent calc(50% + 1px))}
-#nowplay{position:absolute;top:64px;left:50%;transform:translateX(-50%);z-index:15;
+#nowplay{position:absolute;top:64px;left:50%;transform:translateX(-50%);z-index:17;
   font-family:var(--mono);font-size:10px;letter-spacing:2.5px;color:var(--ion);
   background:rgba(6,12,24,.78);border:1px solid var(--line);padding:6px 14px;
   opacity:0;transition:opacity .5s;pointer-events:none;white-space:nowrap}
@@ -307,6 +307,7 @@ body.touch #datepop{bottom:auto;top:62px;left:12px;z-index:80;max-width:calc(100
   width:min(980px,96vw);height:min(660px,88vh);background:var(--panel);border:1px solid var(--line2);padding:10px 12px 10px;
   clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
 #localpop.on{display:flex;animation:tourpopnasce .24s ease-out}
+#localpop.on ~ #datepop{z-index:30}   /* r291 · o seletor de data aberto de dentro do céu fica por cima do modal */
 #localpop .lphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;
   font-family:var(--mono);font-size:9.5px;letter-spacing:2.5px;color:var(--amber)}
 #localpop .lpbtns{display:flex;gap:6px}
@@ -354,19 +355,6 @@ body.touch #localinfo{display:none}
 body.touch #localpop{width:100vw;height:100dvh;padding:8px;clip-path:none}
 body.touch #localpop::before,body.touch #localpop::after{display:none}   /* r290 · sem chanfro, sem as diagonais */
 body.touch #localbussola{width:60px;height:60px} body.touch #localmapa{width:120px} body.touch #localmapacv{width:120px;height:60px}
-/* r286 · o céu de hoje (molde do satpop) */
-#ceupop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:27;display:none;
-  width:min(440px,94vw);background:var(--panel);border:1px solid var(--line2);padding:14px 16px 12px;
-  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
-#ceupop.on{display:block;animation:tourpopnasce .24s ease-out}
-#ceupop .tphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
-  font-family:var(--mono);font-size:9.5px;letter-spacing:2.5px;color:var(--amber)}
-#ceupop .tphead button{width:20px;height:20px;background:none;border:1px solid var(--line2);color:var(--dim);
-  font-family:var(--mono);font-size:9px;line-height:1;cursor:pointer;padding:0}
-#ceupop .tpn{font-family:var(--mono);font-size:8.5px;letter-spacing:1.2px;color:var(--dim2);line-height:1.7;margin-top:10px}
-#ceulista .satrow span{line-height:1.5}
-#ceulista .satrow em{font-style:normal;color:var(--amber)}
-#ceulista .satrow b{color:var(--ion);border:1px solid var(--line2);padding:2px 7px;font-size:8.5px}
 #satpop .tphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
   font-family:var(--mono);font-size:9.5px;letter-spacing:2.5px;color:var(--amber)}
 #satpop .tphead button{width:20px;height:20px;background:none;border:1px solid var(--line2);color:var(--dim);
@@ -400,7 +388,7 @@ body.touch #localbussola{width:60px;height:60px} body.touch #localmapa{width:120
 #evtlista .evx:hover{color:var(--amber);border-color:var(--amber)}
 #evtlista .evx .evd{color:var(--ion);display:block;font-size:8.5px;letter-spacing:1.8px}
 #evtlista .evx.past{opacity:.55}
-#evtlista .evx.past .evd::after{content:' · JÁ PASSOU';color:var(--dim2)}
+#evtlista .evx .evpast{color:var(--dim2);font-style:normal}   /* r291 · o texto sai do CSS para traduzir */
 #evtlista .evvazio{font-family:var(--mono);font-size:9px;color:var(--dim2);padding:10px 4px;letter-spacing:1.5px}
 #evtpop .tpn{font-family:var(--mono);font-size:8.5px;letter-spacing:1.2px;color:var(--dim2);line-height:1.7}
 #datepop .devt{display:block;width:100%;text-align:left;background:none;border:1px solid var(--line2);
@@ -5861,15 +5849,22 @@ function updateLabels(){
 
 /* ---------- construção das cenas ---------- */
 let ACT = null;
-function disposeScene(act){
-  if(!act) return;
-  act.scene.traverse(o=>{
+/* r291 · descarta uma cena ou qualquer Object3D: geometria, material (fora do ANIM_MATS) */
+function descartaCena(sc){
+  if(!sc) return;
+  sc.traverse(o=>{
     if(o.geometry) o.geometry.dispose();
     if(o.material){
       const mats = Array.isArray(o.material)?o.material:[o.material];
       mats.forEach(m=>{ const i = ANIM_MATS.indexOf(m); if(i>=0) ANIM_MATS.splice(i,1); m.dispose(); });
     }
   });
+}
+function disposeScene(act){
+  if(!act) return;
+  descartaCena(act.scene);
+  if(act.sceneCeu) descartaCena(act.sceneCeu);   /* r291 · o céu profundo (a Via Láctea de 7 mil pontos, as vizinhas, o fundo) vazava em toda troca de cena */
+  if(window.__luaTarde) window.__luaTarde = window.__luaTarde.filter(m=>{ let p = m; while(p){ if(p === act.scene) return false; p = p.parent; } return true; });   /* r291 · o warm-up não toca malha de cena morta */
   if(act.labels) act.labels.forEach(l=>{ if(l.el && l.el.remove) l.el.remove(); });
 }
 
@@ -6933,7 +6928,7 @@ function localSelecao(liga){
     showHint(t('TOQUE NUM LUGAR DA TERRA · o céu desse lugar abre em seguida'));
     if(ACT && ACT.kind === 'system' && ST.sys === 'sol' && !(ST.mapCard && ST.mapCard.id === 'terra' && (ACT.escr ? CAM.dist < 0.02 : CAM.dist < 6))){
       if(ACT.escr) irAoCorpo('terra');
-      else { const pkT = acharPick('terra'); if(pkT){ const vT = pkT.getWorldPosition(new THREE.Vector3()); ST.mapCard = {type:'body', id:'terra', act:'focus', t:performance.now(), entrou:true};
+      else { const pkT = acharPick('terra'); if(pkT){ const vT = pkT.getWorldPosition(new THREE.Vector3()); ST.mapCard = {type:'body', id:'terra', act:'focus', t:performance.now(), entrou:true}; markVisited('terra'); pushNav(); syncHash();
         CAMTW = {t0:performance.now(), ms:1800, f:{yaw:CAM.yaw, pitch:CAM.pitch, dist:CAM.dist}, t:{yaw:CAM.yaw, pitch:Math.max(0.2, CAM.pitch), dist:4.5}, p0:CAM.pivot.clone(), p1:vT, segue:'terra'}; ZOOM = null; } }   /* r290 · no cênico voa dentro do mapa: a cena de foco não tem a Terra do mapa */
     }
   }
@@ -7261,7 +7256,7 @@ function satVivoTick(){
     return;
   }
   const data = new Date(SIMT.data), gmst = satellite.gstime(data);
-  const arr = SATV.geo.attributes.position.array, v = new THREE.Vector3();
+  const arr = SATV.geo.attributes.position.array, v = SATV._vt || (SATV._vt = new THREE.Vector3());   /* r291 · sem alocar por quadro */
   const n = SATV.sats.length, lote = Math.min(n, 220);
   for(let k = 0; k < lote; k++){
     const i = SATV.cursor; SATV.cursor = (SATV.cursor + 1) % n;
@@ -8987,7 +8982,7 @@ function buildSystem(sysId, spin0){
             dt2.mesh.material = liveMaterial(dt2.id);
             const slF = solLuz.find(x=>x.grupo === dt2.grupo);
             if(slF){ slF.mats = slF.mats.filter(m=>m !== antigo); slF.mats.push(dt2.mesh.material); }
-            if(antigo && antigo.dispose) antigo.dispose();
+            if(antigo){ const ia = ANIM_MATS.indexOf(antigo); if(ia >= 0) ANIM_MATS.splice(ia, 1); if(antigo.dispose) antigo.dispose(); }   /* r291 · fora do ANIM_MATS também */
             /* nuvem de verdade, quando existe, numa casca própria */
             const nf = texturaFoto(dt2.id + 'nuvens');
             if(nf){
@@ -10394,10 +10389,10 @@ function grupoSonda(raio){
   disco.rotation.z = Math.PI/2; disco.position.set(raio*0.36, 0, 0); g.add(disco);
   /* prato: casca externa, casca interna, aro e a corneta em três hastes */
   const prato = _cil(mPrato, raio*0.95, raio*0.18, raio*0.30, 40);
-  prato.geometry = new THREE.CylinderGeometry(raio*0.95, raio*0.18, raio*0.30, 40, 1, true);
+  prato.geometry.dispose(); prato.geometry = new THREE.CylinderGeometry(raio*0.95, raio*0.18, raio*0.30, 40, 1, true);
   prato.rotation.x = -Math.PI/2; prato.position.z = raio*0.42; g.add(prato);
   const pratoIn = _cil(mPratoIn, raio*0.80, raio*0.20, raio*0.24, 40);
-  pratoIn.geometry = new THREE.CylinderGeometry(raio*0.80, raio*0.20, raio*0.24, 40, 1, true);
+  pratoIn.geometry.dispose(); pratoIn.geometry = new THREE.CylinderGeometry(raio*0.80, raio*0.20, raio*0.24, 40, 1, true);
   pratoIn.rotation.x = -Math.PI/2; pratoIn.position.z = raio*0.45; g.add(pratoIn);
   const aro = new THREE.Mesh(new THREE.TorusGeometry(raio*0.95, raio*0.018, 6, 48), mCorpo);
   aro.position.z = raio*0.57; g.add(aro);
@@ -10726,7 +10721,7 @@ function buildFocus(bodyId, spin0){
      mapa: assim entrar num planeta não troca o universo atrás dele */
   const ceuFoco = (ESCR.on && b._sys === 'sol' && !b.comet) ? ceuProfundo() : null;
   const sceneCeu = ceuFoco ? ceuFoco.cena : null;
-  const stF1 = makeStars(QLOW?750:1100, 130, 1.4, 0.8), stF2 = makeStars(300, 110, 2.2, 0.95);
+  const stF1 = ceuFoco ? null : makeStars(QLOW?750:1100, 130, 1.4, 0.8), stF2 = ceuFoco ? null : makeStars(300, 110, 2.2, 0.95);   /* r291 · só quando o céu real não entra */
   if(!ceuFoco){ scene.add(stF1); scene.add(stF2); }
   const wrap = new THREE.Group();
   scene.add(wrap);
@@ -10885,7 +10880,7 @@ function buildFocus(bodyId, spin0){
      : makeBodyGroup(bV, radius, QLOW?96:128);
   /* no 1:1 a pele de verdade entra na hora: aqui a câmera já está colada */
   if(aoVivo && bg.mesh){
-    bg.mesh.material = liveMaterial(bodyId);
+    { const antM = bg.mesh.material; bg.mesh.material = liveMaterial(bodyId); if(antM){ const ia = ANIM_MATS.indexOf(antM); if(ia >= 0) ANIM_MATS.splice(ia, 1); antM.dispose(); } }   /* r291 */
     const nfF = texturaFoto(bodyId + 'nuvens');
     if(nfF){
       const cnF = new THREE.ShaderMaterial({vertexShader:LIVE_VERT, fragmentShader:NUVENS_FRAG,
@@ -11134,7 +11129,7 @@ void main(){
      senão o céu aparece DENTRO da órbita da Lua (print do Rodrigo) */
   if(maxKidR > 40){
     const kEsc = maxKidR*3.2/130;
-    stF1.scale.setScalar(kEsc); stF2.scale.setScalar(kEsc);
+    if(stF1){ stF1.scale.setScalar(kEsc); stF2.scale.setScalar(kEsc); }
   }
 
   const _smA = new THREE.Vector3(), _smB = new THREE.Vector3(), _smC = new THREE.Vector3();
@@ -12027,12 +12022,12 @@ function trajLimpar(){
     TRAJ.holderGirado.updateMatrixWorld(true);
   }
   if(TRAJ){
-    if(TRAJ.rotaViz && TRAJ.rotaViz.parent) TRAJ.rotaViz.parent.remove(TRAJ.rotaViz);
-    if(TRAJ.luaViz && TRAJ.luaViz.parent) TRAJ.luaViz.parent.remove(TRAJ.luaViz);
-    if(TRAJ.luaOrb && TRAJ.luaOrb.parent) TRAJ.luaOrb.parent.remove(TRAJ.luaOrb);
-    if(TRAJ.marcaLanc && TRAJ.marcaLanc.parent) TRAJ.marcaLanc.parent.remove(TRAJ.marcaLanc);
-    if(TRAJ.lancFio && TRAJ.lancFio.parent) TRAJ.lancFio.parent.remove(TRAJ.lancFio);
-    if(TRAJ.trilha && TRAJ.trilha.parent) TRAJ.trilha.parent.remove(TRAJ.trilha);
+    if(TRAJ.rotaViz && TRAJ.rotaViz.parent) TRAJ.rotaViz.parent.remove(TRAJ.rotaViz); descartaCena(TRAJ.rotaViz);
+    if(TRAJ.luaViz && TRAJ.luaViz.parent) TRAJ.luaViz.parent.remove(TRAJ.luaViz); descartaCena(TRAJ.luaViz);
+    if(TRAJ.luaOrb && TRAJ.luaOrb.parent) TRAJ.luaOrb.parent.remove(TRAJ.luaOrb); descartaCena(TRAJ.luaOrb);
+    if(TRAJ.marcaLanc && TRAJ.marcaLanc.parent) TRAJ.marcaLanc.parent.remove(TRAJ.marcaLanc); descartaCena(TRAJ.marcaLanc);
+    if(TRAJ.lancFio && TRAJ.lancFio.parent) TRAJ.lancFio.parent.remove(TRAJ.lancFio); descartaCena(TRAJ.lancFio);
+    if(TRAJ.trilha && TRAJ.trilha.parent) TRAJ.trilha.parent.remove(TRAJ.trilha); descartaCena(TRAJ.trilha);
     if(TRAJ.rotaViz) TRAJ.rotaViz.visible = true;
     if(TRAJ.arcoOp0 !== undefined && TRAJ.obj && TRAJ.obj.material) TRAJ.obj.material.opacity = TRAJ.arcoOp0;
     if(TRAJ.luaLuz && ACT && ACT.solLuz){
@@ -12053,7 +12048,7 @@ function trajLimpar(){
       if(typeof applySel === 'function') applySel();
     }
     if(TRAJ.luaFoco && TRAJ.luaRot0 !== undefined) TRAJ.luaFoco.kh.rotation.y = TRAJ.luaRot0;
-    if(TRAJ.frameFoco && TRAJ.frameFoco.parent) TRAJ.frameFoco.parent.remove(TRAJ.frameFoco);
+    if(TRAJ.frameFoco && TRAJ.frameFoco.parent) TRAJ.frameFoco.parent.remove(TRAJ.frameFoco); descartaCena(TRAJ.frameFoco);
   }
   TRAJ = null;
   if(typeof syncHash === 'function') syncHash();
@@ -12230,6 +12225,7 @@ function fadeSwap(text, fn){
   setTimeout(()=>{ fn(); setTimeout(()=>f.classList.remove('on'), 140); }, 330);
 }
 function swapScene(built, continuo){
+  if(TRANSITO){ if(TRANSITO.novo && TRANSITO.novo !== built && TRANSITO.novo !== ACT) disposeScene(TRANSITO.novo); TRANSITO = null; }   /* r291 · a viagem interplanetar não sobrevive à troca */
   disposeScene(ACT); ACT = built; setCam(ACT.cam);
   if(!continuo) CAM.pivot.set(0, 0, 0);   /* pivô limpo em toda troca sem emenda */
   CAMTW = null; DIVE = null; FADEIN = null;
@@ -12895,6 +12891,7 @@ function habMonta(){
     HAB.cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 80);
     HAB.cam.position.set(0, 0, 12);
   }
+  if(HAB.scene) descartaCena(HAB.scene);   /* r291 · a bancada recriava a cena sem descartar */
   HAB.scene = new THREE.Scene();
   HAB.worlds = [];
   const lista = HAB.sel.map(id=>ALLBODIES[id]).filter(Boolean);
@@ -13077,6 +13074,7 @@ function cmp3dMonta(A, B, kmA, kmB){
   const W = (cv.parentElement && cv.parentElement.clientWidth) || 560, H2 = CMP3.max ? 430 : 220;
   CMP3.rnd.setSize(W, H2, false);
   cv.style.height = H2 + 'px';
+  if(CMP3.scene) descartaCena(CMP3.scene);   /* r291 */
   CMP3.scene = new THREE.Scene();
   CMP3.worlds = [];
   const kmG = Math.max(kmA, kmB) || 1;
@@ -13292,7 +13290,7 @@ function marcaVizinha(id){
   const total = listaVizinhas().length;
   if(VIZINHAS.size >= total) feito('vizinhanca');
   else if(typeof showHint === 'function')
-    showHint('VIZINHA ' + VIZINHAS.size + ' DE ' + total + ' · FALTAM ' + (total - VIZINHAS.size));
+    showHint(t('VIZINHA ') + VIZINHAS.size + t(' DE ') + total + t(' · FALTAM ') + (total - VIZINHAS.size));
 }
 function marcaConstel(id){
   if(!CEU_LINHAS[id] || CEUFIG.has(id)) return;
@@ -13301,7 +13299,7 @@ function marcaConstel(id){
   const total = Object.keys(CEU_LINHAS).length;
   if(CEUFIG.size >= total) feito('ceufiguras');
   else if(typeof showHint === 'function' && CEUFIG.size > 1)
-    showHint('FIGURA ' + CEUFIG.size + ' DE ' + total + ' · FALTAM ' + (total - CEUFIG.size));
+    showHint(t('FIGURA ') + CEUFIG.size + t(' DE ') + total + t(' · FALTAM ') + (total - CEUFIG.size));
 }
 function ACTION(act, id){
   if(TRAJ && TRAJ.fase!=='volta') return;   /* na linha do tempo a cena não navega */
@@ -13539,7 +13537,7 @@ function fmtEscala(km){
   if(km >= 1e6)        return fmtNumEsc(km/1e6) + ' MI KM';
   if(km >= 1000)       return fmtNumEsc(km/1000) + ' MIL KM';
   if(km < 1) return Math.round(km*1000).toLocaleString('pt-BR') + ' M';
-  return Math.round(km).toLocaleString('pt-BR') + ' KM';
+  return Math.round(km).toLocaleString('pt-BR') + t(' KM');
 }
 function fmtNumEsc(v){
   if(v >= 100) return Math.round(v).toLocaleString('pt-BR');
@@ -13671,10 +13669,10 @@ function reguaBarra(){
   let txt;
   if(emAL){
     const pc = redondo/3.26156;
-    if(redondo >= 1e6) txt = fmtNum(+(redondo/1e6).toFixed(2)) + ' MILHÕES DE ANOS-LUZ · ' + fmtNum(+(pc/1e6).toFixed(2)) + ' Mpc';
-    else if(redondo >= 1000) txt = fmtNum(redondo/1000) + ' MIL ANOS-LUZ · ' + fmtNum(+(pc/1000).toFixed(1)) + ' kpc';
-    else txt = fmtNum(redondo) + (redondo === 1 ? ' ANO-LUZ' : ' ANOS-LUZ') + ' · ' + fmtNum(+pc.toFixed(1)) + ' pc';
-  } else txt = fmtNum(redondo) + (emUAagora ? (redondo === 1 ? ' UNIDADE ASTRONÔMICA' : ' UA') : ' KM');
+    if(redondo >= 1e6) txt = fmtNum(+(redondo/1e6).toFixed(2)) + t(' MILHÕES DE ANOS-LUZ · ') + fmtNum(+(pc/1e6).toFixed(2)) + ' Mpc';
+    else if(redondo >= 1000) txt = fmtNum(redondo/1000) + t(' MIL ANOS-LUZ · ') + fmtNum(+(pc/1000).toFixed(1)) + ' kpc';
+    else txt = fmtNum(redondo) + (redondo === 1 ? t(' ANO-LUZ') : t(' ANOS-LUZ')) + ' · ' + fmtNum(+pc.toFixed(1)) + ' pc';
+  } else txt = fmtNum(redondo) + (emUAagora ? (redondo === 1 ? t(' UNIDADE ASTRONÔMICA') : ' UA') : t(' KM'));   /* r291 · a régua traduz */
   $('#rbtxt').textContent = txt;
 }
 function fmtNum(v){
@@ -14040,10 +14038,10 @@ function missRender(){
   $('#misspat').textContent = pat.cur.t;
   $('#misscnt').onclick = (e)=>{ if(e.target.closest('[data-abreconq]')){ MISS.filtro='conquistas'; missRender(); } };
   /* o balanço vivo do atlas: quanto mundo existe e quanto já foi visto */
-  $('#misscnt').innerHTML = '<b>'+n+'</b> / '+total+' CORPOS VISITADOS'
-    + ' · '+Object.keys(SYS).length+' SISTEMAS · '+GALAXIES.length+' GALÁXIAS'
-    + ' · <span class="lnkconq" data-abreconq="1"><b>'+FEITO.size+'</b> / '+Object.keys(MISS_ROT).length+' CONQUISTAS</span>'
-    + (selos ? ' · <b>'+selos+'</b>/'+sis.length+' SELOS' : '');
+  $('#misscnt').innerHTML = '<b>'+n+'</b> / '+total+t(' CORPOS VISITADOS')
+    + ' · '+Object.keys(SYS).length+t(' SISTEMAS · ')+GALAXIES.length+t(' GALÁXIAS')
+    + ' · <span class="lnkconq" data-abreconq="1"><b>'+FEITO.size+'</b> / '+Object.keys(MISS_ROT).length+t(' CONQUISTAS')+'</span>'
+    + (selos ? ' · <b>'+selos+'</b>/'+sis.length+t(' SELOS') : '');   /* r291 · os pedaços traduzem */
   $('#missbar').firstElementChild.style.width = Math.round(n/total*100)+'%';
   $('#missnext').textContent = pat.nxt ? (pat.cur.d+' Faltam '+(pat.nxt.n-n)+' para '+pat.nxt.t+'.') : pat.cur.d;
   $('#cadmiss').innerHTML = '';
@@ -14067,7 +14065,7 @@ function missRender(){
       return '<li class="'+(ok?'vis':'')+'">'
         + '<span class="mdot"></span>'
         + '<span class="minfo"><span class="mnm">'+(ok?'✓ ':'○ ')+esc(par[0])+' · '+esc(par[1])+extra+'</span>'
-        + '<span class="msub">'+(quando ? 'CONCLUÍDA EM '+quando : esc(CONQ_DESC[k]||''))+'</span></span>'
+        + '<span class="msub">'+(quando ? t('CONCLUÍDA EM ')+quando : esc(CONQ_DESC[k]||''))+'</span></span>'
         + '</li>';
     }).join('');
     $('#missfootcnt').textContent = FEITO.size + ' DE ' + Object.keys(MISS_ROT).length + ' CONQUISTAS · CADA UMA VALE 2 CORPOS NA CARREIRA';
@@ -14090,7 +14088,7 @@ function missRender(){
       html += '<li class="galrow'+(gfull?' full':'')+'" data-gal="'+g.id+'">'
             + '<button class="mexp" data-exp="g:'+g.id+'">'+(gAberta?'−':'+')+'</button>'
             + '<span class="galnm">'+esc(g.nome)+'</span>'
-            + '<span class="galct">'+g.completos+'/'+g.sistemas.length+' SISTEMAS · '+gpc+'%</span></li>';
+            + '<span class="galct">'+g.completos+'/'+g.sistemas.length+t(' SISTEMAS · ')+gpc+'%</span></li>';
       if(!gAberta) continue;
       for(const s of ls){
         const pc = Math.round(s.vistos/s.total*100), full = s.vistos>=s.total;
@@ -14100,7 +14098,7 @@ function missRender(){
           + '<span class="sysbadge"><span>'+(full?'★':'')+'</span></span>'
           + '<span class="minfo"><span class="mnm">'+esc(s.nome)+'</span>'
           + '<span class="msub">'+(full ? esc('★ ' + (TITULOS[s.id] || 'SISTEMA COMPLETO'))
-                                        : ((s.total-s.vistos)===1 ? 'FALTA 1' : 'FALTAM '+(s.total-s.vistos))
+                                        : ((s.total-s.vistos)===1 ? t('FALTA 1') : t('FALTAM ')+(s.total-s.vistos))
                                           + ' · '+s.total+(s.total===1 ? ' CORPO' : ' CORPOS'))+'</span></span>'
           + '<span class="sysprog">'+s.vistos+'/'+s.total+'<i><b style="width:'+pc+'%"></b></i></span>'
           + '</li>';
@@ -14133,7 +14131,7 @@ function missRender(){
     }
     el.innerHTML = achou ? html : '<li id="missempty">NENHUM SISTEMA ENCONTRADO</li>';
     $('#missfootcnt').textContent = selos + ' DE ' + sis.length + (selos===1 ? ' SISTEMA COMPLETO' : ' SISTEMAS COMPLETOS')
-      + ' · ' + gals.length + ' GALÁXIAS';
+      + ' · ' + gals.length + t(' GALÁXIAS');
     $('#misschips').querySelectorAll('.mchip').forEach(c=>c.classList.toggle('on', c.dataset.k===MISS.filtro));
     return;
   }
@@ -14735,14 +14733,14 @@ function tourDoSistema(sysId){
 function tourPopAbre(){
   const tot = Object.keys(ROTAS).length;
   const ok = Object.keys(ROTAS).filter(k=>ROTAS_OK.has(k)).length;
-  $('#tourpop .tphead span').textContent = '▸ ROTAS DO TOUR · ' + ok + '/' + tot + ' CONCLUÍDAS';
+  $('#tourpop .tphead span').textContent = t('▸ ROTAS DO TOUR · ') + ok + '/' + tot + t(' CONCLUÍDAS');
   const el = $('#tourpoplista');
   el.innerHTML = Object.keys(ROTAS).map(k=>{
     const r = ROTAS[k];
     const min = Math.max(1, Math.round(r.lista.reduce((a,x)=>a+(x.ms||0), 0)/60000));
     return '<button class="tprota'+(ROTAS_OK.has(k)?' feita':'')+'" data-rotasel="'+k+'">'
       + '<span class="tpnm">'+esc(r.nome)+'</span>'
-      + '<span class="tpsub">'+r.lista.length+' PARADAS · ~'+min+' MIN'+(ROTAS_OK.has(k)?' · ✓ CONCLUÍDA':'')+'</span>'
+      + '<span class="tpsub">'+r.lista.length+t(' PARADAS · ~')+min+t(' MIN')+(ROTAS_OK.has(k)?t(' · ✓ CONCLUÍDA'):'')+'</span>'
       + '<span class="tpgo">▸</span>'
       + '</button>';
   }).join('');
@@ -14846,7 +14844,7 @@ function voarAteEstrela(idCeu){
   VOOCEU = {t0:performance.now(), ms:(sis ? 5200 : 4200), p0:CAM.pivot.clone(), p1:alvo,
     d0:CAM.dist, d1:Math.max(CAM.min*4, Math.min(CAM.max*0.6, ly*LY_UA*ESCR_UA*0.06)),
     y0:CAM.yaw, y1:yawAlvo, i0:CAM.pitch, i1:pitAlvo, sis, nome, ly, idCeu, longe:true};
-  showHint('RUMO A ' + nome + ' · ' + (ly < 100 ? String(ly).replace('.', ',') : Math.round(ly)) + ' ANOS-LUZ');
+  showHint(t('RUMO A ') + nome + ' · ' + (ly < 100 ? String(ly).replace('.', ',') : Math.round(ly)) + t(' ANOS-LUZ'));
   AUDIO.sfx('enter');
 }
 function vooCeuStep(now){
@@ -15077,7 +15075,7 @@ function currentEntity(){
   if(ST.mapCard){
     if(ST.mapCard.type==='body'){
       const bb = ALLBODIES[ST.mapCard.id];
-      return {type:'map', b:bb, nav:true, navKind:'body', navId:bb.id};
+      if(bb) return {type:'map', b:bb, nav:true, navKind:'body', navId:bb.id};
     }
     if(ST.mapCard.type==='satlive'){   /* r264 */
       const sv = SATV.sats[ST.mapCard.id];
@@ -15813,7 +15811,7 @@ function dolly(f){
       const pkSel = (tipoSel === 'body' || tipoSel === 'satlive' || tipoSel === 'sismo') ? acharPick((tipoSel === 'satlive' || tipoSel === 'sismo') ? 'terra' : ST.mapCard.id) : null;   /* r276 · o piso do zoom segue a Terra com satélite ou tremor na ficha */
       /* r157: dá para chegar bem mais perto (era 3,2 raios, agora 1,45): o
          contínuo para dentro precisa do corpo enchendo a tela */
-      minEf = (pkSel && pkSel.userData.r) ? Math.max(0.0004, pkSel.userData.r*1.45) : ((tipoSel && tipoSel !== 'body' && tipoSel !== 'satlive' && tipoSel !== 'sismo') ? CAM.min : 0.02);
+      minEf = (pkSel && pkSel.userData.r) ? Math.max(0.0004, pkSel.userData.r*1.45) : ((tipoSel && tipoSel !== 'body' && tipoSel !== 'satlive' && tipoSel !== 'sismo') ? Math.min(0.02, CAM.dist) : 0.02);   /* r291 · CAM.min é 14 un no Sol: a ficha do céu travava o zoom a 1 UA */
       if(ST.mapCard && ST.mapCard.type === 'satlive' && ST.mapCard.entrou) minEf = 0.00009;   /* r277 · no satélite o zoom vai até o desenho (como nas missões); r290 · só com a câmera NELE (com o pivô na Terra o zoom entrava no planeta) */
       if(pkSel && pkSel.userData.vivo && ST.mapCard && ST.mapCard.entrou) minEf = 0.00009;   /* r280 · a ISS pelo card de sempre também (o alvo vivo travava o zoom a 4 mil km); r290 · só depois do ENTRAR */
     } else if(ST.mapCard) minEf = Math.min(CAM.min, 4.2);
@@ -16053,10 +16051,10 @@ window.addEventListener('keydown', e=>{
   if(tag==='INPUT' || tag==='TEXTAREA' || tag==='SELECT' || (e.target && e.target.isContentEditable)) return;   /* r290 */
   if(e.key==='ArrowRight') step(1);
   else if(e.key==='ArrowLeft') step(-1);
-  else if(e.key==='/' || e.key==='s' || e.key==='S'){ e.preventDefault(); findOpen(); }
+  else if(e.key==='/' || e.key==='s' || e.key==='S'){ e.preventDefault(); if($('#mission').classList.contains('on')) missClose(); $('#help').classList.remove('on'); findOpen(); }   /* r291 · a busca abria por baixo do registro e do manual */
   else if(e.key==='p' || e.key==='P') togglePhoto();
   else if(e.key==='m' || e.key==='M'){ if($('#mission').classList.contains('on')) missClose(); else missOpen(); }
-  else if(e.key==='t' || e.key==='T') tourToggle();
+  else if(e.key==='t' || e.key==='T'){ if($('#mission').classList.contains('on')) missClose(); $('#help').classList.remove('on'); tourToggle(); }
   else if(e.key==='Escape'){
     if(typeof LOCAL !== 'undefined' && (LOCAL.on || LOCAL.sel)){ if(LOCAL.on) localFecha(); else localSelecao(false); }   /* r287 */
     else if(TOUR.on) tourStop();
@@ -16064,7 +16062,7 @@ window.addEventListener('keydown', e=>{
     else if($('#tourpop').classList.contains('on')) $('#tourpop').classList.remove('on');
     else if($('#evtpop').classList.contains('on')) $('#evtpop').classList.remove('on');   /* r290 · os popovers novos fecham no ESC */
     else if($('#satpop').classList.contains('on')) $('#satpop').classList.remove('on');
-    else if($('#habpop').classList.contains('on')) $('#habpop').classList.remove('on');
+    else if($('#habpop').classList.contains('on')) $('#habpopx').click();   /* r291 · pelo ✕: para o laço da bancada */
     else if($('#player').classList.contains('on')) $('#player').classList.remove('on');
     else if($('#datepop').classList.contains('on')) $('#datepop').classList.remove('on');
     else if($('#cfgpop').classList.contains('on')) $('#cfgpop').classList.remove('on');
@@ -16108,7 +16106,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r290';
+const BUILD = 'r291';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -16147,7 +16145,7 @@ resize();
   const aula = (new URLSearchParams(location.search)).get('aula');
   if(aula){
     document.body.classList.add('aula');
-    TUT.v.add('boasvindas');
+    setTimeout(()=>TUT.v.add('boasvindas'), 0);   /* r291 · TUT é const mais abaixo neste bloco: chamar aqui derrubava o boot inteiro com ?aula= (TDZ) */
   }
   const _tB0 = performance.now();
   let trajLink = false;
@@ -16220,7 +16218,7 @@ setTimeout(function(){
   if(window.__luaTarde && typeof liveMaterial === 'function'){
     for(const m of window.__luaTarde){
       try{
-        m.material = liveMaterial('lua');
+        { const antL = m.material; m.material = liveMaterial('lua'); if(antL){ const ia = ANIM_MATS.indexOf(antL); if(ia >= 0) ANIM_MATS.splice(ia, 1); antL.dispose(); } }   /* r291 */
         if(ACT && ACT.solLuz && m.material.uniforms && m.material.uniforms.uL)
           ACT.solLuz.push({mesh:m, grupo:m, mats:[m.material]});
       }catch(e){}
@@ -16234,7 +16232,15 @@ pushNav();
 syncHash();
 window.addEventListener('hashchange', ()=>{
   let hh1 = (location.hash||'').slice(1);
-  if(hh1.indexOf('&escala=real') >= 0){
+  const querReal = hh1.indexOf('&escala=real') >= 0;
+  /* r291 · o link muda de escala: reconstrói o mapa (trocaEscala) e reaplica o alvo depois; só marcar a flag deixava
+     um foco 1:1 em cima do mapa cênico */
+  if(querReal !== !!ESCR.on && ACT && ACT.kind === 'system' && ST.sys === 'sol' && typeof trocaEscala === 'function'){
+    const alvoH = location.hash; trocaEscala();
+    setTimeout(()=>{ if(location.hash !== alvoH) location.hash = alvoH; }, 900);
+    return;
+  }
+  if(querReal){
     if(!ESCR.on){ ESCR.on = true; store.set('carto:escr', '1'); cfgSync(); }
     hh1 = hh1.replace('&escala=real', '');
   }
@@ -16612,7 +16618,7 @@ $('#simpp').addEventListener('click', ()=>{
   simClockUI();
 });
 $('#simgo').addEventListener('click', ()=>{
-  const dp = $('#datepop');
+  const dp = $('#datepop'); $('#velpop').classList.remove('on');   /* r291 · os dois popovers do relógio não se sobrepõem */
   if(!dp.classList.contains('on')){
     const d = new Date(SIMT.data);
     DP.d = d.getDate(); DP.m = d.getMonth(); DP.a = d.getFullYear();
@@ -16716,7 +16722,7 @@ function evtRender(){
   const el = $('#evtlista');
   if(!lista.length){ el.innerHTML = '<div class="evvazio">' + t('NADA ENCONTRADO COM ESSES FILTROS.') + '</div>'; return; }
   el.innerHTML = lista.map(ev=>'<button class="evx' + (evtData(ev) < agora ? ' past' : '') + '" data-evt="' + ev.d + '"' + (ev.c ? ' data-corpo="' + ev.c + '"' : '') + '>'
-    + '<span class="evd">' + evtRotuloData(ev) + '</span>' + esc(t(ev.t)) + '</button>').join('');   /* r290 · os eventos traduzem */
+    + '<span class="evd">' + evtRotuloData(ev) + (evtData(ev) < agora ? '<i class="evpast">' + t(' · JÁ PASSOU') + '</i>' : '') + '</span>' + esc(t(ev.t)) + '</button>').join('');   /* r290 · os eventos traduzem */
 }
 function evtChips(){
   $('#evttags').innerHTML = EVT_TAGS.map(tg=>'<button data-tag="' + tg[0] + '"' + (EVTF.tag === tg[0] ? ' class="on"' : '') + '>' + t(tg[1]) + '</button>').join('');
@@ -17391,7 +17397,7 @@ function loop(){
     const pertoTerra = (typeof SATV !== 'undefined' && SATV.pontos) ? satVivoPerto() : (ACT.escr && CAM.dist < 0.08);
     const soltoNaTerra = ST.mapCard && !ST.mapCard.entrou && pertoTerra && ((ST.mapCard.type === 'satlive') || (ST.mapCard.type === 'body' && ALLBODIES[ST.mapCard.id] && ALLBODIES[ST.mapCard.id].satOf === 'terra'));
     const naTerra = ST.mapCard && (soltoNaTerra || ST.mapCard.type === 'sismo' || (ST.mapCard.type === 'satlive' && !ST.mapCard.entrou));
-    const travavel = ST.mapCard && (!ST.mapCard.type || ST.mapCard.type === 'body' || ST.mapCard.type === 'starsys' || ST.mapCard.type === 'satlive' || naTerra);   /* r283 · satlive sempre travável (entrou: no satélite; senão na Terra) */
+    const travavel = ST.mapCard && (!ST.mapCard.type || ST.mapCard.type === 'body' || (ST.mapCard.type === 'starsys' && ACT.kind !== 'system') || ST.mapCard.type === 'satlive' || naTerra);   /* r291 · no mapa 1:1 o marcador de sistema do céu é reposicionado por quadro: travar nele era o runaway do r151 */   /* r283 · satlive sempre travável (entrou: no satélite; senão na Terra) */
     if(travavel){
       ACT.pivoSegue = null;
       /* r277 · com um satélite na ficha a trava segue O SATÉLITE (como qualquer corpo escolhido, pedido dele) */
@@ -17419,7 +17425,7 @@ function loop(){
   }
   if(TOUR.on && TOUR.ms && !TOUR.pausado) $('#tourprog').style.width = Math.min(100, (now-TOUR.t0)/TOUR.ms*100).toFixed(1)+'%';
   if(ACT){
-    if(ACT.update) ACT.update(dt, t);
+    if(ACT.update){ try{ ACT.update(dt, t); }catch(eU){ if(!ACT._erroUpd){ ACT._erroUpd = true; RLOG.push('upd-erro: ' + (eU && eU.message ? eU.message.slice(0, 60) : eU)); } } }   /* r291 · um corpo com erro não congela o quadro */
     zoomPasso(dt);
     applyCam();
     /* r200 · o PRIMEIRO QUADRO carrega a compilação dos shaders pelo driver

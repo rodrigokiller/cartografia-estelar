@@ -16,7 +16,7 @@ const CHROMES = ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Pr
 const chrome = CHROMES.find(p=>fs.existsSync(p));
 if(!chrome){ console.error('nao achei o Chrome'); process.exit(1); }
 const corpo = fs.readFileSync(SONDA, 'utf8');
-const html = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
+const html = fs.readFileSync(process.env.SONDA_HTML || path.join(RAIZ, 'index.html'), 'utf8');   /* SONDA_HTML: outro index (bissecao de regressao) */
 const topo = `<script>
 window.__err = [];
 window.addEventListener('error', function(e){ window.__err.push(e.message + ' @linha ' + e.lineno); });
@@ -50,7 +50,8 @@ class CDP {
 const dorme = ms=>new Promise(ok=>setTimeout(ok, ms));
 (async ()=>{
   const perfil = path.join(require('os').tmpdir(), 'universatlas-sonda-' + process.pid);
-  const proc = cp.spawn(chrome, ['--headless=new', '--no-sandbox', '--lang=' + LANG, '--hide-scrollbars', '--remote-debugging-port=' + PORTA,
+  const extra = (process.env.SONDA_FLAGS || '').split(' ').filter(Boolean);   /* ex.: SONDA_FLAGS=--disable-gpu (swiftshader, quando a GPU esta disputada) */
+  const proc = cp.spawn(chrome, ['--headless=new', '--no-sandbox', '--lang=' + LANG, '--hide-scrollbars', '--remote-debugging-port=' + PORTA, ...extra,
     '--user-data-dir=' + perfil, '--window-size=' + (process.env.SONDA_WIN || '1000,760'), 'file:///' + pagina.replace(/\\/g, '/') + '#' + HASH], {stdio:'ignore'});
   const t0 = Date.now();
   let cdp = null, saida = 'TIMEOUT';
@@ -64,6 +65,7 @@ const dorme = ms=>new Promise(ok=>setTimeout(ok, ms));
       await dorme(250);
     }
   }catch(e){ saida = 'FALHA: ' + e.message; }
+  if(saida === 'TIMEOUT' && cdp){ try{ const ult = await Promise.race([cdp.eval('document.title + " | erros=" + JSON.stringify((window.__err || []).slice(0, 3)) + " | fase=" + window.__fase'), dorme(3000).then(()=>'(pagina nao respondeu: pendurada)')]); saida += ' · ultimo: ' + ult; }catch(e){ saida += ' · ' + e.message; } }
   console.log(saida + ' · ' + ((Date.now() - t0)/1000).toFixed(1) + 's');
   if(cdp) cdp.fecha(); proc.kill();
   try{ fs.unlinkSync(pagina); }catch(e){}
