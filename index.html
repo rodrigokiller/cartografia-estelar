@@ -219,14 +219,14 @@ body.touch #topright{z-index:76}
 #player .pl-mute{width:100%;margin-top:8px}
 /* popover de filtros das linhas: mesmo corpo do player */
 #filtpop{position:absolute;top:60px;right:14px;z-index:20;width:min(280px,86vw);display:none;
-  max-height:calc(100vh - 92px);overflow-y:auto;overscroll-behavior:contain;
+  max-height:calc(100vh - 92px);overscroll-behavior:contain;
   background:var(--panel);border:1px solid var(--line2);padding:12px 14px 10px;
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
-#filtpop.on{display:block}
-#cfgpop{position:absolute;top:60px;right:14px;z-index:20;width:min(300px,86vw);display:none;
+#filtpop.on{display:flex;flex-direction:column}
+#cfgpop{position:absolute;top:60px;right:14px;z-index:20;width:min(300px,86vw);display:none;max-height:calc(100vh - 92px);
   background:var(--panel);border:1px solid var(--line2);padding:12px 14px 10px;
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
-#cfgpop.on{display:block}
+#cfgpop.on{display:flex;flex-direction:column}
 .fpx{position:absolute;top:8px;right:10px;width:20px;height:20px;background:none;
   border:1px solid var(--line2);color:var(--dim);font-family:var(--mono);font-size:9px;
   line-height:1;cursor:pointer;padding:0;z-index:3}
@@ -270,7 +270,7 @@ body.touch #datepop{bottom:auto;top:62px;left:12px;z-index:80;max-width:calc(100
 #habpop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:27;display:none;
   width:min(900px,94vw);background:var(--panel);border:1px solid var(--line2);padding:14px 16px 12px;
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
-#habpop.on{display:block;animation:tourpopnasce .24s ease-out}
+#habpop.on{display:flex;flex-direction:column;animation:tourpopnasce .24s ease-out}
 #habpop .tphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
   font-family:var(--mono);font-size:9.5px;letter-spacing:2.5px;color:var(--amber)}
 #habpop .tphead button{width:20px;height:20px;background:none;border:1px solid var(--line2);color:var(--dim);
@@ -330,9 +330,9 @@ body.touch #datepop{bottom:auto;top:62px;left:12px;z-index:80;max-width:calc(100
 #localpop.semhud #localbussola,#localpop.semhud #localmapa{display:none}
 #locallbls .llbl[data-id]{pointer-events:auto;cursor:pointer}
 #locallbls .llbl.con{color:#7f9ac4;font-size:9.5px;letter-spacing:3px;opacity:.85}
-#localcard{position:absolute;right:10px;bottom:10px;width:250px;max-height:62%;overflow:auto;display:none;background:rgba(6,12,24,.92);border:1px solid var(--line2);padding:10px 12px;
+#localcard{position:absolute;right:10px;bottom:10px;width:250px;max-height:62%;display:none;background:rgba(6,12,24,.92);border:1px solid var(--line2);padding:10px 12px;
   font-family:var(--mono);color:var(--ion);clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
-#localcard.on{display:block}
+#localcard.on{display:flex;flex-direction:column}
 #localcard .lc-eye{font-size:8px;letter-spacing:2.5px;color:var(--dim);display:flex;justify-content:space-between;align-items:center}
 #localcard .lc-eye button{width:16px;height:16px;background:none;border:1px solid var(--line2);color:var(--dim);font-size:8px;line-height:1;cursor:pointer;padding:0}
 #localcard h3{margin:6px 0 2px;font-size:13px;letter-spacing:3px;color:#fff;font-weight:700}
@@ -712,6 +712,19 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 .eyebrow #cardshare{font-size:11px;margin-left:auto}   /* r289 · o compartilhar pequeno, ao lado do ✕ */
 .eyebrow #cardshare + #cardx2{margin-left:4px}
 .eyebrow #cardx2:hover,.eyebrow #cardshare:hover{color:var(--amber);border-color:var(--amber)}
+/* r293 · quem rola é o .popscroll de dentro (o chanfro e as diagonais ficam parados), e no toque os alvos crescem */
+.popscroll{overflow-y:auto;overscroll-behavior:contain;min-height:0;scrollbar-width:thin;scrollbar-color:var(--line2) rgba(63,140,255,.08)}
+.popscroll::-webkit-scrollbar{width:4px} .popscroll::-webkit-scrollbar-thumb{background:var(--line2)}
+body.touch #habpop{max-height:calc(100dvh - 20px)}
+body.touch .eyebrow #cardx2,body.touch .eyebrow #cardshare{width:30px;height:30px;font-size:13px}
+body.touch .eyebrow #cardshare{font-size:15px}
+body.touch #tourpop .tphead button,body.touch #habpop .tphead button,body.touch #satpop .tphead button,body.touch #evtpop .tphead button,body.touch .fpx,body.touch #lmgx{width:30px;height:30px;font-size:12px}
+body.touch #localpop .lpbtns button{height:30px;min-width:30px;font-size:9.5px}
+body.touch #localcard .lc-eye button{width:28px;height:28px;font-size:11px}
+body.touch #localmapa .lmz button{width:30px;height:28px}
+body.touch .satrow{padding:11px 4px}
+body.touch .evtchips button{padding:8px 10px}
+body.touch #habq,body.touch #lmgq,body.touch #evtq,body.touch #missq,body.touch #findin{font-size:16px;letter-spacing:1px}
 #tip{position:fixed;z-index:60;font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--ion);
   background:rgba(6,12,24,.94);border:1px solid rgba(63,140,255,.55);padding:6px 10px;pointer-events:none;
   opacity:0;transition:opacity .15s;transform:translate(-50%,-100%);white-space:nowrap}
@@ -5774,6 +5787,8 @@ function makeLabel(text, cls, onClick){
 }
 function updateLabels(){
   if(!ACT) return;
+  /* r293 · escrever display/transform em ~600 rótulos por quadro custava 1 a 3 ms no celular: só quando muda */
+  const oculta = L=>{ if(L._vis !== false){ L._vis = false; L.el.style.display = 'none'; } };
   const W = CRECT.width, H = CRECT.height;
   /* longe demais, os nomes de luas e satélites descansam */
   const longe = !!(ACT.zoomMini && CAM.dist > ACT.zoomMini);
@@ -5790,36 +5805,36 @@ function updateLabels(){
   const dLy = (ACT.escr && ACT.kind === 'system') ? CAM.dist/(LY_UA*ESCR_UA) : 0;
   const foraDeCasa = dLy > 0.25;
   for(const L of ACT.labels){
-    if(L.off){ L.el.style.display = 'none'; continue; }
+    if(L.off){ oculta(L); continue; }
     /* a estrela discreta só se apresenta quando você sai de casa */
-    if(L.soLonge && !foraDeCasa){ L.el.style.display = 'none'; continue; }
+    if(L.soLonge && !foraDeCasa){ oculta(L); continue; }
     /* o Sol só tem nome enquanto a casa dele é o assunto */
-    if(L.solLbl && dLy > 3000){ L.el.style.display = 'none'; continue; }
+    if(L.solLbl && dLy > 3000){ oculta(L); continue; }
     /* r175 · SISTEMA SOLAR assume quando o SOL descansa, e descansa quando a
        galáxia vira mançha; os sistemas do atlas aparecem quando o zoom abraça
        a distância de cada um */
     /* r176 · calibrado por ele: entrava cedo demais e saía com a galáxia
        ainda ocupando a tela inteira */
-    if(L.sisCasa && (dLy < 6000 || dLy > 600000)){ L.el.style.display = 'none'; continue; }
-    if(L.sisLy && (dLy < L.sisLy*0.8 || dLy > Math.min(L.sisLy*50, 250000))){ L.el.style.display = 'none'; continue; }
+    if(L.sisCasa && (dLy < 6000 || dLy > 600000)){ oculta(L); continue; }
+    if(L.sisLy && (dLy < L.sisLy*0.8 || dLy > Math.min(L.sisLy*50, 250000))){ oculta(L); continue; }
     if(foraDeCasa){
       /* o nome da estrela só aparece quando o zoom já abraça a distância dela */
       /* na escala GALÁCTICA a vizinhança inteira vira um grão: os nomes das
          estrelas descansam e sobram os marcos grandes (o centro da galáxia
          e o braço onde a gente mora) */
-      if(L.ceuNome && (dLy > 200 || !(L.ly && L.ly < dLy*1.25))){ L.el.style.display = 'none'; continue; }
+      if(L.ceuNome && (dLy > 200 || !(L.ly && L.ly < dLy*1.25))){ oculta(L); continue; }
       /* o desenho das constelações é coisa de quem está em casa */
-      if(L.constelLbl && dLy > 0.35){ L.el.style.display = 'none'; continue; }
+      if(L.constelLbl && dLy > 0.35){ oculta(L); continue; }
       /* fora de casa somem os nomes de dentro do sistema, inclusive as
          cascas (heliopausa e Oort) que só fazem sentido de perto */
-      if(L.cinturao || L.zonaLonge || (L.escrOrb && L.escrOrb < 40000)){ L.el.style.display = 'none'; continue; }
+      if(L.cinturao || L.zonaLonge || (L.escrOrb && L.escrOrb < 40000)){ oculta(L); continue; }
       /* r175 · rede de segurança: passando de 2 anos-luz, NENHUM nome de corpo
          do sistema sobrevive (Sedna aparecia no zoom galáctico, ele reportou) */
-      if(dLy > 2 && (L.lid || L.escrMr || L.escrOrb)){ L.el.style.display = 'none'; continue; }
+      if(dLy > 2 && (L.lid || L.escrMr || L.escrOrb)){ oculta(L); continue; }
     }
     /* escala real: cada nome descansa quando a própria órbita fica pequena na
        tela, senão os internos se amontoam todos no centro no zoom aberto */
-    if(L.escrOrb && CAM.dist > L.escrOrb*20){ L.el.style.display = 'none'; continue; }   /* x20: Mercúrio sumia cedo demais (calibrado por ele) */
+    if(L.escrOrb && CAM.dist > L.escrOrb*20){ oculta(L); continue; }   /* x20: Mercúrio sumia cedo demais (calibrado por ele) */
     /* zoom fundo na escala real: só o corpo travado e as luas dele mantêm o
        nome, o mapa vira sistema planetário só de aproximar (ideia do Rodrigo) */
     /* colado num planeta é justamente a hora de olhar o CÉU: estrelas e
@@ -5828,22 +5843,23 @@ function updateLabels(){
     if(ACT.escr && ACT.kind==='system' && CAM.dist < 0.8 && !TRAJ){
       const dono = ST.mapCard ? ((!ST.mapCard.type || ST.mapCard.type === 'body') ? ST.mapCard.id : ((ST.mapCard.type === 'satlive' || ST.mapCard.type === 'sismo') ? 'terra' : null)) : null;   /* r290 */
       const fica = (dono && L.lid && (L.lid === dono || L.lidPai === dono)) || L.sempre;
-      if(!fica){ L.el.style.display = 'none'; continue; }
+      if(!fica){ oculta(L); continue; }
     }
-    if(L.mini && longe){ L.el.style.display = 'none'; continue; }
+    if(L.mini && longe){ oculta(L); continue; }
     /* escala real: a lua só tem nome quando a órbita dela ABRE na tela,
        senão os rótulos empilham em cima do nome do planeta */
-    if(L.escrMr && CAM.dist > L.escrMr*110){ L.el.style.display = 'none'; continue; }   /* r227: 260 deixava as luas de Júpiter amontoadas a 1 UA */
-    if(L.cinturao && FILTROBJ.cinturao === false){ L.el.style.display = 'none'; continue; }
+    if(L.escrMr && CAM.dist > L.escrMr*110){ oculta(L); continue; }   /* r227: 260 deixava as luas de Júpiter amontoadas a 1 UA */
+    if(L.cinturao && FILTROBJ.cinturao === false){ oculta(L); continue; }
     L.get(tmpV);
     tmpV.project(camera);
     if(tmpV.z > 1 || tmpV.x < -1.1 || tmpV.x > 1.1 || tmpV.y < -1.1 || tmpV.y > 1.1){
-      L.el.style.display = 'none'; continue;
+      oculta(L); continue;
     }
-    L.el.style.display = 'block';
-    const x = ( tmpV.x*0.5 + 0.5) * W;
-    const y = (-tmpV.y*0.5 + 0.5) * H;
-    L.el.style.transform = 'translate(' + x + 'px,' + y + 'px) translate(-50%,-140%)';
+    if(L._vis !== true){ L._vis = true; L.el.style.display = 'block'; }
+    const x = Math.round(( tmpV.x*0.5 + 0.5) * W * 10)/10;
+    const y = Math.round((-tmpV.y*0.5 + 0.5) * H * 10)/10;
+    const tx = 'translate(' + x + 'px,' + y + 'px) translate(-50%,-140%)';
+    if(L._tx !== tx){ L._tx = tx; L.el.style.transform = tx; }
   }
 }
 
@@ -6965,6 +6981,7 @@ function localMontaCat6(){
   LOCAL.ultimo = 0;
 }
 function localAbre(lat, lon){
+  LOCAL._hh = null; LOCAL._bz = null; LOCAL._info = null;   /* r293 · reabrir redesenha */
   if(isFinite(lat) && isFinite(lon)) localVaiPara(lat, lon);
   localMonta();
   if(typeof CEU6 !== 'undefined') localMontaCat6();
@@ -6990,9 +7007,9 @@ function localFicha(id, tipo){
   else b = ALLBODIES[id];
   if(!b) return;
   const quick = (b.quick || []).slice(0, 6);
-  el.innerHTML = '<div class="lc-eye"><span>' + esc(tpal(b.desig || '')) + '</span><button id="localcardx">✕</button></div><h3>' + esc(t(b.name || id)) + '</h3><div class="lc-kind">' + esc(t(b.kind || '')) + '</div>'
+  el.innerHTML = '<div class="popscroll"><div class="lc-eye"><span>' + esc(tpal(b.desig || '')) + '</span><button id="localcardx">✕</button></div><h3>' + esc(t(b.name || id)) + '</h3><div class="lc-kind">' + esc(t(b.kind || '')) + '</div>'
     + '<div class="lc-q">' + quick.map(q=>'<div><div class="k">' + esc(t(q[0])) + '</div><div class="v">' + esc(q[1]) + '</div></div>').join('') + '</div>'
-    + '<button class="lc-go" id="localcardgo">' + t('▶ ABRIR A FICHA NO MAPA') + '</button>';
+    + '<button class="lc-go" id="localcardgo">' + t('▶ ABRIR A FICHA NO MAPA') + '</button></div>';
   el.classList.add('on');
   document.getElementById('localcardx').addEventListener('click', localCardFecha);
   document.getElementById('localcardgo').addEventListener('click', ()=>{ localFecha(); ACTION(tipo === 'estrela' ? 'estrela' : (tipo === 'constel' ? 'constel' : 'focus'), id); });
@@ -7029,7 +7046,7 @@ function localMonta(){
   r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
   const sc = new THREE.Scene(), cam = new THREE.PerspectiveCamera(LOCAL.fov, 1.6, 0.1, 3000);
   /* a abóbada: dia, crepúsculo e noite pela altura do Sol; abaixo do horizonte o chão */
-  const dome = new THREE.Mesh(new THREE.SphereGeometry(900, 64, 48), new THREE.ShaderMaterial({side:THREE.BackSide, depthWrite:false, extensions:{derivatives:true},
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(900, 64, 48), new THREE.ShaderMaterial({side:THREE.BackSide, depthWrite:true, extensions:{derivatives:true},
     uniforms:{uSunAlt:{value:0}, uSunDir:{value:new THREE.Vector3(0, 0, -1)}},
     vertexShader:'varying vec3 vD; void main(){ vD = normalize(position); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
     fragmentShader:'uniform float uSunAlt; uniform vec3 uSunDir; varying vec3 vD;\n'
@@ -7040,7 +7057,7 @@ function localMonta(){
       + ' float twk = max(0.0, dot(normalize(vec3(vD.x, 0.0, vD.z)), normalize(vec3(uSunDir.x, 0.0, uSunDir.z))));\n'
       + ' c += vec3(0.98,0.48,0.16)*tw*pow(twk, 3.0)*max(0.0, 1.0 - h*3.5);\n'
       + ' c += mix(vec3(0.0), vec3(0.55,0.65,0.80), day)*exp(-max(h, 0.0)*22.0)*0.30;\n'
-      + ' if(h < 0.0){ float dep = -h; vec3 g0 = mix(vec3(0.030,0.036,0.055), vec3(0.165,0.195,0.235), day);\n'
+      + ' if(h < 0.0){ float dep = -h; vec3 g0 = mix(vec3(0.044,0.052,0.074), vec3(0.165,0.195,0.235), day);\n'
       + '   vec3 c2 = mix(g0*1.25, g0*0.65, clamp(dep*2.2, 0.0, 1.0));\n'
       + '   vec3 nevoa = mix(vec3(0.06,0.075,0.11), vec3(0.62,0.72,0.86), day); c2 = mix(c2, nevoa, exp(-dep*40.0)*0.7);\n'
       + '   float az = atan(vD.x, -vD.z); float sa = sin(az*12.0); float ga = abs(sa)/max(fwidth(sa), 1e-5);\n'
@@ -7050,6 +7067,11 @@ function localMonta(){
       + ' float hl = 1.0 - smoothstep(0.0, fwidth(h)*1.3 + 1e-5, abs(h)); c = mix(c, mix(vec3(0.42,0.50,0.64), vec3(0.85,0.90,1.0), day), hl*0.85);\n'
       + ' gl_FragColor = vec4(c, 1.0); }'}));
   dome.renderOrder = -10; sc.add(dome);
+  /* r293 · o PISO: um hemisfério opaco por dentro, mais perto que as estrelas (raio 400 contra 700), com o MESMO material do
+     chão: o que está abaixo do horizonte fica atrás dele. As estrelas e as linhas das constelações apareciam através do
+     chão (print dele ao pôr do sol), e era isso que dava a cara de oco */
+  const piso = new THREE.Mesh(new THREE.SphereGeometry(400, 64, 24, 0, Math.PI*2, Math.PI/2, Math.PI/2), dome.material);
+  piso.renderOrder = -9; sc.add(piso);
   /* as estrelas e as constelações do catálogo do céu */
   const n = ESTRELAS_CEU.length, pos = new Float32Array(n*3), col = new Float32Array(n*3), c = new THREE.Color();
   const brilho = [], fraco = [];
@@ -7118,7 +7140,8 @@ function localFrame(){
   ESTRELAS_CEU.forEach((s, i)=>{ const hz = localAltAzPrec(s[2]*15*D2R, s[3]*D2R, lst, φ, PM); const d = localDir(hz.alt, hz.az).multiplyScalar(700); pos[i*3] = d.x; pos[i*3+1] = d.y; pos[i*3+2] = d.z; if(hz.alt > 0) vis++; });
   LOCAL.pB.geometry.attributes.position.needsUpdate = true; LOCAL.pF.geometry.attributes.position.needsUpdate = true; LOCAL.linhas.geometry.attributes.position.needsUpdate = true;
   const sunAlt = Math.sin(C.sol.alt), noite = 1 - Math.min(1, Math.max(0, (sunAlt + 0.14)/0.16));
-  LOCAL.pB.material.opacity = 0.95*noite; LOCAL.pF.material.opacity = 0.85*noite; LOCAL.linhas.material.opacity = 0.28*noite;
+  /* r293 · de dia as estrelas não somem de vez (pedido dele): as brilhantes e as linhas ficam com um mínimo de presença */
+  LOCAL.pB.material.opacity = 0.95*Math.max(noite, 0.4); LOCAL.pF.material.opacity = 0.85*Math.max(noite, 0.22); LOCAL.linhas.material.opacity = 0.28*Math.max(noite, 0.5);
   /* r289 · as 5 mil estrelas do catálogo grande, giradas por matriz (equatorial -> horizonte) */
   if(LOCAL.p6a){
     const eq = LOCAL.eq6, p6 = LOCAL.pos6, cL = Math.cos(lst), sL = Math.sin(lst), cφ = Math.cos(φ), sφ = Math.sin(φ);
@@ -7126,7 +7149,7 @@ function localFrame(){
       const vx = PM[0]*x0 + PM[1]*y0 + PM[2]*z0, vy = PM[3]*x0 + PM[4]*y0 + PM[5]*z0, vz = PM[6]*x0 + PM[7]*y0 + PM[8]*z0, m = cL*vx + sL*vy;   /* r290 · precessão */
       const e = -(sL*vx - cL*vy), nn = vz*cφ - m*sφ, u = m*cφ + vz*sφ; p6[i*3] = e*720; p6[i*3+1] = u*720; p6[i*3+2] = -nn*720; }
     LOCAL.p6a.geometry.attributes.position.needsUpdate = true; LOCAL.p6b.geometry.attributes.position.needsUpdate = true;
-    LOCAL.p6a.material.opacity = 0.9*noite; LOCAL.p6b.material.opacity = 0.6*noite;
+    LOCAL.p6a.material.opacity = 0.9*Math.max(noite, 0.3); LOCAL.p6b.material.opacity = 0.6*Math.max(noite, 0.15);   /* r293 */
   }
   const dS = localDir(C.sol.alt, C.sol.az), dL = localDir(C.lua.alt, C.lua.az);
   LOCAL.dome.material.uniforms.uSunAlt.value = sunAlt; LOCAL.dome.material.uniforms.uSunDir.value.copy(dS);
@@ -7150,14 +7173,15 @@ function localFrame(){
   if(C.sol.alt > -0.02) rot(dS, t('SOL') + (C.lua.eclSolar ? ' · ' + t('ECLIPSE') + ' ' + t(C.lua.eclSolar.toUpperCase()) : ''), 'sol', 'sol', 'corpo');
   if(C.lua.alt > -0.02) rot(dL, t('LUA') + ' · ' + Math.round(C.lua.ilum*100) + '%' + (C.lua.eclLunar ? ' · ' + t('ECLIPSE') + ' ' + t(C.lua.eclLunar.toUpperCase()) : ''), 'lua', 'lua', 'corpo');
   for(const p of C.planetas) if(LOCAL.plan[p.id].visible) rot(localDir(p.alt, p.az), p.nome, 'pla', p.id, 'corpo');
-  if(noite > 0.3){
+  {   /* r293 · os nomes das brilhantes e das constelações aparecem de dia também */
     ESTRELAS_CEU.forEach((s, i)=>{ if(s[4] > 1.0 || !s[1]) return; const hz = localAltAzPrec(s[2]*15*D2R, s[3]*D2R, lst, φ, PM); if(hz.alt > 0.01) rot(localDir(hz.alt, hz.az), t(s[1]), 'est', s[0], 'estrela'); });
     /* r289 · o nome de cada constelação no centroide das estrelas dela (só as acima do horizonte) */
     const cv3 = new THREE.Vector3();
     for(const k in LOCAL.consIdx){ const ids = LOCAL.consIdx[k]; if(!ids.length) continue; cv3.set(0, 0, 0); for(const i of ids) cv3.x += pos[i*3], cv3.y += pos[i*3+1], cv3.z += pos[i*3+2]; cv3.normalize(); if(cv3.y > 0.03) rot(cv3, t(CEU_LINHAS[k].nome), 'con', k, 'constel'); }
   }
-  lb.innerHTML = hh;
-  localBussola(); localInfo(C, ms, vis);
+  if(LOCAL._hh !== hh){ LOCAL._hh = hh; lb.innerHTML = hh; }   /* r293 · parado, os rótulos não são recriados 25 vezes por segundo */
+  if(LOCAL._bz !== LOCAL.az){ LOCAL._bz = LOCAL.az; localBussola(); }
+  localInfo(C, ms, vis);
 }
 function localBussola(){
   const c = document.getElementById('localbussola'); if(!c) return;
@@ -7192,7 +7216,8 @@ function localMapa(){
   }catch(e){}
 }
 function localInfo(C, ms, vis){
-  const el = document.getElementById('localinfo'); if(!el) return;
+  const elI = document.getElementById('localinfo'); if(!elI) return;
+  const el = {set innerHTML(v){ if(LOCAL._info !== v){ LOCAL._info = v; elI.innerHTML = v; } }};   /* r293 · só reescreve quando muda */
   const d = new Date(ms), la = LOCAL.lat, lo = LOCAL.lon;
   const rumo = ['N', 'NE', 'L', 'SE', 'S', 'SO', 'O', 'NO'][Math.round((((LOCAL.az % 360) + 360) % 360)/45) % 8];
   const solTxt = C.sol.alt > 0 ? t('DIA') + ' · ' + t('SOL A') + ' ' + Math.round(C.sol.alt/D2R) + '°' : (C.sol.alt > -6*D2R ? t('CREPÚSCULO') : (C.sol.alt > -18*D2R ? t('CREPÚSCULO ASTRONÔMICO') : t('NOITE')));
@@ -7259,7 +7284,10 @@ function satVivoTick(){
   }
   const data = new Date(SIMT.data), gmst = satellite.gstime(data);
   const arr = SATV.geo.attributes.position.array, v = SATV._vt || (SATV._vt = new THREE.Vector3());   /* r291 · sem alocar por quadro */
-  const n = SATV.sats.length, lote = Math.min(n, 220);
+  /* r293 · em tempo real e longe da Terra o movimento é subpixel: propaga menos por quadro (a SGP4 de 220 satélites
+     custava 3 a 8 ms por quadro no celular); perto, ou com o relógio acelerado, o lote volta a ser cheio */
+  const lentoS = (SIMT.vel === 'real' || SIMT.vel === 'seg' || SIMT.pausado);
+  const n = SATV.sats.length, lote = Math.min(n, lentoS ? (satVivoPerto() ? 110 : 40) : 220);
   for(let k = 0; k < lote; k++){
     const i = SATV.cursor; SATV.cursor = (SATV.cursor + 1) % n;
     const s = SATV.sats[i];
@@ -11552,8 +11580,8 @@ function trajStart(id){
   /* primeira viagem: o navegador LÊ o manual antes de decolar */
   if(!TUT.v.has('linhadotempo')){
     TUT.aoFechar = ()=>trajStart(id);
-    tutInicia('linhadotempo', [{tx:'<b>LINHA DO TEMPO:</b> a barra corre os anos da viagem. Os losangos são os marcos, com balão e clique. Arraste a barra, ou o próprio corpo na cena, para ir e voltar no tempo. O ✕ encerra.', botao:'INICIAR A VIAGEM ▸'}]);
-    return;
+    if(tutInicia('linhadotempo', [{tx:'<b>LINHA DO TEMPO:</b> a barra corre os anos da viagem. Os losangos são os marcos, com balão e clique. Arraste a barra, ou o próprio corpo na cena, para ir e voltar no tempo. O ✕ encerra.', botao:'INICIAR A VIAGEM ▸'}])) return;
+    TUT.aoFechar = null;   /* r293 · outro tutorial aberto: decola sem a leitura (ela fica para a próxima) */
   }
   /* guarda os pontos LOCAIS e transforma a cada quadro: o Halley continua
      orbitando durante o passeio e a linha acompanha */
@@ -12370,6 +12398,10 @@ const PLAYLIST = [
   {file:'audio/14-ultima-transmissao.mp3',   title:'ÚLTIMA TRANSMISSÃO'}
 ];
 const MUSIC_URL = null; // troque por 'minha-trilha.mp3' (mesmo diretório) para tocar sua própria música em loop
+/* r293 · nenhum efeito antes do primeiro gesto do usuário: o ?aula= disparava o whoosh do tour antes de qualquer
+   clique, criando o AudioContext suspenso (aviso do navegador e um sopro atrasado no primeiro toque) */
+let AUDIO_GESTO = false;
+['pointerdown', 'keydown', 'touchstart'].forEach(ev=>window.addEventListener(ev, ()=>{ AUDIO_GESTO = true; }, {capture:true, passive:true}));
 const AUDIO = (function(){
   let ctx=null, master=null, musGain=null, started=false, amb=null, extEl=null;
   let sfxMudo = false;   /* efeitos separados da música */
@@ -12586,7 +12618,7 @@ const AUDIO = (function(){
   }
   let lastEnter = 0;
   function sfx(name){
-    if(sfxMudo || !ensure()) return;
+    if(sfxMudo || !AUDIO_GESTO || !ensure()) return;
     if(ctx.state==='suspended'){ try{ ctx.resume(); }catch(e){} }
     if(name==='enter') lastEnter = performance.now();
     if(name==='warp' && performance.now() - lastEnter < 900) return;
@@ -12867,20 +12899,24 @@ function cartaoCompartilhar(id, opts){
   c.textAlign = 'left'; c.fillStyle = '#ffffff'; c.font = '700 40px ' + mono; c.fillText('ATLAS', W2/2 + 2, 1290);
   c.textAlign = 'center';
   c.fillStyle = '#7f9cc8'; c.font = '400 22px ' + mono; c.fillText('universatlas.com' + (LANG === 'en' ? '/en' : '') + '  ·  #corpo=' + id, W2/2, 1326);
-  rnd.dispose();
+  descartaCena(sc); try{ rnd.forceContextLoss(); }catch(e){} rnd.dispose();   /* r293 · a cena e o contexto do cartão ficavam vivos a cada compartilhar */
   if(opts.retorna) return cv.toDataURL('image/png');
   /* 3) compartilhar ou baixar */
   cv.toBlob(blob=>{
     if(!blob) return;
     const arq = new File([blob], 'universatlas-' + id + '.png', {type:'image/png'});
+    const baixa = ()=>{
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = arq.name; document.body.appendChild(a); a.click();
+      setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 2000);
+      showHint('CARTÃO SALVO · a imagem está nos downloads');
+    };
     if(navigator.share && navigator.canShare && navigator.canShare({files:[arq]})){
-      navigator.share({files:[arq], title:'UNIVERSATLAS · ' + b.name, text:b.kind || ''}).then(()=>showHint('CARTÃO COMPARTILHADO')).catch(()=>{});
+      /* r293 · a folha recusou (gesto expirado no primeiro render, plataforma sem suporte)? baixa; cancelar é cancelar */
+      navigator.share({files:[arq], title:'UNIVERSATLAS · ' + b.name, text:b.kind || ''}).then(()=>showHint('CARTÃO COMPARTILHADO')).catch(err=>{ if(!err || err.name !== 'AbortError') baixa(); });
       return;
     }
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = arq.name; document.body.appendChild(a); a.click();
-    setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 2000);
-    showHint('CARTÃO SALVO · a imagem está nos downloads');
+    baixa();
   }, 'image/png');
   return null;
 }
@@ -12941,7 +12977,7 @@ function habMonta(){
   const meio = (Wpx - T*PXU)/2;
   const pxs = xs.map(x=>Math.round(x*PXU + Math.max(0, meio)));
   const info = lista.map((b, i)=>{
-    const dia = (b.quick.find(q=>/DIÂMETRO|RAIO/.test(q[0])) || [])[1] || '';
+    const dia = (b.quick.find(q=>/DIÂMETRO|RAIO|DIAMETER|RADIUS/.test(q[0])) || [])[1] || '';   /* r293 · no /en também */
     /* r204 · a coluna respeita o vizinho: mundos colados ganham coluna
        estreita (só nome + barra), sem a pilha de textos do print dele */
     const dEsq = (i > 0) ? (pxs[i] - pxs[i-1]) : 999;
@@ -12984,8 +13020,8 @@ function habMonta(){
   const ha = document.getElementById('habachados');
   if(ha && HAB.grupo !== 'perso') ha.innerHTML = '';
   if(HAB.grupo === 'perso'){
-    HAB.perso = HAB.sel.slice();
-    store.set('carto:habperso', HAB.perso.join(','));
+    if(HAB.linkSel && HAB.sel.join(',') === HAB.linkSel){ /* r293 · ainda é a bancada do link: a sua fica guardada */ }
+    else { HAB.linkSel = null; HAB.perso = HAB.sel.slice(); store.set('carto:habperso', HAB.perso.join(',')); }
     if(!HAB.sel.length && hq) hq.placeholder = 'BUSQUE UM CORPO PARA COMEÇAR A SUA BANCADA...';
   }
 }
@@ -13023,7 +13059,7 @@ function habChips(){
     const b = ALLBODIES[HAB.sel[i]];
     if(!b) return;
     ST.mapCard = {type:'body', id:b.id, act:'focus', t:performance.now()};
-    document.getElementById('habpop').classList.remove('on');
+    document.getElementById('habpop').classList.remove('on'); HAB.rodando = false;   /* r293 · o laço da bancada seguia rodando escondido */
     uiSync();
     showHint('FICHA DE ' + b.name + ' · o botão ENTRAR viaja até lá');
   });
@@ -13060,12 +13096,12 @@ function abrirHab(idBase, grupo){
    estourar o teto de contextos WebGL do navegador) */
 const CMP3 = {rnd:null, cam:null, scene:null, worlds:[], ang:0.9, rodando:false, cv:null};
 function cmp3dMonta(A, B, kmA, kmB){
-  const cv = document.getElementById('cmp3d');
+  let cv = document.getElementById('cmp3d');
   if(!cv) return;
-  if(CMP3.rnd && CMP3.cv !== cv){
-    try{ CMP3.rnd.dispose(); }catch(e){}
-    CMP3.rnd = null;
-  }
+  /* r293 · o card injeta um canvas novo a cada comparação e o renderer era recriado: um contexto WebGL vazava por
+     abertura (dispose não solta o contexto) e o Chrome derruba o mais antigo, o do mapa, depois de uns 14. O canvas
+     de sempre volta ao lugar do novo, e o renderer (com os shaders já compilados) é um só */
+  if(CMP3.rnd && CMP3.cv && CMP3.cv !== cv){ cv.replaceWith(CMP3.cv); cv = CMP3.cv; }
   if(!CMP3.rnd){
     CMP3.rnd = new THREE.WebGLRenderer({canvas:cv, antialias:true, alpha:true});
     CMP3.cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 60);
@@ -13499,29 +13535,32 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
 /* ---------- análise comparativa ---------- */
 const CMP = {a:null};
 function parseDia(b){
-  const KM = {'⊕':6371, '☉':696340};
-  const num = t => parseFloat(String(t).replace(/\./g,'').replace(',','.'));
+  const KM = {'⊕':6371, '☉':696340, '♃':69911};   /* r293 · R♃ (os jupiterianos quentes ficavam sem tamanho) */
+  /* r293 · no /en os números vêm no formato inglês (12,742 km · 0.92 R⊕): a vírgula é de milhar e o ponto é decimal */
+  const num = t => { t = String(t); return LANG === 'en' ? parseFloat(t.replace(/,/g, '')) : parseFloat(t.replace(/\./g,'').replace(',','.')); };
   const tryVal = (key, val) => {
     val = String(val);
-    if(/^RAIO/i.test(key)){
-      let m = val.match(/([\d.,]+)\s*R([⊕☉])/);
+    if(/^RA(IO|DIUS)/i.test(key)){
+      let m = val.match(/(\d[\d.,]*)\s*R([⊕☉♃])/);
       if(m) return {km: num(m[1])*KM[m[2]]*2, raw: val};
-      m = val.match(/([\d.,]+)\s*(mil|mi)?\s*km/i);
-      if(m) return {km: num(m[1]) * ({mil:1e3,mi:1e6}[(m[2]||'').toLowerCase()]||1) * 2, raw: val};
+      m = val.match(/(\d[\d.,]*)\s*(mil|mi|thousand|million)?\s*km/i);
+      if(m) return {km: num(m[1]) * ({mil:1e3, thousand:1e3, mi:1e6, million:1e6}[(m[2]||'').toLowerCase()]||1) * 2, raw: val};
       if(/J[úu]piter/i.test(val)) return {km: 142984, raw: val};
       return null;
     }
-    const m = val.match(/([\d.,]+)\s*(mil|mi|bi)?\s*(km|m|anos-luz|AL)\b/i);
+    /* r293 · '2.100 × 1.680 × 1.100 km' ou '5,7 + 3,6 km': vale o PRIMEIRO número, o eixo maior (a conta pegava o
+       último, o menor, e a bancada e o comparar encolhiam Hipérion, Fobos, Haumea e companhia até 2x) */
+    const m = val.match(/(\d[\d.,]*)(?:\s*[×x+]\s*\d[\d.,]*)*\s*(mil|mi|bi|thousand|million|billion)?\s*(km|m|anos-luz|light-years|ly|AL)\b/i);
     if(!m) return null;
-    let n = num(m[1]) * ({mil:1e3, mi:1e6, bi:1e9}[(m[2]||'').toLowerCase()] || 1);
-    if(/anos|al/i.test(m[3])) n *= 9.46e12;
+    let n = num(m[1]) * ({mil:1e3, thousand:1e3, mi:1e6, million:1e6, bi:1e9, billion:1e9}[(m[2]||'').toLowerCase()] || 1);
+    if(/anos|light|^al$|^ly$/i.test(m[3])) n *= 9.46e12;
     else if(m[3].toLowerCase()==='m') n /= 1000;
     return {km:n, raw: val.split('(')[0].trim()};
   };
   for(const s of (b.sections||[])) for(const r of (s.rows||[]))
-    if(/^(Di[âa]metro|Dimens)/i.test(r[0])){ const d = tryVal('D', r[1]); if(d) return d; }
+    if(/^(Di[âa]metro|Dimens|Diameter)/i.test(r[0])){ const d = tryVal('D', r[1]); if(d) return d; }
   for(const q of (b.quick||[]))
-    if(/^(DI[ÂA]METRO|DIMENS|RAIO|TAMANHO|N[ÚU]CLEO)/i.test(q[0])){ const d = tryVal(q[0], q[1]); if(d) return d; }
+    if(/^(DI[ÂA]METRO|DIMENS|RAIO|TAMANHO|N[ÚU]CLEO|DIAMETER|RADIUS|SIZE|NUCLEUS)/i.test(q[0])){ const d = tryVal(q[0], q[1]); if(d) return d; }
   return null;
 }
 const dec1 = v => v.toFixed(1).replace('.', ',');
@@ -13667,7 +13706,7 @@ function reguaBarra(){
   const px = Math.round(unRedondo/larguraUn*CRECT.width);
   if(!(px > 24 && px < CRECT.width*0.7)){ el.classList.remove('on'); return; }
   el.classList.add('on');
-  el.querySelector('b').style.width = px + 'px';
+  if(REGUA._px !== px){ REGUA._px = px; el.querySelector('b').style.width = px + 'px'; }   /* r293 · sem sujar o layout a cada quadro */
   let txt;
   if(emAL){
     const pc = redondo/3.26156;
@@ -13675,7 +13714,7 @@ function reguaBarra(){
     else if(redondo >= 1000) txt = fmtNum(redondo/1000) + t(' MIL ANOS-LUZ · ') + fmtNum(+(pc/1000).toFixed(1)) + ' kpc';
     else txt = fmtNum(redondo) + (redondo === 1 ? t(' ANO-LUZ') : t(' ANOS-LUZ')) + ' · ' + fmtNum(+pc.toFixed(1)) + ' pc';
   } else txt = fmtNum(redondo) + (emUAagora ? (redondo === 1 ? t(' UNIDADE ASTRONÔMICA') : ' UA') : t(' KM'));   /* r291 · a régua traduz */
-  $('#rbtxt').textContent = txt;
+  if(REGUA._txt !== txt){ REGUA._txt = txt; $('#rbtxt').textContent = txt; }
 }
 function fmtNum(v){
   if(v >= 1) return v.toLocaleString('pt-BR');
@@ -13897,19 +13936,19 @@ function somDeEpoca(id){
 }
 function markVisited(id){
   if(!id) return;
+  /* r293 · o registro entra ANTES das conquistas: elas contavam sem a visita atual (a 5ª do Sol, o sistema
+     completo e a promoção só fechavam na visita seguinte, e 'cinco' saía com 4 ao rever um corpo) */
+  if(!VIS.has(id)){ VIS.add(id); store.set('carto:vis', [...VIS].join(',')); }
   somDeEpoca(id);
   feito('visita');
   if(ALLBODIES[id] && ALLBODIES[id].sonda) feito('sondavisita');
-  if(cadCinco() >= 4) feito('cinco');   /* esta visita fecha a quinta */
+  if(cadCinco() >= 5) feito('cinco');
   if(typeof progressoSistemas === 'function' && progressoSistemas().some(x=>x.total > 1 && x.vistos >= x.total)) feito('sistemacompleto');
   checaPromocao();
   REC = [id].concat(REC.filter(x=>x!==id)).slice(0, 20);
   store.set('carto:rec', REC.join(','));
   FRQ[id] = (FRQ[id]||0) + 1;
   store.set('carto:frq', JSON.stringify(FRQ));
-  if(VIS.has(id)) return;
-  VIS.add(id);
-  store.set('carto:vis', [...VIS].join(','));
 }
 const PATENTES = [
   {n:0,   t:'CADETE',                d:'Ainda no cais.'},
@@ -14182,7 +14221,7 @@ function missOpen(){
 function missClose(){ $('#mission').classList.remove('on'); }
 
 /* ---------- modo tour: o app se guiando sozinho ---------- */
-const TOUR = {on:false, i:0, tm:null, t0:0, ms:0, rota:'completo'};
+const TOUR = {on:false, i:0, tm:null, t0:0, ms:0, rota:'completo', gen:0};   /* r293 · gen: a geração da parada (os timers velhos morrem) */
 const ROTA_SOLAR = [
   {sis:'sol', ms:8000, texto:'Uma estrela comum, oito planetas e um mundo com vida confirmada. Começamos em casa.'},
   {corpo:'terra', ms:12000},
@@ -14358,13 +14397,26 @@ function tourNome(p){
   return 'UNIVERSO OBSERVÁVEL';
 }
 function tourIr(p){
+  const g = TOUR.gen;   /* r293 · os timers desta parada só valem enquanto ela é a parada atual */
   if(p.corpo && ST.level === 'focus' && ST.body === p.corpo) return;
   /* r162 · O TOUR NO CONTÍNUO: no mapa 1:1 do Sistema Solar a parada de corpo
      deixa de trocar de cena e vira o mesmo voo do ENTRAR (irAoCorpo), que a
      busca já usava desde o r159. A rota inteira passa a ser um voo só */
+  /* r293 · parada de FOGUETE no mapa 1:1: o foguete não tem corpo no mapa (o voo antigo chegava num vazio ao lado da
+     Terra), então a parada é a própria LINHA DO TEMPO da missão rodando ali, o museu da Lua em escala real; a parada
+     seguinte e o fim do tour limpam a missão */
+  if(p.corpo && ACT && ACT.kind === 'system' && ACT.escr && ST.sys === 'sol'
+     && ALLBODIES[p.corpo] && ALLBODIES[p.corpo].foguete && ALLBODIES[p.corpo].traj && !DIVE){
+    if(TRAJ && TRAJ.id === p.corpo) return;
+    if(!TUT.v.has('linhadotempo')) tutFeito('linhadotempo');   /* o tour narra: a leitura do manual não interrompe */
+    ST.mapCard = {type:'body', id:p.corpo, act:'focus', t:performance.now()}; uiSync();
+    CAMTW = null; trajStart(p.corpo); if(TRAJ) TRAJ.doTour = true;
+    return;
+  }
   if(p.corpo && ACT && ACT.kind === 'system' && ACT.escr && ST.sys === 'sol'
      && ALLBODIES[p.corpo] && ALLBODIES[p.corpo]._sys === 'sol' && !DIVE && acharPick(p.corpo)){
     if(ST.mapCard && ST.mapCard.id === p.corpo) return;
+    if(TRAJ && TRAJ.doTour) trajLimpar();   /* r293 · a missão da parada anterior sai antes do voo */
     aproximarNoMapa(p.corpo);
     return;
   }
@@ -14376,7 +14428,7 @@ function tourIr(p){
       if(!ESCR.on){ ESCR.on = true; store.set('carto:escr', '1'); if(typeof cfgSync === 'function') cfgSync(); }
       if(ST.level === 'focus') gotoSystem('sol', null, ST.body);
       else gotoSystem('sol');
-      setTimeout(()=>{ if(TOUR.on) tourIr(p); }, 1600);
+      setTimeout(()=>{ if(TOUR.on && TOUR.gen === g) tourIr(p); }, 1600);
       return;
     }
     if(!CEUV.on){
@@ -14417,7 +14469,7 @@ function tourIr(p){
       const minhaGal = (SYS[ST.sys] && SYS[ST.sys].gal) || 'vialactea';
       if(ST.level === 'focus') gotoSystem(ST.sys, null, ST.body);
       else gotoGalaxy(minhaGal, null, false, ST.sys);
-      setTimeout(()=>{ if(TOUR.on) tourIr(p); }, 1500);
+      setTimeout(()=>{ if(TOUR.on && TOUR.gen === g) tourIr(p); }, 1500);
       return;
     }
     gotoUniverse('TOUR · PANORAMA FINAL');
@@ -14427,7 +14479,7 @@ function tourIr(p){
     if(ST.level === 'galaxy' && ST.gal === p.gal) return;
     if(ST.level === 'universe'){
       const tenta0 = (n)=>{
-        if(!TOUR.on) return;
+        if(!TOUR.on || TOUR.gen !== g) return;
         if(!DIVE && ACT && ACT.kind === 'universe' && acharPick(p.gal)){
           const niv0 = ACT.nivelar ? (e)=>ACT.nivelar(p.gal, e) : null;
           diveInto(p.gal, ()=>gotoGalaxy(p.gal, null, true), {yaw:0.4, pitch:0.95, ms:1250, semDesvio:true, extra:niv0});
@@ -14440,7 +14492,7 @@ function tourIr(p){
       /* atravessa o universo: sobe contínuo e mergulha na miniatura do destino */
       gotoUniverse(null, ST.gal);
       const tenta = (n)=>{
-        if(!TOUR.on) return;
+        if(!TOUR.on || TOUR.gen !== g) return;
         if(!DIVE && ACT && ACT.kind === 'universe' && acharPick(p.gal)){
           const niv = ACT.nivelar ? (e)=>ACT.nivelar(p.gal, e) : null;
           diveInto(p.gal, ()=>gotoGalaxy(p.gal, null, true), {yaw:0.4, pitch:0.95, ms:1250, semDesvio:true, extra:niv});
@@ -14454,7 +14506,7 @@ function tourIr(p){
       const minhaGal = (SYS[ST.sys] && SYS[ST.sys].gal) || 'vialactea';
       if(ST.level === 'focus'){ gotoSystem(ST.sys, null, ST.body); }
       else gotoGalaxy(minhaGal, null, false, ST.sys);
-      setTimeout(()=>{ if(TOUR.on) tourIr(p); }, 1500);
+      setTimeout(()=>{ if(TOUR.on && TOUR.gen === g) tourIr(p); }, 1500);
       return;
     }
     gotoGalaxy(p.gal, 'TOUR · ' + tourNome(p));
@@ -14488,7 +14540,7 @@ function tourIr(p){
     const galDe = (SYS[ST.sys] && SYS[ST.sys].gal) || 'vialactea';
     const mergulha = ()=>{
       const tenta = (n)=>{
-        if(!TOUR.on) return;
+        if(!TOUR.on || TOUR.gen !== g) return;
         if(!DIVE && ACT && ACT.kind==='galaxy' && ST.gal === galPara && acharPick(p.sis))
           diveInto(p.sis, ()=>gotoSystem(p.sis, null, null, true), {yaw:0.65, pitch:0.55, semDesvio:true});
         else if(n < 40) setTimeout(()=>tenta(n+1), 250);
@@ -14505,7 +14557,7 @@ function tourIr(p){
         if(ST.level === 'focus'){
           const meu = ST.sys;
           gotoSystem(meu, null, ST.body);
-          setTimeout(()=>{ if(!TOUR.on) return; gotoGalaxy(galPara, null, false, meu); mergulha(); }, 1500);
+          setTimeout(()=>{ if(!TOUR.on || TOUR.gen !== g) return; gotoGalaxy(galPara, null, false, meu); mergulha(); }, 1500);
         } else {
           gotoGalaxy(galPara, null, false, ST.sys);
           mergulha();
@@ -14538,7 +14590,7 @@ function tourIr(p){
     /* corpo em OUTRO sistema: voa até o sistema e mergulha no corpo */
     tourIr({sis:b._sys});
     const pollC = (n)=>{
-      if(!TOUR.on) return;
+      if(!TOUR.on || TOUR.gen !== g) return;
       if(!DIVE && ACT && ACT.kind==='system' && ST.sys === b._sys && acharPick(p.corpo))
         diveInto(p.corpo, ()=>gotoFocus(p.corpo, true));
       else if(n < 80) setTimeout(()=>pollC(n+1), 300);
@@ -14553,7 +14605,7 @@ function tourIr(p){
        sem tela preta e sem parada: a câmera varre o sistema como uma nave */
     gotoSystem(b._sys, null, ST.body);
     const tenta = (n)=>{
-      if(!TOUR.on) return;
+      if(!TOUR.on || TOUR.gen !== g) return;
       if(!DIVE && ACT && ACT.kind==='system' && acharPick(p.corpo))
         diveInto(p.corpo, ()=>gotoFocus(p.corpo, true));
       else if(n < 22) setTimeout(()=>tenta(n+1), 200);
@@ -14585,7 +14637,9 @@ function tourSync(){
   setTimeout(()=>{ n.textContent = tourNarra(p); n.classList.remove('tr-in'); }, 260);
 }
 function tourPasso(){
+  TOUR.gen++;   /* r293 · toda parada nova invalida os timers e polls da anterior */
   const p = ROTEIRO[TOUR.i];
+  if(!p){ tourStop(true); return; }
   /* parada de sistema que era só transição entre dois corpos: o vôo direto
      já mostra o sistema no caminho, então pula sem gastar relógio */
   if(p && p.sis && !p.texto && ST.level==='focus'
@@ -14683,6 +14737,7 @@ function tourRota(k, quieto){
 }
 function tourStart(){
   if(TOUR.on) return;
+  if(typeof TRAJ !== 'undefined' && TRAJ) trajLimpar();   /* r293 · a linha do tempo e o tour brigavam pelo pivô no 1:1 */
   TOUR.volta = {level:ST.level, sys:ST.sys, gal:ST.gal, body:ST.body};
   TOUR.on = true; TOUR.i = 0; TOUR.pausado = false;
   { const b = $('#tourpausa2'); if(b) b.textContent = '⏸'; }
@@ -14693,8 +14748,9 @@ function tourStart(){
 }
 function tourStop(quieto, voltar){
   if(!TOUR.on) return;
-  TOUR.on = false; TOUR.pausado = false;
+  TOUR.on = false; TOUR.pausado = false; TOUR.gen++;
   clearTimeout(TOUR.tm);
+  if(typeof TRAJ !== 'undefined' && TRAJ && TRAJ.doTour) trajLimpar();   /* r293 · a missão que o tour abriu sai com ele */
   if(voltar) tourVoltar(TOUR.volta);
   document.body.classList.remove('tour');
   const bt = $('#misstour'); if(bt) bt.textContent = '▶ TOUR';
@@ -14719,6 +14775,7 @@ const SIS_TOUR_TXT = {
 };
 function tourDoSistema(sysId){
   ST.mapCard = null; uiSync();
+  if(TOUR.on) tourStop(true);   /* r293 · trocar a rota com o tour rodando avançava na lista nova pelo índice velho */
   if(sysId === 'sol'){ tourRota('solar', true); tourStart(); return; }
   const S = SYS[sysId]; if(!S) return;
   const TXT = SIS_TOUR_TXT[sysId] || {};
@@ -14891,7 +14948,7 @@ function findOpen(){
   if(!FINDIDX) buildFindIdx();
   $('#finder').classList.add('on');
   const i = $('#findin'); i.value = ''; findRender('');
-  setTimeout(()=>i.focus(), 30);
+  i.focus(); setTimeout(()=>i.focus(), 30);   /* r293 · o foco síncrono, dentro do gesto, é o que sobe o teclado no iPhone */
   tutInicia('busca', [{tx:'<b>BUSCA:</b> qualquer corpo do catálogo, sistemas e galáxias. Sem digitar nada, ficam as sugestões de onde você está e dos seus visitados.'}]);
 }
 function findClose(){ $('#finder').classList.remove('on'); $('#findin').blur(); }
@@ -14945,7 +15002,7 @@ function findRender(q){
   ).join('') || '<li><small>SEM RESULTADOS NO CATÁLOGO</small></li>';
   $('#findlist').scrollTop = 0;
 }
-function paintSel(){ $('#findlist').querySelectorAll('li').forEach((li,i)=>li.classList.toggle('sel', i===findSel)); }
+function paintSel(){ $('#findlist').querySelectorAll('li').forEach((li,i)=>{ li.classList.toggle('sel', i===findSel); if(i===findSel && li.scrollIntoView) li.scrollIntoView({block:'nearest'}); }); }   /* r293 · a seta desce a lista junto */
 function findGo(){ const r = findRes[findSel]; if(r){ findClose(); feito('busca'); r.go(); } }
 
 /* RA/DEC real do alvo, quando existe: sistemas usam a posição da estrela no
@@ -15661,7 +15718,7 @@ $('#mission').addEventListener('click', e=>{ if(e.target.id==='mission') missClo
     missClose();
     if(li.dataset.gal){ gotoGalaxy(li.dataset.gal); return; }
     if(li.dataset.sis) gotoSystem(li.dataset.sis);
-    else gotoFocus(li.dataset.id);
+    else irAoCorpo(li.dataset.id);   /* r293 · no 1:1 voa no mesmo mapa (a busca já fazia desde o r277) */
   });
 })();
 $('#btnfind').addEventListener('click', findOpen);
@@ -16108,7 +16165,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r292';
+const BUILD = 'r293';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -16177,6 +16234,7 @@ resize();
     if(idsB.length) setTimeout(()=>{
       HAB.grupo = 'perso';
       HAB.sel = idsB.slice();
+      HAB.linkSel = idsB.join(',');   /* r293 · a bancada do link não sobrescreve a sua guardada enquanto você não mexer nela */
       TUT.v.add('boasvindas');
       abrirHab();
     }, 1600);
@@ -16424,7 +16482,9 @@ function tutMostra(){
   $('#tut').classList.add('on');
 }
 function tutInicia(chave, passos){
-  if(TUT.v.has(chave)) return;
+  if(TUT.v.has(chave)) return false;
+  /* r293 · um tutorial por vez: o contextual não derruba o que está aberto (nem rouba o aoFechar dele) */
+  if(TUT.fila && $('#tut').classList.contains('on') && TUT.chave !== chave) return false;
   TUT.chave = chave;
   /* as boas-vindas só contam como vistas ao FECHAR: fechar o navegador no
      meio faz retomar do mesmo passo na próxima visita */
@@ -16436,6 +16496,7 @@ function tutInicia(chave, passos){
     TUT.i = sv; TUT.max = sv;
   }
   tutMostra();
+  return true;
 }
 $('#tutnext').addEventListener('click', ()=>{ if(!$('#tutnext').disabled){ TUT.i++; tutMostra(); } });
 $('#tutprev').addEventListener('click', ()=>{ if(TUT.i > 0){ TUT.i--; tutMostra(); } });
@@ -16807,6 +16868,8 @@ $('#habachados').addEventListener('click', e=>{
   });
   box.addEventListener('pointermove', e=>{
     if(!alvoD) return;
+    /* r293 · soltou fora da caixa antes dos 8 px? o botão não está mais apertado: nada de reordenar no passeio do mouse */
+    if(e.buttons === 0){ if(alvoD.classList) alvoD.classList.remove('arrastando'); alvoD = null; moveu = false; return; }
     if(!moveu && Math.abs(e.clientX - x0) < 8) return;
     if(!moveu){ try{ box.setPointerCapture(pid); }catch(err){} }
     moveu = true;
@@ -17240,6 +17303,14 @@ $('#tournext2').addEventListener('click', ()=>{
   TOUR.pausado = false; $('#tourpausa2').textContent = '⏸';
   tourAvanca();
 });
+/* r293 · os popovers com chanfro NÃO rolam eles mesmos (as diagonais iam junto com o conteúdo): o conteúdo entra num .popscroll */
+for(const par of [['cfgpop', '.fpx'], ['filtpop', '.fpx'], ['habpop', '.tphead']]){
+  const el = $('#' + par[0]); if(!el || el.querySelector(':scope > .popscroll')) continue;
+  const w = document.createElement('div'); w.className = 'popscroll';
+  for(const ch of [...el.childNodes]) if(!(ch.nodeType === 1 && ch.matches(par[1]))) w.appendChild(ch);
+  el.appendChild(w);
+}
+$('#tourrota').innerHTML = Object.keys(ROTAS).map(k=>'<option value="' + k + '">' + esc(ROTAS[k].nome) + '</option>').join('');   /* r293 · corrida, céu e chuvas faltavam no seletor da barra */
 $('#tourrota').addEventListener('change', e=>tourRota(e.target.value));
 tourRota(store.get('carto:rota','completo'), true);
 $('#photoexit').addEventListener('click', e=>{ e.stopPropagation(); togglePhoto(); });
