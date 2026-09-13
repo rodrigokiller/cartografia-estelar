@@ -76,3 +76,17 @@ A camada SATÉLITES AO VIVO NA TERRA usa dois terceiros, os dois sem chave:
 | --- | --- | --- |
 | As 5.044 estrelas até magnitude 6 do céu local (`ceu6.js`: RA, DEC, magnitude, B-V e o número HR) | Yale Bright Star Catalogue (BSC5), no recorte `stars.6.json` do d3-celestial de Olaf Frohn, `https://github.com/ofrohn/d3-celestial` | BSD-3-Clause (d3-celestial); o catálogo de Yale é de domínio público |
 | Sol e Lua no céu local (fórmulas) | Jean Meeus, Astronomical Algorithms, caps. 25 e 47 (termos principais) | algoritmos publicados |
+
+## Terra em ladrilhos (r295)
+
+Com a opção TERRA EM LADRILHOS ligada, o mapa 1:1 busca, perto da Terra, os
+ladrilhos do serviço WMTS do NASA GIBS (Global Imagery Browse Services), parte
+do ESDIS: a camada `VIIRS_SNPP_CorrectedReflectance_TrueColor` (a foto do dia,
+250 m por pixel, desde 24 NOV 2015) e, quando ela não existe para a data, a
+`BlueMarble_NextGeneration` (500 m). Imagens de domínio público da NASA; o
+serviço pede reconhecimento: "We acknowledge the use of imagery provided by
+services from NASA's Global Imagery Browse Services (GIBS), part of NASA's Earth
+Science Data and Information System (ESDIS)". Endereço base:
+https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/ (CORS aberto, sem chave).
+Nada é copiado para o repositório: os ladrilhos são carregados na hora e ficam
+só na memória do navegador.

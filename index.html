@@ -1246,6 +1246,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-escr="1"><span>SISTEMA SOLAR EM ESCALA 1:1 (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-coord="1"><span>COORDENADAS REAIS (RA/DEC)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-luzvia="1"><span>EFEITO LIGHTSPEED NAS VIAGENS 1:1 (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
+    <div class="filtrow" data-ladrilhos="1"><span>TERRA EM LADRILHOS DA NASA · ZOOM ATÉ AS CIDADES (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
     <div class="fp-t fp-t2">SOM</div>
     <div class="filtrow" data-som="mus"><span>MÚSICA</span><b></b></div>
     <div class="filtrow" data-som="fx"><span>EFEITOS SONOROS</span><b></b></div>
@@ -12354,6 +12355,159 @@ function luzViaPasso(dt){
 }
 LUZVIA.on = store.get('carto:luzvia','0') === '1';
 luzViaSync();
+/* ================= r295 · TERRA EM LADRILHOS (experimental): a pele de perto vem dos ladrilhos do NASA GIBS =================
+   No mapa 1:1, perto da Terra, um tapete de ladrilhos (WMTS EPSG:4326, 512 px, 288/2^L graus por ladrilho, 9 niveis ate
+   250 m por pixel; CORS aberto, sem chave) e montado em volta do ponto sob a camera, filho do MESH da Terra (gira com o
+   dia, na convencao da textura: X = cos lat cos lon, Y = sin lat, Z = -cos lat sin lon). A camada e a do DIA DO RELOGIO
+   (VIIRS true color, desde 24 NOV 2015: as nuvens daquele dia) e, quando ela nao existe (futuro, antes do VIIRS, buraco),
+   o Blue Marble fixo. Os niveis: pixel de 0,5625/2^L graus; o nivel e escolhido pelos graus por pixel da tela no ponto
+   sob a camera. Com a camada montada o piso do zoom desce a 1,02 raios e o plano de corte a 2e-6 un. */
+const LADR = {on:false, mesh:null, grupo:null, cache:new Map(), emVoo:0, nivel:-1, q:0, data:null, nuvens:[], cred:false, sub:null, uL:{value:new THREE.Vector3(0, 0, 1)}};
+const LADR_W = [2,3,5,10,20,40,80,160,320], LADR_H = [1,2,3,5,10,20,40,80,160];
+const LADR_URL = 'https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/';
+const LADR_VERT = 'varying vec3 vN; varying vec2 vUv; void main(){ vN = normalize(normalMatrix*normal); vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }';
+const LADR_FRAG = 'uniform sampler2D uMap; uniform vec3 uL; varying vec3 vN; varying vec2 vUv; void main(){ vec3 c = texture2D(uMap, vUv).rgb; float d = dot(normalize(vN), normalize(uL)); float lit = smoothstep(-0.22, 0.30, d); gl_FragColor = vec4(c*(0.05 + 0.95*lit), 1.0); }';
+function ladrTam(L){ return 288/Math.pow(2, L); }   /* graus por ladrilho */
+function ladrData(){
+  /* a data do relogio, se o VIIRS ja existia e ela nao esta no futuro; senao null = Blue Marble */
+  if(!(SIMT.data >= Date.UTC(2015, 10, 24) && SIMT.data <= Date.now())) return null;
+  /* o composto de HOJE so fica pronto amanha (a sonda pegou ladrilhos pretos): o dia UTC corrente vira o de ontem */
+  const hoje0 = Math.floor(Date.now()/86400000)*86400000;
+  const d = new Date(Math.min(SIMT.data, hoje0 - 1));
+  return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') + '-' + String(d.getUTCDate()).padStart(2, '0');
+}
+function ladrUrl(L, col, row, data){
+  return data ? (LADR_URL + 'VIIRS_SNPP_CorrectedReflectance_TrueColor/default/' + data + '/250m/' + L + '/' + row + '/' + col + '.jpg')
+              : (LADR_URL + 'BlueMarble_NextGeneration/default/2004-08-01/500m/' + Math.min(L, 7) + '/' + row + '/' + col + '.jpg');
+}
+function ladrTerra(){
+  if(!LADR.on || !ACT || ACT.kind !== 'system' || !ACT.escr || ST.sys !== 'sol' || !ACT.objs || !ACT.liveGiro) return null;
+  const oo = ACT.objs.find(o=>o.id === 'terra'); if(!oo) return null;
+  const lv = ACT.liveGiro.find(v=>v.grupo === oo.corpo);
+  return lv ? lv.mesh : null;
+}
+function ladrAng(la1, lo1, la2, lo2){
+  const a = Math.sin(la1*D2R)*Math.sin(la2*D2R) + Math.cos(la1*D2R)*Math.cos(la2*D2R)*Math.cos((lo1 - lo2)*D2R);
+  return Math.acos(Math.max(-1, Math.min(1, a)))/D2R;
+}
+function ladrTiraPatches(){
+  if(!LADR.grupo) return;
+  for(const ch of [...LADR.grupo.children]){ LADR.grupo.remove(ch); ch.geometry.dispose(); ch.material.dispose(); }
+}
+function ladrLimpa(tudo){
+  ladrTiraPatches();
+  if(LADR.grupo && LADR.grupo.parent) LADR.grupo.parent.remove(LADR.grupo);
+  LADR.grupo = null; LADR.mesh = null; LADR.nivel = -1; LADR.sub = null;
+  for(const o of LADR.nuvens) o.visible = true; LADR.nuvens = [];
+  if(tudo){ for(const v of LADR.cache.values()){ if(v.tex) v.tex.dispose(); } LADR.cache.clear(); LADR.emVoo = 0; }
+}
+/* o patch: uma grade de lat/lon sobre a esfera, um pouco acima da superficie; sub = sub-retangulo quando a textura e do pai */
+function ladrPatch(L, col, row, tex, R, sub){
+  const tam = ladrTam(L), lon0 = -180 + col*tam, lat1 = 90 - row*tam;
+  const lonA = lon0, lonB = Math.min(180, lon0 + tam), latB = lat1, latA = Math.max(-90, lat1 - tam);
+  const n = L >= 5 ? 8 : 16, pos = [], nrm = [], uv = [], idx = [];
+  for(let j = 0; j <= n; j++) for(let i = 0; i <= n; i++){
+    const fu = i/n, fv = j/n;   /* fv 0 = sul (a base da imagem), 1 = norte */
+    const lonD = lonA + (lonB - lonA)*fu, latD = latA + (latB - latA)*fv;
+    const lon = lonD*D2R, lat = latD*D2R, cl = Math.cos(lat), x = cl*Math.cos(lon), y = Math.sin(lat), z = -cl*Math.sin(lon);
+    pos.push(x*R*1.0015, y*R*1.0015, z*R*1.0015); nrm.push(x, y, z);
+    let u = (lonD - lon0)/tam, v = (latD - (lat1 - tam))/tam;
+    if(sub){ u = sub.u0 + (sub.u1 - sub.u0)*u; v = sub.v0 + (sub.v1 - sub.v0)*v; }
+    uv.push(u, v);
+  }
+  for(let j = 0; j < n; j++) for(let i = 0; i < n; i++){ const a = j*(n + 1) + i, b = a + 1, c2 = a + n + 1, d2 = c2 + 1; idx.push(a, b, c2, b, d2, c2); }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(nrm, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx);
+  const m = new THREE.Mesh(g, new THREE.ShaderMaterial({vertexShader:LADR_VERT, fragmentShader:LADR_FRAG, side:THREE.DoubleSide, uniforms:{uMap:{value:tex}, uL:LADR.uL}}));
+  m.renderOrder = 1;
+  return m;
+}
+function ladrVazio(img){
+  try{
+    const cv = document.createElement('canvas'); cv.width = cv.height = 8; const g = cv.getContext('2d'); g.drawImage(img, 0, 0, 8, 8);
+    const d = g.getImageData(0, 0, 8, 8).data; let s = 0; for(let i = 0; i < d.length; i += 4) s += d[i] + d[i + 1] + d[i + 2];
+    return s/(64*3) < 10;
+  }catch(e){ return false; }
+}
+function ladrPoda(){
+  const teto = QLOW ? 36 : 72; if(LADR.cache.size <= teto) return;
+  const emUso = new Set(LADR.grupo ? LADR.grupo.children.map(ch=>ch.userData.ck) : []);
+  const velhos = [...LADR.cache.entries()].filter(([k, v])=>v.tex && !emUso.has(k)).sort((a, b)=>a[1].t - b[1].t);
+  for(const [k, v] of velhos.slice(0, LADR.cache.size - teto)){ v.tex.dispose(); LADR.cache.delete(k); }
+}
+function ladrPede(q, R, data){
+  const k = q.L + '/' + q.col + '/' + q.row, ck = data + '/' + k;
+  const c = LADR.cache.get(ck);
+  if(c && c.tex){ c.t = performance.now(); const m = ladrPatch(q.L, q.col, q.row, c.tex, R, c.sub); m.userData.k = k; m.userData.ck = ck; LADR.grupo.add(m); return; }
+  if(c) return;                    /* pendente ou falhou: nada a fazer agora */
+  if(LADR.emVoo >= 6) return;      /* a proxima passada pede */
+  LADR.cache.set(ck, {pendente:true, t:performance.now()}); LADR.emVoo++;
+  const carrega = (url, sub, senao)=>{
+    const ld = new THREE.TextureLoader(); ld.setCrossOrigin('anonymous');
+    ld.load(url, tex=>{
+      /* ladrilho PRETO (noite polar, buraco da passagem, dia incompleto)? vale o Blue Marble no lugar */
+      if(senao && ladrVazio(tex.image)){ tex.dispose(); senao(); return; }
+      tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy()); tex.minFilter = THREE.LinearMipmapLinearFilter; tex.generateMipmaps = true;
+      LADR.emVoo--; LADR.cache.set(ck, {tex, sub, t:performance.now()}); ladrPoda();
+      if(!LADR.cred){ LADR.cred = true; showHint(t('IMAGENS DA TERRA: NASA GIBS · VIIRS E BLUE MARBLE')); }
+    }, undefined, ()=>{ if(senao) senao(); else { LADR.emVoo--; LADR.cache.set(ck, {falhou:true, t:performance.now()}); } });
+  };
+  /* a camada do dia; falhou? o Blue Marble fixo (o nivel 8 usa o pai do nivel 7 com sub-retangulo) */
+  const bm = ()=>{
+    const L2 = Math.min(q.L, 7), f = Math.pow(2, q.L - L2), col2 = Math.floor(q.col/f), row2 = Math.floor(q.row/f);
+    const sub = f > 1 ? {u0:(q.col % f)/f, u1:(q.col % f + 1)/f, v0:1 - (q.row % f + 1)/f, v1:1 - (q.row % f)/f} : null;
+    carrega(ladrUrl(L2, col2, row2, null), sub, null);
+  };
+  if(data !== 'bm') carrega(ladrUrl(q.L, q.col, q.row, data), null, bm); else bm();
+}
+function ladrTick(){
+  const mesh = ladrTerra();
+  if(!mesh){ if(LADR.grupo) ladrLimpa(false); return; }
+  LADR.q++; if(LADR.q % 8) return;
+  if(LADR.mesh && LADR.mesh !== mesh) ladrLimpa(false);
+  if(!LADR.grupo){ LADR.grupo = new THREE.Group(); LADR.grupo.name = 'ladrilhos'; mesh.add(LADR.grupo); LADR.mesh = mesh; }
+  const R = mesh.geometry && mesh.geometry.parameters ? mesh.geometry.parameters.radius : 0;
+  if(!R) return;
+  const pl = mesh.worldToLocal(camera.position.clone());   /* a camera no quadro da textura */
+  const dist = pl.length(), alt = dist - R;
+  /* a luz: a mesma do mesh da Terra (espaco de camera) */
+  const uLt = mesh.material && mesh.material.uniforms && mesh.material.uniforms.uL; if(uLt) LADR.uL.value.copy(uLt.value);
+  const data = ladrData() || 'bm';
+  if(data !== LADR.data){ LADR.data = data; ladrTiraPatches(); }
+  /* o nivel: graus por pixel da tela no ponto sob a camera contra o pixel de cada nivel */
+  const degPx = (2*Math.max(alt, R*0.005)*Math.tan(camera.fov*Math.PI/360)/Math.max(200, CRECT.width))/(R*D2R);
+  let L = 8; for(let k = 0; k <= 8; k++){ if(0.5625/Math.pow(2, k) <= degPx*1.3){ L = k; break; } }
+  if(alt > R*4 || L < 2){ if(LADR.grupo.children.length) ladrTiraPatches(); LADR.nivel = -1; if(LADR.nuvens.length){ for(const o of LADR.nuvens) o.visible = true; LADR.nuvens = []; } return; }
+  const lat0 = Math.asin(Math.max(-1, Math.min(1, pl.y/dist)))/D2R, lon0 = Math.atan2(-pl.z, pl.x)/D2R;
+  LADR.sub = {lat:lat0, lon:lon0, alt, L};
+  const hor = Math.acos(Math.min(1, R/dist))/D2R;                                                   /* ate o horizonte */
+  const tela = Math.atan(Math.tan(camera.fov*Math.PI/360)*Math.max(1, camera.aspect)*alt/R)/D2R;   /* meia tela no chao */
+  const tam = ladrTam(L), raio = Math.min(hor, tela*1.5) + tam*0.75;
+  const W = LADR_W[L], H = LADR_H[L], quer = [];
+  const rowA = Math.max(0, Math.floor((90 - Math.min(90, lat0 + raio))/tam)), rowB = Math.min(H - 1, Math.floor((90 - Math.max(-90, lat0 - raio))/tam));
+  const dLon = Math.min(180, raio/Math.max(0.12, Math.cos(lat0*D2R)));
+  for(let row = rowA; row <= rowB; row++){
+    const colA = Math.floor((lon0 - dLon + 180)/tam), colB = Math.floor((lon0 + dLon + 180)/tam);
+    for(let c = colA; c <= colB; c++){
+      const col = ((c % W) + W) % W, cLat = 90 - (row + 0.5)*tam, cLon = -180 + (col + 0.5)*tam;
+      const dd = ladrAng(lat0, lon0, cLat, cLon); if(dd <= raio) quer.push({L, col, row, d:dd});
+    }
+  }
+  quer.sort((a, b)=>a.d - b.d); if(quer.length > 30) quer.length = 30;
+  const quero = new Set(quer.map(q=>q.L + '/' + q.col + '/' + q.row));
+  for(const ch of [...LADR.grupo.children]) if(!quero.has(ch.userData.k)){ LADR.grupo.remove(ch); ch.geometry.dispose(); ch.material.dispose(); }
+  const tem = new Set(LADR.grupo.children.map(ch=>ch.userData.k));
+  for(const q of quer){ if(!tem.has(q.L + '/' + q.col + '/' + q.row)) ladrPede(q, R, data); }
+  LADR.nivel = L;
+  /* as nuvens da foto saem da frente enquanto os ladrilhos estao na tela (a camada do dia ja traz as nuvens daquele dia) */
+  if(LADR.grupo.children.length && !LADR.nuvens.length && mesh.parent){ mesh.parent.traverse(o=>{ if(o.userData && o.userData.isClouds && o.visible){ o.visible = false; LADR.nuvens.push(o); } }); }
+}
+function ladrSync(){
+  const r = document.querySelector('.filtrow[data-ladrilhos] b');
+  if(r) r.textContent = LADR.on ? t('LIGADO') : t('DESLIGADO');
+}
+LADR.on = store.get('carto:ladrilhos','0') === '1';
+ladrSync();
 /* r154 · os padrões do mapa mudaram (escolha dele): quem já tinha ajuste
    salvo recebe a limpeza UMA vez. Apaga as chaves e deixa o padrão do
    código valer; a partir daí as escolhas do navegador mandam de novo */
@@ -15885,7 +16039,8 @@ function dolly(f){
       const pkSel = (tipoSel === 'body' || tipoSel === 'satlive' || tipoSel === 'sismo') ? acharPick((tipoSel === 'satlive' || tipoSel === 'sismo') ? 'terra' : ST.mapCard.id) : null;   /* r276 · o piso do zoom segue a Terra com satélite ou tremor na ficha */
       /* r157: dá para chegar bem mais perto (era 3,2 raios, agora 1,45): o
          contínuo para dentro precisa do corpo enchendo a tela */
-      minEf = (pkSel && pkSel.userData.r) ? Math.max(0.0004, pkSel.userData.r*1.45) : ((tipoSel && tipoSel !== 'body' && tipoSel !== 'satlive' && tipoSel !== 'sismo') ? Math.min(0.02, CAM.dist) : 0.02);   /* r291 · CAM.min é 14 un no Sol: a ficha do céu travava o zoom a 1 UA */
+      const ladrPerto = LADR.on && LADR.grupo && LADR.grupo.children.length && pkSel && (ST.mapCard.id === 'terra' || tipoSel === 'satlive' || tipoSel === 'sismo');   /* r295 · com os ladrilhos na tela o zoom desce a 1,02 raios (~130 km) */
+      minEf = (pkSel && pkSel.userData.r) ? Math.max(ladrPerto ? 0.00003 : 0.0004, pkSel.userData.r*(ladrPerto ? 1.02 : 1.45)) : ((tipoSel && tipoSel !== 'body' && tipoSel !== 'satlive' && tipoSel !== 'sismo') ? Math.min(0.02, CAM.dist) : 0.02);   /* r291 · CAM.min é 14 un no Sol: a ficha do céu travava o zoom a 1 UA */
       if(ST.mapCard && ST.mapCard.type === 'satlive' && ST.mapCard.entrou) minEf = 0.00009;   /* r277 · no satélite o zoom vai até o desenho (como nas missões); r290 · só com a câmera NELE (com o pivô na Terra o zoom entrava no planeta) */
       if(pkSel && pkSel.userData.vivo && ST.mapCard && ST.mapCard.entrou) minEf = 0.00009;   /* r280 · a ISS pelo card de sempre também (o alvo vivo travava o zoom a 4 mil km); r290 · só depois do ENTRAR */
     } else if(ST.mapCard) minEf = Math.min(CAM.min, 4.2);
@@ -16180,7 +16335,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r294';
+const BUILD = 'r295';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -17095,6 +17250,19 @@ const cfgRowClick = e=>{
     showHint(LUZVIA.on ? 'LIGHTSPEED LIGADO: ACELERE FUNDO NO 1:1 PARA VER' : 'LIGHTSPEED DESLIGADO');
     return;
   }
+  const rLad = e.target.closest('[data-ladrilhos]');
+  if(rLad){
+    LADR.on = !LADR.on;
+    store.set('carto:ladrilhos', LADR.on ? '1' : '0');
+    ladrSync();
+    if(!LADR.on) ladrLimpa(true);
+    showHint(LADR.on ? 'LADRILHOS LIGADOS: NO 1:1, CHEGUE PERTO DA TERRA' : 'LADRILHOS DESLIGADOS');
+    if(LADR.on && typeof tutInicia === 'function') tutInicia('ladrilhos', [
+      {tx:'<b>TERRA EM LADRILHOS:</b> no mapa 1:1, perto da Terra, a pele vira a foto de satélite do <b>dia do relógio</b> (NASA GIBS, VIIRS, 250 m por pixel): as nuvens daquele dia, de verdade. A foto de hoje só fica pronta amanhã: até lá vale a de ontem. O zoom desce até uns 130 km de altura.'},
+      {tx:'Mude a data no relógio para ver outro dia (desde NOV 2015). No futuro, ou antes disso, entra o Blue Marble fixo. Ao afastar, a pele de sempre volta. É experimental: precisa de internet e pesa no celular.'}
+    ]);
+    return;
+  }
   const rNom = e.target.closest('[data-ceunomes]');
   if(rNom){
     CEUN.on = !CEUN.on;
@@ -17420,6 +17588,7 @@ function loop(){
   }
   if(LOCAL.sel && !(ACT && ACT.kind === 'system' && ST.sys === 'sol')) localSelecao(false);   /* r290 · trocou de cena: a escolha do lugar solta */
   satVivoTick();   /* r261/r264 · no 1:1 a classe SATÉLITES do filtro é a camada ao vivo */
+  ladrTick();      /* r295 · os ladrilhos da Terra de perto */
   if(SISM.on && ACT && ACT.escr) sismosTick(); else if(SISM.grupo) sismosDesmonta();   /* r262; r290 · só no 1:1 (no cênico montava esferas de km dentro da Terra desenhada) */
   if(DIVE) diveStep(now);
   if(VOOCEU) vooCeuStep(now);
@@ -17521,7 +17690,7 @@ function loop(){
     if(!window.__crono1q){ window.__crono1q = 1; try{ RLOG.push('crono 1oquadro ' + Math.round(performance.now()) + 'ms'); }catch(e){} }
     /* escala real: perto de um grão de planeta o plano de corte encolhe
        junto, senão a câmera atravessa o corpo antes de conseguir vê-lo */
-    const nearAlvo = (ACT && ACT.escr && CAM.dist < 2) ? Math.max(0.00004, CAM.dist*0.018)
+    const nearAlvo = (ACT && ACT.escr && CAM.dist < 2) ? Math.max((LADR.grupo && LADR.grupo.children.length) ? 0.000002 : 0.00004, CAM.dist*0.018)
       : ((ACT && ACT.escr && CAM.dist > 20000) ? CAM.dist*0.004 : 0.05);
     /* longe de casa o alcance da câmera cresce junto, senão o próprio sistema
        sai pela frente do plano de corte */
