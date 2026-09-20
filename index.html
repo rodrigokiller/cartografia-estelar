@@ -1364,6 +1364,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-regua="1"><span>RÉGUA DE DISTÂNCIAS (ESCALA 1:1)</span><b>LIGADO</b></div>
     <div class="filtrow" data-ecl="1"><span>ECLÍPTICA E ZODÍACO</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-sismos="1"><span>TERREMOTOS DAS ÚLTIMAS 24 H (USGS)</span><b>DESLIGADO</b></div>
+    <div class="filtrow" data-aurora="1"><span>AURORA AO VIVO NA TERRA (NOAA)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-satcfg="1"><span>CONFIGURAR OS SATÉLITES AO VIVO</span><b>ABRIR</b></div>
     <div class="filtrow" data-reguadisco="1"><span>DISCO DA RÉGUA</span><b>LIGADO</b></div>
     <div class="rgcor">
@@ -7796,6 +7797,115 @@ function sismosTick(){
   if(!mesh){ if(SISM.grupo) sismosDesmonta(); return; }
   if(SISM.act !== ACT || !SISM.grupo || SISM.grupo.parent !== mesh){ sismosDesmonta(); sismosMonta(); }
 }
+/* ================= r304 · A AURORA AO VIVO (NOAA SWPC) =================
+   A Terra do 1:1 já tem satélites, terremotos e a foto de ontem; o clima
+   espacial faltava, e é o fenômeno do céu que mais circula.
+   O modelo OVATION do NOAA publica, sem chave e com CORS aberto, a
+   PROBABILIDADE de aurora visível numa grade de 1 grau (65.160 pontos, 920 KB
+   crus e 142 KB comprimidos, medido): ela vira uma textura de 360x181 num
+   canvas (o app desenha textura em canvas o tempo todo) aplicada numa casca
+   aditiva a 1,006 raio, filha do MESH da Terra, portanto girando com o dia na
+   mesma convenção de longitude do r165/r261/r262, e acesa SÓ do lado da noite
+   pelo mesmo teste de dot com o uL que os ladrilhos usam.
+   HONESTIDADE: o verde é uma ESCALA de probabilidade, não a cor medida; e o
+   que o modelo dá é a chance de ver, não um retrato. A ficha diz isso.
+   Junto vêm o índice Kp e as escalas R/S/G, que alimentam a linha AGORA do
+   card do Sol. Nada disso é buscado antes de alguém ligar a camada. */
+const AUR = {on:false, carregando:false, pronto:false, erro:null, tex:null, malha:null, act:null,
+  obs:'', kp:null, kpEst:null, escalas:null, quando:0, op:{value:0}, uL:{value:new THREE.Vector3(0, 0, 1)}};
+const AUR_VERT = 'varying vec3 vP; varying vec3 vN; void main(){ vP = normalize(position); vN = normalize(normalMatrix*normal); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }';
+const AUR_FRAG = 'uniform sampler2D uMap; uniform vec3 uL; uniform float uOp; varying vec3 vP; varying vec3 vN;'
+  + 'void main(){ float lat = asin(clamp(vP.y, -1.0, 1.0)); float lon = atan(-vP.z, vP.x);'
+  + ' vec4 c = texture2D(uMap, vec2((lon + 3.14159265)/6.28318531, lat/3.14159265 + 0.5));'
+  + ' float noite = smoothstep(0.18, -0.30, dot(normalize(vN), normalize(uL)));'
+  + ' float a = c.a*noite*uOp; if(a < 0.004) discard;'
+  + ' gl_FragColor = vec4(c.rgb*a, a); }';
+function aurTextura(coords){
+  const W = 360, H = 181;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const g = cv.getContext('2d'), img = g.createImageData(W, H), d = img.data;
+  for(const c of coords){
+    const p = c[2]; if(!p) continue;
+    const x = (((c[0] + 180) % 360) + 360) % 360, y = 90 - c[1];
+    if(y < 0 || y >= H) continue;
+    const a = Math.min(1, p/45);            /* 45 por cento de chance já pinta forte */
+    const i = ((y*W) + x)*4;
+    d[i] = Math.round(70 + 170*a*a); d[i + 1] = 255; d[i + 2] = Math.round(110 + 100*a*a);
+    d[i + 3] = Math.round(255*a);
+  }
+  g.putImageData(img, 0, 0);
+  const tex = new THREE.CanvasTexture(cv);
+  tex.wrapS = THREE.RepeatWrapping; tex.minFilter = THREE.LinearFilter; tex.magFilter = THREE.LinearFilter; tex.generateMipmaps = false;
+  return tex;
+}
+function aurNivel(kp){
+  if(kp === null || kp === undefined) return '';
+  if(kp < 3) return t('CÉU CALMO');
+  if(kp < 5) return t('AGITADO');
+  if(kp < 6) return t('TEMPESTADE MENOR');
+  if(kp < 8) return t('TEMPESTADE FORTE');
+  return t('TEMPESTADE SEVERA');
+}
+function aurLinha(){
+  const e = AUR.escalas || {};
+  const rsg = ['R', 'S', 'G'].map(k=>k + (e[k] && e[k].Scale !== undefined ? e[k].Scale : '0')).join(' ');
+  return t('AGORA · ') + 'Kp ' + (AUR.kpEst !== null ? AUR.kpEst.toFixed(1) : AUR.kp) + ' · ' + aurNivel(AUR.kpEst !== null ? AUR.kpEst : AUR.kp)
+    + ' · ' + rsg + ' · ' + t('DADOS DO NOAA');
+}
+async function aurCarrega(){
+  if(AUR.carregando) return;
+  AUR.carregando = true;
+  try{
+    const B = 'https://services.swpc.noaa.gov/';
+    const [ov, kp, sc] = await Promise.all([
+      buscaComPrazo(B + 'json/ovation_aurora_latest.json', 25000).then(r=>r.json()),
+      buscaComPrazo(B + 'json/planetary_k_index_1m.json', 12000).then(r=>r.json()).catch(()=>null),
+      buscaComPrazo(B + 'products/noaa-scales.json', 12000).then(r=>r.json()).catch(()=>null),
+    ]);
+    if(!ov || !ov.coordinates || !ov.coordinates.length) throw new Error('sem grade');
+    AUR.tex = aurTextura(ov.coordinates);
+    AUR.obs = ov['Observation Time'] || '';
+    if(kp && kp.length){ const u = kp[kp.length - 1]; AUR.kp = u.kp_index; AUR.kpEst = isFinite(u.estimated_kp) ? u.estimated_kp : null; }
+    if(sc && sc['0']) AUR.escalas = sc['0'];
+    AUR.pronto = true; AUR.quando = Date.now();
+    RLOG.push('aurora-kp' + AUR.kp);
+    const pico = ov.coordinates.reduce((a, c)=>Math.max(a, c[2]), 0);
+    showHint(t('AURORA AO VIVO · NOAA') + ' · Kp ' + (AUR.kpEst !== null ? AUR.kpEst.toFixed(1) : AUR.kp) + ' · ' + aurNivel(AUR.kpEst !== null ? AUR.kpEst : AUR.kp) + ' · ' + t('PICO DE ') + pico + '%');
+    if(typeof cardRender === 'function') cardRender();
+  }catch(e){ AUR.erro = e; showHint(t('AURORA: NÃO CARREGOU') + ' · ' + e.message); }
+  AUR.carregando = false;
+}
+function aurMonta(){
+  const mesh = satVivoTerra(); if(!mesh || !AUR.tex) return false;
+  const g = mesh.geometry, R = (g && g.parameters ? g.parameters.radius : 0)*1.006;
+  if(!R) return false;
+  const m = new THREE.Mesh(new THREE.SphereGeometry(R, 64, 48),
+    new THREE.ShaderMaterial({vertexShader:AUR_VERT, fragmentShader:AUR_FRAG, transparent:true, depthWrite:false,
+      blending:THREE.AdditiveBlending, uniforms:{uMap:{value:AUR.tex}, uL:AUR.uL, uOp:AUR.op}}));
+  m.renderOrder = 2;
+  mesh.add(m);
+  AUR.malha = m; AUR.act = ACT;
+  return true;
+}
+function aurDesmonta(){
+  if(AUR.malha){
+    if(AUR.malha.parent) AUR.malha.parent.remove(AUR.malha);
+    AUR.malha.geometry.dispose(); AUR.malha.material.dispose();
+  }
+  AUR.malha = null; AUR.act = null;
+}
+function aurTick(){
+  if(!AUR.pronto){ if(!AUR.carregando && !AUR.erro) aurCarrega(); return; }
+  const mesh = satVivoTerra();
+  if(!mesh){ if(AUR.malha) aurDesmonta(); return; }
+  if(AUR.act !== ACT || !AUR.malha || AUR.malha.parent !== mesh){ aurDesmonta(); if(!aurMonta()) return; }
+  const uLt = mesh.material && mesh.material.uniforms && mesh.material.uniforms.uL;
+  if(uLt) AUR.uL.value.copy(uLt.value);
+  /* de longe a casca vira um aro verde em volta de um grão: só acende chegando perto */
+  const gp = mesh.geometry.parameters, Rm = gp ? gp.radius : 0;
+  const d = (typeof SATV !== 'undefined' && SATV.dTerra) ? SATV.dTerra : CAM.dist;
+  AUR.op.value = Rm ? Math.max(0, Math.min(1, (Rm*40 - d)/(Rm*25))) : 0;
+}
 function fichaSismo(q){
   const d = new Date(q.quando);
   const quando = d.getUTCDate() + ' ' + MESES_N[d.getUTCMonth()] + ' ' + d.getUTCFullYear() + ' · ' + String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0') + ' UTC';
@@ -13048,6 +13158,7 @@ REGUA.cor = Math.max(0, Math.min(REGUA_CORES.length - 1, parseInt(store.get('car
 REGUA.hex = store.get('carto:reguahex', '') || null;
 ECLV.on = store.get('carto:ecl', '0') === '1';
 SISM.on = store.get('carto:sismos', '0') === '1';
+AUR.on = store.get('carto:aurora','0') === '1';   /* r304 · nasce desligada: ninguém paga 142 KB sem pedir */
 try{ const ll = String(store.get('carto:local', '') || '').split(','); if(ll.length === 2 && isFinite(+ll[0]) && isFinite(+ll[1])){ LOCAL.lat = +ll[0]; LOCAL.lon = +ll[1]; } LOCAL.hud = store.get('carto:localhud', '1') !== '0'; }catch(e){}   /* r287 */
 try{ const sc = JSON.parse(store.get('carto:satcfg', '{}') || '{}'); if(sc && sc.grupos) SATCFG.grupos = sc.grupos; if(sc && sc.lixo === false) SATCFG.lixo = false; }catch(e){}   /* r280 */
 REGUA.disco = store.get('carto:reguadisco', '1') === '1';
@@ -16076,11 +16187,19 @@ function cardRender(){
   { const sv = satVivoDoCard(cur); if(sv) h = h.replace('<div class="qgrid">', '<div id="liveinfo">' + esc(satVivoLinha(sv)) + '</div><div class="qgrid">'); }
 
   if(lockOn && ST.body === 'lua'){
-    const d = new Date(), f = faseDaLua();
+    /* r304 · a hora vinha do relógio de PAREDE e a fase do relógio SIMULADO:
+       viajar para 2029 mostrava a hora de hoje com a fase de 2029, lado a lado
+       na mesma linha (achado do crítico da auditoria do r298) */
+    const d = new Date(SIMT.data), f = faseDaLua();
     const hh = String(d.getUTCHours()).padStart(2,'0') + ':' + String(d.getUTCMinutes()).padStart(2,'0');
     h = h.replace('<div class="qgrid">',
       '<div id="liveinfo">'+t('AGORA · ') + hh + ' UTC · ' + nomeDaFase(f.idade)
       + ' · ' + Math.round(f.ilum*100) + '%'+t(' ILUMINADA')+'</div><div class="qgrid">');
+  }
+  /* r304 · o SOL ganhou linha AGORA: o clima espacial de agora, quando a camada
+     da aurora já trouxe os dados do NOAA */
+  if(cur.b && cur.b.id === 'sol' && AUR.kp !== null && typeof AUR.kp !== 'undefined'){
+    h = h.replace('<div class="qgrid">', '<div id="liveinfo">' + esc(aurLinha()) + '</div><div class="qgrid">');
   }
   const pb = $('#panelbody');
   pb.innerHTML = h; pb.scrollTop = 0;
@@ -16868,7 +16987,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r303';
+const BUILD = 'r304';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -17430,6 +17549,11 @@ $('#datepop').addEventListener('click', e=>{
    A entrada `ver` é opcional e LEVA à feature, que é o que faz o painel valer:
    ler que existe um planetário não é a mesma coisa que abrir um. */
 const NOVIDADES = [
+  {b:'r304', d:'20 SET 2026', t:'A AURORA AO VIVO', ls:[
+    'A Terra já tinha satélites, terremotos e a foto de ontem. Faltava o clima espacial: ligue AURORA AO VIVO no filtro ≋ e chegue perto dela na escala 1:1.',
+    'O verde vem do modelo OVATION do NOAA, atualizado o tempo todo, e acende só do lado da noite, em volta dos polos magnéticos, como na vida.',
+    'E o card do Sol ganhou a linha AGORA, com o índice Kp e as escalas de tempestade deste minuto.'],
+   ver:()=>{ const b = $('#btnfilt'); if(b) b.click(); }},
   {b:'r303', d:'20 SET 2026', t:'HOJE À NOITE', ls:[
     'O planetário respondia como está o céu de um lugar numa data. Agora responde a outra pergunta, que é a que a gente faz de verdade: o que vale a pena olhar daqui a pouco.',
     'O botão NOITE lista a Lua, os planetas e as passagens da Estação Espacial desta noite, do mais alto para o mais baixo, com uma dica de como achar cada um e a barrinha de quanto o céu deve ficar limpo hora a hora.',
@@ -17882,6 +18006,8 @@ function cfgSync(){
   if(rec){ rec.classList.toggle('off', !ECLV.on); rec.querySelector('b').textContent = ECLV.on ? t('LIGADO') : t('DESLIGADO'); }
   const rsm = document.querySelector('[data-sismos]');
   if(rsm){ rsm.classList.toggle('off', !SISM.on); rsm.querySelector('b').textContent = SISM.on ? t('LIGADO') : t('DESLIGADO'); }
+  const rau = document.querySelector('[data-aurora]');
+  if(rau){ rau.classList.toggle('off', !AUR.on); rau.querySelector('b').textContent = AUR.on ? t('LIGADO') : t('DESLIGADO'); }
   const rrd = document.querySelector('[data-reguadisco]');
   if(rrd){ rrd.classList.toggle('off', !REGUA.disco); rrd.querySelector('b').textContent = REGUA.disco ? t('LIGADO') : t('DESLIGADO'); }
   const rrg = document.querySelector('[data-regua]');
@@ -17988,6 +18114,15 @@ const cfgRowClick = e=>{
   }
   const rSc = e.target.closest('[data-satcfg]');
   if(rSc){ satCfgAbre(); return; }   /* r280 */
+  const rAu = e.target.closest('[data-aurora]');
+  if(rAu){
+    AUR.on = !AUR.on;
+    store.set('carto:aurora', AUR.on ? '1' : '0');
+    cfgSync();
+    if(!AUR.on) aurDesmonta();
+    else if(!satVivoTerra()) showHint(t('AURORA: LIGUE A ESCALA 1:1 E CHEGUE PERTO DA TERRA'));
+    return;
+  }
   const rSm = e.target.closest('[data-sismos]');
   if(rSm){
     SISM.on = !SISM.on;
@@ -18293,7 +18428,8 @@ function loop(){
     satVivoTick();   /* r261/r264 · no 1:1 a classe SATÉLITES do filtro é a camada ao vivo */
     ladrTick();      /* r295 · os ladrilhos da Terra de perto */
   }
-  if(SISM.on && ACT && ACT.escr) sismosTick(); else if(SISM.grupo) sismosDesmonta();   /* r262; r290 · só no 1:1 (no cênico montava esferas de km dentro da Terra desenhada) */
+  if(SISM.on && ACT && ACT.escr) sismosTick(); else if(SISM.grupo) sismosDesmonta();
+  if(AUR.on && ACT && ACT.escr) aurTick(); else if(AUR.malha) aurDesmonta();   /* r304 · a aurora, só no 1:1 (no cênico a Terra é desenhada fora de escala) */   /* r262; r290 · só no 1:1 (no cênico montava esferas de km dentro da Terra desenhada) */
   if(DIVE) diveStep(now);
   if(VOOCEU) vooCeuStep(now);
   if(TRAJ) trajStep(now);

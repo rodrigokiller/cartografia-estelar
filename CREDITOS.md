@@ -91,6 +91,18 @@ https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/ (CORS aberto, sem chave).
 Nada é copiado para o repositório: os ladrilhos são carregados na hora e ficam
 só na memória do navegador.
 
+## Clima espacial e aurora (r304)
+
+Com a camada AURORA AO VIVO ligada, o mapa 1:1 busca três coisas no **NOAA Space
+Weather Prediction Center** (https://services.swpc.noaa.gov/, CORS aberto, sem
+chave): o modelo **OVATION** de probabilidade de aurora numa grade de 1 grau
+(`json/ovation_aurora_latest.json`, 65.160 pontos, 920 KB crus e 142 KB
+comprimidos), o **índice Kp** minuto a minuto (`json/planetary_k_index_1m.json`)
+e as **escalas R/S/G** de agora (`products/noaa-scales.json`). Dados de domínio
+público do governo dos Estados Unidos. O verde do mapa é uma ESCALA de
+probabilidade, não a cor medida, e o que o modelo entrega é a chance de ver
+aurora, não um retrato dela. Nada é copiado para o repositório.
+
 ## Lua e Marte em ladrilhos (r301)
 
 A mesma opção, agora com a Lua e Marte, usa os mosaicos globais do **NASA Trek**

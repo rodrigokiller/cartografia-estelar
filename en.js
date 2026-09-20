@@ -223,6 +223,12 @@ ui: {
   'COMPARAÇÃO CANCELADA':'COMPARISON CANCELED', 'AGORA ABRA OUTRO CORPO E TOQUE EM ◫':'NOW OPEN ANOTHER BODY AND TAP ◫', 'COMPARAR: ESCOLHA O SEGUNDO CORPO':'COMPARE: PICK THE SECOND BODY',
   'MAPA FOTOGRAFADO (NASA)':'PHOTOGRAPHED MAP (NASA)', 'MAPA DESENHADO À MÃO':'HAND-DRAWN MAP',
   'BAIXANDO AS FOTOS DA NASA...':'DOWNLOADING THE NASA PHOTOS...', 'AS FOTOS NÃO CARREGARAM: O MAPA SEGUE DESENHADO':'THE PHOTOS DID NOT LOAD: THE MAP STAYS HAND-DRAWN',
+  /* r304 · a aurora ao vivo */
+  'AURORA AO VIVO NA TERRA (NOAA)':'LIVE AURORA ON EARTH (NOAA)',
+  'AURORA: LIGUE A ESCALA 1:1 E CHEGUE PERTO DA TERRA':'AURORA: TURN ON THE 1:1 SCALE AND GET CLOSE TO EARTH',
+  'AURORA AO VIVO · NOAA':'LIVE AURORA · NOAA', 'AURORA: NÃO CARREGOU':'AURORA: DID NOT LOAD', 'PICO DE ':'PEAK OF ',
+  'CÉU CALMO':'QUIET SKY', 'AGITADO':'UNSETTLED', 'TEMPESTADE MENOR':'MINOR STORM', 'TEMPESTADE FORTE':'STRONG STORM', 'TEMPESTADE SEVERA':'SEVERE STORM',
+  'DADOS DO NOAA':'NOAA DATA',
   /* r303 · HOJE À NOITE */
   'NOITE':'TONIGHT', 'O que vale a pena olhar nas próximas horas deste lugar':'What is worth looking at over the next few hours from this place',
   'O QUE VER NAS PRÓXIMAS HORAS':'WHAT TO SEE IN THE NEXT FEW HOURS', 'SEM NOITE AQUI':'NO NIGHT HERE',
@@ -248,6 +254,10 @@ ui: {
   'NÃO CONSEGUI ABRIR DAQUI: TENTE PELO MAPA':'COULD NOT OPEN FROM HERE: TRY FROM THE MAP',
   'O que mudou de uns tempos para cá, do mais recente para o mais antigo. O ponto âmbar no ? aparece sozinho quando tem coisa nova.':'What changed lately, newest first. The amber dot on the ? shows up by itself when there is something new.',
   '20 SET 2026':'SEP 20, 2026', '13 SET 2026':'SEP 13, 2026', '12 SET 2026':'SEP 12, 2026', '11 SET 2026':'SEP 11, 2026', '10 SET 2026':'SEP 10, 2026', '8 SET 2026':'SEP 8, 2026',
+  'A AURORA AO VIVO':'THE LIVE AURORA',
+  'A Terra já tinha satélites, terremotos e a foto de ontem. Faltava o clima espacial: ligue AURORA AO VIVO no filtro ≋ e chegue perto dela na escala 1:1.':'Earth already had satellites, earthquakes and yesterday’s photo. Space weather was missing: turn LIVE AURORA on in the ≋ filter and get close to it at 1:1 scale.',
+  'O verde vem do modelo OVATION do NOAA, atualizado o tempo todo, e acende só do lado da noite, em volta dos polos magnéticos, como na vida.':'The green comes from NOAA’s OVATION model, updated continuously, and it only lights up on the night side, around the magnetic poles, just like in real life.',
+  'E o card do Sol ganhou a linha AGORA, com o índice Kp e as escalas de tempestade deste minuto.':'And the Sun card got a NOW line, with the Kp index and this minute’s storm scales.',
   'HOJE À NOITE':'TONIGHT',
   'O planetário respondia como está o céu de um lugar numa data. Agora responde a outra pergunta, que é a que a gente faz de verdade: o que vale a pena olhar daqui a pouco.':'The planetarium used to answer how the sky looks at a place on a date. Now it answers the other question, the one people actually ask: what is worth looking at in a little while.',
   'O botão NOITE lista a Lua, os planetas e as passagens da Estação Espacial desta noite, do mais alto para o mais baixo, com uma dica de como achar cada um e a barrinha de quanto o céu deve ficar limpo hora a hora.':'The TONIGHT button lists the Moon, the planets and the Space Station passes for tonight, from highest to lowest, with a tip on how to find each one and a little bar chart of how clear the sky should be hour by hour.',

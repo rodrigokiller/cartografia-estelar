@@ -8,7 +8,19 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 206 itens pendentes, do r131 ao r303.
+Hoje: 213 itens pendentes, do r131 ao r304.
+
+---
+
+## r304 · a aurora ao vivo
+
+- [ ] **A camada.** Filtro ≋ · AURORA AO VIVO NA TERRA, escala 1:1, chegue perto da Terra e gire para o lado da NOITE: o oval verde aparece em volta do polo magnético. Nasce desligada, e só baixa os dados quando você liga (142 KB comprimidos).
+- [ ] **Só do lado escuro.** Gire para o lado do dia: ela some, como tem que ser. E de longe ela apaga sozinha, senão viraria um aro verde em volta de um grão.
+- [ ] **O card do Sol ganhou a linha AGORA**, com o índice Kp deste minuto, o nível (céu calmo, agitado, tempestade menor...) e as escalas R/S/G do NOAA. Aparece depois que a camada carrega.
+- [ ] **A HONESTIDADE, e eu quero sua opinião.** O verde é uma ESCALA de probabilidade, não a cor medida, e o que o modelo entrega é a CHANCE de ver aurora naquele ponto, não uma foto dela. Está escrito no CREDITOS.md. Acha que precisa estar escrito também na tela?
+- [ ] **Hoje o céu está calmo** (Kp 0, pico de 18 por cento de chance), então o arco é suave. Se der uma tempestade solar nas próximas semanas, vale reabrir: a diferença é grande.
+- [ ] **Conferido por prova numérica:** 7 de 7 pontos batem entre o que o shader lê em cada (latitude, longitude) e o que a fonte gravou, e 100 por cento dos pixels acesos estão acima de 50 graus de latitude, com o pico em -71. Mais o print do oval sul com as luzes das Américas no terminador.
+- [ ] **Bug de carona consertado:** a linha AGORA da LUA misturava dois relógios, a hora vinha do relógio de parede e a fase do relógio simulado. Viaje para 2029 e confira que os dois falam da mesma data agora.
 
 ---
 
