@@ -1295,7 +1295,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-escr="1"><span>SISTEMA SOLAR EM ESCALA 1:1 (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-coord="1"><span>COORDENADAS REAIS (RA/DEC)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-luzvia="1"><span>EFEITO LIGHTSPEED NAS VIAGENS 1:1 (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
-    <div class="filtrow" data-ladrilhos="1"><span>TERRA EM LADRILHOS DA NASA · ZOOM ATÉ AS CIDADES (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
+    <div class="filtrow" data-ladrilhos="1"><span>SUPERFÍCIE EM LADRILHOS DA NASA · TERRA, LUA E MARTE (EXPERIMENTAL)</span><b>DESLIGADO</b></div>
     <div class="fp-t fp-t2">SOM</div>
     <div class="filtrow" data-som="mus"><span>MÚSICA</span><b></b></div>
     <div class="filtrow" data-som="fx"><span>EFEITOS SONOROS</span><b></b></div>
@@ -7769,6 +7769,7 @@ function buildSystem(sysId, spin0){
   const aneisMira = [];
   const solLuz = [];   /* corpos que recebem a direção real do Sol (r161: nos dois modos) */
   const liveGiro = [];  /* corpos com mapa de verdade: o giro vem do relógio (r165) */
+  const peles = [];     /* r301 · corpos que podem receber o tapete de ladrilhos (a LUA é mini: não entra no objs nem no liveGiro) */
   const detalhaveis = [];   /* corpos que ganham malha fina de perto (contínuo) */
   const _lzA = new THREE.Vector3(), _lzB = new THREE.Vector3();
   /* r156 · o anel de mira agora é DESENHADO COMO UMA ÓRBITA (pedido dele): a
@@ -7971,7 +7972,8 @@ function buildSystem(sysId, spin0){
        decorativo: a longitude que está debaixo do Sol tem que ser a de agora.
        O spinner escrevia spinAcc por cima e jogava tudo para um lugar
        qualquer, e era esse o bug que ele viu comparando com o NASA Eyes */
-    if(aoVivoP) liveGiro.push({mesh:bg.mesh, grupo:bg.group});
+    if(aoVivoP) liveGiro.push({mesh:bg.mesh, grupo:bg.group, id:p.id});
+    if(escrAtivo && bg.mesh && typeof LADR_CORPOS !== 'undefined' && LADR_CORPOS[p.id]) peles.push({id:p.id, mesh:bg.mesh});   /* r301 · o id: Marte tem relógio próprio no lonSubsolar */
     else { bg.mesh.rotation.y = spinAcc; spinners.push({obj:bg.mesh, spd:0.25, id:p.id}); }
     let cometFx = null;
     if(p.comet){
@@ -8061,6 +8063,7 @@ function buildSystem(sysId, spin0){
         if(escrAtivo)
           detalhaveis.push({id:m.id, grupo:mg2.group, mesh:mg2.mesh, v:m.visual, r:ms, feito:false});
         /* a lua também tem dia e noite, nos dois modos (r161) */
+        if(escrAtivo && mg2.mesh && typeof LADR_CORPOS !== 'undefined' && LADR_CORPOS[m.id]) peles.push({id:m.id, mesh:mg2.mesh});
         if(mg2.mesh.material && mg2.mesh.material.uniforms && mg2.mesh.material.uniforms.uL)
           solLuz.push({mesh:mg2.mesh, grupo:mg2.group, mats:[mg2.mesh.material]});
         const mpk = new THREE.Mesh(new THREE.SphereGeometry(escrAtivo ? Math.max(0.012, mr*0.22) : 0.30, 6, 6), new THREE.MeshBasicMaterial({visible:false}));
@@ -9021,7 +9024,7 @@ function buildSystem(sysId, spin0){
     });
   }
   const camMaxDin = escrAtivo ? 4e6*LY_UA*ESCR_UA : Math.max(S.camMax || 60, alcance * 1.7);
-  return {kind:'system', scene, sceneCeu, eclLinha, aneisMira, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, liveGiro, solLuz, spinners, navesAng, ceuPicks, ceuAlvos, galCentro, galPolo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
+  return {kind:'system', scene, sceneCeu, eclLinha, aneisMira, labels, pickables, sel:selReg, objs:objReg, rastros, escr:escrAtivo, liveGiro, peles, solLuz, spinners, navesAng, ceuPicks, ceuAlvos, galCentro, galPolo, reguaAneis, hzRing, hzLbl, ceuLinhas, ceuLbls, ceuCruzDir, get ceuSelFn(){ return ceuSelFn; },
     zoomMini:camMaxDin*0.33,
     get spin(){ return spinAcc; },
     /* posiciona cada planeta em função dos anos decorridos (Kepler, Terra = 1 ano).
@@ -9312,7 +9315,7 @@ function buildSystem(sysId, spin0){
         if(typeof TRAJ !== 'undefined' && TRAJ && TRAJ.dias && TRAJ.lancAz !== undefined && TRAJ.terraGiro === lv && TRAJT.gira){
           apontarLon(lv.mesh, -80.6 - 360*(TRAJ.ano1 - TRAJ.ano0)*TRAJ.prog, TRAJ.lancAz);
         } else
-        apontarSubsolar(lv.mesh, Math.atan2(-_lzA.z, -_lzA.x), SIMT.data + ((typeof TRAJ !== 'undefined' && TRAJ && TRAJ.spinMs) ? TRAJ.spinMs : 0));
+        apontarSubsolar(lv.mesh, Math.atan2(-_lzA.z, -_lzA.x), SIMT.data + ((typeof TRAJ !== 'undefined' && TRAJ && TRAJ.spinMs) ? TRAJ.spinMs : 0), lv.id);
       }
       /* rastro elíptico acompanha o relógio (e a linha do tempo) */
       if(RASTRO.on) for(const rt of rastros) if(rt.userData.elip) rastroElip(rt);
@@ -10513,9 +10516,40 @@ const LIVE_FASE = Math.atan2(LDIR.x, LDIR.z) - Math.PI/2;
    geometria, refeita a cada quadro.
    Ao meio-dia UTC o Sol está sobre Greenwich, e a cada hora ele anda 15 graus
    para oeste: essa é a longitude subsolar */
-function lonSubsolar(ms){
+function lonSubsolar(ms, id){
+  /* r301 · MARTE TEM RELÓGIO PRÓPRIO. Até aqui ele girava pela conta da TERRA
+     (o r165 consertou a Terra e Marte veio de carona, sem conta própria), e o
+     dia marciano tem 24 h 39 min: a longitude subsolar escorregava 9,57 graus
+     por dia e dava a volta inteira a cada 37,6 dias. Medido contra a rotação
+     IAU 2015: o erro ia de -169 a +150 graus, ou seja o lado ERRADO do
+     planeta pegando sol, na configuração de fábrica.
+     Agora é o Mars24 do GISS/NASA (sol médio marciano + equação do tempo de
+     Marte). CONFERIDO contra uma segunda implementação independente (Kepler
+     de Standish para a posição heliocentrica + orientação IAU pelo polo
+     317,68143 / 52,88650 e W = 176,630 + 350,891982443297 d): as duas contas
+     ficam dentro de 0,29 grau em 31 anos de amostras, uns 17 km na superfície,
+     bem abaixo do que o mapa desenha. */
+  if(id === 'marte') return lonSubsolarMarte(ms);
   const h = ((ms/3600000) % 24 + 24) % 24;
   return (12 - h)*15;                    /* graus, leste positivo */
+}
+function lonSubsolarMarte(ms){
+  const dTJ = ms/86400000 + 2440587.5 + 69.184/86400 - 2451545.0;   /* dias TT desde J2000 */
+  const M = (19.3871 + 0.52402073*dTJ)*D2R;                          /* anomalia média de Marte */
+  const aFMS = 270.3871 + 0.524038496*dTJ;                           /* sol médio fictício */
+  const c = (p, a)=>(0.985626*dTJ/p + a)*D2R;
+  const PBS = 0.0071*Math.cos(c(2.2353, 49.409)) + 0.0057*Math.cos(c(2.7543, 168.173))
+            + 0.0039*Math.cos(c(1.1177, 191.837)) + 0.0037*Math.cos(c(15.7866, 21.736))
+            + 0.0021*Math.cos(c(2.1354, 15.704)) + 0.0020*Math.cos(c(2.4694, 95.528))
+            + 0.0018*Math.cos(c(32.8493, 49.095));                   /* as perturbações de Júpiter e companhia */
+  const vM = (10.691 + 3e-7*dTJ)*Math.sin(M) + 0.623*Math.sin(2*M) + 0.050*Math.sin(3*M)
+           + 0.005*Math.sin(4*M) + 0.0005*Math.sin(5*M) + PBS;        /* equação do centro */
+  const Ls = (aFMS + vM)*D2R;                                         /* longitude solar: a estação marciana */
+  const EOT = 2.861*Math.sin(2*Ls) - 0.071*Math.sin(4*Ls) + 0.002*Math.sin(6*Ls) - vM;   /* equação do tempo, graus */
+  const MSD = (dTJ - 4.5)/1.027491252 + 44796.0 - 0.00096;            /* Mars Sol Date */
+  const MTC = (((MSD % 1) + 1) % 1)*24;                               /* hora marciana de Greenwich */
+  const lon = 180 - 15*MTC - EOT;
+  return ((lon + 180) % 360 + 360) % 360 - 180;                       /* graus, leste positivo */
 }
 /* na textura equirretangular a longitude L cai no azimute -L quando
    rotation.y é zero (no three.js o u=0 fica em -X e cresce para +Z), e girar
@@ -10526,8 +10560,8 @@ function lonSubsolar(ms){
    em vez de deduzir, MEDIMOS: zera o giro, olha para onde a longitude do Sol
    aponta no mundo, e corrige a diferença. Vale para qualquer cadeia de pais */
 const _lvA = new THREE.Vector3();
-function apontarSubsolar(mesh, azSol, ms){
-  const lam = lonSubsolar(ms)*Math.PI/180;
+function apontarSubsolar(mesh, azSol, ms, id){
+  const lam = lonSubsolar(ms, id)*Math.PI/180;
   mesh.rotation.y = 0;
   mesh.updateWorldMatrix(true, false);
   /* na textura, a longitude L fica na direção local (cos L, 0, -sen L) */
@@ -11443,7 +11477,7 @@ void main(){
           : {mode:'orbit', yaw:0, pitch:0.06, dist:9.0, min:3.7, max:9.6, pivFoco:true}),
     update:(dt)=>{
       if(marteCalota) marteCalota(SIMT.data);   /* as calotas de Marte seguem o relógio */
-      if(giroLive && bg) apontarSubsolar(bg.mesh, SOLAZ_FOCO, SIMT.data);
+      if(giroLive && bg) apontarSubsolar(bg.mesh, SOLAZ_FOCO, SIMT.data, b.id);
       if(luzFoco.length){
         _flz.copy(luzDirFoco).transformDirection(camera.matrixWorldInverse);
         for(const m of luzFoco) m.uniforms.uL.value.copy(_flz);
@@ -12587,12 +12621,38 @@ luzViaSync();
    (VIIRS true color, desde 24 NOV 2015: as nuvens daquele dia) e, quando ela nao existe (futuro, antes do VIIRS, buraco),
    o Blue Marble fixo. Os niveis: pixel de 0,5625/2^L graus; o nivel e escolhido pelos graus por pixel da tela no ponto
    sob a camera. Com a camada montada o piso do zoom desce a 1,02 raios e o plano de corte a 2e-6 un. */
-const LADR = {on:false, mesh:null, grupo:null, cache:new Map(), emVoo:0, nivel:-1, q:0, data:null, nuvens:[], cred:false, sub:null, uL:{value:new THREE.Vector3(0, 0, 1)}};
+/* r301 · O TAPETE SAIU DA TERRA. O motor do r295 era genérico menos por três
+   constantes presas ao GIBS (a grade, os graus por ladrilho e a URL). Com elas
+   numa tabela, o mesmo código serve o NASA Trek, que publica os mosaicos
+   globais da Lua e de Marte em WMTS equirretangular, sem chave e com
+   Access-Control-Allow-Origin: * (conferido por curl com Origin).
+   As duas grades são diferentes e por isso viraram função:
+   · GIBS: ladrilho de 512 px cobrindo 288/2^L graus, grade irregular (a tabela
+     LADR_W/LADR_H), 9 níveis, pixel de 0,5625/2^L graus.
+   · Trek: ladrilho de 256 px cobrindo 180/2^L graus, grade limpa de 2^(L+1)
+     por 2^L, pixel de 0,703125/2^L graus. Lua até o nível 8 (83 m por pixel),
+     Marte até o 7 (325 m). Medido: nível 9 devolve 404 nos dois.
+   Como o ladrilho do Trek é metade do lado, a mesma área de tela pede quatro
+   vezes mais pedaços: por isso o teto de patches é maior lá, e cai no QLOW. */
+const LADR = {on:false, mesh:null, grupo:null, cache:new Map(), emVoo:0, nivel:-1, q:0, data:null, nuvens:[], cred:false, sub:null, corpo:null, uL:{value:new THREE.Vector3(0, 0, 1)}};
 const LADR_W = [2,3,5,10,20,40,80,160,320], LADR_H = [1,2,3,5,10,20,40,80,160];
 const LADR_URL = 'https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/';
+const LADR_TREK = 'https://trek.nasa.gov/tiles/';
+const LADR_CORPOS = {
+  terra:{gibs:true, nmax:8, p0:0.5625, tam:L=>288/Math.pow(2, L), W:L=>LADR_W[L], H:L=>LADR_H[L], teto:30,
+         credito:'IMAGENS DA TERRA: NASA GIBS · VIIRS E BLUE MARBLE'},
+  lua:{trek:'Moon/EQ/LRO_WAC_Mosaic_Global_303ppd_v02', nmax:8, p0:0.703125, tam:L=>180/Math.pow(2, L),
+       W:L=>Math.pow(2, L + 1), H:L=>Math.pow(2, L), teto:40,
+       credito:'IMAGENS DA LUA: NASA TREK · LRO WAC MOSAIC'},
+  marte:{trek:'Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m', nmax:7, p0:0.703125, tam:L=>180/Math.pow(2, L),
+         W:L=>Math.pow(2, L + 1), H:L=>Math.pow(2, L), teto:40,
+         credito:'IMAGENS DE MARTE: NASA TREK · VIKING MDIM 2.1'},
+};
+const _ladrV = new THREE.Vector3();
 const LADR_VERT = 'varying vec3 vN; varying vec2 vUv; void main(){ vN = normalize(normalMatrix*normal); vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }';
 const LADR_FRAG = 'uniform sampler2D uMap; uniform vec3 uL; varying vec3 vN; varying vec2 vUv; void main(){ vec3 c = texture2D(uMap, vUv).rgb; float d = dot(normalize(vN), normalize(uL)); float lit = smoothstep(-0.22, 0.30, d); gl_FragColor = vec4(c*(0.05 + 0.95*lit), 1.0); }';
-function ladrTam(L){ return 288/Math.pow(2, L); }   /* graus por ladrilho */
+function ladrCfg(){ return LADR_CORPOS[LADR.corpo] || LADR_CORPOS.terra; }
+function ladrTam(L, cfg){ return (cfg || ladrCfg()).tam(L); }   /* graus por ladrilho */
 function ladrData(){
   /* a data do relogio, se o VIIRS ja existia e ela nao esta no futuro; senao null = Blue Marble */
   if(!(SIMT.data >= Date.UTC(2015, 10, 24) && SIMT.data <= Date.now())) return null;
@@ -12601,15 +12661,29 @@ function ladrData(){
   const d = new Date(Math.min(SIMT.data, hoje0 - 1));
   return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') + '-' + String(d.getUTCDate()).padStart(2, '0');
 }
-function ladrUrl(L, col, row, data){
+function ladrUrl(L, col, row, data, cfg){
+  cfg = cfg || ladrCfg();
+  if(cfg.trek) return LADR_TREK + cfg.trek + '/1.0.0/default/default028mm/' + L + '/' + row + '/' + col + '.jpg';
   return data ? (LADR_URL + 'VIIRS_SNPP_CorrectedReflectance_TrueColor/default/' + data + '/250m/' + L + '/' + row + '/' + col + '.jpg')
               : (LADR_URL + 'BlueMarble_NextGeneration/default/2004-08-01/500m/' + Math.min(L, 7) + '/' + row + '/' + col + '.jpg');
 }
-function ladrTerra(){
-  if(!LADR.on || !ACT || ACT.kind !== 'system' || !ACT.escr || ST.sys !== 'sol' || !ACT.objs || !ACT.liveGiro) return null;
-  const oo = ACT.objs.find(o=>o.id === 'terra'); if(!oo) return null;
-  const lv = ACT.liveGiro.find(v=>v.grupo === oo.corpo);
-  return lv ? lv.mesh : null;
+/* r301 · qual corpo recebe o tapete agora. Manda o que está travado na ficha;
+   sem ficha, o que estiver ao alcance da câmera. O registro ACT.peles existe
+   porque as LUAS não entram no ACT.objs nem no liveGiro (elas são miniaturas
+   filhas do holder do planeta), então o caminho do r295 não as alcançava. */
+function ladrAlvo(){
+  if(!LADR.on || !ACT || ACT.kind !== 'system' || !ACT.escr || ST.sys !== 'sol' || !ACT.peles || !ACT.peles.length) return null;
+  const pref = (ST.mapCard && ST.mapCard.id) || ACT.pivoSegue || null;
+  if(pref && LADR_CORPOS[pref]){ const p = ACT.peles.find(x=>x.id === pref); if(p) return p; }
+  let alvo = null, melhor = Infinity;
+  for(const p of ACT.peles){
+    const g = p.mesh.geometry, R = (g && g.parameters) ? g.parameters.radius : 0; if(!R) continue;
+    p.mesh.getWorldPosition(_ladrV);
+    const d = _ladrV.distanceTo(camera.position);
+    if(d > R*5 || d >= melhor) continue;
+    melhor = d; alvo = p;
+  }
+  return alvo;
 }
 function ladrAng(la1, lo1, la2, lo2){
   const a = Math.sin(la1*D2R)*Math.sin(la2*D2R) + Math.cos(la1*D2R)*Math.cos(la2*D2R)*Math.cos((lo1 - lo2)*D2R);
@@ -12681,7 +12755,8 @@ function ladrPede(q, R, data){
       if(senao && ladrVazio(tex.image)){ tex.dispose(); senao(); return; }
       tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy()); tex.minFilter = THREE.LinearMipmapLinearFilter; tex.generateMipmaps = true;
       LADR.emVoo--; LADR.cache.set(ck, {tex, sub, t:performance.now()}); ladrPoda();
-      if(!LADR.cred){ LADR.cred = true; showHint(t('IMAGENS DA TERRA: NASA GIBS · VIIRS E BLUE MARBLE')); }
+      /* r301 · o crédito é por corpo: o GIBS e o Trek pedem reconhecimento em separado */
+      if(LADR.cred !== LADR.corpo){ LADR.cred = LADR.corpo; showHint(t(ladrCfg().credito)); }
     }, undefined, ()=>{ if(senao) senao(); else { LADR.emVoo--; LADR.cache.set(ck, {falhou:true, t:performance.now()}); } });
   };
   /* a camada do dia; falhou? o Blue Marble fixo (o nivel 8 usa o pai do nivel 7 com sub-retangulo) */
@@ -12690,32 +12765,41 @@ function ladrPede(q, R, data){
     const sub = f > 1 ? {u0:(q.col % f)/f, u1:(q.col % f + 1)/f, v0:1 - (q.row % f + 1)/f, v1:1 - (q.row % f)/f} : null;
     carrega(ladrUrl(L2, col2, row2, null), sub, null);
   };
-  if(data !== 'bm') carrega(ladrUrl(q.L, q.col, q.row, data), null, bm); else bm();
+  /* r301 · o Trek é mosaico fixo: não tem camada do dia, não tem ladrilho preto
+     e não tem reserva. Falhou, fica marcado como falhou e pronto. */
+  if(ladrCfg().trek) carrega(ladrUrl(q.L, q.col, q.row, null), null, null);
+  else if(data !== 'bm') carrega(ladrUrl(q.L, q.col, q.row, data), null, bm);
+  else bm();
 }
 function ladrTick(){
-  const mesh = ladrTerra();
-  if(!mesh){ if(LADR.grupo) ladrLimpa(false); return; }
+  const alvo = ladrAlvo();
+  if(!alvo){ if(LADR.grupo) ladrLimpa(false); LADR.corpo = null; return; }
+  const mesh = alvo.mesh;
   LADR.q++; if(LADR.q % 8) return;
   if(LADR.mesh && LADR.mesh !== mesh) ladrLimpa(false);
+  LADR.corpo = alvo.id;
+  const cfg = LADR_CORPOS[alvo.id];
   if(!LADR.grupo){ LADR.grupo = new THREE.Group(); LADR.grupo.name = 'ladrilhos'; mesh.add(LADR.grupo); LADR.mesh = mesh; }
   const R = mesh.geometry && mesh.geometry.parameters ? mesh.geometry.parameters.radius : 0;
   if(!R) return;
   const pl = mesh.worldToLocal(camera.position.clone());   /* a camera no quadro da textura */
   const dist = pl.length(), alt = dist - R;
-  /* a luz: a mesma do mesh da Terra (espaco de camera) */
+  /* a luz: a mesma do mesh do corpo (espaco de camera) */
   const uLt = mesh.material && mesh.material.uniforms && mesh.material.uniforms.uL; if(uLt) LADR.uL.value.copy(uLt.value);
-  const data = ladrData() || 'bm';
+  /* a camada do DIA só existe na Terra; o Trek é mosaico fixo, e o id do corpo
+     entra na chave do cache para a Lua e Marte não disputarem os mesmos slots */
+  const data = cfg.trek ? cfg.trek : (ladrData() || 'bm');
   if(data !== LADR.data){ LADR.data = data; ladrTiraPatches(); }
   /* o nivel: graus por pixel da tela no ponto sob a camera contra o pixel de cada nivel */
   const degPx = (2*Math.max(alt, R*0.005)*Math.tan(camera.fov*Math.PI/360)/Math.max(200, CRECT.width))/(R*D2R);
-  let L = 8; for(let k = 0; k <= 8; k++){ if(0.5625/Math.pow(2, k) <= degPx*1.3){ L = k; break; } }
+  let L = cfg.nmax; for(let k = 0; k <= cfg.nmax; k++){ if(cfg.p0/Math.pow(2, k) <= degPx*1.3){ L = k; break; } }
   if(alt > R*4 || L < 2){ if(LADR.grupo.children.length) ladrTiraPatches(); LADR.nivel = -1; if(LADR.nuvens.length){ for(const o of LADR.nuvens) o.visible = true; LADR.nuvens = []; } return; }
   const lat0 = Math.asin(Math.max(-1, Math.min(1, pl.y/dist)))/D2R, lon0 = Math.atan2(-pl.z, pl.x)/D2R;
   LADR.sub = {lat:lat0, lon:lon0, alt, L};
   const hor = Math.acos(Math.min(1, R/dist))/D2R;                                                   /* ate o horizonte */
   const tela = Math.atan(Math.tan(camera.fov*Math.PI/360)*Math.max(1, camera.aspect)*alt/R)/D2R;   /* meia tela no chao */
-  const tam = ladrTam(L), raio = Math.min(hor, tela*1.5) + tam*0.75;
-  const W = LADR_W[L], H = LADR_H[L], quer = [];
+  const tam = ladrTam(L, cfg), raio = Math.min(hor, tela*1.5) + tam*0.75;
+  const W = cfg.W(L), H = cfg.H(L), quer = [];
   const rowA = Math.max(0, Math.floor((90 - Math.min(90, lat0 + raio))/tam)), rowB = Math.min(H - 1, Math.floor((90 - Math.max(-90, lat0 - raio))/tam));
   const dLon = Math.min(180, raio/Math.max(0.12, Math.cos(lat0*D2R)));
   for(let row = rowA; row <= rowB; row++){
@@ -12725,7 +12809,10 @@ function ladrTick(){
       const dd = ladrAng(lat0, lon0, cLat, cLon); if(dd <= raio) quer.push({L, col, row, d:dd});
     }
   }
-  quer.sort((a, b)=>a.d - b.d); if(quer.length > 30) quer.length = 30;
+  /* r301 · o teto vem do corpo: o ladrilho do Trek tem metade do lado do GIBS,
+     então a mesma área de tela pede quatro vezes mais pedaços. No QLOW cai. */
+  const teto = QLOW ? Math.round(cfg.teto*0.45) : cfg.teto;
+  quer.sort((a, b)=>a.d - b.d); if(quer.length > teto) quer.length = teto;
   const quero = new Set(quer.map(q=>q.L + '/' + q.col + '/' + q.row));
   for(const ch of [...LADR.grupo.children]) if(!quero.has(ch.userData.k)){ LADR.grupo.remove(ch); ch.geometry.dispose(); ch.material.dispose(); }
   const tem = new Set(LADR.grupo.children.map(ch=>ch.userData.k));
@@ -16287,7 +16374,7 @@ function dolly(f){
       const pkSel = (tipoSel === 'body' || tipoSel === 'satlive' || tipoSel === 'sismo') ? acharPick((tipoSel === 'satlive' || tipoSel === 'sismo') ? 'terra' : ST.mapCard.id) : null;   /* r276 · o piso do zoom segue a Terra com satélite ou tremor na ficha */
       /* r157: dá para chegar bem mais perto (era 3,2 raios, agora 1,45): o
          contínuo para dentro precisa do corpo enchendo a tela */
-      const ladrPerto = LADR.on && LADR.grupo && LADR.grupo.children.length && pkSel && (ST.mapCard.id === 'terra' || tipoSel === 'satlive' || tipoSel === 'sismo');   /* r295 · com os ladrilhos na tela o zoom desce a 1,02 raios (~130 km) */
+      const ladrPerto = LADR.on && LADR.grupo && LADR.grupo.children.length && pkSel && (LADR_CORPOS[ST.mapCard.id] || tipoSel === 'satlive' || tipoSel === 'sismo');   /* r295 · com os ladrilhos na tela o zoom desce a 1,02 raios (~130 km) */
       minEf = (pkSel && pkSel.userData.r) ? Math.max(ladrPerto ? 0.00003 : 0.0004, pkSel.userData.r*(ladrPerto ? 1.02 : 1.45)) : ((tipoSel && tipoSel !== 'body' && tipoSel !== 'satlive' && tipoSel !== 'sismo') ? Math.min(0.02, CAM.dist) : 0.02);   /* r291 · CAM.min é 14 un no Sol: a ficha do céu travava o zoom a 1 UA */
       if(ST.mapCard && ST.mapCard.type === 'satlive' && ST.mapCard.entrou) minEf = 0.00009;   /* r277 · no satélite o zoom vai até o desenho (como nas missões); r290 · só com a câmera NELE (com o pivô na Terra o zoom entrava no planeta) */
       if(pkSel && pkSel.userData.vivo && ST.mapCard && ST.mapCard.entrou) minEf = 0.00009;   /* r280 · a ISS pelo card de sempre também (o alvo vivo travava o zoom a 4 mil km); r290 · só depois do ENTRAR */
@@ -16590,7 +16677,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r300';
+const BUILD = 'r301';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -17152,6 +17239,13 @@ $('#datepop').addEventListener('click', e=>{
    A entrada `ver` é opcional e LEVA à feature, que é o que faz o painel valer:
    ler que existe um planetário não é a mesma coisa que abrir um. */
 const NOVIDADES = [
+  {b:'r301', d:'20 SET 2026', t:'A LUA E MARTE EM LADRILHOS', ls:[
+    'O tapete de fotos de satélite saiu da Terra: chegando perto da Lua e de Marte na escala 1:1, a pele vira o mosaico de verdade do NASA Trek, a 83 e 325 metros por pixel.',
+    'Dá para ir até Tycho, o sítio da Apollo 11 e o Valles Marineris. Ligue em ⚙︎ EXTRAS, que ainda é experimental.',
+    'De carona, Marte passou a girar pelo relógio dele: o dia marciano tem 24 h 39 min e o planeta vinha girando pelo horário de Greenwich.'],
+   ver:()=>{ const b = $('#btncfg'); if(b) b.click(); }},
+  {b:'r300', d:'20 SET 2026', t:'ESTE PAINEL', ls:[
+    'O app fez 300 entregas sem nunca contar o que mudou. Agora conta: um ponto âmbar aparece no ? quando tem novidade, e cada linha daqui leva direto à feature.']},
   {b:'r299', d:'20 SET 2026', t:'O CELULAR E A PRIMEIRA VISITA', ls:[
     'No celular a barra do topo some enquanto um painel está aberto: o ✕ do planetário voltou a ser alcançável.',
     'Com um painel aberto em tela cheia o mapa para de ser desenhado por baixo, e o aparelho esquenta bem menos.',
@@ -17614,9 +17708,9 @@ const cfgRowClick = e=>{
     store.set('carto:ladrilhos', LADR.on ? '1' : '0');
     ladrSync();
     if(!LADR.on) ladrLimpa(true);
-    showHint(LADR.on ? 'LADRILHOS LIGADOS: NO 1:1, CHEGUE PERTO DA TERRA' : 'LADRILHOS DESLIGADOS');
+    showHint(t(LADR.on ? 'LADRILHOS LIGADOS: NO 1:1, CHEGUE PERTO DA TERRA, DA LUA OU DE MARTE' : 'LADRILHOS DESLIGADOS'));
     if(LADR.on && typeof tutInicia === 'function') tutInicia('ladrilhos', [
-      {tx:'<b>TERRA EM LADRILHOS:</b> no mapa 1:1, perto da Terra, a pele vira a foto de satélite do <b>dia do relógio</b> (NASA GIBS, VIIRS, 250 m por pixel): as nuvens daquele dia, de verdade. A foto de hoje só fica pronta amanhã: até lá vale a de ontem. O zoom desce até uns 130 km de altura.'},
+      {tx:'<b>SUPERFÍCIE EM LADRILHOS:</b> no mapa 1:1, chegando perto da <b>Terra</b> a pele vira a foto de satélite do <b>dia do relógio</b> (NASA GIBS, VIIRS, 250 m por pixel): as nuvens daquele dia, de verdade. Na <b>Lua</b> e em <b>Marte</b> entram os mosaicos do NASA Trek (83 e 325 m por pixel), e dá para chegar em Tycho, no sítio da Apollo 11 e no Valles Marineris. O zoom desce até uns 2 por cento de raio acima do chão.'},
       {tx:'Mude a data no relógio para ver outro dia (desde NOV 2015). No futuro, ou antes disso, entra o Blue Marble fixo. Ao afastar, a pele de sempre volta. É experimental: precisa de internet e pesa no celular.'}
     ]);
     return;

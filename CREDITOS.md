@@ -90,3 +90,17 @@ Science Data and Information System (ESDIS)". Endereço base:
 https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/ (CORS aberto, sem chave).
 Nada é copiado para o repositório: os ladrilhos são carregados na hora e ficam
 só na memória do navegador.
+
+## Lua e Marte em ladrilhos (r301)
+
+A mesma opção, agora com a Lua e Marte, usa os mosaicos globais do **NASA Trek**
+(https://trek.nasa.gov/tiles/, WMTS equirretangular, CORS aberto, sem chave):
+
+| Corpo | Camada | Resolução no nível máximo |
+|---|---|---|
+| Lua | `Moon/EQ/LRO_WAC_Mosaic_Global_303ppd_v02` · mosaico global da Wide Angle Camera do Lunar Reconnaissance Orbiter (NASA/GSFC/Arizona State University) | 83 m por pixel (nível 8) |
+| Marte | `Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m` · Mars Digital Image Model 2.1, mosaico colorido das Viking (NASA/JPL/USGS Astrogeology) | 325 m por pixel (nível 7) |
+
+Imagens de domínio público da NASA. Como no GIBS, nada é copiado para o
+repositório: os ladrilhos são buscados na hora e ficam só na memória do
+navegador, e o app mostra o crédito da fonte na primeira carga de cada corpo.

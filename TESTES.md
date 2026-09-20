@@ -8,7 +8,18 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 186 itens pendentes, do r131 ao r300.
+Hoje: 192 itens pendentes, do r131 ao r301.
+
+---
+
+## r301 · a Lua e Marte em ladrilhos, e o relógio de Marte
+
+- [ ] **A Lua em detalhe.** ⚙︎ EXTRAS, ligue SUPERFÍCIE EM LADRILHOS, vá para a escala 1:1, entre na Lua e aproxime: a pele vira o mosaico LRO a 83 m por pixel. Procure Tycho (com os raios) e o Mar da Tranquilidade. Medido por sonda: os ladrilhos entram em 1,8 s, e o print mostra o lado oculto em detalhe, sem costura.
+- [ ] **Marte em detalhe.** O mesmo em Marte, com o mosaico Viking a 325 m por pixel: Valles Marineris, Olympus Mons, a bacia Hellas, a cratera Jezero.
+- [ ] **A COR DE MARTE, e aqui eu quero sua opinião.** O mosaico Viking é mais acinzentado que o Marte desenhado do app, então dá para ver a emenda entre a área com ladrilho e o resto da esfera. É o dado real da NASA, sem retoque. Quer que eu deixe honesto assim, ou que eu puxe a cor dos ladrilhos de Marte para o alaranjado do desenho para a emenda sumir?
+- [ ] **MARTE GIRAVA PELO HORÁRIO DE GREENWICH.** O dia marciano tem 24 h 39 min, e o planeta usava a conta da Terra desde sempre: o erro ia de -169 a +150 graus, ou seja o lado ERRADO pegando sol. Agora é o Mars24 do GISS. Confira com o relógio acelerado em 1 s = 1 h: Marte dá a volta em uns 24 s e meio, não em 24. Conferido contra a rotação IAU: as duas contas ficam dentro de 0,29 grau em 31 anos.
+- [ ] **O toggle mudou de nome** para SUPERFÍCIE EM LADRILHOS DA NASA · TERRA, LUA E MARTE, e o tutorial da primeira ligada fala dos três.
+- [ ] **A Terra continua igual.** O caminho dela não mudou em nada (mesma camada do dia, mesma reserva Blue Marble, mesmo Blue Marble no futuro e no passado).
 
 ---
 
