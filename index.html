@@ -381,6 +381,22 @@ body.touch .novit button{padding:8px 12px;font-size:9px}
 #localcard .lc-q .k{color:var(--dim);font-size:7.5px;letter-spacing:1.5px} #localcard .lc-q .v{color:var(--ion)}
 #localcard .lc-go{margin-top:10px;width:100%;border:1px solid var(--line);background:rgba(63,140,255,.1);color:var(--ion);font-family:var(--mono);font-size:8.5px;letter-spacing:2px;padding:7px 6px;cursor:pointer}
 #localcard .lc-go:hover{border-color:var(--amber);color:var(--amber)}
+/* r303 · HOJE À NOITE: a fileira de alvos e a barrinha de nuvem das próximas horas */
+#localcard .lc-alvo{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;align-items:baseline;
+  border-left:1px solid var(--line2);padding:3px 0 3px 8px;margin-bottom:7px}
+#localcard .lc-alvo.top{border-left-color:var(--amber)}
+#localcard .lc-alvo .an{grid-column:1;font-size:10px;letter-spacing:2px;color:var(--txt)}
+#localcard .lc-alvo.top .an{color:var(--amber)}
+#localcard .lc-alvo .aq{grid-column:2;font-size:8px;letter-spacing:1.4px;color:var(--ion);text-align:right}
+#localcard .lc-alvo .ad{grid-column:1/3;font-size:8px;letter-spacing:1px;color:var(--dim2);line-height:1.5}
+#localcard .lc-alvo button{grid-column:1/3;justify-self:start;margin-top:3px;border:1px solid var(--line2);background:none;
+  color:var(--dim);font-family:var(--mono);font-size:7.5px;letter-spacing:1.5px;padding:3px 7px;cursor:pointer}
+#localcard .lc-alvo button:hover{border-color:var(--amber);color:var(--amber)}
+body.touch #localcard .lc-alvo button{padding:7px 10px;font-size:9px}
+#localcard .lc-nuvem{display:flex;gap:2px;align-items:flex-end;height:26px;margin:2px 0 4px}
+#localcard .lc-nuvem i{flex:1;background:var(--line2);opacity:.85;min-height:2px;border-radius:1px}
+#localcard .lc-nuvem i.lim{background:#79c98f} #localcard .lc-nuvem i.meio{background:#d8c070} #localcard .lc-nuvem i.fech{background:#8a6a7a}
+#localcard .lc-hs{display:flex;justify-content:space-between;font-size:7px;letter-spacing:1px;color:var(--dim2);margin-bottom:8px}
 #localmapagrande{position:absolute;inset:14px;display:none;flex-direction:column;gap:8px;background:rgba(6,12,24,.96);border:1px solid var(--line2);padding:10px;z-index:3}
 #localmapagrande.on{display:flex}
 #localmapagrande .lmg-head{display:flex;gap:8px;align-items:center}
@@ -1250,7 +1266,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="tpn">O que mudou de uns tempos para cá, do mais recente para o mais antigo. O ponto âmbar no ? aparece sozinho quando tem coisa nova.</div>
   </div>
   <div id="localpop">
-    <div class="lphead"><span id="localtit">◎ PLANETÁRIO</span><span class="lpbtns"><button id="localsens" data-tip="Apontar o celular para o céu: giroscópio e bússola (pede permissão)">APONTAR</button><button id="localgps" data-tip="Usar a posição do aparelho (pede permissão)">GPS</button><button id="localiss" data-tip="As próximas passagens da ISS e da Tiangong neste lugar">ISS</button><button id="localhud" data-tip="Esconder ou mostrar a bússola e o mapa">HUD</button><button id="localdata" data-tip="Ver o céu em outra data">◈</button><button id="localx">✕</button></span></div>
+    <div class="lphead"><span id="localtit">◎ PLANETÁRIO</span><span class="lpbtns"><button id="localsens" data-tip="Apontar o celular para o céu: giroscópio e bússola (pede permissão)">APONTAR</button><button id="localgps" data-tip="Usar a posição do aparelho (pede permissão)">GPS</button><button id="localnoite" data-tip="O que vale a pena olhar nas próximas horas deste lugar">NOITE</button><button id="localiss" data-tip="As próximas passagens da ISS e da Tiangong neste lugar">ISS</button><button id="localhud" data-tip="Esconder ou mostrar a bússola e o mapa">HUD</button><button id="localdata" data-tip="Ver o céu em outra data">◈</button><button id="localx">✕</button></span></div>
     <div id="localwrap">
       <canvas id="localcv"></canvas>
       <div id="locallbls"></div>
@@ -7036,7 +7052,7 @@ function localEscolheNoMapa(x, y){
   localSelecao(false);
   localAbre(lat, lon);
 }
-function localVaiPara(lat, lon){ LOCAL.lat = lat; LOCAL.lon = lon; store.set('carto:local', lat.toFixed(3) + ',' + lon.toFixed(3)); localMapa(); LOCAL.ultimo = 0; }
+function localVaiPara(lat, lon){ LOCAL.lat = lat; LOCAL.lon = lon; LOCAL.tz = undefined; LOCAL.nuvem = null; LOCAL.nuvemErro = false;   /* r303 · outro lugar, outro fuso e outra nuvem */ store.set('carto:local', lat.toFixed(3) + ',' + lon.toFixed(3)); localMapa(); LOCAL.ultimo = 0; }
 /* r289 · as 5.044 estrelas até magnitude 6 (ceu6.js), carregadas só quando o céu abre; a cor pelo B-V */
 function localCorBV(bv){ return bv < 0.0 ? 0xa8c8ff : (bv < 0.3 ? 0xd0e0ff : (bv < 0.6 ? 0xf4f4ff : (bv < 0.95 ? 0xfff0c8 : (bv < 1.4 ? 0xffd8a0 : 0xffb080)))); }
 function localMontaCat6(){
@@ -7265,21 +7281,180 @@ function localPassagensCard(){
     el.innerHTML = '<div class="popscroll">' + eye + '<h3>ISS · TIANGONG</h3><div class="lc-kind">' + t(SATV.erro ? 'OS DADOS DOS SATÉLITES NÃO CARREGARAM' : 'CARREGANDO OS DADOS DOS SATÉLITES... toque de novo em instantes') + '</div></div>';
     el.classList.add('on'); document.getElementById('localcardx').addEventListener('click', localCardFecha); return;
   }
-  const hhmm = ms=>{ const d = new Date(ms); return String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0'); };
+  const hhmm = ms=>localHora(ms);   /* r303 · a hora do LUGAR quando o Open-Meteo já contou o fuso */
   let h = '<div class="popscroll">' + eye;
   for(const id in LOCAL_EST){
     const ps = localPassagens(LOCAL_EST[id], SIMT.data, LOCAL.lat, LOCAL.lon, 5);
     h += '<h3>' + (id === 'iss' ? 'ISS' : 'TIANGONG') + '</h3><div class="lc-kind">' + (ps.length ? t('PASSAGENS VISÍVEIS A OLHO NU: ACIMA DE 10°, DE NOITE, COM A ESTAÇÃO AO SOL') : t('NENHUMA PASSAGEM VISÍVEL NOS PRÓXIMOS 5 DIAS DESTE LUGAR')) + '</div>';
-    if(ps.length) h += '<div class="lc-q">' + ps.map(p=>{ const d = new Date(p.ini); return '<div><div class="k">' + d.getUTCDate() + ' ' + MESES_N[d.getUTCMonth()] + ' · ' + hhmm(p.ini) + ' UTC</div><div class="v">' + Math.round(p.max/D2R) + '° · ' + localRumo(p.azIni) + ' › ' + localRumo(p.azFim) + ' · ' + Math.max(1, Math.round((p.fim - p.ini)/60000)) + ' min</div><button class="lc-go" data-ver="' + p.msMax + '">' + t('▶ VER ESTA PASSAGEM') + '</button></div>'; }).join('') + '</div>';
+    if(ps.length) h += '<div class="lc-q">' + ps.map(p=>{ const d = new Date(p.ini); return '<div><div class="k">' + d.getUTCDate() + ' ' + MESES_N[d.getUTCMonth()] + ' · ' + hhmm(p.ini) + localHoraSufixo() + '</div><div class="v">' + Math.round(p.max/D2R) + '° · ' + localRumo(p.azIni) + ' › ' + localRumo(p.azFim) + ' · ' + Math.max(1, Math.round((p.fim - p.ini)/60000)) + ' min</div><button class="lc-go" data-ver="' + p.msMax + '" data-est="' + id + '">' + t('▶ VER ESTA PASSAGEM') + '</button></div>'; }).join('') + '</div>';
   }
-  h += '<div class="lc-kind" style="margin-top:8px">' + t('Horários em UTC · dados: os TLE do CelesTrak, os mesmos dos satélites ao vivo') + '</div></div>';
+  h += '<div class="lc-kind" style="margin-top:8px">' + t(LOCAL.tz === undefined ? 'Horários em UTC · dados: os TLE do CelesTrak, os mesmos dos satélites ao vivo' : 'Horários do lugar · dados: os TLE do CelesTrak, os mesmos dos satélites ao vivo') + '</div></div>';
   el.innerHTML = h; el.classList.add('on');
   document.getElementById('localcardx').addEventListener('click', localCardFecha);
   el.querySelectorAll('button[data-ver]').forEach(b=>b.addEventListener('click', ()=>{
     SIMT.data = +b.dataset.ver; SIMT.vel = 'seg'; SIMT.pausado = false; if(typeof simClockUI === 'function') simClockUI(); LOCAL.ultimo = 0;
-    const e = localEstPos(LOCAL_EST.iss, SIMT.data, LOCAL.lat, LOCAL.lon, null); if(e && e.alt > 0){ LOCAL.az = e.az/D2R; LOCAL.alt = Math.min(80, e.alt/D2R); }
+    const e = localEstPos(LOCAL_EST[b.dataset.est] || LOCAL_EST.iss, SIMT.data, LOCAL.lat, LOCAL.lon, null);
+    if(e && e.alt > 0){ LOCAL.az = e.az/D2R; LOCAL.alt = Math.min(80, e.alt/D2R); }
+    else showHint(t('O RELÓGIO FOI AO PONTO ALTO, MAS A ESTAÇÃO NÃO ESTÁ ACIMA DO HORIZONTE AQUI'));
     showHint(t('O RELÓGIO FOI AO PONTO ALTO DA PASSAGEM'));
   }));
+}
+/* ================= r303 · HOJE À NOITE =================
+   O planetário respondia "como está o céu deste lugar nesta data", que é a
+   pergunta de quem já sabe o que quer. Faltava a outra: "o que vale a pena
+   olhar hoje". Todas as peças já existiam (localCalc devolve o Sol, a Lua e os
+   cinco planetas; localPassagens varre as passagens visíveis a olho nu; o
+   catálogo tem RA/Dec de tudo), faltava juntar e ordenar.
+   A única informação que o app NÃO tem é a NUVEM, e ela vem do Open-Meteo
+   (823 bytes a 1,4 KB, sem chave, CORS aberto), que de quebra devolve o
+   utc_offset_seconds do lugar: é ele que resolve o NÃO FEITO do r296, os
+   horários das passagens da ISS que só existiam em UTC. */
+const LOCAL_DICA = {
+  lua:'A olho nu. Perto do quarto crescente ou minguante o relevo aparece melhor: a luz de lado desenha as crateras.',
+  venus:'A olho nu, o objeto mais brilhante do céu depois do Sol e da Lua. Num binóculo já dá para ver a fase dela.',
+  jupiter:'A olho nu. Um binóculo firme mostra as quatro luas de Galileu ao lado, mudando de lugar todas as noites.',
+  saturno:'A olho nu parece uma estrela amarelada parada. Os anéis precisam de um telescópio pequeno, e é uma das primeiras vezes que todo mundo lembra.',
+  marte:'A olho nu, alaranjado e sem piscar. Quanto mais perto da oposição, maior e mais brilhante.',
+  mercurio:'A olho nu, mas baixo e no clarão do crepúsculo: precisa de horizonte limpo e da hora certa.',
+};
+/* r303 · nenhum fetch do app tinha prazo: se o servidor responde e trava, a
+   promessa nunca resolve e a camada fica esperando para sempre */
+function buscaComPrazo(url, ms){
+  if(typeof AbortController === 'undefined') return fetch(url);
+  const ac = new AbortController(), tm = setTimeout(()=>ac.abort(), ms || 9000);
+  return fetch(url, {signal:ac.signal}).finally(()=>clearTimeout(tm));
+}
+function localNuvemBusca(){
+  const la = LOCAL.lat, lo = LOCAL.lon;
+  const n = LOCAL.nuvem;
+  if(n && Math.abs(n.lat - la) < 0.5 && Math.abs(n.lon - lo) < 0.5 && performance.now() - n.t < 7200000) return Promise.resolve(n);
+  if(LOCAL.nuvemVoo) return LOCAL.nuvemVoo;
+  const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + la.toFixed(3) + '&longitude=' + lo.toFixed(3)
+            + '&hourly=cloud_cover&forecast_days=3&timezone=auto';
+  LOCAL.nuvemVoo = buscaComPrazo(url, 9000).then(r=>r.json()).then(j=>{
+    if(!j || !j.hourly || !j.hourly.time) throw new Error('resposta vazia');
+    LOCAL.tz = j.utc_offset_seconds;
+    LOCAL.nuvem = {lat:la, lon:lo, t:performance.now(), tz:j.utc_offset_seconds, horas:j.hourly.time, cob:j.hourly.cloud_cover};
+    LOCAL.nuvemVoo = null; return LOCAL.nuvem;
+  }).catch(e=>{ LOCAL.nuvemVoo = null; LOCAL.nuvemErro = true; return null; });
+  return LOCAL.nuvemVoo;
+}
+/* a hora do LUGAR quando o fuso é conhecido; UTC enquanto não é */
+function localHora(ms){
+  const d = new Date(ms + (LOCAL.tz || 0)*1000);
+  return String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0');
+}
+function localHoraSufixo(){ return LOCAL.tz === undefined ? ' UTC' : ''; }
+/* varre as próximas 24 h de 10 em 10 minutos: acha a NOITE (Sol abaixo de -6,
+   o crepúsculo civil) e, dentro dela, a altura máxima de cada astro */
+function localNoiteCalc(ms0, lat, lon){
+  const passo = 600000, N = 144, alvos = {}, noites = [];
+  /* a altura do Sol sozinha, que é barata: serve para afinar a borda da noite
+     até o minuto. Com o passo de 10 minutos o horário mostrado errava até 7
+     (medido contra uma conta independente), e horário de crepúsculo é
+     justamente o número que a pessoa vai comparar com o relógio dela. */
+  const solAltEm = m=>{
+    const q = localEquat(localSol(m).lam, 0, localObliq(m));
+    return localAltAz(q.ra, q.dec, (localGMST(m) + lon)*D2R, lat*D2R).alt;
+  };
+  const cruza = (a, b)=>{
+    const ladoA = solAltEm(a) < -6*D2R;
+    for(let k = 0; k < 5; k++){ const m = (a + b)/2; if((solAltEm(m) < -6*D2R) === ladoA) a = m; else b = m; }
+    return Math.round((a + b)/2/60000)*60000;
+  };
+  let dentro = false, ini = 0, ms = ms0;
+  for(let i = 0; i <= N; i++){
+    ms = ms0 + i*passo;
+    const C = localCalc(ms, lat, lon), eh = C.sol.alt < -6*D2R;
+    if(eh && !dentro){ dentro = true; ini = i ? cruza(ms - passo, ms) : ms; }
+    else if(!eh && dentro){ dentro = false; noites.push([ini, cruza(ms - passo, ms)]); }
+    if(!eh) continue;
+    const poe = (id, nome, alt, az, extra)=>{
+      if(!alvos[id] || alt > alvos[id].alt) alvos[id] = Object.assign({id, nome, alt, az, ms}, extra || {});
+    };
+    poe('lua', t('LUA'), C.lua.alt, C.lua.az, {ilum:C.lua.ilum});
+    for(const p of C.planetas) poe(p.id, p.nome, p.alt, p.az, {fase:p.fase, d:p.d});
+  }
+  if(dentro) noites.push([ini, ms]);
+  return {noites, alvos:Object.values(alvos).filter(a=>a.alt > 10*D2R).sort((a, b)=>b.alt - a.alt)};
+}
+function localNoiteCard(){
+  const el = document.getElementById('localcard'); if(!el) return;
+  const R = localNoiteCalc(SIMT.data, LOCAL.lat, LOCAL.lon);
+  const eye = '<div class="lc-eye"><span>' + t('O QUE VER NAS PRÓXIMAS HORAS') + '</span><button id="localcardx">✕</button></div>';
+  let h = '<div class="popscroll">' + eye;
+  if(!R.noites.length){
+    h += '<h3>' + t('SEM NOITE AQUI') + '</h3><div class="lc-kind">' + t('Nas próximas 24 horas deste lugar o Sol não desce o bastante para escurecer o céu. Tente outro lugar ou outra data.') + '</div>';
+  } else {
+    const n0 = R.noites[0];
+    h += '<h3>' + localHora(n0[0]) + ' › ' + localHora(n0[1]) + '</h3>';
+    h += '<div class="lc-kind">' + t('A noite deste lugar, do fim do crepúsculo ao começo do próximo') + localHoraSufixo() + '</div>';
+    /* a nuvem, se o Open-Meteo já respondeu */
+    const nu = LOCAL.nuvem;
+    if(nu && nu.horas){
+      /* a faixa cobre a NOITE, não 12 horas fixas: numa noite de 9 h as três
+         últimas barras cairiam depois do nascer do Sol */
+      const nh = Math.max(4, Math.min(14, Math.round((n0[1] - n0[0])/3600000)));
+      const barras = [];
+      for(let k = 0; k < nh; k++){
+        const msH = n0[0] + k*3600000;
+        const iso = new Date(msH + nu.tz*1000).toISOString().slice(0, 13) + ':00';
+        const idx = nu.horas.indexOf(iso);
+        const c = idx >= 0 ? nu.cob[idx] : null;
+        /* piso de 6px: com o céu 100 por cento fechado a barra virava um risco
+           de 2px e lia como "sem dado", que é justamente o contrário do que ela
+           está dizendo. Quem carrega o recado é a COR; a altura é o detalhe. */
+        barras.push(c === null ? '<i style="height:3px;opacity:.3"></i>'
+          : '<i class="' + (c < 30 ? 'lim' : c < 70 ? 'meio' : 'fech') + '" style="height:' + Math.max(6, Math.round(26*(1 - c/100)) + 2) + 'px" title="' + c + '% ' + t('de nuvem') + '"></i>');
+      }
+      h += '<div class="lc-kind" style="margin-bottom:2px">' + t('CÉU LIMPO POR HORA (barra alta = mais limpo)') + '</div>';
+      h += '<div class="lc-nuvem">' + barras.join('') + '</div>';
+      h += '<div class="lc-hs"><span>' + localHora(n0[0]) + '</span><span>' + localHora(n0[0] + (nh - 1)*3600000) + '</span></div>';
+    } else if(LOCAL.nuvemErro){
+      h += '<div class="lc-kind">' + t('A previsão de nuvem não carregou.') + '</div>';
+    }
+    if(!R.alvos.length) h += '<div class="lc-kind">' + t('Nenhum planeta nem a Lua sobem o bastante nesta noite. Fica o céu profundo: ligue as constelações e procure as figuras.') + '</div>';
+    for(let i = 0; i < R.alvos.length; i++){
+      const a = R.alvos[i];
+      const extra = a.id === 'lua' ? (Math.round(a.ilum*100) + '% ' + t('iluminada'))
+        : (a.d ? (a.d < 2 ? a.d.toFixed(2) : a.d.toFixed(1)) + ' UA' : '');
+      h += '<div class="lc-alvo' + (i === 0 ? ' top' : '') + '">'
+        + '<span class="an">' + esc(a.nome) + '</span>'
+        + '<span class="aq">' + Math.round(a.alt/D2R) + '° · ' + localRumo(a.az) + ' · ' + localHora(a.ms) + '</span>'
+        + '<span class="ad">' + esc(t(LOCAL_DICA[a.id] || '')) + (extra ? ' · ' + extra : '') + '</span>'
+        + '<button data-noite="' + a.ms + '" data-az="' + (a.az/D2R).toFixed(2) + '" data-alt="' + (a.alt/D2R).toFixed(2) + '">' + t('▶ VER NO CÉU') + '</button>'
+        + '</div>';
+    }
+    /* as estações espaciais desta noite, pelo mesmo motor do r296 */
+    if(typeof satellite !== 'undefined' && SATV.pronto){
+      const passes = [];
+      for(const id in LOCAL_EST) for(const p of localPassagens(LOCAL_EST[id], n0[0] - 3600000, LOCAL.lat, LOCAL.lon, 1))
+        if(p.msMax <= n0[1] + 3600000) passes.push(Object.assign({est:id}, p));
+      passes.sort((a, b)=>a.msMax - b.msMax);
+      if(passes.length){
+        h += '<div class="lc-kind" style="margin-top:4px">' + t('E PASSANDO POR CIMA NESTA NOITE') + '</div>';
+        for(const p of passes.slice(0, 4))
+          h += '<div class="lc-alvo"><span class="an">' + (p.est === 'iss' ? 'ISS' : 'TIANGONG') + '</span>'
+            + '<span class="aq">' + Math.round(p.max/D2R) + '° · ' + localRumo(p.azIni) + ' › ' + localRumo(p.azFim) + ' · ' + localHora(p.ini) + '</span>'
+            + '<button data-noite="' + p.msMax + '" data-est="' + p.est + '">' + t('▶ VER ESTA PASSAGEM') + '</button></div>';
+      }
+    }
+  }
+  h += '</div>';
+  el.innerHTML = h; el.classList.add('on');
+  document.getElementById('localcardx').addEventListener('click', localCardFecha);
+  el.querySelectorAll('button[data-noite]').forEach(b=>b.addEventListener('click', ()=>{
+    SIMT.data = +b.dataset.noite; SIMT.vel = 'seg'; SIMT.pausado = false;
+    if(typeof simClockUI === 'function') simClockUI();
+    LOCAL.ultimo = 0;
+    if(b.dataset.est){
+      const e = localEstPos(LOCAL_EST[b.dataset.est], SIMT.data, LOCAL.lat, LOCAL.lon, null);
+      if(e && e.alt > 0){ LOCAL.az = e.az/D2R; LOCAL.alt = Math.min(80, e.alt/D2R); }
+    } else { LOCAL.az = +b.dataset.az; LOCAL.alt = Math.min(85, +b.dataset.alt); }
+    showHint(t('O RELÓGIO FOI PARA O MELHOR MOMENTO'));
+  }));
+  /* a nuvem chega depois: quando chegar, redesenha uma vez */
+  if(!LOCAL.nuvem && !LOCAL.nuvemErro) localNuvemBusca().then(n=>{ if(n && document.getElementById('localcard').classList.contains('on')) localNoiteCard(); });
 }
 /* ================= r297 · APONTAR O CELULAR PARA O CEU (sensores) e a posicao do aparelho =================
    Opt-in por botao, nunca automatico (regra dele): 'APONTAR' pede a permissao dos sensores (o iOS 13+ exige um gesto)
@@ -16693,7 +16868,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r302';
+const BUILD = 'r303';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -17255,6 +17430,11 @@ $('#datepop').addEventListener('click', e=>{
    A entrada `ver` é opcional e LEVA à feature, que é o que faz o painel valer:
    ler que existe um planetário não é a mesma coisa que abrir um. */
 const NOVIDADES = [
+  {b:'r303', d:'20 SET 2026', t:'HOJE À NOITE', ls:[
+    'O planetário respondia como está o céu de um lugar numa data. Agora responde a outra pergunta, que é a que a gente faz de verdade: o que vale a pena olhar daqui a pouco.',
+    'O botão NOITE lista a Lua, os planetas e as passagens da Estação Espacial desta noite, do mais alto para o mais baixo, com uma dica de como achar cada um e a barrinha de quanto o céu deve ficar limpo hora a hora.',
+    'E os horários passaram a ser os do LUGAR, não mais só em UTC.'],
+   ver:()=>{ if(typeof localAbre === 'function'){ localAbre(LOCAL.lat, LOCAL.lon); setTimeout(()=>{ const b = document.getElementById('localnoite'); if(b) b.click(); }, 400); } }},
   {b:'r302', d:'20 SET 2026', t:'O RELÓGIO HONESTO', ls:[
     'A fase da Lua passou a vir da posição de verdade dela, e não de uma média: o balão do relógio e o planetário diziam números diferentes na mesma tela.',
     'Os equinócios e solstícios deixaram de ter o dia escrito à mão no código. Quatro dos que estavam na lista caíam no dia errado, incluindo o equinócio de setembro deste ano.',
@@ -17482,6 +17662,11 @@ $('#novolista').addEventListener('click', e=>{
 $('#localx').addEventListener('click', localFecha);   /* r287 */
 $('#localsens').addEventListener('click', ()=>localSensores(!LOCAL.sens));
 $('#localgps').addEventListener('click', localGps);
+$('#localnoite').addEventListener('click', ()=>{
+  localNuvemBusca();
+  localNoiteCard();
+  if(typeof tutInicia === 'function') tutInicia('noite', [{tx:'<b>HOJE À NOITE:</b> a lista do que vale a pena olhar deste lugar nas próximas horas, do mais alto no céu para o mais baixo. A barrinha mostra quanto o céu deve ficar limpo hora a hora (barra alta = mais limpo), e o <b>▶ VER NO CÉU</b> leva o relógio ao melhor momento e vira o olhar para o astro. Os horários são os do lugar, não os seus.'}]);
+});
 $('#localiss').addEventListener('click', ()=>{
   localPassagensCard();
   if(typeof tutInicia === 'function') tutInicia('isspass', [{tx:'<b>PASSAGENS:</b> a ISS e a Tiangong aparecem no céu deste lugar como um ponto âmbar quando estão ao Sol, cinza quando cruzam a sombra da Terra. A lista traz as passagens visíveis a olho nu dos próximos 5 dias; ▶ VER leva o relógio ao ponto alto de cada uma e vira o olhar para ela.'}]);

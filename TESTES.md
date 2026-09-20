@@ -8,7 +8,20 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 198 itens pendentes, do r131 ao r302.
+Hoje: 206 itens pendentes, do r131 ao r303.
+
+---
+
+## r303 · hoje à noite
+
+- [ ] **O botão NOITE no planetário.** Card da Terra, ◎ ABRIR O PLANETÁRIO, e o botão **NOITE** no cabeçalho: a lista do que vale a pena olhar deste lugar nas próximas horas, do mais alto no céu para o mais baixo, com a altura, o rumo e a hora de cada um.
+- [ ] **A dica de como achar.** Cada astro vem com uma linha honesta: Júpiter com o binóculo mostrando as luas de Galileu, Saturno com os anéis pedindo telescópio pequeno, Mercúrio baixo e no clarão do crepúsculo.
+- [ ] **A barrinha de nuvem.** Vem do Open-Meteo (sem chave, 1,4 KB), uma barra por hora da noite: barra alta e verde é céu limpo, baixa e roxa é fechado. Confira contra a previsão do tempo que você usa. Se a rede falhar, o card continua funcionando sem ela.
+- [ ] **OS HORÁRIOS AGORA SÃO OS DO LUGAR.** Era o NÃO FEITO do r296: as passagens da ISS só existiam em UTC. O fuso vem de carona na previsão do tempo, então escolha Tóquio ou Lisboa no mapa grande e confira se os horários fazem sentido para lá.
+- [ ] **▶ VER NO CÉU** leva o relógio ao melhor momento do astro e vira o olhar para ele.
+- [ ] **O BUG DA TIANGONG (achado da auditoria).** Na lista do botão ISS, ▶ VER ESTA PASSAGEM mirava SEMPRE a ISS, mesmo nas passagens da Tiangong: o relógio andava e o olhar não se mexia, em silêncio. Agora mira a estação certa, e avisa quando ela não está acima do horizonte.
+- [ ] **Polo Norte em setembro** deve dizer SEM NOITE AQUI (dia polar). Conferido por sonda.
+- [ ] **Conferência independente:** as alturas de Mercúrio, Vênus, Marte, Júpiter e Saturno para São Paulo nesta noite batem dentro de 1 grau com um Kepler escrito do zero, e o fim do crepúsculo dentro de 2 minutos.
 
 ---
 
