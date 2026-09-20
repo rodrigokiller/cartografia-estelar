@@ -8,7 +8,19 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 179 itens pendentes, do r131 ao r299.
+Hoje: 186 itens pendentes, do r131 ao r300.
+
+---
+
+## r300 · o painel de novidades
+
+- [ ] **O ponto âmbar no `?`.** Abra o app: uns segundos depois aparece um pontinho âmbar no canto do botão `?` e um aviso discreto passa uma vez. Ele só aparece quando tem build que você ainda não reconheceu, e apaga sozinho quando você abre o painel.
+- [ ] **O painel.** Abra o `?` e clique em **✦ O QUE MUDOU NESTA VERSÃO**: a lista das 14 entregas mais recentes, da mais nova para a mais velha, com as não vistas marcadas em âmbar. Medido por sonda: 14 itens, 12 marcados como novos para quem parou no r280.
+- [ ] **O ▸ VER leva à feature.** Cada entrada que tem destino ganha um botão: o do planetário abre o planetário, o das luas novas voa até Netuno, o dos satélites abre o filtro. É isso que faz o painel valer mais do que um texto.
+- [ ] **Visitante de primeira viagem não vê nada.** Abra numa aba anônima: o painel fica calado e quem manda é o tutorial de boas-vindas, como sempre foi. Conferido por sonda.
+- [ ] **O ESC.** Com o painel aberto por cima do manual, o primeiro ESC fecha o painel e o manual continua lá; o segundo fecha o manual.
+- [ ] **Em inglês.** Troque o idioma e abra de novo: as 14 entradas, os títulos, as datas e os botões estão traduzidos.
+- [ ] **Uma linha por entrega daqui para a frente.** A partir de agora toda entrega acrescenta a linha dela na tabela NOVIDADES, como já incrementa o BUILD. Se você achar o texto comprido ou curto demais, me diga o tom que eu calibro.
 
 ---
 

@@ -170,12 +170,12 @@ body.touch:has(#localpop.on,#mission.on,#finder.on,#cmp.on,#help.on,#habpop.on,#
 #panel::before,#panel::after,#findbox::before,#findbox::after,#cmpcard::before,#cmpcard::after,
 #helpcard::before,#helpcard::after,#player::before,#player::after,#misscard::before,#misscard::after,
 #filtpop::before,#filtpop::after,#cfgpop::before,#cfgpop::after,#tut::before,#tut::after,
-#datepop::before,#datepop::after,#tourpop::before,#tourpop::after,#habpop::before,#habpop::after,#evtpop::before,#evtpop::after,#satpop::before,#satpop::after,#localpop::before,#localpop::after,#localcard::before,#localcard::after{
+#datepop::before,#datepop::after,#tourpop::before,#tourpop::after,#habpop::before,#habpop::after,#evtpop::before,#evtpop::after,#satpop::before,#satpop::after,#novopop::before,#novopop::after,#localpop::before,#localpop::after,#localcard::before,#localcard::after{
   content:'';position:absolute;pointer-events:none;z-index:2}
-#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before,#filtpop::before,#cfgpop::before,#tut::before,#datepop::before,#tourpop::before,#habpop::before,#evtpop::before,#satpop::before,#localpop::before,#localcard::before{
+#panel::before,#findbox::before,#cmpcard::before,#helpcard::before,#player::before,#misscard::before,#filtpop::before,#cfgpop::before,#tut::before,#datepop::before,#tourpop::before,#habpop::before,#evtpop::before,#satpop::before,#novopop::before,#localpop::before,#localcard::before{
   left:-1px;top:-1px;
   background:linear-gradient(-45deg,transparent calc(50% - 1px),var(--line2) calc(50% - 1px),var(--line2) 50%,transparent 50%)}
-#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after,#filtpop::after,#cfgpop::after,#tut::after,#datepop::after,#tourpop::after,#habpop::after,#evtpop::after,#satpop::after,#localpop::after,#localcard::after{
+#panel::after,#findbox::after,#cmpcard::after,#helpcard::after,#player::after,#misscard::after,#filtpop::after,#cfgpop::after,#tut::after,#datepop::after,#tourpop::after,#habpop::after,#evtpop::after,#satpop::after,#novopop::after,#localpop::after,#localcard::after{
   right:-1px;bottom:-1px;
   background:linear-gradient(-45deg,transparent 50%,var(--line2) 50%,var(--line2) calc(50% + 1px),transparent calc(50% + 1px))}
 #panel::before,#panel::after{width:18px;height:18px}
@@ -191,7 +191,7 @@ body.touch:has(#localpop.on,#mission.on,#finder.on,#cmp.on,#help.on,#habpop.on,#
 #datepop::before,#datepop::after{width:10px;height:10px}
 #tourpop::before,#tourpop::after{width:10px;height:10px}
 #habpop::before,#habpop::after{width:10px;height:10px}
-#evtpop::before,#evtpop::after,#satpop::before,#satpop::after{width:10px;height:10px}
+#evtpop::before,#evtpop::after,#satpop::before,#satpop::after,#novopop::before,#novopop::after{width:10px;height:10px}
 #localcard::before,#localcard::after{width:8px;height:8px}
 #evtpop{position:relative}
 #satpop{position:relative}
@@ -312,6 +312,31 @@ body.touch #datepop{bottom:auto;top:62px;left:12px;z-index:80;max-width:calc(100
   width:min(400px,94vw);background:var(--panel);border:1px solid var(--line2);padding:14px 16px 12px;
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
 #satpop.on{display:block;animation:tourpopnasce .24s ease-out}
+/* r300 · PAINEL DE NOVIDADES (molde do evtpop). z 46 porque ele abre de DENTRO
+   do manual (z 45) e precisa ficar por cima dele. Nada abre sozinho: o que
+   chama a atenção é o ponto âmbar no ?. */
+#novopop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:46;display:none;flex-direction:column;
+  width:min(470px,94vw);max-height:calc(100dvh - 20px);background:var(--panel);border:1px solid var(--line2);padding:14px 16px 12px;
+  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+#novopop.on{display:flex;animation:tourpopnasce .24s ease-out}
+#novolista{display:flex;flex-direction:column;gap:11px}
+.novit{border-left:1px solid var(--line2);padding:1px 0 1px 10px}
+.novit.nova{border-left-color:var(--amber)}
+.novit .nvb{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--dim2)}
+.novit .nvt{font-family:var(--mono);font-size:10.5px;letter-spacing:2px;color:var(--txt);margin:3px 0 5px}
+.novit.nova .nvt{color:var(--amber)}
+.novit p{font-family:var(--mono);font-size:9.5px;letter-spacing:.8px;color:var(--dim);line-height:1.85;margin:0}
+.novit button{margin-top:6px;background:none;border:1px solid var(--line2);color:var(--dim);
+  font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;cursor:pointer;padding:4px 9px}
+.novit button:hover{color:var(--amber);border-color:var(--amber)}
+body.touch .novit button{padding:8px 12px;font-size:9px}
+/* o ponto âmbar no ? enquanto houver coisa que ele não viu */
+#btnhelp{position:relative}
+#btnhelp.temnovo::after{content:'';position:absolute;top:-3px;right:-3px;width:6px;height:6px;border-radius:50%;
+  background:var(--amber);box-shadow:0 0 6px var(--amber)}
+#helpnovo{display:block;width:100%;margin:0 0 14px;background:rgba(255,180,84,.08);border:1px solid var(--line2);
+  color:var(--amber);font-family:var(--mono);font-size:9.5px;letter-spacing:2px;cursor:pointer;padding:9px 10px;text-align:left}
+#helpnovo:hover{border-color:var(--amber);background:rgba(255,180,84,.14)}
 /* r287 · O CÉU DE UM LUGAR: o modal do planetário local */
 #localpop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:26;display:none;flex-direction:column;
   width:min(980px,96vw);height:min(660px,88vh);background:var(--panel);border:1px solid var(--line2);padding:10px 12px 10px;
@@ -1219,6 +1244,11 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div id="satlista"></div>
     <div class="tpn">Os pontos vêm do catálogo CelesTrak, na posição de agora. Desmarcar um grupo esconde os pontos, os nomes e as órbitas dele. Afastando o zoom, os satélites somem por ordem de altitude, os mais baixos primeiro.</div>
   </div>
+  <div id="novopop">
+    <div class="tphead"><span>✦ NOVIDADES</span><button id="novopopx">✕</button></div>
+    <div class="popscroll"><div id="novolista"></div></div>
+    <div class="tpn">O que mudou de uns tempos para cá, do mais recente para o mais antigo. O ponto âmbar no ? aparece sozinho quando tem coisa nova.</div>
+  </div>
   <div id="localpop">
     <div class="lphead"><span id="localtit">◎ PLANETÁRIO</span><span class="lpbtns"><button id="localsens" data-tip="Apontar o celular para o céu: giroscópio e bússola (pede permissão)">APONTAR</button><button id="localgps" data-tip="Usar a posição do aparelho (pede permissão)">GPS</button><button id="localiss" data-tip="As próximas passagens da ISS e da Tiangong neste lugar">ISS</button><button id="localhud" data-tip="Esconder ou mostrar a bússola e o mapa">HUD</button><button id="localdata" data-tip="Ver o céu em outra data">◈</button><button id="localx">✕</button></span></div>
     <div id="localwrap">
@@ -1362,6 +1392,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div id="help">
     <div id="helpcard"><div class="cardscroll">
       <h2>MANUAL DO NAVEGADOR</h2>
+      <button id="helpnovo">✦ O QUE MUDOU NESTA VERSÃO</button>
       <p><b>Toque</b> em um corpo para catalogar. Toque de novo (ou use o botão ▶ do card) para entrar.</p>
       <p><b>Arraste</b> para girar<span class="kb"> · <b>scroll</b> para aproximar</span><span class="touchonly"> · <b>pinça</b> para aproximar. Os botões <b>+ / −</b> também ajustam o zoom</span>.</p>
       <p><b>Afaste o zoom</b> até o limite para subir de escala: Corpo → Sistema → Galáxia → Universo. Ele trava no limite: afaste de novo para subir. A trilha no topo também navega.</p>
@@ -16511,6 +16542,7 @@ window.addEventListener('keydown', e=>{
        invisível atrás da cortina do registro ou do manual: o usuário apertava,
        nada mudava na tela, e só o segundo ESC fazia efeito. O #velpop (z 40)
        não estava na cadeia inteira. */
+    else if($('#novopop').classList.contains('on')) $('#novopop').classList.remove('on');           /* z 46 · r300 */
     else if($('#help').classList.contains('on')) $('#help').classList.remove('on');                 /* z 45 */
     else if($('#velpop').classList.contains('on')) $('#velpop').classList.remove('on');             /* z 40 */
     else if($('#mission').classList.contains('on')) missClose();                                    /* z 33 */
@@ -16558,7 +16590,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r299';
+const BUILD = 'r300';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -17105,6 +17137,93 @@ $('#datepop').addEventListener('click', e=>{
     dpSync(); return;
   }
 });
+/* ================= r300 · PAINEL DE NOVIDADES =================
+   O BUILD subiu 300 vezes e o app nunca se anunciou: doze entregas seguidas de
+   planetário, oito de satélites ao vivo e o inglês inteiro chegaram sem que
+   ninguém soubesse. Aqui ele conta.
+   REGRA DA CASA: nada abre sozinho. Quem chama a atenção é um ponto âmbar de
+   6px no ?, e um hint discreto uma vez por versão. O painel abre pelo botão
+   dentro do manual, ou por esse hint.
+   O carto:visto guarda o ÚLTIMO BUILD RECONHECIDO, e só é gravado quando o
+   painel ABRE (gravar no boot faria o ponto sumir sem ele ver nada). Visitante
+   de primeira viagem (sem carto:loc e sem carto:tut) já nasce com o build de
+   hoje gravado e não vê nada, para não brigar com as boas-vindas; quem já usou
+   o app antes do r300 nasce em 'r0' e recebe a lista inteira, como quem volta.
+   A entrada `ver` é opcional e LEVA à feature, que é o que faz o painel valer:
+   ler que existe um planetário não é a mesma coisa que abrir um. */
+const NOVIDADES = [
+  {b:'r299', d:'20 SET 2026', t:'O CELULAR E A PRIMEIRA VISITA', ls:[
+    'No celular a barra do topo some enquanto um painel está aberto: o ✕ do planetário voltou a ser alcançável.',
+    'Com um painel aberto em tela cheia o mapa para de ser desenhado por baixo, e o aparelho esquenta bem menos.',
+    'A primeira visita ficou uns 70 por cento mais leve: as fotos da NASA só descem para quem liga o modo FOTO.']},
+  {b:'r298', d:'13 SET 2026', t:'A FAIXA DA VIA LÁCTEA', ls:[
+    'A faixa difusa da nossa galáxia agora atravessa o céu do planetário, do mapa e da cena de foco, com o bojo brilhante em Sagitário, a Grande Fenda escura e o Saco de Carvão ao lado do Cruzeiro.'],
+   ver:()=>localAbre(LOCAL.lat, LOCAL.lon)},
+  {b:'r297', d:'13 SET 2026', t:'APONTAR O CELULAR PARA O CÉU', ls:[
+    'No planetário, o botão APONTAR usa o giroscópio e a bússola do aparelho: aponte a parte de trás do celular para uma estrela e o mapa vira junto.',
+    'O botão GPS põe o lugar na sua posição. Os dois pedem permissão e só funcionam se você mandar.'],
+   ver:()=>localAbre(LOCAL.lat, LOCAL.lon)},
+  {b:'r296', d:'12 SET 2026', t:'AS PASSAGENS DA ISS', ls:[
+    'O botão ISS lista as passagens visíveis a olho nu da Estação Espacial e da Tiangong nos próximos cinco dias, com altura, rumo e duração.',
+    'Escolher uma leva o relógio ao ponto alto e vira o olhar para ela.'],
+   ver:()=>localAbre(LOCAL.lat, LOCAL.lon)},
+  {b:'r295', d:'12 SET 2026', t:'A TERRA EM LADRILHOS DA NASA', ls:[
+    'Experimental, nas configurações: chegando perto da Terra na escala 1:1, a pele vira a foto de satélite de ontem, com as nuvens do dia. Mudar a data no relógio troca a foto.'],
+   ver:()=>{ const b = $('#btncfg'); if(b) b.click(); }},
+  {b:'r294', d:'12 SET 2026', t:'O PLANETÁRIO GANHOU CHÃO', ls:[
+    'O horizonte virou paisagem: duas cadeias de morros, o chão em perspectiva visto de 1,70 m de altura e a névoa tomando conta ao longe.',
+    'De dia os nomes ficam escuros com halo claro, para dar para ler contra o azul.'],
+   ver:()=>localAbre(LOCAL.lat, LOCAL.lon)},
+  {b:'r289', d:'12 SET 2026', t:'CINCO MIL ESTRELAS DE VERDADE', ls:[
+    'O céu do planetário passou a usar o catálogo Yale, com as 5.044 estrelas visíveis a olho nu na cor certa de cada uma.',
+    'Os nomes das constelações aparecem, e tocar num astro abre a ficha dele ali dentro. O ⛶ abre o mapa-múndi com busca de lugares.'],
+   ver:()=>localAbre(LOCAL.lat, LOCAL.lon)},
+  {b:'r288', d:'12 SET 2026', t:'SEIS LUAS NOVAS', ls:[
+    'Náiade, Talassa e Despina em Netuno (as duas primeiras fazem uma dança de esquiva que ninguém entendeu até 2019), e Bianca, Créssida e Julieta em Urano.'],
+   ver:()=>irAoCorpo('netuno')},
+  {b:'r287', d:'12 SET 2026', t:'O PLANETÁRIO', ls:[
+    'No card da Terra, ◎ ABRIR O PLANETÁRIO: escolha um ponto do planeta e veja o céu daquele lugar na data do relógio, com o Sol, a Lua na fase certa, os planetas e os eclipses acontecendo de verdade.'],
+   ver:()=>localAbre(LOCAL.lat, LOCAL.lon)},
+  {b:'r286', d:'12 SET 2026', t:'O CÉU DE HOJE', ls:[
+    'Na escala 1:1, o card da Terra diz o que dá para ver esta noite: a fase da Lua, quais planetas estão no céu do anoitecer ou da madrugada, e os cometas perto do periélio.'],
+   ver:()=>irAoCorpo('terra')},
+  {b:'r284', d:'11 SET 2026', t:'A LUA NO RELÓGIO', ls:[
+    'O canto do relógio ganhou um disquinho com a fase da Lua na data simulada, como se vê do Brasil. Viajar no tempo muda o desenho junto.']},
+  {b:'r282', d:'11 SET 2026', t:'OS COMETAS RECENTES', ls:[
+    'Pons-Brooks, o cometa do diabo que soltou dois chifres em 2023, e o ATLAS G3, que foi visto de dia em janeiro de 2025 e se desfez na saída.'],
+   ver:()=>irAoCorpo('ponsbrooks')},
+  {b:'r274', d:'10 SET 2026', t:'OS TROIANOS E A LUCY', ls:[
+    'Euríbates, Heitor e Pátroclo entraram no mapa, 60 graus à frente e atrás de Júpiter, na posição real. A sonda Lucy tem linha do tempo até 2033.'],
+   ver:()=>irAoCorpo('lucy')},
+  {b:'r261', d:'8 SET 2026', t:'OS SATÉLITES AO VIVO', ls:[
+    'Ligue SATÉLITES no filtro ≋ e chegue perto da Terra na escala 1:1: uns 310 satélites de verdade, na posição de agora, pelo catálogo público do CelesTrak.',
+    'Tocar num deles abre a ficha, com altitude, período e operador.'],
+   ver:()=>{ const b = $('#btnfilt'); if(b) b.click(); }},
+];
+function novoNum(b){ return +String(b).replace(/[^0-9]/g, '') || 0; }
+function novasDesde(){
+  const v = novoNum(store.get('carto:visto', ''));
+  return NOVIDADES.filter(x => novoNum(x.b) > v);
+}
+function novoSync(){ const b = $('#btnhelp'); if(b) b.classList.toggle('temnovo', novasDesde().length > 0); }
+function novoRender(){
+  const v = novoNum(store.get('carto:visto', ''));
+  $('#novolista').innerHTML = NOVIDADES.map((x, i)=>{
+    const nova = novoNum(x.b) > v;
+    return '<div class="novit' + (nova ? ' nova' : '') + '">'
+      + '<div class="nvb">' + esc(x.b.toUpperCase()) + ' · ' + esc(t(x.d)) + (nova ? ' · ' + t('NOVO') : '') + '</div>'
+      + '<div class="nvt">' + esc(t(x.t)) + '</div>'
+      + x.ls.map(l=>'<p>' + esc(t(l)) + '</p>').join('')
+      + (x.ver ? '<button data-nov="' + i + '">▸ ' + t('VER') + '</button>' : '')
+      + '</div>';
+  }).join('');
+}
+function novoAbre(){
+  novoRender();
+  $('#novopop').classList.add('on');
+  store.set('carto:visto', BUILD);   /* só aqui: gravar no boot faria o ponto sumir sem ele ver */
+  novoSync();
+}
 /* ================= r173 · EVENTOS DO CÉU =================
    O datepop mostrava sete eventos fixos; agora existe uma tela própria com
    busca, filtro por tipo, passado/futuro e as ESTAÇÕES geradas por ano.
@@ -17201,6 +17320,16 @@ $('#dp_eventos').addEventListener('click', ()=>{
 });
 $('#evtpopx').addEventListener('click', ()=>$('#evtpop').classList.remove('on'));
 $('#satpopx').addEventListener('click', ()=>$('#satpop').classList.remove('on'));   /* r280 */
+/* r300 · o painel de novidades: abre pelo botão do manual, e o ▸ VER leva à feature */
+$('#novopopx').addEventListener('click', ()=>$('#novopop').classList.remove('on'));
+$('#helpnovo').addEventListener('click', novoAbre);
+$('#novolista').addEventListener('click', e=>{
+  const b = e.target.closest('button[data-nov]'); if(!b) return;
+  const n = NOVIDADES[+b.dataset.nov]; if(!n || !n.ver) return;
+  $('#novopop').classList.remove('on');
+  $('#help').classList.remove('on');
+  try{ n.ver(); }catch(err){ showHint(t('NÃO CONSEGUI ABRIR DAQUI: TENTE PELO MAPA')); }
+});
 $('#localx').addEventListener('click', localFecha);   /* r287 */
 $('#localsens').addEventListener('click', ()=>localSensores(!LOCAL.sens));
 $('#localgps').addEventListener('click', localGps);
@@ -17978,6 +18107,24 @@ setTimeout(()=>{
   if(!TUT.v.has('boasvindas') && ST.level === 'system' && !document.body.classList.contains('photo'))
     tutBoasVindas();
 }, 2100);
+/* r300 · NOVIDADES: quem nunca usou o app nasce com o build de hoje gravado e
+   não vê nada (na primeira visita quem manda são as boas-vindas); quem já usou
+   antes do r300 nasce em 'r0' e recebe a lista inteira, como quem volta de
+   viagem. O ponto âmbar e o hint entram bem depois do primeiro quadro, e só se
+   nenhum tutorial estiver aberto. */
+if(!store.get('carto:visto', '')){
+  /* quem nunca viu um tutorial nunca esteve aqui. NÃO usar o carto:loc para
+     isso: ele é escrito DURANTE o boot, então quando esta linha roda todo
+     mundo já parece veterano (pego pela sonda do r300). */
+  const novato = !store.get('carto:tut', '');
+  store.set('carto:visto', novato ? BUILD : 'r0');
+}
+setTimeout(()=>{
+  novoSync();
+  if(novasDesde().length && !$('#tut').classList.contains('on') && !$('#novopop').classList.contains('on')
+     && !document.body.classList.contains('photo'))
+    showHint(t('NOVIDADES NESTA VERSÃO: ABRA O ? PARA VER'));
+}, 3600);
 loop();
 </script>
 <!-- r168 · AS FOTOS entram DEPOIS do app de propósito: a primeira cena nasce
