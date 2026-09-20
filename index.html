@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UNIVERSATLAS // mapa 3D interativo do universo</title>
 <meta name="description" content="Explore o Sistema Solar e além em 3D: planetas, luas, sondas, cometas e as missões Apollo com posições reais. Viaje no tempo, compare mundos e navegue do corpo à galáxia. Em português.">
 <link rel="canonical" href="https://www.universatlas.com/">
@@ -102,6 +102,11 @@ body{font-family:var(--disp);color:var(--txt);user-select:none;-webkit-user-sele
 /* r221 · no toque o menu ⋯ precisa vencer o balão do tutorial (z 70), senão
    o passo do voltar fica inclicável (bug do teste dele no celular) */
 body.touch #topright{z-index:76}
+/* r299 · MAS um modal em tela cheia manda nele: com z 76 a barra ⌕ ▤ ⋯ ficava
+   por cima do ✕ do planetário (z 26, 100vw por 100dvh no toque) e cobria 28 dos
+   30px do botão. Como no celular não existe ESC, o painel ficava SEM SAÍDA.
+   Vale para os nove modais, e some junto com eles. */
+body.touch:has(#localpop.on,#mission.on,#finder.on,#cmp.on,#help.on,#habpop.on,#evtpop.on,#satpop.on,#tourpop.on) #topright{visibility:hidden;pointer-events:none}
 /* no desktop tudo fica numa linha só (display:contents), na ordem original */
 #morebtns{display:contents}
 /* r176: o relógio do canto não existe no celular; a data ganhou um botão no ⋯ */
@@ -234,10 +239,15 @@ body.touch #topright{z-index:76}
 #datepop{position:absolute;left:14px;bottom:118px;z-index:22;display:none;
   background:var(--panel);border:1px solid var(--line2);padding:12px 14px;
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+/* r299 · as 10 rotas dão até 645px de conteúdo: em celular deitado o cabeçalho
+   com o ✕ saía da tela e não havia clique-fora para fechar. O max-height só
+   funciona com o flex (o display:block não passa a altura para a lista), e o
+   conteúdo rola num .popscroll por dentro, senão as diagonais do chanfro rolam
+   junto (a regra da casa desde o r293) */
 #tourpop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:26;display:none;
-  width:min(370px,92vw);background:var(--panel);border:1px solid var(--line2);padding:14px 16px 12px;
+  width:min(370px,92vw);max-height:calc(100dvh - 20px);background:var(--panel);border:1px solid var(--line2);padding:14px 16px 12px;
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
-#tourpop.on{display:block;animation:tourpopnasce .24s ease-out}
+#tourpop.on{display:flex;flex-direction:column;animation:tourpopnasce .24s ease-out}
 @keyframes tourpopnasce{0%{opacity:0;transform:translate(-50%,-48.5%)}100%{opacity:1;transform:translate(-50%,-50%)}}
 #tourpop .tphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
   font-family:var(--mono);font-size:9.5px;letter-spacing:2.5px;color:var(--amber)}
@@ -721,6 +731,14 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 .popscroll{overflow-y:auto;overscroll-behavior:contain;min-height:0;scrollbar-width:thin;scrollbar-color:var(--line2) rgba(63,140,255,.08)}
 .popscroll::-webkit-scrollbar{width:4px} .popscroll::-webkit-scrollbar-thumb{background:var(--line2)}
 body.touch #habpop{max-height:calc(100dvh - 20px)}
+/* r299 · os três alvos que a lapidada do r293 esqueceu, e são os que ele usa
+   toda hora: os botões do relógio (pausa, data, AO VIVO, velocidade) tinham
+   uns 14x10px, os dez steppers do seletor de data 34x22, e a barra do tour
+   fica na tela durante a narração inteira de uma rota */
+body.touch #simclock button{min-width:30px;min-height:30px;font-size:12px}
+body.touch #simlua{width:22px;height:22px}
+body.touch #datepop .dcol button{width:40px;height:30px;font-size:11px}
+body.touch #tourbar button{width:32px;height:32px;font-size:12px}
 body.touch .eyebrow #cardx2,body.touch .eyebrow #cardshare{width:30px;height:30px;font-size:13px}
 body.touch .eyebrow #cardshare{font-size:15px}
 body.touch #tourpop .tphead button,body.touch #habpop .tphead button,body.touch #satpop .tphead button,body.touch #evtpop .tphead button,body.touch .fpx,body.touch #lmgx{width:30px;height:30px;font-size:12px}
@@ -1468,6 +1486,17 @@ const I18N = (LANG === 'en' && window.I18N_EN) ? window.I18N_EN : null;
    o arquivo): document.write durante o parse insere um script que bloqueia,
    então os dados já existem quando o bloco 3 registra os corpos */
 if(I18N) document.write('<script src="dados_en.js"><\/script>');
+/* r299 · AS FOTOS SÓ DESCEM PARA QUEM AS USA. O texturas.js são 1,43 MB
+   comprimidos (71 por cento da primeira visita) e o modo FOTO nasce DESLIGADO
+   desde o r172: no padrão de fábrica nenhum byte daquele arquivo era lido.
+   Mesmo mecanismo do dados_en.js: o document.write durante o parse bloqueia,
+   então window.TEXFOTO já existe quando o bloco 4 monta a primeira cena (o
+   texturaFoto é SÍNCRONO e é chamado de dentro do buildSystem: uma Promise
+   aqui montaria a cena sem foto e nunca mais trocaria).
+   Quem liga o botão FOTO no meio da sessão carrega sob demanda (r299, no
+   #btnlive), e o temMapa passou a decidir por lista fixa, senão o botão
+   sumiria de Júpiter, Saturno, Vênus, Mercúrio e Netuno. */
+try{ if(localStorage.getItem('carto:foto') === '1') document.write('<script src="texturas.js"><\/script>'); }catch(e){}
 function t(s){ if(!I18N || typeof s !== 'string') return s; const v = I18N.ui[s]; return (v === undefined) ? s : v; }
 function tpal(s){
   if(!I18N || typeof s !== 'string') return s;
@@ -3304,12 +3333,6 @@ const STARSYS = [
    sections:[{t:'REGISTRO', rows:[['A forma','O recorte exato da América do Norte, com o Golfo do México'],['A estrela','Bajamar, a ionizadora escondida achada em 2004']]}],
    facts:['Quatro luas cheias de céu que só aparecem em longa exposição.'],
    fict:'A favorita dos astrofotógrafos de quintal.'}},
- {id:'formiga', name:'NEBULOSA DA FORMIGA', nav:true, pos:[16.5,0,7.5], hot:true,
-  card:{desig:'NEBULOSA BIPOLAR · 8.000 AL', kind:'A estrela que morre em duas direções', hab:null,
-   quick:[['DISTÂNCIA','8.000 al'],['CATÁLOGO','Menzel 3'],['JATOS','1.000 km/s'],['LASER','sim']],
-   sections:[{t:'REGISTRO', rows:[['O mistério','Deveria soprar gás em esfera, mas dispara dois jatos'],['A suspeita','Uma companheira próxima canalizando tudo'],['O laser','Emissão laser natural detectada no centro em 2018']]}],
-   facts:['Dois lobos e uma cintura, igualzinho ao corpo de uma formiga.'],
-   fict:'Presença garantida em toda lista de objetos mais estranhos do universo.'}},
  {id:'sgra', name:'SAGITTARIUS A*', nav:true, pos:[0,0,0], hot:true,
   card:{desig:'BURACO NEGRO · 26.000 AL', kind:'O centro da Via Láctea', hab:null,
    quick:[['MASSA','4,3 mi Sóis'],['DISTÂNCIA','26.000 al'],['FOTO','EHT · 2022'],['NOBEL','2020']],
@@ -3469,11 +3492,6 @@ const GALAXIES = [
    quick:[['DISTÂNCIA','200 mil al'],['DIÂMETRO','~7 mil al'],['ESTRELAS','~3 bi'],['VISÍVEL','do Brasil ✓']],
    sections:[{t:'REGISTRO', rows:[['O par','Junto com a Grande Nuvem, forma a dupla de satélites que o hemisfério sul enxerga sem telescópio'],['A ponte','Um rio de gás liga as duas, arrancado pela maré da Via Láctea'],['Henrietta Leavitt','Estudando estrelas variáveis daqui, ela descobriu como medir distâncias no universo'],['O futuro','Vai ser dilacerada e absorvida pela Via Láctea']]}],
    facts:['Foi olhando para esta galáxia que a humanidade aprendeu a medir o tamanho do universo.']}},
- {id:'sombrero', name:'SOMBRERO · M104', nav:true, pos:[-16,-4,20], hue:0.09, tilt:[1.45,0.1],
-  card:{desig:'GALÁXIA · 29 MI AL', kind:'Espiral de perfil', hab:null,
-   quick:[['DISTÂNCIA','29,3 mi al'],['DIÂMETRO','~50 mil al'],['BURACO NEGRO','1 bi M☉'],['VISUAL','icônica']],
-   sections:[{t:'REGISTRO', rows:[['Aparência','Vista de perfil, com uma faixa de poeira, parece um chapéu'],['Núcleo','Um dos buracos negros mais massivos da vizinhança: 1 bilhão de sóis']]}],
-   facts:['O bojo brilhante + a faixa escura renderam o apelido mexicano.']}},
  {id:'redemoinho', radec:'13h30m +47°12′', name:'REDEMOINHO · M51', nav:true, pos:[31,-2,15], hue:0.6, tilt:[0.2,0.1],
   card:{desig:'GALÁXIA · ~28 MI AL', kind:'Espiral interagindo', hab:null,
    quick:[['DISTÂNCIA','~28 mi al'],['DIÂMETRO','~76 mil al'],['COMPANHEIRA','NGC 5195'],['BRAÇOS','livro-texto']],
@@ -4833,28 +4851,13 @@ const GATO_NEBULA = {
   ],
   facts:['É considerada a nebulosa planetária mais complexa já observada, e ninguém explicou completamente a forma dela.','Foi ela que provou, em 1864, que nebulosas são gás e não aglomerados de estrelas distantes.','As onze camadas foram sopradas em intervalos regulares de mil e quinhentos anos, como um relógio.'],
   fict:'A imagem do Hubble virou pôster, capa de livro e ícone: quando alguém desenha um olho cósmico, está copiando ela.', moons:[]};
-const FORM_STAR = {
-  id:'formigacentro', name:'NÚCLEO DA FORMIGA', desig:'MZ 3 · ESTRELA MORIBUNDA', kind:'A estrela que dispara jatos gêmeos', hab:null, gbar:150000,
-  quick:[['TIPO','anã branca + companheira'],['RAIO','~0,02 R☉'],['TEMP. SUP.','~35.000 °C'],['DISTÂNCIA','8.000 al'],['JATOS','1.000 km/s'],['LASER','detectado em 2018']],
-  visual:{mode:'star', c1:'#fff0e8', c2:'#ff9a72'},
-  sections:[
-    {t:'ESTRUTURA', rows:[['O que é','Uma estrela em fim de vida que, em vez de soprar gás em todas as direções, dispara dois jatos opostos'],['A causa','Quase certamente uma companheira próxima, ou um campo magnético intenso, canalizando o fluxo'],['A velocidade','O gás sai a mil quilômetros por segundo, com precisão de metralhadora']]},
-    {t:'REGISTRO', rows:[['2018','Detectaram emissão laser vindo do centro, sinal de gás denso escondido ali'],['O que isso indica','Deve haver um disco de material comprimido em volta, provavelmente por causa da companheira'],['A simetria','Os dois lobos são espelhos quase perfeitos um do outro, o que exige um mecanismo muito organizado']]}
-  ],
-  facts:['O centro dela emite laser natural, coisa raríssima, e isso denuncia um disco de gás escondido.'],
-  fict:null
-};
-const FORM_NEBULA = {
-  id:'formiganeb', name:'NEBULOSA DA FORMIGA', desig:'MZ 3 · NEBULOSA BIPOLAR', kind:'A nebulosa com forma de inseto', hab:0, gbar:0.0001, pop:'0',
-  region:true, field:{shape:'cloud', r0:4, r1:19, col:0xe86a5a, rock:0x8a3020, size:0.22},
-  quick:[['DISTÂNCIA','8.000 al'],['LARGURA','~1,6 ano-luz'],['FORMA','dois lobos'],['JATOS','1.000 km/s'],['CATÁLOGO','Menzel 3'],['DESCOBERTA','1922']],
-  visual:{mode:'haze', c1:'#4a1a14', c2:'#e86a5a', c3:'#ffc890', seed:33.0, atmo:{col:'#ff7a5a', i:1.7}},
-  sections:[
-    {t:'ESCALA', rows:[['Tamanho','Cerca de 1,6 ano-luz de uma ponta à outra'],['A forma','Dois lobos simétricos separados por uma cintura, exatamente como o corpo de uma formiga'],['Posição aqui','Simbólica: os lobos saem da estrela central em direções opostas']]},
-    {t:'REGISTRO', rows:[['1922','Catalogada por Donald Menzel, daí o nome Menzel 3'],['O mistério','Estrelas moribundas costumam soprar gás em esfera. Esta dispara em duas direções, e ninguém sabe exatamente por quê.'],['As hipóteses','Uma companheira orbitando muito perto, ou um campo magnético canalizando o vento'],['O laser','Em 2018 o observatório Herschel detectou emissão laser no centro, algo visto em pouquíssimos objetos'],['Por que interessa','Entender isso é entender como o Sol vai morrer, e por que algumas estrelas morrem tortas']]}
-  ],
-  facts:['A forma de inseto é tão marcada que o apelido é imediato: dois lobos e uma cintura no meio.','Estrelas como o Sol deveriam morrer soprando gás em todas as direções. Esta escolheu duas, e ainda não sabemos por quê.','O centro dela emite laser natural, um fenômeno detectado em pouquíssimos lugares do universo.'],
-  fict:'É a nebulosa favorita de quem gosta de formas bizarras: aparece em toda lista de objetos mais estranhos do universo.', moons:[]};
+/* r299 · FORM_STAR e FORM_NEBULA (r43) foram APAGADOS: o r60 reescreveu a
+   Nebulosa da Formiga do zero (MZ3_STAR e FORMIGA_NEBULA, logo abaixo) sem ver
+   que ela ja existia, e a chave repetida no literal de SYS fazia a segunda
+   vencer. O resultado eram dois marcadores clicaveis em cantos opostos da
+   galaxia e um corpo (formigacentro) que contava no total e nao existia em
+   mapa nenhum. O laser de 2018 e a largura, que so a versao velha contava,
+   foram para a ficha viva antes do corte. */
 const ETA_STAR = {
   id:'etacarinae', name:'ETA CARINAE', desig:'CARINA · BINÁRIA MONSTRO', kind:'A estrela que quase explodiu e pode terminar o serviço', hab:null, gbar:8,
   quick:[['TIPO','LBV + O, binária'],['RAIO','~240 R☉'],['MASSA','~90 + 30 Sóis'],['BRILHO','5 mi Sóis'],['DISTÂNCIA','7.500 al'],['DESTINO','supernova, talvez logo']],
@@ -4894,10 +4897,10 @@ const FORMIGA_NEBULA = {
   quick:[['DISTÂNCIA','~4.500 al'],['CATÁLOGO','Menzel 3'],['FORMA','dois lóbulos, corpo de formiga'],['EXPANSÃO','>1.000 km/s'],['CONSTELAÇÃO','Norma, o Esquadro'],['TIPO','nebulosa planetária']],
   visual:{mode:'haze', c1:'#4a1f22', c2:'#d06a6a', c3:'#f0a878', seed:19.22, atmo:{col:'#ff8a6a', i:1.6}},
   sections:[
-    {t:'A FORMIGA', rows:[['Cabeça e tórax','Os dois lóbulos de gás brilhante que dão o apelido'],['O escultor','Algo aperta a cintura: talvez uma segunda estrela, talvez campos magnéticos'],['Planetária','O nome é histórico e não tem a ver com planetas: nos telescópios antigos pareciam discos'],['Posição aqui','Simbólica: a nuvem envolve a estrela central']]},
-    {t:'REGISTRO', rows:[['Vida curta','Nebulosas assim duram só umas dezenas de milhares de anos e se dissipam'],['O futuro do Sol','É assim que o nosso sistema termina: um sopro colorido e uma anã branca'],['Estudo','O Hubble a fotografou em detalhe em 1997 e 2001']]}
+    {t:'A FORMIGA', rows:[['Cabeça e tórax','Os dois lóbulos de gás brilhante que dão o apelido'],['Largura','Cerca de 1,6 ano-luz de uma ponta à outra'],['O escultor','Algo aperta a cintura: talvez uma segunda estrela, talvez campos magnéticos'],['Planetária','O nome é histórico e não tem a ver com planetas: nos telescópios antigos pareciam discos'],['Posição aqui','Simbólica: a nuvem envolve a estrela central']]},
+    {t:'REGISTRO', rows:[['1922','Catalogada por Donald Menzel, daí o nome Menzel 3'],['O laser','Em 2018 detectaram emissão laser natural vindo do centro, coisa raríssima: denuncia um disco de gás denso escondido ali'],['A distância','As medidas vão de 3.000 a 8.000 anos-luz, dependendo do método: o número aqui é o meio do caminho'],['Vida curta','Nebulosas assim duram só umas dezenas de milhares de anos e se dissipam'],['O futuro do Sol','É assim que o nosso sistema termina: um sopro colorido e uma anã branca'],['Estudo','O Hubble a fotografou em detalhe em 1997 e 2001']]}
   ],
-  facts:['É uma estrela como o Sol morrendo AGORA: o retrato do fim do nosso próprio sistema.','O gás escapa a 1.000 km/s, mas alguma coisa aperta a cintura dela e desenha a formiga.','Nebulosa planetária não tem planeta nenhum: o nome é um engano histórico que pegou.'],
+  facts:['É uma estrela como o Sol morrendo AGORA: o retrato do fim do nosso próprio sistema.','O gás escapa a 1.000 km/s, mas alguma coisa aperta a cintura dela e desenha a formiga.','O centro dela emite laser natural, fenômeno detectado em pouquíssimos lugares do universo.','Nebulosa planetária não tem planeta nenhum: o nome é um engano histórico que pegou.'],
   fict:'Uma das fotos mais reproduzidas do Hubble: a formiga cósmica de quatro mil anos-luz.', moons:[]};
 const OLHO_STAR = {
   id:'olhostar', name:'NGC 6543 CENTRAL', desig:'OLHO DE GATO · ESTRELA PULSANTE', kind:'A estrela que sopra anéis a cada 1.500 anos', hab:null, gbar:7,
@@ -5210,12 +5213,6 @@ const SYS = {
           quick:[['DISTÂNCIA','~2.590 al'],['CATÁLOGO','NGC 7000'],['TAMANHO','4× a Lua cheia'],['CONSTELAÇÃO','Cisne']],
           sections:[{t:'REGISTRO', rows:[['O que é','Uma nuvem de gás com o recorte de um continente'],['A ionizadora','A estrela Bajamar, escondida até 2004'],['A vizinha','A Nebulosa do Pelicano, do outro lado da poeira']]}],
           facts:['O Golfo do México existe na nebulosa também: é a faixa de poeira escura.']} },
-  formiga:{ id:'formiga', name:'NEBULOSA DA FORMIGA', star:FORM_STAR, bodies:[], belt:[], beltR:[11,18], beltLabel:'OS LOBOS →', beltId:'formiganeb', beltCol:0xe86a5a,
-        starSize:1.4, camMax:36, hint:'UMA ESTRELA MORRENDO EM DUAS DIREÇÕES, E NINGUÉM SABE POR QUÊ',
-        card:{desig:'NEBULOSA BIPOLAR · NORMA', kind:'A nebulosa com forma de inseto', hab:null,
-          quick:[['DISTÂNCIA','8.000 al'],['CATÁLOGO','Menzel 3'],['LARGURA','~1,6 al'],['JATOS','1.000 km/s'],['LASER','sim, 2018'],['DESCOBERTA','1922']],
-          sections:[{t:'REGISTRO', rows:[['O mistério','Estrelas assim deveriam soprar gás em esfera, esta dispara em dois jatos'],['A suspeita','Uma companheira muito próxima canalizando o fluxo'],['O laser','O centro emite laser natural, coisa raríssima']]}],
-          facts:['Dois lobos e uma cintura: o apelido de formiga é imediato quando você vê a foto.']} },
   sgra:{ id:'sgra', name:'SAGITTARIUS A*', star:SGR_STAR, bodies:SGR_BODIES, belt:[], beltR:null,
         starSize:2.4, camMax:32, hint:'O CENTRO DA VIA LÁCTEA: TUDO AQUI ORBITA ESTE PONTO',
         card:{desig:'BURACO NEGRO · CENTRO DA GALÁXIA', kind:'O nosso endereço central', hab:null,
@@ -5421,7 +5418,6 @@ reg(SGR_STAR,'sgra'); SGR_BODIES.forEach(p=>reg(p,'sgra'));
 reg(CYG_STAR,'cygx1'); CYG_BODIES.forEach(p=>reg(p,'cygx1'));
 reg(K218_STAR,'k218'); K218_BODIES.forEach(p=>reg(p,'k218'));
 reg(GATO_STAR,'gato'); reg(GATO_NEBULA,'gato');
-reg(FORM_STAR,'formiga'); reg(FORM_NEBULA,'formiga');
 reg(CHAMA_STAR,'chama'); reg(CHAMA_NEBULA,'chama');
 reg(TUC_STAR,'tuc47'); reg(TUC_SWARM,'tuc47');
 reg(NGC346_STAR,'ngc346'); reg(NGC346_NEBULA,'ngc346');
@@ -9522,8 +9518,14 @@ let _texLuzes = null, _texPreta = null, _texNuvens = null;
    quebra sem o texturas.js */
 const _texFoto = {};
 function fotoDe(id){ return (typeof window !== 'undefined' && window.TEXFOTO) ? window.TEXFOTO[id] : null; }
+/* r299 · os ids que o texturas.js traz, escritos à mão de propósito: o temMapa
+   decide se o botão FOTO aparece no card, e ele é chamado ANTES do arquivo
+   existir (as fotos agora entram sob demanda). Sem esta lista o botão sumiria
+   justamente dos cinco corpos que só têm foto. Acrescentar aqui ao acrescentar
+   mapa novo no tools/fototex.js. */
+const TEXIDS = {terra:1, lua:1, marte:1, mercurio:1, venus:1, jupiter:1, saturno:1, netuno:1};
 /* existe mapa de verdade para este corpo? (foto da NASA ou o nosso desenho) */
-function temMapa(id){ return !!fotoDe(id) || id === 'terra' || id === 'lua' || id === 'marte'; }
+function temMapa(id){ return !!TEXIDS[id] || !!fotoDe(id); }
 /* r168 · DE LONGE O DESENHO, DE PERTO A FOTO (ideia dele, e é a certa): o
    mapa cênico fica com o visual desenhado que ele gosta, e a foto entra só
    quando a câmera chega perto do corpo na ESCALA 1:1. Fora o gosto, isso
@@ -12592,6 +12594,13 @@ function ladrLimpa(tudo){
   LADR.grupo = null; LADR.mesh = null; LADR.nivel = -1; LADR.sub = null;
   for(const o of LADR.nuvens) o.visible = true; LADR.nuvens = [];
   if(tudo){ for(const v of LADR.cache.values()){ if(v.tex) v.tex.dispose(); } LADR.cache.clear(); LADR.emVoo = 0; }
+  /* r299 · sair da Terra ou trocar de cena descartava os patches e deixava até
+     72 texturas de 512px PRESAS na GPU até o F5 (uns 100 MB no desktop, 50 no
+     celular), porque o ladrPoda só rodava dentro do callback de carga. Agora o
+     repouso poda para um teto pequeno. NÃO zerar o LADR.emVoo aqui: cada
+     emVoo++ tem decremento pareado e zerar com carga em voo deixa o contador
+     negativo, que trava o pedido seguinte para sempre. */
+  else ladrPoda(QLOW ? 4 : 8);
 }
 /* o patch: uma grade de lat/lon sobre a esfera, um pouco acima da superficie; sub = sub-retangulo quando a textura e do pai */
 function ladrPatch(L, col, row, tex, R, sub){
@@ -12621,8 +12630,8 @@ function ladrVazio(img){
     return s/(64*3) < 10;
   }catch(e){ return false; }
 }
-function ladrPoda(){
-  const teto = QLOW ? 36 : 72; if(LADR.cache.size <= teto) return;
+function ladrPoda(teto0){
+  const teto = (teto0 === undefined) ? (QLOW ? 36 : 72) : teto0; if(LADR.cache.size <= teto) return;
   const emUso = new Set(LADR.grupo ? LADR.grupo.children.map(ch=>ch.userData.ck) : []);
   const velhos = [...LADR.cache.entries()].filter(([k, v])=>v.tex && !emUso.has(k)).sort((a, b)=>a[1].t - b[1].t);
   for(const [k, v] of velhos.slice(0, LADR.cache.size - teto)){ v.tex.dispose(); LADR.cache.delete(k); }
@@ -14392,7 +14401,7 @@ const TITULOS = {
   cavalo:'CAÇADOR DE SOMBRAS', pa99:'EMBAIXADOR EM ANDRÔMEDA', m51uls:'ALCANCE MÁXIMO',
   mayall2:'CONTADOR DE MULTIDÕES', nucleoM31:'MERGULHADOR DO ABISMO',
   lagoa:'PESCADOR DA LAGOA', trifida:'TRÊS EM UM',
-  norteamerica:'CARTÓGRAFO DO CISNE', formiga:'ENCANTADOR DE FORMIGAS', olhodegato:'VIGIA DO OLHO DE GATO',
+  norteamerica:'CARTÓGRAFO DO CISNE', olhodegato:'VIGIA DO OLHO DE GATO',   /* r299 · formiga saiu daqui: estava repetida no mesmo literal, e a segunda (ENTOMOLOGISTA CÓSMICO) é quem valia */
   carina:'ESCALADOR DA MONTANHA MÍSTICA', omega:'SENHOR DAS MULTIDÕES', veu:'ARQUEÓLOGO DA EXPLOSÃO',
   kepler186:'AGRÔNOMO VERMELHO', roseta:'JARDINEIRO CÓSMICO',
   tarantula:'DOMADOR DE ARANHAS', sn1987a:'CAÇADOR DE NEUTRINOS',
@@ -15781,6 +15790,22 @@ function cardRender(){
     openCompare(CMP.a, b);
   });
   const bl = $('#btnlive'); if(bl) bl.addEventListener('click', ()=>{
+    /* r299 · as fotos entram sob demanda: quem liga o modo FOTO no meio da
+       sessão baixa o texturas.js agora, pelo mesmo helper que já traz a
+       satellite.js, o tle_snapshot e o ceu6 (satVivoScript, definido no bloco
+       dos satélites ao vivo). Quem já tem a chave ligada recebeu o arquivo no
+       boot, bloqueante, e cai direto no trocaFoto. */
+    if(!LIVE && !window.TEXFOTO){
+      if(bl.dataset.carregando) return;
+      bl.dataset.carregando = '1';
+      showHint(t('BAIXANDO AS FOTOS DA NASA...'));
+      satVivoScript('texturas.js').then(()=>{ delete bl.dataset.carregando; trocaFoto(); })
+        .catch(()=>{ delete bl.dataset.carregando; showHint(t('AS FOTOS NÃO CARREGARAM: O MAPA SEGUE DESENHADO')); });
+      return;
+    }
+    trocaFoto();
+  });
+  function trocaFoto(){
     LIVE = !LIVE;
     store.set('carto:foto', LIVE ? '1' : '0');
     if(ST.level === 'focus') swapScene(buildFocus(ST.body), true);
@@ -15794,8 +15819,8 @@ function cardRender(){
       CAMTW = null; applyCam();
     }
     uiSync();
-    showHint(LIVE ? 'MAPA FOTOGRAFADO (NASA)' : 'MAPA DESENHADO À MÃO');
-  });
+    showHint(t(LIVE ? 'MAPA FOTOGRAFADO (NASA)' : 'MAPA DESENHADO À MÃO'));
+  }
   const tg = $('#btntraj'); if(tg) tg.addEventListener('click', ()=>{
     if(TRAJ && TRAJ.fase!=='volta') trajCancelar();
     else trajStart(cur.navId);
@@ -16480,19 +16505,25 @@ window.addEventListener('keydown', e=>{
     if(typeof LOCAL !== 'undefined' && (LOCAL.on || LOCAL.sel)){ if(LOCAL.on) localFecha(); else localSelecao(false); }   /* r287 */
     else if(TOUR.on) tourStop();
     else if(TRAJ && TRAJ.fase!=='volta') trajCancelar();
-    else if($('#tourpop').classList.contains('on')) $('#tourpop').classList.remove('on');
-    else if($('#evtpop').classList.contains('on')) $('#evtpop').classList.remove('on');   /* r290 · os popovers novos fecham no ESC */
-    else if($('#satpop').classList.contains('on')) $('#satpop').classList.remove('on');
-    else if($('#habpop').classList.contains('on')) $('#habpopx').click();   /* r291 · pelo ✕: para o laço da bancada */
-    else if($('#player').classList.contains('on')) $('#player').classList.remove('on');
-    else if($('#datepop').classList.contains('on')) $('#datepop').classList.remove('on');
-    else if($('#cfgpop').classList.contains('on')) $('#cfgpop').classList.remove('on');
-    else if($('#filtpop').classList.contains('on')) $('#filtpop').classList.remove('on');
-    else if(document.body.classList.contains('photo')) togglePhoto();
-    else if($('#mission').classList.contains('on')) missClose();
-    else if($('#finder').classList.contains('on')) findClose();
-    else if($('#cmp').classList.contains('on')) closeCmp();
-    else if($('#help').classList.contains('on')) $('#help').classList.remove('on');
+    else if(document.body.classList.contains('photo')) togglePhoto();   /* r299 · no modo foto os painéis estão escondidos (mas com a classe .on): o ESC tem que sair do modo, não fechar um painel invisível */
+    /* r299 · A CADEIA SEGUE O Z-INDEX, do mais alto para o mais baixo. Antes a
+       ordem era a de quem foi escrito primeiro, e o ESC fechava um popover
+       invisível atrás da cortina do registro ou do manual: o usuário apertava,
+       nada mudava na tela, e só o segundo ESC fazia efeito. O #velpop (z 40)
+       não estava na cadeia inteira. */
+    else if($('#help').classList.contains('on')) $('#help').classList.remove('on');                 /* z 45 */
+    else if($('#velpop').classList.contains('on')) $('#velpop').classList.remove('on');             /* z 40 */
+    else if($('#mission').classList.contains('on')) missClose();                                    /* z 33 */
+    else if($('#finder').classList.contains('on')) findClose();                                     /* z 32 */
+    else if($('#cmp').classList.contains('on')) closeCmp();                                         /* z 30 */
+    else if($('#habpop').classList.contains('on')) $('#habpopx').click();   /* z 27 · r291 · pelo ✕: para o laço da bancada */
+    else if($('#evtpop').classList.contains('on')) $('#evtpop').classList.remove('on');             /* z 27 */
+    else if($('#satpop').classList.contains('on')) $('#satpop').classList.remove('on');             /* z 27 */
+    else if($('#tourpop').classList.contains('on')) $('#tourpop').classList.remove('on');           /* z 26 */
+    else if($('#datepop').classList.contains('on')) $('#datepop').classList.remove('on');           /* z 22 */
+    else if($('#player').classList.contains('on')) $('#player').classList.remove('on');             /* z 20 */
+    else if($('#cfgpop').classList.contains('on')) $('#cfgpop').classList.remove('on');             /* z 20 */
+    else if($('#filtpop').classList.contains('on')) $('#filtpop').classList.remove('on');           /* z 20 */
     else if(typeof voltarParaCasa === 'function' && voltarParaCasa()){}   /* longe de casa, o ESC traz de volta */
     else if(ST.mapCard) fecharFicha();   /* r290 · o ESC fecha como o ✕ (antes largava o pivô no Sol) */
     else up();
@@ -16527,7 +16558,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r298';
+const BUILD = 'r299';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -17785,8 +17816,20 @@ function loop(){
     }
   }
   if(LOCAL.sel && !(ACT && ACT.kind === 'system' && ST.sys === 'sol')) localSelecao(false);   /* r290 · trocou de cena: a escolha do lugar solta */
-  satVivoTick();   /* r261/r264 · no 1:1 a classe SATÉLITES do filtro é a camada ao vivo */
-  ladrTick();      /* r295 · os ladrilhos da Terra de perto */
+  /* r299 · MODAL EM TELA CHEIA TAPA O MAPA. No celular o planetário é 100vw
+     por 100dvh com fundo opaco (CSS 360) e a cena continuava viva por baixo:
+     o mapa desenhando a 60 fps, os 600 rótulos recebendo transform, a SGP4
+     propagando até 220 satélites por quadro e os ladrilhos pedindo textura,
+     tudo invisível. É o aquecimento do celular, e o r297 pede justamente que
+     ele segure o aparelho apontado para o céu por minutos nesse estado.
+     A câmera (CAMTW) e o ACT.update seguem correndo: a volta não dá salto.
+     Só no TOQUE: no desktop o modal é uma janela de 980x660 e o mapa em volta
+     continua visível (sem render o canvas ficaria em branco). */
+  const TAPADO = document.body.classList.contains('touch') && typeof LOCAL !== 'undefined' && LOCAL.on;
+  if(!TAPADO){
+    satVivoTick();   /* r261/r264 · no 1:1 a classe SATÉLITES do filtro é a camada ao vivo */
+    ladrTick();      /* r295 · os ladrilhos da Terra de perto */
+  }
   if(SISM.on && ACT && ACT.escr) sismosTick(); else if(SISM.grupo) sismosDesmonta();   /* r262; r290 · só no 1:1 (no cênico montava esferas de km dentro da Terra desenhada) */
   if(DIVE) diveStep(now);
   if(VOOCEU) vooCeuStep(now);
@@ -17903,6 +17946,7 @@ function loop(){
     /* as constelações acendem em qualquer cena que tenha céu profundo */
     if(ACT.ceuLinhas && ACT.kind === 'focus' && ACT.ceuLinhas.visible && ACT.ceuLinhas.material.opacity < 0.3)
       ACT.ceuLinhas.material.opacity = Math.min(0.3, ACT.ceuLinhas.material.opacity + 0.006);
+    if(!TAPADO){   /* r299 · nada a desenhar atrás de um modal opaco de tela cheia */
     if(ACT.sceneCeu){
       camCeu.position.copy(camera.position);
       camCeu.quaternion.copy(camera.quaternion);
@@ -17926,6 +17970,7 @@ function loop(){
     }
     if(ACT.sceneCeu) renderer.autoClear = true;
     updateLabels();
+    }   /* r299 · fim do !TAPADO */
   }
 }
 /* primeiro acesso: as boas-vindas entram depois do primeiro render */
@@ -17937,7 +17982,11 @@ loop();
 </script>
 <!-- r168 · AS FOTOS entram DEPOIS do app de propósito: a primeira cena nasce
      desenhada (o visual do mapa cênico) e a foto fica à mão para quando alguém
-     chegar perto de um corpo na escala 1:1. Fontes em CREDITOS.md -->
-<script src="texturas.js"></script>
+     chegar perto de um corpo na escala 1:1. Fontes em CREDITOS.md
+     r299 · e agora SÓ DESCEM PARA QUEM AS USA: a tag fixa daqui saiu. Quem tem
+     carto:foto ligado recebe o arquivo no bloco do idioma (bloqueante, porque o
+     texturaFoto é síncrono dentro do buildSystem) e quem liga o botão no meio
+     da sessão baixa sob demanda. São 1,43 MB comprimidos a menos em toda
+     primeira visita do padrão de fábrica. -->
 </body>
 </html>

@@ -2006,24 +2006,14 @@ namneb: {
   facts: ['The dust draws the map of North America so well that even the Gulf of Mexico is there.', 'It covers four full Moons in the sky and almost nobody has seen it: it takes a long-exposure photo.', 'The star that lights it was only found in 2004, hidden in its own dust.'],
   fict: 'It is the favorite nebula of backyard astrophotographers: every astrophotography gallery has a North America.'
 },
-formigacentro: {
-  kind: 'The star that fires twin jets',
-  quick: [['TYPE','white dwarf + companion'],['RADIUS','~0.02 R☉'],['SURF. TEMP.','~35,000 °C'],['DISTANCE','8,000 ly'],['JETS','1,000 km/s'],['LASER','detected in 2018']],
-  sections: [
-    {t:'STRUCTURE', rows:[['What it is','A star at the end of its life which, instead of blowing gas in every direction, fires two opposite jets'],['The cause','Almost certainly a close companion, or an intense magnetic field, channeling the flow'],['The speed','The gas leaves at a thousand kilometers per second, with machine-gun precision']]},
-    {t:'RECORD', rows:[['2018','Laser emission was detected coming from the center, a sign of dense gas hidden there'],['What that means','There must be a disk of compressed material around it, probably because of the companion'],['The symmetry','The two lobes are near-perfect mirrors of each other, which demands a very organized mechanism']]}
-  ],
-  facts: ['Its center emits a natural laser, something extremely rare, and that gives away a hidden disk of gas.'],
-  fict: null
-},
 formiganeb: {
   kind: 'The ant-shaped cocoon of a dying star',
   quick: [['DISTANCE','~4,500 ly'],['CATALOG','Menzel 3'],['SHAPE','two lobes, an ant\'s body'],['EXPANSION','>1,000 km/s'],['CONSTELLATION','Norma, the Square'],['TYPE','planetary nebula']],
   sections: [
-    {t:'THE ANT', rows:[['Head and thorax','The two lobes of bright gas that give the nickname'],['The sculptor','Something squeezes the waist: maybe a second star, maybe magnetic fields'],['Planetary','The name is historical and has nothing to do with planets: in old telescopes they looked like disks'],['Position here','Symbolic: the cloud surrounds the central star']]},
-    {t:'RECORD', rows:[['Short life','Nebulae like this last only a few tens of thousands of years and dissipate'],['The Sun\'s future','This is how our system ends: a colorful puff and a white dwarf'],['Study','Hubble photographed it in detail in 1997 and 2001']]}
+    {t:'THE ANT', rows:[['Head and thorax','The two lobes of bright gas that give the nickname'],['Width','About 1.6 light-years from tip to tip'],['The sculptor','Something squeezes the waist: maybe a second star, maybe magnetic fields'],['Planetary','The name is historical and has nothing to do with planets: in old telescopes they looked like disks'],['Position here','Symbolic: the cloud surrounds the central star']]},
+    {t:'RECORD', rows:[['1922','Cataloged by Donald Menzel, hence the name Menzel 3'],['The laser','In 2018 natural laser emission was detected coming from the core, something very rare: it betrays a dense disk of gas hidden there'],['The distance','Measurements range from 3,000 to 8,000 light-years depending on the method: the number here is the middle ground'],['Short life','Nebulae like this last only a few tens of thousands of years and dissipate'],['The Sun\'s future','This is how our system ends: a colorful puff and a white dwarf'],['Study','Hubble photographed it in detail in 1997 and 2001']]}
   ],
-  facts: ['It is a Sun-like star dying NOW: the portrait of the end of our own system.', 'The gas escapes at 1,000 km/s, but something squeezes its waist and draws the ant.', 'A planetary nebula has no planet at all: the name is a historical mistake that stuck.'],
+  facts: ['It is a Sun-like star dying NOW: the portrait of the end of our own system.', 'The gas escapes at 1,000 km/s, but something squeezes its waist and draws the ant.','Its core emits natural laser light, a phenomenon detected in very few places in the universe.', 'A planetary nebula has no planet at all: the name is a historical mistake that stuck.'],
   fict: 'One of the most reproduced Hubble photos: the cosmic ant four thousand light-years away.'
 },
 mz3star: {

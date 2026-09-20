@@ -2,7 +2,7 @@
    Uso: node tools/verifica.js
    Extrai os blocos <script> do index.html, executa os dados e confere as
    armadilhas que já nos morderam antes. Sai com código 1 se achar problema. */
-const fs = require('fs'), path = require('path');
+const fs = require('fs'), path = require('path'), vm = require('vm');
 
 const RAIZ = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
@@ -10,6 +10,31 @@ const html = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
 const blocos = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
 if(!blocos.length){ console.error('nenhum bloco <script> encontrado'); process.exit(1); }
 const todo = blocos.join('\n');
+
+/* 0. r299 · A SINTAXE DE TUDO. Até aqui o gate só COMPILAVA a fatia de dados
+      entre "const SUN" e "const UNIVERSE_CARD", ou seja 22 por cento do JS:
+      um erro de sintaxe no motor, na UI ou no boot passava batido e o gate
+      imprimia "Tudo íntegro" com código 0, enquanto a Vercel publicava uma
+      tela de loading congelada (provado por experimento na auditoria do r298).
+      vm.Script COMPILA sem executar, que é exatamente o que se quer aqui.
+      NÃO pega TDZ nem colisão de nome entre blocos (r232, r291): isso continua
+      sendo trabalho de sonda. O texturas.js fica de fora de propósito: são
+      1,9 MB de base64 e nenhuma lógica. */
+const fontes = blocos.map((b, i) => ['index.html · bloco ' + (i + 1), b]);
+for(const f of ['en.js', 'dados_en.js', 'ceu6.js', 'tle_snapshot.js']){
+  const p = path.join(RAIZ, f);
+  if(fs.existsSync(p)) fontes.push([f, fs.readFileSync(p, 'utf8')]);
+}
+let sintaxe = 0;
+for(const [nome, src] of fontes){
+  try{ new vm.Script(src, {filename: nome}); }
+  catch(e){
+    sintaxe++;
+    const ln = (e.stack || '').match(/:(\d+)\n/);
+    console.error('x SINTAXE em ' + nome + (ln ? ' (linha ' + ln[1] + ' do bloco)' : '') + ': ' + e.message);
+  }
+}
+if(sintaxe){ console.error('\n' + sintaxe + ' bloco(s) que nem compilam: o app não abriria.'); process.exit(1); }
 
 const ini = todo.indexOf('const SUN = {');
 const fim = todo.indexOf('const UNIVERSE_CARD');
@@ -93,6 +118,40 @@ const idsCss = new Set([...css.matchAll(/#([\w-]+)/g)].map(m => m[1]));
 for(const id of idsCss)
   if(!idsHtml.has(id) && !criados.has(id) && !/^[0-9a-fA-F]{3,8}$/.test(id))
     avisos.push(`o CSS estiliza #${id}, que não existe no HTML`);
+
+/* 7. r299 · OBJETO CADASTRADO DUAS VEZES. A auditoria do r298 achou a galáxia
+      SOMBRERO em GALAXIES duas vezes (dois marcadores no universo, dois
+      resultados na busca, fichas conflitantes) e a NEBULOSA DA FORMIGA em
+      STARSYS e na chave de SYS, o que deixou um corpo REGISTRADO e sem lugar
+      nenhum no mapa. É a mesma classe do bug do r28, e o gate não via. */
+for(const [nome, lista] of [['GALAXIES', GALAXIES], ['STARSYS', STARSYS]]){
+  const vis = new Map();
+  for(const o of lista){
+    if(vis.has(o.id)) erros.push(`"${o.id}" aparece DUAS vezes em ${nome}: vira dois objetos com a mesma ficha (bug do r28)`);
+    vis.set(o.id, 1);
+  }
+}
+/* corpo registrado que nenhum sistema cita: sobra de duplicata, conta no total,
+   entra na busca e não existe em mapa nenhum */
+const alcancavel = new Set();
+for(const S of Object.values(SYS)){
+  for(const b of [S.star, ...(S.bodies||[]), ...(S.belt||[])].filter(Boolean)) alcancavel.add(b.id);
+  if(S.beltId) alcancavel.add(S.beltId);
+}
+/* os HUBS de região (cinturão, Kuiper, Oort e as nebulosas) não são citados em
+   SYS.bodies de propósito: o motor os desenha a partir dos parâmetros do
+   próprio sistema (beltR, kuiperR) ou do beltId. Contam como alcançáveis, e os
+   filhos deles entram pela propagação de moons logo abaixo. */
+for(const [id, b] of Object.entries(ALLBODIES)) if(b.region) alcancavel.add(id);
+for(let mudou = true; mudou; ){
+  mudou = false;
+  for(const id of [...alcancavel]){
+    const b = ALLBODIES[id]; if(!b) continue;
+    for(const m of (b.moons||[])) if(m && m.id && !alcancavel.has(m.id)){ alcancavel.add(m.id); mudou = true; }
+  }
+}
+for(const [id, b] of Object.entries(ALLBODIES))
+  if(!alcancavel.has(id)) erros.push(`corpo "${id}" (${b.name}) está registrado mas nenhum sistema o cita: inalcançável no mapa`);
 
 const n = Object.keys(ALLBODIES).length;
 console.log(`${n} corpos · ${Object.keys(SYS).length} sistemas · ${STARSYS.length} marcadores · ${GALAXIES.length} galáxias`);
