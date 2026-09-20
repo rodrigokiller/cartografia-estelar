@@ -763,11 +763,13 @@ h1.bodyname{font-family:var(--disp);font-weight:600;font-size:27px;letter-spacin
 .mbadge.on{border-color:var(--amber);color:var(--amber)}
 .mbadge.morto{color:#d06a6a;border-color:rgba(208,106,106,.4)}
 .exluas{font-family:var(--mono);font-size:8.5px;letter-spacing:1.2px;color:var(--dim2);margin-top:8px;line-height:1.8}
-.eyebrow #cardx2,.eyebrow #cardshare{background:none;border:1px solid var(--line2);color:var(--dim);font-family:var(--mono);
+.eyebrow #cardx2,.eyebrow #cardshare,.eyebrow #cardvista{background:none;border:1px solid var(--line2);color:var(--dim);font-family:var(--mono);
   font-size:9px;width:18px;height:18px;line-height:1;cursor:pointer;padding:0;margin-left:8px;flex:0 0 auto}
-.eyebrow #cardshare{font-size:11px;margin-left:auto}   /* r289 · o compartilhar pequeno, ao lado do ✕ */
+.eyebrow #cardshare{font-size:11px;margin-left:auto}
+.eyebrow #cardvista{font-size:10px;margin-left:auto}   /* r305 · quando não há ⇪, é ele que empurra para a direita */
+.eyebrow #cardshare ~ #cardvista{margin-left:4px}   /* r289 · o compartilhar pequeno, ao lado do ✕ */
 .eyebrow #cardshare + #cardx2{margin-left:4px}
-.eyebrow #cardx2:hover,.eyebrow #cardshare:hover{color:var(--amber);border-color:var(--amber)}
+.eyebrow #cardx2:hover,.eyebrow #cardshare:hover,.eyebrow #cardvista:hover{color:var(--amber);border-color:var(--amber)}
 /* r293 · quem rola é o .popscroll de dentro (o chanfro e as diagonais ficam parados), e no toque os alvos crescem */
 .popscroll{overflow-y:auto;overscroll-behavior:contain;min-height:0;scrollbar-width:thin;scrollbar-color:var(--line2) rgba(63,140,255,.08)}
 .popscroll::-webkit-scrollbar{width:4px} .popscroll::-webkit-scrollbar-thumb{background:var(--line2)}
@@ -780,7 +782,7 @@ body.touch #simclock button{min-width:30px;min-height:30px;font-size:12px}
 body.touch #simlua{width:22px;height:22px}
 body.touch #datepop .dcol button{width:40px;height:30px;font-size:11px}
 body.touch #tourbar button{width:32px;height:32px;font-size:12px}
-body.touch .eyebrow #cardx2,body.touch .eyebrow #cardshare{width:30px;height:30px;font-size:13px}
+body.touch .eyebrow #cardx2,body.touch .eyebrow #cardshare,body.touch .eyebrow #cardvista{width:30px;height:30px;font-size:13px}
 body.touch .eyebrow #cardshare{font-size:15px}
 body.touch #tourpop .tphead button,body.touch #habpop .tphead button,body.touch #satpop .tphead button,body.touch #evtpop .tphead button,body.touch .fpx,body.touch #lmgx{width:30px;height:30px;font-size:12px}
 body.touch #localpop .lpbtns button{height:30px;min-width:30px;font-size:9.5px}
@@ -13513,6 +13515,82 @@ function flyThen(id, go){
 }
 
 /* ---------- histórico de navegação (ir/voltar entre objetos) ---------- */
+
+/* ================= r305 · A VISTA COMPARTILHADA =================
+   O endereço de sempre (#corpo=, #sistema=, #galaxia=) guarda NÍVEL e ID, e
+   mais nada: a câmera, a data do relógio, as camadas ligadas e o lugar do
+   planetário moram no localStorage e não viajam. Então trezentos builds de
+   coisas que só existem num INSTANTE (o eclipse de 28 AGO, a passagem da ISS,
+   a Apollo no meio da rota, o céu de São Paulo às 22h) não cabiam num link.
+   Este é um SEGUNDO formato, opcional, que não mexe no primeiro: #v=<pacote>.
+   Campos separados por ~ (caractere não reservado em URL), na ordem:
+     0 modo (r = escala 1:1, c = cênico)
+     1 cena (s sistema, f foco, g galáxia, u universo)
+     2 id da cena          3 corpo travado na ficha (ou vazio)
+     4..9 câmera: yaw, pitch, dist, pivô x, y, z
+     10 data do relógio em base36   11 velocidade do relógio
+     12 camadas ligadas (6 bits em base36)   13 lat,lon do planetário
+   O que NÃO viaja de propósito: os filtros de linha e de objeto que são
+   preferência pessoal de quem recebe (r154). Viajam só as seis camadas que
+   fazem a vista ser o que é. */
+function vistaCodifica(){
+  const nn = x=>String(+(+x).toPrecision(7));
+  /* r305 · o PIVÔ e a DISTÂNCIA pedem mais casas: no 1:1 o pivô é uma posição
+     ABSOLUTA em unidades de UA (a Terra fica em 15) e a gente precisa de
+     precisão na escala da SUPERFÍCIE dela (o raio é 0,00064). Com 7 dígitos o
+     pivô voltava 17 km fora, medido, e a 4 raios isso se vê. */
+  const np = x=>String(+(+x).toPrecision(13));
+  let cena = 'u', id = '';
+  if(ACT && ACT.kind === 'system'){ cena = 's'; id = ST.sys; }
+  else if(ACT && ACT.kind === 'focus'){ cena = 'f'; id = ST.body; }
+  else if(ACT && ACT.kind === 'galaxy'){ cena = 'g'; id = ST.gal; }
+  const corpo = (ST.mapCard && ALLBODIES[ST.mapCard.id] && (!ST.mapCard.type || ST.mapCard.type === 'body')) ? ST.mapCard.id : '';
+  const flags = (FILTROBJ.satelite !== false ? 1 : 0) | (SISM.on ? 2 : 0) | (LADR.on ? 4 : 0)
+              | (AUR.on ? 8 : 0) | (CEUV.on ? 16 : 0) | (CEUN.on ? 32 : 0);
+  return [ESCR.on ? 'r' : 'c', cena, id, corpo,
+    nn(CAM.yaw), nn(CAM.pitch), np(CAM.dist), np(CAM.pivot.x), np(CAM.pivot.y), np(CAM.pivot.z),
+    Math.round(SIMT.data).toString(36), SIMT.vel || 'real', flags.toString(36),
+    LOCAL.lat.toFixed(2) + ',' + LOCAL.lon.toFixed(2)].join('~');
+}
+/* devolve o pacote lido, ou null: quem monta a cena é quem chama */
+function vistaLe(s){
+  const p = String(s || '').split('~');
+  if(p.length < 13) return null;
+  const f = parseInt(p[12], 36) || 0, ll = String(p[13] || '').split(',');
+  const num = (x, d)=>{ const n = parseFloat(x); return isFinite(n) ? n : d; };
+  return {modo:p[0] === 'r', cena:p[1], id:p[2], corpo:p[3],
+    yaw:num(p[4], 0), pitch:num(p[5], 0.6), dist:num(p[6], 60),
+    piv:[num(p[7], 0), num(p[8], 0), num(p[9], 0)],
+    data:parseInt(p[10], 36), vel:p[11],
+    sat:!!(f & 1), sism:!!(f & 2), ladr:!!(f & 4), aur:!!(f & 8), ceuv:!!(f & 16), ceun:!!(f & 32),
+    lat:num(ll[0], NaN), lon:num(ll[1], NaN)};
+}
+/* as camadas e o relógio: valem em qualquer cena, então entram antes dela */
+function vistaCamadas(V){
+  if(isFinite(V.data)) SIMT.data = V.data;
+  if(V.vel) SIMT.vel = V.vel;
+  FILTROBJ.satelite = V.sat; SISM.on = V.sism; LADR.on = V.ladr; AUR.on = V.aur;
+  CEUV.on = V.ceuv; CEUN.on = V.ceun;
+  store.set('carto:sismos', V.sism ? '1' : '0');
+  store.set('carto:ladrilhos', V.ladr ? '1' : '0');
+  store.set('carto:aurora', V.aur ? '1' : '0');
+  if(isFinite(V.lat) && isFinite(V.lon)){ LOCAL.lat = V.lat; LOCAL.lon = V.lon; LOCAL.tz = undefined; LOCAL.nuvem = null; }
+}
+/* a câmera, depois que a cena existe */
+function vistaCamera(V){
+  CAMTW = null; ZOOM = null; DIVE = null;
+  CAM.yaw = V.yaw; CAM.pitch = V.pitch; CAM.dist = V.dist;
+  CAM.pivot.set(V.piv[0], V.piv[1], V.piv[2]);
+  if(V.corpo && ALLBODIES[V.corpo]){
+    ST.mapCard = {type:'body', id:V.corpo, act:'focus', entrou:1, t:performance.now()};
+    markVisited(V.corpo);
+  }
+  if(typeof applySel === 'function') applySel();
+  applyCam();
+  if(typeof uiSync === 'function') uiSync();
+  if(typeof cfgSync === 'function') cfgSync();
+  if(typeof simClockUI === 'function') simClockUI();
+}
 function syncHash(){
   let h = '#universo';
   if(ST.level==='focus') h = '#corpo='+ST.body;
@@ -16007,6 +16085,7 @@ function cardRender(){
   $('#headmini').innerHTML =
     '<div class="eyebrow"><span>'+esc(b.desig||'')+'</span><span class="lock'+(lockOn?'':' off')+'">'+(lockOn?t('⬢ LINK TRAVADO'):t('MODO MAPA'))+'</span>'
     +(shId ? '<button id="cardshare" data-shareid="'+shId+'" title="'+t('Compartilhar o cartão deste corpo')+'">⇪</button>' : '')
+    +'<button id="cardvista" title="'+t('Copiar o endereço desta vista exata: câmera, data e camadas')+'">⧉</button>'   /* r305 */
     +(ST.mapCard ? '<button id="cardx2" title="'+t('Fechar esta ficha')+'">✕</button>'
       : ((ACT && ACT.kind==='system' && ACT.escr && ACT.galCentro && CAM.dist/(LY_UA*ESCR_UA) > 20000)
          ? '<button id="cardx2" data-xgal="1" title="Fechar o Sistema Solar e olhar a galáxia">✕</button>' : ''))+'</div>'+
@@ -16254,6 +16333,13 @@ function cardRender(){
     else trajStart(cur.navId);
   });
   const ng = $('#navgo'); if(ng) ng.addEventListener('click', ()=>{ if(cur.navKind === 'satlive'){ satVivoIr(cur.navId); return; } enterTarget(cur.navKind==='gal' ? 'galaxy' : (cur.navKind==='sys' ? 'starsys' : 'focus'), cur.navId); });
+  const cv2 = $('#cardvista'); if(cv2) cv2.addEventListener('click', ()=>{
+    /* r305 · o link que leva o outro ao instante exato */
+    const url = location.href.split('#')[0] + '#v=' + vistaCodifica();
+    const avisa = ()=>showHint(t('LINK DESTA VISTA COPIADO · câmera, data e camadas vão junto'));
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(avisa, ()=>showHint(url));
+    else showHint(url);
+  });
   const cx = $('#cardx2'); if(cx) cx.addEventListener('click', ()=>{
     /* r176 · no zoom galáctico o ✕ do card do SISTEMA SOLAR fecha a casa:
        seleciona a VIA LÁCTEA e centraliza nela olhando de cima (pedido dele) */
@@ -16987,7 +17073,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r304';
+const BUILD = 'r305';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -17036,7 +17122,21 @@ resize();
   const mAlvo = hh0.match(/&alvo=([a-z0-9_]+)/i);
   if(mAlvo){ hh0 = mAlvo[1] && ALLBODIES[mAlvo[1]] ? 'corpo=' + mAlvo[1] : hh0.replace(mAlvo[0], ''); }
   const [k, v] = hh0.split('=');
-  if(k==='corpo' && ALLBODIES[v]){
+  if(k==='v'){
+    /* r305 · a VISTA COMPARTILHADA: o modo e as camadas entram ANTES da cena,
+       porque é ESCR.on que decide o que o buildSystem monta */
+    const V = vistaLe(v);
+    if(V){
+      ESCR.on = V.modo; store.set('carto:escr', V.modo ? '1' : '0');
+      vistaCamadas(V);
+      if(V.cena === 'f' && ALLBODIES[V.id]){ ST.level='focus'; ST.sys=ALLBODIES[V.id]._sys; ST.body=V.id; markVisited(V.id); swapScene(buildFocus(V.id)); }
+      else if(V.cena === 'g'){ ST.level='galaxy'; if(GALAXIES.find(x=>x.id===V.id)) ST.gal=V.id; swapScene(buildGalaxy(ST.gal)); }
+      else if(V.cena === 'u'){ ST.level='universe'; swapScene(buildUniverse()); }
+      else { ST.sys = SYS[V.id] ? V.id : 'sol'; swapScene(buildSystem(ST.sys)); }
+      setTimeout(()=>TUT.v.add('boasvindas'), 0);   /* quem chega por um link de vista não leva tutorial na cara. O setTimeout é obrigatório: TUT é const MAIS ABAIXO neste mesmo bloco, e chamar aqui derruba o boot inteiro por TDZ (o tombo do r232 e do r291, pego de novo pela sonda) */
+      setTimeout(()=>vistaCamera(V), 260);
+    } else swapScene(buildSystem('sol'));
+  } else if(k==='corpo' && ALLBODIES[v]){
     /* r188 · na ESCALA 1:1 o corpo abre DENTRO do mapa único, voando até ele:
        o link caindo na cena de foco era o que dava as 'partes de transição'
        estranhas que ele reportou (entrar mudava de cena, sair voltava torto) */
@@ -17131,7 +17231,19 @@ window.addEventListener('hashchange', ()=>{
   const mA = hh1.match(/&alvo=([a-z0-9_]+)/i);
   if(mA) hh1 = (mA[1] && ALLBODIES[mA[1]]) ? 'corpo=' + mA[1] : hh1.replace(mA[0], '');
   const [k, v] = hh1.split('=');
-  if(k==='corpo' && ALLBODIES[v] && ST.body!==v
+  if(k==='v'){
+    /* r305 · uma vista colada numa aba JÁ ABERTA: o modo decide o que o
+       buildSystem monta, então ele entra antes da cena, e a câmera depois */
+    const V = vistaLe(v); if(!V) return;
+    ESCR.on = V.modo; store.set('carto:escr', V.modo ? '1' : '0');
+    vistaCamadas(V);
+    if(V.cena === 'f' && ALLBODIES[V.id]){ ST.level='focus'; ST.sys=ALLBODIES[V.id]._sys; ST.body=V.id; swapScene(buildFocus(V.id)); }
+    else if(V.cena === 'g'){ ST.level='galaxy'; if(GALAXIES.find(x=>x.id===V.id)) ST.gal=V.id; swapScene(buildGalaxy(ST.gal)); }
+    else if(V.cena === 'u'){ ST.level='universe'; swapScene(buildUniverse()); }
+    else { ST.level='system'; ST.sys = SYS[V.id] ? V.id : 'sol'; swapScene(buildSystem(ST.sys)); }
+    setTimeout(()=>vistaCamera(V), 260);
+  }
+  else if(k==='corpo' && ALLBODIES[v] && ST.body!==v
      && !(ST.mapCard && ST.mapCard.id===v)) irAoCorpo(v);
   else if(k==='sistema' && SYS[v] && !(ST.level==='system' && ST.sys===v)) gotoSystem(v);
   else if(k==='galaxia'){ const gid=(v && GALAXIES.find(x=>x.id===v))?v:'vialactea'; if(ST.level!=='galaxy'||ST.gal!==gid) gotoGalaxy(gid); }
@@ -17549,6 +17661,10 @@ $('#datepop').addEventListener('click', e=>{
    A entrada `ver` é opcional e LEVA à feature, que é o que faz o painel valer:
    ler que existe um planetário não é a mesma coisa que abrir um. */
 const NOVIDADES = [
+  {b:'r305', d:'20 SET 2026', t:'O LINK QUE LEVA AO INSTANTE', ls:[
+    'O endereço guardava só onde você estava. Agora o ⧉ no canto da ficha copia um link com a câmera, a data do relógio, as camadas ligadas e o lugar do planetário.',
+    'Quem abrir cai exatamente no que você estava vendo: o eclipse, a passagem da ISS, a Apollo no meio da rota.'],
+   ver:()=>{ const b = document.getElementById('cardvista'); if(b) b.click(); }},
   {b:'r304', d:'20 SET 2026', t:'A AURORA AO VIVO', ls:[
     'A Terra já tinha satélites, terremotos e a foto de ontem. Faltava o clima espacial: ligue AURORA AO VIVO no filtro ≋ e chegue perto dela na escala 1:1.',
     'O verde vem do modelo OVATION do NOAA, atualizado o tempo todo, e acende só do lado da noite, em volta dos polos magnéticos, como na vida.',

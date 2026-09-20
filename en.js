@@ -223,6 +223,9 @@ ui: {
   'COMPARAÇÃO CANCELADA':'COMPARISON CANCELED', 'AGORA ABRA OUTRO CORPO E TOQUE EM ◫':'NOW OPEN ANOTHER BODY AND TAP ◫', 'COMPARAR: ESCOLHA O SEGUNDO CORPO':'COMPARE: PICK THE SECOND BODY',
   'MAPA FOTOGRAFADO (NASA)':'PHOTOGRAPHED MAP (NASA)', 'MAPA DESENHADO À MÃO':'HAND-DRAWN MAP',
   'BAIXANDO AS FOTOS DA NASA...':'DOWNLOADING THE NASA PHOTOS...', 'AS FOTOS NÃO CARREGARAM: O MAPA SEGUE DESENHADO':'THE PHOTOS DID NOT LOAD: THE MAP STAYS HAND-DRAWN',
+  /* r305 · a vista compartilhada */
+  'Copiar o endereço desta vista exata: câmera, data e camadas':'Copy the address of this exact view: camera, date and layers',
+  'LINK DESTA VISTA COPIADO · câmera, data e camadas vão junto':'VIEW LINK COPIED · camera, date and layers travel with it',
   /* r304 · a aurora ao vivo */
   'AURORA AO VIVO NA TERRA (NOAA)':'LIVE AURORA ON EARTH (NOAA)',
   'AURORA: LIGUE A ESCALA 1:1 E CHEGUE PERTO DA TERRA':'AURORA: TURN ON THE 1:1 SCALE AND GET CLOSE TO EARTH',
@@ -254,6 +257,9 @@ ui: {
   'NÃO CONSEGUI ABRIR DAQUI: TENTE PELO MAPA':'COULD NOT OPEN FROM HERE: TRY FROM THE MAP',
   'O que mudou de uns tempos para cá, do mais recente para o mais antigo. O ponto âmbar no ? aparece sozinho quando tem coisa nova.':'What changed lately, newest first. The amber dot on the ? shows up by itself when there is something new.',
   '20 SET 2026':'SEP 20, 2026', '13 SET 2026':'SEP 13, 2026', '12 SET 2026':'SEP 12, 2026', '11 SET 2026':'SEP 11, 2026', '10 SET 2026':'SEP 10, 2026', '8 SET 2026':'SEP 8, 2026',
+  'O LINK QUE LEVA AO INSTANTE':'THE LINK THAT TAKES YOU TO THE MOMENT',
+  'O endereço guardava só onde você estava. Agora o ⧉ no canto da ficha copia um link com a câmera, a data do relógio, as camadas ligadas e o lugar do planetário.':'The address only stored where you were. Now the ⧉ in the corner of the card copies a link carrying the camera, the clock date, the layers you turned on and the planetarium place.',
+  'Quem abrir cai exatamente no que você estava vendo: o eclipse, a passagem da ISS, a Apollo no meio da rota.':'Whoever opens it lands on exactly what you were looking at: the eclipse, the ISS pass, Apollo halfway through its route.',
   'A AURORA AO VIVO':'THE LIVE AURORA',
   'A Terra já tinha satélites, terremotos e a foto de ontem. Faltava o clima espacial: ligue AURORA AO VIVO no filtro ≋ e chegue perto dela na escala 1:1.':'Earth already had satellites, earthquakes and yesterday’s photo. Space weather was missing: turn LIVE AURORA on in the ≋ filter and get close to it at 1:1 scale.',
   'O verde vem do modelo OVATION do NOAA, atualizado o tempo todo, e acende só do lado da noite, em volta dos polos magnéticos, como na vida.':'The green comes from NOAA’s OVATION model, updated continuously, and it only lights up on the night side, around the magnetic poles, just like in real life.',

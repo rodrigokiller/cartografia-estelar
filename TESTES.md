@@ -8,7 +8,18 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 213 itens pendentes, do r131 ao r304.
+Hoje: 219 itens pendentes, do r131 ao r305.
+
+---
+
+## r305 · o link que leva ao instante
+
+- [ ] **O ⧉ no canto da ficha.** Enquadre alguma coisa (o eclipse, a ISS passando, a Apollo no meio da rota), toque no ⧉ ao lado do ✕ e cole o link numa aba anônima: a pessoa cai exatamente no que você estava vendo, com a mesma câmera, a mesma data, as mesmas camadas e o mesmo lugar do planetário.
+- [ ] **O link antigo não mudou.** O #corpo=, o #sistema= e o #galaxia= continuam curtos e legíveis como sempre. Este é um segundo formato, só para quando você quer o instante exato.
+- [ ] **Colar numa aba JÁ ABERTA** também funciona (era um buraco que a auditoria achou no #bancada=).
+- [ ] **O que NÃO viaja, de propósito:** os seus filtros de linha e de objeto, que são preferência pessoal de quem recebe. Viajam só as seis camadas que fazem a vista ser o que é: satélites, terremotos, ladrilhos, aurora, constelações e nomes das estrelas. Me diga se você quer mais alguma junto.
+- [ ] **Um tutorial contextual pode aparecer** para quem abre o link, se ele ligar uma camada que a pessoa nunca viu (os satélites, por exemplo). Achei que explica o que ela está vendo, mas se você achar intrusivo eu suprimo.
+- [ ] **Conferido por sonda:** a câmera volta com 0 km de erro no pivô, a data bate, e abrir o app direto por um link de vista cai no lugar certo. De carona, a sonda pegou um TDZ meu antes de ir para o ar (o mesmo tombo do r232 e do r291).
 
 ---
 
