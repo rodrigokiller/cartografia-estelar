@@ -8,7 +8,7 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 219 itens pendentes, do r131 ao r305.
+Hoje: 219 testes pendentes (do r131 ao r305) e 4 decisões suas.
 
 ---
 
