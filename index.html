@@ -10367,12 +10367,28 @@ function diasDaOrbita(txt){
   return 0;
 }
 function faseDaLua(){
-  const novaRef = Date.UTC(2000,0,6,18,14);      /* lua nova de referencia */
-  const SIN = 29.530588853 * 86400000;
   /* usa a data SIMULADA: viajar no tempo muda a fase junto (typeof evita TDZ) */
   const agora = (typeof SIMT !== 'undefined') ? SIMT.data : Date.now();
-  const idade = (((agora - novaRef) % SIN) + SIN) % SIN / 86400000;
-  const ang = idade/29.530588853 * Math.PI*2;
+  const SIN = 29.530588853;
+  /* r302 · A FASE VEM DA ELONGAÇÃO DE VERDADE. Até aqui era uma interpolação
+     LINEAR a partir de uma lua nova de referência, com o mês sinódico MÉDIO,
+     enquanto o planetário calculava a mesma Lua por Meeus cap. 47 com 60
+     termos 3.400 linhas acima: o app se contradizia na mesma tela (o balão do
+     relógio dizia 71 por cento iluminada e o planetário dizia 63 no mesmo
+     instante). Erro medido do modelo linear: até 11 graus de elongação, 21,7 h
+     de idade e 9,2 pontos de iluminação, com o NOME da fase saindo diferente
+     em 9,9 por cento das horas do ano. Agora é a diferença de longitude
+     eclíptica entre a Lua e o Sol, que é a definição da fase, e a idade sai
+     dela. O modelo médio fica de reserva se as funções do planetário não
+     estiverem carregadas. */
+  if(typeof localLua === 'function' && typeof localSol === 'function'){
+    let ang = localLua(agora).lam - localSol(agora).lam;
+    ang = ((ang % (Math.PI*2)) + Math.PI*2) % (Math.PI*2);
+    return {idade:ang/(Math.PI*2)*SIN, ang, ilum:(1 - Math.cos(ang))/2};
+  }
+  const novaRef = Date.UTC(2000,0,6,18,14);      /* lua nova de referencia */
+  const idade = (((agora - novaRef) % (SIN*86400000)) + SIN*86400000) % (SIN*86400000) / 86400000;
+  const ang = idade/SIN * Math.PI*2;
   return {idade, ang, ilum:(1 - Math.cos(ang))/2};
 }
 function nomeDaFase(i){
@@ -16677,7 +16693,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r301';
+const BUILD = 'r302';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -17035,11 +17051,11 @@ function tutBoasVindas(){
     {tx:(t?'Toque':'Clique')+' na <b>TERRA</b>, ou em qualquer planeta. O primeiro '+(t?'toque':'clique')+' abre a ficha e trava a câmera nele.',
      alvoLabel:'TERRA', checks:[{tx:'Abra a ficha de um planeta', ok:()=>!!ST.mapCard}]},
     {tx:'Agora toque em <b>ENTRAR</b> no topo da ficha, ou de novo no corpo.',
-     alvo:'#navgo', checks:[{tx:'Entre no corpo', ok:()=>ST.level === 'focus'}]},
+     alvo:'#navgo', checks:[{tx:'Entre no corpo', ok:()=>ST.level === 'focus' || !!(ST.mapCard && ST.mapCard.entrou)}]},   /* r302 · no 1:1 o ENTRAR nao troca de cena: quem marca e o entrou do mapCard */
     {tx:'Para voltar, '+(t?'junte os dedos':'afaste o zoom')+' até a cena abrir, ou use o ESC.',
-     auto:true, checks:[{tx:'Volte para a cena do sistema', ok:()=>ST.level !== 'focus'}]},
+     auto:true, checks:[{tx:'Volte para a cena do sistema', ok:()=>(ST.level !== 'focus' && !(ST.mapCard && ST.mapCard.entrou)) || !!(ACT && ACT.escr && CAM.dist > 20)}]},   /* r302 · no 1:1 voltar e afastar o zoom (ou o ESC, que limpa a ficha) */
     {tx:'Também dá para navegar pelo <b>rastro</b> aqui de cima: clique em <b>VIA LÁCTEA</b> para subir até a galáxia.',
-     alvo:'#crumbs', auto:true, checks:[{tx:'Suba para a galáxia', ok:()=>ST.level === 'galaxy'}]},
+     alvo:'#crumbs', auto:true, checks:[{tx:'Suba para a galáxia', ok:()=>ST.level === 'galaxy' || (typeof nivel1x1 === 'function' && nivel1x1() === 'galaxia')}]},   /* r302 · no 1:1 a galaxia e um nivel de ZOOM, nao uma cena */
     /* r221 · no CELULAR os botões extras moram no ⋯: o tutorial DEMONSTRA o
        caminho (a caixa pisca no ⋯, abriu, pisca no botão de dentro),
        exatamente como ele desenhou testando no celular */
@@ -17054,7 +17070,7 @@ function tutBoasVindas(){
            : 'Filtros: abra o <b>≋</b> e LIGUE a linha das <b>SONDAS</b>. As rotas surgem no mapa. Cada filtro liga ou desliga uma camada.'),
      alvo:'#btnfilt',
      init:()=>{ if(ACT && ACT.kind === 'system' && CAM.dist < 44) tweenCam({dist:48}, 900); },
-     checks:[{tx:'Ligue a linha das SONDAS', ok:()=>FILTROS.sonda === true}]},
+     checks:[{tx:'Ligue a linha das SONDAS', ok:()=>FILTROS.sonda === true}, {tx:'Ligue o objeto SONDAS (senão a rota fica invisível)', ok:()=>FILTROBJ.sonda !== false}]},
     {tx:'Seu painel de bordo: <b>CAMPO DE VISÃO</b> é a largura real da tela; abaixo, o endereço no espaço (cênico, ou RA/DEC, altere nas configurações); <b>T+</b> é o tempo da sua sessão; e abaixo a <b>data real do sistema solar</b>, com opção de pausar ou viajar pelo tempo.',
      alvo:'#navpod, #simclock'},
     {tx:'Aqui temos o menu: navegação, música e sons, modo foto, filtros, diário de bordo, pesquisa e ajuda. O <b>?</b> guarda o manual.',
@@ -17239,6 +17255,11 @@ $('#datepop').addEventListener('click', e=>{
    A entrada `ver` é opcional e LEVA à feature, que é o que faz o painel valer:
    ler que existe um planetário não é a mesma coisa que abrir um. */
 const NOVIDADES = [
+  {b:'r302', d:'20 SET 2026', t:'O RELÓGIO HONESTO', ls:[
+    'A fase da Lua passou a vir da posição de verdade dela, e não de uma média: o balão do relógio e o planetário diziam números diferentes na mesma tela.',
+    'Os equinócios e solstícios deixaram de ter o dia escrito à mão no código. Quatro dos que estavam na lista caíam no dia errado, incluindo o equinócio de setembro deste ano.',
+    'E o tutorial de boas-vindas não trava mais para quem tem a escala 1:1 ligada.'],
+   ver:()=>{ const b = document.querySelector('#simgo'); if(b) b.click(); }},
   {b:'r301', d:'20 SET 2026', t:'A LUA E MARTE EM LADRILHOS', ls:[
     'O tapete de fotos de satélite saiu da Terra: chegando perto da Lua e de Marte na escala 1:1, a pele vira o mosaico de verdade do NASA Trek, a 83 e 325 metros por pixel.',
     'Dá para ir até Tycho, o sítio da Apollo 11 e o Valles Marineris. Ligue em ⚙︎ EXTRAS, que ainda é experimental.',
@@ -17346,16 +17367,50 @@ const EVENTOS = [
   {t:'SEDNA NO PERIÉLIO · a visita de 11 mil anos', d:'2076-07-01T12:00:00Z', g:'marco', ap:1},
   {t:'PLUTÃO CRUZA A ÓRBITA DE NETUNO', d:'2227-01-01T12:00:00Z', g:'marco', ap:1}
 ];
+/* r302 · AS ESTAÇÕES DEIXARAM DE TER O DIA CRAVADO NO CÓDIGO. O gerador escrevia
+   a+'-03-20', a+'-06-21', a+'-09-22' e a+'-12-21' para todo ano, e o flag ap:1
+   escondia a hora mas apresentava o DIA como certo: 4 das 25 entradas da janela
+   atual estavam no dia errado, inclusive o equinócio de setembro de 2026 e de
+   2027. Agora é a série de Meeus cap. 27 (o instante médio do ano mais 24
+   termos periódicos), que dá o minuto, então o ap:1 sai das quatro estações.
+   Teste de regressão de graça: estacaoMs('jun', 2026) tem que devolver o mesmo
+   instante da constante SOLSTICIO_JUN que o app já carrega desde o r171. */
+const MEEUS27 = [[485,324.96,1934.136],[203,337.23,32964.467],[199,342.08,20.186],[182,27.85,445267.112],
+  [156,73.14,45036.886],[136,171.52,22518.443],[77,222.54,65928.934],[74,296.72,3034.906],[70,243.58,9037.513],
+  [58,119.81,33718.147],[52,297.17,150.678],[50,21.02,2281.226],[45,247.54,29929.562],[44,325.15,31555.956],
+  [29,60.93,4443.417],[18,155.12,67555.328],[17,288.79,4562.452],[16,198.04,62894.029],[14,199.76,31436.921],
+  [12,95.39,14577.848],[12,287.11,31931.756],[12,320.81,34777.259],[9,227.73,1222.114],[8,15.45,16859.074]];
+const MEEUS27_A = {mar:[2451623.80984,365242.37404,0.05169,-0.00411,-0.00057],
+                   jun:[2451716.56767,365241.62603,0.00325,0.00888,-0.00030],
+                   set:[2451810.21715,365242.01767,-0.11575,0.00337,0.00078],
+                   dez:[2451900.05952,365242.74049,-0.06223,-0.00823,0.00032]};
+function estacaoMs(qual, ano){
+  const Y = (ano - 2000)/1000, c = MEEUS27_A[qual];
+  const jde0 = c[0] + c[1]*Y + c[2]*Y*Y + c[3]*Y*Y*Y + c[4]*Y*Y*Y*Y;
+  const T = (jde0 - 2451545.0)/36525, W = (35999.373*T - 2.47)*D2R;
+  const dl = 1 + 0.0334*Math.cos(W) + 0.0007*Math.cos(2*W);
+  let S = 0; for(const q of MEEUS27) S += q[0]*Math.cos((q[1] + q[2]*T)*D2R);
+  const jde = jde0 + 0.00001*S/dl;
+  return (jde - 2440587.5)*86400000 - 69184;   /* TT para UTC: o delta-T de hoje */
+}
+function estacaoISO(qual, ano){ return new Date(estacaoMs(qual, ano)).toISOString().replace(/\.\d+Z$/, 'Z'); }
+/* Meeus cap. 38: o periélio e o afélio MÉDIOS da Terra. O instante verdadeiro
+   escorrega algumas horas por causa da Lua, então estes seguem com ap:1 */
+function apsideISO(afelio, ano){
+  const k = (ano - 2000)*0.99997 + (afelio ? 0.5 : 0);
+  const jde = 2451547.507 + 365.2596358*k + 0.0000000156*k*k;
+  return new Date((jde - 2440587.5)*86400000).toISOString().replace(/\.\d+Z$/, 'Z');
+}
 /* as estações e os extremos da órbita da Terra, ano a ano em volta de agora */
 {
   const a0 = new Date().getFullYear();
   for(let a = a0 - 1; a <= a0 + 3; a++){
-    EVENTOS.push({t:'EQUINÓCIO DE MARÇO · outono no sul', d:a+'-03-20T12:00:00Z', g:'estacao', ap:1});
-    EVENTOS.push({t:'SOLSTÍCIO DE JUNHO · inverno no sul', d:a+'-06-21T12:00:00Z', g:'estacao', ap:1});
-    EVENTOS.push({t:'EQUINÓCIO DE SETEMBRO · primavera no sul', d:a+'-09-22T12:00:00Z', g:'estacao', ap:1});
-    EVENTOS.push({t:'SOLSTÍCIO DE DEZEMBRO · verão no sul', d:a+'-12-21T12:00:00Z', g:'estacao', ap:1});
-    EVENTOS.push({t:'TERRA NO PERIÉLIO · o mais perto do Sol', d:a+'-01-03T12:00:00Z', g:'estacao', ap:1});
-    EVENTOS.push({t:'TERRA NO AFÉLIO · o mais longe do Sol', d:a+'-07-04T12:00:00Z', g:'estacao', ap:1});
+    EVENTOS.push({t:'EQUINÓCIO DE MARÇO · outono no sul', d:estacaoISO('mar', a), g:'estacao'});
+    EVENTOS.push({t:'SOLSTÍCIO DE JUNHO · inverno no sul', d:estacaoISO('jun', a), g:'estacao'});
+    EVENTOS.push({t:'EQUINÓCIO DE SETEMBRO · primavera no sul', d:estacaoISO('set', a), g:'estacao'});
+    EVENTOS.push({t:'SOLSTÍCIO DE DEZEMBRO · verão no sul', d:estacaoISO('dez', a), g:'estacao'});
+    EVENTOS.push({t:'TERRA NO PERIÉLIO · o mais perto do Sol', d:apsideISO(false, a), g:'estacao', ap:1});
+    EVENTOS.push({t:'TERRA NO AFÉLIO · o mais longe do Sol', d:apsideISO(true, a), g:'estacao', ap:1});
     /* r253 · as chuvas de meteoros: o pico de cada uma (a data é certa, a hora
        não), com o cometa pai quando ele está no atlas (c: o clique cataloga) */
     EVENTOS.push({t:t('QUADRÂNTIDAS · pico, ~80 por hora, do asteroide 2003 EH1'), d:a+'-01-03T12:00:00Z', g:'chuva', ap:1});

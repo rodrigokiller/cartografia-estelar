@@ -8,7 +8,18 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 192 itens pendentes, do r131 ao r301.
+Hoje: 198 itens pendentes, do r131 ao r302.
+
+---
+
+## r302 · o relógio honesto e o tutorial destravado
+
+- [ ] **A FASE DA LUA SE CONTRADIZIA NA MESMA TELA.** O balão do disquinho do relógio dizia uma coisa (mês sinódico médio, interpolação linear) e o planetário, dois cliques adiante, dizia outra (Meeus com 60 termos): até 9,2 pontos de iluminação de diferença, e o NOME da fase saía diferente em 10 por cento das horas do ano. Agora os dois usam a mesma conta. Confira passando o mouse no disquinho e abrindo o planetário na mesma data.
+- [ ] **A prova do eclipse.** Ponha o relógio em 12 AGO 2026 17:46 UTC (eclipse total do Sol): a Lua tem que estar em LUA NOVA com 0 por cento. E em 28 AGO 2026 04:13 (eclipse lunar): LUA CHEIA com 100 por cento. Medido: elongação de 0,07 e 179,94 graus. O modelo antigo dava 352,89 no primeiro.
+- [ ] **AS ESTAÇÕES ESTAVAM NO DIA ERRADO.** O relógio · ◈ · EVENTOS gerava as quatro estações com o dia escrito à mão no código, igual para todo ano. O equinócio de setembro de 2026 é dia **23 às 00:05 UTC**, não 22; o de 2027 também é dia 23; e o solstício de dezembro de 2027 é dia 22, não 21. Agora vem da série de Meeus e mostra a HORA (o aviso de data aproximada saiu das quatro).
+- [ ] **A conferência que fecha sozinha:** a conta nova reproduz a constante do solstício de junho que o app já carrega desde o r171 com 1 minuto de diferença.
+- [ ] **O TUTORIAL TRAVAVA PARA SEMPRE.** Com a escala 1:1 ligada, os passos 5, 6 e 7 do tutorial de boas-vindas eram impossíveis de cumprir (eles testavam a troca de cena, que no 1:1 não existe): o PRÓXIMO ficava desabilitado e a única saída era PULAR, que marca as boas-vindas como vistas de vez. Teste: ligue a escala 1:1, apague os dados do site e recarregue.
+- [ ] **O passo das sondas prometia o que não entregava:** ele mandava ligar a LINHA das sondas e dizia que as rotas apareceriam, mas o OBJETO sondas nasce desligado e a rota é filha dele, então nada aparecia e o check fechava assim mesmo. Agora ele pede os dois.
 
 ---
 
