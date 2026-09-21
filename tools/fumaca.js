@@ -11,7 +11,7 @@
 /* fumaca r302: os fluxos principais depois de quatro builds */
 window.__fase = window.__fase || 0; window.__d = window.__d || {}; var D = window.__d;
 var P = [
-  ['card de um planeta', function(){ ACTION('focus','saturno'); var e = document.querySelector('#headmini .eyebrow'); return !!e && /SATURNO/i.test(document.getElementById('panel').textContent); }],
+  ['card de um planeta', function(){ ACTION('focus','saturno'); var e = document.querySelector('#headmini .eyebrow'); return !!e && /SATURN/i.test(document.getElementById('panel').textContent)   /* SATURN casa SATURNO e SATURN: a fumaca roda em en-US tambem */; }],
   ['comparar', function(){ CMP.a = ALLBODIES.terra; openCompare(ALLBODIES.terra, ALLBODIES.saturno); var ok = document.getElementById('cmp').classList.contains('on'); closeCmp(); return ok; }],
   ['bancada', function(){ abrirHab('terra'); var ok = document.getElementById('habpop').classList.contains('on'); document.getElementById('habpopx').click(); return ok; }],
   ['busca', function(){ findOpen(); var ok = document.getElementById('finder').classList.contains('on'); findClose(); return ok; }],

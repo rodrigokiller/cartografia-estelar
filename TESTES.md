@@ -8,7 +8,18 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 248 testes pendentes (do r131 ao r309) e 4 decisões suas.
+Hoje: 254 testes pendentes (do r131 ao r310) e 4 decisões suas.
+
+---
+
+## r310 · o censo dos exoplanetas
+
+- [ ] **Ligar a camada.** ≋ do topo, CAMADAS DO MAPA: EXOPLANETAS CONFIRMADOS (NASA EXOPLANET ARCHIVE). Nasce desligada; ligada no cênico ela avisa para ir ao 1:1. No 1:1, afaste até uns 50 anos-luz: os pontos azulados começam a acender e a 300 al o céu fica salpicado (4.747 estrelas na posição real). Em casa (menos de 8 al) ela some de propósito, e acima de 400 mil al também.
+- [ ] **Os verdes.** 42 estrelas têm um mundo temperado (raio menor que 1,8 Terras e temperatura de equilíbrio entre 180 e 320 K, um filtro e não uma promessa): ficam maiores e verdes. TRAPPIST-1, Kepler-442, LHS 1140 e TOI-700 estão entre elas. Diga se o verde destaca o bastante ou demais.
+- [ ] **A ficha.** Toque num ponto (no celular o alvo é 40 por cento maior): distância, quantos planetas, tipo espectral, primeira descoberta, método, e a seção OS PLANETAS com raio (ou massa), período, temperatura, ano e método de cada um. Nas 18 estrelas que já são sistemas do atlas (TRAPPIST-1, Kepler-452, 51 Pegasi, Proxima, Barnard...) aparece o ENTRAR.
+- [ ] **A busca.** / e digite kepler-442 ou hd 209458: com o censo carregado, qualquer das 4.747 estrelas aparece com EXOPLANETAS · n planetas · distância, e escolher liga a camada e vira o olhar até ela.
+- [ ] **O peso.** O catálogo (exo.js, 490 KB) só desce quando a camada liga, uma vez por sessão, com um aviso de crédito. No celular, ligar e afastar até 300 al: dizer se pesou.
+- [ ] **A poluição.** Os pontos são aditivos sobre o céu do 1:1, junto com a faixa da Via Láctea (r298) e os 27 marcadores antigos dos sistemas do atlas, que continuam. Dizer se ficou carregado demais ou se os pontos comuns estão fracos demais (0,55).
 
 ---
 

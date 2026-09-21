@@ -1368,6 +1368,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-sismos="1"><span>TERREMOTOS DAS ÚLTIMAS 24 H (USGS)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-aurora="1"><span>AURORA AO VIVO NA TERRA (NOAA)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-lanc="1"><span>PRÓXIMOS LANÇAMENTOS DE FOGUETE (LAUNCH LIBRARY)</span><b>DESLIGADO</b></div>
+    <div class="filtrow" data-exo="1"><span>EXOPLANETAS CONFIRMADOS (NASA EXOPLANET ARCHIVE)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-satcfg="1"><span>CONFIGURAR OS SATÉLITES AO VIVO</span><b>ABRIR</b></div>
     <div class="filtrow" data-reguadisco="1"><span>DISCO DA RÉGUA</span><b>LIGADO</b></div>
     <div class="rgcor">
@@ -1417,7 +1418,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <p><b>Arraste</b> para girar<span class="kb"> · <b>scroll</b> para aproximar</span><span class="touchonly"> · <b>pinça</b> para aproximar. Os botões <b>+ / −</b> também ajustam o zoom</span>.</p>
       <p><b>Dois mapas:</b> o <b>CÊNICO</b>, com as distâncias comprimidas para caber na tela, e a <b>ESCALA 1:1</b>, com tudo na medida real, do chão de um planeta até Andrômeda num zoom só. O botão no topo, ao lado do nome, alterna. No cênico, afaste o zoom até o limite para subir de escala (Corpo → Sistema → Galáxia → Universo). No 1:1 não existe subir: é só continuar afastando, e o rastro no topo muda sozinho. A trilha também navega.</p>
       <p><b>Botões ‹ ›</b> saltam entre planetas ou luas vizinhas<span class="kb">, assim como as setas do teclado</span>.</p>
-      <p><b>≋ Camadas do mapa</b> (o ≋ do topo): as linhas de órbita por classe, os objetos que aparecem, e as camadas ao vivo da Terra na escala 1:1: satélites de verdade (CelesTrak), terremotos das últimas 24 h (USGS), a aurora (NOAA) e os próximos lançamentos de foguete. Todas nascem desligadas.</p>
+      <p><b>≋ Camadas do mapa</b> (o ≋ do topo): as linhas de órbita por classe, os objetos que aparecem, e as camadas ao vivo da Terra na escala 1:1: satélites de verdade (CelesTrak), terremotos das últimas 24 h (USGS), a aurora (NOAA), os próximos lançamentos de foguete e, no zoom galáctico, o censo dos exoplanetas confirmados (NASA Exoplanet Archive). Todas nascem desligadas.</p>
       <p><b>◎ Planetário:</b> no card da Terra, de Marte ou da Lua: o céu daquele lugar na data do relógio, com 5 mil estrelas, o Sol, a Lua na fase certa, os planetas e os eclipses. <b>NOITE</b> lista o que vale a pena olhar nas próximas horas, <b>ISS</b> as passagens da estação, <b>⛶</b> o mapa grande com busca de lugares<span class="touchonly">, <b>APONTAR</b> dirige o olhar pelos sensores do celular e <b>GPS</b> usa a sua posição</span>.</p>
       <p><b>◫ Comparar:</b> toque no botão do card, abra outro corpo e toque de novo: os dois lado a lado em escala real. <b>◉ Bancada:</b> até doze mundos girando juntos em escala, com grupos prontos, busca para acrescentar qualquer corpo, e ⧉ para copiar o link da sua bancada.</p>
       <p><b>▤ Registro de bordo:</b> a lista completa do catálogo, o que você já visitou, sua patente e as <b>⬡ conquistas</b>: cada uma vale 2 corpos na carreira. Busca e filtros por habitáveis, planetas, luas, estrelas, regiões, missões e onde já chegamos.</p>
@@ -8174,6 +8175,103 @@ function fichaLanc(q){
     fict:null,
     acoes:[{txt:t('◈ IR AO T-0'), fn:()=>lancIrAoT0(q)}, {txt:t('◎ VER A BASE'), fn:()=>lancVerBase(q)}]};
 }
+/* ================= r310 · O CENSO DOS EXOPLANETAS =================
+   O zoom galáctico do 1:1 mostrava 27 marcadores escolhidos à mão; o censo
+   real tem 6.338 planetas confirmados em 4.747 estrelas com distância medida
+   (censo de 21 SET 2026), a maioria dentro dos 1.000 pc que a cena já desenha. O NASA Exoplanet Archive
+   responde SEM CORS, então o catálogo é pré-assado por tools/exo.js (como o
+   ceu6.js) e carregado sob demanda quando a camada liga. Cada estrela vira um
+   ponto na posição REAL (dirCeu × anos-luz × UNAL) na cena do céu profundo, a
+   que tem plano de corte de 5e12; as que têm um mundo temperado (raio < 1,8
+   Terras e Teq entre 180 e 320 K, um filtro e não uma promessa) ficam verdes.
+   Clique por pixel como nos satélites; ficha de toque único como a das
+   estrelas, com ENTRAR quando a estrela já é um sistema do atlas. */
+const EXO = {on:false, carregando:false, pronto:false, erro:null, pts:null, ptsT:null, act:null, sysDe:null, q:0};
+function exoCarrega(){
+  if(EXO.carregando || EXO.pronto) return;
+  EXO.carregando = true;
+  satVivoScript('exo.js').then(()=>{
+    if(!window.EXO || !window.EXO.h) throw new Error('sem catálogo');
+    EXO.dados = window.EXO; EXO.pronto = true; EXO.carregando = false;
+    /* a estrela do censo que já é sistema do atlas: casa pelo nome normalizado */
+    EXO.sysDe = {};
+    const porNome = {};
+    for(const k in SYS){ porNome[norm(SYS[k].name)] = k; if(SYS[k].star && SYS[k].star.name) porNome[norm(SYS[k].star.name)] = k; }
+    /* os nomes que o arquivo escreve diferente do atlas (medido: 12 casam pelo nome, estes seis não) */
+    Object.assign(porNome, {'51 peg':'pegasi51', '55 cnc':'cnc55', 'gj 581':'gliese581', 'psr b1257+12':'psr1257', 'proxima cen':'alphacen', "barnard's star":'barnard'});
+    EXO.dados.h.forEach((x, i)=>{ const k = porNome[norm(x[0])]; if(k) EXO.sysDe[i] = k; });
+    RLOG.push('exo-' + EXO.dados.h.length);
+    showHint(t('EXOPLANETAS') + ' · ' + EXO.dados.p.length + ' ' + t('planetas em') + ' ' + EXO.dados.h.length + ' ' + t('estrelas · NASA Exoplanet Archive'));
+    if($('#evtpop').classList.contains('on')) evtRender();
+  }).catch(e=>{ EXO.erro = e; EXO.carregando = false; showHint(t('EXOPLANETAS: NÃO CARREGOU') + ' · ' + e.message); });
+}
+function exoDesmonta(){
+  for(const k of ['pts', 'ptsT']){ const o = EXO[k]; if(o){ if(o.parent) o.parent.remove(o); o.geometry.dispose(); o.material.dispose(); } EXO[k] = null; }
+  EXO.act = null;
+  if(ST.mapCard && ST.mapCard.type === 'exo'){ ST.mapCard = null; uiSync(); }
+}
+function exoMonta(){
+  if(!ACT || !ACT.sceneCeu || !EXO.pronto) return false;
+  const UNAL = LY_UA*ESCR_UA, H = EXO.dados.h;
+  const mk = (filtro, cor, tam)=>{
+    const idx = []; H.forEach((x, i)=>{ if(filtro(x)) idx.push(i); });
+    const pos = new Float32Array(idx.length*3);
+    idx.forEach((i, k)=>{ const x = H[i]; const d = dirCeu(x[1], x[2]).normalize().multiplyScalar(x[3]*UNAL); pos[k*3] = d.x; pos[k*3 + 1] = d.y; pos[k*3 + 2] = d.z; });
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const m = new THREE.Points(g, new THREE.PointsMaterial({size:tam, sizeAttenuation:false, color:cor, map:TEX_DOT, transparent:true, opacity:0, blending:THREE.AdditiveBlending, depthWrite:false}));
+    m.frustumCulled = false; m.userData.idx = idx; m.renderOrder = -2;
+    ACT.sceneCeu.add(m); return m;
+  };
+  EXO.pts = mk(x=>!x[5], 0x8fb8ff, QLOW ? 3.4 : 3.0);
+  EXO.ptsT = mk(x=>!!x[5], 0x7fe8a8, QLOW ? 4.6 : 4.2);
+  EXO.act = ACT;
+  return true;
+}
+function exoTick(){
+  if(!EXO.pronto){ if(!EXO.carregando && !EXO.erro) exoCarrega(); return; }
+  if(!(ACT && ACT.kind === 'system' && ACT.escr && ST.sys === 'sol' && ACT.sceneCeu)){ if(EXO.pts) exoDesmonta(); return; }
+  if(EXO.act !== ACT || !EXO.pts){ exoDesmonta(); if(!exoMonta()) return; }
+  /* acende quando o zoom sai da vizinhança do Sol e apaga na escala do universo */
+  const dLy = CAM.dist/(LY_UA*ESCR_UA);
+  const op = Math.max(0, Math.min(1, (dLy - 8)/60))*Math.max(0, Math.min(1, (400000 - dLy)/200000));
+  EXO.pts.material.opacity = 0.55*op; EXO.ptsT.material.opacity = 0.95*op;
+}
+/* o clique por pixel: projeta as estrelas do censo e pega a mais perto do dedo */
+const _exoV = new THREE.Vector3();
+function exoPickPx(x, y, R){
+  if(!EXO.pts || EXO.pts.material.opacity < 0.05) return null;
+  const UNAL = LY_UA*ESCR_UA, H = EXO.dados.h, W = CRECT.width, Hh = CRECT.height;
+  let best = -1, bd = 1e9;
+  camCeu.position.copy(camera.position); camCeu.quaternion.copy(camera.quaternion); camCeu.fov = camera.fov; camCeu.aspect = camera.aspect; camCeu.updateProjectionMatrix(); camCeu.updateMatrixWorld();
+  for(let i = 0; i < H.length; i++){
+    const s = H[i]; _exoV.copy(dirCeu(s[1], s[2])).normalize().multiplyScalar(s[3]*UNAL).project(camCeu);
+    if(_exoV.z > 1) continue;
+    const px = (_exoV.x + 1)/2*W + CRECT.left, py = (1 - _exoV.y)/2*Hh + CRECT.top;
+    const d = Math.hypot(px - x, py - y); if(d < bd){ bd = d; best = i; }
+  }
+  if(best < 0 || bd > R) return null;
+  /* a âncora para o mirarNoCeu, registrada na hora */
+  if(ACT.ceuAlvos) ACT.ceuAlvos['exo_' + best] = dirCeu(H[best][1], H[best][2]).normalize().multiplyScalar(H[best][3]*UNAL);
+  return {act:'exo', id:best};
+}
+function exoIr(i){
+  if(!EXO.on){ EXO.on = true; store.set('carto:exo', '1'); if(typeof cfgSync === 'function') cfgSync(); }
+  if(ACT && ACT.ceuAlvos && EXO.dados){ const s = EXO.dados.h[i]; ACT.ceuAlvos['exo_' + i] = dirCeu(s[1], s[2]).normalize().multiplyScalar(s[3]*LY_UA*ESCR_UA); }
+  ACTION('exo', i);
+}
+function fichaExo(i){
+  const D = EXO.dados, s = D.h[i], pls = D.p.filter(q=>q[0] === i);
+  const anos = pls.map(q=>q[6]).filter(Boolean), ano0 = anos.length ? Math.min.apply(null, anos) : null;
+  const mets = [...new Set(pls.map(q=>D.met[q[7]]))].map(m=>t(m)).join(', ');
+  const rows = pls.map(q=>[q[1], (q[2] !== null ? q[2] + ' R⊕' : (q[3] !== null ? q[3] + ' M⊕' : '?')) + (q[4] !== null ? ' · ' + q[4] + ' d' : '') + (q[5] !== null ? ' · ' + q[5] + ' K' : '') + (q[6] ? ' · ' + q[6] : '') + ' · ' + t(D.met[q[7]])]);
+  const sysId = EXO.sysDe && EXO.sysDe[i];
+  return {name:s[0], desig:t('ESTRELA COM PLANETAS · NASA EXOPLANET ARCHIVE'), kind:(s[4] === 1 ? t('1 planeta confirmado') : s[4] + ' ' + t('planetas confirmados')) + (s[6] ? ' · ' + s[6] : ''), hab:null, _exo:i,
+    quick:[[t('DISTÂNCIA'), s[3] < 100 ? s[3].toFixed(1) + ' al' : Math.round(s[3]) + ' al'],[t('PLANETAS'), String(s[4])],[t('TIPO ESPECTRAL'), s[6] || '?'],[t('PRIMEIRA DESCOBERTA'), ano0 ? String(ano0) : '?'],[t('MUNDO TEMPERADO'), s[5] ? t('sim, pelo raio e pela temperatura') : t('não')],[t('MÉTODO'), mets]],
+    sections:[{t:t('OS PLANETAS'), rows}],
+    facts:[t('Raio em Terras, período em dias e temperatura de equilíbrio em kelvin: a temperatura é a de um corpo sem atmosfera, então a de verdade pode ser bem maior.'), t('Todo número aqui é o do NASA Exoplanet Archive, a tabela oficial dos planetas confirmados, que muda toda semana.')],
+    fict:sysId ? t('Esta estrela tem um sistema navegável no atlas: use o ENTRAR.') : null,
+    _nav:sysId || null};
+}
 function fichaSismo(q){
   const d = new Date(q.quando);
   const quando = d.getUTCDate() + ' ' + MESES_N[d.getUTCMonth()] + ' ' + d.getUTCFullYear() + ' · ' + String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0') + ' UTC';
@@ -13429,7 +13527,8 @@ REGUA.hex = store.get('carto:reguahex', '') || null;
 ECLV.on = store.get('carto:ecl', '0') === '1';
 SISM.on = store.get('carto:sismos', '0') === '1';
 AUR.on = store.get('carto:aurora','0') === '1';
-LANC.on = store.get('carto:lanc','0') === '1';   /* r306 · nasce desligada; a lista dos eventos carrega sozinha ao abrir o chip */   /* r304 · nasce desligada: ninguém paga 142 KB sem pedir */
+LANC.on = store.get('carto:lanc','0') === '1';
+EXO.on = store.get('carto:exo','0') === '1';   /* r310 · nasce desligada, como toda camada */   /* r306 · nasce desligada; a lista dos eventos carrega sozinha ao abrir o chip */   /* r304 · nasce desligada: ninguém paga 142 KB sem pedir */
 try{ const ll = String(store.get('carto:local', '') || '').split(','); if(ll.length === 2 && isFinite(+ll[0]) && isFinite(+ll[1])){ LOCAL.lat = +ll[0]; LOCAL.lon = +ll[1]; } LOCAL.hud = store.get('carto:localhud', '1') !== '0'; }catch(e){}   /* r287 */
 try{ const sc = JSON.parse(store.get('carto:satcfg', '{}') || '{}'); if(sc && sc.grupos) SATCFG.grupos = sc.grupos; if(sc && sc.lixo === false) SATCFG.lixo = false; }catch(e){}   /* r280 */
 REGUA.disco = store.get('carto:reguadisco', '1') === '1';
@@ -14489,7 +14588,7 @@ function ACTION(act, id){
   /* r290 · as fichas de toque único (galáxia vizinha, satélite, tremor, fronteira, estrela, constelação): o segundo
      toque FECHA pelo fecharFicha (pivô, volta à Terra, endereço) e abrir também escreve o endereço */
   const jaEra = ST.mapCard && ST.mapCard.type === act && ST.mapCard.id === id;
-  if(act==='galviz' || act==='satlive' || act==='sismo' || act==='lanc' || act==='fronteira' || act==='estrela' || act==='constel'){   /* r306 · lanc */
+  if(act==='galviz' || act==='satlive' || act==='sismo' || act==='lanc' || act==='exo' || act==='fronteira' || act==='estrela' || act==='constel'){   /* r306 · lanc; r310 · exo */
     if(act==='estrela') marcaVizinha(id);
     if(act==='sismo' && typeof feito === 'function') feito('tremor');   /* r307 */
     if(act==='constel') marcaConstel(id);
@@ -14499,6 +14598,7 @@ function ACTION(act, id){
     if(act==='satlive'){ SATV.foco = SATV.sats[id] || null; SATV.q = 0; }   /* r264 · a trilha dele acende */
     uiSync(); syncHash();
     if(act==='galviz' || act==='fronteira' || act==='estrela') mirarNoCeu(id);
+    if(act==='exo') mirarNoCeu('exo_' + id);   /* r310 */
     if(act==='constel') showHint('CONSTELAÇÃO ' + (CEU_LINHAS[id] ? CEU_LINHAS[id].nome : '') + ' · O DESENHO ESTÁ ACESO NO CÉU');
     return;
   }
@@ -16175,6 +16275,9 @@ function findRender(q){
   /* r277 · os satélites ao vivo entram na busca quando a camada está carregada */
   if(q && typeof SATV !== 'undefined' && SATV.pronto && findRes.length < cap)
     for(const s of SATV.sats){ if(findRes.length >= cap) break; if(norm(s.nome).includes(q)) findRes.push({name:s.nome, sub:t('SATÉLITE AO VIVO') + ' · ' + t(SATV_GRUPO_NOME[s.grupo] || s.grupo), go:()=>satVivoIr(s.i)}); }
+  /* r310 · as estrelas com planetas confirmados entram na busca quando o censo está carregado */
+  if(q && typeof EXO !== 'undefined' && EXO.pronto && findRes.length < cap)
+    EXO.dados.h.forEach((s, i)=>{ if(findRes.length >= cap) return; if(norm(s[0]).includes(q) && !findRes.some(r=>norm(r.name) === norm(s[0]))) findRes.push({name:s[0], sub:t('EXOPLANETAS') + ' · ' + s[4] + ' ' + t(s[4] === 1 ? 'planeta' : 'planetas') + ' · ' + Math.round(s[3]) + ' al', go:()=>exoIr(i)}); });
   findSel = 0;
   $('#findlist').innerHTML = findRes.map((r,i)=>
     '<li class="'+(i===0?'sel':'')+'" data-i="'+i+'">'+esc(r.name)+'<small>'+esc(r.sub)+'</small></li>'
@@ -16322,6 +16425,9 @@ function currentEntity(){
     if(ST.mapCard.type==='sismo'){   /* r262 */
       const q = SISM.lista[ST.mapCard.id];
       if(q) return {type:'map', b:fichaSismo(q), nav:false};
+    }
+    if(ST.mapCard.type==='exo'){   /* r310 */
+      if(EXO.pronto && EXO.dados.h[ST.mapCard.id]){ const f = fichaExo(ST.mapCard.id); return f._nav ? {type:'map', b:f, nav:true, navKind:'sys', navId:f._nav} : {type:'map', b:f, nav:false}; }
     }
     if(ST.mapCard.type==='lanc'){   /* r306 */
       const q = LANC.lista[ST.mapCard.id];
@@ -17144,6 +17250,7 @@ function pick(x, y){
     if(best && bd <= R) ud = best.userData;
     /* r272 · a nuvem de satélites ao vivo também entra no acerto por pixel (o dedo não acertava os pontinhos) */
     if(typeof satVivoPickPx === 'function'){ const us = satVivoPickPx(x, y, R); if(us && (!best || bd > R*0.6)) ud = us; }
+    if(typeof exoPickPx === 'function' && !ud){ const ue = exoPickPx(x, y, R*1.4); if(ue && (!best || bd > R*0.6)) ud = ue; }   /* r310 · as estrelas do censo */
   }
   if(ud) ACTION(ud.act, ud.id);
   else if(ST.level==='focus' && ST.mapCard){ ST.mapCard = null; uiSync(); }
@@ -17395,7 +17502,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r309';
+const BUILD = 'r310';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -17983,6 +18090,10 @@ $('#datepop').addEventListener('click', e=>{
    A entrada `ver` é opcional e LEVA à feature, que é o que faz o painel valer:
    ler que existe um planetário não é a mesma coisa que abrir um. */
 const NOVIDADES = [
+  {b:'r310', d:'21 SET 2026', t:'O CENSO DOS EXOPLANETAS', ls:[
+    'O zoom galáctico do 1:1 tinha 27 marcadores escolhidos à mão; agora a camada EXOPLANETAS CONFIRMADOS (no ≋) põe as 4.747 estrelas com planeta confirmado do NASA Exoplanet Archive na posição real do céu, e as 42 com um mundo temperado ficam verdes.',
+    'Cada ponto abre a ficha da estrela com os planetas (raio, período, temperatura, ano e método), a busca acha qualquer uma pelo nome (ex.: Kepler-442) e as que já são sistemas do atlas têm ENTRAR.'],
+   ver:()=>{ EXO.on = true; store.set('carto:exo', '1'); cfgSync(); const salta = ()=>{ if(!(ACT && ACT.escr)) return; ST.mapCard = null; CAMTW = null; ZOOM = null; CAM.pivot.set(0, 0, 0); CAM.dist = 300*LY_UA*ESCR_UA; applyCam(); uiSync(); }; if(ACT && ACT.escr) salta(); else { trocaEscala(); setTimeout(salta, 1400); } }},
   {b:'r309', d:'21 SET 2026', t:'O MANUAL REESCRITO', ls:[
     'O manual do ? parou no r90, mais de 200 entregas atrás, e ensinava uma coisa que já não existia (afastar o zoom para subir de escala no 1:1).',
     'Agora ele conta o que o app faz hoje: os dois mapas, as camadas ao vivo, o planetário e os outros mundos, a bancada, o relógio com os eventos, o compartilhar e as configurações, em português e em inglês.'],
@@ -18473,6 +18584,8 @@ function cfgSync(){
   if(rau){ rau.classList.toggle('off', !AUR.on); rau.querySelector('b').textContent = AUR.on ? t('LIGADO') : t('DESLIGADO'); }
   const rla = document.querySelector('[data-lanc]');
   if(rla){ rla.classList.toggle('off', !LANC.on); rla.querySelector('b').textContent = LANC.on ? t('LIGADO') : t('DESLIGADO'); }
+  const rex = document.querySelector('[data-exo]');
+  if(rex){ rex.classList.toggle('off', !EXO.on); rex.querySelector('b').textContent = EXO.on ? t('LIGADO') : t('DESLIGADO'); }
   const rrd = document.querySelector('[data-reguadisco]');
   if(rrd){ rrd.classList.toggle('off', !REGUA.disco); rrd.querySelector('b').textContent = REGUA.disco ? t('LIGADO') : t('DESLIGADO'); }
   const rrg = document.querySelector('[data-regua]');
@@ -18579,6 +18692,15 @@ const cfgRowClick = e=>{
   }
   const rSc = e.target.closest('[data-satcfg]');
   if(rSc){ satCfgAbre(); return; }   /* r280 */
+  const rEx = e.target.closest('[data-exo]');
+  if(rEx){
+    EXO.on = !EXO.on;
+    store.set('carto:exo', EXO.on ? '1' : '0');
+    cfgSync();
+    if(!EXO.on) exoDesmonta();
+    else { if(!EXO.pronto) exoCarrega(); if(!(ACT && ACT.escr)) showHint(t('EXOPLANETAS: LIGUE A ESCALA 1:1 E AFASTE ATÉ SAIR DA VIZINHANÇA DO SOL')); }
+    return;
+  }
   const rLa = e.target.closest('[data-lanc]');
   if(rLa){
     LANC.on = !LANC.on;
@@ -18904,7 +19026,8 @@ function loop(){
   }
   if(SISM.on && ACT && ACT.escr) sismosTick(); else if(SISM.grupo) sismosDesmonta();
   if(AUR.on && ACT && ACT.escr) aurTick(); else if(AUR.malha) aurDesmonta();
-  if(LANC.on && ACT && ACT.escr) lancTick(); else if(LANC.grupo) lancDesmonta();   /* r306 */   /* r304 · a aurora, só no 1:1 (no cênico a Terra é desenhada fora de escala) */   /* r262; r290 · só no 1:1 (no cênico montava esferas de km dentro da Terra desenhada) */
+  if(LANC.on && ACT && ACT.escr) lancTick(); else if(LANC.grupo) lancDesmonta();   /* r306 */
+  if(EXO.on && ACT && ACT.escr) exoTick(); else if(EXO.pts) exoDesmonta();   /* r310 */   /* r304 · a aurora, só no 1:1 (no cênico a Terra é desenhada fora de escala) */   /* r262; r290 · só no 1:1 (no cênico montava esferas de km dentro da Terra desenhada) */
   if(DIVE) diveStep(now);
   if(VOOCEU) vooCeuStep(now);
   if(TRAJ) trajStep(now);

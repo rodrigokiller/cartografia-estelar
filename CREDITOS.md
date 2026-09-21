@@ -103,6 +103,19 @@ público do governo dos Estados Unidos. O verde do mapa é uma ESCALA de
 probabilidade, não a cor medida, e o que o modelo entrega é a chance de ver
 aurora, não um retrato dela. Nada é copiado para o repositório.
 
+## O censo dos exoplanetas (r310)
+
+A camada EXOPLANETAS CONFIRMADOS usa a tabela `pscomppars` do **NASA Exoplanet
+Archive** (IPAC/Caltech, https://exoplanetarchive.ipac.caltech.edu/), uma linha por
+planeta confirmado com parâmetros compostos. O TAP do arquivo responde sem CORS,
+então o catálogo é pré-assado por `node tools/exo.js` em `exo.js` (compacto: nome
+da estrela, RA/Dec, distância, e por planeta raio, massa, período, temperatura de
+equilíbrio, ano e método), datado, e carregado sob demanda quando a camada liga.
+Reconhecimento pedido pelo arquivo: "This research has made use of the NASA
+Exoplanet Archive, which is operated by the California Institute of Technology,
+under contract with the National Aeronautics and Space Administration under the
+Exoplanet Exploration Program."
+
 ## Lua e Marte em ladrilhos (r301)
 
 A mesma opção, agora com a Lua e Marte, usa os mosaicos globais do **NASA Trek**
