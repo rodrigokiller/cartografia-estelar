@@ -8,7 +8,19 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 226 testes pendentes (do r131 ao r306) e 4 decisões suas.
+Hoje: 233 testes pendentes (do r131 ao r307) e 4 decisões suas.
+
+---
+
+## r307 · treze conquistas, cinco patentes e o registro honesto
+
+- [ ] **As 13 conquistas novas** (registro de bordo ▤ · ⬡ CONQUISTAS): três de observatório (abrir o planetário, o NOITE, ver uma passagem da ISS), cinco das camadas ao vivo (travar num satélite, ficha de tremor, aurora, T-0 de um lançamento, chegar ao chão em ladrilhos), quatro de bancada e compartilhar (seis mundos, o cartão, o link da vista, a linha do tempo de uma sonda) e uma do céu (catalogar uma chuva). Cada uma diz como fazer. Faça uma e veja o selo.
+- [ ] **Os cinco degraus novos:** COMODORO (100), VICE-ALMIRANTE (135), ALMIRANTE DE ESQUADRA (170), GRÃO-ALMIRANTE (205) e GUARDIÃO DO CATÁLOGO (235). Os oito de baixo mantêm os nomes de sempre (ninguém é rebaixado); só três descrições mudaram porque tinham ficado falsas com o atlas crescendo.
+- [ ] **Os toasts não se engolem mais.** Faça duas conquistas seguidas (ou uma que promova): os avisos aparecem um depois do outro, 3 segundos cada. Medido por sonda: conquista, promoção, conquista, na ordem.
+- [ ] **O Faltam N ficou honesto.** No registro, a linha embaixo da patente contava com o número cru de corpos enquanto a patente somava as conquistas: com 22 conquistas o erro era de 44 pontos cravados. Agora as duas contas são a mesma.
+- [ ] **A promoção compara o degrau, não o nome.** Troque o idioma nas configurações: não pode aparecer ★ PROMOVIDO só por isso (antes aparecia, porque o nome guardado mudava de língua). Quem já tinha patente migra sem perder nada.
+- [ ] **ONDE CHEGAMOS** (filtro do registro) foi de 40 para 84 corpos, validados contra o atlas: entraram as luas que a Cassini, a Voyager 2 e a New Horizons fotografaram, o 67P onde a Philae pousou, os alvos da Lucy, a Parker e a JUICE; saíram iapeto (typo) e itokawa (não existe no atlas).
+- [ ] **A conta de 35 conquistas vale 70 pontos de bônus na carreira** (cada uma segue valendo 2). Me diga se você acha que subiu rápido demais ou devagar demais depois de brincar um pouco.
 
 ---
 

@@ -6880,6 +6880,7 @@ function satVivoDoCard(cur){
    para a Terra primeiro e seleciona o satélite quando a camada montar (SATV.pendente) */
 function satVivoIr(i){
   const s = SATV.sats[i]; if(!s) return;
+  if(typeof feito === 'function') feito('satelite');   /* r307 */
   if(!satVivoTerra() || !SATV.pontos){
     if(FILTROBJ.satelite === false){ FILTROBJ.satelite = true; if(typeof filtSync === 'function') filtSync(); applySel(); }
     SATV.pendente = s.norad;
@@ -7077,6 +7078,7 @@ function localAbre(lat, lon){
   LOCAL._hh = null; LOCAL._bz = null; LOCAL._info = null;   /* r293 · reabrir redesenha */
   if(isFinite(lat) && isFinite(lon)) localVaiPara(lat, lon);
   localMonta();
+  if(typeof feito === 'function') feito('planetario');   /* r307 */
   if(typeof CEU6 !== 'undefined') localMontaCat6();
   else if(!LOCAL.cat6){ LOCAL.cat6 = 'carregando'; satVivoScript('ceu6.js').then(()=>{ LOCAL.cat6 = 'ok'; localMontaCat6(); }).catch(()=>{ LOCAL.cat6 = 'erro'; }); }
   LOCAL.on = true; document.getElementById('localpop').classList.add('on');
@@ -7297,6 +7299,7 @@ function localPassagensCard(){
   document.getElementById('localcardx').addEventListener('click', localCardFecha);
   el.querySelectorAll('button[data-ver]').forEach(b=>b.addEventListener('click', ()=>{
     SIMT.data = +b.dataset.ver; SIMT.vel = 'seg'; SIMT.pausado = false; if(typeof simClockUI === 'function') simClockUI(); LOCAL.ultimo = 0;
+    if(typeof feito === 'function') feito('passagem');   /* r307 */
     const e = localEstPos(LOCAL_EST[b.dataset.est] || LOCAL_EST.iss, SIMT.data, LOCAL.lat, LOCAL.lon, null);
     if(e && e.alt > 0){ LOCAL.az = e.az/D2R; LOCAL.alt = Math.min(80, e.alt/D2R); }
     else showHint(t('O RELÓGIO FOI AO PONTO ALTO, MAS A ESTAÇÃO NÃO ESTÁ ACIMA DO HORIZONTE AQUI'));
@@ -7385,6 +7388,7 @@ function localNoiteCalc(ms0, lat, lon){
 function localNoiteCard(){
   const el = document.getElementById('localcard'); if(!el) return;
   const R = localNoiteCalc(SIMT.data, LOCAL.lat, LOCAL.lon);
+  if(typeof feito === 'function') feito('noite');   /* r307 */
   const eye = '<div class="lc-eye"><span>' + t('O QUE VER NAS PRÓXIMAS HORAS') + '</span><button id="localcardx">✕</button></div>';
   let h = '<div class="popscroll">' + eye;
   if(!R.noites.length){
@@ -7452,6 +7456,7 @@ function localNoiteCard(){
     if(typeof simClockUI === 'function') simClockUI();
     LOCAL.ultimo = 0;
     if(b.dataset.est){
+      if(typeof feito === 'function') feito('passagem');   /* r307 */
       const e = localEstPos(LOCAL_EST[b.dataset.est], SIMT.data, LOCAL.lat, LOCAL.lon, null);
       if(e && e.alt > 0){ LOCAL.az = e.az/D2R; LOCAL.alt = Math.min(80, e.alt/D2R); }
     } else { LOCAL.az = +b.dataset.az; LOCAL.alt = Math.min(85, +b.dataset.alt); }
@@ -7888,6 +7893,7 @@ function aurMonta(){
   m.renderOrder = 2;
   mesh.add(m);
   AUR.malha = m; AUR.act = ACT;
+  if(typeof feito === 'function') feito('aurora');   /* r307 */
   return true;
 }
 function aurDesmonta(){
@@ -8027,6 +8033,7 @@ function lancIrAoT0(q){
   SIMT.data = q.net - 30000; SIMT.pausado = false;
   simClockUI();
   showHint(t('O RELÓGIO ESTÁ EM T-30 s DE') + ' ' + q.foguete.toUpperCase());
+  if(typeof feito === 'function') feito('lancamento');   /* r307 */
 }
 function lancVerBase(q){
   const anc = LANC.picks[LANC.lista.filter(x=>x.net > SIMT.data - 86400000).indexOf(q)];
@@ -12286,6 +12293,7 @@ function verLinhaDoTempo(id){
 }
 function trajStart(id){
   const b = ALLBODIES[id];
+  if(b && b.sonda && typeof feito === 'function') feito('sondatempo');   /* r307 */
   /* PALCO DO FOCO (escala real): a missão roda DENTRO do foco da Terra, com
      a Lua REAL da cena a 60 raios servindo de alvo (ideia do Rodrigo) */
   const focoPalco = !!(b && b.foguete && b.traj && ACT && ACT.kind === 'focus' && ST.body === (b.satOf || '') && ACT.subKids && ACT.subKids.some(k=>k.tDias));
@@ -13265,6 +13273,7 @@ function ladrTick(){
   const tem = new Set(LADR.grupo.children.map(ch=>ch.userData.k));
   for(const q of quer){ if(!tem.has(q.L + '/' + q.col + '/' + q.row)) ladrPede(q, R, data); }
   LADR.nivel = L;
+  if(L >= 5 && LADR.grupo.children.length && typeof feito === 'function') feito('ladrilhos');   /* r307 */
   /* as nuvens da foto saem da frente enquanto os ladrilhos estao na tela (a camada do dia ja traz as nuvens daquele dia) */
   if(LADR.grupo.children.length && !LADR.nuvens.length && mesh.parent){ mesh.parent.traverse(o=>{ if(o.userData && o.userData.isClouds && o.visible){ o.visible = false; LADR.nuvens.push(o); } }); }
 }
@@ -13856,6 +13865,7 @@ function bancadaMundo(b, rW){
 function cartaoCompartilhar(id, opts){
   opts = opts || {};
   const b = ALLBODIES[id]; if(!b || !b.visual) return null;
+  if(!opts.retorna && typeof feito === 'function') feito('cartao');   /* r307 · a sonda usa retorna: não conta */
   const W2 = 1080, H2 = 1350, G = 760;
   /* 1) o globo, num renderizador próprio com o buffer preservado */
   const cvg = document.createElement('canvas'); cvg.width = G; cvg.height = G;
@@ -13934,6 +13944,7 @@ function cartaoCompartilhar(id, opts){
   return null;
 }
 function habMonta(){
+  if(HAB.sel && HAB.sel.length >= 6 && typeof feito === 'function') feito('bancada6');   /* r307 */
   const cv = document.getElementById('habcanvas');
   if(!HAB.rnd){
     HAB.rnd = new THREE.WebGLRenderer({canvas:cv, antialias:true, alpha:true});
@@ -14365,6 +14376,7 @@ function ACTION(act, id){
   const jaEra = ST.mapCard && ST.mapCard.type === act && ST.mapCard.id === id;
   if(act==='galviz' || act==='satlive' || act==='sismo' || act==='lanc' || act==='fronteira' || act==='estrela' || act==='constel'){   /* r306 · lanc */
     if(act==='estrela') marcaVizinha(id);
+    if(act==='sismo' && typeof feito === 'function') feito('tremor');   /* r307 */
     if(act==='constel') marcaConstel(id);
     AUDIO.sfx('sel');
     if(jaEra){ fecharFicha(); return; }
@@ -14870,7 +14882,20 @@ const CONQ_DESC = {visita:'Selecione um corpo e entre nele.', sondas:'No filtro 
   vizinhanca:'Abra a ficha de cada estrela a menos de 25 anos-luz do Sol.',
   continuo:'Na escala 1:1, entre num corpo e afaste o zoom sem trocar de cena até ver a Via Láctea inteira.',
   eracompleta:'Reviva as linhas do tempo das seis missões lunares: Apollo 8, 11, 13, 17 e Artemis I e II.',
-  museuinteiro:'Reviva as DEZ linhas do tempo lunares, da Luna 9 ao SLIM: o museu completo da corrida.'};
+  museuinteiro:'Reviva as DEZ linhas do tempo lunares, da Luna 9 ao SLIM: o museu completo da corrida.',
+  planetario:'No card da Terra, abra o ◎ PLANETÁRIO e veja o céu de um lugar.',
+  noite:'No planetário, toque em NOITE: o que vale a pena olhar nas próximas horas.',
+  passagem:'No planetário, toque em ISS ou em NOITE e depois em ▶ VER uma passagem da estação.',
+  satelite:'Ligue SATÉLITES no filtro ≋ (escala 1:1), toque num pontinho e em ENTRAR · TRAVAR.',
+  tremor:'Ligue TERREMOTOS no filtro ≋ (escala 1:1) e toque num ponto na Terra.',
+  aurora:'Ligue AURORA AO VIVO no filtro ≋ (escala 1:1) e chegue perto da Terra.',
+  lancamento:'Ligue PRÓXIMOS LANÇAMENTOS no filtro ≋ e toque em ◈ IR AO T-0 na ficha de uma base.',
+  ladrilhos:'Em ⚙︎ EXTRAS ligue SUPERFÍCIE EM LADRILHOS e desça até o chão da Terra, da Lua ou de Marte.',
+  bancada6:'Abra a bancada (◉) e ponha seis mundos lado a lado.',
+  cartao:'No ⇪ da ficha de um corpo, gere o cartão de compartilhar.',
+  vista:'No ⧉ da ficha, copie o link da vista exata.',
+  sondatempo:'Abra a ≋ LINHA DO TEMPO de uma sonda (Voyager, Cassini, Parker...).',
+  chuva:'No relógio · ◈ · EVENTOS, chip CHUVAS DE METEOROS: escolha uma no mapa do Sol.'};
 const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A LINHA DAS SONDAS',
   busca:'CAD-03 · LOCALIZAR PELA BUSCA', cinco:'CAD-04 · VISITAR 5 CORPOS DO SISTEMA SOLAR',
   pause:'CAD-05 · PAUSAR E RETOMAR O RELÓGIO', galaxia:'CAD-06 · SUBIR ATÉ A GALÁXIA',
@@ -14887,7 +14912,13 @@ const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A
   vizinhanca:'CEU-04 · A VIZINHANÇA DO SOL',
   continuo:'EXP-05 · DE UM MUNDO À GALÁXIA, SEM CORTES',
   eracompleta:'TIM-05 · A ERA COMPLETA',
-  museuinteiro:'TIM-06 · O MUSEU INTEIRO'};
+  museuinteiro:'TIM-06 · O MUSEU INTEIRO',
+  /* r307 · o lote que faltava: a última conquista era do r155 e 150 builds de features chegaram sem nenhuma */
+  planetario:'OBS-01 · ABRIR O PLANETÁRIO', noite:'OBS-02 · O QUE VER HOJE À NOITE', passagem:'OBS-03 · UMA PASSAGEM DA ISS',
+  satelite:'VIV-01 · TRAVAR NUM SATÉLITE AO VIVO', tremor:'VIV-02 · A FICHA DE UM TREMOR', aurora:'VIV-03 · VER A AURORA AO VIVO',
+  lancamento:'VIV-04 · IR AO T-0 DE UM LANÇAMENTO', ladrilhos:'VIV-05 · CHEGAR AO CHÃO EM LADRILHOS',
+  bancada6:'TIM-07 · SEIS MUNDOS NA BANCADA', cartao:'TIM-08 · COMPARTILHAR UM CARTÃO', vista:'TIM-09 · COPIAR O LINK DE UMA VISTA',
+  sondatempo:'TIM-10 · A LINHA DO TEMPO DE UMA SONDA', chuva:'CEU-05 · CATALOGAR UMA CHUVA DE METEOROS'};
 function feito(k){
   if(FEITO.has(k)) return;
   FEITO.add(k);
@@ -14899,38 +14930,48 @@ function feito(k){
   if($('#mission').classList.contains('on')) missRender();
 }
 /* selo de conquista, estilo jogo: código + nome, desliza e some */
-function toastMissao(k){
-  const rot = MISS_ROT[k]; if(!rot) return;
-  let el = $('#mtoast');
-  if(!el){
-    el = document.createElement('div'); el.id = 'mtoast';
-    document.body.appendChild(el);
-  }
-  const par = rot.split(' · ');
-  el.innerHTML = '<b>✓ CONQUISTA REGISTRADA</b><span>' + esc(par[0]) + ' · ' + esc(par[1]) + '</span>';
-  el.classList.remove('on');
-  void el.offsetWidth;
-  el.classList.add('on');
-  clearTimeout(toastMissao._t);
-  toastMissao._t = setTimeout(()=>el.classList.remove('on'), 3200);
+/* r307 · a promoção compara o ÍNDICE do degrau, não o nome: comparar nome disparava
+   ★ PROMOVIDO ao trocar de idioma (as patentes são traduzidas) e anunciaria
+   REBAIXAMENTO se a escada mudasse. Só sobe quando o índice sobe. */
+function patenteIdx(n, total){
+  if(n >= total) return PATENTES.length;
+  let i = 0; for(let k = 0; k < PATENTES.length; k++) if(n >= PATENTES[k].n) i = k;
+  return i;
 }
-function cadCinco(){ return [...VIS].filter(id=>ALLBODIES[id] && ALLBODIES[id]._sys === 'sol').length; }
-/* subiu de patente? toast de promoção, o momento mais gostoso do jogo */
 function checaPromocao(){
   const tot = Object.keys(ALLBODIES).length;
   const n = [...VIS].filter(id=>ALLBODIES[id]).length;
-  const t = patenteDe(Math.min(n + FEITO.size*2, tot), tot).cur.t;
-  const antes = store.get('carto:pat', '');
-  if(antes && antes !== t) toastPromo(t);
-  store.set('carto:pat', t);
+  const score = Math.min(n + FEITO.size*2, tot), idx = patenteIdx(score, tot), nome = patenteDe(score, tot).cur.t;
+  let antes = parseInt(store.get('carto:pati', ''), 10);
+  if(!isFinite(antes)){   /* migração: quem só tem o NOME guardado (até o r306) */
+    const nm = store.get('carto:pat', '');
+    antes = nm ? (nm === PATENTE_MAX.t ? PATENTES.length : PATENTES.findIndex(p=>p.t === nm)) : -1;
+  }
+  if(antes >= 0 && idx > antes) toastPromo(nome);
+  store.set('carto:pati', String(idx)); store.set('carto:pat', nome);
 }
-function toastPromo(t){
+/* r307 · A FILA. feito() chamava toastMissao e, na linha seguinte, checaPromocao: os dois
+   escreviam no MESMO #mtoast com o mesmo timer, e o selo da conquista era substituído
+   antes de um quadro (achado 20b da auditoria). Agora cada aviso espera o anterior. */
+const TOASTQ = [];
+function toastEnfileira(html){ TOASTQ.push(html); if(!toastEnfileira._on) toastProximo(); }
+function toastProximo(){
+  const html = TOASTQ.shift();
+  if(html === undefined){ toastEnfileira._on = false; return; }
+  toastEnfileira._on = true;
   let el = $('#mtoast');
   if(!el){ el = document.createElement('div'); el.id = 'mtoast'; document.body.appendChild(el); }
-  el.innerHTML = '<b>★ PROMOVIDO</b><span>PATENTE · ' + esc(t) + '</span>';
-  el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
+  el.innerHTML = html; el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
   clearTimeout(toastMissao._t);
-  toastMissao._t = setTimeout(()=>el.classList.remove('on'), 3600);
+  toastMissao._t = setTimeout(()=>{ el.classList.remove('on'); setTimeout(toastProximo, 380); }, 3200);
+}
+function toastMissao(k){
+  const rot = MISS_ROT[k]; if(!rot) return;
+  const par = rot.split(' · ');
+  toastEnfileira('<b>' + t('✓ CONQUISTA REGISTRADA') + '</b><span>' + esc(par[0]) + ' · ' + esc(par[1]) + '</span>');
+}
+function toastPromo(nome){   /* o parâmetro chamava t e sombreava o tradutor (achado 32 da auditoria) */
+  toastEnfileira('<b>' + t('★ PROMOVIDO') + '</b><span>' + t('PATENTE · ') + esc(nome) + '</span>');
 }
 /* os mais recentes primeiro, para o buscar sugerir "voltar aonde eu estava" */
 let REC = String(store.get('carto:rec','')).split(',').filter(Boolean);
@@ -14969,9 +15010,17 @@ const PATENTES = [
   {n:5,   t:'NAVEGADOR',             d:'Já sabe ler uma carta estelar.'},
   {n:12,  t:'PILOTO DE LONGO CURSO', d:'Sai do quintal sem se perder.'},
   {n:24,  t:'CARTÓGRAFO',            d:'Desenha o que ninguém viu.'},
-  {n:40,  t:'MESTRE CARTÓGRAFO',     d:'Metade do catálogo na memória.'},
-  {n:58,  t:'EXPLORADOR SÊNIOR',     d:'Poucos lugares ainda te surpreendem.'},
-  {n:72,  t:'ALMIRANTE DO VAZIO',    d:'Falta pouco para o catálogo inteiro.'}
+  {n:40,  t:'MESTRE CARTÓGRAFO',     d:'Já leu mais fichas que muito astrônomo.'},
+  {n:58,  t:'EXPLORADOR SÊNIOR',     d:'Sai da vizinhança do Sol sem mapa.'},
+  {n:72,  t:'ALMIRANTE DO VAZIO',    d:'Um quarto do catálogo, e o caminho ainda é longo.'},
+  /* r307 · a escada acabava em 72 num atlas de 252: eram 180 pontos de platô. Os oito degraus
+     de cima ficam com os NOMES de sempre (quem já subiu não pode ser rebaixado) e só as
+     descrições, que ficaram falsas, mudaram; os cinco novos entram por cima */
+  {n:100, t:'COMODORO',              d:'Cem lugares que a maioria nunca vai ver.'},
+  {n:135, t:'VICE-ALMIRANTE',        d:'Metade do catálogo na memória.'},
+  {n:170, t:'ALMIRANTE DE ESQUADRA', d:'Poucos lugares ainda te surpreendem.'},
+  {n:205, t:'GRÃO-ALMIRANTE',        d:'O catálogo inteiro está ao alcance.'},
+  {n:235, t:'GUARDIÃO DO CATÁLOGO',  d:'Falta pouco para o catálogo inteiro.'}
 ];
 const PATENTE_MAX = {t:'CARTÓGRAFO-MOR', d:'Tudo visitado. O universo ficou pequeno.'};
 if(I18N){ PATENTES.forEach(pt=>{ pt.t = t(pt.t); pt.d = t(pt.d); }); PATENTE_MAX.t = t(PATENTE_MAX.t); PATENTE_MAX.d = t(PATENTE_MAX.d); }   /* r232 */
@@ -15027,10 +15076,9 @@ function distDeCasa(b){
   return (_distSis[sid] = km);
 }
 /* corpos que já receberam sobrevoo, orbitador, pouso ou pegada humana */
-const ALCANCADOS = new Set(['sol','mercurio','venus','terra','lua','marte','fobos','deimos',
-  'jupiter','io','europa','ganimedes','calisto','saturno','tita','encelado','mimas','reia','iapeto',
-  'urano','netuno','tritao','plutao','caronte','ceres','vesta','palas','eros','itokawa','ryugu','bennu',
-  'halley','arrokoth','cinturao','kuiper','voyager1','voyager2','newhorizons','pioneer10']);
+/* r307 · a lista foi escrita no r44 e nunca tocada: tinha iapeto (typo de japeto), itokawa (corpo que
+   nunca existiu) e faltavam ~40 corpos fotografados de perto desde então. Validada contra o atlas ao gerar. */
+const ALCANCADOS = new Set(['sol','mercurio','venus','terra','lua','marte','fobos','deimos','jupiter','io','europa','ganimedes','calisto','amalteia','tebe','metis','saturno','tita','encelado','mimas','reia','japeto','dione','tetis','hiperion','febe','pan','prometeu','pandora','jano','epimeteu','telesto','calipso','urano','miranda','ariel','umbriel','titania','oberon','puck','cordelia','ofelia','bianca','cressida','julieta','netuno','tritao','proteu','nereida','larissa','galateia','naiade','talassa','despina','plutao','caronte','estige','nix','cerbero','hidra','arrokoth','ceres','vesta','eros','ryugu','bennu','dinkinesh','selam','halley','p67','giacobini','cinturao','kuiper','voyager1','voyager2','newhorizons','pioneer10','cassini','parker','lucy','juice','clipper','pathfinder','viking1']);
 const MISS = {filtro:'tudo', ordem:'nome', q:'', galFech:new Set(), sisAb:new Set(), corpAb:new Set()};
 /* cada sistema 100% visitado rende um título, além do selo */
 const TITULOS = {
@@ -15097,7 +15145,8 @@ function missRender(){
     + ' · <span class="lnkconq" data-abreconq="1"><b>'+FEITO.size+'</b> / '+Object.keys(MISS_ROT).length+t(' CONQUISTAS')+'</span>'
     + (selos ? ' · <b>'+selos+'</b>/'+sis.length+t(' SELOS') : '');   /* r291 · os pedaços traduzem */
   $('#missbar').firstElementChild.style.width = Math.round(n/total*100)+'%';
-  $('#missnext').textContent = pat.nxt ? (pat.cur.d+' Faltam '+(pat.nxt.n-n)+' para '+pat.nxt.t+'.') : pat.cur.d;
+  /* r307 · 'Faltam N' contava com o n cru enquanto a patente usa n + bonus: com 22 conquistas o erro era de 44 pontos cravados */
+  $('#missnext').textContent = pat.nxt ? (pat.cur.d + t(' Faltam ') + (pat.nxt.n - Math.min(n + bonus, total)) + t(' para ') + pat.nxt.t + '.') : pat.cur.d;
   $('#cadmiss').innerHTML = '';
 
   const q = norm(MISS.q||'');
@@ -16491,6 +16540,7 @@ function cardRender(){
   const cv2 = $('#cardvista'); if(cv2) cv2.addEventListener('click', ()=>{
     /* r305 · o link que leva o outro ao instante exato */
     const url = location.href.split('#')[0] + '#v=' + vistaCodifica();
+    if(typeof feito === 'function') feito('vista');   /* r307 */
     const avisa = ()=>showHint(t('LINK DESTA VISTA COPIADO · câmera, data e camadas vão junto'));
     if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(avisa, ()=>showHint(url));
     else showHint(url);
@@ -17228,7 +17278,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r306';
+const BUILD = 'r307';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -17816,6 +17866,11 @@ $('#datepop').addEventListener('click', e=>{
    A entrada `ver` é opcional e LEVA à feature, que é o que faz o painel valer:
    ler que existe um planetário não é a mesma coisa que abrir um. */
 const NOVIDADES = [
+  {b:'r307', d:'21 SET 2026', t:'TREZE CONQUISTAS E CINCO PATENTES', ls:[
+    'A última conquista era de 150 builds atrás: nada premiava o planetário, os satélites, os tremores, a aurora, os lançamentos, a bancada nem o cartão. Agora são 35, com 13 novas.',
+    'A escada de patentes acabava em 72 pontos num atlas de 252: entraram cinco degraus por cima, até GUARDIÃO DO CATÁLOGO.',
+    'E o registro parou de errar a conta: o Faltam N ficava 44 pontos fora, o selo da conquista era engolido pelo da promoção, e ONDE CHEGAMOS tinha um corpo que nunca existiu.'],
+   ver:()=>{ MISS.filtro = 'conquistas'; missOpen(); }},
   {b:'r306', d:'21 SET 2026', t:'OS LANÇAMENTOS DE FOGUETE', ls:[
     'O app contava a corrida espacial de 1966 a 2026 e não sabia que tem foguete subindo amanhã. Agora sabe: ligue PRÓXIMOS LANÇAMENTOS no filtro ≋.',
     'Na escala 1:1 cada base vira um cone âmbar na Terra, com a contagem regressiva viva no rótulo; a ficha tem IR AO T-0 e VER A BASE.',
@@ -18027,7 +18082,7 @@ function evtRender(){
   }).sort((a, b)=>evtData(a) - evtData(b));
   const el = $('#evtlista');
   if(!lista.length){ el.innerHTML = '<div class="evvazio">' + ((EVTF.tag === 'lanc' && !LANC.pronto) ? t(LANC.erro ? 'OS LANÇAMENTOS NÃO CARREGARAM.' : 'BUSCANDO OS PRÓXIMOS LANÇAMENTOS...') : t('NADA ENCONTRADO COM ESSES FILTROS.')) + '</div>'; return; }
-  el.innerHTML = lista.map(ev=>'<button class="evx' + (evtData(ev) < agora ? ' past' : '') + '" data-evt="' + ev.d + '"' + (ev.c ? ' data-corpo="' + ev.c + '"' : '') + (ev.li !== undefined ? ' data-lanc="' + ev.li + '"' : '') + '>'
+  el.innerHTML = lista.map(ev=>'<button class="evx' + (evtData(ev) < agora ? ' past' : '') + '" data-evt="' + ev.d + '" data-g="' + ev.g + '"' + (ev.c ? ' data-corpo="' + ev.c + '"' : '') + (ev.li !== undefined ? ' data-lanc="' + ev.li + '"' : '') + '>'
     + '<span class="evd">' + evtRotuloData(ev) + (evtData(ev) < agora ? '<i class="evpast">' + t(' · JÁ PASSOU') + '</i>' : '') + '</span>' + esc(t(ev.t)) + '</button>').join('');   /* r290 · os eventos traduzem */
 }
 function evtChips(){
@@ -18203,6 +18258,7 @@ $('#evtlista').addEventListener('click', e=>{
   const cp = b.dataset.corpo;
   if(cp && ALLBODIES[cp] && ST.sys === 'sol' && ST.level === 'system' && !(TRAJ && TRAJ.fase !== 'volta') && !(ST.mapCard && ST.mapCard.id === cp))
     setTimeout(()=>ACTION('focus', cp), 350);
+  if(b.dataset.g === 'chuva' && typeof feito === 'function') feito('chuva');   /* r307 */
 });
 $('#dp_ir').addEventListener('click', ()=>{
   const dias = new Date(DP.a, DP.m + 1, 0).getDate();
