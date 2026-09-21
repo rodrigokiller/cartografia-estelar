@@ -8,7 +8,18 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 242 testes pendentes (do r131 ao r308) e 4 decisões suas.
+Hoje: 248 testes pendentes (do r131 ao r309) e 4 decisões suas.
+
+---
+
+## r309 · o manual reescrito
+
+- [ ] **Abra o ? e leia.** Quinze parágrafos, um por feature viva: os dois mapas e o botão de modo, as camadas ao vivo, o planetário (com NOITE, ISS, ⛶, e no celular APONTAR e GPS), comparar e bancada, o registro e as conquistas, o relógio com os eventos e a fase da Lua, a linha do tempo, a trava de centro, o modo foto, o tour e o modo aula, compartilhar (⇪ e ⧉) e as configurações com os ladrilhos e o idioma. Diga o que ficou longo, curto ou obscuro.
+- [ ] **O parágrafo falso saiu.** O antigo dizia para afastar o zoom até o limite e afastar de novo para subir de escala; no 1:1 isso não existe desde o r157. Agora explica os dois mapas e diz que no 1:1 é só continuar afastando.
+- [ ] **O ≋ tem dois sentidos** e o manual agora diz os dois: o do topo é CAMADAS DO MAPA, o de dentro do card é a LINHA DO TEMPO.
+- [ ] **No celular** a linha de atalhos de teclado some e entra a de gestos (toque longo, dois dedos, ⋯, puxar a ficha). Confira que ela aparece no seu.
+- [ ] **Em inglês, o manual inteiro está traduzido**: conferido por sonda, zero parágrafos sobrando em português. As chaves de tradução nascem do mesmo texto do index, então não têm como divergir.
+- [ ] **Regra de casa nova** (no CLAUDE.md): toda entrega que cria um botão acrescenta a linha dele no manual e a chave no en.js, como já incrementa o BUILD e escreve a NOVIDADE.
 
 ---
 
