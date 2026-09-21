@@ -8,7 +8,19 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 219 testes pendentes (do r131 ao r305) e 4 decisões suas.
+Hoje: 226 testes pendentes (do r131 ao r306) e 4 decisões suas.
+
+---
+
+## r306 · os lançamentos de foguete ao vivo
+
+- [ ] **A camada.** Filtro ≋ · PRÓXIMOS LANÇAMENTOS DE FOGUETE, escala 1:1, chegue perto da Terra: cada base com lançamento marcado nos próximos dias vira um cone âmbar na superfície (Wenchang, Vandenberg, Cabo Canaveral, Kourou, Mahia...). O próximo ganha rótulo com a contagem regressiva andando.
+- [ ] **A ficha.** Toque num cone: foguete, quem lança, a missão, a órbita, o status e a precisão do horário. A linha AGORA mostra a contagem viva. Dois botões: **◈ IR AO T-0** leva o relógio a 30 s da decolagem, **◎ VER A BASE** põe a câmera em cima da plataforma (conferido por sonda: 0 grau de desvio).
+- [ ] **Nos eventos do relógio** (◈ · ESCOLHER UM EVENTO DO CÉU) apareceu o chip LANÇAMENTOS, com os mesmos 20 lançamentos: funciona no mapa cênico também, onde não há cone. Escolher um leva o relógio ao T-0, e no 1:1 perto da Terra abre a ficha da base.
+- [ ] **Sem chave e com cache.** Os dados vêm da Launch Library 2 (The Space Devs), que limita quem não tem conta a poucos pedidos por hora: a resposta fica guardada 6 horas no seu navegador. Se aparecer LANÇAMENTOS: NÃO CARREGOU, é isso.
+- [ ] **O horário ainda está em UTC** na ficha (o fuso só existe dentro do planetário). Me diga se quer a hora de Brasília ali.
+- [ ] **Bug pego pela sonda antes do ar:** com a ficha de um lançamento aberta, a trava de centro ia perseguir o CONE em vez do centro da Terra (o id do lançamento é um número, igual ao do marcador), e a câmera caía 133 graus longe da base. Hoje os tremores, os satélites e os lançamentos travam na Terra.
+- [ ] **Uma novidade de arquitetura que você não vê:** o card ganhou botões próprios por ficha (o gancho acoes). O planetário e outros cards vão poder usar isso.
 
 ---
 

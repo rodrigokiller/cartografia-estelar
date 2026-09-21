@@ -1367,6 +1367,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="filtrow" data-ecl="1"><span>ECLÍPTICA E ZODÍACO</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-sismos="1"><span>TERREMOTOS DAS ÚLTIMAS 24 H (USGS)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-aurora="1"><span>AURORA AO VIVO NA TERRA (NOAA)</span><b>DESLIGADO</b></div>
+    <div class="filtrow" data-lanc="1"><span>PRÓXIMOS LANÇAMENTOS DE FOGUETE (LAUNCH LIBRARY)</span><b>DESLIGADO</b></div>
     <div class="filtrow" data-satcfg="1"><span>CONFIGURAR OS SATÉLITES AO VIVO</span><b>ABRIR</b></div>
     <div class="filtrow" data-reguadisco="1"><span>DISCO DA RÉGUA</span><b>LIGADO</b></div>
     <div class="rgcor">
@@ -5933,7 +5934,7 @@ function updateLabels(){
        constelações (sempre:true) atravessam o declutter; na linha do tempo
        a regra descansa inteira (a rota precisa dos nomes) */
     if(ACT.escr && ACT.kind==='system' && CAM.dist < 0.8 && !TRAJ){
-      const dono = ST.mapCard ? ((!ST.mapCard.type || ST.mapCard.type === 'body') ? ST.mapCard.id : ((ST.mapCard.type === 'satlive' || ST.mapCard.type === 'sismo') ? 'terra' : null)) : null;   /* r290 */
+      const dono = ST.mapCard ? ((!ST.mapCard.type || ST.mapCard.type === 'body') ? ST.mapCard.id : ((ST.mapCard.type === 'satlive' || ST.mapCard.type === 'sismo' || ST.mapCard.type === 'lanc') ? 'terra' : null)) : null;   /* r290; r306 lanc */
       const fica = (dono && L.lid && (L.lid === dono || L.lidPai === dono)) || L.sempre;
       if(!fica){ oculta(L); continue; }
     }
@@ -7908,6 +7909,149 @@ function aurTick(){
   const d = (typeof SATV !== 'undefined' && SATV.dTerra) ? SATV.dTerra : CAM.dist;
   AUR.op.value = Rm ? Math.max(0, Math.min(1, (Rm*40 - d)/(Rm*25))) : 0;
 }
+/* ================= r306 · LANÇAMENTOS AO VIVO (Launch Library 2) =================
+   O app conta a corrida espacial de 1966 a 2026 e não sabia que tem foguete
+   subindo amanhã. A Launch Library 2 (The Space Devs) publica os próximos
+   lançamentos do mundo inteiro, sem chave e com CORS aberto (medido por curl
+   com Origin): foguete, missão, operadora, status, precisão do T-0 e a
+   LATITUDE/LONGITUDE da base. Cada base vira um marcador âmbar na superfície
+   da Terra do 1:1, filho do mesh na convenção de longitude do r165/r261/r262,
+   com ficha própria (ACTION 'lanc', o molde dos tremores), contagem regressiva
+   viva e dois botões: IR AO T-0 (o relógio vai ao instante) e VER A BASE (a
+   câmera vai para cima da plataforma). A mesma lista vira o chip LANÇAMENTOS
+   nos EVENTOS, que existem nos dois modos. Limite anônimo da API é baixo (uns
+   15 pedidos por hora), então a resposta fica 6 h no localStorage. */
+const LANC = {on:false, carregando:false, pronto:false, erro:null, lista:[], act:null, grupo:null, picks:[], lbl:null, quando:0, q:0};
+const EVENTOS_LANC = [];
+function lancContagem(ms){
+  const d = ms - SIMT.data, a = Math.abs(d), s = d < 0 ? 'T+' : 'T-';
+  const dd = Math.floor(a/86400000), hh = Math.floor(a/3600000) % 24, mm = Math.floor(a/60000) % 60, ss = Math.floor(a/1000) % 60;
+  const p2 = n=>String(n).padStart(2, '0');
+  return s + (dd ? dd + 'd ' : '') + p2(hh) + ':' + p2(mm) + ':' + p2(ss);
+}
+function lancPreparaLista(res){
+  LANC.lista = (res || []).filter(r=>r && r.pad && isFinite(parseFloat(r.pad.latitude)) && r.net).map((r, i)=>({
+    i, nome:r.name || '?', foguete:(r.rocket && r.rocket.configuration && r.rocket.configuration.full_name) || '?',
+    quem:(r.launch_service_provider && r.launch_service_provider.name) || '?',
+    missao:r.mission ? {nome:r.mission.name, tipo:r.mission.type, orbita:r.mission.orbit ? r.mission.orbit.name : '', desc:r.mission.description || ''} : null,
+    status:r.status ? {s:r.status.abbrev, nome:r.status.name} : null,
+    prec:r.net_precision ? r.net_precision.name : '',
+    net:new Date(r.net).getTime(), lat:parseFloat(r.pad.latitude), lon:parseFloat(r.pad.longitude),
+    base:(r.pad.location && r.pad.location.name) || '', pad:r.pad.name || ''}));
+  EVENTOS_LANC.length = 0;
+  for(const q of LANC.lista){
+    const prec = /day|month|week|quarter|year/i.test(q.prec);
+    EVENTOS_LANC.push({t:q.foguete.toUpperCase() + ' · ' + q.nome + ' · ' + q.base.split(',')[0], d:new Date(q.net).toISOString(), g:'lanc', ap:prec ? 1 : 0, li:q.i});
+  }
+}
+async function lancCarrega(){
+  if(LANC.carregando) return;
+  LANC.carregando = true;
+  try{
+    let res = null;
+    try{ const c = JSON.parse(store.get('carto:lanccache', 'null')); if(c && c.t && Date.now() - c.t < 6*3600000 && c.r) res = c.r; }catch(e){}
+    if(!res){
+      const r = await buscaComPrazo('https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=20', 15000);
+      if(!r.ok) throw new Error('HTTP ' + r.status);
+      const j = await r.json(); res = j.results || [];
+      /* guarda só o que usamos: a resposta inteira tem 80 KB de imagem e texto */
+      const magro = res.map(x=>({name:x.name, net:x.net, rocket:{configuration:{full_name:x.rocket && x.rocket.configuration ? x.rocket.configuration.full_name : ''}},
+        launch_service_provider:{name:x.launch_service_provider ? x.launch_service_provider.name : ''},
+        mission:x.mission ? {name:x.mission.name, type:x.mission.type, orbit:x.mission.orbit ? {name:x.mission.orbit.name} : null, description:(x.mission.description || '').slice(0, 400)} : null,
+        status:x.status ? {abbrev:x.status.abbrev, name:x.status.name} : null, net_precision:x.net_precision ? {name:x.net_precision.name} : null,
+        pad:x.pad ? {name:x.pad.name, latitude:x.pad.latitude, longitude:x.pad.longitude, location:x.pad.location ? {name:x.pad.location.name} : null} : null}));
+      store.set('carto:lanccache', JSON.stringify({t:Date.now(), r:magro}));
+      res = magro;
+    }
+    lancPreparaLista(res);
+    LANC.pronto = true; LANC.quando = Date.now();
+    RLOG.push('lanc-' + LANC.lista.length);
+    const prox = LANC.lista.filter(q=>q.net > SIMT.data).sort((a, b)=>a.net - b.net)[0];
+    if(prox) showHint(t('PRÓXIMO LANÇAMENTO') + ' · ' + prox.foguete.toUpperCase() + ' · ' + lancContagem(prox.net) + ' · ' + prox.base.split(',')[0]);
+    if($('#evtpop').classList.contains('on')) evtRender();
+  }catch(e){ LANC.erro = e; showHint(t('LANÇAMENTOS: NÃO CARREGOU') + ' · ' + e.message); }
+  LANC.carregando = false;
+}
+function lancDesmonta(){
+  if(LANC.grupo){
+    if(LANC.grupo.parent) LANC.grupo.parent.remove(LANC.grupo);
+    LANC.grupo.traverse(o=>{ if(o.geometry) o.geometry.dispose(); if(o.material) o.material.dispose(); });
+  }
+  if(LANC.act && LANC.act.pickables) for(const p of LANC.picks){ const k = LANC.act.pickables.indexOf(p); if(k >= 0) LANC.act.pickables.splice(k, 1); }
+  if(LANC.lbl && LANC.act && LANC.act.labels){ const k = LANC.act.labels.indexOf(LANC.lbl); if(k >= 0) LANC.act.labels.splice(k, 1); if(LANC.lbl.el && LANC.lbl.el.parentNode) LANC.lbl.el.parentNode.removeChild(LANC.lbl.el); }
+  LANC.grupo = null; LANC.picks = []; LANC.lbl = null; LANC.act = null;
+  if(ST.mapCard && ST.mapCard.type === 'lanc'){ ST.mapCard = null; uiSync(); }
+}
+function lancMonta(){
+  const mesh = satVivoTerra(); if(!mesh) return false;
+  const KM = ESCR_UA/149597870, R = 6371*KM*1.004;
+  const g = new THREE.Group();
+  const futuros = LANC.lista.filter(q=>q.net > SIMT.data - 86400000);
+  let prox = null;
+  for(const q of futuros){
+    const la = q.lat*Math.PI/180, lo = q.lon*Math.PI/180;
+    const m = new THREE.Mesh(new THREE.ConeGeometry(KM*120, KM*420, 8), new THREE.MeshBasicMaterial({color:0xffb454, transparent:true, opacity:0.9}));
+    const x = Math.cos(la)*Math.cos(lo), y = Math.sin(la), z = -Math.cos(la)*Math.sin(lo);
+    m.position.set(x*R, y*R, z*R);
+    m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(x, y, z));   /* o cone em pé sobre a base */
+    m.userData = {act:'lanc', id:q.i, r:KM*300};
+    g.add(m); LANC.picks.push(m); ACT.pickables.push(m);
+    if(!prox || q.net < prox.net) prox = q;
+  }
+  g.visible = !LOCAL.sel;
+  mesh.add(g);
+  LANC.grupo = g; LANC.act = ACT;
+  if(prox){
+    const anc = LANC.picks[futuros.indexOf(prox)];
+    const L = {el:makeLabel(prox.foguete.toUpperCase() + ' · ' + lancContagem(prox.net), 'faint mini', ()=>ACTION('lanc', prox.i)), mini:true, lid:'lanc_' + prox.i, lidPai:'terra', escrMr:0.0005,
+      get:v=>{ anc.getWorldPosition(v); v.y += Math.max(0.00003, CAM.dist*0.012); }};
+    ACT.labels.push(L); LANC.lbl = L; LANC.lblId = prox.i;
+  }
+  return true;
+}
+function lancTick(){
+  if(!LANC.pronto){ if(!LANC.carregando && !LANC.erro) lancCarrega(); return; }
+  const mesh = satVivoTerra();
+  if(!mesh){ if(LANC.grupo) lancDesmonta(); return; }
+  if(LANC.act !== ACT || !LANC.grupo || LANC.grupo.parent !== mesh){ lancDesmonta(); lancMonta(); }
+  LANC.q++;
+  if(LANC.q % 30 === 0){
+    /* a contagem viva: no rótulo do próximo e na linha AGORA da ficha aberta */
+    if(LANC.lbl && LANC.lbl.el && LANC.lblId !== undefined){ const q = LANC.lista[LANC.lblId]; if(q) LANC.lbl.el.textContent = q.foguete.toUpperCase() + ' · ' + lancContagem(q.net); }
+    if(ST.mapCard && ST.mapCard.type === 'lanc'){ const el = document.getElementById('liveinfo'), q = LANC.lista[ST.mapCard.id]; if(el && q) el.textContent = lancLinha(q); }
+  }
+}
+function lancLinha(q){ return lancContagem(q.net) + ' · ' + (q.status ? t(q.status.nome) : '') + (q.prec ? ' · ' + t('T-0 com precisão de') + ' ' + t(q.prec.toLowerCase()) : ''); }
+function lancIrAoT0(q){
+  if(SIMT.vel === 'real'){ SIMT.vel = 'seg'; store.set('carto:vel', 'seg'); }
+  SIMT.data = q.net - 30000; SIMT.pausado = false;
+  simClockUI();
+  showHint(t('O RELÓGIO ESTÁ EM T-30 s DE') + ' ' + q.foguete.toUpperCase());
+}
+function lancVerBase(q){
+  const anc = LANC.picks[LANC.lista.filter(x=>x.net > SIMT.data - 86400000).indexOf(q)];
+  const pk = acharPick('terra'); if(!anc || !pk) return;
+  const c = new THREE.Vector3(), p = new THREE.Vector3(); pk.getWorldPosition(c); anc.getWorldPosition(p);
+  const d = p.sub(c).normalize();
+  CAMTW = null; ZOOM = null;
+  CAM.yaw = Math.atan2(d.x, d.z); CAM.pitch = Math.asin(Math.max(-1, Math.min(1, d.y)));
+  CAM.dist = Math.max(CAM.min || 0, (pk.userData.r || 0.00064)*1.6);
+  applyCam();
+  showHint(t('A BASE ESTÁ NO CENTRO DA TELA') + ' · ' + q.base.split(',')[0]);
+}
+function fichaLanc(q){
+  const d = new Date(q.net);
+  const quando = d.getUTCDate() + ' ' + MESES_N[d.getUTCMonth()] + ' ' + d.getUTCFullYear() + ' · ' + String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0') + ' UTC';
+  const rows = [[t('Foguete'), q.foguete], [t('Quem lança'), q.quem], [t('A base'), q.base + (q.pad ? ' · ' + q.pad : '')]];
+  if(q.missao){ if(q.missao.tipo) rows.push([t('Tipo de missão'), q.missao.tipo]); if(q.missao.orbita) rows.push([t('Órbita'), q.missao.orbita]); if(q.missao.desc) rows.push([t('A missão'), q.missao.desc]); }
+  if(q.status) rows.push([t('Status'), q.status.nome]);
+  return {name:q.nome, desig:t('LANÇAMENTO · LAUNCH LIBRARY 2'), kind:q.foguete + ' · ' + q.quem, hab:null, _lanc:q,
+    quick:[[t('QUANDO'), quando],[t('CONTAGEM'), lancContagem(q.net)],['LAT / LON', q.lat.toFixed(2) + ' / ' + q.lon.toFixed(2)],[t('PRECISÃO'), q.prec ? t(q.prec.toLowerCase()) : '?'],[t('STATUS'), q.status ? q.status.s : '?'],[t('ÓRBITA'), q.missao && q.missao.orbita ? q.missao.orbita : '?']],
+    sections:[{t:t('A MISSÃO'), rows}],
+    facts:[t('Uma base perto do equador ganha até 460 m/s de graça da rotação da Terra: por isso Kourou e Cabo Canaveral ficam onde ficam.'), t('Quase toda janela de lançamento é decidida pelo alvo, não pelo tempo: uma estação em órbita passa por cima da base uma ou duas vezes por dia.')],
+    fict:null,
+    acoes:[{txt:t('◈ IR AO T-0'), fn:()=>lancIrAoT0(q)}, {txt:t('◎ VER A BASE'), fn:()=>lancVerBase(q)}]};
+}
 function fichaSismo(q){
   const d = new Date(q.quando);
   const quando = d.getUTCDate() + ' ' + MESES_N[d.getUTCMonth()] + ' ' + d.getUTCFullYear() + ' · ' + String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0') + ' UTC';
@@ -9368,7 +9512,7 @@ function buildSystem(sysId, spin0){
         /* e as órbitas das LUAS do corpo travado acendem sozinhas: o mapa vira
            o sistema planetário só de aproximar (ideia dele). Respeita o filtro
            de objetos; ao afastar, applySel restaura o estado normal. */
-        const dono2 = ST.mapCard ? ((!ST.mapCard.type || ST.mapCard.type === 'body') ? ST.mapCard.id : ((ST.mapCard.type === 'satlive' || ST.mapCard.type === 'sismo') ? 'terra' : null)) : null;   /* r290 */
+        const dono2 = ST.mapCard ? ((!ST.mapCard.type || ST.mapCard.type === 'body') ? ST.mapCard.id : ((ST.mapCard.type === 'satlive' || ST.mapCard.type === 'sismo' || ST.mapCard.type === 'lanc') ? 'terra' : null)) : null;   /* r290; r306 lanc */
         const dzL = (dono2 && CAM.dist < 1.2) ? Math.min(1, (1.2 - CAM.dist)/0.6) : 0;
         if(dzL > 0){
           ACT._zLua = true;
@@ -13160,7 +13304,8 @@ REGUA.cor = Math.max(0, Math.min(REGUA_CORES.length - 1, parseInt(store.get('car
 REGUA.hex = store.get('carto:reguahex', '') || null;
 ECLV.on = store.get('carto:ecl', '0') === '1';
 SISM.on = store.get('carto:sismos', '0') === '1';
-AUR.on = store.get('carto:aurora','0') === '1';   /* r304 · nasce desligada: ninguém paga 142 KB sem pedir */
+AUR.on = store.get('carto:aurora','0') === '1';
+LANC.on = store.get('carto:lanc','0') === '1';   /* r306 · nasce desligada; a lista dos eventos carrega sozinha ao abrir o chip */   /* r304 · nasce desligada: ninguém paga 142 KB sem pedir */
 try{ const ll = String(store.get('carto:local', '') || '').split(','); if(ll.length === 2 && isFinite(+ll[0]) && isFinite(+ll[1])){ LOCAL.lat = +ll[0]; LOCAL.lon = +ll[1]; } LOCAL.hud = store.get('carto:localhud', '1') !== '0'; }catch(e){}   /* r287 */
 try{ const sc = JSON.parse(store.get('carto:satcfg', '{}') || '{}'); if(sc && sc.grupos) SATCFG.grupos = sc.grupos; if(sc && sc.lixo === false) SATCFG.lixo = false; }catch(e){}   /* r280 */
 REGUA.disco = store.get('carto:reguadisco', '1') === '1';
@@ -14218,7 +14363,7 @@ function ACTION(act, id){
   /* r290 · as fichas de toque único (galáxia vizinha, satélite, tremor, fronteira, estrela, constelação): o segundo
      toque FECHA pelo fecharFicha (pivô, volta à Terra, endereço) e abrir também escreve o endereço */
   const jaEra = ST.mapCard && ST.mapCard.type === act && ST.mapCard.id === id;
-  if(act==='galviz' || act==='satlive' || act==='sismo' || act==='fronteira' || act==='estrela' || act==='constel'){
+  if(act==='galviz' || act==='satlive' || act==='sismo' || act==='lanc' || act==='fronteira' || act==='estrela' || act==='constel'){   /* r306 · lanc */
     if(act==='estrela') marcaVizinha(id);
     if(act==='constel') marcaConstel(id);
     AUDIO.sfx('sel');
@@ -16012,6 +16157,10 @@ function currentEntity(){
       const q = SISM.lista[ST.mapCard.id];
       if(q) return {type:'map', b:fichaSismo(q), nav:false};
     }
+    if(ST.mapCard.type==='lanc'){   /* r306 */
+      const q = LANC.lista[ST.mapCard.id];
+      if(q) return {type:'map', b:fichaLanc(q), nav:false};
+    }
     if(ST.mapCard.type==='fronteira'){
       const fr = FRONTEIRAS[ST.mapCard.id];
       /* r176 · o CENTRO DA GALÁXIA dá para ENTRAR: o sistema do Sagittarius A*
@@ -16073,7 +16222,7 @@ function fecharFicha(){
   if(tipo === 'satlive' && typeof SATV !== 'undefined'){ SATV.foco = null; SATV.q = 0; }
   if(ACT && ACT.escr && ACT.kind === 'system' && CAM.dist < 5 && tipo === 'body' && ALLBODIES[mc.id]) ACT.pivoSegue = mc.id;
   const bFecha = tipo === 'body' && ALLBODIES[mc.id];
-  const paraTerra = (tipo === 'satlive' || tipo === 'sismo') && ACT && ACT.kind === 'system' && ST.sys === 'sol';
+  const paraTerra = (tipo === 'satlive' || tipo === 'sismo' || tipo === 'lanc') && ACT && ACT.kind === 'system' && ST.sys === 'sol';
   ST.mapCard = (bFecha && bFecha.satOf && ALLBODIES[bFecha.satOf] && ACT && ACT.kind === 'system')
     ? {type:'body', id:bFecha.satOf, act:'focus', t:performance.now()} : (paraTerra ? {type:'body', id:'terra', act:'focus', t:performance.now()} : null);
   uiSync(); syncHash();
@@ -16243,6 +16392,8 @@ function cardRender(){
   if(hasX){
     if(cur.type==='body') h += '<button class="xbtn" id="xexp">'+(ST.expanded?t('RECOLHER DADOS ▴'):t('EXPANDIR DADOS ▾'))+'</button>';
     if(cur.b && cur.b.quick) h += '<button class="xbtn" id="cmpbtn">'+cmpLabel(cur.b)+'</button>';
+    /* r306 · botões próprios da ficha (o lançamento tem IR AO T-0 e VER A BASE): gancho genérico, qualquer ficha pode usar */
+    if(b.acoes) b.acoes.forEach((a, i)=>{ h += '<button class="xbtn" data-acao="' + i + '">' + esc(a.txt) + '</button>'; });
     if(cur.type!=='body' || ST.expanded){
       for(const s of (b.sections||[])){
         h += '<div class="sect"><h3>'+esc(t(s.t))+'</h3><div class="rows">';
@@ -16277,11 +16428,15 @@ function cardRender(){
   }
   /* r304 · o SOL ganhou linha AGORA: o clima espacial de agora, quando a camada
      da aurora já trouxe os dados do NOAA */
+  if(cur.b && cur.b._lanc){   /* r306 · a contagem regressiva viva */
+    h = h.replace('<div class="qgrid">', '<div id="liveinfo">' + esc(lancLinha(cur.b._lanc)) + '</div><div class="qgrid">');
+  }
   if(cur.b && cur.b.id === 'sol' && AUR.kp !== null && typeof AUR.kp !== 'undefined'){
     h = h.replace('<div class="qgrid">', '<div id="liveinfo">' + esc(aurLinha()) + '</div><div class="qgrid">');
   }
   const pb = $('#panelbody');
   pb.innerHTML = h; pb.scrollTop = 0;
+  pb.querySelectorAll('[data-acao]').forEach(el=>el.addEventListener('click', ()=>{ const a = b.acoes && b.acoes[+el.dataset.acao]; if(a && a.fn) a.fn(); }));   /* r306 */
   pb.querySelectorAll('[data-go]').forEach(el=>el.addEventListener('click', ()=>{
     if(el.classList.contains('chip') || el.classList.contains('mbadge')) ACTION('focus', el.dataset.go);   /* 1º clique: ficha; ENTRAR fica no topo */
     else gotoFocus(el.dataset.go);
@@ -16767,11 +16922,11 @@ function dolly(f){
       /* ST.mapCard é um OBJETO (a trava usa .id): passar ele inteiro fazia o
          acharPick falhar sempre e o zoom parava no piso (o 1,5 MI KM dele) */
       const tipoSel = ST.mapCard ? (ST.mapCard.type || 'body') : null;   /* r290 · constelação, estrela e fronteira na ficha não travavam o piso em 0,02 */
-      const pkSel = (tipoSel === 'body' || tipoSel === 'satlive' || tipoSel === 'sismo') ? acharPick((tipoSel === 'satlive' || tipoSel === 'sismo') ? 'terra' : ST.mapCard.id) : null;   /* r276 · o piso do zoom segue a Terra com satélite ou tremor na ficha */
+      const pkSel = (tipoSel === 'body' || tipoSel === 'satlive' || tipoSel === 'sismo' || tipoSel === 'lanc') ? acharPick((tipoSel === 'satlive' || tipoSel === 'sismo' || tipoSel === 'lanc') ? 'terra' : ST.mapCard.id) : null;   /* r276 · o piso do zoom segue a Terra com satélite ou tremor na ficha */
       /* r157: dá para chegar bem mais perto (era 3,2 raios, agora 1,45): o
          contínuo para dentro precisa do corpo enchendo a tela */
-      const ladrPerto = LADR.on && LADR.grupo && LADR.grupo.children.length && pkSel && (LADR_CORPOS[ST.mapCard.id] || tipoSel === 'satlive' || tipoSel === 'sismo');   /* r295 · com os ladrilhos na tela o zoom desce a 1,02 raios (~130 km) */
-      minEf = (pkSel && pkSel.userData.r) ? Math.max(ladrPerto ? 0.00003 : 0.0004, pkSel.userData.r*(ladrPerto ? 1.02 : 1.45)) : ((tipoSel && tipoSel !== 'body' && tipoSel !== 'satlive' && tipoSel !== 'sismo') ? Math.min(0.02, CAM.dist) : 0.02);   /* r291 · CAM.min é 14 un no Sol: a ficha do céu travava o zoom a 1 UA */
+      const ladrPerto = LADR.on && LADR.grupo && LADR.grupo.children.length && pkSel && (LADR_CORPOS[ST.mapCard.id] || tipoSel === 'satlive' || tipoSel === 'sismo' || tipoSel === 'lanc');   /* r295 · com os ladrilhos na tela o zoom desce a 1,02 raios (~130 km) */
+      minEf = (pkSel && pkSel.userData.r) ? Math.max(ladrPerto ? 0.00003 : 0.0004, pkSel.userData.r*(ladrPerto ? 1.02 : 1.45)) : ((tipoSel && tipoSel !== 'body' && tipoSel !== 'satlive' && tipoSel !== 'sismo' && tipoSel !== 'lanc') ? Math.min(0.02, CAM.dist) : 0.02);   /* r291 · CAM.min é 14 un no Sol: a ficha do céu travava o zoom a 1 UA */
       if(ST.mapCard && ST.mapCard.type === 'satlive' && ST.mapCard.entrou) minEf = 0.00009;   /* r277 · no satélite o zoom vai até o desenho (como nas missões); r290 · só com a câmera NELE (com o pivô na Terra o zoom entrava no planeta) */
       if(pkSel && pkSel.userData.vivo && ST.mapCard && ST.mapCard.entrou) minEf = 0.00009;   /* r280 · a ISS pelo card de sempre também (o alvo vivo travava o zoom a 4 mil km); r290 · só depois do ENTRAR */
     } else if(ST.mapCard) minEf = Math.min(CAM.min, 4.2);
@@ -17073,7 +17228,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r305';
+const BUILD = 'r306';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -17661,6 +17816,11 @@ $('#datepop').addEventListener('click', e=>{
    A entrada `ver` é opcional e LEVA à feature, que é o que faz o painel valer:
    ler que existe um planetário não é a mesma coisa que abrir um. */
 const NOVIDADES = [
+  {b:'r306', d:'21 SET 2026', t:'OS LANÇAMENTOS DE FOGUETE', ls:[
+    'O app contava a corrida espacial de 1966 a 2026 e não sabia que tem foguete subindo amanhã. Agora sabe: ligue PRÓXIMOS LANÇAMENTOS no filtro ≋.',
+    'Na escala 1:1 cada base vira um cone âmbar na Terra, com a contagem regressiva viva no rótulo; a ficha tem IR AO T-0 e VER A BASE.',
+    'E o relógio ganhou o chip LANÇAMENTOS nos eventos, que funciona nos dois modos.'],
+   ver:()=>{ EVTF.tag = 'lanc'; const b = document.getElementById('dp_eventos'); if(b) b.click(); }},
   {b:'r305', d:'20 SET 2026', t:'O LINK QUE LEVA AO INSTANTE', ls:[
     'O endereço guardava só onde você estava. Agora o ⧉ no canto da ficha copia um link com a câmera, a data do relógio, as camadas ligadas e o lugar do planetário.',
     'Quem abrir cai exatamente no que você estava vendo: o eclipse, a passagem da ISS, a Apollo no meio da rota.'],
@@ -17765,7 +17925,7 @@ function novoAbre(){
    Datas em UTC; as marcadas aprox são aproximações honestas (o dia é certo,
    a hora não). Escolher um evento leva o relógio para o instante dele */
 const EVT_TAGS = [['todos','TODOS'],['eclipse','ECLIPSES'],['transito','TRÂNSITOS'],
-  ['estacao','ESTAÇÕES'],['planetas','PLANETAS'],['cometa','COMETAS'],['chuva','CHUVAS DE METEOROS'],['marco','MARCOS']];
+  ['estacao','ESTAÇÕES'],['planetas','PLANETAS'],['cometa','COMETAS'],['chuva','CHUVAS DE METEOROS'],['marco','MARCOS'],['lanc','LANÇAMENTOS']];   /* r306 */
 const EVENTOS = [
   {t:'ECLIPSE TOTAL DO SOL · Islândia e Espanha', d:'2026-08-12T17:46:00Z', g:'eclipse'},
   {t:'ECLIPSE PARCIAL DA LUA', d:'2026-08-28T04:13:00Z', g:'eclipse'},
@@ -17855,7 +18015,9 @@ function evtRotuloData(ev){
 }
 function evtRender(){
   const agora = Date.now();
-  let lista = EVENTOS.filter(ev=>{
+  /* r306 · os lançamentos são dinâmicos: entram na lista quando carregam, e o chip deles dispara a carga */
+  if(EVTF.tag === 'lanc' && !LANC.pronto && !LANC.carregando && !LANC.erro) lancCarrega();
+  let lista = EVENTOS.concat(EVENTOS_LANC).filter(ev=>{
     if(EVTF.tag !== 'todos' && ev.g !== EVTF.tag) return false;
     const ms = evtData(ev);
     if(EVTF.tempo === 'fut' && ms < agora - 86400000) return false;
@@ -17864,8 +18026,8 @@ function evtRender(){
     return true;
   }).sort((a, b)=>evtData(a) - evtData(b));
   const el = $('#evtlista');
-  if(!lista.length){ el.innerHTML = '<div class="evvazio">' + t('NADA ENCONTRADO COM ESSES FILTROS.') + '</div>'; return; }
-  el.innerHTML = lista.map(ev=>'<button class="evx' + (evtData(ev) < agora ? ' past' : '') + '" data-evt="' + ev.d + '"' + (ev.c ? ' data-corpo="' + ev.c + '"' : '') + '>'
+  if(!lista.length){ el.innerHTML = '<div class="evvazio">' + ((EVTF.tag === 'lanc' && !LANC.pronto) ? t(LANC.erro ? 'OS LANÇAMENTOS NÃO CARREGARAM.' : 'BUSCANDO OS PRÓXIMOS LANÇAMENTOS...') : t('NADA ENCONTRADO COM ESSES FILTROS.')) + '</div>'; return; }
+  el.innerHTML = lista.map(ev=>'<button class="evx' + (evtData(ev) < agora ? ' past' : '') + '" data-evt="' + ev.d + '"' + (ev.c ? ' data-corpo="' + ev.c + '"' : '') + (ev.li !== undefined ? ' data-lanc="' + ev.li + '"' : '') + '>'
     + '<span class="evd">' + evtRotuloData(ev) + (evtData(ev) < agora ? '<i class="evpast">' + t(' · JÁ PASSOU') + '</i>' : '') + '</span>' + esc(t(ev.t)) + '</button>').join('');   /* r290 · os eventos traduzem */
 }
 function evtChips(){
@@ -18036,6 +18198,8 @@ $('#evtlista').addEventListener('click', e=>{
   irParaEvento(b.dataset.evt, b.querySelector('.evd').textContent + ' · ' + b.textContent.replace(b.querySelector('.evd').textContent, '').trim());
   /* r253 · chuva de meteoros com cometa pai no atlas: no mapa do Sol o clique
      também CATALOGA o cometa (two-step de sempre: ENTRAR fica por conta do usuário) */
+  /* r306 · lançamento escolhido nos eventos: no 1:1 perto da Terra abre a ficha da base */
+  if(b.dataset.lanc !== undefined && LANC.on && LANC.grupo && LANC.lista[+b.dataset.lanc]) setTimeout(()=>ACTION('lanc', +b.dataset.lanc), 350);
   const cp = b.dataset.corpo;
   if(cp && ALLBODIES[cp] && ST.sys === 'sol' && ST.level === 'system' && !(TRAJ && TRAJ.fase !== 'volta') && !(ST.mapCard && ST.mapCard.id === cp))
     setTimeout(()=>ACTION('focus', cp), 350);
@@ -18124,6 +18288,8 @@ function cfgSync(){
   if(rsm){ rsm.classList.toggle('off', !SISM.on); rsm.querySelector('b').textContent = SISM.on ? t('LIGADO') : t('DESLIGADO'); }
   const rau = document.querySelector('[data-aurora]');
   if(rau){ rau.classList.toggle('off', !AUR.on); rau.querySelector('b').textContent = AUR.on ? t('LIGADO') : t('DESLIGADO'); }
+  const rla = document.querySelector('[data-lanc]');
+  if(rla){ rla.classList.toggle('off', !LANC.on); rla.querySelector('b').textContent = LANC.on ? t('LIGADO') : t('DESLIGADO'); }
   const rrd = document.querySelector('[data-reguadisco]');
   if(rrd){ rrd.classList.toggle('off', !REGUA.disco); rrd.querySelector('b').textContent = REGUA.disco ? t('LIGADO') : t('DESLIGADO'); }
   const rrg = document.querySelector('[data-regua]');
@@ -18230,6 +18396,15 @@ const cfgRowClick = e=>{
   }
   const rSc = e.target.closest('[data-satcfg]');
   if(rSc){ satCfgAbre(); return; }   /* r280 */
+  const rLa = e.target.closest('[data-lanc]');
+  if(rLa){
+    LANC.on = !LANC.on;
+    store.set('carto:lanc', LANC.on ? '1' : '0');
+    cfgSync();
+    if(!LANC.on) lancDesmonta();
+    else { if(!LANC.pronto) lancCarrega(); if(!satVivoTerra()) showHint(t('LANÇAMENTOS: NO 1:1 AS BASES APARECEM NA TERRA; A LISTA ESTÁ NOS EVENTOS DO RELÓGIO')); }
+    return;
+  }
   const rAu = e.target.closest('[data-aurora]');
   if(rAu){
     AUR.on = !AUR.on;
@@ -18545,7 +18720,8 @@ function loop(){
     ladrTick();      /* r295 · os ladrilhos da Terra de perto */
   }
   if(SISM.on && ACT && ACT.escr) sismosTick(); else if(SISM.grupo) sismosDesmonta();
-  if(AUR.on && ACT && ACT.escr) aurTick(); else if(AUR.malha) aurDesmonta();   /* r304 · a aurora, só no 1:1 (no cênico a Terra é desenhada fora de escala) */   /* r262; r290 · só no 1:1 (no cênico montava esferas de km dentro da Terra desenhada) */
+  if(AUR.on && ACT && ACT.escr) aurTick(); else if(AUR.malha) aurDesmonta();
+  if(LANC.on && ACT && ACT.escr) lancTick(); else if(LANC.grupo) lancDesmonta();   /* r306 */   /* r304 · a aurora, só no 1:1 (no cênico a Terra é desenhada fora de escala) */   /* r262; r290 · só no 1:1 (no cênico montava esferas de km dentro da Terra desenhada) */
   if(DIVE) diveStep(now);
   if(VOOCEU) vooCeuStep(now);
   if(TRAJ) trajStep(now);
@@ -18609,7 +18785,7 @@ function loop(){
        só o ENTRAR (entrou) segue o satélite. Vale para o ponto (satlive) e para os famosos pelo card de sempre */
     const pertoTerra = (typeof SATV !== 'undefined' && SATV.pontos) ? satVivoPerto() : (ACT.escr && CAM.dist < 0.08);
     const soltoNaTerra = ST.mapCard && !ST.mapCard.entrou && pertoTerra && ((ST.mapCard.type === 'satlive') || (ST.mapCard.type === 'body' && ALLBODIES[ST.mapCard.id] && ALLBODIES[ST.mapCard.id].satOf === 'terra'));
-    const naTerra = ST.mapCard && (soltoNaTerra || ST.mapCard.type === 'sismo' || (ST.mapCard.type === 'satlive' && !ST.mapCard.entrou));
+    const naTerra = ST.mapCard && (soltoNaTerra || ST.mapCard.type === 'sismo' || ST.mapCard.type === 'lanc' || (ST.mapCard.type === 'satlive' && !ST.mapCard.entrou));   /* r306 · o lançamento também trava na Terra: o id dele é um NÚMERO, igual ao do cone, e sem isto o pivô ia perseguir a base */
     const travavel = ST.mapCard && (!ST.mapCard.type || ST.mapCard.type === 'body' || (ST.mapCard.type === 'starsys' && ACT.kind !== 'system') || ST.mapCard.type === 'satlive' || naTerra);   /* r291 · no mapa 1:1 o marcador de sistema do céu é reposicionado por quadro: travar nele era o runaway do r151 */   /* r283 · satlive sempre travável (entrou: no satélite; senão na Terra) */
     if(travavel){
       ACT.pivoSegue = null;
