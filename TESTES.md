@@ -8,7 +8,21 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 233 testes pendentes (do r131 ao r307) e 4 decisões suas.
+Hoje: 242 testes pendentes (do r131 ao r308) e 4 decisões suas.
+
+---
+
+## r308 · o céu visto da Lua e de Marte
+
+- [ ] **O botão.** Abra o card de MARTE ou da LUA (qualquer modo, no mapa do Sol): ◎ O CÉU VISTO DE MARTE / DA LUA. Abre direto no último sítio (Jezero e o Mar da Tranquilidade de fábrica); o ⛶ do mapa grande lista nove sítios em cada mundo, com o minimapa desenhado do próprio corpo.
+- [ ] **A TERRA NO CÉU DA LUA.** Do Mar da Tranquilidade ela está a 64° de altura, azul, com a fase ao contrário da Lua daqui (hoje a Lua está 75%, a Terra vista de lá 26%) e 1,8° de diâmetro, quase quatro Luas. Ela não nasce nem se põe: acelere o relógio a 1 s = 1 dia e veja o Sol passar enquanto ela fica. Vá ao VON KÁRMÁN (lado oculto) e ela some para sempre. Medido por sonda: 86° do centro do lado visível, -47° do lado oculto.
+- [ ] **O céu preto ao meio-dia.** Na Lua não tem ar: o céu é preto com o Sol a 59° de altura, sem crepúsculo e sem névoa no horizonte. As estrelas continuam lá de dia. Diga se o chão cinza convence.
+- [ ] **MARTE.** Em Jezero o Sol tem 0,35° (contra 0,53° daqui), o céu de dia é caramelo e o pôr do sol é AZUL em volta do Sol (é real: a poeira fina espalha o azul para a frente, o contrário daqui). A Terra aparece como planeta na lista, com a dica de estrela da tarde. Acelere para 1 s = 1 h: o Sol repete a posição a cada 24 h 39 min, não a cada 24 h.
+- [ ] **HOJE À NOITE em outro mundo** varre um dia do MUNDO (na Lua, 29,5 dias terrestres), lista a Terra como alvo, e não tem faixa de nuvem nem passagens da ISS, que só existem daqui.
+- [ ] **O que não mudou:** o planetário da Terra é o mesmo de antes, pela mesma porta, conferido por sonda (resultado idêntico ao da função antiga).
+- [ ] **HONESTIDADES que estão na tela:** os horários seguem em UTC da Terra (a linha diz HORÁRIO DA TERRA); a libração da Lua (até 8°) fica de fora, então a Terra paira PERTO do lugar exato; Fobos e Deimos não entram porque a fase orbital deles não tem âncora real no app.
+- [ ] **Bug pego pela sonda antes do ar:** a base equatorial do mundo tinha duas linhas iguais, e a Terra caía 10° ABAIXO do horizonte vista do centro do lado visível. A fumaça não pegaria nunca: só o teste de física pegou. Segundo: de Marte a Terra entra na lista de planetas e o planetário não tinha sprite para ela: quebrava o quadro.
+- [ ] **Conquista nova:** OBS-04 · O CÉU DE OUTRO MUNDO.
 
 ---
 

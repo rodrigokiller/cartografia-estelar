@@ -6998,6 +6998,101 @@ function localAltAzPrec(ra, dec, lst, lat, P){
   const e = -(sL*vx - cL*vy), n = vz*cφ - m*sφ, u = m*cφ + vz*sφ;
   return {alt:Math.asin(Math.max(-1, Math.min(1, u))), az:((Math.atan2(e, n) % (2*Math.PI)) + 2*Math.PI) % (2*Math.PI)};
 }
+/* ================= r308 · O PLANETÁRIO DE OUTRO MUNDO =================
+   O motor mais caro do projeto (12 builds) existia para um único lugar do
+   universo. As amarras à Terra eram três, e nenhuma estrutural: (1) o tempo
+   sideral e a matriz de precessão, que giram as 5 mil estrelas, as linhas e a
+   Via Láctea; (2) o Sol, a Lua e os planetas, calculados como vistos daqui;
+   (3) a cor do céu, chumbada no shader da abóboda.
+   A saída de (1) foi ver que localFrame aplica a matriz PM a TODO vetor do
+   catálogo antes de lst/latitude: trocando PM pela rotação IAU do mundo (polo
+   RA/Dec e o ângulo W do meridiano) e lst por W + longitude, o céu inteiro
+   gira certo para qualquer corpo sem tocar numa linha do desenho. O catálogo
+   é J2000 e a rotação IAU é definida no ICRF: a precessão da Terra nem entra.
+   (2) virou localCalcMundo: da Lua, a TERRA é o astro grande (direção exata:
+   o oposto do vetor geocêntrico da Lua, tamanho 2 asin(6371/d), a fase sai
+   sozinha da luz direcional), e de Marte a Terra vira um planeta na lista,
+   com o Sol 0,35 grau em vez de 0,53. (3) virou o uniform uMundo: Marte de
+   dia é caramelo e o pôr do sol é AZUL em volta do Sol (a poeira espalha o
+   azul para a frente, o contrário daqui); a Lua não tem ar: céu preto ao
+   meio-dia, sem crepúsculo e sem névoa.
+   HONESTIDADES: o W da Lua é o termo linear da IAU (a libração de até 8 graus
+   fica de fora: a Terra paira perto do lugar certo, não no exato); Fobos e
+   Deimos não entram porque a fase orbital deles não tem âncora real no app;
+   os horários seguem em UTC da Terra; ISS, GPS e APONTAR só fazem sentido
+   daqui. */
+const LOCAL_MUNDOS = {
+  terra:{idx:0, nome:'TERRA', tit:'◎ PLANETÁRIO', diaH:24, raio:6371, sitio:[-23.55, -46.63]},
+  marte:{idx:1, nome:'MARTE', tit:'◎ PLANETÁRIO DE MARTE', diaH:24.66, raio:3389.5, a0:317.68143, d0:52.88650, w0:176.630, w1:350.891982443297, sitio:[18.44, 77.45]},
+  lua:{idx:2, nome:'LUA', tit:'◎ PLANETÁRIO DA LUA', diaH:708.73, raio:1737.4, a0:269.9949, d0:66.5392, w0:38.3213, w1:13.17635815, sitio:[0.67, 23.47]},
+};
+const LOCAL_SITIOS = {
+  marte:[['Cratera Jezero · Perseverance', 18.44, 77.45], ['Cratera Gale · Curiosity', -4.59, 137.44], ['Olympus Mons · o cume', 18.65, -133.8], ['Valles Marineris · Melas Chasma', -10.5, -72.5],
+         ['Planície de Chryse · Viking 1', 22.27, -47.95], ['Utopia Planitia · Zhurong', 25.07, 109.93], ['Elysium Planitia · InSight', 4.5, 135.6], ['Polo norte · a calota', 89.5, 0], ['Hellas · o fundo da bacia', -42.4, 70.5]],
+  lua:[['Mar da Tranquilidade · Apollo 11', 0.67, 23.47], ['Cratera Tycho', -43.31, -11.36], ['Cratera Copérnico', 9.62, -20.08], ['Mar das Chuvas · Luna 17', 38.24, -35.0],
+       ['Taurus-Littrow · Apollo 17', 20.19, 30.77], ['Oceano das Tempestades · Apollo 12', -3.01, -23.42], ['Polo sul · Shackleton', -89.9, 0], ['Von Kármán · Chang e 4, lado oculto', -45.44, 177.6], ['Mare Moscoviense · lado oculto', 27.3, 148.0]],
+};
+/* a rotação do mundo: a base equatorial dele nas coordenadas J2000 do catálogo (linhas = eixos x, y, z do corpo) */
+function localRotMundo(m, ms){
+  const d = localJD(ms) - 2451545.0;
+  const a0 = m.a0*D2R, d0 = m.d0*D2R, W = ((m.w0 + m.w1*d) % 360 + 360) % 360;
+  const zb = [Math.cos(d0)*Math.cos(a0), Math.cos(d0)*Math.sin(a0), Math.sin(d0)];
+  const no = [-Math.sin(a0), Math.cos(a0), 0];                       /* o nó ascendente do equador do corpo */
+  const pb = [zb[1]*no[2] - zb[2]*no[1], zb[2]*no[0] - zb[0]*no[2], zb[0]*no[1] - zb[1]*no[0]];
+  /* x do corpo = o nó Q; y = z × x (pb); z = o polo. W entra como o tempo sideral: é o ângulo do meridiano zero a partir de Q.
+     A primeira versão usava -(z × y) na segunda linha, que é x de novo: a matriz tinha duas linhas iguais e a Terra
+     caía 10 graus ABAIXO do horizonte vista do centro do lado visível da Lua (pego pela sonda de física do r308) */
+  return {P:[no[0], no[1], no[2], pb[0], pb[1], pb[2], zb[0], zb[1], zb[2]], W:W*D2R};
+}
+function localCalcMundo(ms, lat, lon){
+  const mundo = LOCAL.mundo || 'terra';
+  if(mundo === 'terra') return localCalc(ms, lat, lon);
+  const m = LOCAL_MUNDOS[mundo], R = localRotMundo(m, ms), lst = R.W + lon*D2R, φ = lat*D2R, eps = 23.4392911*D2R;
+  const hz = (vx, vy, vz)=>{ const q = localEquat(Math.atan2(vy, vx), Math.asin(vz/Math.hypot(vx, vy, vz)), eps); return localAltAzPrec(q.ra, q.dec, lst, φ, R.P); };
+  const eu = localKepler(mundo, ms);
+  const sol = {x:0, y:0, z:0};
+  let hs, angSol, rS = 1;
+  if(eu){ hs = hz(-eu.x, -eu.y, -eu.z); rS = Math.hypot(eu.x, eu.y, eu.z); angSol = 2*Math.asin(695700/(rS*149597870)); }
+  else { hs = {alt:-1, az:0}; angSol = 0.009; }
+  /* da LUA, a Terra é o astro grande: o oposto do vetor geocêntrico da Lua, com o tamanho e a fase de verdade */
+  let lua = {alt:-1, az:0, ang:0, ilum:0, eclLunar:null, eclSolar:null, sepSL:0, nome:null};
+  const planetas = [];
+  if(mundo === 'lua'){
+    const L = localLua(ms), S = localSol(ms);
+    const qT = localEquat(L.lam + Math.PI, -L.beta, localObliq(ms));
+    const ht = localAltAzPrec(qT.ra, qT.dec, lst, φ, R.P);
+    let sep = Math.acos(Math.cos(L.beta)*Math.cos(L.lam - S.lam));
+    lua = {alt:ht.alt, az:ht.az, ang:2*Math.asin(6371/L.r), ilum:(1 + Math.cos(sep))/2, eclLunar:null, eclSolar:null, sepSL:Math.PI - sep, nome:'TERRA'};
+    /* o Sol visto da Lua é o Sol visto da Terra, com um grau de paralaxe que não se vê */
+    const qs = localEquat(S.lam, 0, localObliq(ms)); hs = localAltAzPrec(qs.ra, qs.dec, lst, φ, R.P); angSol = 2*Math.asin(695700/S.r);
+    const terraH = localKepler('terra', ms);
+    for(const id of ['mercurio', 'venus', 'marte', 'jupiter', 'saturno']){
+      const Pp = localKepler(id, ms); if(!Pp || !terraH) continue;
+      const x = Pp.x - terraH.x, y = Pp.y - terraH.y, z = Pp.z - terraH.z, d = Math.hypot(x, y, z);
+      const rp = Math.hypot(Pp.x, Pp.y, Pp.z), fase = (1 + (Pp.x*x + Pp.y*y + Pp.z*z)/(rp*d))/2;
+      planetas.push({id, nome:ALLBODIES[id] ? ALLBODIES[id].name : id.toUpperCase(), alt:hz(x, y, z).alt, az:hz(x, y, z).az, d, fase});
+    }
+  } else if(eu){
+    for(const id of ['mercurio', 'venus', 'terra', 'jupiter', 'saturno']){
+      const Pp = localKepler(id, ms); if(!Pp) continue;
+      const x = Pp.x - eu.x, y = Pp.y - eu.y, z = Pp.z - eu.z, d = Math.hypot(x, y, z);
+      const rp = Math.hypot(Pp.x, Pp.y, Pp.z), fase = (1 + (Pp.x*x + Pp.y*y + Pp.z*z)/(rp*d))/2;
+      const a = hz(x, y, z);
+      planetas.push({id, nome:ALLBODIES[id] ? ALLBODIES[id].name : id.toUpperCase(), alt:a.alt, az:a.az, d, fase});
+    }
+  }
+  return {lst, eps, PM:R.P, sol:{alt:hs.alt, az:hs.az, ang:angSol, ra:0, dec:0}, lua, planetas, mundo};
+}
+function localAbrirPara(id){
+  if(!LOCAL_MUNDOS[id]) return;
+  if(id === 'terra'){ LOCAL.mundo = 'terra'; localSelecao(!LOCAL.sel); return; }
+  LOCAL.mundo = id;
+  const guardado = String(store.get('carto:local_' + id, '')).split(',').map(Number);
+  const s = (guardado.length === 2 && guardado.every(isFinite)) ? guardado : LOCAL_MUNDOS[id].sitio;
+  LOCAL.tz = undefined; LOCAL.nuvem = null; LOCAL.nuvemErro = false;
+  localAbre(s[0], s[1]);
+  if(typeof feito === 'function') feito('planetariofora');
+}
 /* tudo que aparece no céu do lugar na data ms */
 function localCalc(ms, lat, lon){
   const eps = localObliq(ms), lst = (localGMST(ms) + lon)*D2R, φ = lat*D2R;
@@ -7057,7 +7152,7 @@ function localEscolheNoMapa(x, y){
   localSelecao(false);
   localAbre(lat, lon);
 }
-function localVaiPara(lat, lon){ LOCAL.lat = lat; LOCAL.lon = lon; LOCAL.tz = undefined; LOCAL.nuvem = null; LOCAL.nuvemErro = false;   /* r303 · outro lugar, outro fuso e outra nuvem */ store.set('carto:local', lat.toFixed(3) + ',' + lon.toFixed(3)); localMapa(); LOCAL.ultimo = 0; }
+function localVaiPara(lat, lon){ LOCAL.lat = lat; LOCAL.lon = lon; LOCAL.tz = undefined; LOCAL.nuvem = null; LOCAL.nuvemErro = false;   /* r303 · outro lugar, outro fuso e outra nuvem */ store.set((LOCAL.mundo && LOCAL.mundo !== 'terra') ? 'carto:local_' + LOCAL.mundo : 'carto:local', lat.toFixed(3) + ',' + lon.toFixed(3));   /* r308 · um lugar por mundo */ localMapa(); LOCAL.ultimo = 0; }
 /* r289 · as 5.044 estrelas até magnitude 6 (ceu6.js), carregadas só quando o céu abre; a cor pelo B-V */
 function localCorBV(bv){ return bv < 0.0 ? 0xa8c8ff : (bv < 0.3 ? 0xd0e0ff : (bv < 0.6 ? 0xf4f4ff : (bv < 0.95 ? 0xfff0c8 : (bv < 1.4 ? 0xffd8a0 : 0xffb080)))); }
 function localMontaCat6(){
@@ -7076,8 +7171,12 @@ function localMontaCat6(){
 }
 function localAbre(lat, lon){
   LOCAL._hh = null; LOCAL._bz = null; LOCAL._info = null;   /* r293 · reabrir redesenha */
+  if(!LOCAL.mundo) LOCAL.mundo = 'terra';
+  { const tt = document.getElementById('localtit'); if(tt) tt.textContent = t(LOCAL_MUNDOS[LOCAL.mundo].tit); }   /* r308 */
   if(isFinite(lat) && isFinite(lon)) localVaiPara(lat, lon);
   localMonta();
+  if(LOCAL.domeUni) LOCAL.domeUni.uMundo.value = LOCAL_MUNDOS[LOCAL.mundo].idx;   /* r308 · a cor do céu */
+  if(LOCAL.luaMat) LOCAL.luaMat.color.setHex(LOCAL.mundo === 'lua' ? 0x6f9fe8 : 0xcfcac0);   /* r308 · da Lua o astro grande é a Terra, azul */
   if(typeof feito === 'function') feito('planetario');   /* r307 */
   if(typeof CEU6 !== 'undefined') localMontaCat6();
   else if(!LOCAL.cat6){ LOCAL.cat6 = 'carregando'; satVivoScript('ceu6.js').then(()=>{ LOCAL.cat6 = 'ok'; localMontaCat6(); }).catch(()=>{ LOCAL.cat6 = 'erro'; }); }
@@ -7131,7 +7230,8 @@ function localMapaGrande(liga){
 function localMapaBusca(){
   const q = document.getElementById('lmgq'), lista = document.getElementById('lmglista'); if(!q || !lista) return;
   const n = norm(q.value || '');
-  const achados = (n ? LOCAL_CIDADES.filter(c=>norm(c[0]).indexOf(n) >= 0) : LOCAL_CIDADES.slice(0, 8)).slice(0, 8);
+  const lugares = (LOCAL.mundo && LOCAL.mundo !== 'terra') ? (LOCAL_SITIOS[LOCAL.mundo] || []) : LOCAL_CIDADES;   /* r308 */
+  const achados = (n ? lugares.filter(c=>norm(c[0]).indexOf(n) >= 0) : lugares.slice(0, 9)).slice(0, 9);
   lista.innerHTML = achados.map(c=>'<div class="satrow" data-lat="' + c[1] + '" data-lon="' + c[2] + '"><span>' + esc(c[0]) + '</span><b>' + Math.abs(c[1]).toFixed(1) + '° ' + (c[1] >= 0 ? 'N' : 'S') + ' · ' + Math.abs(c[2]).toFixed(1) + '° ' + (c[2] >= 0 ? t('L') : t('O')) + '</b></div>').join('');
 }
 function localMonta(){
@@ -7146,20 +7246,30 @@ function localMonta(){
      visto de 1,7 m de altura: a distância no chão vem da depressão (d = 1,7/tan), a textura é fbm nessa coordenada (grande
      perto dos pés, comprimida no horizonte) e a névoa toma conta ao longe. O piso (hemisfério de raio 400) usa o mesmo
      shader e sobe 5 graus acima do horizonte para tampar as estrelas atrás dos morros; acima do relevo ele descarta o pixel */
-  const domeUni = {uSunAlt:{value:0}, uSunDir:{value:new THREE.Vector3(0, 0, -1)}};
-  const domeFrag = NOISE_GLSL + 'uniform float uSunAlt; uniform vec3 uSunDir; uniform float uPiso; varying vec3 vD;\n'
-      + 'void main(){ float h = vD.y; float day = smoothstep(-0.10, 0.12, uSunAlt); float tw = exp(-abs(uSunAlt + 0.02)*14.0);\n'
-      + ' vec3 night = mix(vec3(0.045,0.06,0.11), vec3(0.012,0.016,0.04), clamp(h*1.4, 0.0, 1.0));\n'
-      + ' vec3 dayc = mix(vec3(0.66,0.80,0.96), vec3(0.20,0.44,0.86), clamp(h*1.5, 0.0, 1.0));\n'
+  const domeUni = {uSunAlt:{value:0}, uSunDir:{value:new THREE.Vector3(0, 0, -1)}, uMundo:{value:(LOCAL_MUNDOS[LOCAL.mundo || 'terra'] || LOCAL_MUNDOS.terra).idx}};   /* r308 */
+  const domeFrag = NOISE_GLSL + 'uniform float uSunAlt; uniform vec3 uSunDir; uniform float uPiso; uniform float uMundo; varying vec3 vD;\n'
+      + 'void main(){ float h = vD.y; float semAr = step(1.5, uMundo); float marte = step(0.5, uMundo)*(1.0 - semAr);\n'
+      + ' float day = smoothstep(-0.10, 0.12, uSunAlt)*(1.0 - semAr); float tw = exp(-abs(uSunAlt + 0.02)*14.0)*(1.0 - semAr);\n'
+      /* r308 · a Lua não tem ar: o céu é preto ao meio-dia, sem crepúsculo e sem névoa. Marte de dia é caramelo
+         (a poeira em suspensão) e o crepúsculo é AZUL em volta do Sol: a poeira fina espalha o azul para a frente */
+      + ' vec3 night = mix(mix(vec3(0.045,0.06,0.11), vec3(0.030,0.026,0.030), marte), vec3(0.012,0.016,0.04), clamp(h*1.4, 0.0, 1.0))*(1.0 - semAr*0.85);\n'
+      + ' vec3 dayT = mix(vec3(0.66,0.80,0.96), vec3(0.20,0.44,0.86), clamp(h*1.5, 0.0, 1.0));\n'
+      + ' vec3 dayM = mix(vec3(0.86,0.66,0.48), vec3(0.62,0.44,0.32), clamp(h*1.5, 0.0, 1.0));\n'
+      + ' vec3 dayc = mix(dayT, dayM, marte);\n'
       + ' vec3 c = mix(night, dayc, day);\n'
       + ' float twk = max(0.0, dot(normalize(vec3(vD.x, 0.0, vD.z)), normalize(vec3(uSunDir.x, 0.0, uSunDir.z))));\n'
-      + ' c += vec3(0.98,0.48,0.16)*tw*pow(twk, 3.0)*max(0.0, 1.0 - h*3.5);\n'
-      + ' c += mix(vec3(0.0), vec3(0.55,0.65,0.80), day)*exp(-max(h, 0.0)*22.0)*0.30;\n'
+      + ' c += mix(vec3(0.98,0.48,0.16), vec3(0.40,0.55,0.95), marte)*tw*pow(twk, 3.0)*max(0.0, 1.0 - h*3.5);\n'
+      + ' c += mix(vec3(0.0), mix(vec3(0.55,0.65,0.80), vec3(0.72,0.55,0.40), marte), day)*exp(-max(h, 0.0)*22.0)*0.30;\n'
       + ' float az = atan(vD.x, -vD.z); vec3 ca = vec3(cos(az), sin(az), 0.0);\n'
       + ' float r1 = 0.008 + 0.034*fbm(ca*2.2 + vec3(0.0, 0.0, 5.0)); float r2 = 0.002 + 0.018*fbm(ca*5.0 + vec3(0.0, 0.0, 11.0));\n'
       + ' if(uPiso > 0.5 && h > max(r1, r2) + 0.003) discard;\n'
-      + ' vec3 nevoa = mix(vec3(0.055,0.065,0.095), vec3(0.64,0.73,0.86), day);\n'
-      + ' vec3 solo = mix(vec3(0.030,0.034,0.028), vec3(0.27,0.30,0.21), day);\n'
+      + ' vec3 nevoa = mix(vec3(0.055,0.065,0.095), mix(vec3(0.64,0.73,0.86), vec3(0.78,0.62,0.48), marte), day);\n'
+      + ' float sol2 = smoothstep(-0.10, 0.12, uSunAlt);\n'
+      + ' vec3 soloT = mix(vec3(0.030,0.034,0.028), vec3(0.27,0.30,0.21), day);\n'
+      + ' vec3 soloM = mix(vec3(0.040,0.026,0.020), vec3(0.52,0.30,0.18), day);\n'
+      + ' vec3 soloL = mix(vec3(0.030,0.030,0.030), vec3(0.42,0.41,0.39), sol2);\n'
+      + ' vec3 solo = mix(mix(soloT, soloM, marte), soloL, semAr);\n'
+      + ' nevoa = mix(nevoa, solo*0.9, semAr);\n'
       + ' float fw = fwidth(h) + 1e-5;\n'
       + ' vec3 morroL = mix(solo*0.55, nevoa, 0.55 + 0.15*day); vec3 morroP = mix(solo*0.45, nevoa, 0.22);\n'
       + ' c = mix(morroL, c, smoothstep(r1 - fw, r1 + fw, h));\n'
@@ -7170,7 +7280,7 @@ function localMonta(){
       + '   c2 = mix(c2, nevoa, 1.0 - exp(-d/700.0)); c = c2; }\n'
       + ' gl_FragColor = vec4(c, 1.0); }';
   const domeMat = (ehPiso)=>new THREE.ShaderMaterial({side:THREE.BackSide, depthWrite:true, extensions:{derivatives:true},
-    uniforms:{uSunAlt:domeUni.uSunAlt, uSunDir:domeUni.uSunDir, uPiso:{value:ehPiso ? 1 : 0}},
+    uniforms:{uSunAlt:domeUni.uSunAlt, uSunDir:domeUni.uSunDir, uMundo:domeUni.uMundo, uPiso:{value:ehPiso ? 1 : 0}},
     vertexShader:'varying vec3 vD; void main(){ vD = normalize(position); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
     fragmentShader:domeFrag});
   const dome = new THREE.Mesh(new THREE.SphereGeometry(900, 64, 48), domeMat(false));
@@ -7197,7 +7307,7 @@ function localMonta(){
   const lua = new THREE.Mesh(new THREE.SphereGeometry(1, 40, 28), luaMat); sc.add(lua);
   const luz = new THREE.DirectionalLight(0xffffff, 1.35); sc.add(luz); sc.add(luz.target); sc.add(new THREE.AmbientLight(0xffffff, 0.06));
   /* os planetas */
-  const CORP = {mercurio:0xd0c8b8, venus:0xfff4dc, marte:0xff9a6a, jupiter:0xffe2b0, saturno:0xf4dca0};
+  const CORP = {terra:0x9ec8ff, mercurio:0xd0c8b8, venus:0xfff4dc, marte:0xff9a6a, jupiter:0xffe2b0, saturno:0xf4dca0}   /* r308 · de Marte a Terra é um planeta da lista: sem o sprite dela, sp.position estourava no quadro */;
   const plan = {};
   for(const id in CORP){ const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:TEX_DOT, color:CORP[id], transparent:true, depthWrite:false, blending:THREE.AdditiveBlending})); sc.add(sp); plan[id] = sp; }
   /* r296 · as estacoes espaciais cruzando o ceu (ISS e Tiangong), pelos TLE dos satelites ao vivo */
@@ -7208,7 +7318,7 @@ function localMonta(){
     const via = viaLacteaPontos(sc, (ra, dec)=>{ const r = ra*D2R, d = dec*D2R; return new THREE.Vector3(Math.cos(d)*Math.cos(r), Math.cos(d)*Math.sin(r), Math.sin(d)).multiplyScalar(720); }, QLOW ? 4.5 : 5.5, 0.085);
     via.matrixAutoUpdate = false; via.renderOrder = -5; LOCAL.via = via;
   }
-  LOCAL.r = r; LOCAL.sc = sc; LOCAL.cam = cam; LOCAL.dome = dome; LOCAL.pos = pos; LOCAL.pB = pB; LOCAL.pF = pF; LOCAL.linhas = linhas;
+  LOCAL.r = r; LOCAL.sc = sc; LOCAL.cam = cam; LOCAL.dome = dome; LOCAL.domeUni = domeUni; LOCAL.pos = pos; LOCAL.pB = pB; LOCAL.pF = pF; LOCAL.linhas = linhas;
   LOCAL.solDisco = solDisco; LOCAL.solGlow = solGlow; LOCAL.lua = lua; LOCAL.luaMat = luaMat; LOCAL.luz = luz; LOCAL.plan = plan;
   /* arrastar gira o olhar; a roda muda o campo */
   const wrap = document.getElementById('localwrap');
@@ -7323,6 +7433,7 @@ const LOCAL_DICA = {
   saturno:'A olho nu parece uma estrela amarelada parada. Os anéis precisam de um telescópio pequeno, e é uma das primeiras vezes que todo mundo lembra.',
   marte:'A olho nu, alaranjado e sem piscar. Quanto mais perto da oposição, maior e mais brilhante.',
   mercurio:'A olho nu, mas baixo e no clarão do crepúsculo: precisa de horizonte limpo e da hora certa.',
+  terra:'Vista de Marte, a Terra é a estrela da tarde ou da manhã: um ponto azul-claro brilhante, com a Lua ao lado num telescópio.',
 };
 /* r303 · nenhum fetch do app tinha prazo: se o servidor responde e trava, a
    promessa nunca resolve e a camada fica esperando para sempre */
@@ -7355,7 +7466,8 @@ function localHoraSufixo(){ return LOCAL.tz === undefined ? ' UTC' : ''; }
 /* varre as próximas 24 h de 10 em 10 minutos: acha a NOITE (Sol abaixo de -6,
    o crepúsculo civil) e, dentro dela, a altura máxima de cada astro */
 function localNoiteCalc(ms0, lat, lon){
-  const passo = 600000, N = 144, alvos = {}, noites = [];
+  const diaH = (LOCAL_MUNDOS[LOCAL.mundo || 'terra'] || LOCAL_MUNDOS.terra).diaH;   /* r308 · na Lua a noite dura 14 dias: a varredura cobre um dia do MUNDO */
+  const passo = Math.round(diaH*3600000/144), N = 144, alvos = {}, noites = [];
   /* a altura do Sol sozinha, que é barata: serve para afinar a borda da noite
      até o minuto. Com o passo de 10 minutos o horário mostrado errava até 7
      (medido contra uma conta independente), e horário de crepúsculo é
@@ -7372,14 +7484,14 @@ function localNoiteCalc(ms0, lat, lon){
   let dentro = false, ini = 0, ms = ms0;
   for(let i = 0; i <= N; i++){
     ms = ms0 + i*passo;
-    const C = localCalc(ms, lat, lon), eh = C.sol.alt < -6*D2R;
+    const C = localCalcMundo(ms, lat, lon), eh = C.sol.alt < -6*D2R;   /* r308 */
     if(eh && !dentro){ dentro = true; ini = i ? cruza(ms - passo, ms) : ms; }
     else if(!eh && dentro){ dentro = false; noites.push([ini, cruza(ms - passo, ms)]); }
     if(!eh) continue;
     const poe = (id, nome, alt, az, extra)=>{
       if(!alvos[id] || alt > alvos[id].alt) alvos[id] = Object.assign({id, nome, alt, az, ms}, extra || {});
     };
-    poe('lua', t('LUA'), C.lua.alt, C.lua.az, {ilum:C.lua.ilum});
+    if(C.lua && C.lua.ang > 0) poe(C.lua.nome === 'TERRA' ? 'terra' : 'lua', t(C.lua.nome || 'LUA'), C.lua.alt, C.lua.az, {ilum:C.lua.ilum});
     for(const p of C.planetas) poe(p.id, p.nome, p.alt, p.az, {fase:p.fase, d:p.d});
   }
   if(dentro) noites.push([ini, ms]);
@@ -7398,7 +7510,7 @@ function localNoiteCard(){
     h += '<h3>' + localHora(n0[0]) + ' › ' + localHora(n0[1]) + '</h3>';
     h += '<div class="lc-kind">' + t('A noite deste lugar, do fim do crepúsculo ao começo do próximo') + localHoraSufixo() + '</div>';
     /* a nuvem, se o Open-Meteo já respondeu */
-    const nu = LOCAL.nuvem;
+    const nu = (LOCAL.mundo && LOCAL.mundo !== 'terra') ? null : LOCAL.nuvem;
     if(nu && nu.horas){
       /* a faixa cobre a NOITE, não 12 horas fixas: numa noite de 9 h as três
          últimas barras cairiam depois do nascer do Sol */
@@ -7434,7 +7546,7 @@ function localNoiteCard(){
         + '</div>';
     }
     /* as estações espaciais desta noite, pelo mesmo motor do r296 */
-    if(typeof satellite !== 'undefined' && SATV.pronto){
+    if(typeof satellite !== 'undefined' && SATV.pronto && (!LOCAL.mundo || LOCAL.mundo === 'terra')){
       const passes = [];
       for(const id in LOCAL_EST) for(const p of localPassagens(LOCAL_EST[id], n0[0] - 3600000, LOCAL.lat, LOCAL.lon, 1))
         if(p.msMax <= n0[1] + 3600000) passes.push(Object.assign({est:id}, p));
@@ -7535,7 +7647,7 @@ function localFrame(){
   const ms = SIMT.data, agora = performance.now();
   if(agora - LOCAL.ultimo < 40) return;   /* ~25 quadros por segundo bastam */
   LOCAL.ultimo = agora;
-  const C = localCalc(ms, LOCAL.lat, LOCAL.lon), cam = LOCAL.cam;
+  const C = localCalcMundo(ms, LOCAL.lat, LOCAL.lon), cam = LOCAL.cam;   /* r308 */
   const lst = C.lst, φ = LOCAL.lat*D2R;
   /* as estrelas do catálogo giram com o tempo sideral */
   const pos = LOCAL.pos; let vis = 0;
@@ -7572,10 +7684,10 @@ function localFrame(){
   if(C.lua.eclLunar){ LOCAL.luz.intensity = C.lua.eclLunar === 'total' ? 0.12 : 0.5; LOCAL.luz.color.setHex(C.lua.eclLunar === 'total' ? 0xff7a48 : 0xffc8a8); } else { LOCAL.luz.intensity = 1.35; LOCAL.luz.color.setHex(0xffffff); }
   /* r296 · as estacoes cruzando o ceu: ponto ambar ao Sol, cinza na sombra da Terra */
   localEstGarante();
-  for(const id in LOCAL_EST){ const sp = LOCAL.est[id]; const e = localEstPos(LOCAL_EST[id], ms, LOCAL.lat, LOCAL.lon, C.sol); LOCAL.estPos[id] = e;
+  for(const id in LOCAL_EST){ const sp = LOCAL.est[id]; if(LOCAL.mundo && LOCAL.mundo !== 'terra'){ sp.visible = false; LOCAL.estPos[id] = null; continue; } const e = localEstPos(LOCAL_EST[id], ms, LOCAL.lat, LOCAL.lon, C.sol); LOCAL.estPos[id] = e;
     if(!e || e.alt <= 0){ sp.visible = false; continue; }
     sp.visible = true; sp.position.copy(localDir(e.alt, e.az)).multiplyScalar(650); sp.scale.setScalar(e.luz ? 5.5 : 3.8); sp.material.color.setHex(e.luz ? 0xffc98a : 0x8a94a8); sp.material.opacity = e.luz ? 0.95 : 0.55; }
-  for(const p of C.planetas){ const sp = LOCAL.plan[p.id]; const d = localDir(p.alt, p.az); sp.position.copy(d).multiplyScalar(700); const mag = p.id === 'venus' ? 5.5 : (p.id === 'jupiter' ? 5 : (p.id === 'marte' ? 4 : (p.id === 'saturno' ? 3.6 : 3.2))); sp.scale.setScalar(mag*(0.55 + 0.45*noite)); sp.visible = p.alt > -0.01 && (noite > 0.05 || p.id === 'venus'); }
+  for(const p of C.planetas){ const sp = LOCAL.plan[p.id]; const d = localDir(p.alt, p.az); sp.position.copy(d).multiplyScalar(700); const mag = p.id === 'venus' ? 5.5 : ((p.id === 'jupiter' || p.id === 'terra') ? 5 : (p.id === 'marte' ? 4 : (p.id === 'saturno' ? 3.6 : 3.2))); sp.scale.setScalar(mag*(0.55 + 0.45*noite)); sp.visible = p.alt > -0.01 && (noite > 0.05 || p.id === 'venus'); }
   /* a câmera olha para (az, alt) */
   const dV = localDir(LOCAL.alt*D2R, LOCAL.az*D2R);
   cam.position.set(0, 0, 0); if(LOCAL.sens && LOCAL.sensUp) cam.up.copy(LOCAL.sensUp); else cam.up.set(0, 1, 0); cam.lookAt(dV.x*10, dV.y*10, dV.z*10);   /* r297 · o up vem do topo da tela do aparelho */
@@ -7587,7 +7699,7 @@ function localFrame(){
   const rot = (dir, txt, cls, id, tipo)=>{ const q = proj(dir); if(!q) return; if(id) LOCAL.alvos.push({id, tipo, x:q.x, y:q.y}); hh += '<div class="llbl ' + cls + '"' + (id ? ' data-id="' + id + '" data-tipo="' + tipo + '"' : '') + ' style="left:' + q.x.toFixed(0) + 'px;top:' + q.y.toFixed(0) + 'px">' + txt + '</div>'; };
   [['N', 0], ['L', 90], ['S', 180], ['O', 270]].forEach(c=>rot(localDir(0.004, c[1]*D2R), t(c[0]), 'hz'));
   if(C.sol.alt > -0.02) rot(dS, t('SOL') + (C.lua.eclSolar ? ' · ' + t('ECLIPSE') + ' ' + t(C.lua.eclSolar.toUpperCase()) : ''), 'sol', 'sol', 'corpo');
-  if(C.lua.alt > -0.02) rot(dL, t('LUA') + ' · ' + Math.round(C.lua.ilum*100) + '%' + (C.lua.eclLunar ? ' · ' + t('ECLIPSE') + ' ' + t(C.lua.eclLunar.toUpperCase()) : ''), 'lua', 'lua', 'corpo');
+  if(C.lua.alt > -0.02) rot(dL, t(C.lua.nome || 'LUA') + ' · ' + Math.round(C.lua.ilum*100) + '%' + (C.lua.eclLunar ? ' · ' + t('ECLIPSE') + ' ' + t(C.lua.eclLunar.toUpperCase()) : ''), 'lua', 'lua', 'corpo');
   for(const p of C.planetas) if(LOCAL.plan[p.id].visible) rot(localDir(p.alt, p.az), p.nome, 'pla', p.id, 'corpo');
   for(const id in LOCAL_EST){ const e = LOCAL.estPos[id]; if(e && e.alt > 0.005) rot(localDir(e.alt, e.az), (id === 'iss' ? 'ISS' : 'TIANGONG') + (e.luz ? '' : ' · ' + t('NA SOMBRA')), 'pla', id, 'corpo'); }   /* r296 */
   {   /* r293 · os nomes das brilhantes e das constelações aparecem de dia também */
@@ -7618,7 +7730,7 @@ function localMapa(){
   const g = c.getContext('2d'), W = c.width, H = c.height;
   g.fillStyle = '#0a1224'; g.fillRect(0, 0, W, H);
   try{
-    const tex = texturaTerra(), img = tex && tex.image;
+    const tex = (LOCAL.mundo === 'marte') ? texturaMarte() : (LOCAL.mundo === 'lua' ? texturaLua() : texturaTerra()), img = tex && tex.image;   /* r308 · o minimapa do mundo */
     if(img){
       const z = LOCAL.zoomMapa, lonC = (z > 1) ? LOCAL.lon : 0, latC = (z > 1) ? LOCAL.lat : 0;
       const sw = img.width/z, sh = img.height/z;
@@ -7640,7 +7752,7 @@ function localInfo(C, ms, vis){
   const solTxt = C.sol.alt > 0 ? t('DIA') + ' · ' + t('SOL A') + ' ' + Math.round(C.sol.alt/D2R) + '°' : (C.sol.alt > -6*D2R ? t('CREPÚSCULO') : (C.sol.alt > -18*D2R ? t('CREPÚSCULO ASTRONÔMICO') : t('NOITE')));
   el.innerHTML = 'LAT ' + Math.abs(la).toFixed(2) + '° ' + (la >= 0 ? 'N' : 'S') + ' · LON ' + Math.abs(lo).toFixed(2) + '° ' + (lo >= 0 ? t('L') : t('O'))
     + ' · ' + d.getUTCDate() + ' ' + MESES_N[d.getUTCMonth()] + ' ' + d.getUTCFullYear() + ' · ' + String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0') + ' UTC<br>'
-    + t('OLHANDO PARA') + ' ' + t(rumo) + ' · ' + Math.round(LOCAL.alt) + '° ' + t('ACIMA DO HORIZONTE') + ' · ' + solTxt + ' · ' + t('LUA') + ' ' + Math.round(C.lua.ilum*100) + '%'
+    + t('OLHANDO PARA') + ' ' + t(rumo) + ' · ' + Math.round(LOCAL.alt) + '° ' + t('ACIMA DO HORIZONTE') + ' · ' + solTxt + (C.lua && C.lua.ang > 0 ? ' · ' + t(C.lua.nome || 'LUA') + ' ' + Math.round(C.lua.ilum*100) + '%' : '') + ((LOCAL.mundo && LOCAL.mundo !== 'terra') ? ' · ' + t('HORÁRIO DA TERRA') : '')
     + (C.lua.eclSolar ? ' · <b>' + t('ECLIPSE SOLAR') + ' ' + t(C.lua.eclSolar.toUpperCase()) + '</b>' : '') + (C.lua.eclLunar ? ' · <b>' + t('ECLIPSE LUNAR') + ' ' + t(C.lua.eclLunar.toUpperCase()) + '</b>' : '');
 }
 /* r280 · o CONFIGURADOR dos satélites ao vivo (ideia dele): os grupos do catálogo com a legenda das cores e o lixo
@@ -14895,7 +15007,8 @@ const CONQ_DESC = {visita:'Selecione um corpo e entre nele.', sondas:'No filtro 
   cartao:'No ⇪ da ficha de um corpo, gere o cartão de compartilhar.',
   vista:'No ⧉ da ficha, copie o link da vista exata.',
   sondatempo:'Abra a ≋ LINHA DO TEMPO de uma sonda (Voyager, Cassini, Parker...).',
-  chuva:'No relógio · ◈ · EVENTOS, chip CHUVAS DE METEOROS: escolha uma no mapa do Sol.'};
+  chuva:'No relógio · ◈ · EVENTOS, chip CHUVAS DE METEOROS: escolha uma no mapa do Sol.',
+  planetariofora:'No card de Marte ou da Lua, abra ◎ O CÉU VISTO DE lá.'};
 const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A LINHA DAS SONDAS',
   busca:'CAD-03 · LOCALIZAR PELA BUSCA', cinco:'CAD-04 · VISITAR 5 CORPOS DO SISTEMA SOLAR',
   pause:'CAD-05 · PAUSAR E RETOMAR O RELÓGIO', galaxia:'CAD-06 · SUBIR ATÉ A GALÁXIA',
@@ -14918,7 +15031,8 @@ const MISS_ROT = {visita:'CAD-01 · VISITAR UM CORPO', sondas:'CAD-02 · LIGAR A
   satelite:'VIV-01 · TRAVAR NUM SATÉLITE AO VIVO', tremor:'VIV-02 · A FICHA DE UM TREMOR', aurora:'VIV-03 · VER A AURORA AO VIVO',
   lancamento:'VIV-04 · IR AO T-0 DE UM LANÇAMENTO', ladrilhos:'VIV-05 · CHEGAR AO CHÃO EM LADRILHOS',
   bancada6:'TIM-07 · SEIS MUNDOS NA BANCADA', cartao:'TIM-08 · COMPARTILHAR UM CARTÃO', vista:'TIM-09 · COPIAR O LINK DE UMA VISTA',
-  sondatempo:'TIM-10 · A LINHA DO TEMPO DE UMA SONDA', chuva:'CEU-05 · CATALOGAR UMA CHUVA DE METEOROS'};
+  sondatempo:'TIM-10 · A LINHA DO TEMPO DE UMA SONDA', chuva:'CEU-05 · CATALOGAR UMA CHUVA DE METEOROS',
+  planetariofora:'OBS-04 · O CÉU DE OUTRO MUNDO'};   /* r308 */
 function feito(k){
   if(FEITO.has(k)) return;
   FEITO.add(k);
@@ -16303,7 +16417,7 @@ function cardRender(){
   /* ENTRAR agora mora no TOPO do card, como o Rodrigo pediu */
   if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='satlive' ? t('▶ ENTRAR · TRAVAR NO SATÉLITE') : (cur.navKind==='body'?t('▶ ENTRAR · TRAVAR LINK'):t('▶ ENTRAR · TRAVAR ROTA')))+'</button>';
   { const bT = (cur.type==='body') ? cur.b : ((cur.navKind==='body' && ALLBODIES[cur.navId]) ? ALLBODIES[cur.navId] : null);
-    if(bT && bT.id === 'terra' && ACT && ACT.kind === 'system' && ST.sys === 'sol') h += '<button class="xbtn" id="btnlocal">'+t(LOCAL.sel ? '✕ CANCELAR A ESCOLHA DO LUGAR' : '◎ ABRIR O PLANETÁRIO')+'</button>'; }   /* r287 */
+    if(bT && LOCAL_MUNDOS[bT.id] && ACT && ACT.kind === 'system' && ST.sys === 'sol') h += '<button class="xbtn" id="btnlocal" data-mundo="' + bT.id + '">'+t(bT.id === 'terra' ? (LOCAL.sel ? '✕ CANCELAR A ESCOLHA DO LUGAR' : '◎ ABRIR O PLANETÁRIO') : (bT.id === 'marte' ? '◎ O CÉU VISTO DE MARTE' : '◎ O CÉU VISTO DA LUA'))+'</button>'; }   /* r287; r308 · Marte e a Lua */
   { const bHab = (cur.type==='body') ? cur.b : ((cur.navKind==='body' && ALLBODIES[cur.navId]) ? ALLBODIES[cur.navId] : null);
     if(bHab && bHab.visual && MODEMAP[bHab.visual.mode] === 4)
       h += '<button class="xbtn" id="btnhab">'+t('◉ MUNDOS HABITÁVEIS LADO A LADO')+'</button>';
@@ -16492,7 +16606,7 @@ function cardRender(){
   }));
   const xe = $('#xexp'); if(xe) xe.addEventListener('click', ()=>{ ST.expanded=!ST.expanded; cardRender(); if(isMobile()&&ST.expanded)$('#panel').classList.add('expanded'); });
   const hb2 = $('#btnhab'); if(hb2) hb2.addEventListener('click', ()=>abrirHab(cur.b && cur.b.id));
-  const hl2 = $('#btnlocal'); if(hl2) hl2.addEventListener('click', ()=>localSelecao(!LOCAL.sel));   /* r287 */
+  const hl2 = $('#btnlocal'); if(hl2) hl2.addEventListener('click', ()=>localAbrirPara(hl2.dataset.mundo || 'terra'));   /* r287; r308 · por mundo */
   const cb = $('#cmpbtn'); if(cb) cb.addEventListener('click', ()=>{
     const ce = currentEntity(); if(!ce || !ce.b) return;
     const b = ce.b;
@@ -17278,7 +17392,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r307';
+const BUILD = 'r308';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -17866,6 +17980,11 @@ $('#datepop').addEventListener('click', e=>{
    A entrada `ver` é opcional e LEVA à feature, que é o que faz o painel valer:
    ler que existe um planetário não é a mesma coisa que abrir um. */
 const NOVIDADES = [
+  {b:'r308', d:'21 SET 2026', t:'O CÉU VISTO DA LUA E DE MARTE', ls:[
+    'O planetário só existia para a Terra. Agora o card de Marte e o da Lua têm o botão ◎ O CÉU VISTO DE LÁ: as mesmas 5 mil estrelas giradas pela rotação de verdade de cada mundo.',
+    'Da Lua, a Terra paira quase parada no céu, quatro vezes maior que a Lua daqui e com a fase ao contrário; do lado oculto ela nunca aparece. De Marte, o Sol é menor, o céu é caramelo, o pôr do sol é azul e a Terra vira a estrela da tarde.',
+    'Nove sítios em cada um, do Mar da Tranquilidade ao Von Kármán, de Jezero ao cume do Olympus Mons.'],
+   ver:()=>{ if(typeof localAbrirPara === 'function') localAbrirPara('lua'); }},
   {b:'r307', d:'21 SET 2026', t:'TREZE CONQUISTAS E CINCO PATENTES', ls:[
     'A última conquista era de 150 builds atrás: nada premiava o planetário, os satélites, os tremores, a aurora, os lançamentos, a bancada nem o cartão. Agora são 35, com 13 novas.',
     'A escada de patentes acabava em 72 pontos num atlas de 252: entraram cinco degraus por cima, até GUARDIÃO DO CATÁLOGO.',
@@ -18120,11 +18239,12 @@ $('#localx').addEventListener('click', localFecha);   /* r287 */
 $('#localsens').addEventListener('click', ()=>localSensores(!LOCAL.sens));
 $('#localgps').addEventListener('click', localGps);
 $('#localnoite').addEventListener('click', ()=>{
-  localNuvemBusca();
+  if(LOCAL.mundo === 'terra') localNuvemBusca();
   localNoiteCard();
   if(typeof tutInicia === 'function') tutInicia('noite', [{tx:'<b>HOJE À NOITE:</b> a lista do que vale a pena olhar deste lugar nas próximas horas, do mais alto no céu para o mais baixo. A barrinha mostra quanto o céu deve ficar limpo hora a hora (barra alta = mais limpo), e o <b>▶ VER NO CÉU</b> leva o relógio ao melhor momento e vira o olhar para o astro. Os horários são os do lugar, não os seus.'}]);
 });
 $('#localiss').addEventListener('click', ()=>{
+  if(LOCAL.mundo && LOCAL.mundo !== 'terra'){ showHint(t('A ISS ORBITA A TERRA: AS PASSAGENS SÓ EXISTEM VISTAS DAQUI')); return; }
   localPassagensCard();
   if(typeof tutInicia === 'function') tutInicia('isspass', [{tx:'<b>PASSAGENS:</b> a ISS e a Tiangong aparecem no céu deste lugar como um ponto âmbar quando estão ao Sol, cinza quando cruzam a sombra da Terra. A lista traz as passagens visíveis a olho nu dos próximos 5 dias; ▶ VER leva o relógio ao ponto alto de cada uma e vira o olhar para ela.'}]);
 });
