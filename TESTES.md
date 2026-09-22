@@ -8,7 +8,18 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 264 testes pendentes (do r131 ao r312) e 4 decisões suas.
+Hoje: 270 testes pendentes (do r131 ao r313) e 4 decisões suas.
+
+---
+
+## r313 · todo sistema do censo é navegável, e as correções no painel
+
+- [ ] **ENTRAR numa estrela do censo.** No 1:1 com EXOPLANETAS ligada, afaste a uns 300 al, toque num ponto que NÃO seja sistema do atlas (ex.: busque kepler-442, ou koi-351, o Kepler-90 de 8 planetas) e use ENTRAR: a câmera voa até a estrela e o sistema aparece montado na hora, com a estrela na cor do tipo e os planetas em órbita. Diga se a montagem convence e se o voo fica igual ao das estrelas do atlas.
+- [ ] **A cara dos planetas.** Kepler-442 b (super-Terra temperada, cara de Terra com continentes aleatórios, habitabilidade 45), KOI-351 (do rochoso de lava ao gigante morno), um Júpiter quente (WASP-12 é do atlas; tente HAT-P-7 ou TrES-4): rochoso, mini-Netuno e gigante devem se distinguir à primeira vista. Diga se alguma classe ficou estranha.
+- [ ] **A ficha do planeta e da estrela.** RAIO, MASSA, PERÍODO, DISTÂNCIA DA ESTRELA (estimada), TEMP. DE EQUILÍBRIO e DESCOBERTA; a seção MEDIDO E ESTIMADO separa o que o arquivo mede do que eu estimo. A estrela traz TIPO (do arquivo, ou pela temperatura quando o arquivo não tem: é o caso de 3.070 hospedeiros do Kepler), RAIO, MASSA e TEMPERATURA medidos (só 301 estrelas ficam sem raio e 7 sem massa). Em inglês, tudo em inglês.
+- [ ] **Voltar.** Dentro do sistema gerado, afastar até sair devolve ao mapa 1:1 estacionado na estrela (como nos sistemas do atlas); ESC volta para casa. O registro de bordo NÃO conta os corpos gerados na patente nem os sistemas gerados nos 57 (confira que o total não muda ao entrar num deles).
+- [ ] **O link.** Dentro do sistema gerado o endereço vira #sistema=exo_N (ou #corpo=exo_N_k num planeta): copie, abra numa aba nova: o mapa de casa monta, o catálogo desce e o sistema abre sozinho. Exemplo: universatlas.com/#sistema=exo_495 (KOI-351).
+- [ ] **CORREÇÕES no painel de novidades.** ? e O QUE MUDOU NESTA VERSÃO: no fim da lista, discreta, a seção CORREÇÕES com uma linha por conserto (sem número de build), em português (e em inglês no /en). Diga se é assim que você imaginava e se as linhas estão no tom certo.
 
 ---
 
