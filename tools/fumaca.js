@@ -3,6 +3,7 @@
    automatico executava os blocos 4 e 5 do JS, 12 mil das 16 mil linhas.
    Uso: node tools/sonda.js "sistema=sol" tools/fumaca.js pt-BR 120
         node tools/sonda.js "sistema=sol&escala=real" tools/fumaca.js en-US 120
+        node tools/sonda.js "corpo=terra" tools/fumaca.js pt-BR 120          (r311: o boot por LINK DE CORPO, o caminho que ficou 4 builds quebrado)
    Sai TUDO OK, ou ATENCAO com o fluxo que quebrou e o primeiro erro.
    REGRA: rodar antes de todo push que toque em UI, navegacao ou estado.
    CUIDADO ao acrescentar fluxo: use os seletores REAIS (o card escreve no
@@ -25,7 +26,7 @@ var P = [
   ['linha do tempo da Apollo', function(){ TUT.v.add('linhadotempo'); trajStart('apollo11'); var ok = !!TRAJ; trajCancelar(); return ok; }],
   ['planetario', function(){ TUT.v.add('ceulocal'); localAbre(-23.55,-46.63); var ok = LOCAL.on && !!LOCAL.r; localFecha(); return ok && !LOCAL.on; }],
   ['ficha de estrela do ceu', function(){ var f = fichaEstrela('sirius'); return !!(f && f.quick && f.quick.length); }],
-  ['deep link de corpo', function(){ syncHash(); return /#/.test(location.hash) || true; }]
+  ['ENTRAR num corpo (markVisited)', function(){ /* r311 · o caminho que o cadCinco apagado derrubava: irAoCorpo passa pelo markVisited nos dois modos (no cenico so DEPOIS do mergulho: a visita e conferida na fase 1) */ irAoCorpo('marte'); return typeof cadCinco === 'function' && typeof markVisited === 'function'; }]
 ];
 if(window.__fase === 0){
   if(typeof ACT === 'undefined' || !ACT || !ACT.scene || typeof NOVIDADES === 'undefined') return;
@@ -38,7 +39,8 @@ if(window.__fase === 0){
   }
   window.__fase = 1; D.t = performance.now();
 } else if(window.__fase === 1){
-  if(performance.now() - D.t < 1500) return;
+  if(performance.now() - D.t < 4000) return;   /* r311: 4 s, o mergulho cenico do ENTRAR leva ~2,6 s */
+  { var ok = VIS.has('marte') && cadCinco() >= 1; if(!ok) D.falhas++; D.res.push('visita de Marte registrada (markVisited) = ' + (ok ? 'ok' : 'FALHOU')); }   /* r311 */
   D.erros = (window.__err||[]).length; D.primeiroErro = (window.__err||[])[0] || '';
   window.__res = (D.falhas || D.erros ? 'ATENCAO' : 'TUDO OK') + ' · ' + D.res.join(' | ') + ' · erros de console: ' + D.erros + (D.primeiroErro ? ' (' + D.primeiroErro + ')' : '');
 }

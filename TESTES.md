@@ -8,7 +8,15 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 254 testes pendentes (do r131 ao r310) e 4 decisões suas.
+Hoje: 257 testes pendentes (do r131 ao r311) e 4 decisões suas.
+
+---
+
+## r311 · o boot que não trava mais (o seu bug do loading)
+
+- [ ] **O site abre de novo.** universatlas.com no seu navegador de sempre (o que ficava preso no loading com o erro do cadCinco): tem que abrir no último lugar guardado. E abrir direto um link de corpo, universatlas.com/#corpo=terra e universatlas.com/#corpo=marte&escala=real, nos dois modos. Desde o r307 (21 SET) esse caminho estourava; quem abria em #sistema=sol nunca viu.
+- [ ] **O ENTRAR conta a visita.** Entrar em qualquer planeta e abrir o registro ▤: a visita aparece, e depois da quinta do Sistema Solar a conquista CAD-05 dispara (era ela que faltava).
+- [ ] **A rede de segurança** (não dá para provocar sem quebrar o código, medido por sonda com a função apagada de propósito): um erro no link cai em casa com o aviso O LINK NÃO ABRIU E O MAPA CAIU EM CASA no rodapé e o loading termina.
 
 ---
 

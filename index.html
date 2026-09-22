@@ -15155,6 +15155,8 @@ function patenteIdx(n, total){
   let i = 0; for(let k = 0; k < PATENTES.length; k++) if(n >= PATENTES[k].n) i = k;
   return i;
 }
+/* r311 · a conta das visitas ao Sistema Solar (a conquista CAD 'cinco'): a linha sumiu no recorte por intervalo do r307 e o markVisited estourava no boot de todo link de corpo */
+function cadCinco(){ return [...VIS].filter(id=>ALLBODIES[id] && ALLBODIES[id]._sys === 'sol').length; }
 function checaPromocao(){
   const tot = Object.keys(ALLBODIES).length;
   const n = [...VIS].filter(id=>ALLBODIES[id]).length;
@@ -17502,7 +17504,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r310';
+const BUILD = 'r311';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -17525,7 +17527,7 @@ window.addEventListener('resize', queueResize);
 if(window.ResizeObserver) new ResizeObserver(queueResize).observe(canvas);
 resize();
 
-(function initFromHash(){
+(function initFromHash(){ try{
   if(!location.hash){
     const sv = store.get('carto:loc','');
     if(sv){ try{ history.replaceState(null, '', sv); }catch(e){} }
@@ -17618,6 +17620,16 @@ resize();
     tourRota(rid, true);
     tourStart();
   }, 1800);
+  }catch(e){
+    /* r311 · O BOOT NUNCA FICA PRESO: um erro ao abrir o link ou o lugar guardado (o cadCinco
+       apagado no recorte do r307 segurava o loading para SEMPRE em todo link de corpo, porque a
+       exceção matava o resto deste bloco, inclusive o bootNext e o laço de render) cai em casa,
+       registra no RLOG, avisa no fim do loading e limpa o lugar guardado para o F5 não repetir. */
+    try{ console.error("boot: " + (e && e.message), e); RLOG.push("boot-erro " + (e && e.message)); }catch(_){}
+    window.__bootErro = e;
+    try{ store.set("carto:loc", ""); history.replaceState(null, "", location.pathname + location.search); }catch(_){}
+    try{ if(!ACT){ ST.level = "system"; ST.sys = "sol"; ST.body = null; ST.mapCard = null; swapScene(buildSystem("sol")); } }catch(_){}
+  }
 })();
 /* r200 · WARM-UP: os canvases pesados (Lua e Marte) são desenhados DEPOIS do
    primeiro quadro, em folga, e a Lua troca de pele no lugar; a luz real é
@@ -18090,6 +18102,10 @@ $('#datepop').addEventListener('click', e=>{
    A entrada `ver` é opcional e LEVA à feature, que é o que faz o painel valer:
    ler que existe um planetário não é a mesma coisa que abrir um. */
 const NOVIDADES = [
+  {b:'r311', d:'21 SET 2026', t:'O BOOT QUE NÃO TRAVA MAIS', ls:[
+    'Desde o r307 abrir o mapa por um link de corpo (ou com o último lugar guardado num corpo) parava no loading para sempre: uma função de uma linha (a conta das visitas ao Sistema Solar) tinha sumido numa edição e o boot estourava. Voltou.',
+    'E o boot ficou blindado: se algum link falhar de novo, o mapa cai em casa, avisa no rodapé e limpa o lugar guardado, em vez de prender a tela.'],
+   ver:null},
   {b:'r310', d:'21 SET 2026', t:'O CENSO DOS EXOPLANETAS', ls:[
     'O zoom galáctico do 1:1 tinha 27 marcadores escolhidos à mão; agora a camada EXOPLANETAS CONFIRMADOS (no ≋) põe as 4.747 estrelas com planeta confirmado do NASA Exoplanet Archive na posição real do céu, e as 42 com um mundo temperado ficam verdes.',
     'Cada ponto abre a ficha da estrela com os planetas (raio, período, temperatura, ano e método), a busca acha qualquer uma pelo nome (ex.: Kepler-442) e as que já são sistemas do atlas têm ENTRAR.'],
@@ -18946,7 +18962,8 @@ function bootNext(){
 }
 function endBoot(){
   $('#boot').classList.add('off');
-  if(ST.level==='system') showHint(SYS[ST.sys].hint);
+  if(window.__bootErro) showHint(t('O LINK NÃO ABRIU E O MAPA CAIU EM CASA') + ' · ' + (window.__bootErro.message || ''));   /* r311 */
+  else if(ST.level==='system') showHint(SYS[ST.sys].hint);
 }
 $('#boot').addEventListener('pointerdown', endBoot);
 bootNext();

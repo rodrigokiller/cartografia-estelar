@@ -5,7 +5,7 @@
 const fs = require('fs'), path = require('path'), vm = require('vm');
 
 const RAIZ = path.join(__dirname, '..');
-const html = fs.readFileSync(path.join(RAIZ, 'index.html'), 'utf8');
+const html = fs.readFileSync(process.env.VERIFICA_INDEX || path.join(RAIZ, 'index.html'), 'utf8');   /* VERIFICA_INDEX: outro index (r311: provar que o gate pega um bug velho) */
 
 const blocos = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
 if(!blocos.length){ console.error('nenhum bloco <script> encontrado'); process.exit(1); }
@@ -152,6 +152,43 @@ for(let mudou = true; mudou; ){
 }
 for(const [id, b] of Object.entries(ALLBODIES))
   if(!alcancavel.has(id)) erros.push(`corpo "${id}" (${b.name}) está registrado mas nenhum sistema o cita: inalcançável no mapa`);
+
+/* 8. r311 · CHAMADA SEM DECLARACAO. O recorte por intervalo do r307 apagou o cadCinco (uma
+      linha entre duas funcoes reescritas) e a chamada dentro do markVisited ficou: todo link de
+      corpo estourava ReferenceError no boot e o loading ficava preso para sempre, por quatro
+      builds, porque nenhuma sonda abria o app num #corpo=. O vm.Script do lint 0 compila isso
+      sem reclamar (referencia livre e JS valido). Aqui: todo nome chamado como funcao (nome(
+      sem ponto antes) precisa de uma declaracao em algum lugar do JS: function, const/let/var
+      (declaradores multiplos inclusive), parametro, arrow, atribuicao ou metodo de objeto.
+      Strings, templates e comentarios saem antes; o que sobra de regex com parenteses e
+      getters vive na lista RESIDUO. Nome novo aqui = olhar antes de acrescentar. */
+{
+  const limpo = todo
+    .replace(/\/\*[\s\S]*?\*\//g, ' ')
+    .replace(/(^|[^:\\])\/\/[^\n]*/g, '$1')
+    .replace(/`(?:\\[\s\S]|\$\{[^}]*\}|[^`\\])*`/g, '``')
+    .replace(/'(?:\\.|[^'\\\n])*'/g, "''")
+    .replace(/"(?:\\.|[^"\\\n])*"/g, '""');
+  const decl = new Set();
+  for(const m of limpo.matchAll(/\bfunction\s+([A-Za-z_$][\w$]*)/g)) decl.add(m[1]);
+  for(const m of limpo.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)/g)) decl.add(m[1]);
+  for(const m of limpo.matchAll(/\b([A-Za-z_$][\w$]*)\s*=[^=>]/g)) decl.add(m[1]);             /* atribuicao e declaradores multiplos (let a = 1, b = 2) */
+  for(const m of limpo.matchAll(/\b(?:const|let|var)\s*[{\[]([^}\]]*)[}\]]/g)) for(const n of m[1].split(',')){ const k = n.split(':').pop().trim().split('=')[0].trim(); if(/^[A-Za-z_$][\w$]*$/.test(k)) decl.add(k); }
+  for(const m of limpo.matchAll(/\bfunction\b[^(]*\(([^)]*)\)/g)) for(const n of m[1].split(',')){ const k = n.trim().split('=')[0].trim().replace(/^\.\.\./, ''); if(/^[A-Za-z_$][\w$]*$/.test(k)) decl.add(k); }
+  for(const m of limpo.matchAll(/\(([^()]*)\)\s*=>/g)) for(const n of m[1].split(',')){ const k = n.trim().split('=')[0].trim().replace(/^\.\.\./, ''); if(/^[A-Za-z_$][\w$]*$/.test(k)) decl.add(k); }
+  for(const m of limpo.matchAll(/\b([A-Za-z_$][\w$]*)\s*=>/g)) decl.add(m[1]);
+  for(const m of limpo.matchAll(/^\s*(?:async\s+)?(?:get\s+|set\s+)?([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{/gm)) decl.add(m[1]);   /* metodo de objeto */
+  const GLOBAIS = new Set(('parseFloat parseInt isFinite isNaN Number String Boolean Array Object Math Date JSON Promise Set Map WeakMap WeakSet Float32Array Float64Array Uint8Array Uint16Array Uint32Array Int32Array Int16Array Int8Array Uint8ClampedArray ArrayBuffer DataView RegExp Error TypeError RangeError Symbol Proxy Reflect Intl BigInt Function eval requestAnimationFrame cancelAnimationFrame setTimeout clearTimeout setInterval clearInterval fetch alert confirm prompt encodeURIComponent decodeURIComponent encodeURI decodeURI escape unescape atob btoa structuredClone queueMicrotask matchMedia getComputedStyle Image Audio AudioContext webkitAudioContext OfflineAudioContext Blob File FileReader URL URLSearchParams AbortController TextEncoder TextDecoder ResizeObserver IntersectionObserver MutationObserver PointerEvent MouseEvent KeyboardEvent TouchEvent CustomEvent Event DOMParser XMLSerializer Worker WebSocket Notification performance THREE satellite localStorage sessionStorage navigator document window location history screen console crypto createImageBitmap OffscreenCanvas ImageData Path2D DeviceOrientationEvent DeviceMotionEvent getSelection open close focus blur print scroll scrollTo scrollBy postMessage').split(' '));
+  const RESIDUO = new Set(['RA', 'playing', 'innerHTML', 'set']);   /* regex /^RA(IO|DIUS)/, o evento 'playing' atras de uma regex com aspas, o setter innerHTML, o store.set */
+  const PALAVRA = /^(if|for|while|switch|catch|return|function|typeof|new|else|do|await|async|yield|delete|void|throw|in|of|instanceof|class|super|this)$/;
+  const semDecl = new Map();
+  for(const m of limpo.matchAll(/(^|[^.\w$])([A-Za-z_$][\w$]*)\s*\(/g)){
+    const nm = m[2];
+    if(PALAVRA.test(nm) || decl.has(nm) || GLOBAIS.has(nm) || RESIDUO.has(nm)) continue;
+    semDecl.set(nm, (semDecl.get(nm) || 0) + 1);
+  }
+  for(const [nm, c] of semDecl) erros.push(`${nm}() e chamado ${c}x mas nao tem declaracao em lugar nenhum do JS: ReferenceError garantido quando rodar (o cadCinco do r307)`);
+}
 
 const n = Object.keys(ALLBODIES).length;
 console.log(`${n} corpos · ${Object.keys(SYS).length} sistemas · ${STARSYS.length} marcadores · ${GALAXIES.length} galáxias`);
