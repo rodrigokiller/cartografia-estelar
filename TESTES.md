@@ -8,7 +8,19 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 257 testes pendentes (do r131 ao r311) e 4 decisões suas.
+Hoje: 264 testes pendentes (do r131 ao r312) e 4 decisões suas.
+
+---
+
+## r312 · o ✕ em todo painel, o planetário no foco e por link (a sua lista de 21 SET)
+
+- [ ] **Novidades.** ? e O QUE MUDOU NESTA VERSÃO: o ✕ está na ponta direita do cabeçalho (mesmo estilo do ✕ do card), o título ✦ NOVIDADES e o rodapé estão na fonte da casa (a mesma dos outros painéis), e a entrada do boot sumiu (a lista começa no r312 e no r310). O ✦ é um glifo (U+2726, como o ◎ e o ≋), não emoji: se ainda incomodar, sai. Em inglês (/en) a entrada do censo e a data SEP 21, 2026 aparecem traduzidas.
+- [ ] **O ✕ em todo painel.** Manual (?), música (♪), velocidade (»), busca (/), comparar (⚖) e registro de bordo (▤) ganharam o ✕ no canto superior direito, no estilo do ✕ do card; engrenagem, filtro e data já tinham e ficaram na mesma medida (18 px, 30 no celular). Cada um fecha pelo ✕.
+- [ ] **Planetário no foco cênico.** MAPA CÊNICO, ENTRAR na Terra: o card agora tem ◎ ABRIR O PLANETÁRIO e ele abre direto no seu último lugar (sem a etapa de tocar no globo, que só existe no mapa). Dentro de Marte e da Lua idem (◎ O CÉU VISTO DE MARTE / DA LUA).
+- [ ] **O link do planetário.** No planetário, vire o olhar, escolha a data e toque no ⧉ novo (ao lado do ✕): LINK DESTE CÉU COPIADO. Cole numa aba nova: o mapa de casa embaixo e o céu daquele lugar por cima, olhando para a mesma direção, com o mesmo campo e a mesma data (o relógio sai do AO VIVO). Cole numa aba já aberta: abre igual. Vale para a Terra, Marte e a Lua. Exemplo: universatlas.com/#planetario=lua~0.674~23.473~250~40~60~mycxxmo0 (Apollo 11, olhando para o oeste-sudoeste a 40°, 1 JAN 2027 12:00).
+- [ ] **ESTA NOITE.** O botão do planetário que era NOITE chama-se ESTA NOITE (em inglês TONIGHT); a linha de estado continua dizendo NOITE / NIGHT (a mesma palavra em português estava traduzida de dois jeitos e a linha de estado saía TONIGHT em inglês).
+- [ ] **Links que se comportavam mal (achados da varredura por agentes).** No 1:1, colar um link de vista (⧉ do card, #v=) numa aba que já está no 1:1 não pisca mais para o cênico e volta. Travar o HALLEY (ou a Parker, a Cassini) no 1:1 e dar F5: volta ao mapa 1:1 com ele na ficha, não a uma cena de foco. Travar o SPUTNIK 1 (ou Skylab, Mir) no 1:1 e dar F5: abre a ficha sem cena de foco. Colar universatlas.com/#corpo=apollo11&traj=1 numa aba aberta: a linha do tempo começa (antes só abria o foguete).
+- [ ] **Redes de segurança** (não dá para provocar sem quebrar o código; medidas por sonda): uma troca de cena que falhe não deixa mais a tela preta do fader ligada (o mapa fica onde estava e avisa); se o próprio 1:1 falhar no boot, a queda volta ao cênico; um link de vista com distância zero ou negativa não põe mais a câmera dentro do Sol.
 
 ---
 

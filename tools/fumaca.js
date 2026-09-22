@@ -26,12 +26,16 @@ var P = [
   ['linha do tempo da Apollo', function(){ TUT.v.add('linhadotempo'); trajStart('apollo11'); var ok = !!TRAJ; trajCancelar(); return ok; }],
   ['planetario', function(){ TUT.v.add('ceulocal'); localAbre(-23.55,-46.63); var ok = LOCAL.on && !!LOCAL.r; localFecha(); return ok && !LOCAL.on; }],
   ['ficha de estrela do ceu', function(){ var f = fichaEstrela('sirius'); return !!(f && f.quick && f.quick.length); }],
-  ['ENTRAR num corpo (markVisited)', function(){ /* r311 · o caminho que o cadCinco apagado derrubava: irAoCorpo passa pelo markVisited nos dois modos (no cenico so DEPOIS do mergulho: a visita e conferida na fase 1) */ irAoCorpo('marte'); return typeof cadCinco === 'function' && typeof markVisited === 'function'; }]
+  ['hashchange #corpo=marte (irAoCorpo + markVisited)', function(){ /* r311/r312 · o caminho que o cadCinco apagado derrubava, agora pelo handler de hashchange (colar um link numa aba aberta), que nenhuma sonda disparava; no cenico o markVisited so roda DEPOIS do mergulho: conferido na fase 1 */ location.hash = '#corpo=marte' + (ESCR.on ? '&escala=real' : ''); return typeof cadCinco === 'function' && typeof markVisited === 'function'; }]
 ];
 if(window.__fase === 0){
   if(typeof ACT === 'undefined' || !ACT || !ACT.scene || typeof NOVIDADES === 'undefined') return;
   TUT.v.add('boasvindas');
   D.res = []; D.falhas = 0;
+  /* r312 · o boot foi honrado? A fumaca dizia TUDO OK com o link caindo em casa pelo try/catch do r311 (achado da varredura) */
+  D.hash0 = location.hash; var mB = D.hash0.match(/^#corpo=([a-z0-9_]+)/i);
+  if(window.__bootErro){ D.falhas++; D.res.push('boot sem erro = FALHOU (' + window.__bootErro.message + ')'); } else D.res.push('boot sem erro = ok');
+  if(mB){ var idB = mB[1]; var okB = VIS.has(idB) && (ST.body === idB || (ST.mapCard && ST.mapCard.id === idB)); if(!okB) D.falhas++; D.res.push('link #corpo=' + idB + ' honrado = ' + (okB ? 'ok' : 'FALHOU')); }
   for(var i = 0; i < P.length; i++){
     var r; try{ r = P[i][1]() ? 'ok' : 'FALHOU'; }catch(e){ r = 'ERRO: ' + e.message; }
     if(r !== 'ok') D.falhas++;
@@ -39,8 +43,9 @@ if(window.__fase === 0){
   }
   window.__fase = 1; D.t = performance.now();
 } else if(window.__fase === 1){
-  if(performance.now() - D.t < 4000) return;   /* r311: 4 s, o mergulho cenico do ENTRAR leva ~2,6 s */
-  { var ok = VIS.has('marte') && cadCinco() >= 1; if(!ok) D.falhas++; D.res.push('visita de Marte registrada (markVisited) = ' + (ok ? 'ok' : 'FALHOU')); }   /* r311 */
+  if(performance.now() - D.t < 6000) return;   /* r311/r312: 6 s, o mergulho cenico do ENTRAR leva ~2,6 s e o loading fecha em ~5 s */
+  { var ok = VIS.has('marte') && cadCinco() >= 1 && (ST.body === 'marte' || (ST.mapCard && ST.mapCard.id === 'marte')); if(!ok) D.falhas++; D.res.push('chegou em Marte pelo hashchange (markVisited) = ' + (ok ? 'ok' : 'FALHOU')); }   /* r311/r312 */
+  { var okL = document.getElementById('boot').classList.contains('off'); if(!okL) D.falhas++; D.res.push('loading terminou = ' + (okL ? 'ok' : 'FALHOU')); }   /* r312 */
   D.erros = (window.__err||[]).length; D.primeiroErro = (window.__err||[])[0] || '';
   window.__res = (D.falhas || D.erros ? 'ATENCAO' : 'TUDO OK') + ' · ' + D.res.join(' | ') + ' · erros de console: ' + D.erros + (D.primeiroErro ? ' (' + D.primeiroErro + ')' : '');
 }

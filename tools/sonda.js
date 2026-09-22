@@ -20,6 +20,8 @@ const html = fs.readFileSync(process.env.SONDA_HTML || path.join(RAIZ, 'index.ht
 const topo = `<script>
 window.__err = [];
 window.addEventListener('error', function(e){ window.__err.push(e.message + ' @linha ' + e.lineno); });
+window.addEventListener('unhandledrejection', function(e){ window.__err.push('promise: ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason))); });
+(function(){ var ce = console.error.bind(console); console.error = function(){ try{ window.__err.push('console.error: ' + Array.prototype.map.call(arguments, function(a){ return a && a.message ? a.message : String(a); }).join(' ').slice(0, 220)); }catch(e){} ce.apply(console, arguments); }; })();   /* r312: o try/catch do r311 manda o erro de boot para o console.error, que a sonda nao via */
 (function(){ var r0 = window.requestAnimationFrame.bind(window);
   window.requestAnimationFrame = function(cb){ window.__rafCb = cb; return r0(cb); }; })();
 <\/script>\n`;

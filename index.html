@@ -180,6 +180,8 @@ body.touch:has(#localpop.on,#mission.on,#finder.on,#cmp.on,#help.on,#habpop.on,#
   background:linear-gradient(-45deg,transparent 50%,var(--line2) 50%,var(--line2) calc(50% + 1px),transparent calc(50% + 1px))}
 #panel::before,#panel::after{width:18px;height:18px}
 #findbox{position:relative}
+#findbox .fpx{top:9px;right:9px}
+#findbox #findin{padding-right:40px}   /* r312 · o ✕ da busca não cobre o fim do texto */
 #findbox::before,#findbox::after{width:12px;height:12px}
 #cmpcard{position:relative}
 #cmpcard::before,#cmpcard::after{width:16px;height:16px}
@@ -232,7 +234,7 @@ body.touch:has(#localpop.on,#mission.on,#finder.on,#cmp.on,#help.on,#habpop.on,#
   background:var(--panel);border:1px solid var(--line2);padding:12px 14px 10px;
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
 #cfgpop.on{display:flex;flex-direction:column}
-.fpx{position:absolute;top:8px;right:10px;width:20px;height:20px;background:none;
+.fpx{position:absolute;top:10px;right:12px;width:18px;height:18px;background:none;   /* r312 · a medida do ✕ do card (18 px), sempre no canto direito */
   border:1px solid var(--line2);color:var(--dim);font-family:var(--mono);font-size:9px;
   line-height:1;cursor:pointer;padding:0;z-index:3}
 .fpx:hover{color:var(--amber);border-color:var(--amber)}
@@ -249,11 +251,11 @@ body.touch:has(#localpop.on,#mission.on,#finder.on,#cmp.on,#help.on,#habpop.on,#
   clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
 #tourpop.on{display:flex;flex-direction:column;animation:tourpopnasce .24s ease-out}
 @keyframes tourpopnasce{0%{opacity:0;transform:translate(-50%,-48.5%)}100%{opacity:1;transform:translate(-50%,-50%)}}
-#tourpop .tphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
+#tourpop .tphead,#novopop .tphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
   font-family:var(--mono);font-size:9.5px;letter-spacing:2.5px;color:var(--amber)}
-#tourpop .tphead button{width:20px;height:20px;background:none;border:1px solid var(--line2);color:var(--dim);
+#tourpop .tphead button,#novopop .tphead button{width:18px;height:18px;background:none;border:1px solid var(--line2);color:var(--dim);
   font-family:var(--mono);font-size:9px;line-height:1;cursor:pointer;padding:0}
-#tourpop .tphead button:hover{color:var(--amber);border-color:var(--amber)}
+#tourpop .tphead button:hover,#novopop .tphead button:hover{color:var(--amber);border-color:var(--amber)}
 #tourpoplista{display:flex;flex-direction:column;gap:6px}
 .tprota{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;align-items:center;
   gap:1px 10px;text-align:left;background:rgba(63,140,255,.05);border:1px solid var(--line2);
@@ -264,7 +266,7 @@ body.touch:has(#localpop.on,#mission.on,#finder.on,#cmp.on,#help.on,#habpop.on,#
 .tprota .tpgo{grid-column:2;grid-row:1 / span 2;font-family:var(--mono);font-size:13px;color:var(--dim)}
 .tprota:hover .tpgo{color:var(--amber)}
 .tprota.feita .tpnm{color:var(--amber)}
-#tourpop .tpn{margin-top:10px;font-family:var(--mono);font-size:8.5px;letter-spacing:1.4px;
+#tourpop .tpn,#novopop .tpn{margin-top:10px;font-family:var(--mono);font-size:8.5px;letter-spacing:1.4px;
   color:var(--dim2);line-height:1.8}
 #datepop.on{display:block}
 body.touch #datepop{bottom:auto;top:62px;left:12px;z-index:80;max-width:calc(100vw - 24px)}   /* r276 · no celular ficava embaixo da folha do card */
@@ -283,7 +285,7 @@ body.touch #datepop{bottom:auto;top:62px;left:12px;z-index:80;max-width:calc(100
 #habpop.on{display:flex;flex-direction:column;animation:tourpopnasce .24s ease-out}
 #habpop .tphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
   font-family:var(--mono);font-size:9.5px;letter-spacing:2.5px;color:var(--amber)}
-#habpop .tphead button{width:20px;height:20px;background:none;border:1px solid var(--line2);color:var(--dim);
+#habpop .tphead button{width:18px;height:18px;background:none;border:1px solid var(--line2);color:var(--dim);
   font-family:var(--mono);font-size:9px;line-height:1;cursor:pointer;padding:0}
 #habscroll{overflow-x:auto;overflow-y:hidden;border:1px solid var(--line);background:#05080f;
   scrollbar-width:thin;scrollbar-color:var(--line2) rgba(63,140,255,.08)}
@@ -413,7 +415,7 @@ body.touch #localpop::before,body.touch #localpop::after{display:none}   /* r290
 body.touch #localbussola{width:60px;height:60px} body.touch #localmapa{width:120px} body.touch #localmapacv{width:120px;height:60px}
 #satpop .tphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
   font-family:var(--mono);font-size:9.5px;letter-spacing:2.5px;color:var(--amber)}
-#satpop .tphead button{width:20px;height:20px;background:none;border:1px solid var(--line2);color:var(--dim);
+#satpop .tphead button{width:18px;height:18px;background:none;border:1px solid var(--line2);color:var(--dim);
   font-family:var(--mono);font-size:9px;line-height:1;cursor:pointer;padding:0}
 #satpop .tpn{font-family:var(--mono);font-size:8.5px;letter-spacing:1.2px;color:var(--dim2);line-height:1.7;margin-top:10px}
 .satrow{display:flex;align-items:center;gap:9px;padding:7px 4px;border-bottom:1px solid var(--line);cursor:pointer;
@@ -425,7 +427,7 @@ body.touch #localbussola{width:60px;height:60px} body.touch #localmapa{width:120
 .satrow:hover{color:var(--amber)}
 #evtpop .tphead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
   font-family:var(--mono);font-size:9.5px;letter-spacing:2.5px;color:var(--amber)}
-#evtpop .tphead button{width:20px;height:20px;background:none;border:1px solid var(--line2);color:var(--dim);
+#evtpop .tphead button{width:18px;height:18px;background:none;border:1px solid var(--line2);color:var(--dim);
   font-family:var(--mono);font-size:9px;line-height:1;cursor:pointer;padding:0}
 #evtq{width:100%;background:rgba(10,18,34,.7);border:1px solid var(--line2);color:var(--ion);
   font-family:var(--mono);font-size:10px;letter-spacing:1.5px;padding:7px 9px;margin-bottom:8px;outline:none}
@@ -784,7 +786,7 @@ body.touch #datepop .dcol button{width:40px;height:30px;font-size:11px}
 body.touch #tourbar button{width:32px;height:32px;font-size:12px}
 body.touch .eyebrow #cardx2,body.touch .eyebrow #cardshare,body.touch .eyebrow #cardvista{width:30px;height:30px;font-size:13px}
 body.touch .eyebrow #cardshare{font-size:15px}
-body.touch #tourpop .tphead button,body.touch #habpop .tphead button,body.touch #satpop .tphead button,body.touch #evtpop .tphead button,body.touch .fpx,body.touch #lmgx{width:30px;height:30px;font-size:12px}
+body.touch #novopop .tphead button,body.touch #tourpop .tphead button,body.touch #habpop .tphead button,body.touch #satpop .tphead button,body.touch #evtpop .tphead button,body.touch .fpx,body.touch #lmgx{width:30px;height:30px;font-size:12px}
 body.touch #localpop .lpbtns button{height:30px;min-width:30px;font-size:9.5px}
 body.touch #localcard .lc-eye button{width:28px;height:28px;font-size:11px}
 body.touch #localmapa .lmz button{width:30px;height:28px}
@@ -1215,6 +1217,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   </div>
   <div id="phototoast"></div>
   <div id="player">
+    <button class="fpx" id="playerx" title="Fechar">✕</button>
     <div class="pl-now">♪ TRANSMISSÃO DE BORDO</div>
     <div class="pl-title" id="pl_title">…</div>
     <div class="pl-ctl">
@@ -1268,7 +1271,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="tpn">O que mudou de uns tempos para cá, do mais recente para o mais antigo. O ponto âmbar no ? aparece sozinho quando tem coisa nova.</div>
   </div>
   <div id="localpop">
-    <div class="lphead"><span id="localtit">◎ PLANETÁRIO</span><span class="lpbtns"><button id="localsens" data-tip="Apontar o celular para o céu: giroscópio e bússola (pede permissão)">APONTAR</button><button id="localgps" data-tip="Usar a posição do aparelho (pede permissão)">GPS</button><button id="localnoite" data-tip="O que vale a pena olhar nas próximas horas deste lugar">NOITE</button><button id="localiss" data-tip="As próximas passagens da ISS e da Tiangong neste lugar">ISS</button><button id="localhud" data-tip="Esconder ou mostrar a bússola e o mapa">HUD</button><button id="localdata" data-tip="Ver o céu em outra data">◈</button><button id="localx">✕</button></span></div>
+    <div class="lphead"><span id="localtit">◎ PLANETÁRIO</span><span class="lpbtns"><button id="localsens" data-tip="Apontar o celular para o céu: giroscópio e bússola (pede permissão)">APONTAR</button><button id="localgps" data-tip="Usar a posição do aparelho (pede permissão)">GPS</button><button id="localnoite" data-tip="O que vale a pena olhar nas próximas horas deste lugar">ESTA NOITE</button><button id="localiss" data-tip="As próximas passagens da ISS e da Tiangong neste lugar">ISS</button><button id="localhud" data-tip="Esconder ou mostrar a bússola e o mapa">HUD</button><button id="localdata" data-tip="Ver o céu em outra data">◈</button><button id="localvista" data-tip="Copiar o link deste céu: lugar, direção do olhar e data">⧉</button><button id="localx">✕</button></span></div>
     <div id="localwrap">
       <canvas id="localcv"></canvas>
       <div id="locallbls"></div>
@@ -1320,6 +1323,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div class="fp-n">O relógio no canto inferior esquerdo mostra a data do sistema. Pausar e viajar no tempo ficam lá.</div>
   </div>
   <div id="velpop">
+    <button class="fpx" title="Fechar">✕</button>
     <div class="vptit">VELOCIDADE DO TEMPO</div>
     <div id="velslider">
       <div class="vstrilho"><div class="vsfill"></div></div>
@@ -1411,7 +1415,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   <div id="fader"><div id="fadertxt">ESTABELECENDO LINK</div></div>
 
   <div id="help">
-    <div id="helpcard"><div class="cardscroll">
+    <div id="helpcard"><button class="fpx" id="helpx" title="Fechar">✕</button><div class="cardscroll">
       <h2>MANUAL DO NAVEGADOR</h2>
       <button id="helpnovo">✦ O QUE MUDOU NESTA VERSÃO</button>
       <p><b>Toque</b> em um corpo para catalogar. Toque de novo (ou use o botão ▶ do card) para entrar.</p>
@@ -1419,7 +1423,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <p><b>Dois mapas:</b> o <b>CÊNICO</b>, com as distâncias comprimidas para caber na tela, e a <b>ESCALA 1:1</b>, com tudo na medida real, do chão de um planeta até Andrômeda num zoom só. O botão no topo, ao lado do nome, alterna. No cênico, afaste o zoom até o limite para subir de escala (Corpo → Sistema → Galáxia → Universo). No 1:1 não existe subir: é só continuar afastando, e o rastro no topo muda sozinho. A trilha também navega.</p>
       <p><b>Botões ‹ ›</b> saltam entre planetas ou luas vizinhas<span class="kb">, assim como as setas do teclado</span>.</p>
       <p><b>≋ Camadas do mapa</b> (o ≋ do topo): as linhas de órbita por classe, os objetos que aparecem, e as camadas ao vivo da Terra na escala 1:1: satélites de verdade (CelesTrak), terremotos das últimas 24 h (USGS), a aurora (NOAA), os próximos lançamentos de foguete e, no zoom galáctico, o censo dos exoplanetas confirmados (NASA Exoplanet Archive). Todas nascem desligadas.</p>
-      <p><b>◎ Planetário:</b> no card da Terra, de Marte ou da Lua: o céu daquele lugar na data do relógio, com 5 mil estrelas, o Sol, a Lua na fase certa, os planetas e os eclipses. <b>NOITE</b> lista o que vale a pena olhar nas próximas horas, <b>ISS</b> as passagens da estação, <b>⛶</b> o mapa grande com busca de lugares<span class="touchonly">, <b>APONTAR</b> dirige o olhar pelos sensores do celular e <b>GPS</b> usa a sua posição</span>.</p>
+      <p><b>◎ Planetário:</b> no card da Terra, de Marte ou da Lua: o céu daquele lugar na data do relógio, com 5 mil estrelas, o Sol, a Lua na fase certa, os planetas e os eclipses. <b>ESTA NOITE</b> lista o que vale a pena olhar nas próximas horas, <b>ISS</b> as passagens da estação, <b>⛶</b> o mapa grande com busca de lugares<span class="touchonly">, <b>APONTAR</b> dirige o olhar pelos sensores do celular e <b>GPS</b> usa a sua posição</span>. <b>⧉</b> copia o link deste céu: lugar, direção do olhar e data.</p>
       <p><b>◫ Comparar:</b> toque no botão do card, abra outro corpo e toque de novo: os dois lado a lado em escala real. <b>◉ Bancada:</b> até doze mundos girando juntos em escala, com grupos prontos, busca para acrescentar qualquer corpo, e ⧉ para copiar o link da sua bancada.</p>
       <p><b>▤ Registro de bordo:</b> a lista completa do catálogo, o que você já visitou, sua patente e as <b>⬡ conquistas</b>: cada uma vale 2 corpos na carreira. Busca e filtros por habitáveis, planetas, luas, estrelas, regiões, missões e onde já chegamos.</p>
       <p><b>Relógio do sistema:</b> a data real corre no canto inferior esquerdo, com pause, a velocidade no » (do tempo real a 1 s = 1 mês) e o disquinho com a fase da Lua. O <b>◈</b> vai a qualquer data ou a um <b>evento do céu</b>: eclipses, oposições, estações, chuvas de meteoros e os lançamentos. Tudo no mapa segue o relógio, das órbitas ao planetário.</p>
@@ -1443,6 +1447,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
 
   <div id="mission">
     <div id="misscard">
+      <button class="fpx" id="missx" title="Fechar">✕</button>
       <div id="misshead">
         <h2>REGISTRO DE BORDO</h2>
         <div class="missrank">
@@ -1480,6 +1485,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
 
   <div id="finder">
     <div id="findbox">
+      <button class="fpx" id="findx" title="Fechar">✕</button>
       <input id="findin" type="text" placeholder="BUSCAR CORPO, SISTEMA OU GALÁXIA…" autocomplete="off" spellcheck="false">
       <ul id="findlist"></ul>
       <div id="findhint">↑↓ NAVEGA · ENTER TRAVA ROTA · ESC FECHA</div>
@@ -1487,7 +1493,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   </div>
 
   <div id="cmp">
-    <div id="cmpcard"><div class="cardscroll">
+    <div id="cmpcard"><button class="fpx" id="cmpx" title="Fechar">✕</button><div class="cardscroll">
       <h2>◇ ANÁLISE COMPARATIVA</h2>
       <div id="cmpbody"></div>
       <div id="cmpbtns"><button class="xbtn" id="cmpclose">FECHAR</button></div>
@@ -7087,9 +7093,39 @@ function localCalcMundo(ms, lat, lon){
   }
   return {lst, eps, PM:R.P, sol:{alt:hs.alt, az:hs.az, ang:angSol, ra:0, dec:0}, lua, planetas, mundo};
 }
-function localAbrirPara(id){
+/* r312 · O LINK DO PLANETÁRIO: #planetario=<mundo>~<lat>~<lon>~<az>~<alt>~<campo>~<data base36>. Quem abre cai no
+   mapa de casa e o céu daquele lugar abre por cima, olhando para onde quem mandou olhava, na data do relógio dele
+   (o molde do link da bancada, r210, e o pacote do link de vista, r305). */
+function planetarioCodifica(){
+  return [LOCAL.mundo || 'terra', LOCAL.lat.toFixed(3), LOCAL.lon.toFixed(3), LOCAL.az.toFixed(1), LOCAL.alt.toFixed(1), Math.round(LOCAL.fov), Math.round(SIMT.data).toString(36)].join('~');
+}
+function planetarioAbreLink(s){
+  const p = String(s || '').split('~');
+  const mundo = LOCAL_MUNDOS[p[0]] ? p[0] : 'terra';
+  const num = (x, d)=>{ const n = parseFloat(x); return isFinite(n) ? n : d; };
+  const lat = num(p[1], LOCAL_MUNDOS[mundo].sitio[0]), lon = num(p[2], LOCAL_MUNDOS[mundo].sitio[1]);
+  const az = num(p[3], LOCAL.az), alt = num(p[4], LOCAL.alt), fov = Math.max(30, Math.min(100, num(p[5], LOCAL.fov)));
+  const ms = p[6] ? parseInt(p[6], 36) : NaN;
+  if(isFinite(ms) && ms > 0){ SIMT.data = ms; SIMT.vel = 'seg'; SIMT.pausado = false; if(typeof simClockUI === 'function') simClockUI(); }
+  LOCAL.mundo = mundo; LOCAL.tz = undefined; LOCAL.nuvem = null; LOCAL.nuvemErro = false;
+  LOCAL.fov = fov;
+  localAbre(Math.max(-89.9, Math.min(89.9, lat)), ((lon + 540) % 360) - 180);
+  LOCAL.az = ((az % 360) + 360) % 360; LOCAL.alt = Math.max(-25, Math.min(89, alt)); LOCAL.ultimo = 0;
+  if(LOCAL.cam){ LOCAL.cam.fov = LOCAL.fov; LOCAL.cam.updateProjectionMatrix(); }
+  if(typeof feito === 'function' && mundo !== 'terra') feito('planetariofora');
+}
+function localAbrirPara(id, direto){
   if(!LOCAL_MUNDOS[id]) return;
-  if(id === 'terra'){ LOCAL.mundo = 'terra'; localSelecao(!LOCAL.sel); return; }
+  if(id === 'terra'){
+    LOCAL.mundo = 'terra';
+    /* r312 · no MAPA do Sol a Terra abre pela escolha do lugar no globo; fora dele (a cena de foco do cênico, o VER das novidades) abre direto no último lugar guardado */
+    if(!direto && ACT && ACT.kind === 'system' && ST.sys === 'sol'){ localSelecao(!LOCAL.sel); return; }
+    const g = String(store.get('carto:local', '')).split(',').map(Number);
+    const s = (g.length === 2 && g.every(isFinite)) ? g : LOCAL_MUNDOS.terra.sitio;
+    LOCAL.tz = undefined; LOCAL.nuvem = null; LOCAL.nuvemErro = false;
+    localAbre(s[0], s[1]);
+    return;
+  }
   LOCAL.mundo = id;
   const guardado = String(store.get('carto:local_' + id, '')).split(',').map(Number);
   const s = (guardado.length === 2 && guardado.every(isFinite)) ? guardado : LOCAL_MUNDOS[id].sitio;
@@ -13195,7 +13231,15 @@ function fadeSwap(text, fn){
   const f = $('#fader');
   $('#fadertxt').textContent = text;
   f.classList.add('on');
-  setTimeout(()=>{ fn(); setTimeout(()=>f.classList.remove('on'), 140); }, 330);
+  /* r312 · como o blinkSwap: uma exceção na troca deixava o fader preto ligado para sempre e o estado torto; o estado volta ao da cena viva */
+  setTimeout(()=>{
+    try{ fn(); }
+    catch(e){
+      try{ console.error('fadeSwap: ' + (e && e.message), e); RLOG.push('swap-erro ' + (e && e.message)); }catch(_){}
+      try{ if(ACT && ACT.kind){ ST.level = ACT.kind; if(ACT.kind !== 'focus') ST.body = null; uiSync(); showHint(t('A CENA NÃO ABRIU E O MAPA FICOU ONDE ESTAVA')); } }catch(_){}
+    }
+    finally{ setTimeout(()=>f.classList.remove('on'), 140); }
+  }, 330);
 }
 function swapScene(built, continuo){
   if(TRANSITO){ if(TRANSITO.novo && TRANSITO.novo !== built && TRANSITO.novo !== ACT) disposeScene(TRANSITO.novo); TRANSITO = null; }   /* r291 · a viagem interplanetar não sobrevive à troca */
@@ -13947,8 +13991,11 @@ function vistaCamadas(V){
 /* a câmera, depois que a cena existe */
 function vistaCamera(V){
   CAMTW = null; ZOOM = null; DIVE = null;
-  CAM.yaw = V.yaw; CAM.pitch = V.pitch; CAM.dist = V.dist;
-  CAM.pivot.set(V.piv[0], V.piv[1], V.piv[2]);
+  /* r312 · pacote torto (dist 0 ou negativa, NaN) não põe a câmera dentro do pivô: cada campo só entra se for finito e válido */
+  if(isFinite(V.yaw)) CAM.yaw = V.yaw;
+  if(isFinite(V.pitch)) CAM.pitch = V.pitch;
+  if(isFinite(V.dist) && V.dist > 0) CAM.dist = Math.min(CAM.max || V.dist, Math.max(CAM.min || 0, V.dist));
+  if(V.piv && V.piv.length === 3 && V.piv.every(x=>isFinite(x))) CAM.pivot.set(V.piv[0], V.piv[1], V.piv[2]);
   if(V.corpo && ALLBODIES[V.corpo]){
     ST.mapCard = {type:'body', id:V.corpo, act:'focus', entrou:1, t:performance.now()};
     markVisited(V.corpo);
@@ -16528,7 +16575,7 @@ function cardRender(){
   /* ENTRAR agora mora no TOPO do card, como o Rodrigo pediu */
   if(cur.type==='map' && cur.nav) h += '<button class="xbtn primary" id="navgo">'+(cur.navKind==='satlive' ? t('▶ ENTRAR · TRAVAR NO SATÉLITE') : (cur.navKind==='body'?t('▶ ENTRAR · TRAVAR LINK'):t('▶ ENTRAR · TRAVAR ROTA')))+'</button>';
   { const bT = (cur.type==='body') ? cur.b : ((cur.navKind==='body' && ALLBODIES[cur.navId]) ? ALLBODIES[cur.navId] : null);
-    if(bT && LOCAL_MUNDOS[bT.id] && ACT && ACT.kind === 'system' && ST.sys === 'sol') h += '<button class="xbtn" id="btnlocal" data-mundo="' + bT.id + '">'+t(bT.id === 'terra' ? (LOCAL.sel ? '✕ CANCELAR A ESCOLHA DO LUGAR' : '◎ ABRIR O PLANETÁRIO') : (bT.id === 'marte' ? '◎ O CÉU VISTO DE MARTE' : '◎ O CÉU VISTO DA LUA'))+'</button>'; }   /* r287; r308 · Marte e a Lua */
+    if(bT && LOCAL_MUNDOS[bT.id] && ACT && (ACT.kind === 'system' || ACT.kind === 'focus') && ST.sys === 'sol') h += '<button class="xbtn" id="btnlocal" data-mundo="' + bT.id + '">'+t(bT.id === 'terra' ? (LOCAL.sel ? '✕ CANCELAR A ESCOLHA DO LUGAR' : '◎ ABRIR O PLANETÁRIO') : (bT.id === 'marte' ? '◎ O CÉU VISTO DE MARTE' : '◎ O CÉU VISTO DA LUA'))+'</button>'; }   /* r287; r308 · Marte e a Lua */
   { const bHab = (cur.type==='body') ? cur.b : ((cur.navKind==='body' && ALLBODIES[cur.navId]) ? ALLBODIES[cur.navId] : null);
     if(bHab && bHab.visual && MODEMAP[bHab.visual.mode] === 4)
       h += '<button class="xbtn" id="btnhab">'+t('◉ MUNDOS HABITÁVEIS LADO A LADO')+'</button>';
@@ -17504,7 +17551,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r311';
+const BUILD = 'r312';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -17571,15 +17618,20 @@ resize();
     /* r188 · na ESCALA 1:1 o corpo abre DENTRO do mapa único, voando até ele:
        o link caindo na cena de foco era o que dava as 'partes de transição'
        estranhas que ele reportou (entrar mudava de cena, sair voltava torto) */
-    if(ESCR.on && ALLBODIES[v]._sys === 'sol' && !ALLBODIES[v].traj){
+    if(ESCR.on && ALLBODIES[v]._sys === 'sol' && !trajLink){   /* r312 · era !traj: F5 com um cometa ou sonda travado no 1:1 abria a cena de foco; só o link de missão (&traj=1) fica no palco de foco */
       ST.sys='sol'; swapScene(buildSystem('sol'));
       markVisited(v);
-      setTimeout(()=>{ if(ACT && ACT.kind==='system' && ACT.escr) irAoCorpo(v); }, 450);
+      setTimeout(()=>{ if(ACT && ACT.kind==='system' && ACT.escr){ if(acharPick(v)) irAoCorpo(v); else ACTION('focus', v); } }, 450);   /* r312 · corpo sem alvo no mapa (satélite morto, lua de asteroide) só abre a ficha: o irAoCorpo caía numa cena de foco 1:1 */
     } else {
       ST.level='focus'; ST.sys=ALLBODIES[v]._sys; ST.body=v;
       markVisited(v);
       swapScene(buildFocus(v));
     }
+  } else if(k==='planetario'){
+    /* r312 · link do planetário: o mapa de casa embaixo, o céu do lugar por cima (o molde do link da bancada) */
+    ST.sys='sol'; swapScene(buildSystem('sol'));
+    const vP = v;
+    setTimeout(()=>{ TUT.v.add('boasvindas'); planetarioAbreLink(vP); }, 1600);
   } else if(k==='bancada'){
     /* r210 · link de bancada: o mapa de casa embaixo, a bancada por cima */
     ST.sys='sol'; swapScene(buildSystem('sol'));
@@ -17628,7 +17680,8 @@ resize();
     try{ console.error("boot: " + (e && e.message), e); RLOG.push("boot-erro " + (e && e.message)); }catch(_){}
     window.__bootErro = e;
     try{ store.set("carto:loc", ""); history.replaceState(null, "", location.pathname + location.search); }catch(_){}
-    try{ if(!ACT){ ST.level = "system"; ST.sys = "sol"; ST.body = null; ST.mapCard = null; swapScene(buildSystem("sol")); } }catch(_){}
+    try{ if(!ACT){ ST.level = "system"; ST.sys = "sol"; ST.body = null; ST.mapCard = null; swapScene(buildSystem("sol")); } }
+    catch(e2){ /* r312 · se o que falhou foi o próprio mapa 1:1, a queda volta ao cênico */ try{ ESCR.on = false; store.set("carto:escr", "0"); ST.level = "system"; ST.sys = "sol"; swapScene(buildSystem("sol")); }catch(_){} }
   }
 })();
 /* r200 · WARM-UP: os canvases pesados (Lua e Marte) são desenhados DEPOIS do
@@ -17656,9 +17709,10 @@ syncHash();
 window.addEventListener('hashchange', ()=>{
   let hh1 = (location.hash||'').slice(1);
   const querReal = hh1.indexOf('&escala=real') >= 0;
+  const trajH = hh1.indexOf('&traj=1') >= 0;   /* r312 · o link de missão colado numa aba aberta inicia a linha do tempo (era descartado) */
   /* r291 · o link muda de escala: reconstrói o mapa (trocaEscala) e reaplica o alvo depois; só marcar a flag deixava
      um foco 1:1 em cima do mapa cênico */
-  if(querReal !== !!ESCR.on && ACT && ACT.kind === 'system' && ST.sys === 'sol' && typeof trocaEscala === 'function'){
+  if(querReal !== !!ESCR.on && !/^(v|planetario)=/.test(hh1) && ACT && ACT.kind === 'system' && ST.sys === 'sol' && typeof trocaEscala === 'function'){   /* r312 · o #v= carrega o modo no pacote e reconstrói a cena sozinho (sem a ida e volta pelo trocaEscala) */
     const alvoH = location.hash; trocaEscala();
     setTimeout(()=>{ if(location.hash !== alvoH) location.hash = alvoH; }, 900);
     return;
@@ -17684,8 +17738,17 @@ window.addEventListener('hashchange', ()=>{
     else { ST.level='system'; ST.sys = SYS[V.id] ? V.id : 'sol'; swapScene(buildSystem(ST.sys)); }
     setTimeout(()=>vistaCamera(V), 260);
   }
-  else if(k==='corpo' && ALLBODIES[v] && ST.body!==v
-     && !(ST.mapCard && ST.mapCard.id===v)) irAoCorpo(v);
+  else if(k==='planetario'){
+    /* r312 · o link do planetário colado numa aba aberta: abre por cima do mapa de casa */
+    const emCasa = ACT && ACT.kind==='system' && ST.sys==='sol';
+    if(!emCasa) gotoSystem('sol');
+    const vP = v; setTimeout(()=>planetarioAbreLink(vP), emCasa ? 0 : 1600);
+  }
+  else if(k==='corpo' && ALLBODIES[v]){
+    if(ST.body!==v && !(ST.mapCard && ST.mapCard.id===v)) irAoCorpo(v);
+    /* r312 · &traj=1 colado numa aba aberta começa a linha do tempo como no boot (o próprio trajStart escreve este hash: a que já roda não reinicia) */
+    if(trajH && ALLBODIES[v].traj && !(TRAJ && TRAJ.id === v) && typeof verLinhaDoTempo === 'function') setTimeout(()=>{ if(!(TRAJ && TRAJ.id === v)) verLinhaDoTempo(v); }, 1600);
+  }
   else if(k==='sistema' && SYS[v] && !(ST.level==='system' && ST.sys===v)) gotoSystem(v);
   else if(k==='galaxia'){ const gid=(v && GALAXIES.find(x=>x.id===v))?v:'vialactea'; if(ST.level!=='galaxy'||ST.gal!==gid) gotoGalaxy(gid); }
   else if(k==='universo' && ST.level!=='universe') gotoUniverse();
@@ -18102,10 +18165,10 @@ $('#datepop').addEventListener('click', e=>{
    A entrada `ver` é opcional e LEVA à feature, que é o que faz o painel valer:
    ler que existe um planetário não é a mesma coisa que abrir um. */
 const NOVIDADES = [
-  {b:'r311', d:'21 SET 2026', t:'O BOOT QUE NÃO TRAVA MAIS', ls:[
-    'Desde o r307 abrir o mapa por um link de corpo (ou com o último lugar guardado num corpo) parava no loading para sempre: uma função de uma linha (a conta das visitas ao Sistema Solar) tinha sumido numa edição e o boot estourava. Voltou.',
-    'E o boot ficou blindado: se algum link falhar de novo, o mapa cai em casa, avisa no rodapé e limpa o lugar guardado, em vez de prender a tela.'],
-   ver:null},
+  {b:'r312', d:'21 SET 2026', t:'O PLANETÁRIO POR LINK E EM TODA CENA', ls:[
+    'O planetário ganhou o ⧉: copia um link que abre o céu daquele lugar, olhando para onde você olhava, na data do seu relógio. E o botão de abrir agora aparece também dentro do planeta, no mapa cênico.',
+    'Todo painel tem o ✕ de fechar no canto: manual, música, velocidade, busca, comparar e registro de bordo.'],
+   ver:()=>{ if(typeof localAbrirPara === 'function') localAbrirPara('terra', true); }},
   {b:'r310', d:'21 SET 2026', t:'O CENSO DOS EXOPLANETAS', ls:[
     'O zoom galáctico do 1:1 tinha 27 marcadores escolhidos à mão; agora a camada EXOPLANETAS CONFIRMADOS (no ≋) põe as 4.747 estrelas com planeta confirmado do NASA Exoplanet Archive na posição real do céu, e as 42 com um mundo temperado ficam verdes.',
     'Cada ponto abre a ficha da estrela com os planetas (raio, período, temperatura, ano e método), a busca acha qualquer uma pelo nome (ex.: Kepler-442) e as que já são sistemas do atlas têm ENTRAR.'],
@@ -18370,8 +18433,21 @@ $('#novolista').addEventListener('click', e=>{
   try{ n.ver(); }catch(err){ showHint(t('NÃO CONSEGUI ABRIR DAQUI: TENTE PELO MAPA')); }
 });
 $('#localx').addEventListener('click', localFecha);   /* r287 */
+/* r312 · o ✕ do canto em todo painel que só fechava pelo botão do fim, pelo fundo ou pelo ESC (que o celular não tem) */
+{ const liga = (id, fn)=>{ const b = document.getElementById(id); if(b) b.addEventListener('click', fn); };
+  liga('helpx', ()=>{ const c = document.getElementById('helpclose'); if(c) c.click(); else document.getElementById('help').classList.remove('on'); });
+  liga('missx', ()=>{ const c = document.getElementById('missclose'); if(c) c.click(); else document.getElementById('mission').classList.remove('on'); });
+  liga('cmpx', ()=>{ if(typeof closeCmp === 'function') closeCmp(); else document.getElementById('cmp').classList.remove('on'); });
+  liga('findx', ()=>{ if(typeof findClose === 'function') findClose(); else document.getElementById('finder').classList.remove('on'); }); }
 $('#localsens').addEventListener('click', ()=>localSensores(!LOCAL.sens));
 $('#localgps').addEventListener('click', localGps);
+$('#localvista').addEventListener('click', ()=>{
+  /* r312 · o link deste céu: lugar, direção do olhar e data (o molde do ⧉ do card, r305) */
+  const url = location.href.split('#')[0] + '#planetario=' + planetarioCodifica();
+  const avisa = ()=>showHint(t('LINK DESTE CÉU COPIADO · lugar, direção do olhar e data vão junto'));
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(avisa, ()=>showHint(url));
+  else showHint(url);
+});
 $('#localnoite').addEventListener('click', ()=>{
   if(LOCAL.mundo === 'terra') localNuvemBusca();
   localNoiteCard();
@@ -18529,7 +18605,7 @@ $('#dp_hoje').addEventListener('click', ()=>{
   simClockUI();
 });
 document.querySelectorAll('.fpx').forEach(b=>b.addEventListener('click', e=>{
-  const pop = e.target.closest('#filtpop,#cfgpop,#datepop,#velpop');
+  const pop = e.target.closest('#filtpop,#cfgpop,#datepop,#velpop,#player');   /* r312 · o player também */
   if(pop) pop.classList.remove('on');
 }));
 /* alternar entre o mapa cênico e a escala 1:1: vale para a linha da
