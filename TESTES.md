@@ -8,7 +8,26 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 270 testes pendentes (do r131 ao r313) e 4 decisões suas.
+Hoje: 284 testes pendentes (do r131 ao r316) e 4 decisões suas.
+
+---
+
+## r316 · as missões da Lua de verdade, as rotas do JPL, a vista de dentro e o eixo da Terra (r314 e r315 saem juntos)
+
+- [ ] **As missões da Lua de verdade.** Card da Terra, APOLLO 11, ≋ LINHA DO TEMPO (nos dois modos): a nave sobe da Flórida, dá uma volta e meia na Terra no MESMO sentido do lançamento, sai para a Lua, entra em órbita RETRÓGRADA (de leste para oeste), o ponto âmbar EAGLE desce e pousa no Mar da Tranquilidade às 20:17 UTC de 20 de julho, sobe, reencontra o comando, a volta começa atrás da Lua e a cápsula cai no Pacífico às 16:50 de 24 de julho. O relógio da barra mostra data e hora UTC, km/h e a distância à Terra (ou a altitude sobre a Lua quando perto dela). O desenho da rota gira junto com a Lua: as voltas na Lua viram um anel em volta dela e a ida e a volta desenham o oito dos diagramas da NASA; o foguete larga os estágios (a subida inteira em 13 minutos, depois só a cápsula). Diga se a viagem convence e se o ritmo (a subida e as manobras mais lentas, o cruzeiro mais rápido) está bom.
+- [ ] **As outras nove.** APOLLO 8 (as 10 voltas na Lua, o EARTHRISE e o GÊNESIS nos marcos), APOLLO 13 (a volta livre por trás da Lua a 254 km e a queima PC+2 que apressou a volta), APOLLO 17 (o pouso em Taurus-Littrow, o ponto CHALLENGER), LUNA 9 (a descida direta, sem órbita), LUNA 16 (pousa, decola na VERTICAL e cai no Cazaquistão), CHANG'E 4 (três semanas em órbita esperando o amanhecer e o pouso no lado oculto), SLIM (o laço de 1,4 milhão de km antes da Lua e o pouso de precisão), ARTEMIS I (a órbita retrógrada distante e o recorde de 432 mil km) e ARTEMIS II (o contorno a 6.545 km e o recorde de 406.771 km).
+- [ ] **O cênico perto da Lua.** No MAPA CÊNICO a distância à Lua é comprimida como a da Terra: as voltas de 100 km aparecem em volta da Lua desenhada e a órbita distante da Artemis I cabe na tela. Diga se ficou legível ou se a região da Lua está apertada ou inchada demais.
+- [ ] **A vista de dentro.** Com qualquer linha do tempo rodando, o ◉ da barra põe a câmera dentro da nave olhando para a frente: arraste para olhar em volta, roda ou pinça para abrir e fechar o campo, ESC (ou o ◉ de novo) sai. Teste no celular também.
+- [ ] **As rotas das sondas e dos cometas.** VOYAGER 1 e 2, PIONEER 10, NEW HORIZONS, CASSINI, PATHFINDER, VIKING 1, JUICE, EUROPA CLIPPER, LUCY, PARKER e os cometas (HALLEY, 67P, SWIFT-TUTTLE...): a linha do tempo segue a trajetória do JPL, a barra mostra a data, desacelera nos sobrevoos e a sonda encontra o planeta no dia certo, nos dois modos. A JUICE, a Clipper e a Lucy vão até o destino, com o trecho futuro em azul e o HOJE marcado na barra.
+- [ ] **O mapa cênico preciso.** No MAPA CÊNICO cada planeta agora está no ângulo real da data e anda no período real (Júpiter leva 12 anos, não 2): compare a disposição com o 1:1 ou com o NASA Eyes; só as distâncias continuam desenhadas.
+- [ ] **Os filtros numa lista só.** ≋ do topo: cada classe numa linha, com dois botões, LINHA (a órbita ou a rota) e OBJETO (o corpo inteiro). Desligar o OBJETO desliga a linha junto; ligar a LINHA com o objeto desligado liga os dois.
+- [ ] **As constelações fantasmas.** Com as constelações DESLIGADAS, clique em vários pontos do espaço vazio longe dos planetas: nada de ficha de constelação nem de órbitas apagando (era o bug que você viu).
+- [ ] **O eixo da Terra.** No 1:1, perto do equinócio (hoje, 24 SET) a linha dia e noite da Terra passa pelos dois polos; mude a data para 21 DEZ e o polo sul fica todo iluminado, o norte todo no escuro. Os satélites ao vivo e o planetário continuam batendo com o céu.
+- [ ] **A Artemis II como voou.** A ficha virou MISSÃO TRIPULADA · 2026: lançamento em 1 de abril, a Orion Integrity, o contorno a 6.545 km do lado oculto, o recorde de 406.771 km e a amerissagem em 11 de abril. Em inglês também.
+- [ ] **Do foco para o mapa.** No MAPA CÊNICO, ENTRAR na Terra e tocar no ≋ de uma missão lunar: agora a missão sobe para o mapa do sistema e roda lá (o palco dentro do foco usava a Lua simbólica e não cabia a rota real). Diga se sente falta do palco antigo.
+- [ ] **Os eventos das sondas.** ◈ · EVENTOS: JUICE PASSA PELA TERRA (28 SET 2026), VOYAGER 1 A UM DIA-LUZ DA TERRA (18 NOV 2026) e EUROPA CLIPPER PASSA PELA TERRA (3 DEZ 2026); escolher um leva o relógio ao instante e cataloga a sonda.
+- [ ] **Novidades e correções.** ? e O QUE MUDOU NESTA VERSÃO: AS MISSÕES DA LUA DE VERDADE e AS ROTAS DE VERDADE, e quatro linhas novas em CORREÇÕES.
+- [ ] **O peso.** O boot baixa efem/resumo.js (105 KB, as linhas das sondas no mapa) e cada linha do tempo baixa o arquivo dela quando abre (Apollo 11 com 34 KB, SLIM com 200 KB). No celular, diga se alguma demorou.
 
 ---
 

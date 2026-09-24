@@ -21,7 +21,7 @@ const todo = blocos.join('\n');
       sendo trabalho de sonda. O texturas.js fica de fora de propósito: são
       1,9 MB de base64 e nenhuma lógica. */
 const fontes = blocos.map((b, i) => ['index.html · bloco ' + (i + 1), b]);
-for(const f of ['en.js', 'dados_en.js', 'ceu6.js', 'tle_snapshot.js', 'exo.js']){
+for(const f of ['en.js', 'dados_en.js', 'ceu6.js', 'tle_snapshot.js', 'exo.js'].concat(fs.existsSync(path.join(__dirname, '..', 'efem')) ? fs.readdirSync(path.join(__dirname, '..', 'efem')).filter(x=>/\.js$/.test(x)).map(x=>'efem/' + x) : [])){   /* r316 · as rotas reais também compilam */
   const p = path.join(RAIZ, f);
   if(fs.existsSync(p)) fontes.push([f, fs.readFileSync(p, 'utf8')]);
 }

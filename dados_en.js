@@ -645,13 +645,15 @@ artemis1: {
   fict: 'The plush Snoopy floating in the cabin served as the official zero-gravity indicator.'
 },
 artemis2: {
-  kind: 'The first humans bound for the Moon since 1972',
-  quick: [['STATUS','awaiting launch'],['CREW','Wiseman · Glover · Koch · Hansen'],['PROFILE','free-return flyby'],['DURATION','~10 days'],['ROCKET','SLS Block 1'],['CAPSULE','Orion']],
+  desig: 'CREWED MISSION · 2026',
+  kind: 'The first humans back to the Moon since 1972',
+  quick: [['LAUNCH','4/1/2026 · 22:35 UTC'],['CREW','Wiseman · Glover · Koch · Hansen'],['CAPSULE','Orion Integrity'],['PROFILE','free-return flyby'],['DURATION','9 d 1 h 32 min'],['RECORD','406,771 km from Earth']],
   sections: [
-    {t:'THE MISSION', rows:[['The plan','A FREE-RETURN flyby of the Moon: the same safety route that saved Apollo 13'],['The crew','Reid Wiseman, Victor Glover, Christina Koch and Jeremy Hansen'],['The firsts','Koch: the first woman on a lunar mission; Hansen: the first non-American'],['What it tests','Orion with people aboard, life support and the path for Artemis III']]},
-    {t:'RECORD', rows:[['No landing','This mission swings around the Moon and comes back: the landing is left to Artemis III'],['The far side','The crew will see the side the Earth never sees, like Apollo 8 in 1968'],['The timeline here','PLANNED mission profile; the final dates depend on the launch']]}
+    {t:'THE MISSION', rows:[['The flight','Launched on April 1, 2026 from pad 39B, Orion Integrity swung around the Moon and splashed down in the Pacific on April 11'],['The crew','Reid Wiseman (commander), Victor Glover (pilot), Christina Koch and Jeremy Hansen'],['The firsts','Koch: the first woman to go to the Moon; Hansen: the first non-American; Glover: the first Black astronaut'],['What it tested','Orion with people aboard, life support and the path for Artemis III']]},
+    {t:'THE ROUTE', rows:[['The high orbit','On day one, a 185 by 70,000 km orbit to test the ship close to home'],['The injection','On day two, six minutes of the Orion engine (388 m/s) sent it to the Moon'],['The swing-by','On April 6 it passed 6,545 km above the far side, on a free return: the same safety route that saved Apollo 13'],['The record','406,771 km from Earth: the farthest point human beings have ever reached, 6,600 km beyond Apollo 13']]},
+    {t:'RECORD', rows:[['The timeline here','The MEASURED trajectory of Orion (JPL Horizons, -1024), from the end of day one to reentry'],['The return','Reentry at 122 km of altitude and splashdown off Baja California, 9 days 1 h 32 min after launch']]}
   ],
-  facts: ['It will be the first crewed mission bound for the Moon since Apollo 17, in 1972.', 'Christina Koch will be the first woman and Jeremy Hansen the first non-American to travel to the Moon.'],
+  facts: ['It was the first crewed mission to the Moon since Apollo 17, in 1972.', 'The four reached 406,771 km from Earth: no human being had ever gone that far.'],
   fict: 'The four became celebrities at the 2023 announcement: the first lunar cast presented to the world in half a century.'
 },
 luna9: {
@@ -740,7 +742,7 @@ lucy: {
   quick: [['LAUNCH','10/16/2021 · Atlas V'],['TARGETS','8 asteroids in 12 years'],['FIRST TROJAN','Eurybates · AUG 2027'],['THE END','Patroclus and Menoetius · MAR 2033'],['THE NAME','the 3.2-million-year-old fossil'],['AGENCY','NASA']],
   sections: [
     {t:'THE MISSION', rows:[['The name','Lucy, the 3.2-million-year-old Australopithecus fossil that rewrote human origins: the Trojans are the fossils of the Solar System'],['The itinerary','Twelve years, two Earth slingshots, two warm-up asteroids in the belt, five Trojans in the L4 camp and the Patroclus-Menoetius pair in L5: no probe has visited so many worlds'],['The surprise','Dinkinesh, the first target, had a moon made of two touching pieces, the first contact-binary moon ever seen'],['The power','The largest solar panels ever used so far from the Sun, 7 meters across each']]},
-    {t:'RECORD', rows:[['Where it is now','After Donaldjohanson, on the way to the L4 camp, some 3.6 AU from the Sun'],['The plaque','It carries a plaque with messages from Carl Sagan, the Beatles (the song that named the fossil) and poets'],['Here on the map','The arc is the route drawn up to today\'s position; the flybys done so far are on the timeline']]}
+    {t:'RECORD', rows:[['Where it is now','On the way to the L4 camp of Jupiter, some 5 AU from the Sun in September 2026'],['The plaque','It carries a plaque with messages from Carl Sagan, the Beatles (the song that named the fossil) and poets'],['Here on the map','The real JPL route up to today; the timeline follows the planned route to Patroclus, in 2033']]}
   ],
   facts: ['It will visit eight asteroids in twelve years, the record for any probe.', 'The name comes from the Lucy fossil, which in turn comes from the Beatles song playing at the camp in 1974.', 'The first target, Dinkinesh, had a moon made of two touching pieces: nobody had seen one like it.'],
   fict: 'The Lucy plaque carries the lyrics of Lucy in the Sky with Diamonds: the probe, the fossil and the Beatles song in the same name.'
@@ -750,7 +752,7 @@ juice: {
   quick: [['LAUNCH','4/14/2023 · Ariane 5'],['ARRIVAL','July 2031, at Jupiter'],['THE TARGET','Ganymede, Callisto and Europa'],['THE END','in orbit around Ganymede, 2034-35'],['SLINGSHOTS','Moon-Earth, Venus, Earth, Earth'],['AGENCY','ESA']],
   sections: [
     {t:'THE MISSION', rows:[['The name','JUpiter ICy moons Explorer: the first European mission to the outer system'],['The target','The hidden oceans of Ganymede, Callisto and Europa: 35 flybys, and at the end the first ORBIT around a moon of another planet, Ganymede'],['The path','Eight years and four gravity assists: without them the rocket could not send 6 tonnes to Jupiter'],['The panels','85 m² of solar panels, the largest ever sent to the outer system: at Jupiter the Sun shines 25 times fainter']]},
-    {t:'RECORD', rows:[['Where it is now','On the way back to Earth for the slingshot of September 29, 2026, about 1 AU from the Sun'],['The radar','It will measure the thickness of the ice of Ganymede with a radar that sees 9 km down'],['The pair','It arrives in 2031, a year after NASA\'s Europa Clipper: the two will work together'],['Here on the map','The arc is the route drawn up to today\'s position; the slingshots are on the timeline']]}
+    {t:'RECORD', rows:[['Where it is now','Arriving at Earth for the slingshot of September 28, 2026, 15,000 km from the center of the planet'],['The radar','It will measure the thickness of the ice of Ganymede with a radar that sees 9 km down'],['The pair','It arrives in 2031, a year after NASA\'s Europa Clipper: the two will work together'],['Here on the map','The real JPL route up to today; the timeline follows the planned route, with the slingshots, to Jupiter in July 2031']]}
   ],
   facts: ['It will be the first probe to orbit a moon of another planet: Ganymede, in 2034.', 'It needs four gravity assists over eight years to reach Jupiter.', 'It carries the largest solar panels ever sent to the outer system: 85 square meters.'],
   fict: 'JUICE carries a plaque with the pages of the book in which Galileo announced the moons of Jupiter, in 1610.'
@@ -760,7 +762,7 @@ clipper: {
   quick: [['LAUNCH','10/14/2024 · Falcon Heavy'],['ARRIVAL','April 2030, at Jupiter'],['THE TARGET','Europa, 49 flybys'],['CLOSEST','25 km from the surface'],['SIZE','30 m with the panels open'],['AGENCY','NASA']],
   sections: [
     {t:'THE MISSION', rows:[['The target','The ocean of Europa, with twice the water of the Earth under some 20 km of ice'],['The tactic','It does not orbit Europa: the radiation of Jupiter would fry the probe in weeks; it orbits Jupiter and passes Europa 49 times, getting within 25 km'],['What it looks for','Whether the ocean has the ingredients of life: thin ice, plumes, surface chemistry'],['The size','The largest planetary probe of NASA: 30 meters end to end with the panels open']]},
-    {t:'RECORD', rows:[['Where it is now','On the way back to Earth for the slingshot of December 3, 2026, about 1.1 AU from the Sun'],['The scare','In 2024 its transistors turned out sensitive to radiation; NASA tested them and decided to launch anyway'],['The plaque','It carries a poem by Ada Limón and 2.6 million names etched on a chip'],['Here on the map','The arc is the route drawn up to today\'s position; the slingshots are on the timeline']]}
+    {t:'RECORD', rows:[['Where it is now','On the way back to Earth for the slingshot of December 3, 2026, about 0.9 AU from the Sun'],['The scare','In 2024 its transistors turned out sensitive to radiation; NASA tested them and decided to launch anyway'],['The plaque','It carries a poem by Ada Limón and 2.6 million names etched on a chip'],['Here on the map','The real JPL route up to today; the timeline follows the planned route to Jupiter, in April 2030']]}
   ],
   facts: ['It is the largest planetary probe NASA has ever built: 30 meters with the panels open.', 'It will pass Europa 49 times, as close as 25 km from the surface, without ever orbiting it: the radiation does not allow it.', 'It reaches Jupiter in 2030, a year before the European JUICE.'],
   fict: 'It carries the poem In Praise of Mystery by Ada Limón, with a line in the first person plural: we, too, are made of water.'
@@ -771,7 +773,7 @@ parker: {
   quick: [['LAUNCH','8/12/2018 · Delta IV Heavy'],['PERIHELION','6.1 million km · 12/24/2024'],['SPEED','692,000 km/h · record'],['SHIELD','1,400 °C · 11 cm of carbon'],['ORBIT','88 days'],['SLINGSHOTS','7 at Venus']],
   sections: [
     {t:'THE DIVE', rows:[['The record','On December 24, 2024 it passed 6.1 million km from the surface of the Sun, inside the corona, at 692,000 km/h: the fastest object humanity has ever built'],['The shield','An 11 cm carbon plate holds 1,400 °C on the Sun side while the instruments stay at room temperature in the shade'],['How it got there','Seven slingshots at Venus, each shrinking the orbit, from 2018 to 2024'],['What it found','The folds of the solar wind (switchbacks), the dust-free zone near the Sun and the origin of the fast wind']]},
-    {t:'RECORD', rows:[['The name','Eugene Parker, the physicist who predicted the solar wind in 1958: the first NASA probe named after a living person, and he watched the launch'],['The ride','A chip with 1.1 million names from the public'],['The orbit','Since 2024 one lap every 88 days, between 0.046 and 0.73 AU'],['Here on the map','The ellipse is the final orbit (0.046 to 0.73 AU); its orientation in space is approximate']]}
+    {t:'RECORD', rows:[['The name','Eugene Parker, the physicist who predicted the solar wind in 1958: the first NASA probe named after a living person, and he watched the launch'],['The ride','A chip with 1.1 million names from the public'],['The orbit','Since 2024 one lap every 88 days, between 0.046 and 0.73 AU'],['Here on the map','The ellipse is the final orbit, in its real plane; the timeline replays the eight JPL years, with the seven Venus slingshots shrinking the orbit']]}
   ],
   facts: ['It is the fastest object ever built by humanity: 692,000 km/h at perihelion.', 'It passed inside the corona of the Sun, 6.1 million km from the surface, and survived.', 'It was named after a living scientist, Eugene Parker, who watched the launch at 91.'],
   fict: 'The idea of touching the Sun comes from the myth of Icarus; NASA sold the mission with exactly that motto, and this time the wings held.'
@@ -798,9 +800,9 @@ pathfinder: {
 },
 voyager1: {
   kind: 'The most distant human-made object',
-  quick: [['LAUNCH','9/5/1977'],['DISTANCE','~168 AU'],['SPEED','61,000 km/h'],['WHERE','interstellar space'],['POWER','until ~2030'],['SIZE','3.7 m antenna']],
+  quick: [['LAUNCH','9/5/1977'],['DISTANCE','~172 AU'],['SPEED','61,000 km/h'],['WHERE','interstellar space'],['POWER','until ~2030'],['SIZE','3.7 m antenna']],
   sections: [
-    {t:'WHERE IT IS', rows:[['Distance','About 168 AU from the Sun, growing 3.6 AU per year'],['The signal','It takes more than 23 hours to reach us, and another 23 to go back'],['The power','Its radio reaches here with less energy than a digital watch'],['Position here','Symbolic: at real scale it would be far beyond the edge of this scene']]},
+    {t:'WHERE IT IS', rows:[['Distance','About 172 AU from the Sun in September 2026, growing 3.6 AU per year'],['The signal','It takes more than 23 hours to reach us, and another 23 to go back'],['The power','Its radio reaches here with less energy than a digital watch'],['Here on the map','The real JPL route: Jupiter, Saturn and the Titan detour that threw it north of the plane of the planets']]},
     {t:'THE JOURNEY', rows:[['1979','Flies by Jupiter and discovers the volcanoes of Io'],['1980','Passes Saturn and Titan, which threw it out of the plane of the planets'],['1990','Turns its camera and photographs the Pale Blue Dot, at Carl Sagan\'s request'],['2012','Crosses the heliopause and becomes the first human object in interstellar space'],['~2030','The nuclear batteries fade and it sails on, silent forever']]},
     {t:'THE GOLDEN RECORD', rows:[['What it is','A gold-plated copper disc with sounds and images of Earth'],['The content','Greetings in 55 languages, rain, a heartbeat, Bach, Chuck Berry and a Navajo chant'],['Brazil','It has a greeting in Portuguese, "Tchau, pessoal" (bye, everyone)'],['The shelf life','The record was made to last a billion years'],['The odds','It will not get close to any star for 40,000 years']]}
   ],
@@ -809,9 +811,9 @@ voyager1: {
 },
 voyager2: {
   kind: 'The only one to visit all four giants',
-  quick: [['LAUNCH','8/20/1977'],['DISTANCE','~140 AU'],['SPEED','55,000 km/h'],['WHERE','interstellar space'],['RECORD','4 giants'],['POWER','until ~2030']],
+  quick: [['LAUNCH','8/20/1977'],['DISTANCE','~144 AU'],['SPEED','55,000 km/h'],['WHERE','interstellar space'],['RECORD','4 giants'],['POWER','until ~2030']],
   sections: [
-    {t:'WHERE IT IS', rows:[['Distance','About 140 AU, in a different direction from its sister'],['2018','It crossed the heliopause, six years after Voyager 1'],['Position here','Symbolic, like its sister\'s']]},
+    {t:'WHERE IT IS', rows:[['Distance','About 144 AU, heading south of the plane of the planets: a very different direction from its sister'],['2018','It crossed the heliopause, six years after Voyager 1'],['Here on the map','The real JPL route, with the four giants in a row']]},
     {t:'THE GRAND TOUR', rows:[['The alignment','An arrangement of the planets that happens every 175 years allowed visiting four in a single flight'],['1979 and 1981','Jupiter and Saturn'],['1986','Uranus, and to this day it is the only spacecraft that has been there'],['1989','Neptune, and it discovered the geysers of Triton'],['The legacy','Almost everything we know about Uranus and Neptune up close came from these few hours of flyby']]}
   ],
   facts: ['It is the only spacecraft that has visited Uranus and Neptune, and it will probably remain so for decades.', 'The planetary alignment that made its trip possible only repeats every 175 years.', 'It also carries a Golden Record, identical to its sister\'s.'],
@@ -819,7 +821,7 @@ voyager2: {
 },
 newhorizons: {
   kind: 'The one that finally showed Pluto',
-  quick: [['LAUNCH','1/19/2006'],['DISTANCE','~62 AU'],['SPEED','52,000 km/h'],['PLUTO','7/14/2015'],['ARROKOTH','1/1/2019'],['POWER','until ~2040']],
+  quick: [['LAUNCH','1/19/2006'],['DISTANCE','~66 AU'],['SPEED','52,000 km/h'],['PLUTO','7/14/2015'],['ARROKOTH','1/1/2019'],['POWER','until ~2040']],
   sections: [
     {t:'THE JOURNEY', rows:[['The start','It left Earth at 58,000 km/h, the fastest launch in history'],['2015','It passed 12,500 km from Pluto after nine and a half years of travel'],['What it found','Mountains of water ice, a heart-shaped nitrogen plain and a blue atmosphere'],['2019','It flew by Arrokoth, the most distant object ever visited up close'],['Today','It keeps sending data from the Kuiper belt']]},
     {t:'THE HUMAN DETAIL', rows:[['Aboard','It carries part of the ashes of Clyde Tombaugh, who discovered Pluto in 1930'],['The irony','He died in 1997, before Pluto was demoted, and before anyone finally saw it up close'],['The time','The full flyby imagery took 15 months to transmit to Earth']]}
@@ -829,7 +831,7 @@ newhorizons: {
 },
 pioneer10: {
   kind: 'The first to cross the belt',
-  quick: [['LAUNCH','3/2/1972'],['DISTANCE','~140 AU'],['LAST SIGNAL','1/23/2003'],['MILESTONE','1st at Jupiter'],['PLAQUE','yes'],['HEADING','Aldebaran']],
+  quick: [['LAUNCH','3/2/1972'],['DISTANCE','~142 AU'],['LAST SIGNAL','1/23/2003'],['MILESTONE','1st at Jupiter'],['PLAQUE','yes'],['HEADING','Aldebaran']],
   sections: [
     {t:'THE JOURNEY', rows:[['1972','The first spacecraft to cross the asteroid belt, which many feared was impassable'],['1973','The first to reach Jupiter, and to measure the lethal radiation around it'],['2003','The last faint signal was received, 12 billion km away'],['Today','It sails on silently toward Aldebaran, arriving in 2 million years']]},
     {t:'THE PLAQUE', rows:[['What it is','A gold-anodized aluminum plaque with a man, a woman and a map to Earth'],['Who made it','Carl Sagan, Frank Drake and Linda Salzman Sagan, in three weeks'],['The map','The position of the Sun relative to 14 pulsars, an address that works for millions of years'],['The controversy','The nudity of the drawings drew complaints in American newspapers at the time']]}
