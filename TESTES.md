@@ -8,9 +8,13 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 284 testes pendentes (do r131 ao r316) e 4 decisões suas.
+Hoje: 285 testes pendentes (do r131 ao r317) e 4 decisões suas.
 
 ---
+
+## r317 · o modal que fechava sozinho
+
+- [ ] **Selecionar e soltar fora.** No computador, abra a busca (⌕), digite algo, selecione o texto com o mouse e solte o botão fora da caixa, no fundo escuro: a busca continua aberta com o texto. O mesmo no registro de bordo (▤, o campo de busca dele), no manual (?) e no comparar (⚖). Apertar no fundo e soltar dentro da caixa também não fecha mais; um clique normal no fundo continua fechando, e no celular um toque no fundo também.
 
 ## r316 · as missões da Lua de verdade, as rotas do JPL, a vista de dentro e o eixo da Terra (r314 e r315 saem juntos)
 

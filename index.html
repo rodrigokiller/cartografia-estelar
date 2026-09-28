@@ -17919,11 +17919,26 @@ function showHint(txt){
   clearTimeout(hintT); hintT = setTimeout(()=>el.classList.remove('on'), 5600);
 }
 function hideHint(){ clearTimeout(hintT); $('#hint').classList.remove('on'); }
+/* r317 · FECHAR PELO FUNDO, e só por ele. O click nasce no ancestral comum de onde o botão desceu e de onde subiu:
+   selecionar com arraste o texto da busca (ou do registro) e soltar no fundo escuro gerava um click COM target no
+   fundo, e o modal fechava levando junto o que a pessoa digitava; o inverso (apertar no fundo e soltar na caixa)
+   também fechava. Agora só fecha se o botão desceu E subiu no próprio fundo. Os três ouvintes vão na captura, então
+   nada de dentro do modal com stopPropagation esconde o botão descendo. Esc, ✕ e o resto não passam por aqui */
+function fecharPeloFundo(fundo, fechar){
+  let desceu = false, subiu = false;
+  fundo.addEventListener('pointerdown', e=>{ desceu = e.target === fundo; subiu = false; }, true);
+  fundo.addEventListener('pointerup', e=>{ subiu = e.target === fundo; }, true);
+  fundo.addEventListener('click', e=>{
+    const ok = desceu && subiu && e.target === fundo;
+    desceu = subiu = false;
+    if(ok) fechar();
+  }, true);
+}
 $('#btnhelp').addEventListener('click', ()=>$('#help').classList.toggle('on'));
 $('#helpclose').addEventListener('click', ()=>$('#help').classList.remove('on'));
-$('#help').addEventListener('click', e=>{ if(e.target.id==='help') $('#help').classList.remove('on'); });
+fecharPeloFundo($('#help'), ()=>$('#help').classList.remove('on'));
 $('#cmpclose').addEventListener('click', closeCmp);
-$('#cmp').addEventListener('click', e=>{ if(e.target.id==='cmp') closeCmp(); });
+fecharPeloFundo($('#cmp'), closeCmp);
 /* menu ⋯ do celular: abre a coluna, fecha ao escolher algo ou tocar fora */
 function moreClose(){
   const m = $('#morebtns'), b = $('#btnmore');
@@ -17943,7 +17958,7 @@ window.addEventListener('pointerdown', e=>{
 }, true);
 $('#btnmiss').addEventListener('click', missOpen);
 $('#missclose').addEventListener('click', missClose);
-$('#mission').addEventListener('click', e=>{ if(e.target.id==='mission') missClose(); });
+fecharPeloFundo($('#mission'), missClose);
 (function(){
   const ch = $('#misschips');
   ch.innerHTML = MISSFILTROS.map(f=>'<button class="mchip'+(f.k===MISS.filtro?' on':'')+'" data-k="'+f.k+'">'+esc(f.t)+'</button>').join('');
@@ -18003,7 +18018,7 @@ $('#findin').addEventListener('keydown', e=>{
   e.stopPropagation();
 });
 $('#findlist').addEventListener('click', e=>{ const li = e.target.closest('li[data-i]'); if(li){ findSel = +li.dataset.i; findGo(); } });
-$('#finder').addEventListener('click', e=>{ if(e.target.id==='finder') findClose(); });
+fecharPeloFundo($('#finder'), findClose);
 (function(){
   const el = document.documentElement, fs = $('#btnfs');
   const can = el.requestFullscreen || el.webkitRequestFullscreen;
@@ -18450,7 +18465,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r316';
+const BUILD = 'r317';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -19072,6 +19087,7 @@ $('#datepop').addEventListener('click', e=>{
 /* r313 · CORREÇÕES (ideia dele): o que foi consertado, em uma linha cada, sem número de build nem nome de
    função, embaixo das novidades. Hotfix e ferramenta interna moram aqui, nunca em NOVIDADES. */
 const CORRECOES = [
+  {d:'25 SET 2026', l:'Selecionar o texto da busca ou do registro de bordo com o mouse e soltar fora da caixa fechava a janela e perdia o que estava escrito.'},
   {d:'24 SET 2026', l:'Clicar no espaço vazio às vezes abria a ficha de uma constelação e apagava as órbitas, mesmo com as constelações desligadas.'},
   {d:'24 SET 2026', l:'As sondas de longe terminavam todas no mesmo ponto do céu e não encontravam os planetas nas datas dos sobrevoos; o Halley aparecia longe do Sol nos periélios de 1835 e 1910.'},
   {d:'24 SET 2026', l:'As missões lunares tinham o sentido e as voltas desenhados à mão: a Apollo dava as voltas na Terra no sentido contrário ao do lançamento e subia do meio do oceano.'},
