@@ -14211,6 +14211,16 @@ function anlEnvia(tipo, nome, dados){
     else window.umami.track(nome, dados);
   }catch(e){}
 }
+/* r318 · os links copiados (⧉ da vista, do planetário e da bancada) NÃO levam os parâmetros de campanha: quem chegou
+   por um anúncio e compartilha a vista mandaria o utm junto, e o destinatário contaria como vindo do anúncio. Sobra o
+   resto da query (o ?lang=, por exemplo), como antes */
+function anlLinkBase(){
+  try{
+    const u = new URL(location.href); u.hash = '';
+    [...u.searchParams.keys()].forEach(k=>{ if(/^utm_/i.test(k) || /^(gclid|fbclid|msclkid|ttclid|twclid|li_fat_id|ref|analise|nao-contar)$/i.test(k)) u.searchParams.delete(k); });
+    return u.toString();
+  }catch(e){ return location.href.split('#')[0]; }
+}
 function anlEvento(nome, props){
   const d = {}; if(props) for(const k in props) if(props[k] !== undefined && props[k] !== null && props[k] !== '') d[k] = anlTexto(props[k]);
   anlEnvia('evento', nome, d);
@@ -17816,7 +17826,7 @@ function cardRender(){
   const ng = $('#navgo'); if(ng) ng.addEventListener('click', ()=>{ anlEvento('entrar', {tipo:cur.navKind || 'corpo', id:cur.navId}); if(cur.navKind === 'satlive'){ satVivoIr(cur.navId); return; } enterTarget(cur.navKind==='gal' ? 'galaxy' : (cur.navKind==='sys' ? 'starsys' : 'focus'), cur.navId); });
   const cv2 = $('#cardvista'); if(cv2) cv2.addEventListener('click', ()=>{
     /* r305 · o link que leva o outro ao instante exato */
-    const url = location.href.split('#')[0] + '#v=' + vistaCodifica();
+    const url = anlLinkBase() + '#v=' + vistaCodifica();
     if(typeof feito === 'function') feito('vista');   /* r307 */
     anlEvento('compartilhar', {tipo:'vista', corpo:ST.body || (ST.mapCard && ST.mapCard.id) || ''});   /* r318 */
     const avisa = ()=>showHint(t('LINK DESTA VISTA COPIADO · câmera, data e camadas vão junto'));
@@ -19503,7 +19513,7 @@ $('#localsens').addEventListener('click', ()=>localSensores(!LOCAL.sens));
 $('#localgps').addEventListener('click', localGps);
 $('#localvista').addEventListener('click', ()=>{
   /* r312 · o link deste céu: lugar, direção do olhar e data (o molde do ⧉ do card, r305) */
-  const url = location.href.split('#')[0] + '#planetario=' + planetarioCodifica();
+  const url = anlLinkBase() + '#planetario=' + planetarioCodifica();
   anlEvento('compartilhar', {tipo:'planetario', mundo:LOCAL.mundo});   /* r318 */
   const avisa = ()=>showHint(t('LINK DESTE CÉU COPIADO · lugar, direção do olhar e data vão junto'));
   if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(avisa, ()=>showHint(url));
@@ -19549,7 +19559,7 @@ $('#habq').addEventListener('input', e=>{
 });
 $('#habshare').addEventListener('click', ()=>{
   /* r210 · a bancada vira LINK: #bancada=ids abre direto com estes mundos */
-  const url = location.href.split('#')[0] + '#bancada=' + HAB.sel.join(',');
+  const url = anlLinkBase() + '#bancada=' + HAB.sel.join(',');
   anlEvento('compartilhar', {tipo:'bancada', n:HAB.sel.length});   /* r318 */
   const avisa = ()=>showHint('LINK DA BANCADA COPIADO · cole e envie');
   if(navigator.clipboard && navigator.clipboard.writeText)

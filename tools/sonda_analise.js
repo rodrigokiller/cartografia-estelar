@@ -84,6 +84,7 @@ const URL0 = 'http://127.0.0.1:' + HPORTA + '/index.html?analise=log&utm_source=
         localAbre(-23.55, -46.63); document.getElementById('localvista').click(); localFecha();   /* /planetario/terra, compartilhar planetario, abriu */
         { const cv = document.getElementById('cardvista'); if(cv) cv.click(); }  /* compartilhar vista */
         { const a = document.createElement('a'); a.href = 'https://exemplo.org/pagina'; a.textContent = 'x'; a.addEventListener('click', e=>e.preventDefault()); document.body.appendChild(a); a.click(); a.remove(); }   /* saida */
+        R.linkBase = anlLinkBase();                                               /* o link copiado sai sem os utm_* */
         gotoSystem('sol');                                                        /* /sistema/sol (a troca é animada: o resultado é lido depois) */
       }catch(e){ R.excecao = e.message + ' ' + String(e.stack || '').slice(0, 300); }
       return R;
@@ -124,6 +125,7 @@ const URL0 = 'http://127.0.0.1:' + HPORTA + '/index.html?analise=log&utm_source=
     ok(tem('saida', d=>d.url === 'exemplo.org/pagina'), 'evento saida {url}');
     ok(!evs.some(e=>JSON.stringify(e.data || {}).indexOf('zzzzqqq') >= 0), 'o texto digitado na busca vazou para um evento');
     ok(!R.erros || R.erros.length === 0, 'erros de console: ' + JSON.stringify(R.erros));
+    ok(R.linkBase && R.linkBase.indexOf('utm_') < 0 && R.linkBase.indexOf('analise') < 0 && R.linkBase.indexOf('lang=pt') > 0, 'o link copiado deveria sair sem utm e sem ?analise, mantendo o ?lang: ' + R.linkBase);
     /* 4) ?nao-contar=1 */
     await cdp.send('Page.navigate', {url:'http://127.0.0.1:' + HPORTA + '/index.html?nao-contar=1#sistema=sol'});
     let R2 = null;
