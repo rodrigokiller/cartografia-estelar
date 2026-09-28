@@ -7,6 +7,7 @@ Feito por [Rodrigo Sanguanini](https://sanguanini.dev), com trilha sonora origin
 
 **Rodar local:** abra `index.html` no navegador (a pasta `audio/` precisa estar junto para a trilha; sem ela, toca a música generativa).
 **Publicar:** `git push` na branch `main`. O GitHub Pages serve a pasta inteira, sem build step.
+**Visitas:** o site publicado conta visitas de forma anônima pelo Umami Cloud (sem cookie, sem dado pessoal, só em www.universatlas.com; nada roda em file:// ou localhost). Para não contar o seu navegador, abra o mapa com `?nao-contar=1`; para ver no console o que seria enviado, `?analise=log`. `node tools/sonda_analise.js` confere tudo isso.
 **Verificar os dados:** `node tools/verifica.js` confere a integridade do catálogo antes de publicar.
 **Continuar com IA:** abra a pasta no VS Code com Claude Code. O `CLAUDE.md` carrega todo o contexto do projeto.
 

@@ -8,9 +8,14 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 285 testes pendentes (do r131 ao r317) e 4 decisões suas.
+Hoje: 287 testes pendentes (do r131 ao r318) e 4 decisões suas.
 
 ---
+
+## r318 · a contagem de visitas (Umami, para medir os anúncios)
+
+- [ ] **Nada muda no app.** Abra o site publicado, navegue como sempre, no computador e no celular: nenhum botão novo, nenhum aviso de cookie, nada mais lento. No manual (?), no fim, a linha de privacidade em português e, no /en, em inglês.
+- [ ] **O painel do Umami.** Depois de colar o Website ID e publicar: abra www.universatlas.com numa aba anônima com ?utm_source=teste&utm_medium=cpc, entre em Marte, abra o planetário e a bancada, busque algo, use ENTRAR: em um minuto o painel mostra a visita, as páginas /sistema/sol, /corpo/marte, /planetario/terra e /bancada, e os eventos (busca, entrar, planetario, comparar...) com as propriedades. Depois abra com ?nao-contar=1 e confira que a sua navegação não aparece mais.
 
 ## r317 · o modal que fechava sozinho
 

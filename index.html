@@ -1456,6 +1456,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <p><button class="xbtn" id="tutrever">▸ REVER O TUTORIAL DE BOAS-VINDAS</button></p>
       <p class="sub">UNIVERSATLAS · universatlas.com · o mapa Cartografia Estelar</p>
       <p class="sub">Dados: NASA/ESA/IAU, valores aproximados. Linhas em âmbar são referências de ficção.</p>
+      <p class="sub">Privacidade: o site conta as visitas de forma anônima pelo Umami, sem cookie e sem dado pessoal. Para não ser contado, abra universatlas.com/?nao-contar=1.</p>
       <p class="credito">IDEALIZADO E DESENVOLVIDO POR<b>RODRIGO SANGUANINI</b>
         <a href="https://sanguanini.dev" target="_blank" rel="noopener">SANGUANINI.DEV</a></p>
       <p id="diagline" style="font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:1px;margin-top:10px"></p>
@@ -7241,6 +7242,7 @@ function localAbre(lat, lon){
   if(typeof CEU6 !== 'undefined') localMontaCat6();
   else if(!LOCAL.cat6){ LOCAL.cat6 = 'carregando'; satVivoScript('ceu6.js').then(()=>{ LOCAL.cat6 = 'ok'; localMontaCat6(); }).catch(()=>{ LOCAL.cat6 = 'erro'; }); }
   LOCAL.on = true; document.getElementById('localpop').classList.add('on');
+  anlEvento('planetario', {acao:'abriu', mundo:LOCAL.mundo}); anlPagina();   /* r318 · depois do LOCAL.on, senão a página virtual ainda é a do mapa */
   document.getElementById('localpop').classList.toggle('semhud', !LOCAL.hud);
   localResize(); localMapa(); LOCAL.ultimo = 0;
   if(!LOCAL.laco){ LOCAL.laco = true; requestAnimationFrame(localFrame); }
@@ -7250,7 +7252,7 @@ function localAbre(lat, lon){
     {tx:'O mapa no canto mostra onde você está: toque nele para mudar de lugar, + e − dão zoom, ⛶ abre o mapa grande com a busca de lugares. O botão ◈ muda a data: eclipses, a Lua e os planetas obedecem. HUD esconde a bússola e o mapa.', alvo:'#localmapa'}
   ]), 600);
 }
-function localFecha(){ if(LOCAL.sens) localSensores(false); LOCAL.on = false; document.getElementById('localpop').classList.remove('on'); localCardFecha(); localMapaGrande(false); }
+function localFecha(){ if(LOCAL.sens) localSensores(false); LOCAL.on = false; document.getElementById('localpop').classList.remove('on'); localCardFecha(); localMapaGrande(false); anlPagina(); }
 /* r289 · o mini card dentro do céu: Sol, Lua, planetas (a ficha do atlas), estrelas famosas (fichaEstrela) e constelações (CEU_FICHA) */
 function localCardFecha(){ const el = document.getElementById('localcard'); if(el) el.classList.remove('on'); }
 function localFicha(id, tipo){
@@ -7686,6 +7688,7 @@ async function localSensores(liga){
     if(r !== 'granted'){ showHint(t('SEM PERMISSÃO PARA OS SENSORES · libere nos ajustes do navegador')); return; }
   }
   LOCAL.sens = true; LOCAL.sensOff = 0; LOCAL.sensK = undefined; LOCAL.sensAbs = false; LOCAL.sensN = 0;
+  anlEvento('planetario', {acao:'sensores'});   /* r318 · permitiu os sensores (sem a orientação) */
   if('ondeviceorientationabsolute' in window) window.addEventListener('deviceorientationabsolute', localSensEvento);
   window.addEventListener('deviceorientation', localSensEvento);
   /* apontar so faz sentido AGORA: o relogio vai ao vivo */
@@ -7698,7 +7701,7 @@ async function localSensores(liga){
 function localGps(){
   if(!navigator.geolocation){ showHint(t('ESTE NAVEGADOR NÃO DÁ A POSIÇÃO')); return; }
   showHint(t('PEDINDO A POSIÇÃO AO APARELHO...'));
-  navigator.geolocation.getCurrentPosition(p=>{ localVaiPara(p.coords.latitude, p.coords.longitude); LOCAL.ultimo = 0; showHint(t('LUGAR: A SUA POSIÇÃO') + ' · ' + p.coords.latitude.toFixed(2) + ', ' + p.coords.longitude.toFixed(2)); },
+  navigator.geolocation.getCurrentPosition(p=>{ localVaiPara(p.coords.latitude, p.coords.longitude); LOCAL.ultimo = 0; anlEvento('planetario', {acao:'gps'}); showHint(t('LUGAR: A SUA POSIÇÃO') + ' · ' + p.coords.latitude.toFixed(2) + ', ' + p.coords.longitude.toFixed(2)); },
     ()=>showHint(t('SEM ACESSO À POSIÇÃO · escolha o lugar no mapa')), {enableHighAccuracy:false, timeout:10000, maximumAge:600000});
 }
 function localFrame(){
@@ -12878,6 +12881,7 @@ function trajStart(id){
   if(!b || (!focoPalco && (!o || !o.obj)) || !(ehEscape(b) || b.comet || (b.nave && b.traj) || (b.foguete && b.traj)) || DIVE) return;
   /* emendar uma linha do tempo na outra vazava a Lua escondida: limpa antes */
   if(TRAJ) trajLimpar();
+  anlEvento('trajetoria', {id});   /* r318 */
   ZOOM = null;   /* r212 · o alvo do zoom deslizante desfazia a chegada da câmera
                     (o r193 só cobria foguete e foco: sonda e cometa ficaram de fora) */
   /* primeira viagem: o navegador LÊ o manual antes de decolar */
@@ -14156,6 +14160,104 @@ const store = {
    o modo com texturas poderia ser apenas opção'). Chave nova de propósito:
    quem tinha a antiga ligada volta ao desenho também */
 LIVE = store.get('carto:foto','0') === '1';
+/* ================= r318 · A CONTAGEM DE VISITAS (Umami Cloud) =================
+   Análise sem cookie e sem dado pessoal, para medir os anúncios: de onde a pessoa
+   veio (referrer e utm), o que abriu e o que clicou. A navegação é estado interno
+   espelhado no hash (syncHash), então o rastreamento automático do Umami fica
+   DESLIGADO e cada troca de lugar vai à mão, uma vez, como página virtual legível
+   (/corpo/marte, /sistema/exo_12, /galaxia/andromeda, /universo, /planetario/lua,
+   /bancada); só a câmera mexendo não conta. A primeira página leva o referrer e os
+   utm_* da chegada (o replaceState do syncHash só troca o hash: a query fica).
+   Só roda em www.universatlas.com por https: em file://, localhost, prévias da
+   Vercel e no Chrome sem tela das sondas (navigator.webdriver) o script nem é
+   pedido, e sem rede ou com o script bloqueado nada aqui é esperado por ninguém.
+   Respeita Do Not Track. DESLIGAR NO SEU NAVEGADOR: abrir o mapa com
+   ?nao-contar=1 (grava carto:naocontar; ?nao-contar=0 desfaz). VER O QUE SERIA
+   MANDADO sem mandar: ?analise=log (grava carto:anlog, imprime no console;
+   ?analise=0 desfaz). O website ID não é segredo: ele vai no HTML de qualquer
+   site que usa o Umami. */
+const ANL = {
+  ID: 'COLE-AQUI-O-WEBSITE-ID',   /* o Website ID do painel do Umami (uuid): enquanto for este texto, nada é carregado */
+  SRC: 'https://cloud.umami.is/script.js',
+  HOSTS: ['www.universatlas.com', 'universatlas.com'],
+  on:false, pronto:false, log:false, fila:[], ultima:'', n:0, hist:[]   /* hist: em modo ?analise=log guarda os últimos 60 envios (ANL.hist no console) */
+};
+(function(){
+  try{
+    const q = new URLSearchParams(location.search);
+    const nc = q.get('nao-contar'); if(nc !== null){ if(nc === '0') localStorage.removeItem('carto:naocontar'); else store.set('carto:naocontar', '1'); }
+    const lg = q.get('analise'); if(lg !== null){ if(lg === '0') localStorage.removeItem('carto:anlog'); else store.set('carto:anlog', '1'); }
+    ANL.log = store.get('carto:anlog', '0') === '1';
+    const dnt = navigator.doNotTrack === '1' || window.doNotTrack === '1';
+    ANL.on = /^[0-9a-f-]{36}$/i.test(ANL.ID) && ANL.HOSTS.indexOf(location.hostname) >= 0 && location.protocol === 'https:'
+      && store.get('carto:naocontar', '0') !== '1' && !navigator.webdriver && !dnt;
+  }catch(e){ ANL.on = false; }
+})();
+function anlTexto(v){ v = (v === undefined || v === null) ? '' : String(v); return v.length > 100 ? v.slice(0, 100) : v; }
+/* só os parâmetros de campanha viajam na página virtual (utm_* e os ids de clique das plataformas); ?lang=, ?aula= e os nossos ficam de fora */
+function anlQuery(){
+  try{
+    const q = new URLSearchParams(location.search), o = new URLSearchParams();
+    q.forEach((v, k)=>{ if(/^utm_/i.test(k) || /^(gclid|fbclid|msclkid|ttclid|twclid|li_fat_id|ref)$/i.test(k)) o.set(k, v); });
+    const s = o.toString(); return s ? '?' + s : '';
+  }catch(e){ return ''; }
+}
+function anlEnvia(tipo, nome, dados){
+  if(ANL.log){ try{ const c = JSON.parse(JSON.stringify(dados || {})); ANL.hist.push({tipo, nome, dados:c}); if(ANL.hist.length > 60) ANL.hist.shift(); console.info('[analise] ' + tipo + (nome ? ' ' + nome : ''), c); }catch(e){} }
+  if(!ANL.on) return;
+  if(!ANL.pronto || !window.umami){ if(ANL.fila.length < 40) ANL.fila.push([tipo, nome, dados]); return; }
+  try{
+    if(tipo === 'pagina') window.umami.track(p=>Object.assign({}, p, dados));
+    else window.umami.track(nome, dados);
+  }catch(e){}
+}
+function anlEvento(nome, props){
+  const d = {}; if(props) for(const k in props) if(props[k] !== undefined && props[k] !== null && props[k] !== '') d[k] = anlTexto(props[k]);
+  anlEnvia('evento', nome, d);
+}
+function anlCaminho(){
+  if(typeof LOCAL !== 'undefined' && LOCAL && LOCAL.on) return '/planetario/' + (LOCAL.mundo || 'terra');
+  const hp = document.getElementById('habpop'); if(hp && hp.classList.contains('on')) return '/bancada';
+  if(typeof ST === 'undefined' || !ST) return '/';
+  if(ST.level === 'focus' && ST.body) return '/corpo/' + ST.body;
+  if(ST.mapCard && ST.mapCard.id && typeof ALLBODIES !== 'undefined' && ALLBODIES[ST.mapCard.id] && (!ST.mapCard.type || ST.mapCard.type === 'body')) return '/corpo/' + ST.mapCard.id;
+  if(ST.level === 'system' && ST.sys) return '/sistema/' + ST.sys;
+  if(ST.level === 'galaxy' && ST.gal) return '/galaxia/' + ST.gal;
+  return '/universo';
+}
+function anlPagina(){
+  if(!ANL.on && !ANL.log) return;
+  let c; try{ c = anlCaminho(); }catch(e){ return; }
+  if(c === ANL.ultima) return;
+  ANL.ultima = c; ANL.n++;
+  let aula = ''; try{ aula = new URLSearchParams(location.search).get('aula') || ''; }catch(e){}
+  anlEnvia('pagina', '', {url: c + anlQuery(), title: document.title, referrer: ANL.n === 1 ? document.referrer : '',
+    data: {idioma: (typeof LANG === 'string') ? LANG : 'pt', escala: (typeof ESCR !== 'undefined' && ESCR.on) ? 'real' : 'cenico', aula: aula || 'nao', build: (typeof BUILD === 'string') ? BUILD : ''}});
+}
+(function(){
+  /* o script entra só na produção, sem bloquear nada (script inserido depois já é assíncrono); a fila segura o que
+     acontecer antes de ele chegar e é solta no onload; se a rede ou um bloqueador o barrar, a fila morre em silêncio */
+  if(ANL.on){
+    const s = document.createElement('script');
+    s.defer = true; s.src = ANL.SRC;
+    s.setAttribute('data-website-id', ANL.ID);
+    s.setAttribute('data-auto-track', 'false');
+    s.setAttribute('data-domains', ANL.HOSTS.join(','));
+    s.setAttribute('data-do-not-track', 'true');
+    s.setAttribute('data-tag', (typeof LANG === 'string') ? LANG : 'pt');
+    s.onload = ()=>{ ANL.pronto = true; const f = ANL.fila.splice(0); f.forEach(x=>anlEnvia(x[0], x[1], x[2])); };
+    s.onerror = ()=>{ ANL.on = false; ANL.fila.length = 0; };
+    document.head.appendChild(s);
+  }
+  /* links de saída para outros sites (o sanguanini.dev do manual e o que as fichas trouxerem) */
+  document.addEventListener('click', e=>{
+    const a = (e.target && e.target.closest) ? e.target.closest('a[href]') : null;
+    if(!a) return;
+    let u; try{ u = new URL(a.getAttribute('href'), location.href); }catch(err){ return; }
+    if(!/^https?:$/.test(u.protocol) || u.hostname === location.hostname || /(^|\.)universatlas\.com$/.test(u.hostname)) return;
+    anlEvento('saida', {url: u.hostname + u.pathname});
+  }, true);
+})();
 /* ================= r174 · LIGHTSPEED =================
    O efeito de filme que ele pediu: quando a viagem no 1:1 passa de CENTENAS
    de anos-luz por segundo (zoom fundo pela galáxia, voo até uma estrela),
@@ -14905,6 +15007,7 @@ function syncHash(){
   if(ESCR.on) h += '&escala=real';   /* o link leva junto o modo de escala */
   try{ history.replaceState(null, '', h); }catch(e){}
   store.set('carto:loc', h);
+  anlPagina();   /* r318 · a página virtual, uma vez por troca de lugar */
 }
 /* r166 · e a CÂMERA fica guardada à parte, fora do link: o endereço continua
    legível para compartilhar, e o F5 devolve o mesmo enquadramento. Só no mapa,
@@ -15260,6 +15363,7 @@ function abrirHab(idBase, grupo){
   document.getElementById('habpop').classList.add('on');
   habMonta();
   if(!HAB.rodando){ HAB.rodando = true; habPasso(); }
+  anlPagina();   /* r318 */
 }
 /* r203 · a bancada 3D da ANÁLISE COMPARATIVA: renderer próprio pequeno,
    recriado quando o card troca de canvas (o velho é descartado para não
@@ -15952,6 +16056,7 @@ function cotidianoDe(km){
 }
 function openCompare(A, B){
   feito('comparar');
+  anlEvento('comparar', {a:A.id, b:B.id});   /* r318 */
   tutInicia('cmpcard', [{tx:'<b>COMPARAÇÃO EM ESCALA REAL:</b> quando a diferença passa de 3,2 vezes, o menor aparece DENTRO do maior. A razão de volume diz quantas vezes ele caberia ali.'}]);
   const dA = parseDia(A), dB = parseDia(B);
   let viz = '';
@@ -16082,6 +16187,7 @@ function feito(k){
   if(FEITO.has(k)) return;
   FEITO.add(k);
   FEITO_TS[k] = Date.now();
+  anlEvento('conquista', {chave:k});   /* r318 */
   store.set('carto:feitos', [...FEITO].join(','));
   store.set('carto:feitosts', JSON.stringify(FEITO_TS));
   toastMissao(k);
@@ -16430,6 +16536,7 @@ function missRender(){
 }
 function missOpen(){
   $('#mission').classList.add('on'); missRender();
+  anlEvento('registro');   /* r318 */
   tutInicia('registro', [
     {tx:'<b>REGISTRO DE BORDO:</b> tudo que você visita fica anotado aqui, com busca, filtros e ordenações.'},
     {tx:'Clique no chip <b>★ SISTEMAS</b>.',
@@ -16911,6 +17018,7 @@ function tourAvanca(){
   TOUR.i = TOUR.i + 1;
   if(TOUR.i >= ROTEIRO.length){
     feito('tourespacial');
+    anlEvento('tour', {acao:'fim', rota:String(TOUR.rota)});   /* r318 */
     ROTAS_OK.add(TOUR.rota);
     store.set('carto:rotasok', [...ROTAS_OK].join(','));
     if(Object.keys(ROTAS).every(k=>ROTAS_OK.has(k))) feito('rotastodas');
@@ -16963,6 +17071,7 @@ function tourStart(){
   if(typeof TRAJ !== 'undefined' && TRAJ) trajLimpar();   /* r293 · a linha do tempo e o tour brigavam pelo pivô no 1:1 */
   TOUR.volta = {level:ST.level, sys:ST.sys, gal:ST.gal, body:ST.body};
   TOUR.on = true; TOUR.i = 0; TOUR.pausado = false;
+  anlEvento('tour', {acao:'inicio', rota:String(TOUR.rota)});   /* r318 */
   { const b = $('#tourpausa2'); if(b) b.textContent = '⏸'; }
   document.body.classList.add('tour');
   const bt = $('#misstour'); if(bt) bt.textContent = '⏹ PARAR TOUR';
@@ -17174,7 +17283,7 @@ function findOpen(){
   i.focus(); setTimeout(()=>i.focus(), 30);   /* r293 · o foco síncrono, dentro do gesto, é o que sobe o teclado no iPhone */
   tutInicia('busca', [{tx:'<b>BUSCA:</b> qualquer corpo do catálogo, sistemas e galáxias. Sem digitar nada, ficam as sugestões de onde você está e dos seus visitados.'}]);
 }
-function findClose(){ $('#finder').classList.remove('on'); $('#findin').blur(); }
+function findClose(){ const f = $('#finder'); if(f.classList.contains('on') && findRes.length === 0 && $('#findin').value.trim()) anlEvento('busca', {achou:'nao'}); f.classList.remove('on'); $('#findin').blur(); }
 /* a lista inicial da busca ajuda: últimos visitados e o sistema onde você está */
 function findSugestoes(cap){
   const out = [], usados = new Set();
@@ -17229,7 +17338,7 @@ function findRender(q){
   $('#findlist').scrollTop = 0;
 }
 function paintSel(){ $('#findlist').querySelectorAll('li').forEach((li,i)=>{ li.classList.toggle('sel', i===findSel); if(i===findSel && li.scrollIntoView) li.scrollIntoView({block:'nearest'}); }); }   /* r293 · a seta desce a lista junto */
-function findGo(){ const r = findRes[findSel]; if(r){ findClose(); feito('busca'); r.go(); } }
+function findGo(){ const r = findRes[findSel]; if(r){ findClose(); feito('busca'); anlEvento('busca', {achou:'sim'}); r.go(); } }
 
 /* RA/DEC real do alvo, quando existe: sistemas usam a posição da estrela no
    NOSSO céu; galáxias idem; sem dado, volta a coordenada cênica */
@@ -17686,6 +17795,7 @@ function cardRender(){
   function trocaFoto(){
     LIVE = !LIVE;
     store.set('carto:foto', LIVE ? '1' : '0');
+    anlEvento('foto', {ligada:LIVE ? 'sim' : 'nao'});   /* r318 */
     if(ST.level === 'focus') swapScene(buildFocus(ST.body), true);
     else if(ACT && ACT.kind === 'system'){
       /* no mapa a câmera fica exatamente onde estava: trocar a pele da Terra
@@ -17703,11 +17813,12 @@ function cardRender(){
     if(TRAJ && TRAJ.fase!=='volta') trajCancelar();
     else trajStart(cur.navId);
   });
-  const ng = $('#navgo'); if(ng) ng.addEventListener('click', ()=>{ if(cur.navKind === 'satlive'){ satVivoIr(cur.navId); return; } enterTarget(cur.navKind==='gal' ? 'galaxy' : (cur.navKind==='sys' ? 'starsys' : 'focus'), cur.navId); });
+  const ng = $('#navgo'); if(ng) ng.addEventListener('click', ()=>{ anlEvento('entrar', {tipo:cur.navKind || 'corpo', id:cur.navId}); if(cur.navKind === 'satlive'){ satVivoIr(cur.navId); return; } enterTarget(cur.navKind==='gal' ? 'galaxy' : (cur.navKind==='sys' ? 'starsys' : 'focus'), cur.navId); });
   const cv2 = $('#cardvista'); if(cv2) cv2.addEventListener('click', ()=>{
     /* r305 · o link que leva o outro ao instante exato */
     const url = location.href.split('#')[0] + '#v=' + vistaCodifica();
     if(typeof feito === 'function') feito('vista');   /* r307 */
+    anlEvento('compartilhar', {tipo:'vista', corpo:ST.body || (ST.mapCard && ST.mapCard.id) || ''});   /* r318 */
     const avisa = ()=>showHint(t('LINK DESTA VISTA COPIADO · câmera, data e camadas vão junto'));
     if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(avisa, ()=>showHint(url));
     else showHint(url);
@@ -17752,7 +17863,7 @@ function cardRender(){
     if(HAB.sel.indexOf(ba.dataset.habid) < 0) HAB.sel = HAB.perso.filter(x=>x !== ba.dataset.habid).concat([ba.dataset.habid]).slice(-12);
     abrirHab();
   }); }
-  { const bsh = $('#cardshare'); if(bsh) bsh.addEventListener('click', ()=>cartaoCompartilhar(bsh.dataset.shareid)); }
+  { const bsh = $('#cardshare'); if(bsh) bsh.addEventListener('click', ()=>{ anlEvento('compartilhar', {tipo:'cartao', corpo:bsh.dataset.shareid}); cartaoCompartilhar(bsh.dataset.shareid); }); }
   const bts = $('#btntoursis'); if(bts) bts.addEventListener('click', ()=>tourDoSistema(bts.dataset.sistour));
   const bss = $('#btnsubsis'); if(bss) bss.addEventListener('click', subSistema);
   pb.querySelectorAll('[data-vt]').forEach(el=>el.addEventListener('click', ()=>verLinhaDoTempo(el.dataset.vt)));
@@ -18465,7 +18576,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r317';
+const BUILD = 'r318';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -19393,6 +19504,7 @@ $('#localgps').addEventListener('click', localGps);
 $('#localvista').addEventListener('click', ()=>{
   /* r312 · o link deste céu: lugar, direção do olhar e data (o molde do ⧉ do card, r305) */
   const url = location.href.split('#')[0] + '#planetario=' + planetarioCodifica();
+  anlEvento('compartilhar', {tipo:'planetario', mundo:LOCAL.mundo});   /* r318 */
   const avisa = ()=>showHint(t('LINK DESTE CÉU COPIADO · lugar, direção do olhar e data vão junto'));
   if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(avisa, ()=>showHint(url));
   else showHint(url);
@@ -19425,7 +19537,7 @@ $('#satlista').addEventListener('click', e=>{
   store.set('carto:satcfg', JSON.stringify(SATCFG));
   satCfgAplica(); satCfgRender();
 });
-$('#habpopx').addEventListener('click', ()=>{ $('#habpop').classList.remove('on'); HAB.rodando = false; });
+$('#habpopx').addEventListener('click', ()=>{ $('#habpop').classList.remove('on'); HAB.rodando = false; anlPagina(); });
 $('#habq').addEventListener('input', e=>{
   const nrm = (typeof norm === 'function') ? norm : (x=>String(x).toLowerCase());
   const q = nrm(e.target.value.trim());
@@ -19438,6 +19550,7 @@ $('#habq').addEventListener('input', e=>{
 $('#habshare').addEventListener('click', ()=>{
   /* r210 · a bancada vira LINK: #bancada=ids abre direto com estes mundos */
   const url = location.href.split('#')[0] + '#bancada=' + HAB.sel.join(',');
+  anlEvento('compartilhar', {tipo:'bancada', n:HAB.sel.length});   /* r318 */
   const avisa = ()=>showHint('LINK DA BANCADA COPIADO · cole e envie');
   if(navigator.clipboard && navigator.clipboard.writeText)
     navigator.clipboard.writeText(url).then(avisa, ()=>showHint(url));
@@ -19675,8 +19788,9 @@ const cfgRowClick = e=>{
   const rLang = e.target.closest('[data-lang]');
   if(rLang){
     store.set('carto:lang', LANG === 'en' ? 'pt' : 'en');
+    anlEvento('idioma', {para:LANG === 'en' ? 'pt' : 'en'});   /* r318 */
     try{ const u = new URL(location.href); u.searchParams.delete('lang'); history.replaceState(null, '', u.pathname + u.search + u.hash); }catch(err){}
-    location.reload();
+    setTimeout(()=>location.reload(), (ANL.on && ANL.pronto) ? 250 : 0);
     return;
   }
   const rLuz = e.target.closest('[data-luzvia]');
@@ -19993,6 +20107,7 @@ function bootNext(){
 }
 function endBoot(){
   $('#boot').classList.add('off');
+  anlPagina();   /* r318 · a primeira página (se o boot já mandou pelo syncHash, não repete) */
   if(window.__bootErro) showHint(t('O LINK NÃO ABRIU E O MAPA CAIU EM CASA') + ' · ' + (window.__bootErro.message || ''));   /* r311 */
   else if(ST.level==='system') showHint(SYS[ST.sys].hint);
 }

@@ -611,6 +611,8 @@ ui: {
   '<b>≋ Linha do tempo:</b> sondas, cometas e as Apollo têm a viagem reconstruída, com os planetas NA ÉPOCA certa e marcos clicáveis.':'<b>≋ Timeline:</b> probes, comets and the Apollo missions have their trip rebuilt, with the planets AT THE RIGHT TIME and clickable milestones.',
   '▸ REVER O TUTORIAL DE BOAS-VINDAS':'▸ REPLAY THE WELCOME TUTORIAL', 'UNIVERSATLAS · universatlas.com · o mapa Cartografia Estelar':'UNIVERSATLAS · universatlas.com · the Stellar Cartography map',
   'Dados: NASA/ESA/IAU, valores aproximados. Linhas em âmbar são referências de ficção.':'Data: NASA/ESA/IAU, approximate values. Amber lines are fiction references.',
+  /* r318 · a contagem de visitas */
+  'Privacidade: o site conta as visitas de forma anônima pelo Umami, sem cookie e sem dado pessoal. Para não ser contado, abra universatlas.com/?nao-contar=1.':'Privacy: the site counts visits anonymously with Umami, with no cookies and no personal data. To opt out, open universatlas.com/?nao-contar=1.',
   'IDEALIZADO E DESENVOLVIDO POR':'CONCEIVED AND DEVELOPED BY',
   /* rótulos do mapa */
   'ZONA HABITÁVEL':'HABITABLE ZONE', 'NUVEM DE OORT':'OORT CLOUD', 'LINHA DE GELO':'FROST LINE', 'HELIOPAUSA':'HELIOPAUSE', 'CINTURÃO DE KUIPER':'KUIPER BELT',
