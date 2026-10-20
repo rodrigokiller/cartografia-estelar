@@ -111,9 +111,7 @@ body.touch:has(#localpop.on,#mission.on,#finder.on,#cmp.on,#help.on,#habpop.on,#
 #morebtns{display:contents}
 /* r176: o relógio do canto não existe no celular; a data ganhou um botão no ⋯ */
 #btndata{display:none}
-#btnmute{display:none}   /* r320 · o ♪ fixo do toque: liga e desliga a música com um toque, sem abrir o ⋯ */
-body.touch #btnmute{display:block;order:8}
-@media (pointer: coarse){ #btndata{display:flex} }
+@media (pointer: coarse){ #btndata{display:block} }   /* r322 · era display:flex: o ◈ ficava encostado no canto do botão */
 #btnmore{display:none}
 #scalebadge{order:0} #navback{order:1} #navfwd{order:2} #btnsnd{order:3}
 #btnphoto{order:4} #btnfilt{order:4} #btnmiss{order:5} #btnfind{order:6} #btnfs{order:7} #btnhelp{order:8}
@@ -1081,6 +1079,8 @@ body.touch .touchonly{display:inline}
 .livebtn.on i{background:var(--ok);box-shadow:0 0 6px var(--ok);animation:pulseLive 1.8s ease-in-out infinite}
 @keyframes pulseLive{50%{opacity:.35}}
 #liveinfo{font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;color:var(--ok);margin-top:6px}
+#liveinfo.alerta{color:var(--amber);animation:solpulsa 1.1s ease-in-out infinite alternate}   /* r322 · classe M ou X de raios X agora */
+@keyframes solpulsa{from{opacity:.5}to{opacity:1}}
 /* r320 · o ciclo solar no card do Sol: a linha e o gráfico de 2009 a 2030 */
 #solciclo{margin:8px 0 10px}
 #solcicloln{font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;color:var(--dim);margin-bottom:4px;line-height:1.5}
@@ -1139,7 +1139,8 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   #topright{top:9px;right:10px;left:auto;gap:6px;flex-wrap:nowrap}
   .navbtn,#btnhelp{width:32px;height:32px;font-size:14px}
   #btnmore{display:block;order:9}
-  #btndata{order:3} #btncfg{order:10}   /* r320 · na coluna do ⋯: « » ◈ ♪ ⌗ ⛶ ≋ ? ⚙ (◈ e ⚙ estavam sem ordem e vinham primeiro) */
+  #btndata{order:3} #btncfg{order:10}   /* r320 · na coluna do ⋯: « » ◈ ⌗ ⛶ ≋ ? ⚙ (◈ e ⚙ estavam sem ordem e vinham primeiro) */
+  #btnsnd{order:8}   /* r322 · o ♪ da trilha fica FIXO na barra do toque (▤ ⌕ ♪ ⋯), fora do ⋯; o liga e desliga do r320 saiu: dois ♪ confundiam */
   #btnmore.on{border-color:var(--ion);color:var(--ion);background:rgba(63,140,255,.2)}
   #morebtns{display:none;max-height:min(56vh,360px);overflow-y:auto;overscroll-behavior:contain;position:absolute;top:calc(100% + 8px);right:0;
     flex-direction:column;gap:8px;padding:12px 10px;border:1px solid var(--line2);
@@ -1155,9 +1156,10 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   #scalebadge{display:none}
   #navpod{display:none}
   #simclock{left:12px;bottom:12px}
-  #chevL{left:12px}
-  #chevR{right:12px}
-  .chev{top:auto;bottom:calc(var(--sheetpeek,34dvh) + 14px);margin-top:0}
+  /* r322 · os ‹ › na linha de baixo dos botões do topo, deslocados para a esquerda: a coluna do ⋯ abre à direita sem cobri-los (pedido dele) */
+  .chev{top:50px;bottom:auto;margin-top:0;width:30px;height:30px;font-size:13px}
+  #chevL{left:auto;right:122px}
+  #chevR{right:84px}
   #panel::before,#panel::after{display:none}
   #panel{top:auto;left:0;right:0;bottom:0;width:100%;max-height:34dvh;transition:max-height .35s cubic-bezier(.3,.9,.3,1);
     clip-path:none;border-left:none;border-right:none;border-bottom:none;border-top:1px solid var(--line2);
@@ -1177,6 +1179,17 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
 }
 @media (prefers-reduced-motion:reduce){
   #radar::before,#sig i,#statled{animation:none}
+}
+/* r322 · a faixa estreita (320 px e menos): a marca, o botão de modo e os botões encolhem um passo para não quebrar linha */
+@media (max-width:340px){
+  #brand{font-size:7.5px;letter-spacing:1.6px;gap:4px}
+  #brandnm b{letter-spacing:2.2px}
+  body.touch #modebtn{padding:3px 6px 3px 15px;letter-spacing:.8px;margin-left:6px;font-size:7px}
+  #topright{gap:4px;right:6px}
+  .navbtn,#btnhelp{width:28px;height:28px;font-size:12px}
+  #crumbs{font-size:8.5px;letter-spacing:.9px}
+  #statuspod{font-size:8px;letter-spacing:1.1px;gap:6px}
+  .chev{width:26px;height:26px;font-size:11px} #chevL{right:106px} #chevR{right:74px}
 }
 </style>
 </head>
@@ -1209,13 +1222,12 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div id="scalebadge">ESCALA · <b id="scaleval">SISTEMA</b></div>
     <button id="btnfind" class="navbtn" title="Buscar">⌕</button>
     <button id="btnmiss" class="navbtn" title="Registro de bordo">▤</button>
-    <button id="btnmute" class="navbtn" title="Ligar ou desligar a música">♪</button>
+    <button id="btnsnd" class="navbtn" title="Trilha sonora">♪</button>
     <button id="btnmore" class="navbtn" title="Mais opções" aria-expanded="false">⋯</button>
     <div id="morebtns">
       <button id="navback" class="navbtn dis" title="Objeto anterior">«</button>
       <button id="navfwd" class="navbtn dis" title="Objeto seguinte">»</button>
       <button id="btndata" class="navbtn" title="Ver o sistema em outra data">◈</button>
-      <button id="btnsnd" class="navbtn" title="Trilha sonora">♪</button>
       <button id="btnphoto" class="navbtn" title="Modo foto">⌗</button>
       <button id="btnfs" class="navbtn" title="Tela cheia">⛶</button>
       <button id="btnfilt" class="navbtn" title="Linhas do mapa">≋</button>
@@ -1476,7 +1488,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <p><b>Compartilhe:</b> o endereço da página acompanha o objeto (#corpo=europa). No card, <b>⇪</b> gera um cartão-imagem do corpo e <b>⧉</b> copia o link da vista exata: câmera, data do relógio, camadas ligadas e o lugar do planetário viajam junto.</p>
       <p><b>⚙︎ Configurações:</b> música e efeitos, <b>IDIOMA</b> (português ou inglês), coordenadas reais no painel, e os extras: <b>superfície em ladrilhos da NASA</b> (chegando perto na escala 1:1, a Terra vira a foto de satélite de ontem, a Lua e Marte viram os mosaicos do NASA Trek) e o efeito lightspeed. Nos corpos com mapa, o botão <b>FOTO / DESENHO</b> do card troca a pele.</p>
       <p class="sub kb">ESC volta um nível · / ou S busca · M registro · T tour · P foto · + e − zoom · ? este manual</p>
-      <p class="sub touchonly">Toque longo: modo foto · dois dedos: zoom · ♪ liga e desliga a música · ⋯ abre os botões extras · a ficha sobe puxando pela borda</p>
+      <p class="sub touchonly">Toque longo: modo foto · dois dedos: zoom · ♪ abre a trilha sonora · ⋯ abre os botões extras · a ficha sobe puxando pela borda</p>
       <p><button class="xbtn" id="tutrever">▸ REVER O TUTORIAL DE BOAS-VINDAS</button></p>
       <p class="sub">UNIVERSATLAS · universatlas.com · o mapa Cartografia Estelar</p>
       <p class="sub">Dados: NASA/ESA/IAU, valores aproximados. Linhas em âmbar são referências de ficção.</p>
@@ -6011,7 +6023,7 @@ function updateLabels(){
        constelações (sempre:true) atravessam o declutter; na linha do tempo
        a regra descansa inteira (a rota precisa dos nomes) */
     if(ACT.escr && ACT.kind==='system' && CAM.dist < 0.8 && !TRAJ){
-      const dono = ST.mapCard ? ((!ST.mapCard.type || ST.mapCard.type === 'body') ? ST.mapCard.id : ((ST.mapCard.type === 'satlive' || ST.mapCard.type === 'sismo' || ST.mapCard.type === 'lanc') ? 'terra' : null)) : null;   /* r290; r306 lanc */
+      const dono = ST.mapCard ? ((!ST.mapCard.type || ST.mapCard.type === 'body') ? ST.mapCard.id : ((ST.mapCard.type === 'satlive' || ST.mapCard.type === 'sismo' || ST.mapCard.type === 'lanc') ? 'terra' : (ST.mapCard.type === 'regiao' ? 'sol' : null))) : null;   /* r290; r306 lanc; r322 regiao */
       const fica = (dono && L.lid && (L.lid === dono || L.lidPai === dono)) || L.sempre;
       if(!fica){ oculta(L); continue; }
     }
@@ -8128,27 +8140,63 @@ function solCicloCarrega(){
    tamanho segue a área (raio equivalente, com um piso de 1,4 por cento do raio para a mancha pequena não sumir).
    Só o dia mais recente fica guardado 6 h (carto:solregioes). */
 const SOLR = {pronto:false, carregando:false, erro:false, data:'', regs:[]};
+/* r322 · OS RAIOS X AO VIVO: o GOES mede o fluxo de raios X do Sol minuto a minuto e o SWPC resume em 452 bytes
+   (xray-flares-latest.json): a classe de agora (B7.3) e a última explosão (começo, pico com a classe, fim). A linha
+   AGORA do card do Sol passa a existir sempre (antes só com a camada da aurora carregada) e PULSA em âmbar quando a
+   classe do momento é M ou X. Em memória por 10 minutos */
+const SOLX = {pronto:false, carregando:false, erro:false, quando:0, agora:null, ultima:null};
+function solXCarrega(){
+  if(SOLX.carregando) return Promise.resolve();
+  if(SOLX.pronto && Date.now() - SOLX.quando < 10*60e3) return Promise.resolve();
+  SOLX.carregando = true;
+  return buscaComPrazo('https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json', 12000).then(r=>r.json()).then(a=>{
+    const u = Array.isArray(a) ? a[0] : null; if(!u || !u.current_class) throw new Error('vazio');
+    SOLX.agora = {classe:String(u.current_class), t:u.time_tag || ''};
+    SOLX.ultima = u.max_class ? {classe:String(u.max_class), t:u.max_time || '', ini:u.begin_time || '', fim:u.end_time || ''} : null;
+    SOLX.pronto = true; SOLX.erro = false; SOLX.quando = Date.now(); SOLX.carregando = false;
+  }).catch(()=>{ SOLX.erro = true; SOLX.carregando = false; });
+}
+function solXNivel(cls){ const c = String(cls || '')[0]; return c === 'X' ? t('EXPLOSÃO FORTE') : c === 'M' ? t('EXPLOSÃO MÉDIA') : c === 'C' ? t('ATIVO') : t('CALMO'); }
+function solXAlerta(){ return !!(SOLX.pronto && SOLX.agora && /^[MX]/.test(SOLX.agora.classe)); }
+function solAgoraLinha(){
+  let s;
+  if(SOLX.pronto && SOLX.agora){
+    s = t('RAIOS X') + ' ' + SOLX.agora.classe + ' (' + solXNivel(SOLX.agora.classe) + ')';
+    if(SOLX.ultima && SOLX.ultima.t) s += ' · ' + t('ÚLTIMA EXPLOSÃO') + ' ' + SOLX.ultima.classe + ' ' + String(SOLX.ultima.t).slice(11, 16) + ' UTC';
+  } else s = SOLX.erro ? t('RAIOS X SEM DADOS AGORA') : t('RAIOS X: BUSCANDO...');
+  if(AUR.kp !== null && typeof AUR.kp !== 'undefined'){
+    const e = AUR.escalas || {};
+    const rsg = ['R', 'S', 'G'].map(k=>k + (e[k] && e[k].Scale !== undefined ? e[k].Scale : '0')).join(' ');
+    s += ' · Kp ' + (AUR.kpEst !== null ? AUR.kpEst.toFixed(1) : AUR.kp) + ' · ' + aurNivel(AUR.kpEst !== null ? AUR.kpEst : AUR.kp) + ' · ' + rsg;
+  }
+  return t('AGORA · ') + s + ' · ' + t('DADOS DO NOAA');
+}
 function solRegioesCarrega(){
   if(SOLR.pronto || SOLR.carregando) return Promise.resolve();
-  try{ const c = JSON.parse(store.get('carto:solregioes', 'null')); if(c && Array.isArray(c.regs) && Date.now() - c.t < 6*3600e3){ SOLR.data = c.data; SOLR.regs = c.regs; SOLR.pronto = true; return Promise.resolve(); } }catch(e){}
+  try{ const c = JSON.parse(store.get('carto:solregioes2', 'null')); if(c && Array.isArray(c.regs) && Date.now() - c.t < 6*3600e3){ SOLR.data = c.data; SOLR.regs = c.regs; SOLR.pronto = true; return Promise.resolve(); } }catch(e){}
   SOLR.carregando = true;
   return buscaComPrazo('https://services.swpc.noaa.gov/json/solar_regions.json', 20000).then(r=>r.json()).then(a=>{
     if(!Array.isArray(a) || !a.length) throw new Error('vazio');
     let ult = ''; a.forEach(r=>{ if(r && typeof r.observed_date === 'string' && r.observed_date > ult) ult = r.observed_date; });
     SOLR.data = ult;
     SOLR.regs = a.filter(r=>r.observed_date === ult && isFinite(r.latitude) && isFinite(r.longitude) && r.area > 0 && r.number_spots > 0)
-      .map(r=>({n:r.region, lat:+r.latitude, lonW:-(+r.longitude), area:+r.area, spots:+r.number_spots, cls:r.spot_class || '', mag:r.mag_class || ''}));
+      .map(r=>({n:r.region, lat:+r.latitude, lonW:-(+r.longitude), area:+r.area, spots:+r.number_spots, cls:r.spot_class || '', mag:r.mag_class || '', loc:r.location || '', c:+r.c_xray_events || 0, m:+r.m_xray_events || 0, x:+r.x_xray_events || 0, desde:String(r.first_date || '').slice(0, 10)}));   /* r322 · a ficha da região */
     SOLR.pronto = true; SOLR.carregando = false;
-    store.set('carto:solregioes', JSON.stringify({t:Date.now(), data:SOLR.data, regs:SOLR.regs}));
+    store.set('carto:solregioes2', JSON.stringify({t:Date.now(), data:SOLR.data, regs:SOLR.regs}));
     RLOG.push('solregioes ' + SOLR.regs.length);
   }).catch(()=>{ SOLR.erro = true; SOLR.carregando = false; });
 }
-function solManchasMonta(mesh, R){
+/* r322 · vale também no Sol do mapa 1:1: frente() devolve, em coordenadas locais da malha, a direção do meridiano
+   central (no mapa, a direção da Terra; na cena de foco, a da câmera). As penumbras entram em ACT.pickables como
+   alvo 'regiao': tocar numa mancha abre a ficha da região (fichaRegiao) */
+function solManchasMonta(mesh, R, frente){
   solRegioesCarrega().then(()=>{
-    if(!SOLR.pronto || !mesh || !mesh.parent || !ACT || ACT.kind !== 'focus' || ACT.bodyId !== 'sol') return;
+    if(!SOLR.pronto || !mesh || !mesh.parent || !ACT || !ACT.scene) return;
+    { let o = mesh, na = false; while(o){ if(o === ACT.scene){ na = true; break; } o = o.parent; } if(!na) return; }
     if(mesh.getObjectByName('manchas')) return;
     mesh.updateWorldMatrix(true, false);
-    const toCam = mesh.worldToLocal(camera.position.clone()).normalize();
+    let toCam = null; try{ toCam = frente ? frente() : null; }catch(e){ toCam = null; }
+    if(!toCam) toCam = mesh.worldToLocal(camera.position.clone()).normalize();
     const up = new THREE.Vector3(0, 1, 0);
     const right = new THREE.Vector3().crossVectors(up, toCam);
     if(right.lengthSq() < 1e-6) right.set(1, 0, 0); right.normalize();
@@ -8163,13 +8211,28 @@ function solManchasMonta(mesh, R){
       const dir = new THREE.Vector3().addScaledVector(front, Math.cos(lat)*Math.cos(lon)).addScaledVector(right, Math.cos(lat)*Math.sin(lon)).addScaledVector(up, Math.sin(lat)).normalize();
       const ru = R*Math.max(0.014, Math.sqrt(2*r.area*1e-6)*0.75), rp = ru*2.1;
       const q = new THREE.Quaternion().setFromUnitVectors(z, dir);
-      const mp = new THREE.Mesh(new THREE.CircleGeometry(rp, 24), matP); mp.position.copy(dir).multiplyScalar(R*1.003); mp.quaternion.copy(q); mp.renderOrder = 5; mp.userData.regiao = r.n;
+      const mp = new THREE.Mesh(new THREE.CircleGeometry(rp, 24), matP); mp.position.copy(dir).multiplyScalar(R*1.003); mp.quaternion.copy(q); mp.renderOrder = 5; mp.userData = {regiao:r.n, act:'regiao', id:r.n, r:rp};
+      if(Array.isArray(ACT.pickables)) ACT.pickables.push(mp);   /* r322 · a ficha ao toque */
       const mu = new THREE.Mesh(new THREE.CircleGeometry(ru, 20), matU); mu.position.copy(dir).multiplyScalar(R*1.004); mu.quaternion.copy(q); mu.renderOrder = 6; mu.userData.regiao = r.n;
       g.add(mp); g.add(mu);
     });
     mesh.add(g);
     if(SOLR.regs.length && !window.__solManchasHint){ window.__solManchasHint = 1; showHint(SOLR.regs.length + ' ' + t('REGIÕES COM MANCHAS NO DISCO HOJE · DADOS DO NOAA')); }
   });
+}
+/* r322 · a ficha de uma região ativa (o que o NOAA mede dela hoje), sem inventar nada: número, posição, área, manchas,
+   classes e as explosões do dia; o botão abre a imagem do SDO de agora (o continuum do HMI, onde as manchas aparecem) */
+const SOLR_MAG = {A:'alfa: um polo só, a mais calma', B:'beta: dois polos, o arranjo comum', BG:'beta-gama: polos misturados, candidata a explosões', BD:'beta-delta: polos opostos encostados', BGD:'beta-gama-delta: a configuração das grandes explosões', G:'gama: polos misturados', D:'delta'};
+function solRegiaoMc(c){ const k = String(c || '')[0]; return k === 'H' ? 'uma mancha só, com penumbra' : (k === 'A' || k === 'B') ? 'grupo pequeno, sem penumbra' : (k === 'C') ? 'grupo com penumbra de um lado' : (k === 'D') ? 'grupo grande com penumbra dos dois lados' : (k === 'E' || k === 'F') ? 'grupo muito grande, dezenas de manchas' : ''; }
+function fichaRegiao(r){
+  const terras = r.area/42;
+  const mc = solRegiaoMc(r.cls), mg = SOLR_MAG[r.mag] || '';
+  const dia = r.desde ? solRadarDia(Date.parse(r.desde + 'T12:00:00Z')) : '';
+  return {id:'regiao_' + r.n, name:t('REGIÃO ATIVA') + ' ' + r.n, desig:t('SOL · MANCHAS') + ' · ' + solRadarDia(Date.parse(SOLR.data + 'T12:00:00Z')), kind:mc ? t(mc) : t('Grupo de manchas'),
+    quick:[[t('POSIÇÃO'), r.loc], [t('ÁREA'), r.area + ' ' + t('milionésimos') + (terras >= 0.5 ? ' (' + terras.toFixed(1).replace('.', (typeof LANG === 'string' && LANG === 'en') ? '.' : ',') + ' ' + t('Terras') + ')' : '')], [t('MANCHAS'), String(r.spots)], [t('CLASSE'), r.cls || '?'], [t('MAGNÉTICA'), r.mag || '?'], [t('EXPLOSÕES HOJE'), 'C ' + r.c + ' · M ' + r.m + ' · X ' + r.x]],
+    sections:[{t:t('A REGIÃO'), rows:[[t('Número'), 'AR ' + r.n + ' (NOAA)'], [t('Numerada em'), dia || '?'], [t('Posição'), r.loc + ' ' + t('(latitude e longitude heliográficas; W é o lado oeste, à direita)')], [t('Classe McIntosh'), (r.cls || '?') + (mc ? ': ' + t(mc) : '')], [t('Classe magnética'), (r.mag || '?') + (mg ? ': ' + t(mg) : '')], [t('Explosões hoje'), 'C ' + r.c + ' · M ' + r.m + ' · X ' + r.x + ' ' + t('(as classes crescem de dez em dez: uma M é dez vezes uma C)')]]}],
+    facts:[t('Uma mancha é mais fria que a fotosfera em volta (uns 3.800 graus contra 5.500) porque o campo magnético ali trava a convecção que traz o calor de baixo: ela só parece escura por contraste.'), t('Um grupo grande cruza o disco em uns 13 dias, de leste a oeste, e às vezes volta na rotação seguinte com outro número.'), t('O NOAA numera as regiões na ordem em que aparecem; a contagem passou de 10.000 em 2002 e o número de quatro dígitos é o que sobra.')],
+    acoes:[{txt:t('VER A IMAGEM DO SDO AGORA'), fn:()=>{ anlEvento('saida', {url:'sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_HMIIC.jpg'}); window.open('https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_HMIIC.jpg', '_blank', 'noopener'); }}]};
 }
 function solCicloMes(tag){ const m = String(tag).split('-'); return (typeof MESES_N !== 'undefined' ? MESES_N[(+m[1]) - 1] : m[1]) + ' ' + m[0]; }
 function solCicloMax(de, ate){ let mx = null; (SOLC.mes || []).forEach(m=>{ if(m[0] >= de && (!ate || m[0] < ate) && m[2] >= 0 && (!mx || m[2] > mx[2])) mx = m; }); return mx; }
@@ -8235,6 +8298,7 @@ function solRadarDesenha(){
 }
 function solCicloMonta(){
   const ln = document.getElementById('solcicloln'); if(!ln) return;
+  solXCarrega().then(()=>{ const li = document.getElementById('liveinfo'); if(li && document.getElementById('solcicloln')){ li.textContent = solAgoraLinha(); li.classList.toggle('alerta', solXAlerta()); } });   /* r322 */
   ln.textContent = solCicloLinha();
   const rl = document.getElementById('solradarln');
   if(SOLC.pronto){ solCicloDesenha(); if(rl) rl.textContent = solRadarLinha(); solRadarDesenha(); return; }
@@ -8907,6 +8971,9 @@ function buildSystem(sysId, spin0){
   const starPick = new THREE.Mesh(new THREE.SphereGeometry(escrAtivo ? Math.max(starSizeEf*2, 0.02) : starSizeEf+0.8, 8, 8),   /* r276 · no 1:1 o alvo do Sol era 0,87 un, 3 graus a 1 UA */
     new THREE.MeshBasicMaterial({visible:false}));
   starPick.userData = {act:'focus', id:S.star.id, r:starSizeEf};
+  /* r322 · as manchas de hoje também no Sol do 1:1 (o cênico gira de enfeite): o meridiano central é a direção da Terra */
+  if(escrAtivo && S.id === 'sol' && star.mesh && typeof solManchasMonta === 'function')
+    solManchasMonta(star.mesh, starSizeEf, ()=>{ const pk = acharPick('terra'); if(!pk) return null; const v = new THREE.Vector3(); pk.getWorldPosition(v); star.mesh.updateWorldMatrix(true, false); return star.mesh.worldToLocal(v).normalize(); });
   scene.add(starPick); pickables.push(starPick);
   /* r159 · o nome SOL descansa quando a vizinhança inteira vira um grão: daí
      ele é só mais uma estrela no meio da Via Láctea, e o rótulo dele brigava
@@ -10254,7 +10321,7 @@ function buildSystem(sysId, spin0){
         /* e as órbitas das LUAS do corpo travado acendem sozinhas: o mapa vira
            o sistema planetário só de aproximar (ideia dele). Respeita o filtro
            de objetos; ao afastar, applySel restaura o estado normal. */
-        const dono2 = ST.mapCard ? ((!ST.mapCard.type || ST.mapCard.type === 'body') ? ST.mapCard.id : ((ST.mapCard.type === 'satlive' || ST.mapCard.type === 'sismo' || ST.mapCard.type === 'lanc') ? 'terra' : null)) : null;   /* r290; r306 lanc */
+        const dono2 = ST.mapCard ? ((!ST.mapCard.type || ST.mapCard.type === 'body') ? ST.mapCard.id : ((ST.mapCard.type === 'satlive' || ST.mapCard.type === 'sismo' || ST.mapCard.type === 'lanc') ? 'terra' : (ST.mapCard.type === 'regiao' ? 'sol' : null))) : null;   /* r290; r306 lanc; r322 regiao */
         const dzL = (dono2 && CAM.dist < 1.2) ? Math.min(1, (1.2 - CAM.dist)/0.6) : 0;
         if(dzL > 0){
           ACT._zLua = true;
@@ -15103,7 +15170,7 @@ const AUDIO = (function(){
     else { startAmbient(); if(ensure() && ctx.state==='suspended') ctx.resume(); }
     plSync();
   }
-  function syncBtn(){ const b = $('#btnsnd'); if(b) b.classList.toggle('mut', muted); const m = $('#btnmute'); if(m){ m.classList.toggle('mut', muted); m.title = muted ? t('Ligar a música') : t('Desligar a música'); } }   /* r320 · o ♪ fixo do toque mostra o estado */
+  function syncBtn(){ const b = $('#btnsnd'); if(b) b.classList.toggle('mut', muted); }
   return {boot, sfx, toggle, running,
     toggleSfx(){ sfxMudo = !sfxMudo; store.set('carto:sfx', sfxMudo ? '1' : '0'); },
     get sfxMudo(){ return sfxMudo; }, setTrack, setVol, next:()=>setTrack(trk+1), prev:()=>setTrack(trk-1), plSync, get trk(){return trk;}, get muted(){return muted;}, get playing(){return !!(audioEl && !audioEl.paused);}, pause:()=>{ killFade(); if(audioEl){ audioEl.volume = vol; audioEl.pause(); } plSync(); }, resume:()=>{ if(muted){ toggle(); return; } if(audioEl){ audioEl.volume = vol; audioEl.play().catch(()=>{}); } else startAmbient(); plSync(); }};
@@ -15840,7 +15907,7 @@ function ACTION(act, id){
   /* r290 · as fichas de toque único (galáxia vizinha, satélite, tremor, fronteira, estrela, constelação): o segundo
      toque FECHA pelo fecharFicha (pivô, volta à Terra, endereço) e abrir também escreve o endereço */
   const jaEra = ST.mapCard && ST.mapCard.type === act && ST.mapCard.id === id;
-  if(act==='galviz' || act==='satlive' || act==='sismo' || act==='lanc' || act==='exo' || act==='fronteira' || act==='estrela' || act==='constel'){   /* r306 · lanc; r310 · exo */
+  if(act==='galviz' || act==='satlive' || act==='sismo' || act==='lanc' || act==='exo' || act==='fronteira' || act==='estrela' || act==='constel' || act==='regiao'){   /* r322 · regiao */   /* r306 · lanc; r310 · exo */
     if(act==='estrela') marcaVizinha(id);
     if(act==='sismo' && typeof feito === 'function') feito('tremor');   /* r307 */
     if(act==='constel') marcaConstel(id);
@@ -17695,6 +17762,10 @@ function currentEntity(){
       const q = SISM.lista[ST.mapCard.id];
       if(q) return {type:'map', b:fichaSismo(q), nav:false};
     }
+    if(ST.mapCard.type==='regiao'){   /* r322 · a região ativa do Sol */
+      const r = (SOLR.regs || []).find(x=>x.n === ST.mapCard.id);
+      if(r) return {type:'map', b:fichaRegiao(r), nav:false};
+    }
     if(ST.mapCard.type==='exo'){   /* r310 */
       if(EXO.pronto && EXO.dados.h[ST.mapCard.id]){ const f = fichaExo(ST.mapCard.id); return {type:'map', b:f, nav:true, navKind:'sys', navId:f._nav || ('exo_' + ST.mapCard.id)}; }   /* r313 · toda estrela do censo tem ENTRAR */
     }
@@ -17764,8 +17835,9 @@ function fecharFicha(){
   if(ACT && ACT.escr && ACT.kind === 'system' && CAM.dist < 5 && tipo === 'body' && ALLBODIES[mc.id]) ACT.pivoSegue = mc.id;
   const bFecha = tipo === 'body' && ALLBODIES[mc.id];
   const paraTerra = (tipo === 'satlive' || tipo === 'sismo' || tipo === 'lanc') && ACT && ACT.kind === 'system' && ST.sys === 'sol';
+  const paraSol = tipo === 'regiao' && ACT && ACT.kind === 'system' && ST.sys === 'sol';   /* r322 · fechar a região devolve o Sol */
   ST.mapCard = (bFecha && bFecha.satOf && ALLBODIES[bFecha.satOf] && ACT && ACT.kind === 'system')
-    ? {type:'body', id:bFecha.satOf, act:'focus', t:performance.now()} : (paraTerra ? {type:'body', id:'terra', act:'focus', t:performance.now()} : null);
+    ? {type:'body', id:bFecha.satOf, act:'focus', t:performance.now()} : (paraTerra ? {type:'body', id:'terra', act:'focus', t:performance.now()} : (paraSol ? {type:'body', id:'sol', act:'focus', t:performance.now()} : null));
   uiSync(); syncHash();
 }
 function cardRender(){
@@ -17972,8 +18044,8 @@ function cardRender(){
   if(cur.b && cur.b._lanc){   /* r306 · a contagem regressiva viva */
     h = h.replace('<div class="qgrid">', '<div id="liveinfo">' + esc(lancLinha(cur.b._lanc)) + '</div><div class="qgrid">');
   }
-  if(cur.b && cur.b.id === 'sol' && AUR.kp !== null && typeof AUR.kp !== 'undefined'){
-    h = h.replace('<div class="qgrid">', '<div id="liveinfo">' + esc(aurLinha()) + '</div><div class="qgrid">');
+  if(cur.b && cur.b.id === 'sol'){   /* r322 · a linha AGORA do Sol existe sempre: raios X de agora, e o Kp quando a aurora já trouxe */
+    h = h.replace('<div class="qgrid">', '<div id="liveinfo"' + (solXAlerta() ? ' class="alerta"' : '') + '>' + esc(solAgoraLinha()) + '</div><div class="qgrid">');
   }
   /* r320 · o ciclo solar: a linha e o gráfico entram antes dos números rápidos do Sol */
   if(cur.b && cur.b.id === 'sol'){
@@ -18487,7 +18559,7 @@ function dolly(f){
       /* ST.mapCard é um OBJETO (a trava usa .id): passar ele inteiro fazia o
          acharPick falhar sempre e o zoom parava no piso (o 1,5 MI KM dele) */
       const tipoSel = ST.mapCard ? (ST.mapCard.type || 'body') : null;   /* r290 · constelação, estrela e fronteira na ficha não travavam o piso em 0,02 */
-      const pkSel = (tipoSel === 'body' || tipoSel === 'satlive' || tipoSel === 'sismo' || tipoSel === 'lanc') ? acharPick((tipoSel === 'satlive' || tipoSel === 'sismo' || tipoSel === 'lanc') ? 'terra' : ST.mapCard.id) : null;   /* r276 · o piso do zoom segue a Terra com satélite ou tremor na ficha */
+      const pkSel = (tipoSel === 'body' || tipoSel === 'satlive' || tipoSel === 'sismo' || tipoSel === 'lanc') ? acharPick((tipoSel === 'satlive' || tipoSel === 'sismo' || tipoSel === 'lanc') ? 'terra' : ST.mapCard.id) : (tipoSel === 'regiao' ? acharPick('sol') : null);   /* r322 · a região segura o piso no Sol */   /* r276 · o piso do zoom segue a Terra com satélite ou tremor na ficha */
       /* r157: dá para chegar bem mais perto (era 3,2 raios, agora 1,45): o
          contínuo para dentro precisa do corpo enchendo a tela */
       const ladrPerto = LADR.on && LADR.grupo && LADR.grupo.children.length && pkSel && (LADR_CORPOS[ST.mapCard.id] || tipoSel === 'satlive' || tipoSel === 'sismo' || tipoSel === 'lanc');   /* r295 · com os ladrilhos na tela o zoom desce a 1,02 raios (~130 km) */
@@ -18515,7 +18587,7 @@ function rayHit(x, y){
   if(!hits.length) return null;
   /* o alvo da Terra é uma esfera de milhares de km que ENGOLE as órbitas baixas: quem
      clica em cima de um satélite quer o satélite, então o acerto vivo vence o planeta */
-  const h0 = hits.find(x=>x.object.userData.vivo && !x.object.isPoints) || hits.find(x=>x.object.userData.vivo) || hits[0];
+  const h0 = hits.find(x=>x.object.userData.act === 'regiao') || hits.find(x=>x.object.userData.vivo && !x.object.isPoints) || hits.find(x=>x.object.userData.vivo) || hits[0];   /* r322 · a mancha vence o alvo do Sol que a engole */
   if(h0.object.isPoints && h0.object.userData.pontos){
     /* o ponto de um famoso (ISS, Hubble) abre o card de sempre, não a ficha mínima */
     const sv = SATV.sats[h0.index], fv = sv && SATV_NOMES[sv.norad];
@@ -18797,7 +18869,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r321';
+const BUILD = 'r322';
 const RLOG = [];
 /* r320 · A COMPILAÇÃO NARRADA: a fila de programas que o boot compila um a um, contando no console
    (COMPILANDO · VÊNUS...), em vez de um renderer.compile só que congelava a tela de carregamento. Enquanto
@@ -19430,6 +19502,7 @@ $('#datepop').addEventListener('click', e=>{
 /* r313 · CORREÇÕES (ideia dele): o que foi consertado, em uma linha cada, sem número de build nem nome de
    função, embaixo das novidades. Hotfix e ferramenta interna moram aqui, nunca em NOVIDADES. */
 const CORRECOES = [
+  {d:'20 OUT 2026', l:'No celular apareciam dois ♪ (o liga e desliga de poucas horas atrás saiu; o ♪ da trilha ficou fixo no topo), o ◈ do menu ⋯ saía com o ícone no canto do botão, e os ‹ › passaram para a linha de baixo dos botões do topo.'},
   {d:'20 OUT 2026', l:'No celular, o ✕ do planetário ficava fora da tela, a legenda LINHA e OBJETO do filtro ficava embaixo do ✕ e a barra da linha do tempo cobria o relógio e o aviso do marco.'},
   {d:'20 OUT 2026', l:'Na primeira abertura num PC com Windows o mapa travava até um minuto compilando o shader dos planetas (nas visitas seguintes o cache do navegador escondia isso, até o Chrome se atualizar); agora cada tipo de planeta compila só o que usa e a espera caiu para poucos segundos.'},
   {d:'25 SET 2026', l:'Selecionar o texto da busca ou do registro de bordo com o mouse e soltar fora da caixa fechava a janela e perdia o que estava escrito.'},
@@ -19442,6 +19515,10 @@ const CORRECOES = [
   {d:'21 SET 2026', l:'Em inglês, a linha de estado do planetário dizia TONIGHT em vez de NIGHT.'},
 ];
 const NOVIDADES = [
+  {b:'r322', d:'20 OUT 2026', t:'A FICHA DE CADA MANCHA E OS RAIOS X AO VIVO', ls:[
+    'Toque numa mancha do Sol (na cena de foco e agora também no Sol da escala 1:1) e abre a ficha da região ativa: posição, área em Terras, número de manchas, as classes e as explosões do dia, com o botão para ver a imagem do SDO de agora.',
+    'A linha AGORA do card do Sol mostra a classe de raios X do momento (B, C, M ou X) e a última explosão medida pelo GOES; numa classe M ou X ela pulsa em âmbar.'],
+   ver:()=>{ if(typeof gotoFocus === 'function') gotoFocus('sol'); }},
   {b:'r321', d:'20 OUT 2026', t:'AS MANCHAS NO SOL E O RADAR DE 27 DIAS', ls:[
     'ENTRAR no Sol mostra as manchas de hoje no disco, nas posições que o NOAA mede para cada região ativa, girando com o Sol pelo relógio (ele agora gira em 25 dias, como na vida).',
     'O card do Sol ganhou, abaixo do ciclo, o radar de 27 dias: o maior Kp previsto para cada dia (âmbar quando há chance de aurora) e o fluxo de rádio por cima.'],
@@ -20325,8 +20402,6 @@ tourRota(store.get('carto:rota','completo'), true);
 $('#photoexit').addEventListener('click', e=>{ e.stopPropagation(); togglePhoto(); });
 ['pointermove','pointerdown','wheel'].forEach(ev=>window.addEventListener(ev, photoPeek, {passive:true}));
 $('#pl_mute').addEventListener('click', ()=>AUDIO.toggle());
-/* r320 · o ♪ fixo da barra do toque: um toque liga ou desliga a música (o player completo segue no ⋯) */
-{ const bm = $('#btnmute'); if(bm) bm.addEventListener('click', ()=>{ AUDIO.toggle(); showHint(AUDIO.muted ? t('MÚSICA DESLIGADA') : t('MÚSICA LIGADA')); anlEvento('musica', {ligada:AUDIO.muted ? 'nao' : 'sim'}); }); }
 $('#pl_prev').addEventListener('click', ()=>AUDIO.prev());
 $('#pl_next').addEventListener('click', ()=>AUDIO.next());
 $('#pl_play').addEventListener('click', ()=>{ if(AUDIO.playing) AUDIO.pause(); else AUDIO.resume(); });
