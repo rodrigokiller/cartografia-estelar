@@ -1662,7 +1662,15 @@ uniform sampler2D uTer; uniform float uTerOn;
 uniform sampler2D uLuz;
 uniform float uSpotOn; uniform vec2 uSpotPos; uniform float uSpotR; uniform vec3 uSpotCol;
 uniform float uSombraOn; uniform vec2 uSombraPos; uniform float uSombraR;
-uniform float uMode;   /* 0 rocky · 1 gas · 2 haze · 3 earth */
+uniform float uMode;   /* 0 rocky · 1 gas · 2 haze · 3 earth · 4 earth2 · 5 haze2 (r319: quem escolhe o ramo agora é o define MODO, abaixo; o uniform fica por compatibilidade) */
+/* r319 · UM PROGRAMA POR MODO. O ramo era escolhido pelo uniform uMode em tempo de execução, então o compilador da
+   placa montava os SEIS ramos (25 fbm de 5 oitavas desenrolados) num programa só: 42 s para compilar numa Radeon no
+   Windows (o caminho ANGLE para HLSL), o travamento da primeira abertura que ele reportava desde o r200. Com o define
+   MODO (passado pelo planetMaterial em defines) o preprocessador descarta os outros ramos e cada modo compila em 0,6 a
+   2,7 s; o three.js guarda um programa por conjunto de defines. O conteúdo de cada ramo não mudou uma vírgula */
+#ifndef MODO
+#define MODO 0
+#endif
 uniform float uLights; uniform float uCrater;
 uniform vec3 uL; uniform float uTime; uniform float uAmb;
 ${'${NOISE}'}
@@ -1673,26 +1681,33 @@ void main(){
   vec3 col = uC1;
   float water = 0.0;
 
-  if(uMode < 0.5){                       /* rochoso / lua */
+#if MODO == 0
+  {                                      /* rochoso / lua */
     float n = fbm(sp*uScale + uSeed);
     float n2 = fbm(sp*uScale*2.3 + uSeed + 7.7);
     col = mix(uC1, uC2, smoothstep(0.30,0.72,n));
     col = mix(col, uC3, smoothstep(0.55,0.85,n2)*0.6);
     col *= 0.82 + 0.36*noise3(sp*uScale*5.0+uSeed);
     col = mix(col, col*0.55, uCrater*smoothstep(0.78,0.95,noise3(sp*uScale*8.0+uSeed*3.0)));
-  } else if(uMode < 1.5){                /* gigante com faixas */
+  }
+#elif MODO == 1
+  {                                      /* gigante com faixas */
     float y = lat*uBandF + (fbm(sp*2.6+uSeed)-0.5)*uTurb + uTime*0.012;
     float b = fbm(vec3(y, y*0.35, uSeed));
     float b2 = fbm(vec3(y*2.1+3.0, lon*0.25, uSeed+5.0));
     col = mix(uC1, uC2, smoothstep(0.32,0.68,b));
     col = mix(col, uC3, smoothstep(0.55,0.8,b2)*0.7);
     col = mix(col, uC4, smoothstep(0.75,0.95,b)*0.5);
-  } else if(uMode < 2.5){                /* neblina densa (Vênus/Titã) */
+  }
+#elif MODO == 2
+  {                                      /* neblina densa (Vênus/Titã) */
     float n = fbm(sp*3.2 + vec3(uTime*0.02, 0.0, uSeed));
     float sw = fbm(sp*6.0 + n*1.5 + uSeed);
     col = mix(uC1, uC2, smoothstep(0.3,0.7,n));
     col = mix(col, uC3, smoothstep(0.55,0.85,sw)*0.5);
-  } else if(uMode < 3.5){                /* terra (v1) */
+  }
+#elif MODO == 3
+  {                                      /* terra (v1) */
     float n = fbm(sp*uScale + uSeed);
     float land = smoothstep(uSea-0.06, uSea+0.06, n);
     water = 1.0 - land;
@@ -1709,7 +1724,9 @@ void main(){
     }
     vec3 seaC = mix(uSeaCol*0.7, uSeaCol, smoothstep(0.1,0.5,n));
     col = mix(seaC, landC, land);
-  } else {                               /* r178 · TERRA V2: recorte e fundo */
+  }
+#else
+  {                                      /* r178 · TERRA V2: recorte e fundo */
     /* o RECORTE: o campo do continente é distorcido por um ruído de baixa
        frequência ANTES do corte (as bolhas viram penínsulas e golfos), e o
        corte ficou seco: costa de mapa, não de aquarela */
@@ -1765,7 +1782,8 @@ void main(){
        abrir outra cadeia de ifs: fluxo paralelo ao equador com o domínio
        distorcido (as faixas serpenteiam como nas fotos em ultravioleta) e um
        VÓRTICE apertado em cada polo, que Vênus e Titã têm de verdade */
-    if(uMode > 4.5){
+#if MODO == 5
+    {
       float warp = fbm(sp*2.2 + vec3(0.0, uTime*0.012, uSeed))*2.0;
       float flow = fbm(vec3(lat*5.0 + warp, lon*1.2 - uTime*0.03 + warp*0.8, uSeed*2.0));
       col = mix(uC1, uC2, smoothstep(0.30, 0.72, flow));
@@ -1775,7 +1793,9 @@ void main(){
       col = mix(col, mix(uC1*0.92, uC3, vort), pol*0.55);
       water = 0.0;
     }
+#endif
   }
+#endif
 
   /* mancha característica (GMV de Júpiter, coração de Plutão, Herschel, lava de Io...) */
   if(uSpotOn > 0.5){
@@ -5814,7 +5834,8 @@ function planetMaterial(v){
     else if(typeof texturaPreta === 'function') u.uTer.value = texturaPreta();
   }
   if(!u.uLuz.value && typeof texturaPreta === 'function') u.uLuz.value = texturaPreta();
-  const m = new THREE.ShaderMaterial({vertexShader:PLANET_VERT, fragmentShader:PLANET_FRAG, uniforms:u});
+  /* r319 · o define MODO escolhe o ramo em tempo de compilação: um programa pequeno por modo (ver o PLANET_FRAG) */
+  const m = new THREE.ShaderMaterial({vertexShader:PLANET_VERT, fragmentShader:PLANET_FRAG, uniforms:u, defines:{MODO:(MODEMAP[v.mode]!==undefined)?MODEMAP[v.mode]:0}});
   ANIM_MATS.push(m); return m;
 }
 function sunMaterial(v){
@@ -18586,7 +18607,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r318';
+const BUILD = 'r319';
 const RLOG = [];
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
@@ -19208,6 +19229,7 @@ $('#datepop').addEventListener('click', e=>{
 /* r313 · CORREÇÕES (ideia dele): o que foi consertado, em uma linha cada, sem número de build nem nome de
    função, embaixo das novidades. Hotfix e ferramenta interna moram aqui, nunca em NOVIDADES. */
 const CORRECOES = [
+  {d:'20 OUT 2026', l:'Na primeira abertura num PC com Windows o mapa travava até um minuto compilando o shader dos planetas (nas visitas seguintes o cache do navegador escondia isso, até o Chrome se atualizar); agora cada tipo de planeta compila só o que usa e a espera caiu para poucos segundos.'},
   {d:'25 SET 2026', l:'Selecionar o texto da busca ou do registro de bordo com o mouse e soltar fora da caixa fechava a janela e perdia o que estava escrito.'},
   {d:'24 SET 2026', l:'Clicar no espaço vazio às vezes abria a ficha de uma constelação e apagava as órbitas, mesmo com as constelações desligadas.'},
   {d:'24 SET 2026', l:'As sondas de longe terminavam todas no mesmo ponto do céu e não encontravam os planetas nas datas dos sobrevoos; o Halley aparecia longe do Sol nos periélios de 1835 e 1910.'},

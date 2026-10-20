@@ -8,9 +8,13 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 287 testes pendentes (do r131 ao r318) e 4 decisões suas.
+Hoje: 288 testes pendentes (do r131 ao r319) e 4 decisões suas.
 
 ---
+
+## r319 · a primeira abertura sem travar
+
+- [ ] **O travamento da primeira vez.** No seu PC, feche o Chrome, apague a pasta ShaderCache dentro de AppData/Local/Google/Chrome/User Data (ou espere a próxima atualização do Chrome) e abra o mapa: a tela de carregamento deve fechar em uns 6 a 8 segundos em vez de 50, com as linhas do console andando. Shift+D depois mostra a linha crono compile com o número. Os planetas, a Terra, Vênus e Titã devem estar exatamente como antes (o pixel é idêntico por medição, mas olhe).
 
 ## r318 · a contagem de visitas (Umami, para medir os anúncios)
 
