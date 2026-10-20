@@ -8,9 +8,15 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 292 testes pendentes (do r131 ao r320) e 4 decisões suas.
+Hoje: 295 testes pendentes (do r131 ao r321) e 4 decisões suas.
 
 ---
+
+## r321 · as manchas no disco do Sol e o radar de 27 dias
+
+- [ ] **As manchas no Sol.** ENTRAR no Sol (dois toques): as regiões ativas de hoje aparecem como manchas escuras com penumbra no disco, no lado voltado para você na entrada (o lado que a Terra vê), com o aviso N REGIÕES COM MANCHAS NO DISCO HOJE. Compare com a imagem do dia em spaceweather.com ou no SDO da NASA: as posições devem bater (oeste à direita, norte para cima). Diga se o tamanho convence ou se quer maiores (hoje é o tamanho real, com um piso para a pequena não sumir).
+- [ ] **O Sol gira em 25 dias.** No foco do Sol, com o relógio em 1 s = 1 dia, o disco e as manchas dão a volta em uns 25 s (antes o Sol girava uma vez por dia). Acelerando, as manchas somem pelo limbo oeste e voltam pelo leste.
+- [ ] **O radar de 27 dias.** Card do Sol, abaixo do gráfico do ciclo: a frase PRÓXIMOS 27 DIAS · Kp MÁXIMO n EM dia (o nível) · F10,7 de a · NOAA, EMITIDO EM dia e as 27 barras (azul calmo, âmbar quando passa de Kp 5, vermelho de 7) com o fluxo de rádio tracejado por cima. Em inglês tudo em inglês.
 
 ## r320 · o ciclo solar, o ♪ do celular e a tela de carregamento que conta
 

@@ -611,6 +611,12 @@ ui: {
   '<b>≋ Linha do tempo:</b> sondas, cometas e as Apollo têm a viagem reconstruída, com os planetas NA ÉPOCA certa e marcos clicáveis.':'<b>≋ Timeline:</b> probes, comets and the Apollo missions have their trip rebuilt, with the planets AT THE RIGHT TIME and clickable milestones.',
   '▸ REVER O TUTORIAL DE BOAS-VINDAS':'▸ REPLAY THE WELCOME TUTORIAL', 'UNIVERSATLAS · universatlas.com · o mapa Cartografia Estelar':'UNIVERSATLAS · universatlas.com · the Stellar Cartography map',
   'Dados: NASA/ESA/IAU, valores aproximados. Linhas em âmbar são referências de ficção.':'Data: NASA/ESA/IAU, approximate values. Amber lines are fiction references.',
+  /* r321 · as manchas no disco e o radar de 27 dias */
+  'AS MANCHAS NO SOL E O RADAR DE 27 DIAS':'THE SUNSPOTS ON THE SUN AND THE 27-DAY OUTLOOK',
+  'ENTRAR no Sol mostra as manchas de hoje no disco, nas posições que o NOAA mede para cada região ativa, girando com o Sol pelo relógio (ele agora gira em 25 dias, como na vida).':'ENTER the Sun to see today\'s sunspots on the disc, at the positions NOAA measures for each active region, turning with the Sun by the clock (it now rotates in 25 days, as in life).',
+  'O card do Sol ganhou, abaixo do ciclo, o radar de 27 dias: o maior Kp previsto para cada dia (âmbar quando há chance de aurora) e o fluxo de rádio por cima.':'The Sun card gained, below the cycle, the 27-day outlook: the largest Kp expected each day (amber when there is a chance of aurora) and the radio flux on top.',
+  'REGIÕES COM MANCHAS NO DISCO HOJE · DADOS DO NOAA':'ACTIVE REGIONS WITH SUNSPOTS ON THE DISC TODAY · NOAA DATA',
+  'PRÓXIMOS 27 DIAS · Kp MÁXIMO {kp} EM {dia}':'NEXT 27 DAYS · LARGEST Kp {kp} ON {dia}', 'NOAA, EMITIDO EM':'NOAA, ISSUED ON',
   /* r320 · o ciclo solar, o ♪ do toque e a compilação narrada */
   'O CICLO SOLAR E O ♪ À MÃO':'THE SOLAR CYCLE AND THE ♪ AT HAND',
   'O card do Sol mostra em que ponto do ciclo de 11 anos estamos: o ano do ciclo 25, a descida depois do máximo de 2024, as manchas de hoje e o gráfico de 2009 a 2030 com a previsão do NOAA. A ficha ganhou a seção O CICLO SOLAR.':'The Sun card shows where we are in the 11-year cycle: the year of cycle 25, the descent after the 2024 maximum, today\'s sunspots and the 2009 to 2030 chart with the NOAA forecast. The sheet gained the section THE SOLAR CYCLE.',

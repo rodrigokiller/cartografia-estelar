@@ -1085,6 +1085,8 @@ body.touch .touchonly{display:inline}
 #solciclo{margin:8px 0 10px}
 #solcicloln{font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;color:var(--dim);margin-bottom:4px;line-height:1.5}
 #solciclocv{display:block;width:100%;height:64px}
+#solradarln{font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;color:var(--dim);margin:8px 0 4px;line-height:1.5}
+#solradarcv{display:block;width:100%;height:44px}
 /* ---------- hint toast ---------- */
 /* ---------- modo tour ---------- */
 #tourbar{position:absolute;left:50%;top:60px;transform:translateX(-50%);z-index:16;display:none;flex-direction:column;gap:7px;
@@ -8087,26 +8089,87 @@ function aurLinha(){
    e um gráfico de 2009 a 2030: pontos fracos mensais, a linha suavizada, a previsão tracejada e o HOJE em âmbar.
    Só a fatia desde 2008 fica guardada 12 h (carto:solciclo, uns 8 KB). O ciclo 25 começa em DEZ 2019 (o mínimo
    oficial); o ciclo 24, em DEZ 2008. */
-const SOLC = {pronto:false, carregando:false, erro:false, mes:null, prev:null, hoje:null};
+const SOLC = {pronto:false, carregando:false, erro:false, mes:null, prev:null, hoje:null, radar:null};
 function solCicloCarrega(){
   if(SOLC.pronto || SOLC.carregando) return Promise.resolve();
-  try{ const c = JSON.parse(store.get('carto:solciclo', 'null')); if(c && c.mes && Date.now() - c.t < 12*3600e3){ SOLC.mes = c.mes; SOLC.prev = c.prev || []; SOLC.hoje = c.hoje || null; SOLC.pronto = true; return Promise.resolve(); } }catch(e){}
+  try{ const c = JSON.parse(store.get('carto:solciclo', 'null')); if(c && c.mes && c.radar && Date.now() - c.t < 12*3600e3){ SOLC.mes = c.mes; SOLC.prev = c.prev || []; SOLC.hoje = c.hoje || null; SOLC.radar = c.radar; SOLC.pronto = true; return Promise.resolve(); } }catch(e){}
   SOLC.carregando = true;
   const B = 'https://services.swpc.noaa.gov/';
   return Promise.all([
     buscaComPrazo(B + 'json/solar-cycle/observed-solar-cycle-indices.json', 20000).then(r=>r.json()),
     buscaComPrazo(B + 'json/solar-cycle/predicted-solar-cycle.json', 15000).then(r=>r.json()).catch(()=>null),
     buscaComPrazo(B + 'text/daily-solar-indices.txt', 12000).then(r=>r.text()).catch(()=>null),
-  ]).then(([obs, prev, txt])=>{
+    buscaComPrazo(B + 'text/27-day-outlook.txt', 12000).then(r=>r.text()).catch(()=>null),   /* r321 · o radar de 27 dias */
+  ]).then(([obs, prev, txt, out])=>{
     if(!Array.isArray(obs) || !obs.length) throw new Error('sem série');
     SOLC.mes = obs.filter(o=>o && o['time-tag'] >= '2008-01').map(o=>[o['time-tag'], +o.ssn, +o.smoothed_ssn]);
     SOLC.prev = Array.isArray(prev) ? prev.map(p=>[p['time-tag'], +p.predicted_ssn, +p.low_ssn, +p.high_ssn]) : [];
     SOLC.hoje = null;
     if(typeof txt === 'string'){ const L = txt.split('\n').filter(l=>/^\d{4} \d\d \d\d /.test(l)); const u = L[L.length - 1]; if(u){ const c = u.trim().split(/\s+/); SOLC.hoje = {data:c[0] + '-' + c[1] + '-' + c[2], f107:+c[3], ssn:+c[4], area:+c[5], regioes:+c[6]}; } }
+    /* r321 · o radar de 27 dias: fluxo 10,7 cm, índice Ap e o maior Kp de cada dia, emitido toda segunda */
+    SOLC.radar = {emitido:'', dias:[]};
+    if(typeof out === 'string'){
+      const MES = {Jan:0, Feb:1, Mar:2, Apr:3, May:4, Jun:5, Jul:6, Aug:7, Sep:8, Oct:9, Nov:10, Dec:11};
+      const mi = out.match(/Issued:\s*(\d{4}) ([A-Z][a-z]{2}) (\d\d)/); if(mi) SOLC.radar.emitido = Date.UTC(+mi[1], MES[mi[2]] || 0, +mi[3]);
+      out.split('\n').forEach(l=>{ const m = l.match(/^(\d{4}) ([A-Z][a-z]{2}) (\d\d)\s+(\d+)\s+(\d+)\s+(\d+)/); if(m) SOLC.radar.dias.push([Date.UTC(+m[1], MES[m[2]] || 0, +m[3]), +m[4], +m[5], +m[6]]); });
+    }
     SOLC.pronto = true; SOLC.carregando = false;
-    store.set('carto:solciclo', JSON.stringify({t:Date.now(), mes:SOLC.mes, prev:SOLC.prev, hoje:SOLC.hoje}));
+    store.set('carto:solciclo', JSON.stringify({t:Date.now(), mes:SOLC.mes, prev:SOLC.prev, hoje:SOLC.hoje, radar:SOLC.radar}));
     RLOG.push('solciclo ' + SOLC.mes.length + 'm');
   }).catch(()=>{ SOLC.erro = true; SOLC.carregando = false; });
+}
+/* ================= r321 · AS MANCHAS NO DISCO DO SOL =================
+   O SWPC publica as regiões ativas do dia (solar_regions.json, CORS aberto: número da região, latitude, longitude de
+   Stonyhurst com OESTE NEGATIVO no arquivo, área em milionésimos de hemisfério, número de manchas, classes). Na cena de
+   FOCO do Sol cada região com manchas vira dois discos na superfície (umbra escura e penumbra), filhos da malha do Sol:
+   giram com ela pelo relógio (ESCALA_REAL_DIA.sol). O meridiano central é a face voltada para a CÂMERA na hora de
+   montar (a entrada no foco olha o Sol como a Terra o vê), oeste à direita, norte para cima; a longitude anda 13,2
+   graus por dia desde a data da observação (a rotação sinódica de 27,27 d; a rotação diferencial fica de fora). O
+   tamanho segue a área (raio equivalente, com um piso de 1,4 por cento do raio para a mancha pequena não sumir).
+   Só o dia mais recente fica guardado 6 h (carto:solregioes). */
+const SOLR = {pronto:false, carregando:false, erro:false, data:'', regs:[]};
+function solRegioesCarrega(){
+  if(SOLR.pronto || SOLR.carregando) return Promise.resolve();
+  try{ const c = JSON.parse(store.get('carto:solregioes', 'null')); if(c && Array.isArray(c.regs) && Date.now() - c.t < 6*3600e3){ SOLR.data = c.data; SOLR.regs = c.regs; SOLR.pronto = true; return Promise.resolve(); } }catch(e){}
+  SOLR.carregando = true;
+  return buscaComPrazo('https://services.swpc.noaa.gov/json/solar_regions.json', 20000).then(r=>r.json()).then(a=>{
+    if(!Array.isArray(a) || !a.length) throw new Error('vazio');
+    let ult = ''; a.forEach(r=>{ if(r && typeof r.observed_date === 'string' && r.observed_date > ult) ult = r.observed_date; });
+    SOLR.data = ult;
+    SOLR.regs = a.filter(r=>r.observed_date === ult && isFinite(r.latitude) && isFinite(r.longitude) && r.area > 0 && r.number_spots > 0)
+      .map(r=>({n:r.region, lat:+r.latitude, lonW:-(+r.longitude), area:+r.area, spots:+r.number_spots, cls:r.spot_class || '', mag:r.mag_class || ''}));
+    SOLR.pronto = true; SOLR.carregando = false;
+    store.set('carto:solregioes', JSON.stringify({t:Date.now(), data:SOLR.data, regs:SOLR.regs}));
+    RLOG.push('solregioes ' + SOLR.regs.length);
+  }).catch(()=>{ SOLR.erro = true; SOLR.carregando = false; });
+}
+function solManchasMonta(mesh, R){
+  solRegioesCarrega().then(()=>{
+    if(!SOLR.pronto || !mesh || !mesh.parent || !ACT || ACT.kind !== 'focus' || ACT.bodyId !== 'sol') return;
+    if(mesh.getObjectByName('manchas')) return;
+    mesh.updateWorldMatrix(true, false);
+    const toCam = mesh.worldToLocal(camera.position.clone()).normalize();
+    const up = new THREE.Vector3(0, 1, 0);
+    const right = new THREE.Vector3().crossVectors(up, toCam);
+    if(right.lengthSq() < 1e-6) right.set(1, 0, 0); right.normalize();
+    const front = new THREE.Vector3().crossVectors(right, up).normalize();
+    const dias = Math.max(0, (Date.now() - Date.parse(SOLR.data + 'T12:00:00Z'))/864e5);
+    const g = new THREE.Group(); g.name = 'manchas';
+    const matU = new THREE.MeshBasicMaterial({color:0x1c0c04, transparent:true, opacity:0.92, depthWrite:false});
+    const matP = new THREE.MeshBasicMaterial({color:0x7a3a12, transparent:true, opacity:0.55, depthWrite:false});
+    const z = new THREE.Vector3(0, 0, 1);
+    SOLR.regs.forEach(r=>{
+      const lat = r.lat*Math.PI/180, lon = (r.lonW + 13.2*dias)*Math.PI/180;
+      const dir = new THREE.Vector3().addScaledVector(front, Math.cos(lat)*Math.cos(lon)).addScaledVector(right, Math.cos(lat)*Math.sin(lon)).addScaledVector(up, Math.sin(lat)).normalize();
+      const ru = R*Math.max(0.014, Math.sqrt(2*r.area*1e-6)*0.75), rp = ru*2.1;
+      const q = new THREE.Quaternion().setFromUnitVectors(z, dir);
+      const mp = new THREE.Mesh(new THREE.CircleGeometry(rp, 24), matP); mp.position.copy(dir).multiplyScalar(R*1.003); mp.quaternion.copy(q); mp.renderOrder = 5; mp.userData.regiao = r.n;
+      const mu = new THREE.Mesh(new THREE.CircleGeometry(ru, 20), matU); mu.position.copy(dir).multiplyScalar(R*1.004); mu.quaternion.copy(q); mu.renderOrder = 6; mu.userData.regiao = r.n;
+      g.add(mp); g.add(mu);
+    });
+    mesh.add(g);
+    if(SOLR.regs.length && !window.__solManchasHint){ window.__solManchasHint = 1; showHint(SOLR.regs.length + ' ' + t('REGIÕES COM MANCHAS NO DISCO HOJE · DADOS DO NOAA')); }
+  });
 }
 function solCicloMes(tag){ const m = String(tag).split('-'); return (typeof MESES_N !== 'undefined' ? MESES_N[(+m[1]) - 1] : m[1]) + ' ' + m[0]; }
 function solCicloMax(de, ate){ let mx = null; (SOLC.mes || []).forEach(m=>{ if(m[0] >= de && (!ate || m[0] < ate) && m[2] >= 0 && (!mx || m[2] > mx[2])) mx = m; }); return mx; }
@@ -8143,11 +8206,39 @@ function solCicloDesenha(){
   if(m24) g.fillText('24', X(tagX(m24[0])), Math.max(8, Y(m24[2]) - 4));
   if(m25) g.fillText('25', X(tagX(m25[0])), Math.max(8, Y(m25[2]) - 4));
 }
+/* r321 · o radar de 27 dias: 27 barras do maior Kp previsto (azul calmo, âmbar de Kp 5, vermelho de Kp 7) com o fluxo
+   10,7 cm numa linha fina por cima, e a leitura em uma frase */
+function solRadarDia(ms){ const d = new Date(ms); return d.getUTCDate() + ' ' + (typeof MESES_N !== 'undefined' ? MESES_N[d.getUTCMonth()] : (d.getUTCMonth() + 1)); }
+function solRadarLinha(){
+  const R = SOLC.radar; if(!R || !R.dias || !R.dias.length) return '';
+  let mx = R.dias[0]; R.dias.forEach(d=>{ if(d[3] > mx[3]) mx = d; });
+  let f0 = Infinity, f1 = -Infinity; R.dias.forEach(d=>{ if(d[1] < f0) f0 = d[1]; if(d[1] > f1) f1 = d[1]; });
+  return t('PRÓXIMOS 27 DIAS · Kp MÁXIMO {kp} EM {dia}').replace('{kp}', mx[3]).replace('{dia}', solRadarDia(mx[0])) + ' (' + aurNivel(mx[3]) + ') · ' + t('F10,7') + ' ' + f0 + ((typeof LANG === 'string' && LANG === 'en') ? ' to ' : ' a ') + f1 + (R.emitido ? ' · ' + t('NOAA, EMITIDO EM') + ' ' + solRadarDia(R.emitido) : '');
+}
+function solRadarDesenha(){
+  const cv = document.getElementById('solradarcv'), R = SOLC.radar; if(!cv || !R || !R.dias || !R.dias.length) return;
+  const dpr = Math.min(2, window.devicePixelRatio || 1), W = Math.max(120, cv.clientWidth || 300), H = 44;
+  cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+  const N = R.dias.length, pl = 4, pr = 4, pt = 6, pb = 12, bw = (W - pl - pr)/N, hb = H - pt - pb;
+  g.font = '8px "Share Tech Mono", monospace'; g.textAlign = 'center';
+  R.dias.forEach((d, i)=>{
+    const kp = d[3], x = pl + i*bw, hh = Math.max(1.5, kp/9*hb);
+    g.fillStyle = kp >= 7 ? '#ff6a4a' : kp >= 5 ? '#ffb454' : kp >= 4 ? 'rgba(125,196,255,.85)' : 'rgba(125,196,255,.38)';
+    g.fillRect(x + 1, pt + hb - hh, Math.max(1, bw - 2), hh);
+    if(i % 7 === 0 || i === N - 1){ g.fillStyle = 'rgba(159,184,212,.62)'; g.textAlign = i === 0 ? 'left' : (i === N - 1 ? 'right' : 'center'); g.fillText(solRadarDia(d[0]), i === 0 ? x : (i === N - 1 ? x + bw : x + bw/2), H - 2); }
+  });
+  let f0 = Infinity, f1 = -Infinity; R.dias.forEach(d=>{ if(d[1] < f0) f0 = d[1]; if(d[1] > f1) f1 = d[1]; }); if(f1 - f0 < 20){ f0 -= 10; f1 += 10; }
+  g.strokeStyle = 'rgba(159,184,212,.55)'; g.lineWidth = 1; g.setLineDash([2, 2]); g.beginPath();
+  R.dias.forEach((d, i)=>{ const x = pl + (i + 0.5)*bw, y = pt + (1 - (d[1] - f0)/(f1 - f0))*hb; if(i === 0) g.moveTo(x, y); else g.lineTo(x, y); });
+  g.stroke(); g.setLineDash([]);
+}
 function solCicloMonta(){
   const ln = document.getElementById('solcicloln'); if(!ln) return;
   ln.textContent = solCicloLinha();
-  if(SOLC.pronto){ solCicloDesenha(); return; }
-  solCicloCarrega().then(()=>{ const l2 = document.getElementById('solcicloln'); if(!l2) return; l2.textContent = solCicloLinha(); solCicloDesenha(); });
+  const rl = document.getElementById('solradarln');
+  if(SOLC.pronto){ solCicloDesenha(); if(rl) rl.textContent = solRadarLinha(); solRadarDesenha(); return; }
+  solCicloCarrega().then(()=>{ const l2 = document.getElementById('solcicloln'); if(!l2) return; l2.textContent = solCicloLinha(); solCicloDesenha(); const r2 = document.getElementById('solradarln'); if(r2) r2.textContent = solRadarLinha(); solRadarDesenha(); });
 }
 async function aurCarrega(){
   if(AUR.carregando) return;
@@ -8626,7 +8717,7 @@ const ESCALA_REAL_ANC = {
   /* cometas: a âncora é a PASSAGEM PELO PERIÉLIO (ma=0 na data), do SBDB */
   halebopp:{ma:0, ep:Date.UTC(1997,3,1,3,16)}, halley:{ma:0, ep:Date.UTC(1986,1,9,11,22)}, p67:{ma:0, ep:Date.UTC(2015,7,13,2,8)}, swift:{ma:0, ep:Date.UTC(1992,11,12)}, encke:{ma:0, ep:Date.UTC(2023,9,22,7)}, tempeltuttle:{ma:0, ep:Date.UTC(1998,1,28,2)}, wirtanen:{ma:0, ep:Date.UTC(2018,11,12,22,21)}, giacobini:{ma:0, ep:Date.UTC(2018,8,10,6,23)}, tuttle:{ma:0, ep:Date.UTC(2008,0,27,0,26)}, ponsbrooks:{ma:0, ep:Date.UTC(2024,3,21,15,9)}, thatcher:{ma:0, ep:Date.UTC(1861,5,3,21)}, parker:{ma:0, ep:Date.UTC(2025,5,19,9,8)}};
 /* dia sideral de cada planeta em dias terrestres (negativo = retrógrado) */
-const ESCALA_REAL_DIA = {mercurio:58.65, venus:-243.0, terra:0.997, marte:1.026,
+const ESCALA_REAL_DIA = {sol:25.38, mercurio:58.65, venus:-243.0, terra:0.997, marte:1.026,   /* r321 · o Sol: 25,38 d sideral no equador (sem a entrada ele girava uma vez por dia no foco) */
   jupiter:0.414, saturno:0.444, urano:-0.718, netuno:0.671};
 /* obliquidade em graus (o retrógrado já vive no sinal do dia: Vênus e Urano) */
 /* r179 · a obliquidade agora vale nos DOIS modos (pedido dele: 'o cênico tem
@@ -12309,6 +12400,7 @@ function buildFocus(bodyId, spin0){
   if(ESCR.on && b._sys === 'sol' && bg.mesh && bg.mesh.material && bg.mesh.material.uniforms && bg.mesh.material.uniforms.uAmb)
     bg.mesh.material.uniforms.uAmb.value = -0.18;
   if(spin0) bg.mesh.rotation.y = spin0;   /* continua de onde a cena do sistema parou */
+  if(bodyId === 'sol' && bg.mesh) solManchasMonta(bg.mesh, radius);   /* r321 · as manchas de hoje no disco */
   /* o corpo com mapa de verdade ignora o spin herdado: quem manda é o relógio */
   const giroLive = giraPeloSol(bodyId);
   bg.group.traverse(o=>{ if(o.userData && o.userData.isClouds) clouds = o; });
@@ -17885,7 +17977,7 @@ function cardRender(){
   }
   /* r320 · o ciclo solar: a linha e o gráfico entram antes dos números rápidos do Sol */
   if(cur.b && cur.b.id === 'sol'){
-    h = h.replace('<div class="qgrid">', '<div id="solciclo"><div id="solcicloln"></div><canvas id="solciclocv"></canvas></div><div class="qgrid">');
+    h = h.replace('<div class="qgrid">', '<div id="solciclo"><div id="solcicloln"></div><canvas id="solciclocv"></canvas><div id="solradarln"></div><canvas id="solradarcv"></canvas></div><div class="qgrid">');
   }
   const pb = $('#panelbody');
   pb.innerHTML = h; pb.scrollTop = 0;
@@ -18705,7 +18797,7 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r320';
+const BUILD = 'r321';
 const RLOG = [];
 /* r320 · A COMPILAÇÃO NARRADA: a fila de programas que o boot compila um a um, contando no console
    (COMPILANDO · VÊNUS...), em vez de um renderer.compile só que congelava a tela de carregamento. Enquanto
@@ -19350,6 +19442,10 @@ const CORRECOES = [
   {d:'21 SET 2026', l:'Em inglês, a linha de estado do planetário dizia TONIGHT em vez de NIGHT.'},
 ];
 const NOVIDADES = [
+  {b:'r321', d:'20 OUT 2026', t:'AS MANCHAS NO SOL E O RADAR DE 27 DIAS', ls:[
+    'ENTRAR no Sol mostra as manchas de hoje no disco, nas posições que o NOAA mede para cada região ativa, girando com o Sol pelo relógio (ele agora gira em 25 dias, como na vida).',
+    'O card do Sol ganhou, abaixo do ciclo, o radar de 27 dias: o maior Kp previsto para cada dia (âmbar quando há chance de aurora) e o fluxo de rádio por cima.'],
+   ver:()=>{ if(typeof gotoFocus === 'function') gotoFocus('sol'); }},
   {b:'r320', d:'20 OUT 2026', t:'O CICLO SOLAR E O ♪ À MÃO', ls:[
     'O card do Sol mostra em que ponto do ciclo de 11 anos estamos: o ano do ciclo 25, a descida depois do máximo de 2024, as manchas de hoje e o gráfico de 2009 a 2030 com a previsão do NOAA. A ficha ganhou a seção O CICLO SOLAR.',
     'No celular o ♪ fica fixo no topo: um toque liga e desliga a música. E a tela de carregamento conta o que está fazendo enquanto prepara o motor gráfico na primeira visita.'],
