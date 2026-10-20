@@ -111,6 +111,8 @@ body.touch:has(#localpop.on,#mission.on,#finder.on,#cmp.on,#help.on,#habpop.on,#
 #morebtns{display:contents}
 /* r176: o relógio do canto não existe no celular; a data ganhou um botão no ⋯ */
 #btndata{display:none}
+#btnmute{display:none}   /* r320 · o ♪ fixo do toque: liga e desliga a música com um toque, sem abrir o ⋯ */
+body.touch #btnmute{display:block;order:8}
 @media (pointer: coarse){ #btndata{display:flex} }
 #btnmore{display:none}
 #scalebadge{order:0} #navback{order:1} #navfwd{order:2} #btnsnd{order:3}
@@ -895,6 +897,16 @@ body.touch #tut{top:60px;bottom:auto}
 body.emtraj #tut{bottom:216px;top:auto}
 
 body.touch.emtraj #panel{opacity:0;visibility:hidden;pointer-events:none}
+/* r320 · os quatro do print do celular: a legenda do filtro desce do ✕; a fileira do planetário quebra linha com o ✕
+   fixo no canto; na linha do tempo o relógio do canto some (a barra tem a data da missão) e o hint sobe da barra */
+body.touch #filtpop .ftcab{margin-top:12px}
+body.touch #localpop .lphead{flex-wrap:wrap;position:relative;padding-right:38px;row-gap:6px}
+body.touch #localpop #localtit{white-space:nowrap}
+body.touch #localpop .lpbtns{flex-wrap:wrap;justify-content:flex-end;row-gap:6px;margin-left:auto}
+body.touch #localpop #localx{position:absolute;top:0;right:0}
+body.touch.emtraj #simclock{display:none}
+body.touch.emtraj #hint{bottom:104px}
+body.touch #hint{max-width:calc(100vw - 32px);white-space:normal;text-align:center;line-height:1.5}   /* r320 · o aviso do marco passava dos dois lados da tela */
 body.touch #trajclock{bottom:16px}
 .mbadge.vt{color:var(--amber);padding:3px 7px 0;display:inline-flex;align-items:center;justify-content:center;line-height:1}
 #misslist li.mkid .mnm{font-size:10px}
@@ -1069,6 +1081,10 @@ body.touch .touchonly{display:inline}
 .livebtn.on i{background:var(--ok);box-shadow:0 0 6px var(--ok);animation:pulseLive 1.8s ease-in-out infinite}
 @keyframes pulseLive{50%{opacity:.35}}
 #liveinfo{font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;color:var(--ok);margin-top:6px}
+/* r320 · o ciclo solar no card do Sol: a linha e o gráfico de 2009 a 2030 */
+#solciclo{margin:8px 0 10px}
+#solcicloln{font-family:var(--mono);font-size:8.5px;letter-spacing:1.6px;color:var(--dim);margin-bottom:4px;line-height:1.5}
+#solciclocv{display:block;width:100%;height:64px}
 /* ---------- hint toast ---------- */
 /* ---------- modo tour ---------- */
 #tourbar{position:absolute;left:50%;top:60px;transform:translateX(-50%);z-index:16;display:none;flex-direction:column;gap:7px;
@@ -1121,13 +1137,18 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
   #topright{top:9px;right:10px;left:auto;gap:6px;flex-wrap:nowrap}
   .navbtn,#btnhelp{width:32px;height:32px;font-size:14px}
   #btnmore{display:block;order:9}
+  #btndata{order:3} #btncfg{order:10}   /* r320 · na coluna do ⋯: « » ◈ ♪ ⌗ ⛶ ≋ ? ⚙ (◈ e ⚙ estavam sem ordem e vinham primeiro) */
   #btnmore.on{border-color:var(--ion);color:var(--ion);background:rgba(63,140,255,.2)}
   #morebtns{display:none;max-height:min(56vh,360px);overflow-y:auto;overscroll-behavior:contain;position:absolute;top:calc(100% + 8px);right:0;
-    flex-direction:column;gap:8px;padding:8px;border:1px solid var(--line2);
+    flex-direction:column;gap:8px;padding:12px 10px;border:1px solid var(--line2);
     background:rgba(6,12,24,.94);backdrop-filter:blur(8px);
     clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
   #morebtns.on{display:flex;animation:mdrop .18s ease-out;max-height:calc(100dvh - 120px);overflow-y:auto;scrollbar-width:none}
   #morebtns::-webkit-scrollbar{display:none}
+  /* r320 · as diagonais do chanfro (só com .on: no desktop o #morebtns é display:contents e os pseudo-elementos vazariam na barra) */
+  #morebtns.on::before,#morebtns.on::after{content:'';position:absolute;width:10px;height:10px;pointer-events:none;z-index:2}
+  #morebtns.on::before{left:-1px;top:-1px;background:linear-gradient(-45deg,transparent calc(50% - 1px),var(--line2) calc(50% - 1px),var(--line2) 50%,transparent 50%)}
+  #morebtns.on::after{right:-1px;bottom:-1px;background:linear-gradient(-45deg,transparent 50%,var(--line2) 50%,var(--line2) calc(50% + 1px),transparent calc(50% + 1px))}
   @keyframes mdrop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
   #scalebadge{display:none}
   #navpod{display:none}
@@ -1186,6 +1207,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
     <div id="scalebadge">ESCALA · <b id="scaleval">SISTEMA</b></div>
     <button id="btnfind" class="navbtn" title="Buscar">⌕</button>
     <button id="btnmiss" class="navbtn" title="Registro de bordo">▤</button>
+    <button id="btnmute" class="navbtn" title="Ligar ou desligar a música">♪</button>
     <button id="btnmore" class="navbtn" title="Mais opções" aria-expanded="false">⋯</button>
     <div id="morebtns">
       <button id="navback" class="navbtn dis" title="Objeto anterior">«</button>
@@ -1452,7 +1474,7 @@ body.photo #tourbar{opacity:0;visibility:hidden;transition:opacity .3s,visibilit
       <p><b>Compartilhe:</b> o endereço da página acompanha o objeto (#corpo=europa). No card, <b>⇪</b> gera um cartão-imagem do corpo e <b>⧉</b> copia o link da vista exata: câmera, data do relógio, camadas ligadas e o lugar do planetário viajam junto.</p>
       <p><b>⚙︎ Configurações:</b> música e efeitos, <b>IDIOMA</b> (português ou inglês), coordenadas reais no painel, e os extras: <b>superfície em ladrilhos da NASA</b> (chegando perto na escala 1:1, a Terra vira a foto de satélite de ontem, a Lua e Marte viram os mosaicos do NASA Trek) e o efeito lightspeed. Nos corpos com mapa, o botão <b>FOTO / DESENHO</b> do card troca a pele.</p>
       <p class="sub kb">ESC volta um nível · / ou S busca · M registro · T tour · P foto · + e − zoom · ? este manual</p>
-      <p class="sub touchonly">Toque longo: modo foto · dois dedos: zoom · ⋯ abre os botões extras · a ficha sobe puxando pela borda</p>
+      <p class="sub touchonly">Toque longo: modo foto · dois dedos: zoom · ♪ liga e desliga a música · ⋯ abre os botões extras · a ficha sobe puxando pela borda</p>
       <p><button class="xbtn" id="tutrever">▸ REVER O TUTORIAL DE BOAS-VINDAS</button></p>
       <p class="sub">UNIVERSATLAS · universatlas.com · o mapa Cartografia Estelar</p>
       <p class="sub">Dados: NASA/ESA/IAU, valores aproximados. Linhas em âmbar são referências de ficção.</p>
@@ -1970,7 +1992,8 @@ const SUN = {
   sections:[
     {t:'ESTRUTURA', rows:[['Diâmetro','1,39 mi km (109 Terras)'],['Massa','1,99 × 10³⁰ kg'],['Densidade','1,41 g/cm³'],['Gravidade','28 g'],['Temp. do núcleo','15 mi °C']]},
     {t:'ROTAÇÃO', rows:[['Tipo','Diferencial (prógrada)'],['Equador','~25 dias'],['Polos','~35 dias'],['Volta na galáxia','~230 mi anos']]},
-    {t:'REGISTRO', rows:[['Composição','73% H · 25% He'],['Consumo','4 mi t de massa/s'],['Vida restante','~5 bi anos'],['População','0 (esperamos)']]}
+    {t:'REGISTRO', rows:[['Composição','73% H · 25% He'],['Consumo','4 mi t de massa/s'],['Vida restante','~5 bi anos'],['População','0 (esperamos)']]},
+    {t:'O CICLO SOLAR', rows:[['O ritmo','A atividade sobe e desce a cada ~11 anos: Schwabe notou em 1843 contando manchas. O campo magnético inverte a cada ciclo, então o ciclo completo tem 22 anos (ciclo de Hale)'],['O número','O número de Wolf, desde 1749: 10 por grupo mais 1 por mancha, a série contínua mais longa da ciência'],['Ciclo 25','Começou em dezembro de 2019; o máximo veio em 2024, bem acima dos 115 previstos em 2019; o mínimo seguinte é esperado por volta de 2030'],['Máximo e mínimo','No máximo, dezenas de grupos, explosões de classe X e auroras em latitudes baixas (em maio de 2024 chegaram ao sul do Brasil); no mínimo, semanas sem uma mancha'],['O Mínimo de Maunder','De 1645 a 1715 quase não houve manchas, em plena Pequena Idade do Gelo; a ligação com o clima ainda se discute'],['Carrington','A maior tempestade registrada, setembro de 1859, perto do máximo do ciclo 10: auroras no Caribe e telégrafos em curto']]}
   ],
   facts:['Contém 99,86% de toda a massa do Sistema Solar.','A luz gerada no núcleo leva até 100 mil anos para escapar até a superfície, e só 8,3 min até a Terra.','Daqui a ~5 bi de anos vira gigante vermelha e engole Mercúrio e Vênus.'],
   fict:'Star Trek, "Sol III" é como a Frota Estelar chama a Terra.'
@@ -8055,6 +8078,76 @@ function aurLinha(){
   const rsg = ['R', 'S', 'G'].map(k=>k + (e[k] && e[k].Scale !== undefined ? e[k].Scale : '0')).join(' ');
   return t('AGORA · ') + 'Kp ' + (AUR.kpEst !== null ? AUR.kpEst.toFixed(1) : AUR.kp) + ' · ' + aurNivel(AUR.kpEst !== null ? AUR.kpEst : AUR.kp)
     + ' · ' + rsg + ' · ' + t('DADOS DO NOAA');
+}
+/* ================= r320 · O CICLO SOLAR no card do Sol =================
+   O NOAA SWPC serve (CORS aberto, sem chave) a série mensal de manchas desde 1749 com o valor suavizado de 13 meses
+   (observed-solar-cycle-indices.json, 36 KB comprimidos), a previsão até 2030 (predicted-solar-cycle.json, 18 KB) e os
+   índices diários dos últimos 30 dias em texto (daily-solar-indices.txt, 1 KB: fluxo 10,7 cm e número de manchas do
+   dia). O card do Sol mostra a linha do ciclo (ano do ciclo 25, onde estamos em relação ao máximo, as manchas de hoje)
+   e um gráfico de 2009 a 2030: pontos fracos mensais, a linha suavizada, a previsão tracejada e o HOJE em âmbar.
+   Só a fatia desde 2008 fica guardada 12 h (carto:solciclo, uns 8 KB). O ciclo 25 começa em DEZ 2019 (o mínimo
+   oficial); o ciclo 24, em DEZ 2008. */
+const SOLC = {pronto:false, carregando:false, erro:false, mes:null, prev:null, hoje:null};
+function solCicloCarrega(){
+  if(SOLC.pronto || SOLC.carregando) return Promise.resolve();
+  try{ const c = JSON.parse(store.get('carto:solciclo', 'null')); if(c && c.mes && Date.now() - c.t < 12*3600e3){ SOLC.mes = c.mes; SOLC.prev = c.prev || []; SOLC.hoje = c.hoje || null; SOLC.pronto = true; return Promise.resolve(); } }catch(e){}
+  SOLC.carregando = true;
+  const B = 'https://services.swpc.noaa.gov/';
+  return Promise.all([
+    buscaComPrazo(B + 'json/solar-cycle/observed-solar-cycle-indices.json', 20000).then(r=>r.json()),
+    buscaComPrazo(B + 'json/solar-cycle/predicted-solar-cycle.json', 15000).then(r=>r.json()).catch(()=>null),
+    buscaComPrazo(B + 'text/daily-solar-indices.txt', 12000).then(r=>r.text()).catch(()=>null),
+  ]).then(([obs, prev, txt])=>{
+    if(!Array.isArray(obs) || !obs.length) throw new Error('sem série');
+    SOLC.mes = obs.filter(o=>o && o['time-tag'] >= '2008-01').map(o=>[o['time-tag'], +o.ssn, +o.smoothed_ssn]);
+    SOLC.prev = Array.isArray(prev) ? prev.map(p=>[p['time-tag'], +p.predicted_ssn, +p.low_ssn, +p.high_ssn]) : [];
+    SOLC.hoje = null;
+    if(typeof txt === 'string'){ const L = txt.split('\n').filter(l=>/^\d{4} \d\d \d\d /.test(l)); const u = L[L.length - 1]; if(u){ const c = u.trim().split(/\s+/); SOLC.hoje = {data:c[0] + '-' + c[1] + '-' + c[2], f107:+c[3], ssn:+c[4], area:+c[5], regioes:+c[6]}; } }
+    SOLC.pronto = true; SOLC.carregando = false;
+    store.set('carto:solciclo', JSON.stringify({t:Date.now(), mes:SOLC.mes, prev:SOLC.prev, hoje:SOLC.hoje}));
+    RLOG.push('solciclo ' + SOLC.mes.length + 'm');
+  }).catch(()=>{ SOLC.erro = true; SOLC.carregando = false; });
+}
+function solCicloMes(tag){ const m = String(tag).split('-'); return (typeof MESES_N !== 'undefined' ? MESES_N[(+m[1]) - 1] : m[1]) + ' ' + m[0]; }
+function solCicloMax(de, ate){ let mx = null; (SOLC.mes || []).forEach(m=>{ if(m[0] >= de && (!ate || m[0] < ate) && m[2] >= 0 && (!mx || m[2] > mx[2])) mx = m; }); return mx; }
+function solCicloLinha(){
+  if(!SOLC.pronto) return SOLC.erro ? t('CICLO SOLAR · SEM DADOS DO NOAA AGORA') : t('CICLO SOLAR · BUSCANDO OS DADOS DO NOAA...');
+  const ano = Math.floor((Date.now() - Date.UTC(2019, 11, 1))/(365.25*864e5)) + 1;
+  const mx = solCicloMax('2019-12'); const suav = (SOLC.mes || []).filter(m=>m[2] >= 0); const ult = suav.length ? suav[suav.length - 1] : null;
+  let fase = '';
+  if(mx && ult){ if(ult[0] === mx[0]) fase = t('NO MÁXIMO'); else if(ult[2] < mx[2]*0.92) fase = t('DESCENDO DO MÁXIMO DE') + ' ' + solCicloMes(mx[0]); else fase = t('PERTO DO MÁXIMO'); }
+  const hj = SOLC.hoje;
+  return t('CICLO 25 · ANO') + ' ' + ano + (fase ? ' · ' + fase : '') + (hj && isFinite(hj.ssn) ? ' · ' + t('MANCHAS HOJE') + ' ' + hj.ssn + ' · ' + t('F10,7') + ' ' + hj.f107 : '') + ' · ' + t('DADOS DO NOAA');
+}
+function solCicloDesenha(){
+  const cv = document.getElementById('solciclocv'); if(!cv || !SOLC.mes) return;
+  const dpr = Math.min(2, window.devicePixelRatio || 1), W = Math.max(120, cv.clientWidth || 300), H = 64;
+  cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+  const tagX = tag=>{ const p = String(tag).split('-'); return (+p[0]) + ((+p[1]) - 0.5)/12; };
+  const x0 = 2008.9, x1 = 2031.0, pl = 4, pr = 4, pt = 10, pb = 12;
+  const X = v=>pl + (v - x0)/(x1 - x0)*(W - pl - pr);
+  let max = 60; SOLC.mes.forEach(m=>{ if(m[1] > max) max = m[1]; }); (SOLC.prev || []).forEach(p=>{ if(p[3] > max) max = p[3]; }); max *= 1.06;
+  const Y = v=>pt + (1 - Math.max(0, v)/max)*(H - pt - pb);
+  const mono = '8px "Share Tech Mono", monospace';
+  g.strokeStyle = 'rgba(125,196,255,.16)'; g.lineWidth = 1; g.beginPath(); g.moveTo(pl, Y(0) + .5); g.lineTo(W - pr, Y(0) + .5); g.stroke();
+  g.fillStyle = 'rgba(159,184,212,.62)'; g.font = mono; g.textAlign = 'center';
+  for(let a = 2010; a <= 2030; a += 5){ g.fillText(String(a), X(a), H - 2); g.fillRect(X(a), Y(0) - 2, 1, 3); }
+  g.fillStyle = 'rgba(125,196,255,.30)'; SOLC.mes.forEach(m=>{ if(m[1] >= 0) g.fillRect(X(tagX(m[0])) - .6, Y(m[1]) - .6, 1.4, 1.4); });
+  if(SOLC.prev && SOLC.prev.length){ g.setLineDash([3, 3]); g.strokeStyle = 'rgba(125,196,255,.5)'; g.lineWidth = 1; g.beginPath(); SOLC.prev.forEach((p, i)=>{ const x = X(tagX(p[0])), y = Y(p[1]); if(i === 0) g.moveTo(x, y); else g.lineTo(x, y); }); g.stroke(); g.setLineDash([]); }
+  g.strokeStyle = '#7dc4ff'; g.lineWidth = 1.4; g.beginPath(); let on = false; SOLC.mes.forEach(m=>{ if(m[2] >= 0){ const x = X(tagX(m[0])), y = Y(m[2]); if(!on){ g.moveTo(x, y); on = true; } else g.lineTo(x, y); } }); g.stroke();
+  const d = new Date(), xa = X(d.getUTCFullYear() + (d.getUTCMonth() + 0.5)/12);
+  g.strokeStyle = '#ffb454'; g.beginPath(); g.moveTo(Math.round(xa) + .5, pt - 4); g.lineTo(Math.round(xa) + .5, Y(0)); g.stroke();
+  g.fillStyle = 'rgba(159,184,212,.75)';
+  const m24 = solCicloMax('2008-12', '2019-12'), m25 = solCicloMax('2019-12');
+  if(m24) g.fillText('24', X(tagX(m24[0])), Math.max(8, Y(m24[2]) - 4));
+  if(m25) g.fillText('25', X(tagX(m25[0])), Math.max(8, Y(m25[2]) - 4));
+}
+function solCicloMonta(){
+  const ln = document.getElementById('solcicloln'); if(!ln) return;
+  ln.textContent = solCicloLinha();
+  if(SOLC.pronto){ solCicloDesenha(); return; }
+  solCicloCarrega().then(()=>{ const l2 = document.getElementById('solcicloln'); if(!l2) return; l2.textContent = solCicloLinha(); solCicloDesenha(); });
 }
 async function aurCarrega(){
   if(AUR.carregando) return;
@@ -14918,7 +15011,7 @@ const AUDIO = (function(){
     else { startAmbient(); if(ensure() && ctx.state==='suspended') ctx.resume(); }
     plSync();
   }
-  function syncBtn(){ const b = $('#btnsnd'); if(b) b.classList.toggle('mut', muted); }
+  function syncBtn(){ const b = $('#btnsnd'); if(b) b.classList.toggle('mut', muted); const m = $('#btnmute'); if(m){ m.classList.toggle('mut', muted); m.title = muted ? t('Ligar a música') : t('Desligar a música'); } }   /* r320 · o ♪ fixo do toque mostra o estado */
   return {boot, sfx, toggle, running,
     toggleSfx(){ sfxMudo = !sfxMudo; store.set('carto:sfx', sfxMudo ? '1' : '0'); },
     get sfxMudo(){ return sfxMudo; }, setTrack, setVol, next:()=>setTrack(trk+1), prev:()=>setTrack(trk-1), plSync, get trk(){return trk;}, get muted(){return muted;}, get playing(){return !!(audioEl && !audioEl.paused);}, pause:()=>{ killFade(); if(audioEl){ audioEl.volume = vol; audioEl.pause(); } plSync(); }, resume:()=>{ if(muted){ toggle(); return; } if(audioEl){ audioEl.volume = vol; audioEl.play().catch(()=>{}); } else startAmbient(); plSync(); }};
@@ -17790,8 +17883,13 @@ function cardRender(){
   if(cur.b && cur.b.id === 'sol' && AUR.kp !== null && typeof AUR.kp !== 'undefined'){
     h = h.replace('<div class="qgrid">', '<div id="liveinfo">' + esc(aurLinha()) + '</div><div class="qgrid">');
   }
+  /* r320 · o ciclo solar: a linha e o gráfico entram antes dos números rápidos do Sol */
+  if(cur.b && cur.b.id === 'sol'){
+    h = h.replace('<div class="qgrid">', '<div id="solciclo"><div id="solcicloln"></div><canvas id="solciclocv"></canvas></div><div class="qgrid">');
+  }
   const pb = $('#panelbody');
   pb.innerHTML = h; pb.scrollTop = 0;
+  if(cur.b && cur.b.id === 'sol') solCicloMonta();   /* r320 */
   pb.querySelectorAll('[data-acao]').forEach(el=>el.addEventListener('click', ()=>{ const a = b.acoes && b.acoes[+el.dataset.acao]; if(a && a.fn) a.fn(); }));   /* r306 */
   pb.querySelectorAll('[data-go]').forEach(el=>el.addEventListener('click', ()=>{
     if(el.classList.contains('chip') || el.classList.contains('mbadge')) ACTION('focus', el.dataset.go);   /* 1º clique: ficha; ENTRAR fica no topo */
@@ -18607,8 +18705,12 @@ head.addEventListener('pointerup', e=>{
 });
 
 /* ============================ BOOT & LOOP ============================ */
-const BUILD = 'r319';
+const BUILD = 'r320';
 const RLOG = [];
+/* r320 · A COMPILAÇÃO NARRADA: a fila de programas que o boot compila um a um, contando no console
+   (COMPILANDO · VÊNUS...), em vez de um renderer.compile só que congelava a tela de carregamento. Enquanto
+   pendente, o laço não desenha (senão o primeiro quadro compilaria tudo de uma vez, calado) */
+const BOOTCOMP = {fila:[], i:0, pendente:false, ms:0};
 const CRECT = {left:0, top:0, width:1, height:1};
 function resize(){
   const r = canvas.getBoundingClientRect();
@@ -18717,12 +18819,19 @@ resize();
   /* r224 · a COMPILAÇÃO dos shaders acontece AQUI, com a tela de loading
      ainda na frente: se o driver levar segundos (primeiro acesso, sem cache),
      quem espera é a barrinha do boot, não o mapa congelado */
+  /* r320 · a compilação virou uma FILA que o bootCompila consome com o console andando (um corpo por vez: o
+     primeiro de cada modo paga o programa, os seguintes acham no cache do three); o fecho compila o resto da
+     cena (órbitas, cinturões, estrela) e o céu. O crono compile sai no fim da fila */
   try{
-    const _tC0 = performance.now();
-    if(ACT && ACT.scene && typeof renderer !== 'undefined') renderer.compile(ACT.scene, camera);
-    if(ACT && ACT.sceneCeu && typeof camCeu !== 'undefined') renderer.compile(ACT.sceneCeu, camCeu);
-    RLOG.push('crono compile ' + Math.round(performance.now() - _tC0) + 'ms');
-  }catch(e){}
+    BOOTCOMP.fila = []; BOOTCOMP.i = 0; BOOTCOMP.ms = 0;
+    if(ACT && ACT.scene && typeof renderer !== 'undefined'){
+      const vistos = new Set();
+      if(Array.isArray(ACT.objs)) for(const r of ACT.objs){ if(!r || !r.holder || vistos.has(r.holder) || !ALLBODIES[r.id]) continue; vistos.add(r.holder); BOOTCOMP.fila.push({nome:ALLBODIES[r.id].name, obj:r.holder}); }
+      BOOTCOMP.fila.push({nome:t('AS ÓRBITAS E A ESTRELA'), obj:ACT.scene});
+      if(ACT.sceneCeu && typeof camCeu !== 'undefined') BOOTCOMP.fila.push({nome:t('AS ESTRELAS DO CÉU'), obj:ACT.sceneCeu, cam:camCeu});
+    }
+    BOOTCOMP.pendente = BOOTCOMP.fila.length > 0;
+  }catch(e){ BOOTCOMP.pendente = false; }
   try{ RLOG.push('crono boot-js ' + Math.round(performance.now() - _tB0) + 'ms'); }catch(e){}
   /* link direto de missão: abre já com a linha do tempo rodando */
   if(trajLink && k === 'corpo' && ALLBODIES[v] && ALLBODIES[v].traj)
@@ -19229,6 +19338,7 @@ $('#datepop').addEventListener('click', e=>{
 /* r313 · CORREÇÕES (ideia dele): o que foi consertado, em uma linha cada, sem número de build nem nome de
    função, embaixo das novidades. Hotfix e ferramenta interna moram aqui, nunca em NOVIDADES. */
 const CORRECOES = [
+  {d:'20 OUT 2026', l:'No celular, o ✕ do planetário ficava fora da tela, a legenda LINHA e OBJETO do filtro ficava embaixo do ✕ e a barra da linha do tempo cobria o relógio e o aviso do marco.'},
   {d:'20 OUT 2026', l:'Na primeira abertura num PC com Windows o mapa travava até um minuto compilando o shader dos planetas (nas visitas seguintes o cache do navegador escondia isso, até o Chrome se atualizar); agora cada tipo de planeta compila só o que usa e a espera caiu para poucos segundos.'},
   {d:'25 SET 2026', l:'Selecionar o texto da busca ou do registro de bordo com o mouse e soltar fora da caixa fechava a janela e perdia o que estava escrito.'},
   {d:'24 SET 2026', l:'Clicar no espaço vazio às vezes abria a ficha de uma constelação e apagava as órbitas, mesmo com as constelações desligadas.'},
@@ -19240,6 +19350,10 @@ const CORRECOES = [
   {d:'21 SET 2026', l:'Em inglês, a linha de estado do planetário dizia TONIGHT em vez de NIGHT.'},
 ];
 const NOVIDADES = [
+  {b:'r320', d:'20 OUT 2026', t:'O CICLO SOLAR E O ♪ À MÃO', ls:[
+    'O card do Sol mostra em que ponto do ciclo de 11 anos estamos: o ano do ciclo 25, a descida depois do máximo de 2024, as manchas de hoje e o gráfico de 2009 a 2030 com a previsão do NOAA. A ficha ganhou a seção O CICLO SOLAR.',
+    'No celular o ♪ fica fixo no topo: um toque liga e desliga a música. E a tela de carregamento conta o que está fazendo enquanto prepara o motor gráfico na primeira visita.'],
+   ver:()=>{ if(typeof ACTION === 'function') ACTION('focus', 'sol'); }},
   {b:'r316', d:'24 SET 2026', t:'AS MISSÕES DA LUA DE VERDADE', ls:[
     'As dez missões lunares refazem a viagem pela física, com os horários e os lugares dos relatórios oficiais: a Apollo 11 sai da Flórida, dá uma volta e meia na Terra, entra em órbita retrógrada na Lua e a Águia pousa no Mar da Tranquilidade na hora certa; a Luna 16 decola na vertical e cai no Cazaquistão. A Artemis II é a rota medida da Orion, com o recorde de 406.771 km.',
     'O ◉ da barra põe você dentro da nave: arraste para olhar em volta.'],
@@ -20115,6 +20229,8 @@ tourRota(store.get('carto:rota','completo'), true);
 $('#photoexit').addEventListener('click', e=>{ e.stopPropagation(); togglePhoto(); });
 ['pointermove','pointerdown','wheel'].forEach(ev=>window.addEventListener(ev, photoPeek, {passive:true}));
 $('#pl_mute').addEventListener('click', ()=>AUDIO.toggle());
+/* r320 · o ♪ fixo da barra do toque: um toque liga ou desliga a música (o player completo segue no ⋯) */
+{ const bm = $('#btnmute'); if(bm) bm.addEventListener('click', ()=>{ AUDIO.toggle(); showHint(AUDIO.muted ? t('MÚSICA DESLIGADA') : t('MÚSICA LIGADA')); anlEvento('musica', {ligada:AUDIO.muted ? 'nao' : 'sim'}); }); }
 $('#pl_prev').addEventListener('click', ()=>AUDIO.prev());
 $('#pl_next').addEventListener('click', ()=>AUDIO.next());
 $('#pl_play').addEventListener('click', ()=>{ if(AUDIO.playing) AUDIO.pause(); else AUDIO.resume(); });
@@ -20131,13 +20247,42 @@ const BOOTLINES = ['UNIVERSATLAS · '+BUILD.toUpperCase(),'CALIBRANDO SENSORES �
 let bootI = 0;
 function bootNext(){
   if(bootI < BOOTLINES.length){
+    /* r320 · antes da última linha (as boas-vindas) a fila de compilação passa, contando no console */
+    if(bootI === BOOTLINES.length - 1 && BOOTCOMP.pendente){ bootCompila(); return; }
     const d = document.createElement('div');
     d.innerHTML = t(BOOTLINES[bootI++]);
     $('#bootlines').appendChild(d);
     setTimeout(bootNext, 340);
   } else setTimeout(endBoot, 480);
 }
+/* r320 · uma linha que anda (COMPILANDO · VÊNUS) e fecha com o OK. Cada programa pesado ganha um quadro para a
+   linha aparecer antes de bloquear; os que já estão no cache passam em lote dentro de 40 ms */
+function bootCompila(){
+  let d = document.getElementById('bootcomp');
+  if(!d){ d = document.createElement('div'); d.id = 'bootcomp'; $('#bootlines').appendChild(d); }
+  const compila = j=>{ const t0 = performance.now(); try{ renderer.compile(j.obj, j.cam || camera); }catch(e){} BOOTCOMP.ms += performance.now() - t0; BOOTCOMP.i++; };
+  const fim = ()=>{
+    BOOTCOMP.pendente = false;
+    RLOG.push('crono compile ' + Math.round(BOOTCOMP.ms) + 'ms');
+    const s = BOOTCOMP.ms >= 1500 ? ' · ' + (BOOTCOMP.ms/1000).toFixed(1).replace('.', (typeof LANG === 'string' && LANG === 'en') ? '.' : ',') + ' s' : '';
+    d.innerHTML = t('MOTOR GRÁFICO COMPILADO ') + '.'.repeat(Math.max(3, 17 - s.length)) + ' <span class="ok">OK</span>' + s;
+    setTimeout(bootNext, 260);
+  };
+  const passo = ()=>{
+    if(!BOOTCOMP.pendente || BOOTCOMP.i >= BOOTCOMP.fila.length){ fim(); return; }
+    d.textContent = t('COMPILANDO') + ' · ' + BOOTCOMP.fila[BOOTCOMP.i].nome;
+    setTimeout(()=>{
+      if(!BOOTCOMP.pendente){ fim(); return; }
+      const t0 = performance.now();
+      compila(BOOTCOMP.fila[BOOTCOMP.i]);
+      while(BOOTCOMP.i < BOOTCOMP.fila.length && performance.now() - t0 < 40){ d.textContent = t('COMPILANDO') + ' · ' + BOOTCOMP.fila[BOOTCOMP.i].nome; compila(BOOTCOMP.fila[BOOTCOMP.i]); }
+      passo();
+    }, 30);
+  };
+  passo();
+}
 function endBoot(){
+  BOOTCOMP.pendente = false;   /* r320 · tocar para pular: o que faltou compila no primeiro quadro, como antes */
   $('#boot').classList.add('off');
   anlPagina();   /* r318 · a primeira página (se o boot já mandou pelo syncHash, não repete) */
   if(window.__bootErro) showHint(t('O LINK NÃO ABRIU E O MAPA CAIU EM CASA') + ' · ' + (window.__bootErro.message || ''));   /* r311 */
@@ -20338,7 +20483,7 @@ function loop(){
     /* as constelações acendem em qualquer cena que tenha céu profundo */
     if(ACT.ceuLinhas && ACT.kind === 'focus' && ACT.ceuLinhas.visible && ACT.ceuLinhas.material.opacity < 0.3)
       ACT.ceuLinhas.material.opacity = Math.min(0.3, ACT.ceuLinhas.material.opacity + 0.006);
-    if(!TAPADO){   /* r299 · nada a desenhar atrás de um modal opaco de tela cheia */
+    if(!TAPADO && !BOOTCOMP.pendente){   /* r299 · nada a desenhar atrás de um modal opaco de tela cheia; r320 · nem antes de a fila de compilação do boot passar */
     if(ACT.sceneCeu){
       camCeu.position.copy(camera.position);
       camCeu.quaternion.copy(camera.quaternion);

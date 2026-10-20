@@ -8,9 +8,16 @@ Este arquivo passa a ser a fonte única dessa lista, que antes vivia solta no
 CLAUDE.md. Ele cresce a cada entrega, e o painel de novidades dentro do app vai
 ler o mesmo conteúdo, então marcar lá ou aqui dá no mesmo.
 
-Hoje: 288 testes pendentes (do r131 ao r319) e 4 decisões suas.
+Hoje: 292 testes pendentes (do r131 ao r320) e 4 decisões suas.
 
 ---
+
+## r320 · o ciclo solar, o ♪ do celular e a tela de carregamento que conta
+
+- [ ] **O ciclo solar.** Card do Sol (toque no Sol no mapa): abaixo dos botões, a linha CICLO 25 · ANO 7 · DESCENDO DO MÁXIMO DE OUT 2024 · MANCHAS HOJE n · F10,7 n e o gráfico de 2009 a 2030 (os dois picos 24 e 25, a previsão tracejada até 2030 e o HOJE em âmbar). Na ficha, a seção O CICLO SOLAR. Em inglês tudo em inglês. Diga se o gráfico está legível no celular.
+- [ ] **O ♪ no celular.** No topo, entre a busca e o ⋯, o ♪ liga e desliga a música com um toque (o aviso MÚSICA DESLIGADA aparece e o ícone fica apagado e riscado). O player completo continua no ⋯. A linha dos gestos no manual (?) cita o ♪.
+- [ ] **O celular arrumado.** O menu ⋯ na ordem « » ◈ ♪ ⌗ ≋ ⛶ ? ⚙ com o chanfro e as diagonais da casa (o canto do primeiro e do último botão não é mais mordido); no filtro ≋ a legenda LINHA e OBJETO fica abaixo do ✕; no planetário os botões quebram em duas linhas e o ✕ fica no canto (a 390 px ele caía fora da tela); na linha do tempo o relógio do canto some e o aviso do marco sobe da barra, quebrando linha em vez de passar dos dois lados.
+- [ ] **A tela de carregamento conta.** Na primeira abertura (ou com o cache de shaders apagado) o console do boot mostra COMPILANDO · MERCÚRIO, VÊNUS, TERRA... e fecha com MOTOR GRÁFICO COMPILADO OK · n s. Com o cache quente a linha passa num piscar. Tocar na tela de carregamento continua pulando.
 
 ## r319 · a primeira abertura sem travar
 
